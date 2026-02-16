@@ -1,14 +1,12 @@
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function filterFunctionDeclaration(
-  this: ObjectType,
-): FunctionDeclarationStructure {
-  const statements: string[] = [];
+export function filterFunctionDeclaration(this: ObjectType): Code {
+  const statements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(
-      `if (!${parentObjectType.filterFunction}(filter, value)) { return false; }`,
+      code`if (!${parentObjectType.filterFunction}(filter, value)) { return false; }`,
     );
   }
 
@@ -16,29 +14,16 @@ export function filterFunctionDeclaration(
     for (const ownProperty of this.ownProperties) {
       ownProperty.filterProperty.ifJust(({ name }) => {
         statements.push(
-          `if (typeof filter.${name} !== "undefined" && !${ownProperty.type.filterFunction}(filter.${name}, value.${ownProperty.name})) { return false; }`,
+          code`if (typeof filter.${name} !== "undefined" && !${ownProperty.type.filterFunction}(filter.${name}, value.${ownProperty.name})) { return false; }`,
         );
       });
     }
   }
 
-  statements.push(`return true;`);
+  statements.push(code`return true;`);
 
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    parameters: [
-      {
-        name: "filter",
-        type: this.filterType,
-      },
-      {
-        name: "value",
-        type: this.name,
-      },
-    ],
-    name: `${syntheticNamePrefix}filter`,
-    returnType: "boolean",
-    statements,
-  } satisfies FunctionDeclarationStructure;
+  return code`\
+export function ${syntheticNamePrefix}filter(filter: ${this.filterType}, value: ${this.name}): boolean {
+  ${joinCode(statements)}
+}`;
 }

@@ -1,13 +1,11 @@
-import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function filterTypeDeclaration(
-  this: ObjectType,
-): TypeAliasDeclarationStructure {
-  const members: string[] = [];
+export function filterTypeDeclaration(this: ObjectType): Code {
+  const members: Code[] = [];
   if (this.properties.length > 0) {
-    const filterProperties: Record<string, string> = {};
+    const filterProperties: Record<string, Code> = {};
     for (const property of this.properties) {
       property.filterProperty.ifJust(({ name, type }) => {
         filterProperties[name] = type;
@@ -15,22 +13,21 @@ export function filterTypeDeclaration(
     }
     if (Object.entries(filterProperties).length > 0) {
       members.push(
-        `{ ${Object.entries(filterProperties)
-          .map(([name, type]) => `readonly ${name}?: ${type}`)
-          .join(";")} }`,
+        code`{ ${joinCode(
+          Object.entries(filterProperties).map(
+            ([name, type]) => code`readonly ${name}?: ${type}`,
+          ),
+          { on: ";" },
+        )} }`,
       );
     }
   }
   for (const parentObjectType of this.parentObjectTypes) {
     members.push(
-      `${parentObjectType.staticModuleName}.${syntheticNamePrefix}Filter`,
+      code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}Filter`,
     );
   }
 
-  return {
-    isExported: true,
-    kind: StructureKind.TypeAlias,
-    name: `${syntheticNamePrefix}Filter`,
-    type: members.length > 0 ? members.join(" & ") : "object",
-  };
+  return code`\
+export type ${syntheticNamePrefix}Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`;
 }

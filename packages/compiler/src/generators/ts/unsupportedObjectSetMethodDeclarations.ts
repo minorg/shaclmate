@@ -1,31 +1,45 @@
-import { type MethodDeclarationStructure, StructureKind } from "ts-morph";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
+
+function unsupportedObjectSetMethodDeclaration({
+  name,
+  parameters,
+  returnType,
+}: {
+  readonly name: string;
+  readonly parameters: Code;
+  readonly returnType: Code;
+}) {
+  return code`\
+async ${name}(${parameters}): ${returnType} {
+  return ${imports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
+}`;
+}
 
 export function unsupportedObjectSetMethodDeclarations({
   objectType,
 }: {
   objectType: {
-    readonly filterType: string;
-    readonly identifierTypeAlias: string;
+    readonly filterType: Code;
+    readonly identifierTypeAlias: Code;
     readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
     readonly name: string;
   };
-}): readonly MethodDeclarationStructure[] {
-  return Object.values(objectSetMethodSignatures({ objectType })).map(
-    (methodSignature) => ({
-      ...methodSignature,
-      kind: StructureKind.Method,
-      parameters: methodSignature.parameters
-        ? methodSignature.parameters!.map((parameter) => ({
-            ...parameter,
-            name: `_${parameter.name}`,
-          }))
-        : methodSignature.parameters,
-      isAsync: true,
-      statements: [
-        `return purify.Left(new Error("${methodSignature.name}: not supported")) satisfies Awaited<${methodSignature.returnType}>;`,
-      ],
-    }),
-  );
+}): Readonly<Record<keyof ObjectType.ObjectSetMethodNames, Code>> {
+  const methodSignatures = objectSetMethodSignatures({
+    objectType,
+    parameterNamePrefix: "_",
+  });
+  return {
+    object: unsupportedObjectSetMethodDeclaration(methodSignatures.object),
+    objectIdentifiers: unsupportedObjectSetMethodDeclaration(
+      methodSignatures.objectIdentifiers,
+    ),
+    objects: unsupportedObjectSetMethodDeclaration(methodSignatures.objects),
+    objectsCount: unsupportedObjectSetMethodDeclaration(
+      methodSignatures.objectsCount,
+    ),
+  };
 }

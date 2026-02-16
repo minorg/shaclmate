@@ -2,164 +2,65 @@ import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { imports } from "./imports.js";
+import { snippets } from "./snippets.js";
+import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
-  override readonly filterFunction = `${syntheticNamePrefix}filterString`;
-  override readonly filterType = `${syntheticNamePrefix}StringFilter`;
+  override readonly filterFunction = code`${snippets.filterString}`;
+  override readonly filterType = code`${snippets.StringFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
-    "graphql.GraphQLString",
+    code`${imports.GraphQLString}`,
   );
   readonly kind = "StringType";
+  override readonly schemaType = code`${snippets.StringSchema}`;
+  override readonly sparqlWherePatternsFunction =
+    code`${snippets.stringSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["string" as const]);
+
+  @Memoize()
+  override get name(): string {
+    if (this.primitiveIn.length > 0) {
+      return `${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
+    }
+    return `string`;
+  }
 
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
       in:
         this.primitiveIn.length > 0
-          ? this.primitiveIn.map((_) => JSON.stringify(_)).concat()
+          ? this.primitiveIn.map(literalOf).concat()
           : undefined,
     };
-  }
-
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "in?": `readonly string[]`,
-    };
-  }
-
-  @Memoize()
-  override get name(): string {
-    if (this.primitiveIn.length > 0) {
-      return this.primitiveIn.map((value) => `"${value}"`).join(" | ");
-    }
-    return "string";
   }
 
   override hashStatements({
     variables,
   }: Parameters<
     AbstractPrimitiveType<string>["hashStatements"]
-  >[0]): readonly string[] {
-    return [`${variables.hasher}.update(${variables.value});`];
+  >[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value});`];
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractPrimitiveType<string>["jsonZodSchema"]>[0]): ReturnType<
-    AbstractPrimitiveType<string>["jsonZodSchema"]
-  > {
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractPrimitiveType<string>["jsonZodSchema"]>[0],
+  ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return `${variables.zod}.string()`;
+        return code`${imports.z}.string()`;
       case 1:
-        return `${variables.zod}.literal(${this.primitiveIn[0]})`;
+        return code`${imports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return `${variables.zod}.enum(${JSON.stringify(this.primitiveIn)})`;
+        return code`${imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
     }
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractPrimitiveType<string>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}StringFilter`,
-        `\
-interface ${syntheticNamePrefix}StringFilter {
-  readonly in?: readonly string[];
-  readonly maxLength?: number;
-  readonly minLength?: number;
-}`,
-      ),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterString`,
-        `\
-function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}StringFilter, value: string) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
-    return false;
-  }
-
-  if (typeof filter.maxLength !== "undefined" && value.length > filter.maxLength) {
-    return false;
-  }
-
-  if (typeof filter.minLength !== "undefined" && value.length < filter.minLength) {
-    return false;
-  }
-
-  return true;
-}`,
-      ),
-
-      features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}stringSparqlWherePatterns`, {
-            code: `\
-const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
-
-    if (filter) {
-      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
-      }
-
-      if (typeof filter.maxLength !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: "<=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-
-      if (typeof filter.minLength !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: ">=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-    }
-
-    return ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
-  }`,
-            dependencies: {
-              ...sharedSnippetDeclarations.literalSchemaSparqlWherePatterns,
-              ...sharedSnippetDeclarations.sparqlValueInPattern,
-              ...sharedSnippetDeclarations.toLiteral,
-              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-            },
-          })
-        : {},
-    );
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
-    return `[dataFactory.literal(${variables.value})]`;
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
+    return code`[${imports.dataFactory}.literal(${variables.value})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -169,12 +70,12 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
   >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
     const inChain =
       this.primitiveIn.length > 0
-        ? `.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`
+        ? code`.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return ${imports.Either}.of<Error, ${this.name}>(string_); default: return ${imports.Left}<Error, ${this.name}>(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`
         : "";
 
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: `chain(values => values.chainMap(value => value.toString()${inChain}))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toString()${inChain}))`,
     };
   }
 }

@@ -1,68 +1,74 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
-import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
+import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
-  name: string;
-  parameters: OptionalKind<ParameterDeclarationStructure>[];
-  returnType: string;
-  statements: string[];
-}> {
+export function toRdfFunctionOrMethodDeclaration(
+  this: ObjectType,
+): Maybe<Code> {
   if (!this.features.has("rdf")) {
     return Maybe.empty();
   }
 
   this.ensureAtMostOneSuperObjectType();
 
-  const parameters: OptionalKind<ParameterDeclarationStructure>[] = [];
+  let preamble: string = "";
   if (this.declarationType === "interface") {
-    parameters.push({
-      name: this.thisVariable,
-      type: this.name,
-    });
+    preamble = "export function ";
   }
-  parameters.push({
-    hasQuestionToken: true,
-    name: "options",
-    type: `{ ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: rdfjsResource.MutableResource.MutateGraph, ${variables.resourceSet}?: rdfjsResource.MutableResourceSet }`,
-  });
+
+  const parameters: Code[] = [];
+  if (this.declarationType === "interface") {
+    parameters.push(code`${this.thisVariable}: ${this.name}`);
+  }
+  parameters.push(
+    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: ${imports.MutableResource}.MutateGraph, ${variables.resourceSet}?: ${imports.MutableResourceSet} }`,
+  );
 
   let usedIgnoreRdfTypeVariable = false;
 
-  const statements: string[] = [
-    `const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
-    `const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new rdfjsResource.MutableResourceSet({ dataFactory, dataset: datasetFactory.dataset() });`,
+  const statements: Code[] = [
+    code`const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.MutableResourceSet}({ ${imports.dataFactory}, dataset: ${snippets.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
-    const superToRdfOptions = `{ ${variables.ignoreRdfType}: true, ${variables.mutateGraph}, ${variables.resourceSet} }`;
-    let superToRdfCall: string;
+    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.mutateGraph}, ${variables.resourceSet} }`;
+    let superToRdfCall: Code;
     switch (this.declarationType) {
       case "class":
-        superToRdfCall = `super.${syntheticNamePrefix}toRdf(${superToRdfOptions})`;
+        preamble = "override ";
+        superToRdfCall = code`super.${syntheticNamePrefix}toRdf(${superToRdfOptions})`;
         break;
       case "interface":
-        superToRdfCall = `${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${superToRdfOptions})`;
+        superToRdfCall = code`${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${superToRdfOptions})`;
         break;
     }
-    statements.push(`const ${variables.resource} = ${superToRdfCall};`);
+    statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
     usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
   } else if (this.identifierType.kind === "NamedNodeType") {
     statements.push(
-      `const ${variables.resource} = ${variables.resourceSet}.mutableNamedResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
+      code`const ${variables.resource} = ${variables.resourceSet}.mutableNamedResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
     );
   } else {
     statements.push(
-      `const ${variables.resource} = ${variables.resourceSet}.mutableResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
+      code`const ${variables.resource} = ${variables.resourceSet}.mutableResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
     );
   }
 
   if (this.toRdfTypes.length > 0) {
     statements.push(
-      `if (!${variables.ignoreRdfType}) { ${this.toRdfTypes.map((toRdfType) => `${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${variables.resource}.dataFactory.namedNode("${toRdfType.value}"));`).join(" ")} }`,
+      code`if (!${variables.ignoreRdfType}) { ${joinCode(
+        this.toRdfTypes.map(
+          (toRdfType) =>
+            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"));`,
+        ),
+        { on: " " },
+      )} }`,
     );
     usedIgnoreRdfTypeVariable = true;
   }
@@ -72,31 +78,29 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
       ...property.toRdfStatements({
         variables: {
           ...variables,
-          value: `${this.thisVariable}.${property.name}`,
+          value: code`${this.thisVariable}.${property.name}`,
         },
       }),
     );
   }
 
-  statements.push(`return ${variables.resource};`);
+  statements.push(code`return ${variables.resource};`);
 
   if (usedIgnoreRdfTypeVariable) {
     statements.unshift(
-      `const ${variables.ignoreRdfType} = !!options?.ignoreRdfType;`,
+      code`const ${variables.ignoreRdfType} = !!options?.ignoreRdfType;`,
     );
   }
 
-  return Maybe.of({
-    name: `${syntheticNamePrefix}toRdf`,
-    parameters,
-    returnType: this.toRdfjsResourceType,
-    statements,
-  });
+  return Maybe.of(code`\
+${preamble}${syntheticNamePrefix}toRdf(${joinCode(parameters, { on: "," })}): ${this.toRdfjsResourceType} {
+  ${joinCode(statements)}
+}`);
 }
 
 const variables = {
-  ignoreRdfType: "ignoreRdfType",
-  mutateGraph: "mutateGraph",
-  resource: "resource",
-  resourceSet: "resourceSet",
+  ignoreRdfType: code`ignoreRdfType`,
+  mutateGraph: code`mutateGraph`,
+  resource: code`resource`,
+  resourceSet: code`resourceSet`,
 };

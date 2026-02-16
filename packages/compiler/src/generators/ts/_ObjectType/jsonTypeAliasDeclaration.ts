@@ -1,35 +1,29 @@
 import { Maybe } from "purify-ts";
-import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function jsonTypeAliasDeclaration(
-  this: ObjectType,
-): Maybe<TypeAliasDeclarationStructure> {
+export function jsonTypeAliasDeclaration(this: ObjectType): Maybe<Code> {
   if (!this.features.has("json")) {
     return Maybe.empty();
   }
 
-  const members: string[] = [];
+  const members: Code[] = [];
   if (this.ownProperties.length > 0) {
     members.push(
-      `{ ${this.ownProperties
-        .flatMap((property) => property.jsonPropertySignature.toList())
-        .map(
-          (propertySignature) =>
-            `readonly "${propertySignature.name}"${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
-        )
-        .join("; ")} }`,
+      code`{ ${joinCode(
+        this.ownProperties.flatMap((property) =>
+          property.jsonSignature.toList(),
+        ),
+        { on: ";" },
+      )} }`,
     );
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(parentObjectType.jsonType().name);
+    members.push(code`${parentObjectType.jsonType().name}`);
   }
 
-  return Maybe.of({
-    isExported: true,
-    kind: StructureKind.TypeAlias,
-    name: `${syntheticNamePrefix}Json`,
-    type: members.length > 0 ? members.join(" & ") : "object",
-  });
+  return Maybe.of(
+    code`export type ${syntheticNamePrefix}Json = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`,
+  );
 }

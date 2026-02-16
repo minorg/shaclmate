@@ -2,34 +2,28 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import { Import } from "./Import.js";
 import type { IntType } from "./IntType.js";
+import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import type { StringType } from "./StringType.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets } from "./snippets.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import type { UnionType } from "./UnionType.js";
 
 export class ListType<
@@ -60,164 +54,38 @@ export class ListType<
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}listSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get sparqlWherePatternsFunction(): Code {
+    return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression({
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
-  >[0]): string {
-    return [
-      variables.resourceValues,
-      "chain(values => values.chainMap(value => value.toList()))", // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
-      `chain(valueLists =>
+  >[0]): Code {
+    return joinCode(
+      [
+        variables.resourceValues,
+        code`chain(values => values.chainMap(value => value.toList()))`, // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
+        code`chain(valueLists =>
         valueLists.chainMap(
           valueList => ${this.itemType.fromRdfExpression({
             variables: {
               ...variables,
-              resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(rdfjsResource.Resource.Values.fromArray({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, values: valueList }))`,
+              resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, values: valueList }))`,
             },
           })}
       ))`, // Resource.Values<Resource.TermValue[]> to Resource.Values<item type arrays>
-      `map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
-    ].join(".");
+        code`map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
+      ],
+      { on: "." },
+    );
   }
 
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
     return new AbstractCollectionType.JsonType(
-      `readonly (${this.itemType.jsonType().name})[]`,
-    );
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-
-      features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}listSparqlWherePatterns`, {
-            code: `\
-function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}CollectionSchema<ItemSchemaT>> {
-  return (parameters) => {
-    // Need to handle two cases:
-    // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
-    // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
-    // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
-
-    const listVariable = parameters.valueVariable;
-    const patterns: ${syntheticNamePrefix}SparqlPattern[] = [];
-    const variable = (suffix: string) => dataFactory.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
-    const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
-
-    {
-      // ?list rdf:first ?item0
-      const item0Variable = variable("Item0");
-      patterns.push(
-        {
-          triples: [
-            {
-              subject: listVariable,
-              predicate: ${rdfjsTermExpression(rdf.first)},
-              object: item0Variable,
-            },
-          ],
-          type: "bgp",
-        },
-        ...itemSparqlWherePatternsFunction({
-          filter: parameters.filter,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: parameters.schema.item,
-          valueVariable: item0Variable,
-          variablePrefix: variablePrefix("Item0"),
-        }),
-      );
-    }
-
-    {
-      // ?list rdf:rest ?rest0
-      const rest0Variable = variable("Rest0");
-      patterns.push({
-        triples: [
-          {
-            subject: listVariable,
-            predicate: ${rdfjsTermExpression(rdf.rest)},
-            object: rest0Variable,
-          },
-        ],
-        type: "bgp",
-      });
-    }
-
-    const optionalPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
-    
-    const restNVariable = variable("RestN");
-    // ?list rdf:rest+ ?restN
-    optionalPatterns.push({
-      type: "bgp",
-      triples: [
-        {
-          subject: listVariable,
-          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] },
-          object: restNVariable,
-        },
-      ],
-    });
-
-    {
-      // ?rest rdf:first ?itemN
-      const itemNVariable = variable("ItemN");
-      optionalPatterns.push(
-        {
-          triples: [
-            {
-              subject: restNVariable,
-              predicate: ${rdfjsTermExpression(rdf.first)},
-              object: itemNVariable,
-            },
-          ],
-          type: "bgp"
-        },
-        ...itemSparqlWherePatternsFunction({
-          filter: parameters.filter,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: parameters.schema.item,
-          valueVariable: itemNVariable,
-          variablePrefix: variablePrefix("ItemN"),
-        }),
-      );
-    }
-
-    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    optionalPatterns.push({
-      triples: [
-        {
-          subject: restNVariable,
-          predicate: ${rdfjsTermExpression(rdf.rest)},
-          object: variable("RestNBasic"),
-        },
-      ],
-      type: "bgp"
-    });
-
-    patterns.push({ type: "optional", patterns: optionalPatterns });
-
-    // Having an optional around everything handles the rdf:nil case
-    return [...parameters.propertyPatterns, { patterns, type: "optional" }];
-  }
-}`,
-            dependencies: {
-              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-            },
-          })
-        : {},
+      code`readonly (${this.itemType.jsonType().name})[]`,
     );
   }
 
@@ -225,42 +93,47 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
-  >[0]): readonly (AbstractCollectionType.SparqlConstructTriple | string)[] {
-    const triples: (AbstractCollectionType.SparqlConstructTriple | string)[] =
-      [];
+  >[0]): Maybe<Code> {
+    const triples: Code[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
-      `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
+      code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
     const variablePrefix = (suffix: string) =>
-      `\`\${${variables.variablePrefix}}${suffix}\``;
+      code`\`\${${variables.variablePrefix}}${suffix}\``;
 
     {
       // ?list rdf:first ?item0
       const item0Variable = variable("Item0");
       triples.push(
-        {
+        code`${{
           subject: listVariable,
           predicate: rdfjsTermExpression(rdf.first),
           object: item0Variable,
-        },
-        ...this.itemType.sparqlConstructTriples({
+        }}`,
+      );
+      this.itemType
+        .sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
             valueVariable: item0Variable,
             variablePrefix: variablePrefix("Item0"),
           },
-        }),
-      );
+        })
+        .ifJust((code_) => {
+          triples.push(code`...${code_}`);
+        });
     }
 
     {
       // ?list rdf:rest ?rest0
       const rest0Variable = variable("Rest0");
-      triples.push({
-        subject: listVariable,
-        predicate: rdfjsTermExpression(rdf.rest),
-        object: rest0Variable,
-      });
+      triples.push(
+        code`${{
+          subject: listVariable,
+          predicate: rdfjsTermExpression(rdf.rest),
+          object: rest0Variable,
+        }}`,
+      );
     }
 
     // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
@@ -270,44 +143,51 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       // ?rest rdf:first ?itemN
       const itemNVariable = variable("ItemN");
       triples.push(
-        {
+        code`${{
           subject: restNVariable,
           predicate: rdfjsTermExpression(rdf.first),
           object: itemNVariable,
-        },
-        ...this.itemType.sparqlConstructTriples({
+        }}`,
+      );
+      this.itemType
+        .sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
             valueVariable: itemNVariable,
             variablePrefix: variablePrefix("ItemN"),
           },
-        }),
-      );
+        })
+        .ifJust((code_) => {
+          triples.push(code`...${code_}`);
+        });
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    triples.push({
-      subject: restNVariable,
-      predicate: rdfjsTermExpression(rdf.rest),
-      object: variable("RestNBasic"),
-    });
+    triples.push(
+      code`${{
+        subject: restNVariable,
+        predicate: rdfjsTermExpression(rdf.rest),
+        object: variable("RestNBasic"),
+      }}`,
+    );
 
-    return triples;
+    return Maybe.of(code`[${joinCode(triples, { on: "," })}]`);
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["toRdfExpression"]
-  >[0]): string {
-    let listIdentifier: string;
-    let mutableResourceTypeName: string;
+  >[0]): Code {
+    let listIdentifier: Code;
+    let mutableResourceTypeName: Code;
     let resourceSetMethodName: string;
-    let subListIdentifier: string;
+    let subListIdentifier: Code;
     switch (this.identifierNodeKind) {
       case "BlankNode": {
-        listIdentifier = subListIdentifier = "dataFactory.blankNode()";
-        mutableResourceTypeName = "rdfjsResource.MutableResource";
+        listIdentifier =
+          subListIdentifier = code`${imports.dataFactory}.blankNode()`;
+        mutableResourceTypeName = code`${imports.MutableResource}`;
         resourceSetMethodName = "mutableResource";
         break;
       }
@@ -316,46 +196,39 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
           case "blankNode":
             throw new RangeError(this.identifierMintingStrategy);
           case "sha256":
-            listIdentifier = `dataFactory.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
+            listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
         (hasher, item) => {
-          ${this.itemType.hashStatements({ depth: 0, variables: { hasher: "hasher", value: "item" } }).join("\n")}
+          ${joinCode(this.itemType.hashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`item` } }).concat())}
           return hasher;
         },
-        sha256.create(),
+        ${imports.sha256}.create(),
       )}\`)`;
             break;
           case "uuidv4":
-            listIdentifier =
-              // biome-ignore lint/suspicious/noTemplateCurlyInString: necessary
-              "dataFactory.namedNode(`urn:shaclmate:list:${uuid.v4()}`)";
+            listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${imports.uuid}.v4()}\`)`;
             break;
         }
-        mutableResourceTypeName =
-          "rdfjsResource.MutableResource<rdfjs.NamedNode>";
+        mutableResourceTypeName = code`${imports.MutableResource}<${imports.NamedNode}>`;
         resourceSetMethodName = "mutableNamedResource";
-        subListIdentifier =
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: necessary
-          "dataFactory.namedNode(`${listResource.identifier.value}:${itemIndex}`)";
+        subListIdentifier = code`${imports.dataFactory}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
         break;
       }
     }
 
-    return `[${variables.value}.length > 0 ? ${variables.value}.reduce(({ currentSubListResource, listResource }, item, itemIndex, list) => {
+    return code`[${variables.value}.length > 0 ? ${variables.value}.reduce(({ currentSubListResource, listResource }, item, itemIndex, list) => {
     if (itemIndex === 0) {
       currentSubListResource = listResource;
     } else {
-      const newSubListResource = ${variables.resourceSet}.${resourceSetMethodName}(${subListIdentifier}, ${objectInitializer(
-        {
-          mutateGraph: variables.mutateGraph,
-        },
-      )});
+      const newSubListResource = ${variables.resourceSet}.${resourceSetMethodName}(${subListIdentifier}, ${{
+        mutateGraph: variables.mutateGraph,
+      }});
       currentSubListResource!.add(${rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier);
       currentSubListResource = newSubListResource;
     }
     
-    ${this.toRdfTypes.map((rdfType) => `currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, dataFactory.namedNode("${rdfType.value}"))`).join("\n")}
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"))`))}
         
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ...${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ...${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })});
 
     if (itemIndex + 1 === list.length) {
       currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)});
@@ -365,28 +238,14 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
   },
   {
     currentSubListResource: null,
-    listResource: resourceSet.${resourceSetMethodName}(${listIdentifier}, ${objectInitializer(
-      {
-        mutateGraph: variables.mutateGraph,
-      },
-    )}),
+    listResource: resourceSet.${resourceSetMethodName}(${listIdentifier}, ${{
+      mutateGraph: variables.mutateGraph,
+    }}),
   } as {
     currentSubListResource: ${mutableResourceTypeName} | null;
     listResource: ${mutableResourceTypeName};
   },
 ).listResource.identifier : ${rdfjsTermExpression(rdf.nil)}]`;
-  }
-
-  override useImports(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["useImports"]>[0],
-  ): readonly Import[] {
-    const { features } = parameters;
-
-    const imports: Import[] = this.itemType.useImports(parameters).concat();
-    if (features.has("hash") && this.identifierNodeKind === "NamedNode") {
-      imports.push(Import.SHA256);
-    }
-    return imports;
   }
 }
 

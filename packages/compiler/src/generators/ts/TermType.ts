@@ -3,15 +3,11 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets } from "./snippets.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -20,9 +16,12 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
-  override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
-  override readonly filterType = `${syntheticNamePrefix}TermFilter`;
+  override readonly filterFunction = code`${snippets.filterTerm}`;
+  override readonly filterType = code`${snippets.TermFilter}`;
   override readonly kind = "TermType";
+  override readonly schemaType = code`${snippets.TermSchema}`;
+  override readonly sparqlWherePatternsFunction =
+    code`${snippets.termSparqlWherePatterns}`;
 
   constructor(
     superParameters: ConstructorParameters<
@@ -42,62 +41,58 @@ export class TermType<
   }
 
   @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
+  override get name(): Code {
+    return code`(${joinCode(
+      [...this.nodeKinds].map((nodeKind) => (imports as any)[nodeKind]),
+      { on: " | " },
+    )})`;
   }
 
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
       in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
-      nodeKinds: [...this.nodeKinds].map(
-        (_) => `${JSON.stringify(_)} as const`,
-      ),
-    };
-  }
-
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "in?": `readonly (rdfjs.Literal | rdfjs.NamedNode)[]`,
-      nodeKinds: `readonly ("BlankNode" | "Literal" | "NamedNode")[]`,
+      nodeKinds: [...this.nodeKinds].map((_) => code`${literalOf(_)} as const`),
     };
   }
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): string {
-    return [...this.nodeKinds].reduce((expression, nodeKind) => {
-      let valueToNodeKind: string;
-      switch (nodeKind) {
-        case "BlankNode":
-          valueToNodeKind = `dataFactory.blankNode(${variables.value}["@id"].substring(2))`;
-          break;
-        case "Literal":
-          valueToNodeKind = `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
-          break;
-        case "NamedNode":
-          valueToNodeKind = `dataFactory.namedNode(${variables.value}["@id"])`;
-          break;
-        default:
-          throw new RangeError(nodeKind);
-      }
-      return expression.length === 0
-        ? valueToNodeKind
-        : `((${variables.value}.termType === "${nodeKind}") ? (${valueToNodeKind}) : (${expression}))`;
-    }, "");
+  }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {
+    return [...this.nodeKinds].reduce(
+      (expression, nodeKind) => {
+        let valueToNodeKind: Code;
+        switch (nodeKind) {
+          case "BlankNode":
+            valueToNodeKind = code`${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+            break;
+          case "Literal":
+            valueToNodeKind = code`${imports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+            break;
+          case "NamedNode":
+            valueToNodeKind = code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            break;
+          default:
+            throw new RangeError(nodeKind);
+        }
+        return expression == null
+          ? valueToNodeKind
+          : code`((${variables.value}.termType === "${nodeKind}") ? (${valueToNodeKind}) : (${expression}))`;
+      },
+      null as Code | null,
+    )!;
   }
 
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractTermType["graphqlResolveExpression"]>[0],
-  ): string {
+  ): Code {
     throw new Error("not implemented");
   }
 
   @Memoize()
   override jsonType(): AbstractTermType.JsonType {
     return new AbstractTermType.JsonType(
-      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
+      code`{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
         .filter((nodeKind) => nodeKind !== "Literal")
         .map((nodeKind) => `"${nodeKind}"`)
         .join(
@@ -106,72 +101,49 @@ export class TermType<
     );
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractTermType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractTermType["jsonZodSchema"]
-  > {
-    return `${variables.zod}.discriminatedUnion("termType", [${[
-      ...this.nodeKinds,
-    ]
-      .map((nodeKind) => {
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractTermType["jsonZodSchema"]>[0],
+  ): Code {
+    return code`${imports.z}.discriminatedUnion("termType", [${joinCode(
+      [...this.nodeKinds].map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
           case "NamedNode":
-            return `${variables.zod}.object({ "@id": ${variables.zod}.string().min(1), termType: ${variables.zod}.literal("${nodeKind}") })`;
+            return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1), termType: ${imports.z}.literal("${nodeKind}") })`;
           case "Literal":
-            return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string(), termType: ${variables.zod}.literal("Literal") })`;
+            return code`${imports.z}.object({ "@language": ${imports.z}.string().optional(), "@type": ${imports.z}.string().optional(), "@value": ${imports.z}.string(), termType: ${imports.z}.literal("Literal") })`;
           default:
             throw new RangeError(nodeKind);
         }
-      })
-      .join(", ")}])`;
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-      sharedSnippetDeclarations.filterTerm,
-      sharedSnippetDeclarations.TermFilter,
-      features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}termSparqlWherePatterns`, {
-            code: `\
-const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
-  (parameters) => ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns: ${syntheticNamePrefix}termFilterSparqlPatterns(parameters), ...parameters })`,
-            dependencies: {
-              ...sharedSnippetDeclarations.termFilterSparqlPatterns,
-              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
-            },
-          } satisfies SnippetDeclaration)
-        : {},
-    );
+      }),
+      { on: "," },
+    )}])`;
   }
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractTermType["toJsonExpression"]>[0]): string {
-    return [...this.nodeKinds].reduce((expression, nodeKind) => {
-      let valueToNodeKind: string;
-      switch (nodeKind) {
-        case "BlankNode":
-          valueToNodeKind = `{ "@id": \`_:\${${variables.value}.value}\`, termType: "${nodeKind}" as const }`;
-          break;
-        case "Literal":
-          valueToNodeKind = `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${nodeKind}" as const }`;
-          break;
-        case "NamedNode":
-          valueToNodeKind = `{ "@id": ${variables.value}.value, termType: "${nodeKind}" as const }`;
-          break;
-        default:
-          throw new RangeError(nodeKind);
-      }
-      return expression.length === 0
-        ? valueToNodeKind
-        : `(${variables.value}.termType === "${nodeKind}") ? ${valueToNodeKind} : ${expression}`;
-    }, "");
+  }: Parameters<AbstractTermType["toJsonExpression"]>[0]): Code {
+    return [...this.nodeKinds].reduce(
+      (expression, nodeKind) => {
+        let valueToNodeKind: Code;
+        switch (nodeKind) {
+          case "BlankNode":
+            valueToNodeKind = code`{ "@id": \`_:\${${variables.value}.value}\`, termType: "${nodeKind}" as const }`;
+            break;
+          case "Literal":
+            valueToNodeKind = code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${nodeKind}" as const }`;
+            break;
+          case "NamedNode":
+            valueToNodeKind = code`{ "@id": ${variables.value}.value, termType: "${nodeKind}" as const }`;
+            break;
+          default:
+            throw new RangeError(nodeKind);
+        }
+        return expression === null
+          ? valueToNodeKind
+          : code`(${variables.value}.termType === "${nodeKind}") ? ${valueToNodeKind} : ${expression}`;
+      },
+      null as Code | null,
+    )!;
   }
 }

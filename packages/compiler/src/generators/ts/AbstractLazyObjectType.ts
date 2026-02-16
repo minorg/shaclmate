@@ -1,17 +1,12 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
-import type { TsFeature } from "../../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
-import { Import } from "./Import.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { SetType } from "./SetType.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
@@ -20,10 +15,9 @@ export abstract class AbstractLazyObjectType<
   protected readonly partialType: PartialTypeT;
   protected readonly resolvedType: ResolvedTypeT;
   protected readonly runtimeClass: {
-    readonly name: string;
+    readonly name: Code;
     readonly partialPropertyName: string;
-    readonly rawName: string;
-    readonly snippetDeclarations: Readonly<Record<string, SnippetDeclaration>>;
+    readonly rawName: Code;
   };
 
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
@@ -55,23 +49,24 @@ export abstract class AbstractLazyObjectType<
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
+          code`typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
         sourceTypeName: this.name,
+        sourceTypeof: "object",
       } satisfies AbstractType.Conversion,
     ];
   }
 
   @Memoize()
-  override get equalsFunction(): string {
-    return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
+  override get equalsFunction(): Code {
+    return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
   @Memoize()
-  get filterFunction(): string {
-    return `((filter: ${this.filterType}, value: ${this.name}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
+  get filterFunction(): Code {
+    return code`((filter: ${this.filterType}, value: ${this.name}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
   }
 
-  get filterType(): string {
+  get filterType(): Code {
     return this.partialType.filterType;
   }
 
@@ -79,23 +74,27 @@ export abstract class AbstractLazyObjectType<
     return this.resolvedType.graphqlType;
   }
 
-  override get name(): string {
+  override get name(): Code {
     return this.runtimeClass.name;
   }
 
   @Memoize()
-  override get schema(): string {
-    return objectInitializer(this.schemaObject);
+  override get schema(): Code {
+    return code`${this.schemaObject}`;
   }
 
   @Memoize()
-  override get schemaType(): string {
-    return objectInitializer(this.schemaTypeObject);
+  override get schemaType(): Code {
+    return code`${{
+      kind: this.kind,
+      partialType: this.partialType.schemaType,
+      resolvedType: this.resolvedType.schemaType,
+    }}`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
+  override get sparqlWherePatternsFunction(): Code {
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
   }
 
   protected override get schemaObject() {
@@ -106,23 +105,15 @@ export abstract class AbstractLazyObjectType<
     };
   }
 
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      partialType: this.partialType.schemaType,
-      resolvedType: this.resolvedType.schemaType,
-    };
-  }
-
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     return this.partialType.hashStatements({
       depth: depth + 1,
       variables: {
         ...variables,
-        value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
+        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },
     });
   }
@@ -135,57 +126,41 @@ export abstract class AbstractLazyObjectType<
 
   override jsonUiSchemaElement(
     parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): Maybe<string> {
+  ): Maybe<Code> {
     return this.partialType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
     parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
-  ): string {
+  ): Code {
     return this.partialType.jsonZodSchema(parameters);
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    return mergeSnippetDeclarations(
-      this.partialType.snippetDeclarations(parameters),
-      this.resolvedType.snippetDeclarations(parameters),
-      this.runtimeClass.snippetDeclarations,
-    );
   }
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
+  ): Maybe<Code> {
     return this.partialType.sparqlConstructTriples(parameters);
   }
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     return this.partialType.toJsonExpression({
       variables: {
-        value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
+        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },
     });
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
     return this.partialType.toRdfExpression({
       variables: {
         ...variables,
-        value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
+        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
       },
     });
-  }
-
-  override useImports(parameters: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[] {
-    return this.resolvedType.useImports(parameters).concat(Import.PURIFY);
   }
 
   protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
@@ -195,7 +170,7 @@ export abstract class AbstractLazyObjectType<
   }: {
     resolvedObjectUnionType: ObjectUnionType;
     partialObjectUnionType: ObjectUnionType;
-    variables: { resolvedObjectUnion: string };
+    variables: { resolvedObjectUnion: Code };
   }) {
     invariant(
       resolvedObjectUnionType.memberTypes.length ===
@@ -204,13 +179,13 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolvedObjectUnionType.memberTypes.map(
       (resolvedObjectType, objectTypeI) => {
-        return `${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+        return code`${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(
-      `default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
+      code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
+    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 

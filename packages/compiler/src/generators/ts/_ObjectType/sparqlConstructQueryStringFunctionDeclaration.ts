@@ -1,24 +1,13 @@
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function sparqlConstructQueryStringFunctionDeclaration(this: {
-  readonly filterType: string;
+  readonly filterType: Code;
   readonly staticModuleName: string;
-}): FunctionDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}sparqlConstructQueryString`,
-    parameters: [
-      {
-        hasQuestionToken: true,
-        name: "parameters",
-        type: `{ filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; variablePrefix?: string; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions`,
-      },
-    ],
-    returnType: "string",
-    statements: [
-      `return new sparqljs.Generator(parameters).stringify(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery(parameters));`,
-    ],
-  };
+}): Code {
+  return code`\
+export function ${syntheticNamePrefix}sparqlConstructQueryString(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"]; variablePrefix?: string; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions): string {
+  return new ${imports.sparqljs}.Generator(parameters).stringify(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery(parameters));
+}`;
 }

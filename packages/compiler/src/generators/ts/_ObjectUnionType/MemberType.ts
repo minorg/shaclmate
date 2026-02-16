@@ -1,4 +1,5 @@
 import { Memoize } from "typescript-memoize";
+
 import type { AbstractDeclaredType } from "../AbstractDeclaredType.js";
 import type { ObjectType } from "../ObjectType.js";
 
@@ -12,6 +13,10 @@ export class MemberType {
   }: { delegate: ObjectType; universe: readonly ObjectType[] }) {
     this.delegate = delegate;
     this.universe = universe;
+  }
+
+  get _discriminantProperty() {
+    return this.delegate._discriminantProperty;
   }
 
   get abstract() {
@@ -28,10 +33,6 @@ export class MemberType {
 
   get descendantFromRdfTypeVariables() {
     return this.delegate.descendantFromRdfTypeVariables;
-  }
-
-  get _discriminantProperty() {
-    return this.delegate._discriminantProperty;
   }
 
   @Memoize()
@@ -89,20 +90,20 @@ export class MemberType {
     return this.delegate.identifierTypeAlias;
   }
 
-  get ownProperties() {
-    return this.delegate.ownProperties;
-  }
-
   get mutable() {
     return this.delegate.mutable;
   }
 
-  get properties() {
-    return this.delegate.properties;
-  }
-
   get name() {
     return this.delegate.name;
+  }
+
+  get ownProperties() {
+    return this.delegate.ownProperties;
+  }
+
+  get properties() {
+    return this.delegate.properties;
   }
 
   get staticModuleName() {
@@ -127,17 +128,7 @@ export class MemberType {
     return this.delegate.newExpression(parameters);
   }
 
-  snippetDeclarations(
-    parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ) {
-    return this.delegate.snippetDeclarations(parameters);
-  }
-
   toObjectType(): ObjectType {
     return this.delegate;
-  }
-
-  useImports() {
-    return this.delegate.useImports();
   }
 }

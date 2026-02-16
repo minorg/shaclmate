@@ -1,26 +1,13 @@
-import {
-  type OptionalKind,
-  type ParameterDeclarationStructure,
-  Scope,
-  type TypeParameterDeclarationStructure,
-} from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-const hasherVariable = "_hasher";
+const hasherVariable = code`_hasher`;
 
-export const hasherTypeConstraint =
-  "{ update: (message: string | number[] | ArrayBuffer | Uint8Array) => void; }";
-
-export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
-  hasOverrideKeyword?: boolean;
-  name: string;
-  parameters: OptionalKind<ParameterDeclarationStructure>[];
-  returnType: string;
-  scope?: Scope;
-  statements: string[];
-  typeParameters: OptionalKind<TypeParameterDeclarationStructure>[];
-}[] {
+export function hashFunctionOrMethodDeclarations(
+  this: ObjectType,
+): readonly Code[] {
   if (!this.features.has("hash")) {
     return [];
   }
@@ -31,7 +18,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
         depth: 0,
         variables: {
           hasher: hasherVariable,
-          value: `${this.thisVariable}.${property.name}`,
+          value: code`${this.thisVariable}.${property.name}`,
         },
       }),
   );
@@ -45,86 +32,71 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
     return [];
   }
 
-  const parameters: OptionalKind<ParameterDeclarationStructure>[] = [];
-  if (this.declarationType === "interface") {
-    parameters.push({
-      name: this.thisVariable,
-      type: this.name,
-    });
-  }
-  parameters.push({
-    name: hasherVariable,
-    type: "HasherT",
-  });
-
-  const hashShaclPropertiesStatements: string[] = [];
-
-  let hasOverrideKeyword = false;
-  if (this.parentObjectTypes.length > 0) {
-    switch (this.declarationType) {
-      case "class": {
+  const hashShaclPropertiesStatements: Code[] = [];
+  const hashStatements: Code[] = [];
+  const parameters: Code[] = []; // Same between the two functions
+  let hashPreamble: string = "";
+  let hashShaclPropertiesPreamble: string = "";
+  switch (this.declarationType) {
+    case "class": {
+      if (this.parentObjectTypes.length > 0) {
         hashShaclPropertiesStatements.push(
-          `super.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`,
+          code`super.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`,
         );
-        hasOverrideKeyword = true;
-        break;
+        hashShaclPropertiesPreamble = "override ";
+        hashPreamble = "override ";
       }
-      case "interface": {
-        for (const parentObjectType of this.parentObjectTypes) {
-          hashShaclPropertiesStatements.push(
-            `${parentObjectType.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
-          );
-        }
-        break;
+      hashShaclPropertiesPreamble = `protected ${hashShaclPropertiesPreamble}`;
+      hashStatements.push(
+        code`this.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`,
+      );
+
+      break;
+    }
+    case "interface": {
+      for (const parentObjectType of this.parentObjectTypes) {
+        hashShaclPropertiesStatements.push(
+          code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+        );
       }
+      parameters.push(code`${this.thisVariable}: ${this.name}`);
+      hashPreamble = hashShaclPropertiesPreamble = "export function ";
+      hashStatements.push(
+        code`${this.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+      );
+      break;
     }
   }
-  hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);
 
-  const returnType = "HasherT";
-  const typeParameters = [
-    {
-      name: "HasherT",
-      constraint: hasherTypeConstraint,
-    },
-  ];
+  parameters.push(code`${hasherVariable}: HasherT`);
+  const parametersCode = joinCode(parameters, { on: "," });
+
+  hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);
+  hashShaclPropertiesStatements.push(code`return ${hasherVariable};`);
+
+  hashStatements.push(
+    ...this.ownProperties
+      .filter((property) => property.kind !== "ShaclProperty")
+      .flatMap((property) =>
+        property.hashStatements({
+          depth: 0,
+          variables: {
+            hasher: hasherVariable,
+            value: code`${this.thisVariable}.${property.name}`,
+          },
+        }),
+      ),
+  );
+  hashStatements.push(code`return ${hasherVariable};`);
 
   return [
-    {
-      hasOverrideKeyword,
-      name: `${syntheticNamePrefix}hash`,
-      parameters,
-      returnType,
-      statements: [
-        ...this.ownProperties
-          .filter((property) => property.kind !== "ShaclProperty")
-          .flatMap((property) =>
-            property.hashStatements({
-              depth: 0,
-              variables: {
-                hasher: hasherVariable,
-                value: `${this.thisVariable}.${property.name}`,
-              },
-            }),
-          ),
-        this.declarationType === "class"
-          ? `this.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`
-          : `${this.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
-        `return ${hasherVariable};`,
-      ],
-      typeParameters,
-    },
-    {
-      hasOverrideKeyword,
-      name: `${syntheticNamePrefix}hashShaclProperties`,
-      parameters,
-      returnType,
-      scope: this.declarationType === "class" ? Scope.Protected : undefined,
-      statements: [
-        ...hashShaclPropertiesStatements,
-        `return ${hasherVariable};`,
-      ],
-      typeParameters,
-    },
+    code`\
+${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(${parametersCode}): HasherT {
+  ${joinCode(hashStatements)}
+}`,
+    code`\
+${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}>(${parametersCode}): HasherT {
+  ${joinCode(hashShaclPropertiesStatements)}
+}`,
   ];
 }

@@ -15,7 +15,7 @@ export function synthesizeUberObjectUnionType(parameters: {
   objectTypes: readonly ObjectType[];
 }): ObjectUnionType {
   const objectTypes = parameters.objectTypes.filter(
-    (objectType) => !objectType.extern,
+    (objectType) => !objectType.extern, // && !objectType.name.startsWith(syntheticNamePrefix),
   );
 
   const nodeKinds = objectTypes.reduce((nodeKinds, objectType) => {
@@ -57,6 +57,7 @@ export function synthesizeUberObjectUnionType(parameters: {
       for (const feature of objectType.features) {
         features.add(feature);
       }
+      features.delete("graphql");
       return features;
     }, new Set<TsFeature>()),
     identifierType,

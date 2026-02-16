@@ -1,22 +1,9 @@
-import type {
-  ClassDeclarationStructure,
-  InterfaceDeclarationStructure,
-  ModuleDeclarationStructure,
-  TypeAliasDeclarationStructure,
-} from "ts-morph";
-
 import type { TsFeature } from "../../enums/index.js";
 import { AbstractType } from "./AbstractType.js";
-import type { Import } from "./Import.js";
+import type { Code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDeclaredType extends AbstractType {
-  abstract readonly declarationImports: readonly Import[];
-  abstract readonly declarations: readonly (
-    | ClassDeclarationStructure
-    | InterfaceDeclarationStructure
-    | ModuleDeclarationStructure
-    | TypeAliasDeclarationStructure
-  )[];
+  abstract readonly declaration: Code;
   readonly export: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly name: string;
@@ -45,5 +32,4 @@ export namespace AbstractDeclaredType {
   export type GraphqlType = AbstractType.GraphqlType;
   export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
-  export type SparqlConstructTriple = AbstractType.SparqlConstructTriple;
 }

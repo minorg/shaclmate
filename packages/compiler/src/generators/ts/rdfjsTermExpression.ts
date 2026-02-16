@@ -1,7 +1,9 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 import { logger } from "../../logger.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
+import { imports } from "./imports.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export function rdfjsTermExpression(
   rdfjsTerm:
@@ -9,18 +11,18 @@ export function rdfjsTermExpression(
     | Omit<Literal, "equals">
     | Omit<NamedNode, "equals">
     | Omit<Variable, "equals">,
-): string {
+): Code {
   switch (rdfjsTerm.termType) {
     case "BlankNode":
-      return `dataFactory.blankNode("${rdfjsTerm.value}")`;
+      return code`${imports.dataFactory}.blankNode(${literalOf(rdfjsTerm.value)})`;
     case "Literal":
       if (rdfjsTerm.datatype.equals(xsd.string)) {
         if (rdfjsTerm.language.length === 0) {
-          return `dataFactory.literal(${JSON.stringify(rdfjsTerm.value)})`;
+          return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)})`;
         }
-        return `dataFactory.literal(${JSON.stringify(rdfjsTerm.value)}, "${rdfjsTerm.language}")`;
+        return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${literalOf(rdfjsTerm.language)})`;
       }
-      return `dataFactory.literal(${JSON.stringify(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
+      return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
     case "NamedNode": {
       if (rdfjsTerm.value.startsWith(rdf[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
@@ -30,7 +32,7 @@ export function rdfjsTermExpression(
           case "rest":
           case "subject":
           case "type":
-            return `${syntheticNamePrefix}RdfVocabularies.rdf.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}.rdf.${unqualifiedName}`;
           default:
             logger.warn("unrecognized rdf IRI: %s", rdfjsTerm.value);
         }
@@ -40,7 +42,7 @@ export function rdfjsTermExpression(
         );
         switch (unqualifiedName) {
           case "subClassOf":
-            return `${syntheticNamePrefix}RdfVocabularies.rdfs.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}.rdfs.${unqualifiedName}`;
           default:
             logger.warn("unrecognized rdfs IRI: %s", rdfjsTerm.value);
         }
@@ -53,15 +55,15 @@ export function rdfjsTermExpression(
           case "decimal":
           case "double":
           case "integer":
-            return `${syntheticNamePrefix}RdfVocabularies.xsd.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}.xsd.${unqualifiedName}`;
           default:
             logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);
         }
       }
 
-      return `dataFactory.namedNode("${rdfjsTerm.value}")`;
+      return code`${imports.dataFactory}.namedNode(${literalOf(rdfjsTerm.value)})`;
     }
     case "Variable":
-      return `dataFactory.variable!("${rdfjsTerm.value}")`;
+      return code`${imports.dataFactory}.variable!(${literalOf(rdfjsTerm.value)})`;
   }
 }

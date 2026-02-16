@@ -1,94 +1,66 @@
 import { Maybe } from "purify-ts";
-import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
-  hasOverrideKeyword: boolean;
-  name: string;
-  parameters: OptionalKind<ParameterDeclarationStructure>[];
-  returnType: string;
-  statements: string[];
-}> {
+export function equalsFunctionOrMethodDeclaration(
+  this: ObjectType,
+): Maybe<Code> {
   if (!this.features.has("equals")) {
     return Maybe.empty();
   }
 
-  if (this.declarationType === "class" && this.ownProperties.length === 0) {
-    // If there's a parent class and no properties in this class, can skip overriding equals
-    return Maybe.empty();
-  }
-
+  const chain: Code[] = [];
   let leftVariable: string;
+  let parameters: Code;
+  let preamble: string;
   let rightVariable: string;
   switch (this.declarationType) {
     case "class":
+      if (this.ownProperties.length === 0) {
+        // If there's a parent class and no properties in this class, can skip overriding equals
+        return Maybe.empty();
+      }
+
       leftVariable = "this";
+      parameters = code`other: ${this.name}`;
+      if (this.parentObjectTypes.length > 0) {
+        chain.push(code`super.${syntheticNamePrefix}equals(other)`);
+        preamble = "override ";
+      } else {
+        preamble = "";
+      }
       rightVariable = "other";
       break;
     case "interface":
+      // For every parent, find the nearest equals implementation
+      for (const parentObjectType of this.parentObjectTypes) {
+        chain.push(
+          code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
+        );
+      }
       leftVariable = "left";
+      parameters = code`left: ${this.name}, right: ${this.name}`;
+      preamble = "export function ";
       rightVariable = "right";
-  }
-
-  const chain: string[] = [];
-
-  let hasOverrideKeyword = false;
-  if (this.parentObjectTypes.length > 0) {
-    switch (this.declarationType) {
-      case "class": {
-        chain.push(`super.${syntheticNamePrefix}equals(other)`);
-        hasOverrideKeyword = true;
-        break;
-      }
-      case "interface": {
-        // For every parent, find the nearest equals implementation
-        for (const parentObjectType of this.parentObjectTypes) {
-          chain.push(
-            `${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
-          );
-        }
-        break;
-      }
-    }
   }
 
   for (const property of this.ownProperties) {
     property.equalsFunction.ifJust((equalsFunction) => {
       chain.push(
-        `(${equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "Property" as const }))`,
+        code`(${equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "Property" as const }))`,
       );
     });
   }
 
-  return Maybe.of({
-    hasOverrideKeyword,
-    name: `${syntheticNamePrefix}equals`,
-    parameters:
-      this.declarationType === "interface"
-        ? [
-            {
-              name: "left",
-              type: this.name,
-            },
-            {
-              name: "right",
-              type: this.name,
-            },
-          ]
-        : [
-            {
-              name: "other",
-              type: this.name,
-            },
-          ],
-    returnType: `${syntheticNamePrefix}EqualsResult`,
-    statements: [
-      `return ${chain
-        .map((chainPart, chainPartI) =>
-          chainPartI === 0 ? chainPart : `chain(() => ${chainPart})`,
-        )
-        .join(".")};`,
-    ],
-  });
+  return Maybe.of(code`\
+${preamble}${syntheticNamePrefix}equals(${parameters}): ${snippets.EqualsResult} {
+  return ${joinCode(
+    chain.map((chainPart, chainPartI) =>
+      chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,
+    ),
+    { on: "." },
+  )}
+}`);
 }

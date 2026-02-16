@@ -1,26 +1,25 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
+import { imports } from "./imports.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateType extends AbstractDateType {
   protected override readonly xsdDatatype: NamedNode = xsd.date;
 
   override readonly graphqlType = new DateTimeType.GraphqlType(
-    "graphqlScalars.Date",
+    code`${imports.GraphQLDate}`,
   );
   override readonly kind = "DateType";
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<DateTimeType["jsonZodSchema"]>[0]): ReturnType<
-    DateTimeType["jsonZodSchema"]
-  > {
-    return `${variables.zod}.iso.date()`;
+  override jsonZodSchema(
+    _parameters: Parameters<DateTimeType["jsonZodSchema"]>[0],
+  ): Code {
+    return code`${imports.z}.iso.date()`;
   }
 
-  protected override toIsoStringExpression(variables: { value: string }) {
-    return `${variables.value}.toISOString().replace(/T.*$/, '')`;
+  protected override toIsoStringExpression(variables: { value: Code }): Code {
+    return code`${variables.value}.toISOString().replace(/T.*$/, '')`;
   }
 }

@@ -1,12 +1,9 @@
-import {
-  type InterfaceDeclarationStructure,
-  type ModuleDeclarationStructure,
-  StructureKind,
-} from "ts-morph";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export function objectSetInterfaceDeclaration({
   objectTypes,
@@ -14,43 +11,34 @@ export function objectSetInterfaceDeclaration({
 }: {
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
-}): readonly (InterfaceDeclarationStructure | ModuleDeclarationStructure)[] {
-  return [
-    {
-      isExported: true,
-      kind: StructureKind.Interface,
-      methods: objectTypes
-        .flatMap((objectType) =>
-          Object.values(objectSetMethodSignatures({ objectType })),
-        )
-        .concat(
-          objectUnionTypes.flatMap((objectUnionType) =>
-            Object.values(
-              objectSetMethodSignatures({ objectType: objectUnionType }),
-            ),
+}): Code {
+  return code`\
+export interface ${syntheticNamePrefix}ObjectSet {
+  ${joinCode(
+    objectTypes
+      .flatMap((objectType) =>
+        Object.values(objectSetMethodSignatures({ objectType })),
+      )
+      .concat(
+        objectUnionTypes.flatMap((objectUnionType) =>
+          Object.values(
+            objectSetMethodSignatures({ objectType: objectUnionType }),
           ),
         ),
-      name: `${syntheticNamePrefix}ObjectSet`,
-    },
-    {
-      isExported: true,
-      kind: StructureKind.Module,
-      name: `${syntheticNamePrefix}ObjectSet`,
-      statements: [
-        {
-          kind: StructureKind.TypeAlias,
-          isExported: true,
-          name: "Query",
-          type: `{ readonly filter?: ObjectFilterT; readonly limit?: number; readonly offset?: number; }`,
-          typeParameters: [
-            {
-              constraint:
-                "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }",
-              name: "ObjectFilterT",
-            },
-          ],
-        },
-      ],
-    },
-  ];
+      )
+      .map(
+        (methodSignature) =>
+          code`${methodSignature.name}(${methodSignature.parameters}): ${methodSignature.returnType};`,
+      ),
+    { on: "\n\n" },
+  )}
+}
+
+export namespace ${syntheticNamePrefix}ObjectSet {
+  export interface Query<ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[] } }> {
+    readonly filter?: ObjectFilterT;
+    readonly limit?: number;
+    readonly offset?: number;
+  }
+}`;
 }

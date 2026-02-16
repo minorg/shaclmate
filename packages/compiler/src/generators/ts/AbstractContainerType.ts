@@ -12,10 +12,10 @@ import type { LiteralType } from "./LiteralType.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 import type { UnionType } from "./UnionType.js";
 
 /**
@@ -48,8 +48,8 @@ export abstract class AbstractContainerType<
   }
 
   @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
+  get schema(): Code {
+    return code`${this.schemaObject}`;
   }
 
   protected override get schemaObject() {
@@ -113,5 +113,4 @@ export namespace AbstractContainerType {
 
   export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
-  export type SparqlConstructTriple = AbstractType.SparqlConstructTriple;
 }

@@ -1,130 +1,79 @@
-import {
-  type ImportDeclarationStructure,
-  Project,
-  type SourceFile,
-} from "ts-morph";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
-import { Import } from "./Import.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-import { SnippetDeclaration } from "./SnippetDeclaration.js";
+// import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+// import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { snippets } from "./snippets.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
+// import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
   private readonly typeFactory = new TypeFactory();
 
   generate(ast_: ast.Ast): string {
-    const project = new Project({
-      useInMemoryFileSystem: true,
-    });
-    const sourceFile = project.createSourceFile("generated.ts");
+    const declarations: Code[] = [];
 
-    this.addStatements({
-      objectTypes: ast.ObjectType.toposort(ast_.objectTypes).map(
-        (astObjectType) => this.typeFactory.createObjectType(astObjectType),
-      ),
-      objectUnionTypes: ast_.objectUnionTypes.map((astObjectUnionType) =>
+    const objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
+      (astObjectType) => this.typeFactory.createObjectType(astObjectType),
+    );
+
+    const objectUnionTypesToposorted = ast_.objectUnionTypes.map(
+      (astObjectUnionType) =>
         this.typeFactory.createObjectUnionType(astObjectUnionType),
-      ),
-      sourceFile,
-    });
-
-    sourceFile.saveSync();
-
-    return project.getFileSystem().readFileSync(sourceFile.getFilePath());
-  }
-
-  private addStatements({
-    objectTypes,
-    objectUnionTypes,
-    sourceFile,
-  }: {
-    objectTypes: readonly ObjectType[];
-    objectUnionTypes: readonly ObjectUnionType[];
-    sourceFile: SourceFile;
-  }): void {
-    const declaredTypes: (ObjectType | ObjectUnionType)[] = [
-      ...objectTypes,
-      ...objectUnionTypes,
-    ];
-
-    // Gather imports
-    const imports: Import[] = [Import.DATA_FACTORY, Import.DATASET_FACTORY];
-    for (const declaredType of declaredTypes) {
-      imports.push(...declaredType.declarationImports);
-    }
-    // Deduplicate and add imports
-    const stringImports = new Set<string>();
-    const structureImportsByModuleSpecifier: Record<
-      string,
-      ImportDeclarationStructure
-    > = {};
-    for (const import_ of imports) {
-      if (typeof import_ === "string") {
-        stringImports.add(import_);
-      } else {
-        structureImportsByModuleSpecifier[import_.moduleSpecifier] = import_;
-      }
-    }
-    sourceFile.addStatements([...stringImports]);
-    sourceFile.addStatements(Object.values(structureImportsByModuleSpecifier));
-
-    sourceFile.addStatements(
-      Object.entries(
-        declaredTypes.reduce(
-          (snippetDeclarations, declaredType) =>
-            mergeSnippetDeclarations(
-              snippetDeclarations,
-              declaredType.snippetDeclarations({
-                features: declaredType.features,
-                recursionStack: [],
-              }),
-            ),
-          {} as Record<string, SnippetDeclaration>,
-        ),
-      )
-        .sort((left, right) => left[0].localeCompare(right[0]))
-        .map((entry) => SnippetDeclaration.code(entry[1])),
     );
 
-    for (const objectType of objectTypes) {
-      sourceFile.addStatements(objectType.declarations);
+    for (const objectType of objectTypesToposorted) {
+      declarations.push(objectType.declaration);
     }
-    for (const objectUnionType of objectUnionTypes) {
-      sourceFile.addStatements(objectUnionType.declarations);
+    for (const objectUnionType of objectUnionTypesToposorted) {
+      declarations.push(objectUnionType.declaration);
     }
 
-    const objectTypesSortedByName = objectTypes.toSorted((left, right) =>
-      left.name.localeCompare(right.name),
+    const objectTypesNameSorted = objectTypesToposorted.toSorted(
+      (left, right) => left.name.localeCompare(right.name),
     );
 
-    const objectUnionTypesSortedByName = objectUnionTypes.toSorted(
+    const objectUnionTypesNameSorted = objectUnionTypesToposorted.toSorted(
       (left, right) => left.name.localeCompare(right.name),
     );
 
     const uberObjectUnionType = synthesizeUberObjectUnionType({
-      objectTypes: objectTypes.toReversed(), // Reverse topological order so children ane before parents
+      objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
     });
-    sourceFile.addStatements(uberObjectUnionType.declarations);
+    declarations.push(uberObjectUnionType.declaration);
 
-    sourceFile.addStatements(
-      objectSetDeclarations({
-        objectTypes: objectTypesSortedByName,
+    declarations.push(
+      ...objectSetDeclarations({
+        objectTypes: objectTypesNameSorted,
         objectUnionTypes:
-          objectUnionTypesSortedByName.concat(uberObjectUnionType),
+          objectUnionTypesNameSorted.concat(uberObjectUnionType),
       }),
     );
-    sourceFile.addVariableStatements(
-      graphqlSchemaVariableStatement({
-        objectTypes: objectTypesSortedByName,
+
+    declarations.push(
+      ...graphqlSchemaVariableStatement({
+        objectTypes: objectTypesNameSorted,
         objectUnionTypes:
-          objectUnionTypesSortedByName.concat(uberObjectUnionType),
+          objectUnionTypesNameSorted.concat(uberObjectUnionType),
       }).toList(),
     );
+
+    declarations.splice(
+      0,
+      0,
+      joinCode(
+        Object.values(snippets)
+          .sort((left, right) =>
+            left.usageSiteName.localeCompare(right.usageSiteName),
+          )
+          .map((snippet) => code`${snippet.ifUsed}`),
+        { on: "\n\n" },
+      ),
+    );
+
+    return joinCode(declarations).toString({});
   }
 }

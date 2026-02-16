@@ -1,26 +1,29 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import {
-  type GetAccessorDeclarationStructure,
-  type OptionalKind,
-  type PropertyDeclarationStructure,
-  type PropertySignatureStructure,
-  Scope,
-} from "ts-morph";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../../../enums/index.js";
+
+import type {
+  IdentifierMintingStrategy,
+  PropertyVisibility,
+} from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
-import type { AbstractType } from "../AbstractType.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
+import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
-import { Import } from "../Import.js";
+import { imports } from "../imports.js";
 import type { NamedNodeType } from "../NamedNodeType.js";
-import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<
@@ -28,7 +31,7 @@ export class IdentifierProperty extends AbstractProperty<
 > {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
-  private readonly typeAlias: string;
+  private readonly typeAlias: Code;
 
   readonly kind = "IdentifierProperty";
   override readonly mutable = false;
@@ -43,7 +46,7 @@ export class IdentifierProperty extends AbstractProperty<
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierPrefixPropertyName: string;
     type: BlankNodeType | IdentifierType | NamedNodeType;
-    typeAlias: string;
+    typeAlias: Code;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
     invariant(this.visibility === "public");
@@ -53,61 +56,51 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
+  override get constructorParametersSignature(): Maybe<Code> {
     if (this.abstract) {
-      // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
-      const propertyDeclaration = this.propertyDeclaration.extractNullable();
-      if (propertyDeclaration === null || propertyDeclaration.isAbstract) {
+      const declarationModifiers = this.declarationModifiers.extractNullable();
+      if (declarationModifiers === null || declarationModifiers.abstract) {
+        // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
         return Maybe.empty();
       }
     }
 
-    const typeNames = new Set<string>(); // Remove duplicates with a set
+    const hasQuestionToken =
+      this.identifierMintingStrategy.isJust() ||
+      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      ) ||
+      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      );
+
+    const typeNames: Code[] = [];
     for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName !== "undefined") {
-        typeNames.add(conversion.sourceTypeName);
+      if (
+        conversion.sourceTypeof !== "undefined" &&
+        !typeNames.some((typeName) =>
+          codeEquals(typeName, conversion.sourceTypeName),
+        )
+      ) {
+        typeNames.push(code`${conversion.sourceTypeName}`);
       }
     }
 
-    return Maybe.of({
-      hasQuestionToken:
-        this.identifierMintingStrategy.isJust() ||
-        this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
-          ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        ) ||
-        this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-          descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        ),
-      isReadonly: true,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
+    return Maybe.of(
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })};`,
+    );
   }
 
   @Memoize()
-  override get declarationImports(): readonly Import[] {
-    const imports = this.type
-      .useImports({ features: this.objectType.features })
-      .concat();
-
-    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
-      switch (identifierMintingStrategy) {
-        case "sha256":
-          imports.push(Import.SHA256);
-          break;
-        case "uuidv4":
-          imports.push(Import.UUID);
-          break;
-      }
-    });
-
-    return imports;
+  override get declaration(): Maybe<Code> {
+    return this.declarationModifiers.map(
+      ({ abstract, hasQuestionToken, override, readonly, visibility }) =>
+        code`${visibility ? `${visibility} ` : ""}${abstract ? "abstract " : ""}${override ? "override " : ""}${readonly ? "readonly " : ""}${this.declarationName}${hasQuestionToken ? "?" : ""}: ${this.typeAlias};`,
+    );
   }
 
   @Memoize()
-  get equalsFunction(): Maybe<string> {
+  get equalsFunction(): Maybe<Code> {
     return Maybe.of(this.type.equalsFunction);
   }
 
@@ -120,16 +113,14 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get getAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
+  override get getAccessorDeclaration(): Maybe<Code> {
     // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
     // have get accessors.
 
     const checkIdentifierTermTypeStatements = (
       identifierVariable: string,
       identifierVariableNodeKinds?: ReadonlySet<IdentifierNodeKind>,
-    ): readonly string[] => {
+    ): readonly Code[] => {
       if (this.type.nodeKinds.size === 2) {
         return [];
       }
@@ -147,40 +138,38 @@ export class IdentifierProperty extends AbstractProperty<
       }
 
       return [
-        `if (${identifierVariable}.termType !== "${expectedNodeKind}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
+        code`if (${identifierVariable}.termType !== "${expectedNodeKind}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
       ];
     };
 
     if (this.identifierMintingStrategy.isJust()) {
       // Mint the identifier lazily in the get accessor
       let memoizeMintedIdentifier: boolean;
-      let mintIdentifier: string;
+      let mintIdentifier: Code;
       switch (this.identifierMintingStrategy.unsafeCoerce()) {
         case "blankNode":
           memoizeMintedIdentifier = true;
-          mintIdentifier = "dataFactory.blankNode()";
+          mintIdentifier = code`${imports.dataFactory}.blankNode()`;
           break;
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
           memoizeMintedIdentifier = !this.objectType.mutable;
-          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
+          mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${imports.sha256}.create())}\`)`;
           break;
         case "uuidv4":
           memoizeMintedIdentifier = true;
-          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${uuid.v4()}\`)`;
+          mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${imports.uuid}.v4()}\`)`;
           break;
       }
 
-      return Maybe.of({
-        leadingTrivia: this.override ? "override " : undefined,
-        name: this.name,
-        returnType: this.typeAlias,
-        statements: [
-          `if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? `this._${this.name} = ${mintIdentifier};` : `return ${mintIdentifier};`} }`,
+      return Maybe.of(code`\
+      ${this.override ? "override " : ""} get ${this.name}(): ${this.typeAlias} { ${joinCode(
+        [
+          code`if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
           ...checkIdentifierTermTypeStatements(`this._${this.name}`),
-          `return this._${this.name};`,
+          code`return this._${this.name};`,
         ],
-      });
+      )} }`);
     }
 
     // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
@@ -203,32 +192,26 @@ export class IdentifierProperty extends AbstractProperty<
           return Maybe.empty(); // Don't need a get accessor just to return super.identifier.
         }
 
-        return Maybe.of({
-          hasOverrideKeyword: true,
-          name: this.name,
-          returnType: this.typeAlias,
-          statements: [
-            `const identifier = super.${this.name}`,
+        return Maybe.of(
+          code`override get ${this.name}(): ${this.typeAlias} { ${joinCode([
+            code`const identifier = super.${this.name};`,
             ...checkSuperIdentifierTermTypeStatements,
-            "return identifier;",
-          ],
-        });
+            code`return identifier;`,
+          ])} }`,
+        );
       }
 
       // This object type is the root but it has no identifier minting strategy.
       // Just return the declared property in the get accessor.
       // Subclasses will override the get accessor.
-      const propertyDeclaration = this.propertyDeclaration.unsafeCoerce();
-      invariant(propertyDeclaration.hasQuestionToken);
-      return Maybe.of({
-        leadingTrivia: this.override ? "override " : undefined,
-        name: this.name,
-        returnType: this.typeAlias,
-        statements: [
-          `if (typeof this.${propertyDeclaration.name} === "undefined") { throw new Error("unable to mint identifier"); }`,
-          `return this.${propertyDeclaration.name};`,
-        ],
-      });
+      return Maybe.of(
+        code`${this.override ? "override " : ""}get ${this.name}(): ${this.typeAlias} { ${joinCode(
+          [
+            code`if (typeof this.${this.declarationName} === "undefined") { throw new Error("unable to mint identifier"); }`,
+            code`return this.${this.declarationName};`,
+          ],
+        )}`,
+      );
     }
 
     // None of the object type hierarchy has an identifier minting strategy, don't need a get accessor
@@ -242,26 +225,58 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
+      resolve: code`(source) => ${this.typeAlias}.toString(source.${this.name})`,
       type: this.type.graphqlType.name,
     });
   }
 
   @Memoize()
-  override get jsonPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: "@id",
-      type: "string",
-    });
+  override get jsonSignature(): Maybe<Code> {
+    return Maybe.of(code`readonly "@id": string`);
   }
 
   @Memoize()
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
+  override get jsonZodSchema(): AbstractProperty<IdentifierType>["jsonZodSchema"] {
+    let schema: Code;
+    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
+      // Treat sh:in as a union of the IRIs
+      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
+      schema = code`${imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
+    } else {
+      schema = code`${imports.z}.string().min(1)`;
+    }
+
+    return Maybe.of({
+      key: "@id",
+      schema,
+    });
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      identifierMintingStrategy: this.identifierMintingStrategy
+        .map((_) => `${literalOf(_)} as const`)
+        .extract(),
+    };
+  }
+
+  private get abstract(): boolean {
+    return this.objectType.abstract;
+  }
+
+  @Memoize()
+  private get declarationModifiers(): Maybe<{
+    abstract?: boolean;
+    hasQuestionToken?: boolean;
+    override?: boolean;
+    readonly?: boolean;
+    visibility?: PropertyVisibility;
+  }> {
+    if (this.objectType.declarationType === "interface") {
+      return Maybe.of({ readonly: true });
+    }
+
     if (this.objectType.parentObjectTypes.length > 0) {
       // An ancestor will declare the identifier property.
       return Maybe.empty();
@@ -276,63 +291,50 @@ export class IdentifierProperty extends AbstractProperty<
         descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       )
     ) {
-      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
-      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
       return Maybe.of({
         hasQuestionToken: true,
-        name: `_${this.name}`,
-        scope: this.objectType.descendantObjectTypes.some(
+        visibility: this.objectType.descendantObjectTypes.some(
           (descendantObjectType) =>
             descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
         )
-          ? Scope.Protected
-          : Scope.Private,
-        type: this.typeAlias,
+          ? "protected"
+          : "private",
       });
     }
 
     if (this.abstract) {
       // Declare the property abstract and public
       return Maybe.of({
-        isReadonly: true,
-        // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-        leadingTrivia: this.override ? "abstract override " : "abstract ",
-        name: this.name,
-        type: this.typeAlias,
+        abstract: true,
+        override: this.override,
+        readonly: true,
       });
     }
 
     // Declare the property public
     return Maybe.of({
-      hasOverrideKeyword: this.override,
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
+      override: this.override,
+      readonly: true,
     });
   }
 
-  @Memoize()
-  override get propertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
-    });
-  }
+  private get declarationName(): string {
+    if (
+      this.objectType.declarationType === "class" &&
+      (this.identifierMintingStrategy.isJust() ||
+        this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+          ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        ) ||
+        this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+          descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        ))
+    ) {
+      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
+      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
+      return `_${this.name}`;
+    }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      identifierMintingStrategy: this.identifierMintingStrategy
-        .map((_) => `${JSON.stringify(_)} as const`)
-        .extract(),
-    };
-  }
-
-  private get abstract(): boolean {
-    return this.objectType.abstract;
+    return this.name;
   }
 
   private get override(): boolean {
@@ -343,36 +345,35 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["constructorStatements"]
-  >[0]): readonly string[] {
-    const constructorParametersPropertySignature =
-      this.constructorParametersPropertySignature.extractNullable();
-    if (constructorParametersPropertySignature === null) {
+  >[0]): readonly Code[] {
+    const constructorParametersSignature =
+      this.constructorParametersSignature.extractNullable();
+    if (constructorParametersSignature === null) {
       return [];
     }
 
     let lhs: string;
-    const statements: string[] = [];
+    const statements: Code[] = [];
     const typeConversions = this.type.conversions;
     switch (this.objectType.declarationType) {
       case "class": {
-        const propertyDeclaration = this.propertyDeclaration.extractNullable();
-        if (propertyDeclaration === null) {
+        if (this.declaration.isNothing()) {
           return [];
         }
-        lhs = `this.${propertyDeclaration.name}`;
+        lhs = `this.${this.declarationName}`;
         break;
       }
       case "interface":
         lhs = this.name;
-        statements.push(`let ${this.name}: ${this.typeAlias};`);
+        statements.push(code`let ${this.name}: ${this.typeAlias};`);
         break;
     }
 
-    const conversionBranches: string[] = [];
+    const conversionBranches: Code[] = [];
     for (const conversion of typeConversions) {
-      invariant(conversion.sourceTypeName !== "undefined");
+      invariant(conversion.sourceTypeof !== "undefined");
       conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
+        code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
     this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
@@ -381,14 +382,14 @@ export class IdentifierProperty extends AbstractProperty<
           // The identifier will be minted lazily in the get accessor
           invariant(this.getAccessorDeclaration.isJust());
           conversionBranches.push(
-            `if (typeof ${variables.parameter} === "undefined") { }`,
+            code`if (typeof ${variables.parameter} === "undefined") { }`,
           );
           break;
         case "interface": {
-          let mintIdentifier: string;
+          let mintIdentifier: Code;
           switch (identifierMintingStrategy) {
             case "blankNode":
-              mintIdentifier = "dataFactory.blankNode()";
+              mintIdentifier = code`${imports.dataFactory}.blankNode()`;
               break;
             case "sha256":
               logger.warn(
@@ -398,11 +399,11 @@ export class IdentifierProperty extends AbstractProperty<
               );
               return;
             case "uuidv4":
-              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
+              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${${imports.uuid}.v4()}\`)`;
               break;
           }
           conversionBranches.push(
-            `if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
+            code`if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
           );
         }
       }
@@ -410,9 +411,9 @@ export class IdentifierProperty extends AbstractProperty<
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
-      `{ ${lhs} = (${variables.parameter}) satisfies never;\n }`,
+      code`{ ${lhs} = (${variables.parameter}) satisfies never;\n }`,
     );
-    statements.push(conversionBranches.join(" else "));
+    statements.push(joinCode(conversionBranches, { on: " else " }));
 
     return statements;
   }
@@ -421,9 +422,9 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["fromJsonStatements"]
-  >[0]): readonly string[] {
+  >[0]): readonly Code[] {
     return [
-      `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: variables.jsonObject } })};`,
+      code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: variables.jsonObject } })};`,
     ];
   }
 
@@ -431,12 +432,18 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
-  >[0]): Maybe<string> {
+  >[0]): Maybe<Code> {
     if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
-        `(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`(${joinCode(
+          this.type.in_.map(
+            (iri) =>
+              code`${variables.resource}.identifier.value === "${iri.value}"`,
+          ),
+          { on: " || " },
+        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -445,12 +452,12 @@ export class IdentifierProperty extends AbstractProperty<
       this.type.kind === "NamedNodeType"
     ) {
       return Maybe.of(
-        `${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
     return Maybe.of(
-      `purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
+      code`${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
     );
   }
 
@@ -458,97 +465,66 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["hashStatements"]
-  >[0]): readonly string[] {
-    return [`${variables.hasher}.update(${variables.value}.value);`];
+  >[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value}.value);`];
   }
 
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
-  >[0]): Maybe<string> {
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      `{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/${this.jsonPropertySignature.unsafeCoerce().name}\`, type: "Control" }`,
+      code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
     );
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<
-    AbstractProperty<IdentifierType>["jsonZodSchema"]
-  >[0]): ReturnType<AbstractProperty<IdentifierType>["jsonZodSchema"]> {
-    let schema: string;
-    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = `${variables.zod}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
-    } else {
-      schema = `${variables.zod}.string().min(1)`;
-    }
-
-    return Maybe.of({
-      key: this.jsonPropertySignature.unsafeCoerce().name,
-      schema,
-    });
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractProperty<IdentifierType>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    return this.type.snippetDeclarations(parameters);
-  }
-
-  override sparqlConstructTriples(): readonly (
-    | AbstractType.SparqlConstructTriple
-    | string
-  )[] {
-    return [];
+  override sparqlConstructTriples(): Maybe<Code> {
+    return Maybe.empty();
   }
 
   override sparqlWherePatterns({
     variables,
   }: Parameters<AbstractProperty<IdentifierType>["sparqlWherePatterns"]>[0]) {
-    return {
-      condition: `${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: `${this.type.sparqlWherePatternsFunction}(${objectInitializer({
-        filter: `${variables.filter}?.${this.name}`,
+    return Maybe.of({
+      condition: code`${variables.focusIdentifier}.termType === "Variable"`,
+      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
+        filter: code`${variables.filter}?.${this.name}`,
         preferredLanguages: variables.preferredLanguages,
-        propertyPatterns: "[]",
-        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
+        propertyPatterns: code`[]`,
+        schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
-      })})`,
-    };
+      }})`,
+    });
   }
 
-  override toJsonObjectMember({
+  override toJsonObjectMemberExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["toJsonObjectMember"]
-  >[0]): Maybe<string> {
+    AbstractProperty<IdentifierType>["toJsonObjectMemberExpression"]
+  >[0]): Maybe<Code> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {
       switch (nodeKind) {
         case "BlankNode":
-          return `\`_:\${${variables.value}.value}\``;
+          return code`\`_:\${${variables.value}.value}\``;
         case "NamedNode":
-          return `${variables.value}.value`;
+          return code`${variables.value}.value`;
         default:
           throw new RangeError(nodeKind);
       }
     });
     if (valueToNodeKinds.length === 1) {
-      return Maybe.of(`"@id": ${valueToNodeKinds[0]}`);
+      return Maybe.of(code`"@id": ${valueToNodeKinds[0]}`);
     }
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
-      `"@id": ${variables.value}.termType === "${nodeKinds[0]}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+      code`"@id": ${variables.value}.termType === "${nodeKinds[0]}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
     );
   }
 
-  override toRdfStatements(): readonly string[] {
+  override toRdfStatements(): readonly Code[] {
     return [];
   }
 }

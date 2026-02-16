@@ -1,28 +1,21 @@
 import { Maybe } from "purify-ts";
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function isTypeFunctionDeclaration(
-  this: ObjectUnionType,
-): Maybe<FunctionDeclarationStructure> {
+export function isTypeFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
   if (this.name === `${syntheticNamePrefix}Object`) {
     return Maybe.empty();
   }
 
-  return Maybe.of({
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `is${this.name}`,
-    parameters: [
-      {
-        name: "object",
-        type: `${syntheticNamePrefix}Object`,
-      },
-    ],
-    returnType: `object is ${this.name}`,
-    statements: [
-      `return ${this.memberTypes.map((memberType) => `${memberType.staticModuleName}.is${memberType.name}(object)`).join(" || ")};`,
-    ],
-  });
+  return Maybe.of(code`\
+export function is${this.name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
+  return ${joinCode(
+    this.memberTypes.map(
+      (memberType) =>
+        code`${memberType.staticModuleName}.is${memberType.name}(object)`,
+    ),
+    { on: " || " },
+  )};
+}`);
 }

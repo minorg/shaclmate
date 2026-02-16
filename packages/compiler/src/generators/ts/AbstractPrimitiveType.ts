@@ -1,17 +1,13 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,
 > extends AbstractLiteralType {
-  override readonly equalsFunction: string =
-    `${syntheticNamePrefix}strictEquals`;
+  override readonly equalsFunction = code`${snippets.strictEquals}`;
   abstract override readonly kind:
     | "BooleanType"
     | "DateTimeType"
@@ -38,8 +34,9 @@ export abstract class AbstractPrimitiveType<
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          `typeof ${value} === "${this.typeofs[0]}"`,
+          code`typeof ${value} === "${this.typeofs[0]}"`,
         sourceTypeName: this.name,
+        sourceTypeof: this.typeofs[0],
       },
     ];
   }
@@ -50,20 +47,20 @@ export abstract class AbstractPrimitiveType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
     return variables.value;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
     return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly string[] {
-    return [`${variables.hasher}.update(${variables.value}.toString());`];
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
   @Memoize()
@@ -71,20 +68,9 @@ export abstract class AbstractPrimitiveType<
     return new AbstractLiteralType.JsonType(this.name);
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-      features.has("equals") ? sharedSnippetDeclarations.strictEquals : {},
-    );
-  }
-
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return variables.value;
   }
 }

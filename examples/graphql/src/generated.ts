@@ -1,18 +1,183 @@
-import { StoreFactory as _DatasetFactory } from "n3";
+import type { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
+import {
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  GraphQLUnionType,
+} from "graphql";
+import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
+import { Either, EitherAsync, Left, Maybe } from "purify-ts";
+import {
+  type MutableResource,
+  MutableResourceSet,
+  Resource,
+  ResourceSet,
+} from "rdfjs-resource";
 
-const datasetFactory = new _DatasetFactory();
+type $CollectionFilter<ItemFilterT> = ItemFilterT & {
+  readonly $maxCount?: number;
+  readonly $minCount?: number;
+};
 
-import type * as rdfjs from "@rdfjs/types";
-import * as graphql from "graphql";
-import { DataFactory as dataFactory } from "n3";
-import * as purify from "purify-ts";
-import * as rdfjsResource from "rdfjs-resource";
+const $datasetFactory = new DatasetFactory();
 
-interface $ArrayFilter<ItemFilterT> {
-  readonly items?: ItemFilterT;
-  readonly maxCount?: number;
-  readonly minCount?: number;
+function $filterArray<ItemT, ItemFilterT>(
+  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
+) {
+  return (
+    filter: $CollectionFilter<ItemFilterT>,
+    values: readonly ItemT[],
+  ): boolean => {
+    for (const value of values) {
+      if (!filterItem(filter, value)) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.$maxCount !== "undefined" &&
+      values.length > filter.$maxCount
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.$minCount !== "undefined" &&
+      values.length < filter.$minCount
+    ) {
+      return false;
+    }
+
+    return true;
+  };
 }
+
+function $filterIdentifier(
+  filter: $IdentifierFilter,
+  value: BlankNode | NamedNode,
+) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue.equals(value))
+  ) {
+    return false;
+  }
+
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterMaybe<ItemT, ItemFilterT>(
+  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
+) {
+  return (filter: $MaybeFilter<ItemFilterT>, value: Maybe<ItemT>): boolean => {
+    if (filter !== null) {
+      if (value.isNothing()) {
+        return false;
+      }
+
+      if (!filterItem(filter, value.extract()!)) {
+        return false;
+      }
+    } else {
+      if (value.isJust()) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+}
+
+function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue.equals(value))
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterNumber(filter: $NumberFilter, value: number) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxExclusive !== "undefined" &&
+    value >= filter.maxExclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxInclusive !== "undefined" &&
+    value > filter.maxInclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minExclusive !== "undefined" &&
+    value <= filter.minExclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minInclusive !== "undefined" &&
+    value < filter.minInclusive
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterString(filter: $StringFilter, value: string) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxLength !== "undefined" &&
+    value.length > filter.maxLength
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minLength !== "undefined" &&
+    value.length < filter.minLength
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+type $FromRdfOptions = {
+  context?: any;
+  ignoreRdfType?: boolean;
+  objectSet?: $ObjectSet;
+  preferredLanguages?: readonly string[];
+};
 
 function $fromRdfPreferredLanguages({
   focusResource,
@@ -20,100 +185,116 @@ function $fromRdfPreferredLanguages({
   preferredLanguages,
   values,
 }: {
-  focusResource: rdfjsResource.Resource;
-  predicate: rdfjs.NamedNode;
+  focusResource: Resource;
+  predicate: NamedNode;
   preferredLanguages?: readonly string[];
-  values: rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>;
-}): purify.Either<
-  Error,
-  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-> {
+  values: Resource.Values<Resource.TermValue>;
+}): Either<Error, Resource.Values<Resource.TermValue>> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(values);
+    return Either.of<Error, Resource.Values<Resource.TermValue>>(values);
   }
 
-  const literalValuesEither = values.chainMap((value) => value.toLiteral());
-  if (literalValuesEither.isLeft()) {
-    return literalValuesEither;
-  }
-  const literalValues = literalValuesEither.unsafeCoerce();
+  return values
+    .chainMap((value) => value.toLiteral())
+    .map((literalValues) => {
+      // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+      // Within a preferredLanguage the literals may be in any order.
+      let filteredLiteralValues: Resource.Values<Literal> | undefined;
+      for (const preferredLanguage of preferredLanguages) {
+        if (!filteredLiteralValues) {
+          filteredLiteralValues = literalValues.filter(
+            (value) => value.language === preferredLanguage,
+          );
+        } else {
+          filteredLiteralValues = filteredLiteralValues.concat(
+            ...literalValues
+              .filter((value) => value.language === preferredLanguage)
+              .toArray(),
+          );
+        }
+      }
 
-  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-  // Within a preferredLanguage the literals may be in any order.
-  let filteredLiteralValues:
-    | rdfjsResource.Resource.Values<rdfjs.Literal>
-    | undefined;
-  for (const preferredLanguage of preferredLanguages) {
-    if (!filteredLiteralValues) {
-      filteredLiteralValues = literalValues.filter(
-        (value) => value.language === preferredLanguage,
+      return filteredLiteralValues!.map(
+        (literalValue) =>
+          new Resource.TermValue({
+            focusResource,
+            predicate,
+            term: literalValue,
+          }),
       );
-    } else {
-      filteredLiteralValues = filteredLiteralValues.concat(
-        ...literalValues
-          .filter((value) => value.language === preferredLanguage)
-          .toArray(),
-      );
-    }
-  }
-
-  return purify.Either.of<
-    Error,
-    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-  >(
-    filteredLiteralValues!.map(
-      (literalValue) =>
-        new rdfjsResource.Resource.TermValue({
-          focusResource,
-          predicate,
-          term: literalValue,
-        }),
-    ),
-  );
+    });
 }
 
 interface $IdentifierFilter {
+  readonly in?: readonly (BlankNode | NamedNode)[];
   readonly type?: "BlankNode" | "NamedNode";
-  readonly value?: string;
+}
+
+function $identifierFromString(
+  identifier: string,
+): Either<Error, BlankNode | NamedNode> {
+  return Either.encase(() =>
+    Resource.Identifier.fromString({ dataFactory, identifier }),
+  );
+}
+
+class $IdentifierSet {
+  private readonly blankNodeValues = new Set<string>();
+  private readonly namedNodeValues = new Set<string>();
+
+  add(identifier: BlankNode | NamedNode): this {
+    switch (identifier.termType) {
+      case "BlankNode":
+        this.blankNodeValues.add(identifier.value);
+        return this;
+      case "NamedNode":
+        this.namedNodeValues.add(identifier.value);
+        return this;
+    }
+  }
+
+  has(identifier: BlankNode | NamedNode): boolean {
+    switch (identifier.termType) {
+      case "BlankNode":
+        return this.blankNodeValues.has(identifier.value);
+      case "NamedNode":
+        return this.namedNodeValues.has(identifier.value);
+    }
+  }
 }
 
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class $LazyObjectOption<
-  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  ObjectIdentifierT extends BlankNode | NamedNode,
   PartialObjectT extends { $identifier: ObjectIdentifierT },
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
-  readonly partial: purify.Maybe<PartialObjectT>;
+  readonly partial: Maybe<PartialObjectT>;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
-  ) => Promise<purify.Either<Error, ResolvedObjectT>>;
+  ) => Promise<Either<Error, ResolvedObjectT>>;
 
   constructor({
     partial,
     resolver,
   }: {
-    partial: purify.Maybe<PartialObjectT>;
+    partial: Maybe<PartialObjectT>;
     resolver: (
       identifier: ObjectIdentifierT,
-    ) => Promise<purify.Either<Error, ResolvedObjectT>>;
+    ) => Promise<Either<Error, ResolvedObjectT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  async resolve(): Promise<
-    purify.Either<Error, purify.Maybe<ResolvedObjectT>>
-  > {
+  async resolve(): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
-      return purify.Either.of(purify.Maybe.empty());
+      return Either.of(Maybe.empty());
     }
     return (await this.resolver(this.partial.unsafeCoerce().$identifier)).map(
-      purify.Maybe.of,
+      Maybe.of,
     );
   }
 }
@@ -122,14 +303,14 @@ export class $LazyObjectOption<
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class $LazyObjectSet<
-  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  ObjectIdentifierT extends BlankNode | NamedNode,
   PartialObjectT extends { $identifier: ObjectIdentifierT },
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
   readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
     identifiers: readonly ObjectIdentifierT[],
-  ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
+  ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
 
   constructor({
     partials,
@@ -138,7 +319,7 @@ export class $LazyObjectSet<
     partials: readonly PartialObjectT[];
     resolver: (
       identifiers: readonly ObjectIdentifierT[],
-    ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
+    ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -151,14 +332,14 @@ export class $LazyObjectSet<
   async resolve(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
+  }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
-      return purify.Either.of([]);
+      return Either.of([]);
     }
 
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return purify.Either.of([]);
+      return Either.of([]);
     }
 
     let offset = options?.offset ?? 0;
@@ -174,22 +355,27 @@ export class $LazyObjectSet<
   }
 }
 
-interface $MaybeFilter<ItemFilterT> {
-  readonly item?: ItemFilterT;
-  readonly null?: boolean;
-}
+type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
 interface $NamedNodeFilter {
-  readonly value?: string;
+  readonly in?: readonly NamedNode[];
 }
 
 interface $NumberFilter {
+  readonly in?: readonly number[];
   readonly maxExclusive?: number;
   readonly maxInclusive?: number;
   readonly minExclusive?: number;
   readonly minInclusive?: number;
-  readonly value?: number;
 }
+
+type $PropertiesFromRdfParameters = {
+  context?: any;
+  ignoreRdfType: boolean;
+  objectSet: $ObjectSet;
+  preferredLanguages?: readonly string[];
+  resource: Resource;
+};
 
 namespace $RdfVocabularies {
   export namespace rdf {
@@ -229,6 +415,9 @@ namespace $RdfVocabularies {
     export const decimal = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#decimal",
     );
+    export const double = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#double",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
     );
@@ -236,17 +425,19 @@ namespace $RdfVocabularies {
 }
 
 interface $StringFilter {
+  readonly in?: readonly string[];
   readonly maxLength?: number;
   readonly minLength?: number;
 }
 
-type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
+type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
 export class $DefaultPartial {
   readonly $identifier: $DefaultPartial.$Identifier;
-  readonly $type = "$DefaultPartial";
+
+  readonly $type: "$DefaultPartial" = "$DefaultPartial" as const;
 
   constructor(parameters: {
-    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier: (BlankNode | NamedNode) | string;
   }) {
     if (typeof parameters.$identifier === "object") {
       this.$identifier = parameters.$identifier;
@@ -259,15 +450,15 @@ export class $DefaultPartial {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
+  }): MutableResource {
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new MutableResourceSet({
         dataFactory,
-        dataset: datasetFactory.dataset(),
+        dataset: $datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -277,17 +468,43 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
+  export function $filter(
+    filter: $DefaultPartial.$Filter,
+    value: $DefaultPartial,
+  ): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function is$DefaultPartial(
+    object: $Object,
+  ): object is $DefaultPartial {
+    switch (object.$type) {
+      case "$DefaultPartial":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, $DefaultPartial> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, $DefaultPartial> {
     let {
       context,
       ignoreRdfType = false,
@@ -295,9 +512,8 @@ export namespace $DefaultPartial {
       preferredLanguages,
     } = options ?? {};
     if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-
     return $DefaultPartial
       .$propertiesFromRdf({
         context,
@@ -309,52 +525,48 @@ export namespace $DefaultPartial {
       .map((properties) => new $DefaultPartial(properties));
   }
 
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
+    return Either.of<Error, $DefaultPartial.$Identifier>(
+      $parameters.resource.identifier as $DefaultPartial.$Identifier,
+    ).map(($identifier) => ({ $identifier }));
+  }
 
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: () => ({ kind: "IdentifierType" as const }),
+        identifierMintingStrategy: undefined,
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: () => ({
+          descendantValues: undefined,
+          ownValues: ['"$DefaultPartial"'],
         }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export const $properties = {};
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
-    const $identifier: $DefaultPartial.$Identifier =
-      $parameters.resource.identifier;
-    return purify.Either.of({ $identifier });
-  }
-}
-/**
+      },
+    },
+  } as const;
+} /**
  * UnionMember1
  */
+
 export class UnionMember2 {
   private _$identifier?: UnionMember2.$Identifier;
-  readonly $type = "UnionMember2";
+
+  readonly $type: "UnionMember2" = "UnionMember2" as const;
+
   /**
    * Optional string property
-   */
-  readonly optionalStringProperty: purify.Maybe<string>;
+   */ readonly optionalStringProperty: Maybe<string>;
 
   constructor(parameters?: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly optionalStringProperty?: purify.Maybe<string> | string;
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly optionalStringProperty?: Maybe<string> | string;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -364,15 +576,14 @@ export class UnionMember2 {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters?.optionalStringProperty)) {
+    if (Maybe.isMaybe(parameters?.optionalStringProperty)) {
       this.optionalStringProperty = parameters?.optionalStringProperty;
     } else if (typeof parameters?.optionalStringProperty === "string") {
-      this.optionalStringProperty = purify.Maybe.of(
+      this.optionalStringProperty = Maybe.of(
         parameters?.optionalStringProperty,
       );
     } else if (typeof parameters?.optionalStringProperty === "undefined") {
-      this.optionalStringProperty = purify.Maybe.empty();
+      this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =
         parameters?.optionalStringProperty satisfies never;
@@ -383,22 +594,21 @@ export class UnionMember2 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
-
     return this._$identifier;
   }
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
+  }): MutableResource {
     const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new MutableResourceSet({
         dataFactory,
-        dataset: datasetFactory.dataset(),
+        dataset: $datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -406,33 +616,97 @@ export class UnionMember2 {
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode("http://example.com/UnionMember2"),
+        dataFactory.namedNode("http://example.com/UnionMember2"),
       );
     }
-
     resource.add(
-      UnionMember2.$properties.optionalStringProperty["identifier"],
-      ...this.optionalStringProperty.toList(),
+      UnionMember2.$schema.properties.optionalStringProperty.identifier,
+      ...this.optionalStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
 }
 
 export namespace UnionMember2 {
+  export function $filter(
+    filter: UnionMember2.$Filter,
+    value: UnionMember2,
+  ): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalStringProperty !== "undefined" &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/UnionMember2",
+  );
+
+  export const $GraphQL = new GraphQLObjectType<
+    UnionMember2,
+    { objectSet: $ObjectSet }
+  >({
+    description: "UnionMember1",
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) =>
+          UnionMember2.$Identifier.toString(source.$identifier),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "UnionMember2",
+  });
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function isUnionMember2(object: $Object): object is UnionMember2 {
+    switch (object.$type) {
+      case "UnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, UnionMember2> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, UnionMember2> {
     let {
       context,
       ignoreRdfType = false,
@@ -440,9 +714,8 @@ export namespace UnionMember2 {
       preferredLanguages,
     } = options ?? {};
     if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-
     return UnionMember2.$propertiesFromRdf({
       context,
       ignoreRdfType,
@@ -452,154 +725,133 @@ export namespace UnionMember2 {
     }).map((properties) => new UnionMember2(properties));
   }
 
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember2",
-  );
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    UnionMember2,
-    { objectSet: $ObjectSet }
-  >({
-    description: "UnionMember1",
-    fields: () => ({
-      _identifier: {
-        name: "_identifier",
-        resolve: (source) =>
-          UnionMember2.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      optionalStringProperty: {
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-    }),
-    name: "UnionMember2",
-  });
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export const $properties = {
-    optionalStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalStringProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
     Error,
     {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalStringProperty: purify.Maybe<string>;
+      $identifier: BlankNode | NamedNode;
+      optionalStringProperty: Maybe<string>;
     }
   > {
-    if (!$parameters.ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) => {
-          // Check the expected type and its known subtypes
-          switch (actualRdfType.value) {
-            case "http://example.com/UnionMember2":
-              return purify.Either.of(true);
-          }
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/UnionMember2":
+                  return Either.of<Error, true>(true);
+              }
 
-          // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($parameters.resource.isInstanceOf(UnionMember2.$fromRdfType)) {
-            return purify.Either.of(true);
-          }
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(UnionMember2.$fromRdfType)
+              ) {
+                return Either.of<Error, true>(true);
+              }
 
-          return purify.Left(
-            new Error(
-              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
-            ),
-          );
-        });
-      if ($rdfTypeCheck.isLeft()) {
-        return $rdfTypeCheck;
-      }
-    }
-
-    const $identifier: UnionMember2.$Identifier =
-      $parameters.resource.identifier;
-    const _optionalStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalStringProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        $fromRdfPreferredLanguages({
-          focusResource: $parameters.resource,
-          predicate:
-            UnionMember2.$properties.optionalStringProperty["identifier"],
-          preferredLanguages: $parameters.preferredLanguages,
-          values,
-        }),
-      )
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
+                ),
+              );
+            })
+        : Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      Either.of<Error, UnionMember2.$Identifier>(
+        $parameters.resource.identifier as UnionMember2.$Identifier,
+      ).chain(($identifier) =>
+        Either.of<Error, Resource.Values<Resource.TermValue>>(
+          $parameters.resource.values(
+            $schema.properties.optionalStringProperty.identifier,
+            { unique: true },
+          ),
+        )
+          .chain((values) =>
+            $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                UnionMember2.$properties.optionalStringProperty["identifier"],
-              value: purify.Maybe.empty(),
+                UnionMember2.$schema.properties.optionalStringProperty
+                  .identifier,
+              preferredLanguages: $parameters.preferredLanguages,
+              values,
             }),
-      )
-      .chain((values) => values.head());
-    if (_optionalStringPropertyEither.isLeft()) {
-      return _optionalStringPropertyEither;
-    }
-
-    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, optionalStringProperty });
+          )
+          .chain((values) => values.chainMap((value) => value.toString()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => Maybe.of(value))
+              : Resource.Values.fromValue<Maybe<string>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    UnionMember2.$schema.properties.optionalStringProperty
+                      .identifier,
+                  value: Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((optionalStringProperty) => ({
+            $identifier,
+            optionalStringProperty,
+          })),
+      ),
+    );
   }
-}
-/**
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: () => ({ kind: "IdentifierType" as const }),
+        identifierMintingStrategy: "[object Object] as const",
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: () => ({
+          descendantValues: undefined,
+          ownValues: ['"UnionMember2"'],
+        }),
+      },
+      optionalStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalStringProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "StringType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalStringProperty",
+        ),
+      },
+    },
+  } as const;
+} /**
  * UnionMember1
  */
+
 export class UnionMember1 {
   private _$identifier?: UnionMember1.$Identifier;
-  readonly $type = "UnionMember1";
+
+  readonly $type: "UnionMember1" = "UnionMember1" as const;
+
   /**
    * Optional number property
-   */
-  readonly optionalNumberProperty: purify.Maybe<number>;
+   */ readonly optionalNumberProperty: Maybe<number>;
 
   constructor(parameters?: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly optionalNumberProperty?: number | purify.Maybe<number>;
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly optionalNumberProperty?: Maybe<number> | number;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -609,15 +861,14 @@ export class UnionMember1 {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters?.optionalNumberProperty)) {
+    if (Maybe.isMaybe(parameters?.optionalNumberProperty)) {
       this.optionalNumberProperty = parameters?.optionalNumberProperty;
     } else if (typeof parameters?.optionalNumberProperty === "number") {
-      this.optionalNumberProperty = purify.Maybe.of(
+      this.optionalNumberProperty = Maybe.of(
         parameters?.optionalNumberProperty,
       );
     } else if (typeof parameters?.optionalNumberProperty === "undefined") {
-      this.optionalNumberProperty = purify.Maybe.empty();
+      this.optionalNumberProperty = Maybe.empty();
     } else {
       this.optionalNumberProperty =
         parameters?.optionalNumberProperty satisfies never;
@@ -628,22 +879,21 @@ export class UnionMember1 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
-
     return this._$identifier;
   }
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
+  }): MutableResource {
     const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new MutableResourceSet({
         dataFactory,
-        dataset: datasetFactory.dataset(),
+        dataset: $datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -651,12 +901,11 @@ export class UnionMember1 {
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode("http://example.com/UnionMember1"),
+        dataFactory.namedNode("http://example.com/UnionMember1"),
       );
     }
-
     resource.add(
-      UnionMember1.$properties.optionalNumberProperty["identifier"],
+      UnionMember1.$schema.properties.optionalNumberProperty.identifier,
       ...this.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -668,20 +917,83 @@ export class UnionMember1 {
 }
 
 export namespace UnionMember1 {
+  export function $filter(
+    filter: UnionMember1.$Filter,
+    value: UnionMember1,
+  ): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalNumberProperty !== "undefined" &&
+      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly optionalNumberProperty?: $MaybeFilter<$NumberFilter>;
   };
 
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/UnionMember1",
+  );
+
+  export const $GraphQL = new GraphQLObjectType<
+    UnionMember1,
+    { objectSet: $ObjectSet }
+  >({
+    description: "UnionMember1",
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) =>
+          UnionMember1.$Identifier.toString(source.$identifier),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalNumberProperty: {
+        args: undefined,
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLFloat),
+      },
+    }),
+    name: "UnionMember1",
+  });
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function isUnionMember1(object: $Object): object is UnionMember1 {
+    switch (object.$type) {
+      case "UnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, UnionMember1> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, UnionMember1> {
     let {
       context,
       ignoreRdfType = false,
@@ -689,9 +1001,8 @@ export namespace UnionMember1 {
       preferredLanguages,
     } = options ?? {};
     if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-
     return UnionMember1.$propertiesFromRdf({
       context,
       ignoreRdfType,
@@ -701,154 +1012,132 @@ export namespace UnionMember1 {
     }).map((properties) => new UnionMember1(properties));
   }
 
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember1",
-  );
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    UnionMember1,
-    { objectSet: $ObjectSet }
-  >({
-    description: "UnionMember1",
-    fields: () => ({
-      _identifier: {
-        name: "_identifier",
-        resolve: (source) =>
-          UnionMember1.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      optionalNumberProperty: {
-        description: '"Optional number property"',
-        name: "optionalNumberProperty",
-        resolve: (source, _args) =>
-          source.optionalNumberProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLFloat),
-      },
-    }),
-    name: "UnionMember1",
-  });
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export const $properties = {
-    optionalNumberProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalNumberProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
     Error,
     {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalNumberProperty: purify.Maybe<number>;
+      $identifier: BlankNode | NamedNode;
+      optionalNumberProperty: Maybe<number>;
     }
   > {
-    if (!$parameters.ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) => {
-          // Check the expected type and its known subtypes
-          switch (actualRdfType.value) {
-            case "http://example.com/UnionMember1":
-              return purify.Either.of(true);
-          }
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/UnionMember1":
+                  return Either.of<Error, true>(true);
+              }
 
-          // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($parameters.resource.isInstanceOf(UnionMember1.$fromRdfType)) {
-            return purify.Either.of(true);
-          }
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(UnionMember1.$fromRdfType)
+              ) {
+                return Either.of<Error, true>(true);
+              }
 
-          return purify.Left(
-            new Error(
-              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
-            ),
-          );
-        });
-      if ($rdfTypeCheck.isLeft()) {
-        return $rdfTypeCheck;
-      }
-    }
-
-    const $identifier: UnionMember1.$Identifier =
-      $parameters.resource.identifier;
-    const _optionalNumberPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<number>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalNumberProperty["identifier"],
-        { unique: true },
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
+                ),
+              );
+            })
+        : Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      Either.of<Error, UnionMember1.$Identifier>(
+        $parameters.resource.identifier as UnionMember1.$Identifier,
+      ).chain(($identifier) =>
+        Either.of<Error, Resource.Values<Resource.TermValue>>(
+          $parameters.resource.values(
+            $schema.properties.optionalNumberProperty.identifier,
+            { unique: true },
+          ),
+        )
+          .chain((values) => values.chainMap((value) => value.toNumber()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => Maybe.of(value))
+              : Resource.Values.fromValue<Maybe<number>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    UnionMember1.$schema.properties.optionalNumberProperty
+                      .identifier,
+                  value: Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((optionalNumberProperty) => ({
+            $identifier,
+            optionalNumberProperty,
+          })),
       ),
-    )
-      .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              focusResource: $parameters.resource,
-              predicate:
-                UnionMember1.$properties.optionalNumberProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalNumberPropertyEither.isLeft()) {
-      return _optionalNumberPropertyEither;
-    }
-
-    const optionalNumberProperty = _optionalNumberPropertyEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, optionalNumberProperty });
+    );
   }
-}
-/**
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: () => ({ kind: "IdentifierType" as const }),
+        identifierMintingStrategy: "[object Object] as const",
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: () => ({
+          descendantValues: undefined,
+          ownValues: ['"UnionMember1"'],
+        }),
+      },
+      optionalNumberProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalNumberProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "FloatType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalNumberProperty",
+        ),
+      },
+    },
+  } as const;
+} /**
  * Nested
  */
+
 export class Nested {
   private _$identifier?: Nested.$Identifier;
-  readonly $type = "Nested";
+
+  readonly $type: "Nested" = "Nested" as const;
+
   /**
    * Optional number property
-   */
-  readonly optionalNumberProperty: purify.Maybe<number>;
+   */ readonly optionalNumberProperty: Maybe<number>;
+
   /**
    * Optional string property
-   */
-  readonly optionalStringProperty: purify.Maybe<string>;
+   */ readonly optionalStringProperty: Maybe<string>;
+
   /**
    * Required string property
-   */
-  readonly requiredStringProperty: string;
+   */ readonly requiredStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly optionalNumberProperty?: number | purify.Maybe<number>;
-    readonly optionalStringProperty?: purify.Maybe<string> | string;
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly optionalNumberProperty?: Maybe<number> | number;
+    readonly optionalStringProperty?: Maybe<string> | string;
     readonly requiredStringProperty: string;
   }) {
     if (typeof parameters.$identifier === "object") {
@@ -859,33 +1148,26 @@ export class Nested {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
+    if (Maybe.isMaybe(parameters.optionalNumberProperty)) {
       this.optionalNumberProperty = parameters.optionalNumberProperty;
     } else if (typeof parameters.optionalNumberProperty === "number") {
-      this.optionalNumberProperty = purify.Maybe.of(
-        parameters.optionalNumberProperty,
-      );
+      this.optionalNumberProperty = Maybe.of(parameters.optionalNumberProperty);
     } else if (typeof parameters.optionalNumberProperty === "undefined") {
-      this.optionalNumberProperty = purify.Maybe.empty();
+      this.optionalNumberProperty = Maybe.empty();
     } else {
       this.optionalNumberProperty =
         parameters.optionalNumberProperty satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
+    if (Maybe.isMaybe(parameters.optionalStringProperty)) {
       this.optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
-      this.optionalStringProperty = purify.Maybe.of(
-        parameters.optionalStringProperty,
-      );
+      this.optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
     } else if (typeof parameters.optionalStringProperty === "undefined") {
-      this.optionalStringProperty = purify.Maybe.empty();
+      this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =
         parameters.optionalStringProperty satisfies never;
     }
-
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
@@ -893,22 +1175,21 @@ export class Nested {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
-
     return this._$identifier;
   }
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
+  }): MutableResource {
     const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new MutableResourceSet({
         dataFactory,
-        dataset: datasetFactory.dataset(),
+        dataset: $datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -916,12 +1197,11 @@ export class Nested {
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode("http://example.com/Nested"),
+        dataFactory.namedNode("http://example.com/Nested"),
       );
     }
-
     resource.add(
-      UnionMember1.$properties.optionalNumberProperty["identifier"],
+      UnionMember1.$schema.properties.optionalNumberProperty.identifier,
       ...this.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -929,18 +1209,57 @@ export class Nested {
         ]),
     );
     resource.add(
-      UnionMember2.$properties.optionalStringProperty["identifier"],
-      ...this.optionalStringProperty.toList(),
+      UnionMember2.$schema.properties.optionalStringProperty.identifier,
+      ...this.optionalStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
-      Nested.$properties.requiredStringProperty["identifier"],
-      ...[this.requiredStringProperty],
+      Nested.$schema.properties.requiredStringProperty.identifier,
+      ...[dataFactory.literal(this.requiredStringProperty)],
     );
     return resource;
   }
 }
 
 export namespace Nested {
+  export function $filter(filter: Nested.$Filter, value: Nested): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalNumberProperty !== "undefined" &&
+      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalStringProperty !== "undefined" &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.requiredStringProperty !== "undefined" &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly optionalNumberProperty?: $MaybeFilter<$NumberFilter>;
@@ -948,15 +1267,70 @@ export namespace Nested {
     readonly requiredStringProperty?: $StringFilter;
   };
 
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/Nested",
+  );
+
+  export const $GraphQL = new GraphQLObjectType<
+    Nested,
+    { objectSet: $ObjectSet }
+  >({
+    description: "Nested",
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => Nested.$Identifier.toString(source.$identifier),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      optionalNumberProperty: {
+        args: undefined,
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLFloat),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      requiredStringProperty: {
+        args: undefined,
+        description: '"Required string property"',
+        name: "requiredStringProperty",
+        resolve: (source, _args) => source.requiredStringProperty,
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "Nested",
+  });
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function isNested(object: $Object): object is Nested {
+    switch (object.$type) {
+      case "Nested":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, Nested> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, Nested> {
     let {
       context,
       ignoreRdfType = false,
@@ -964,9 +1338,8 @@ export namespace Nested {
       preferredLanguages,
     } = options ?? {};
     if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-
     return Nested.$propertiesFromRdf({
       context,
       ignoreRdfType,
@@ -976,236 +1349,202 @@ export namespace Nested {
     }).map((properties) => new Nested(properties));
   }
 
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/Nested",
-  );
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    Nested,
-    { objectSet: $ObjectSet }
-  >({
-    description: "Nested",
-    fields: () => ({
-      _identifier: {
-        name: "_identifier",
-        resolve: (source) => Nested.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      optionalNumberProperty: {
-        description: '"Optional number property"',
-        name: "optionalNumberProperty",
-        resolve: (source, _args) =>
-          source.optionalNumberProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLFloat),
-      },
-      optionalStringProperty: {
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      requiredStringProperty: {
-        description: '"Required string property"',
-        name: "requiredStringProperty",
-        resolve: (source, _args) => source.requiredStringProperty,
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-    }),
-    name: "Nested",
-  });
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export const $properties = {
-    optionalNumberProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalNumberProperty",
-      ),
-    },
-    optionalStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalStringProperty",
-      ),
-    },
-    requiredStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredStringProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
     Error,
     {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalNumberProperty: purify.Maybe<number>;
-      optionalStringProperty: purify.Maybe<string>;
+      $identifier: BlankNode | NamedNode;
+      optionalNumberProperty: Maybe<number>;
+      optionalStringProperty: Maybe<string>;
       requiredStringProperty: string;
     }
   > {
-    if (!$parameters.ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) => {
-          // Check the expected type and its known subtypes
-          switch (actualRdfType.value) {
-            case "http://example.com/Nested":
-              return purify.Either.of(true);
-          }
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/Nested":
+                  return Either.of<Error, true>(true);
+              }
 
-          // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($parameters.resource.isInstanceOf(Nested.$fromRdfType)) {
-            return purify.Either.of(true);
-          }
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if ($parameters.resource.isInstanceOf(Nested.$fromRdfType)) {
+                return Either.of<Error, true>(true);
+              }
 
-          return purify.Left(
-            new Error(
-              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
-            ),
-          );
-        });
-      if ($rdfTypeCheck.isLeft()) {
-        return $rdfTypeCheck;
-      }
-    }
-
-    const $identifier: Nested.$Identifier = $parameters.resource.identifier;
-    const _optionalNumberPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<number>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalNumberProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              focusResource: $parameters.resource,
-              predicate:
-                UnionMember1.$properties.optionalNumberProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalNumberPropertyEither.isLeft()) {
-      return _optionalNumberPropertyEither;
-    }
-
-    const optionalNumberProperty = _optionalNumberPropertyEither.unsafeCoerce();
-    const _optionalStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalStringProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        $fromRdfPreferredLanguages({
-          focusResource: $parameters.resource,
-          predicate:
-            UnionMember2.$properties.optionalStringProperty["identifier"],
-          preferredLanguages: $parameters.preferredLanguages,
-          values,
-        }),
-      )
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $parameters.resource,
-              predicate:
-                UnionMember2.$properties.optionalStringProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalStringPropertyEither.isLeft()) {
-      return _optionalStringPropertyEither;
-    }
-
-    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    const _requiredStringPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.requiredStringProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          $fromRdfPreferredLanguages({
-            focusResource: $parameters.resource,
-            predicate: Nested.$properties.requiredStringProperty["identifier"],
-            preferredLanguages: $parameters.preferredLanguages,
-            values,
-          }),
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
+                ),
+              );
+            })
+        : Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      Either.of<Error, Nested.$Identifier>(
+        $parameters.resource.identifier as Nested.$Identifier,
+      ).chain(($identifier) =>
+        Either.of<Error, Resource.Values<Resource.TermValue>>(
+          $parameters.resource.values(
+            $schema.properties.optionalNumberProperty.identifier,
+            { unique: true },
+          ),
         )
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_requiredStringPropertyEither.isLeft()) {
-      return _requiredStringPropertyEither;
-    }
-
-    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      $identifier,
-      optionalNumberProperty,
-      optionalStringProperty,
-      requiredStringProperty,
-    });
+          .chain((values) => values.chainMap((value) => value.toNumber()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => Maybe.of(value))
+              : Resource.Values.fromValue<Maybe<number>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    UnionMember1.$schema.properties.optionalNumberProperty
+                      .identifier,
+                  value: Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .chain((optionalNumberProperty) =>
+            Either.of<Error, Resource.Values<Resource.TermValue>>(
+              $parameters.resource.values(
+                $schema.properties.optionalStringProperty.identifier,
+                { unique: true },
+              ),
+            )
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    UnionMember2.$schema.properties.optionalStringProperty
+                      .identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<string>>({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        UnionMember2.$schema.properties.optionalStringProperty
+                          .identifier,
+                      value: Maybe.empty(),
+                    }),
+              )
+              .chain((values) => values.head())
+              .chain((optionalStringProperty) =>
+                Either.of<Error, Resource.Values<Resource.TermValue>>(
+                  $parameters.resource.values(
+                    $schema.properties.requiredStringProperty.identifier,
+                    { unique: true },
+                  ),
+                )
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        Nested.$schema.properties.requiredStringProperty
+                          .identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .chain((values) => values.head())
+                  .map((requiredStringProperty) => ({
+                    $identifier,
+                    optionalNumberProperty,
+                    optionalStringProperty,
+                    requiredStringProperty,
+                  })),
+              ),
+          ),
+      ),
+    );
   }
-}
-/**
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: () => ({ kind: "IdentifierType" as const }),
+        identifierMintingStrategy: "[object Object] as const",
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: () => ({ descendantValues: undefined, ownValues: ['"Nested"'] }),
+      },
+      optionalNumberProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalNumberProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "FloatType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalNumberProperty",
+        ),
+      },
+      optionalStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalStringProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "StringType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalStringProperty",
+        ),
+      },
+      requiredStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "requiredStringProperty",
+        type: () => ({
+          kind: "StringType" as const,
+          languageIn: undefined,
+          in: undefined,
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredStringProperty",
+        ),
+      },
+    },
+  } as const;
+} /**
  * Parent
  */
+
 export class Parent {
   readonly $identifier: ParentStatic.$Identifier;
-  readonly $type: "Parent" | "Child" = "Parent";
+
+  readonly $type: "Parent" | "Child" = "Parent" as const;
+
   /**
    * Parent string property
-   */
-  readonly parentStringProperty: purify.Maybe<string>;
+   */ readonly parentStringProperty: Maybe<string>;
 
   constructor(parameters: {
-    readonly $identifier: rdfjs.NamedNode | string;
-    readonly parentStringProperty?: purify.Maybe<string> | string;
+    readonly $identifier: NamedNode | string;
+    readonly parentStringProperty?: Maybe<string> | string;
   }) {
     if (typeof parameters.$identifier === "object") {
       this.$identifier = parameters.$identifier;
@@ -1214,15 +1553,12 @@ export class Parent {
     } else {
       this.$identifier = parameters.$identifier satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters.parentStringProperty)) {
+    if (Maybe.isMaybe(parameters.parentStringProperty)) {
       this.parentStringProperty = parameters.parentStringProperty;
     } else if (typeof parameters.parentStringProperty === "string") {
-      this.parentStringProperty = purify.Maybe.of(
-        parameters.parentStringProperty,
-      );
+      this.parentStringProperty = Maybe.of(parameters.parentStringProperty);
     } else if (typeof parameters.parentStringProperty === "undefined") {
-      this.parentStringProperty = purify.Maybe.empty();
+      this.parentStringProperty = Maybe.empty();
     } else {
       this.parentStringProperty =
         parameters.parentStringProperty satisfies never;
@@ -1231,16 +1567,16 @@ export class Parent {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
+  }): MutableResource<NamedNode> {
     const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new MutableResourceSet({
         dataFactory,
-        dataset: datasetFactory.dataset(),
+        dataset: $datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -1248,33 +1584,106 @@ export class Parent {
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode("http://example.com/Parent"),
+        dataFactory.namedNode("http://example.com/Parent"),
       );
     }
-
     resource.add(
-      ParentStatic.$properties.parentStringProperty["identifier"],
-      ...this.parentStringProperty.toList(),
+      ParentStatic.$schema.properties.parentStringProperty.identifier,
+      ...this.parentStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
 }
 
 export namespace ParentStatic {
+  export function $filter(
+    filter: ParentStatic.$Filter,
+    value: Parent,
+  ): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterNamedNode(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.parentStringProperty !== "undefined" &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.parentStringProperty,
+        value.parentStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $NamedNodeFilter;
     readonly parentStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/Parent",
+  );
+
+  export const $GraphQL = new GraphQLObjectType<
+    Parent,
+    { objectSet: $ObjectSet }
+  >({
+    description: "Parent",
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) =>
+          ParentStatic.$Identifier.toString(source.$identifier),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      parentStringProperty: {
+        args: undefined,
+        description: '"Parent string property"',
+        name: "parentStringProperty",
+        resolve: (source, _args) =>
+          source.parentStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "Parent",
+  });
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Either.of(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function isParent(object: $Object): object is Parent {
+    switch (object.$type) {
+      case "Child":
+      case "Parent":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, Parent> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, Parent> {
     let {
       context,
       ignoreRdfType = false,
@@ -1282,9 +1691,8 @@ export namespace ParentStatic {
       preferredLanguages,
     } = options ?? {};
     if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-
     return ParentStatic.$propertiesFromRdf({
       context,
       ignoreRdfType,
@@ -1294,220 +1702,189 @@ export namespace ParentStatic {
     }).map((properties) => new Parent(properties));
   }
 
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/Parent",
-  );
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    Parent,
-    { objectSet: $ObjectSet }
-  >({
-    description: "Parent",
-    fields: () => ({
-      _identifier: {
-        name: "_identifier",
-        resolve: (source) =>
-          ParentStatic.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      parentStringProperty: {
-        description: '"Parent string property"',
-        name: "parentStringProperty",
-        resolve: (source, _args) =>
-          source.parentStringProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-    }),
-    name: "Parent",
-  });
-  export type $Identifier = rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjs.NamedNode> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? purify.Either.of(identifier)
-          : purify.Left(new Error("expected identifier to be NamedNode")),
-      ) as purify.Either<Error, rdfjs.NamedNode>;
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export const $properties = {
-    parentStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/parentStringProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
     Error,
-    { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
+    { $identifier: NamedNode; parentStringProperty: Maybe<string> }
   > {
-    if (!$parameters.ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) => {
-          // Check the expected type and its known subtypes
-          switch (actualRdfType.value) {
-            case "http://example.com/Parent":
-            case "http://example.com/Child":
-              return purify.Either.of(true);
-          }
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/Parent":
+                case "http://example.com/Child":
+                  return Either.of<Error, true>(true);
+              }
 
-          // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($parameters.resource.isInstanceOf(ParentStatic.$fromRdfType)) {
-            return purify.Either.of(true);
-          }
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(ParentStatic.$fromRdfType)
+              ) {
+                return Either.of<Error, true>(true);
+              }
 
-          return purify.Left(
-            new Error(
-              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
-            ),
-          );
-        });
-      if ($rdfTypeCheck.isLeft()) {
-        return $rdfTypeCheck;
-      }
-    }
-
-    if ($parameters.resource.identifier.termType !== "NamedNode") {
-      return purify.Left(
-        new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $parameters.resource.identifier,
-          expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $parameters.resource,
-          predicate: $RdfVocabularies.rdf.subject,
-        }),
-      );
-    }
-
-    const $identifier: ParentStatic.$Identifier =
-      $parameters.resource.identifier;
-    const _parentStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.parentStringProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        $fromRdfPreferredLanguages({
-          focusResource: $parameters.resource,
-          predicate:
-            ParentStatic.$properties.parentStringProperty["identifier"],
-          preferredLanguages: $parameters.preferredLanguages,
-          values,
-        }),
-      )
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
+                ),
+              );
+            })
+        : Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      ($parameters.resource.identifier.termType === "NamedNode"
+        ? Either.of<Error, ParentStatic.$Identifier>(
+            $parameters.resource.identifier,
+          )
+        : Left(
+            new Resource.MistypedTermValueError({
+              actualValue: $parameters.resource.identifier,
+              expectedValueType: "NamedNode",
+              focusResource: $parameters.resource,
+              predicate: $RdfVocabularies.rdf.subject,
+            }),
+          )
+      ).chain(($identifier) =>
+        Either.of<Error, Resource.Values<Resource.TermValue>>(
+          $parameters.resource.values(
+            $schema.properties.parentStringProperty.identifier,
+            { unique: true },
+          ),
+        )
+          .chain((values) =>
+            $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                ParentStatic.$properties.parentStringProperty["identifier"],
-              value: purify.Maybe.empty(),
+                ParentStatic.$schema.properties.parentStringProperty.identifier,
+              preferredLanguages: $parameters.preferredLanguages,
+              values,
             }),
-      )
-      .chain((values) => values.head());
-    if (_parentStringPropertyEither.isLeft()) {
-      return _parentStringPropertyEither;
-    }
-
-    const parentStringProperty = _parentStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, parentStringProperty });
+          )
+          .chain((values) => values.chainMap((value) => value.toString()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => Maybe.of(value))
+              : Resource.Values.fromValue<Maybe<string>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    ParentStatic.$schema.properties.parentStringProperty
+                      .identifier,
+                  value: Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((parentStringProperty) => ({
+            $identifier,
+            parentStringProperty,
+          })),
+      ),
+    );
   }
-}
-/**
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+        identifierMintingStrategy: undefined,
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: () => ({
+          descendantValues: ['"Child"'],
+          ownValues: ['"Parent"'],
+        }),
+      },
+      parentStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "parentStringProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "StringType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/parentStringProperty",
+        ),
+      },
+    },
+  } as const;
+} /**
  * Child
  */
+
 export class Child extends Parent {
-  override readonly $type = "Child";
+  override readonly $type: "Child" = "Child" as const;
+
   /**
    * Child string property
-   */
-  readonly childStringProperty: purify.Maybe<string>;
+   */ readonly childStringProperty: Maybe<string>;
+
   /**
    * Lazy object set property
-   */
-  readonly lazyObjectSetProperty: $LazyObjectSet<
+   */ readonly lazyObjectSetProperty: $LazyObjectSet<
     Nested.$Identifier,
     $DefaultPartial,
     Nested
   >;
+
   /**
    * Optional lazy object property
-   */
-  readonly optionalLazyObjectProperty: $LazyObjectOption<
+   */ readonly optionalLazyObjectProperty: $LazyObjectOption<
     Nested.$Identifier,
     $DefaultPartial,
     Nested
   >;
+
   /**
    * Optional object property
-   */
-  readonly optionalObjectProperty: purify.Maybe<Nested>;
+   */ readonly optionalObjectProperty: Maybe<Nested>;
+
   /**
    * Optional string property
-   */
-  readonly optionalStringProperty: purify.Maybe<string>;
+   */ readonly optionalStringProperty: Maybe<string>;
+
   /**
    * Required string property
-   */
-  readonly requiredStringProperty: string;
+   */ readonly requiredStringProperty: string;
 
   constructor(
     parameters: {
-      readonly $identifier: rdfjs.NamedNode | string;
-      readonly childStringProperty?: purify.Maybe<string> | string;
+      readonly $identifier: NamedNode | string;
+      readonly childStringProperty?: Maybe<string> | string;
       readonly lazyObjectSetProperty?:
         | $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>
         | readonly Nested[];
       readonly optionalLazyObjectProperty?:
         | $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>
-        | Nested
-        | purify.Maybe<Nested>;
-      readonly optionalObjectProperty?: Nested | purify.Maybe<Nested>;
-      readonly optionalStringProperty?: purify.Maybe<string> | string;
+        | Maybe<Nested>
+        | Nested;
+      readonly optionalObjectProperty?: Maybe<Nested> | Nested;
+      readonly optionalStringProperty?: Maybe<string> | string;
       readonly requiredStringProperty: string;
     } & ConstructorParameters<typeof Parent>[0],
   ) {
     super(parameters);
-    if (purify.Maybe.isMaybe(parameters.childStringProperty)) {
+    if (Maybe.isMaybe(parameters.childStringProperty)) {
       this.childStringProperty = parameters.childStringProperty;
     } else if (typeof parameters.childStringProperty === "string") {
-      this.childStringProperty = purify.Maybe.of(
-        parameters.childStringProperty,
-      );
+      this.childStringProperty = Maybe.of(parameters.childStringProperty);
     } else if (typeof parameters.childStringProperty === "undefined") {
-      this.childStringProperty = purify.Maybe.empty();
+      this.childStringProperty = Maybe.empty();
     } else {
       this.childStringProperty = parameters.childStringProperty satisfies never;
     }
-
     if (
       typeof parameters.lazyObjectSetProperty === "object" &&
       parameters.lazyObjectSetProperty instanceof $LazyObjectSet
@@ -1523,9 +1900,7 @@ export class Child extends Parent {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          purify.Either.of(
-            parameters.lazyObjectSetProperty as readonly Nested[],
-          ),
+          Either.of(parameters.lazyObjectSetProperty as readonly Nested[]),
       });
     } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
       this.lazyObjectSetProperty = new $LazyObjectSet<
@@ -1542,13 +1917,12 @@ export class Child extends Parent {
       this.lazyObjectSetProperty =
         parameters.lazyObjectSetProperty satisfies never;
     }
-
     if (
       typeof parameters.optionalLazyObjectProperty === "object" &&
       parameters.optionalLazyObjectProperty instanceof $LazyObjectOption
     ) {
       this.optionalLazyObjectProperty = parameters.optionalLazyObjectProperty;
-    } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
+    } else if (Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
       this.optionalLazyObjectProperty = new $LazyObjectOption<
         Nested.$Identifier,
         $DefaultPartial,
@@ -1558,9 +1932,9 @@ export class Child extends Parent {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          purify.Either.of(
+          Either.of(
             (
-              parameters.optionalLazyObjectProperty as purify.Maybe<Nested>
+              parameters.optionalLazyObjectProperty as Maybe<Nested>
             ).unsafeCoerce(),
           ),
       });
@@ -1570,11 +1944,11 @@ export class Child extends Parent {
         $DefaultPartial,
         Nested
       >({
-        partial: purify.Maybe.of(
+        partial: Maybe.of(
           new $DefaultPartial(parameters.optionalLazyObjectProperty),
         ),
         resolver: async () =>
-          purify.Either.of(parameters.optionalLazyObjectProperty as Nested),
+          Either.of(parameters.optionalLazyObjectProperty as Nested),
       });
     } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
       this.optionalLazyObjectProperty = new $LazyObjectOption<
@@ -1582,7 +1956,7 @@ export class Child extends Parent {
         $DefaultPartial,
         Nested
       >({
-        partial: purify.Maybe.empty(),
+        partial: Maybe.empty(),
         resolver: async () => {
           throw new Error("should never be called");
         },
@@ -1591,51 +1965,44 @@ export class Child extends Parent {
       this.optionalLazyObjectProperty =
         parameters.optionalLazyObjectProperty satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters.optionalObjectProperty)) {
+    if (Maybe.isMaybe(parameters.optionalObjectProperty)) {
       this.optionalObjectProperty = parameters.optionalObjectProperty;
     } else if (
       typeof parameters.optionalObjectProperty === "object" &&
       parameters.optionalObjectProperty instanceof Nested
     ) {
-      this.optionalObjectProperty = purify.Maybe.of(
-        parameters.optionalObjectProperty,
-      );
+      this.optionalObjectProperty = Maybe.of(parameters.optionalObjectProperty);
     } else if (typeof parameters.optionalObjectProperty === "undefined") {
-      this.optionalObjectProperty = purify.Maybe.empty();
+      this.optionalObjectProperty = Maybe.empty();
     } else {
       this.optionalObjectProperty =
         parameters.optionalObjectProperty satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
+    if (Maybe.isMaybe(parameters.optionalStringProperty)) {
       this.optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
-      this.optionalStringProperty = purify.Maybe.of(
-        parameters.optionalStringProperty,
-      );
+      this.optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
     } else if (typeof parameters.optionalStringProperty === "undefined") {
-      this.optionalStringProperty = purify.Maybe.empty();
+      this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =
         parameters.optionalStringProperty satisfies never;
     }
-
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
+  }): MutableResource<NamedNode> {
     const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new MutableResourceSet({
         dataFactory,
-        dataset: datasetFactory.dataset(),
+        dataset: $datasetFactory.dataset(),
       });
     const resource = super.$toRdf({
       ignoreRdfType: true,
@@ -1645,23 +2012,24 @@ export class Child extends Parent {
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode("http://example.com/Child"),
+        dataFactory.namedNode("http://example.com/Child"),
       );
     }
-
     resource.add(
-      Child.$properties.childStringProperty["identifier"],
-      ...this.childStringProperty.toList(),
+      Child.$schema.properties.childStringProperty.identifier,
+      ...this.childStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
-      Child.$properties.lazyObjectSetProperty["identifier"],
+      Child.$schema.properties.lazyObjectSetProperty.identifier,
       ...this.lazyObjectSetProperty.partials.flatMap((item) => [
         item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
           .identifier,
       ]),
     );
     resource.add(
-      Child.$properties.optionalLazyObjectProperty["identifier"],
+      Child.$schema.properties.optionalLazyObjectProperty.identifier,
       ...this.optionalLazyObjectProperty.partial
         .toList()
         .flatMap((value) => [
@@ -1670,7 +2038,7 @@ export class Child extends Parent {
         ]),
     );
     resource.add(
-      Child.$properties.optionalObjectProperty["identifier"],
+      Child.$schema.properties.optionalObjectProperty.identifier,
       ...this.optionalObjectProperty
         .toList()
         .flatMap((value) => [
@@ -1679,36 +2047,205 @@ export class Child extends Parent {
         ]),
     );
     resource.add(
-      UnionMember2.$properties.optionalStringProperty["identifier"],
-      ...this.optionalStringProperty.toList(),
+      UnionMember2.$schema.properties.optionalStringProperty.identifier,
+      ...this.optionalStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
-      Nested.$properties.requiredStringProperty["identifier"],
-      ...[this.requiredStringProperty],
+      Nested.$schema.properties.requiredStringProperty.identifier,
+      ...[dataFactory.literal(this.requiredStringProperty)],
     );
     return resource;
   }
 }
 
 export namespace Child {
+  export function $filter(filter: Child.$Filter, value: Child): boolean {
+    if (!ParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      typeof filter.childStringProperty !== "undefined" &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.childStringProperty,
+        value.childStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.lazyObjectSetProperty !== "undefined" &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partials))(
+        filter.lazyObjectSetProperty,
+        value.lazyObjectSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalLazyObjectProperty !== "undefined" &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyObjectProperty,
+        value.optionalLazyObjectProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalObjectProperty !== "undefined" &&
+      !$filterMaybe<Nested, Nested.$Filter>(Nested.$filter)(
+        filter.optionalObjectProperty,
+        value.optionalObjectProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.optionalStringProperty !== "undefined" &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.requiredStringProperty !== "undefined" &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   export type $Filter = {
+    readonly $identifier?: $NamedNodeFilter;
     readonly childStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly lazyObjectSetProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
+    readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
     readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
     readonly optionalObjectProperty?: $MaybeFilter<Nested.$Filter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
   } & ParentStatic.$Filter;
 
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/Child",
+  );
+
+  export const $GraphQL = new GraphQLObjectType<
+    Child,
+    { objectSet: $ObjectSet }
+  >({
+    description: "Child",
+    fields: () => ({
+      _identifier: {
+        args: undefined,
+        description: undefined,
+        name: "_identifier",
+        resolve: (source) => Child.$Identifier.toString(source.$identifier),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      childStringProperty: {
+        args: undefined,
+        description: '"Child string property"',
+        name: "childStringProperty",
+        resolve: (source, _args) =>
+          source.childStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      lazyObjectSetProperty: {
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
+        description: '"Lazy object set property"',
+        name: "lazyObjectSetProperty",
+        resolve: (source, args) =>
+          source.lazyObjectSetProperty
+            .resolve({ limit: args.limit, offset: args.offset })
+            .then((either) => either.unsafeCoerce()),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(Nested.$GraphQL)),
+        ),
+      },
+      optionalLazyObjectProperty: {
+        args: undefined,
+        description: '"Optional lazy object property"',
+        name: "optionalLazyObjectProperty",
+        resolve: (source, _args) =>
+          source.optionalLazyObjectProperty
+            .resolve()
+            .then((either) => either.unsafeCoerce().extractNullable()),
+        type: new GraphQLNonNull(Nested.$GraphQL),
+      },
+      optionalObjectProperty: {
+        args: undefined,
+        description: '"Optional object property"',
+        name: "optionalObjectProperty",
+        resolve: (source, _args) =>
+          source.optionalObjectProperty.extractNullable(),
+        type: new GraphQLNonNull(Nested.$GraphQL),
+      },
+      optionalStringProperty: {
+        args: undefined,
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
+        type: new GraphQLNonNull(GraphQLString),
+      },
+      requiredStringProperty: {
+        args: undefined,
+        description: '"Required string property"',
+        name: "requiredStringProperty",
+        resolve: (source, _args) => source.requiredStringProperty,
+        type: new GraphQLNonNull(GraphQLString),
+      },
+    }),
+    name: "Child",
+  });
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Either.of(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function isChild(object: $Object): object is Child {
+    switch (object.$type) {
+      case "Child":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, Child> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, Child> {
     let {
       context,
       ignoreRdfType = false,
@@ -1716,9 +2253,8 @@ export namespace Child {
       preferredLanguages,
     } = options ?? {};
     if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-
     return Child.$propertiesFromRdf({
       context,
       ignoreRdfType,
@@ -1728,121 +2264,13 @@ export namespace Child {
     }).map((properties) => new Child(properties));
   }
 
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/Child",
-  );
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    Child,
-    { objectSet: $ObjectSet }
-  >({
-    description: "Child",
-    fields: () => ({
-      _identifier: {
-        name: "_identifier",
-        resolve: (source) => Child.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      childStringProperty: {
-        description: '"Child string property"',
-        name: "childStringProperty",
-        resolve: (source, _args) =>
-          source.childStringProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      lazyObjectSetProperty: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        description: '"Lazy object set property"',
-        name: "lazyObjectSetProperty",
-        resolve: (source, args) =>
-          source.lazyObjectSetProperty
-            .resolve({ limit: args.limit, offset: args.offset })
-            .then((either) => either.unsafeCoerce()),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.$GraphQL)),
-        ),
-      },
-      optionalLazyObjectProperty: {
-        description: '"Optional lazy object property"',
-        name: "optionalLazyObjectProperty",
-        resolve: (source, _args) =>
-          source.optionalLazyObjectProperty
-            .resolve()
-            .then((either) => either.unsafeCoerce().extractNullable()),
-        type: new graphql.GraphQLNonNull(Nested.$GraphQL),
-      },
-      optionalObjectProperty: {
-        description: '"Optional object property"',
-        name: "optionalObjectProperty",
-        resolve: (source, _args) =>
-          source.optionalObjectProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(Nested.$GraphQL),
-      },
-      optionalStringProperty: {
-        description: '"Optional string property"',
-        name: "optionalStringProperty",
-        resolve: (source, _args) =>
-          source.optionalStringProperty.extractNullable(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-      requiredStringProperty: {
-        description: '"Required string property"',
-        name: "requiredStringProperty",
-        resolve: (source, _args) => source.requiredStringProperty,
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-    }),
-    name: "Child",
-  });
-  export type $Identifier = ParentStatic.$Identifier;
-  export const $Identifier = ParentStatic.$Identifier;
-  export const $properties = {
-    ...ParentStatic.$properties,
-    childStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/childStringProperty",
-      ),
-    },
-    lazyObjectSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazyObjectSetProperty",
-      ),
-    },
-    optionalLazyObjectProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyObjectProperty",
-      ),
-    },
-    optionalObjectProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalObjectProperty",
-      ),
-    },
-    optionalStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalStringProperty",
-      ),
-    },
-    requiredStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredStringProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
     Error,
     {
-      $identifier: rdfjs.NamedNode;
-      childStringProperty: purify.Maybe<string>;
+      $identifier: NamedNode;
+      childStringProperty: Maybe<string>;
       lazyObjectSetProperty: $LazyObjectSet<
         Nested.$Identifier,
         $DefaultPartial,
@@ -1853,1104 +2281,1144 @@ export namespace Child {
         $DefaultPartial,
         Nested
       >;
-      optionalObjectProperty: purify.Maybe<Nested>;
-      optionalStringProperty: purify.Maybe<string>;
+      optionalObjectProperty: Maybe<Nested>;
+      optionalStringProperty: Maybe<string>;
       requiredStringProperty: string;
     } & $UnwrapR<ReturnType<typeof ParentStatic.$propertiesFromRdf>>
   > {
-    const $super0Either = ParentStatic.$propertiesFromRdf({
+    return ParentStatic.$propertiesFromRdf({
       ...$parameters,
       ignoreRdfType: true,
-    });
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
+    }).chain(($super0) =>
+      (!$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/Child":
+                  return Either.of<Error, true>(true);
+              }
 
-    const $super0 = $super0Either.unsafeCoerce();
-    if (!$parameters.ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) => {
-          // Check the expected type and its known subtypes
-          switch (actualRdfType.value) {
-            case "http://example.com/Child":
-              return purify.Either.of(true);
-          }
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if ($parameters.resource.isInstanceOf(Child.$fromRdfType)) {
+                return Either.of<Error, true>(true);
+              }
 
-          // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($parameters.resource.isInstanceOf(Child.$fromRdfType)) {
-            return purify.Either.of(true);
-          }
-
-          return purify.Left(
-            new Error(
-              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
+                ),
+              );
+            })
+        : Either.of<Error, true>(true)
+      ).chain((_rdfTypeCheck) =>
+        ($parameters.resource.identifier.termType === "NamedNode"
+          ? Either.of<Error, Child.$Identifier>($parameters.resource.identifier)
+          : Left(
+              new Resource.MistypedTermValueError({
+                actualValue: $parameters.resource.identifier,
+                expectedValueType: "NamedNode",
+                focusResource: $parameters.resource,
+                predicate: $RdfVocabularies.rdf.subject,
+              }),
+            )
+        ).chain(($identifier) =>
+          Either.of<Error, Resource.Values<Resource.TermValue>>(
+            $parameters.resource.values(
+              $schema.properties.childStringProperty.identifier,
+              { unique: true },
             ),
-          );
-        });
-      if ($rdfTypeCheck.isLeft()) {
-        return $rdfTypeCheck;
-      }
-    }
-
-    if ($parameters.resource.identifier.termType !== "NamedNode") {
-      return purify.Left(
-        new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $parameters.resource.identifier,
-          expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $parameters.resource,
-          predicate: $RdfVocabularies.rdf.subject,
-        }),
-      );
-    }
-
-    const $identifier: Child.$Identifier = $parameters.resource.identifier;
-    const _childStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.childStringProperty["identifier"],
-        { unique: true },
+          )
+            .chain((values) =>
+              $fromRdfPreferredLanguages({
+                focusResource: $parameters.resource,
+                predicate:
+                  Child.$schema.properties.childStringProperty.identifier,
+                preferredLanguages: $parameters.preferredLanguages,
+                values,
+              }),
+            )
+            .chain((values) => values.chainMap((value) => value.toString()))
+            .map((values) =>
+              values.length > 0
+                ? values.map((value) => Maybe.of(value))
+                : Resource.Values.fromValue<Maybe<string>>({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      Child.$schema.properties.childStringProperty.identifier,
+                    value: Maybe.empty(),
+                  }),
+            )
+            .chain((values) => values.head())
+            .chain((childStringProperty) =>
+              Either.of<Error, Resource.Values<Resource.TermValue>>(
+                $parameters.resource.values(
+                  $schema.properties.lazyObjectSetProperty.identifier,
+                  { unique: true },
+                ),
+              )
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      $DefaultPartial.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: true,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
+                  ),
+                )
+                .map((values) => values.toArray())
+                .map((valuesArray) =>
+                  Resource.Values.fromValue({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      Child.$schema.properties.lazyObjectSetProperty.identifier,
+                    value: valuesArray,
+                  }),
+                )
+                .map((values) =>
+                  values.map(
+                    (partials) =>
+                      new $LazyObjectSet<
+                        Nested.$Identifier,
+                        $DefaultPartial,
+                        Nested
+                      >({
+                        partials,
+                        resolver: (identifiers) =>
+                          $parameters.objectSet.nesteds({
+                            filter: { $identifier: { in: identifiers } },
+                          }),
+                      }),
+                  ),
+                )
+                .chain((values) => values.head())
+                .chain((lazyObjectSetProperty) =>
+                  Either.of<Error, Resource.Values<Resource.TermValue>>(
+                    $parameters.resource.values(
+                      $schema.properties.optionalLazyObjectProperty.identifier,
+                      {
+                        unique: true,
+                      },
+                    ),
+                  )
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toResource().chain((resource) =>
+                          $DefaultPartial.$fromRdf(resource, {
+                            context: $parameters.context,
+                            ignoreRdfType: true,
+                            objectSet: $parameters.objectSet,
+                            preferredLanguages: $parameters.preferredLanguages,
+                          }),
+                        ),
+                      ),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              Child.$schema.properties
+                                .optionalLazyObjectProperty.identifier,
+                            value: Maybe.empty(),
+                          }),
+                    )
+                    .map((values) =>
+                      values.map(
+                        (partial) =>
+                          new $LazyObjectOption<
+                            Nested.$Identifier,
+                            $DefaultPartial,
+                            Nested
+                          >({
+                            partial,
+                            resolver: (identifier) =>
+                              $parameters.objectSet.nested(identifier),
+                          }),
+                      ),
+                    )
+                    .chain((values) => values.head())
+                    .chain((optionalLazyObjectProperty) =>
+                      Either.of<Error, Resource.Values<Resource.TermValue>>(
+                        $parameters.resource.values(
+                          $schema.properties.optionalObjectProperty.identifier,
+                          {
+                            unique: true,
+                          },
+                        ),
+                      )
+                        .chain((values) =>
+                          values.chainMap((value) =>
+                            value.toResource().chain((resource) =>
+                              Nested.$fromRdf(resource, {
+                                context: $parameters.context,
+                                ignoreRdfType: true,
+                                objectSet: $parameters.objectSet,
+                                preferredLanguages:
+                                  $parameters.preferredLanguages,
+                              }),
+                            ),
+                          ),
+                        )
+                        .map((values) =>
+                          values.length > 0
+                            ? values.map((value) => Maybe.of(value))
+                            : Resource.Values.fromValue<Maybe<Nested>>({
+                                focusResource: $parameters.resource,
+                                predicate:
+                                  Child.$schema.properties
+                                    .optionalObjectProperty.identifier,
+                                value: Maybe.empty(),
+                              }),
+                        )
+                        .chain((values) => values.head())
+                        .chain((optionalObjectProperty) =>
+                          Either.of<Error, Resource.Values<Resource.TermValue>>(
+                            $parameters.resource.values(
+                              $schema.properties.optionalStringProperty
+                                .identifier,
+                              {
+                                unique: true,
+                              },
+                            ),
+                          )
+                            .chain((values) =>
+                              $fromRdfPreferredLanguages({
+                                focusResource: $parameters.resource,
+                                predicate:
+                                  UnionMember2.$schema.properties
+                                    .optionalStringProperty.identifier,
+                                preferredLanguages:
+                                  $parameters.preferredLanguages,
+                                values,
+                              }),
+                            )
+                            .chain((values) =>
+                              values.chainMap((value) => value.toString()),
+                            )
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<Maybe<string>>({
+                                    focusResource: $parameters.resource,
+                                    predicate:
+                                      UnionMember2.$schema.properties
+                                        .optionalStringProperty.identifier,
+                                    value: Maybe.empty(),
+                                  }),
+                            )
+                            .chain((values) => values.head())
+                            .chain((optionalStringProperty) =>
+                              Either.of<
+                                Error,
+                                Resource.Values<Resource.TermValue>
+                              >(
+                                $parameters.resource.values(
+                                  $schema.properties.requiredStringProperty
+                                    .identifier,
+                                  {
+                                    unique: true,
+                                  },
+                                ),
+                              )
+                                .chain((values) =>
+                                  $fromRdfPreferredLanguages({
+                                    focusResource: $parameters.resource,
+                                    predicate:
+                                      Nested.$schema.properties
+                                        .requiredStringProperty.identifier,
+                                    preferredLanguages:
+                                      $parameters.preferredLanguages,
+                                    values,
+                                  }),
+                                )
+                                .chain((values) =>
+                                  values.chainMap((value) => value.toString()),
+                                )
+                                .chain((values) => values.head())
+                                .map((requiredStringProperty) => ({
+                                  ...$super0,
+                                  $identifier,
+                                  childStringProperty,
+                                  lazyObjectSetProperty,
+                                  optionalLazyObjectProperty,
+                                  optionalObjectProperty,
+                                  optionalStringProperty,
+                                  requiredStringProperty,
+                                })),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
       ),
-    )
-      .chain((values) =>
-        $fromRdfPreferredLanguages({
-          focusResource: $parameters.resource,
-          predicate: Child.$properties.childStringProperty["identifier"],
-          preferredLanguages: $parameters.preferredLanguages,
-          values,
-        }),
-      )
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $parameters.resource,
-              predicate: Child.$properties.childStringProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_childStringPropertyEither.isLeft()) {
-      return _childStringPropertyEither;
-    }
-
-    const childStringProperty = _childStringPropertyEither.unsafeCoerce();
-    const _lazyObjectSetPropertyEither: purify.Either<
-      Error,
-      $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.lazyObjectSetProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultPartial.$fromRdf(resource, {
-              context: $parameters.context,
-              ignoreRdfType: true,
-              objectSet: $parameters.objectSet,
-              preferredLanguages: $parameters.preferredLanguages,
-            }),
-          ),
-        ),
-      )
-      .map((values) => values.toArray())
-      .map((valuesArray) =>
-        rdfjsResource.Resource.Values.fromValue({
-          focusResource: $parameters.resource,
-          predicate: Child.$properties.lazyObjectSetProperty["identifier"],
-          value: valuesArray,
-        }),
-      )
-      .map((values) =>
-        values.map(
-          (partials) =>
-            new $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>({
-              partials,
-              resolver: (identifiers) =>
-                $parameters.objectSet.nesteds({
-                  where: { identifiers, type: "identifiers" },
-                }),
-            }),
-        ),
-      )
-      .chain((values) => values.head());
-    if (_lazyObjectSetPropertyEither.isLeft()) {
-      return _lazyObjectSetPropertyEither;
-    }
-
-    const lazyObjectSetProperty = _lazyObjectSetPropertyEither.unsafeCoerce();
-    const _optionalLazyObjectPropertyEither: purify.Either<
-      Error,
-      $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalLazyObjectProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultPartial.$fromRdf(resource, {
-              context: $parameters.context,
-              ignoreRdfType: true,
-              objectSet: $parameters.objectSet,
-              preferredLanguages: $parameters.preferredLanguages,
-            }),
-          ),
-        ),
-      )
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<$DefaultPartial>
-            >({
-              focusResource: $parameters.resource,
-              predicate:
-                Child.$properties.optionalLazyObjectProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .map((values) =>
-        values.map(
-          (partial) =>
-            new $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>({
-              partial,
-              resolver: (identifier) =>
-                $parameters.objectSet.nested(identifier),
-            }),
-        ),
-      )
-      .chain((values) => values.head());
-    if (_optionalLazyObjectPropertyEither.isLeft()) {
-      return _optionalLazyObjectPropertyEither;
-    }
-
-    const optionalLazyObjectProperty =
-      _optionalLazyObjectPropertyEither.unsafeCoerce();
-    const _optionalObjectPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<Nested>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalObjectProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            Nested.$fromRdf(resource, {
-              context: $parameters.context,
-              ignoreRdfType: true,
-              objectSet: $parameters.objectSet,
-              preferredLanguages: $parameters.preferredLanguages,
-            }),
-          ),
-        ),
-      )
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Nested>>({
-              focusResource: $parameters.resource,
-              predicate: Child.$properties.optionalObjectProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalObjectPropertyEither.isLeft()) {
-      return _optionalObjectPropertyEither;
-    }
-
-    const optionalObjectProperty = _optionalObjectPropertyEither.unsafeCoerce();
-    const _optionalStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $parameters.resource.values(
-        $properties.optionalStringProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        $fromRdfPreferredLanguages({
-          focusResource: $parameters.resource,
-          predicate:
-            UnionMember2.$properties.optionalStringProperty["identifier"],
-          preferredLanguages: $parameters.preferredLanguages,
-          values,
-        }),
-      )
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $parameters.resource,
-              predicate:
-                UnionMember2.$properties.optionalStringProperty["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalStringPropertyEither.isLeft()) {
-      return _optionalStringPropertyEither;
-    }
-
-    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    const _requiredStringPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.requiredStringProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          $fromRdfPreferredLanguages({
-            focusResource: $parameters.resource,
-            predicate: Nested.$properties.requiredStringProperty["identifier"],
-            preferredLanguages: $parameters.preferredLanguages,
-            values,
-          }),
-        )
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_requiredStringPropertyEither.isLeft()) {
-      return _requiredStringPropertyEither;
-    }
-
-    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      childStringProperty,
-      lazyObjectSetProperty,
-      optionalLazyObjectProperty,
-      optionalObjectProperty,
-      optionalStringProperty,
-      requiredStringProperty,
-    });
+    );
   }
 
-  export function isChild(object: Parent): object is Child {
-    switch (object.$type) {
-      case "Child":
-        return true;
-      default:
-        return false;
-    }
-  }
-}
-/**
+  export const $schema = {
+    properties: {
+      ...ParentStatic.$schema.properties,
+      childStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "childStringProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "StringType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/childStringProperty",
+        ),
+      },
+      lazyObjectSetProperty: {
+        kind: "ShaclProperty" as const,
+        name: "lazyObjectSetProperty",
+        type: () => ({
+          kind: "LazyObjectSetType" as const,
+          partialType: {
+            kind: "SetType" as const,
+            item: $DefaultPartial.$schema,
+            minCount: 0,
+          },
+          resolvedType: {
+            kind: "SetType" as const,
+            item: Nested.$schema,
+            minCount: 0,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazyObjectSetProperty",
+        ),
+      },
+      optionalLazyObjectProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyObjectProperty",
+        type: () => ({
+          kind: "LazyObjectOptionType" as const,
+          partialType: {
+            kind: "OptionType" as const,
+            item: $DefaultPartial.$schema,
+          },
+          resolvedType: { kind: "OptionType" as const, item: Nested.$schema },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyObjectProperty",
+        ),
+      },
+      optionalObjectProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalObjectProperty",
+        type: () => ({ kind: "OptionType" as const, item: Nested.$schema }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalObjectProperty",
+        ),
+      },
+      optionalStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "optionalStringProperty",
+        type: () => ({
+          kind: "OptionType" as const,
+          item: {
+            kind: "StringType" as const,
+            languageIn: undefined,
+            in: undefined,
+          },
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalStringProperty",
+        ),
+      },
+      requiredStringProperty: {
+        kind: "ShaclProperty" as const,
+        name: "requiredStringProperty",
+        type: () => ({
+          kind: "StringType" as const,
+          languageIn: undefined,
+          in: undefined,
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredStringProperty",
+        ),
+      },
+    },
+  } as const;
+} /**
  * Union
  */
+
 export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
-  export type $Filter = {
+  export function $filter(filter: Union.$Filter, value: Union): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      UnionMember1.isUnionMember1(value) &&
+      filter.on?.UnionMember1 &&
+      !UnionMember1.$filter(filter.on.UnionMember1, value as UnionMember1)
+    ) {
+      return false;
+    }
+    if (
+      UnionMember2.isUnionMember2(value) &&
+      filter.on?.UnionMember2 &&
+      !UnionMember2.$filter(filter.on.UnionMember2, value as UnionMember2)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export interface $Filter {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly UnionMember1?: UnionMember1.$Filter;
-      readonly UnionMember2?: UnionMember2.$Filter;
+      readonly UnionMember1?: Omit<UnionMember1.$Filter, "$identifier">;
+      readonly UnionMember2?: Omit<UnionMember2.$Filter, "$identifier">;
     };
-  };
+  }
+
+  export const $GraphQL = new GraphQLUnionType({
+    description: '"Union"',
+    name: "Union",
+    resolveType: (value: Union) => value.$type,
+    types: [UnionMember1.$GraphQL, UnionMember2.$GraphQL],
+  });
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function isUnion(object: $Object): object is Union {
+    return (
+      UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object)
+    );
+  }
+
+  export const $schema = { properties: {} } as const;
 
   export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, Union> {
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, Union> {
     return (
       UnionMember1.$fromRdf(resource, {
         ...options,
         ignoreRdfType: false,
-      }) as purify.Either<Error, Union>
+      }) as Either<Error, Union>
     ).altLazy(
       () =>
         UnionMember2.$fromRdf(resource, {
           ...options,
           ignoreRdfType: false,
-        }) as purify.Either<Error, Union>,
+        }) as Either<Error, Union>,
     );
-  }
-
-  export const $GraphQL = new graphql.GraphQLUnionType({
-    description: "Union",
-    name: "Union",
-    resolveType: (value: Union) => value.$type,
-    types: [UnionMember1.$GraphQL, UnionMember2.$GraphQL],
-  });
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $toRdf(
     _union: Union,
     _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
+      mutateGraph?: MutableResource.MutateGraph;
+      resourceSet?: MutableResourceSet;
     },
-  ): rdfjsResource.MutableResource {
-    switch (_union.$type) {
-      case "UnionMember1":
-        return _union.$toRdf(_parameters);
-      case "UnionMember2":
-        return _union.$toRdf(_parameters);
-      default:
-        _union satisfies never;
-        throw new Error("unrecognized type");
+  ): MutableResource {
+    if (UnionMember1.isUnionMember1(_union)) {
+      return _union.$toRdf(_parameters);
     }
+    if (UnionMember2.isUnionMember2(_union)) {
+      return _union.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
+}
+export type $Object =
+  | Child
+  | Parent
+  | Nested
+  | UnionMember1
+  | UnionMember2
+  | $DefaultPartial;
+
+export namespace $Object {
+  export function $filter(filter: $Object.$Filter, value: $Object): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      Child.isChild(value) &&
+      filter.on?.Child &&
+      !Child.$filter(filter.on.Child, value as Child)
+    ) {
+      return false;
+    }
+    if (
+      ParentStatic.isParent(value) &&
+      filter.on?.Parent &&
+      !ParentStatic.$filter(filter.on.Parent, value as Parent)
+    ) {
+      return false;
+    }
+    if (
+      Nested.isNested(value) &&
+      filter.on?.Nested &&
+      !Nested.$filter(filter.on.Nested, value as Nested)
+    ) {
+      return false;
+    }
+    if (
+      UnionMember1.isUnionMember1(value) &&
+      filter.on?.UnionMember1 &&
+      !UnionMember1.$filter(filter.on.UnionMember1, value as UnionMember1)
+    ) {
+      return false;
+    }
+    if (
+      UnionMember2.isUnionMember2(value) &&
+      filter.on?.UnionMember2 &&
+      !UnionMember2.$filter(filter.on.UnionMember2, value as UnionMember2)
+    ) {
+      return false;
+    }
+    if (
+      $DefaultPartial.is$DefaultPartial(value) &&
+      filter.on?.$DefaultPartial &&
+      !$DefaultPartial.$filter(
+        filter.on.$DefaultPartial,
+        value as $DefaultPartial,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export interface $Filter {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly Child?: Omit<Child.$Filter, "$identifier">;
+      readonly Parent?: Omit<ParentStatic.$Filter, "$identifier">;
+      readonly Nested?: Omit<Nested.$Filter, "$identifier">;
+      readonly UnionMember1?: Omit<UnionMember1.$Filter, "$identifier">;
+      readonly UnionMember2?: Omit<UnionMember2.$Filter, "$identifier">;
+      readonly $DefaultPartial?: Omit<$DefaultPartial.$Filter, "$identifier">;
+    };
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export const $schema = { properties: {} } as const;
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, $Object> {
+    return (
+      Child.$fromRdf(resource, { ...options, ignoreRdfType: false }) as Either<
+        Error,
+        $Object
+      >
+    )
+      .altLazy(
+        () =>
+          ParentStatic.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          Nested.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          UnionMember1.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          UnionMember2.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          $DefaultPartial.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      );
+  }
+
+  export function $toRdf(
+    _object: $Object,
+    _parameters?: {
+      mutateGraph?: MutableResource.MutateGraph;
+      resourceSet?: MutableResourceSet;
+    },
+  ): Resource {
+    if (Child.isChild(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ParentStatic.isParent(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (Nested.isNested(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (UnionMember1.isUnionMember1(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (UnionMember2.isUnionMember2(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if ($DefaultPartial.is$DefaultPartial(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
   }
 }
 export interface $ObjectSet {
-  child(identifier: Child.$Identifier): Promise<purify.Either<Error, Child>>;
+  child(identifier: Child.$Identifier): Promise<Either<Error, Child>>;
   childIdentifiers(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Child.$Identifier[]>>;
+    query?: $ObjectSet.Query<Child.$Filter>,
+  ): Promise<Either<Error, readonly Child.$Identifier[]>>;
   children(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Child[]>>;
+    query?: $ObjectSet.Query<Child.$Filter>,
+  ): Promise<Either<Error, readonly Child[]>>;
   childrenCount(
-    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  nested(identifier: Nested.$Identifier): Promise<purify.Either<Error, Nested>>;
+    query?: Pick<$ObjectSet.Query<Child.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
+  nested(identifier: Nested.$Identifier): Promise<Either<Error, Nested>>;
   nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested.$Identifier[]>>;
+    query?: $ObjectSet.Query<Nested.$Filter>,
+  ): Promise<Either<Error, readonly Nested.$Identifier[]>>;
   nesteds(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested[]>>;
+    query?: $ObjectSet.Query<Nested.$Filter>,
+  ): Promise<Either<Error, readonly Nested[]>>;
   nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  parent(
-    identifier: ParentStatic.$Identifier,
-  ): Promise<purify.Either<Error, Parent>>;
+    query?: Pick<$ObjectSet.Query<Nested.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
+  parent(identifier: ParentStatic.$Identifier): Promise<Either<Error, Parent>>;
   parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ParentStatic.$Identifier[]>>;
+    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+  ): Promise<Either<Error, readonly ParentStatic.$Identifier[]>>;
   parents(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Parent[]>>;
+    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+  ): Promise<Either<Error, readonly Parent[]>>;
   parentsCount(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
   unionMember1(
     identifier: UnionMember1.$Identifier,
-  ): Promise<purify.Either<Error, UnionMember1>>;
+  ): Promise<Either<Error, UnionMember1>>;
   unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1.$Identifier[]>>;
+    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember1.$Identifier[]>>;
   unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1[]>>;
+    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember1[]>>;
   unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
   unionMember2(
     identifier: UnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, UnionMember2>>;
+  ): Promise<Either<Error, UnionMember2>>;
   unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2.$Identifier[]>>;
+    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember2.$Identifier[]>>;
   unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2[]>>;
+    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember2[]>>;
   unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  union(identifier: Union.$Identifier): Promise<purify.Either<Error, Union>>;
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
+  union(identifier: Union.$Identifier): Promise<Either<Error, Union>>;
   unionIdentifiers(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Union.$Identifier[]>>;
+    query?: $ObjectSet.Query<Union.$Filter>,
+  ): Promise<Either<Error, readonly Union.$Identifier[]>>;
   unions(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Union[]>>;
+    query?: $ObjectSet.Query<Union.$Filter>,
+  ): Promise<Either<Error, readonly Union[]>>;
   unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
+    query?: Pick<$ObjectSet.Query<Union.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
+  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+  objectIdentifiers(
+    query?: $ObjectSet.Query<$Object.$Filter>,
+  ): Promise<Either<Error, readonly $Object.$Identifier[]>>;
+  objects(
+    query?: $ObjectSet.Query<$Object.$Filter>,
+  ): Promise<Either<Error, readonly $Object[]>>;
+  objectsCount(
+    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+  ): Promise<Either<Error, number>>;
 }
 
 export namespace $ObjectSet {
-  export type Query<
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  > = {
+  export interface Query<
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (BlankNode | NamedNode)[];
+      };
+    },
+  > {
+    readonly filter?: ObjectFilterT;
     readonly limit?: number;
     readonly offset?: number;
-    readonly where?: Where<ObjectIdentifierT>;
-  };
-  export type Where<
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  > =
-    | {
-        readonly identifiers: readonly ObjectIdentifierT[];
-        readonly type: "identifiers";
-      }
-    | {
-        readonly objectTermType?: "NamedNode";
-        readonly predicate: rdfjs.NamedNode;
-        readonly subject?: rdfjs.BlankNode | rdfjs.NamedNode;
-        readonly type: "triple-objects";
-      }
-    | {
-        readonly object?: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode;
-        readonly predicate: rdfjs.NamedNode;
-        readonly subjectTermType?: "NamedNode";
-        readonly type: "triple-subjects";
-      }
-    | { readonly identifierType?: "NamedNode"; readonly type: "type" };
-}
-
-export abstract class $ForwardingObjectSet implements $ObjectSet {
-  protected abstract get $delegate(): $ObjectSet;
-
-  child(identifier: Child.$Identifier): Promise<purify.Either<Error, Child>> {
-    return this.$delegate.child(identifier);
-  }
-
-  childIdentifiers(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Child.$Identifier[]>> {
-    return this.$delegate.childIdentifiers(query);
-  }
-
-  children(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Child[]>> {
-    return this.$delegate.children(query);
-  }
-
-  childrenCount(
-    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.childrenCount(query);
-  }
-
-  nested(
-    identifier: Nested.$Identifier,
-  ): Promise<purify.Either<Error, Nested>> {
-    return this.$delegate.nested(identifier);
-  }
-
-  nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested.$Identifier[]>> {
-    return this.$delegate.nestedIdentifiers(query);
-  }
-
-  nesteds(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested[]>> {
-    return this.$delegate.nesteds(query);
-  }
-
-  nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.nestedsCount(query);
-  }
-
-  parent(
-    identifier: ParentStatic.$Identifier,
-  ): Promise<purify.Either<Error, Parent>> {
-    return this.$delegate.parent(identifier);
-  }
-
-  parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ParentStatic.$Identifier[]>> {
-    return this.$delegate.parentIdentifiers(query);
-  }
-
-  parents(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Parent[]>> {
-    return this.$delegate.parents(query);
-  }
-
-  parentsCount(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.parentsCount(query);
-  }
-
-  unionMember1(
-    identifier: UnionMember1.$Identifier,
-  ): Promise<purify.Either<Error, UnionMember1>> {
-    return this.$delegate.unionMember1(identifier);
-  }
-
-  unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1.$Identifier[]>> {
-    return this.$delegate.unionMember1Identifiers(query);
-  }
-
-  unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1[]>> {
-    return this.$delegate.unionMember1s(query);
-  }
-
-  unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.unionMember1sCount(query);
-  }
-
-  unionMember2(
-    identifier: UnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, UnionMember2>> {
-    return this.$delegate.unionMember2(identifier);
-  }
-
-  unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2.$Identifier[]>> {
-    return this.$delegate.unionMember2Identifiers(query);
-  }
-
-  unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2[]>> {
-    return this.$delegate.unionMember2s(query);
-  }
-
-  unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.unionMember2sCount(query);
-  }
-
-  union(identifier: Union.$Identifier): Promise<purify.Either<Error, Union>> {
-    return this.$delegate.union(identifier);
-  }
-
-  unionIdentifiers(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Union.$Identifier[]>> {
-    return this.$delegate.unionIdentifiers(query);
-  }
-
-  unions(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Union[]>> {
-    return this.$delegate.unions(query);
-  }
-
-  unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.unionsCount(query);
   }
 }
-
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
-  readonly resourceSet: rdfjsResource.ResourceSet;
+  protected readonly resourceSet: ResourceSet;
 
-  constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
-    this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
+  constructor(dataset: DatasetCore) {
+    this.resourceSet = new ResourceSet({ dataset });
   }
 
-  async child(
-    identifier: Child.$Identifier,
-  ): Promise<purify.Either<Error, Child>> {
+  async child(identifier: Child.$Identifier): Promise<Either<Error, Child>> {
     return this.childSync(identifier);
   }
-
-  childSync(identifier: Child.$Identifier): purify.Either<Error, Child> {
+  childSync(identifier: Child.$Identifier): Either<Error, Child> {
     return this.childrenSync({
-      where: { identifiers: [identifier], type: "identifiers" },
+      filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
-
   async childIdentifiers(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Child.$Identifier[]>> {
+    query?: $ObjectSet.Query<Child.$Filter>,
+  ): Promise<Either<Error, readonly Child.$Identifier[]>> {
     return this.childIdentifiersSync(query);
   }
-
   childIdentifiersSync(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): purify.Either<Error, readonly Child.$Identifier[]> {
-    return this.$objectIdentifiersSync<Child, Child.$Identifier>(
-      [{ $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] }],
-      query,
+    query?: $ObjectSet.Query<Child.$Filter>,
+  ): Either<Error, readonly Child.$Identifier[]> {
+    return this.childrenSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
-
   async children(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Child[]>> {
+    query?: $ObjectSet.Query<Child.$Filter>,
+  ): Promise<Either<Error, readonly Child[]>> {
     return this.childrenSync(query);
   }
-
-  childrenSync(
-    query?: $ObjectSet.Query<Child.$Identifier>,
-  ): purify.Either<Error, readonly Child[]> {
-    return this.$objectsSync<Child, Child.$Identifier>(
-      [{ $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] }],
-      query,
-    );
-  }
-
   async childrenCount(
-    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
+    query?: Pick<$ObjectSet.Query<Child.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
     return this.childrenCountSync(query);
   }
-
   childrenCountSync(
-    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Child, Child.$Identifier>(
-      [{ $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] }],
+    query?: Pick<$ObjectSet.Query<Child.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.childrenSync(query).map((objects) => objects.length);
+  }
+  childrenSync(
+    query?: $ObjectSet.Query<Child.$Filter>,
+  ): Either<Error, readonly Child[]> {
+    return this.$objectsSync<Child, Child.$Filter, Child.$Identifier>(
+      {
+        $filter: Child.$filter,
+        $fromRdf: Child.$fromRdf,
+        $fromRdfTypes: [Child.$fromRdfType],
+      },
       query,
     );
   }
-
-  async nested(
-    identifier: Nested.$Identifier,
-  ): Promise<purify.Either<Error, Nested>> {
+  async nested(identifier: Nested.$Identifier): Promise<Either<Error, Nested>> {
     return this.nestedSync(identifier);
   }
-
-  nestedSync(identifier: Nested.$Identifier): purify.Either<Error, Nested> {
+  nestedSync(identifier: Nested.$Identifier): Either<Error, Nested> {
     return this.nestedsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
+      filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
-
   async nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested.$Identifier[]>> {
+    query?: $ObjectSet.Query<Nested.$Filter>,
+  ): Promise<Either<Error, readonly Nested.$Identifier[]>> {
     return this.nestedIdentifiersSync(query);
   }
-
   nestedIdentifiersSync(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): purify.Either<Error, readonly Nested.$Identifier[]> {
-    return this.$objectIdentifiersSync<Nested, Nested.$Identifier>(
-      [{ $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] }],
-      query,
+    query?: $ObjectSet.Query<Nested.$Filter>,
+  ): Either<Error, readonly Nested.$Identifier[]> {
+    return this.nestedsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
-
   async nesteds(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested[]>> {
+    query?: $ObjectSet.Query<Nested.$Filter>,
+  ): Promise<Either<Error, readonly Nested[]>> {
     return this.nestedsSync(query);
   }
-
-  nestedsSync(
-    query?: $ObjectSet.Query<Nested.$Identifier>,
-  ): purify.Either<Error, readonly Nested[]> {
-    return this.$objectsSync<Nested, Nested.$Identifier>(
-      [{ $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] }],
-      query,
-    );
-  }
-
   async nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
+    query?: Pick<$ObjectSet.Query<Nested.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
     return this.nestedsCountSync(query);
   }
-
   nestedsCountSync(
-    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Nested, Nested.$Identifier>(
-      [{ $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] }],
+    query?: Pick<$ObjectSet.Query<Nested.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.nestedsSync(query).map((objects) => objects.length);
+  }
+  nestedsSync(
+    query?: $ObjectSet.Query<Nested.$Filter>,
+  ): Either<Error, readonly Nested[]> {
+    return this.$objectsSync<Nested, Nested.$Filter, Nested.$Identifier>(
+      {
+        $filter: Nested.$filter,
+        $fromRdf: Nested.$fromRdf,
+        $fromRdfTypes: [Nested.$fromRdfType],
+      },
       query,
     );
   }
-
   async parent(
     identifier: ParentStatic.$Identifier,
-  ): Promise<purify.Either<Error, Parent>> {
+  ): Promise<Either<Error, Parent>> {
     return this.parentSync(identifier);
   }
-
-  parentSync(
-    identifier: ParentStatic.$Identifier,
-  ): purify.Either<Error, Parent> {
+  parentSync(identifier: ParentStatic.$Identifier): Either<Error, Parent> {
     return this.parentsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
+      filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
-
   async parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ParentStatic.$Identifier[]>> {
+    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+  ): Promise<Either<Error, readonly ParentStatic.$Identifier[]>> {
     return this.parentIdentifiersSync(query);
   }
-
   parentIdentifiersSync(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): purify.Either<Error, readonly ParentStatic.$Identifier[]> {
-    return this.$objectIdentifiersSync<Parent, ParentStatic.$Identifier>(
-      [
-        {
-          $fromRdf: ParentStatic.$fromRdf,
-          $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
-        },
-      ],
-      query,
+    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+  ): Either<Error, readonly ParentStatic.$Identifier[]> {
+    return this.parentsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
-
   async parents(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Parent[]>> {
+    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+  ): Promise<Either<Error, readonly Parent[]>> {
     return this.parentsSync(query);
   }
-
-  parentsSync(
-    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
-  ): purify.Either<Error, readonly Parent[]> {
-    return this.$objectsSync<Parent, ParentStatic.$Identifier>(
-      [
-        {
-          $fromRdf: ParentStatic.$fromRdf,
-          $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
   async parentsCount(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
     return this.parentsCountSync(query);
   }
-
   parentsCountSync(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Parent, ParentStatic.$Identifier>(
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.parentsSync(query).map((objects) => objects.length);
+  }
+  parentsSync(
+    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+  ): Either<Error, readonly Parent[]> {
+    return this.$objectsSync<
+      Parent,
+      ParentStatic.$Filter,
+      ParentStatic.$Identifier
+    >(
+      {
+        $filter: ParentStatic.$filter,
+        $fromRdf: ParentStatic.$fromRdf,
+        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+      },
+      query,
+    );
+  }
+  async unionMember1(
+    identifier: UnionMember1.$Identifier,
+  ): Promise<Either<Error, UnionMember1>> {
+    return this.unionMember1Sync(identifier);
+  }
+  unionMember1Sync(
+    identifier: UnionMember1.$Identifier,
+  ): Either<Error, UnionMember1> {
+    return this.unionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+  async unionMember1Identifiers(
+    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember1.$Identifier[]>> {
+    return this.unionMember1IdentifiersSync(query);
+  }
+  unionMember1IdentifiersSync(
+    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+  ): Either<Error, readonly UnionMember1.$Identifier[]> {
+    return this.unionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+  async unionMember1s(
+    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember1[]>> {
+    return this.unionMember1sSync(query);
+  }
+  async unionMember1sCount(
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
+    return this.unionMember1sCountSync(query);
+  }
+  unionMember1sCountSync(
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.unionMember1sSync(query).map((objects) => objects.length);
+  }
+  unionMember1sSync(
+    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+  ): Either<Error, readonly UnionMember1[]> {
+    return this.$objectsSync<
+      UnionMember1,
+      UnionMember1.$Filter,
+      UnionMember1.$Identifier
+    >(
+      {
+        $filter: UnionMember1.$filter,
+        $fromRdf: UnionMember1.$fromRdf,
+        $fromRdfTypes: [UnionMember1.$fromRdfType],
+      },
+      query,
+    );
+  }
+  async unionMember2(
+    identifier: UnionMember2.$Identifier,
+  ): Promise<Either<Error, UnionMember2>> {
+    return this.unionMember2Sync(identifier);
+  }
+  unionMember2Sync(
+    identifier: UnionMember2.$Identifier,
+  ): Either<Error, UnionMember2> {
+    return this.unionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+  async unionMember2Identifiers(
+    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember2.$Identifier[]>> {
+    return this.unionMember2IdentifiersSync(query);
+  }
+  unionMember2IdentifiersSync(
+    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+  ): Either<Error, readonly UnionMember2.$Identifier[]> {
+    return this.unionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+  async unionMember2s(
+    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+  ): Promise<Either<Error, readonly UnionMember2[]>> {
+    return this.unionMember2sSync(query);
+  }
+  async unionMember2sCount(
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
+    return this.unionMember2sCountSync(query);
+  }
+  unionMember2sCountSync(
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.unionMember2sSync(query).map((objects) => objects.length);
+  }
+  unionMember2sSync(
+    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+  ): Either<Error, readonly UnionMember2[]> {
+    return this.$objectsSync<
+      UnionMember2,
+      UnionMember2.$Filter,
+      UnionMember2.$Identifier
+    >(
+      {
+        $filter: UnionMember2.$filter,
+        $fromRdf: UnionMember2.$fromRdf,
+        $fromRdfTypes: [UnionMember2.$fromRdfType],
+      },
+      query,
+    );
+  }
+  async union(identifier: Union.$Identifier): Promise<Either<Error, Union>> {
+    return this.unionSync(identifier);
+  }
+  unionSync(identifier: Union.$Identifier): Either<Error, Union> {
+    return this.unionsSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+  async unionIdentifiers(
+    query?: $ObjectSet.Query<Union.$Filter>,
+  ): Promise<Either<Error, readonly Union.$Identifier[]>> {
+    return this.unionIdentifiersSync(query);
+  }
+  unionIdentifiersSync(
+    query?: $ObjectSet.Query<Union.$Filter>,
+  ): Either<Error, readonly Union.$Identifier[]> {
+    return this.unionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+  async unions(
+    query?: $ObjectSet.Query<Union.$Filter>,
+  ): Promise<Either<Error, readonly Union[]>> {
+    return this.unionsSync(query);
+  }
+  async unionsCount(
+    query?: Pick<$ObjectSet.Query<Union.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
+    return this.unionsCountSync(query);
+  }
+  unionsCountSync(
+    query?: Pick<$ObjectSet.Query<Union.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.unionsSync(query).map((objects) => objects.length);
+  }
+  unionsSync(
+    query?: $ObjectSet.Query<Union.$Filter>,
+  ): Either<Error, readonly Union[]> {
+    return this.$objectUnionsSync<Union, Union.$Filter, Union.$Identifier>(
       [
         {
+          $filter: Union.$filter,
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+        {
+          $filter: Union.$filter,
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+  async object(
+    identifier: $Object.$Identifier,
+  ): Promise<Either<Error, $Object>> {
+    return this.objectSync(identifier);
+  }
+  objectSync(identifier: $Object.$Identifier): Either<Error, $Object> {
+    return this.objectsSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+  async objectIdentifiers(
+    query?: $ObjectSet.Query<$Object.$Filter>,
+  ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
+    return this.objectIdentifiersSync(query);
+  }
+  objectIdentifiersSync(
+    query?: $ObjectSet.Query<$Object.$Filter>,
+  ): Either<Error, readonly $Object.$Identifier[]> {
+    return this.objectsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+  async objects(
+    query?: $ObjectSet.Query<$Object.$Filter>,
+  ): Promise<Either<Error, readonly $Object[]>> {
+    return this.objectsSync(query);
+  }
+  async objectsCount(
+    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+  ): Promise<Either<Error, number>> {
+    return this.objectsCountSync(query);
+  }
+  objectsCountSync(
+    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+  ): Either<Error, number> {
+    return this.objectsSync(query).map((objects) => objects.length);
+  }
+  objectsSync(
+    query?: $ObjectSet.Query<$Object.$Filter>,
+  ): Either<Error, readonly $Object[]> {
+    return this.$objectUnionsSync<
+      $Object,
+      $Object.$Filter,
+      $Object.$Identifier
+    >(
+      [
+        {
+          $filter: $Object.$filter,
+          $fromRdf: Child.$fromRdf,
+          $fromRdfTypes: [Child.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
           $fromRdf: ParentStatic.$fromRdf,
           $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
         },
-      ],
-      query,
-    );
-  }
-
-  async unionMember1(
-    identifier: UnionMember1.$Identifier,
-  ): Promise<purify.Either<Error, UnionMember1>> {
-    return this.unionMember1Sync(identifier);
-  }
-
-  unionMember1Sync(
-    identifier: UnionMember1.$Identifier,
-  ): purify.Either<Error, UnionMember1> {
-    return this.unionMember1sSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1.$Identifier[]>> {
-    return this.unionMember1IdentifiersSync(query);
-  }
-
-  unionMember1IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): purify.Either<Error, readonly UnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<UnionMember1, UnionMember1.$Identifier>(
-      [
         {
-          $fromRdf: UnionMember1.$fromRdf,
-          $fromRdfTypes: [UnionMember1.$fromRdfType],
+          $filter: $Object.$filter,
+          $fromRdf: Nested.$fromRdf,
+          $fromRdfTypes: [Nested.$fromRdfType],
         },
-      ],
-      query,
-    );
-  }
-
-  async unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1[]>> {
-    return this.unionMember1sSync(query);
-  }
-
-  unionMember1sSync(
-    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
-  ): purify.Either<Error, readonly UnionMember1[]> {
-    return this.$objectsSync<UnionMember1, UnionMember1.$Identifier>(
-      [
         {
-          $fromRdf: UnionMember1.$fromRdf,
-          $fromRdfTypes: [UnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.unionMember1sCountSync(query);
-  }
-
-  unionMember1sCountSync(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<UnionMember1, UnionMember1.$Identifier>(
-      [
-        {
-          $fromRdf: UnionMember1.$fromRdf,
-          $fromRdfTypes: [UnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async unionMember2(
-    identifier: UnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, UnionMember2>> {
-    return this.unionMember2Sync(identifier);
-  }
-
-  unionMember2Sync(
-    identifier: UnionMember2.$Identifier,
-  ): purify.Either<Error, UnionMember2> {
-    return this.unionMember2sSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2.$Identifier[]>> {
-    return this.unionMember2IdentifiersSync(query);
-  }
-
-  unionMember2IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): purify.Either<Error, readonly UnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<UnionMember2, UnionMember2.$Identifier>(
-      [
-        {
-          $fromRdf: UnionMember2.$fromRdf,
-          $fromRdfTypes: [UnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2[]>> {
-    return this.unionMember2sSync(query);
-  }
-
-  unionMember2sSync(
-    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
-  ): purify.Either<Error, readonly UnionMember2[]> {
-    return this.$objectsSync<UnionMember2, UnionMember2.$Identifier>(
-      [
-        {
-          $fromRdf: UnionMember2.$fromRdf,
-          $fromRdfTypes: [UnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.unionMember2sCountSync(query);
-  }
-
-  unionMember2sCountSync(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<UnionMember2, UnionMember2.$Identifier>(
-      [
-        {
-          $fromRdf: UnionMember2.$fromRdf,
-          $fromRdfTypes: [UnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async union(
-    identifier: Union.$Identifier,
-  ): Promise<purify.Either<Error, Union>> {
-    return this.unionSync(identifier);
-  }
-
-  unionSync(identifier: Union.$Identifier): purify.Either<Error, Union> {
-    return this.unionsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async unionIdentifiers(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Union.$Identifier[]>> {
-    return this.unionIdentifiersSync(query);
-  }
-
-  unionIdentifiersSync(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): purify.Either<Error, readonly Union.$Identifier[]> {
-    return this.$objectIdentifiersSync<Union, Union.$Identifier>(
-      [
-        {
+          $filter: $Object.$filter,
           $fromRdf: UnionMember1.$fromRdf,
           $fromRdfTypes: [UnionMember1.$fromRdfType],
         },
         {
+          $filter: $Object.$filter,
           $fromRdf: UnionMember2.$fromRdf,
           $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: $DefaultPartial.$fromRdf,
+          $fromRdfTypes: [],
         },
       ],
       query,
     );
   }
-
-  async unions(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Union[]>> {
-    return this.unionsSync(query);
-  }
-
-  unionsSync(
-    query?: $ObjectSet.Query<Union.$Identifier>,
-  ): purify.Either<Error, readonly Union[]> {
-    return this.$objectsSync<Union, Union.$Identifier>(
-      [
-        {
-          $fromRdf: UnionMember1.$fromRdf,
-          $fromRdfTypes: [UnionMember1.$fromRdfType],
-        },
-        {
-          $fromRdf: UnionMember2.$fromRdf,
-          $fromRdfTypes: [UnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.unionsCountSync(query);
-  }
-
-  unionsCountSync(
-    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Union, Union.$Identifier>(
-      [
-        {
-          $fromRdf: UnionMember1.$fromRdf,
-          $fromRdfTypes: [UnionMember1.$fromRdfType],
-        },
-        {
-          $fromRdf: UnionMember2.$fromRdf,
-          $fromRdfTypes: [UnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  protected $objectIdentifiersSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectTypes: readonly {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
-    return this.$objectsSync<ObjectT, ObjectIdentifierT>(
-      objectTypes,
-      query,
-    ).map((objects) => objects.map((object) => object.$identifier));
-  }
-
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (BlankNode | NamedNode)[];
+      };
+    },
+    ObjectIdentifierT extends BlankNode | NamedNode,
   >(
-    objectTypes: readonly {
+    objectType: {
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
-        resource: rdfjsResource.Resource,
+        resource: Resource,
         options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, readonly ObjectT[]> {
+      ) => Either<Error, ObjectT>;
+      $fromRdfTypes: readonly NamedNode[];
+    },
+    query?: $ObjectSet.Query<ObjectFilterT>,
+  ): Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return purify.Either.of([]);
+      return Either.of([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -2958,204 +3426,244 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    // First pass: gather all resources that meet the where filters.
-    // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
-    const resources: {
-      objectType?: {
-        $fromRdf: (
-          resource: rdfjsResource.Resource,
-          options: { objectSet: $ObjectSet },
-        ) => purify.Either<Error, ObjectT>;
-        $fromRdfTypes: readonly rdfjs.NamedNode[];
-      };
-      resource: rdfjsResource.Resource;
-    }[] = [];
-    const where = query?.where ?? { type: "type" };
-    switch (where.type) {
-      case "identifiers": {
-        for (const identifier of where.identifiers) {
-          // Don't deduplicate
-          resources.push({ resource: this.resourceSet.resource(identifier) });
-        }
-        break;
-      }
-
-      case "triple-objects": {
-        for (const quad of this.resourceSet.dataset.match(
-          where.subject,
-          where.predicate,
-          null,
-        )) {
-          if (
-            where.objectTermType &&
-            quad.object.termType !== where.objectTermType
-          ) {
-            continue;
-          }
-
-          switch (quad.object.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              break;
-            default:
-              return purify.Left(
-                new Error(
-                  `subject=${where.subject?.value} predicate=${where.predicate.value} pattern matches non-identifier (${quad.object.termType}) object`,
-                ),
-              );
-          }
-
-          const resource = this.resourceSet.resource(quad.object);
-          if (
-            !resources.some(({ resource: existingResource }) =>
-              existingResource.identifier.equals(resource.identifier),
-            )
-          ) {
+    let resources: { object?: ObjectT; resource: Resource }[];
+    let sortResources: boolean;
+    if (query?.filter?.$identifier?.in) {
+      resources = query.filter.$identifier.in.map((identifier) => ({
+        resource: this.resourceSet.resource(identifier),
+      }));
+      sortResources = false;
+    } else if (objectType.$fromRdfTypes.length > 0) {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      sortResources = true;
+      for (const fromRdfType of objectType.$fromRdfTypes) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          if (!identifierSet.has(resource.identifier)) {
+            identifierSet.add(resource.identifier);
             resources.push({ resource });
           }
         }
-        break;
       }
-
-      case "triple-subjects": {
-        for (const quad of this.resourceSet.dataset.match(
-          null,
-          where.predicate,
-          where.object,
-        )) {
-          if (
-            where.subjectTermType &&
-            quad.subject.termType !== where.subjectTermType
-          ) {
+    } else {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      sortResources = true;
+      for (const quad of this.resourceSet.dataset) {
+        switch (quad.subject.termType) {
+          case "BlankNode":
+          case "NamedNode":
+            break;
+          default:
             continue;
-          }
-
-          switch (quad.subject.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              break;
-            default:
-              return purify.Left(
-                new Error(
-                  `predicate=${where.predicate.value} object=${where.object?.value} pattern matches non-identifier (${quad.subject.termType}) subject`,
-                ),
-              );
-          }
-
-          const resource = this.resourceSet.resource(quad.subject);
-          if (
-            !resources.some(({ resource: existingResource }) =>
-              existingResource.identifier.equals(resource.identifier),
-            )
-          ) {
-            resources.push({ resource });
-          }
-        }
-        break;
-      }
-
-      case "type": {
-        for (const objectType of objectTypes) {
-          if (objectType.$fromRdfTypes.length === 0) {
-            continue;
-          }
-
-          for (const fromRdfType of objectType.$fromRdfTypes) {
-            for (const resource of where.identifierType === "NamedNode"
-              ? this.resourceSet.namedInstancesOf(fromRdfType)
-              : this.resourceSet.instancesOf(fromRdfType)) {
-              if (
-                !resources.some(({ resource: existingResource }) =>
-                  existingResource.identifier.equals(resource.identifier),
-                )
-              ) {
-                resources.push({ objectType, resource });
-              }
-            }
-          }
         }
 
-        break;
+        if (identifierSet.has(quad.subject)) {
+          continue;
+        }
+        identifierSet.add(quad.subject);
+        const resource = this.resourceSet.resource(quad.subject);
+        // Eagerly eliminate the majority of resources that won't match the object type
+        objectType.$fromRdf(resource, { objectSet: this }).ifRight((object) => {
+          resources.push({ object, resource });
+        });
       }
     }
 
-    // Sort resources by identifier so limit and offset are deterministic
-    resources.sort((left, right) =>
-      left.resource.identifier.value.localeCompare(
-        right.resource.identifier.value,
-      ),
-    );
+    if (sortResources) {
+      // Sort resources by identifier so limit and offset are deterministic
+      resources.sort((left, right) =>
+        left.resource.identifier.value.localeCompare(
+          right.resource.identifier.value,
+        ),
+      );
+    }
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (let { objectType, resource } of resources) {
-      let objectEither: purify.Either<Error, ObjectT>;
-      if (objectType) {
-        objectEither = objectType.$fromRdf(resource, { objectSet: this });
-      } else {
-        for (const tryObjectType of objectTypes) {
-          objectEither = tryObjectType.$fromRdf(resource, { objectSet: this });
-          if (objectEither.isRight()) {
-            objectType = tryObjectType;
+    for (let { object, resource } of resources) {
+      if (!object) {
+        const objectEither = objectType.$fromRdf(resource, { objectSet: this });
+        if (objectEither.isLeft()) {
+          return objectEither;
+        }
+        object = objectEither.unsafeCoerce();
+      }
+
+      if (query?.filter && !objectType.$filter(query.filter, object)) {
+        continue;
+      }
+
+      if (objectI++ >= offset) {
+        objects.push(object);
+        if (objects.length === limit) {
+          return Either.of(objects);
+        }
+      }
+    }
+    return Either.of(objects);
+  }
+  protected $objectUnionsSync<
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (BlankNode | NamedNode)[];
+      };
+    },
+    ObjectIdentifierT extends BlankNode | NamedNode,
+  >(
+    objectTypes: readonly {
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+      $fromRdf: (
+        resource: Resource,
+        options: { objectSet: $ObjectSet },
+      ) => Either<Error, ObjectT>;
+      $fromRdfTypes: readonly NamedNode[];
+    }[],
+    query?: $ObjectSet.Query<ObjectFilterT>,
+  ): Either<Error, readonly ObjectT[]> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return Either.of([]);
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let resources: {
+      object?: ObjectT;
+      objectType?: {
+        $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+        $fromRdf: (
+          resource: Resource,
+          options: { objectSet: $ObjectSet },
+        ) => Either<Error, ObjectT>;
+        $fromRdfTypes: readonly NamedNode[];
+      };
+      resource: Resource;
+    }[];
+    let sortResources: boolean;
+    if (query?.filter?.$identifier?.in) {
+      resources = query.filter.$identifier.in.map((identifier) => ({
+        resource: this.resourceSet.resource(identifier),
+      }));
+      sortResources = false;
+    } else if (
+      objectTypes.every((objectType) => objectType.$fromRdfTypes.length > 0)
+    ) {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      sortResources = true;
+      for (const objectType of objectTypes) {
+        for (const fromRdfType of objectType.$fromRdfTypes) {
+          for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+            if (!identifierSet.has(resource.identifier)) {
+              identifierSet.add(resource.identifier);
+              resources.push({ objectType, resource });
+            }
+          }
+        }
+      }
+    } else {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      sortResources = true;
+      for (const quad of this.resourceSet.dataset) {
+        switch (quad.subject.termType) {
+          case "BlankNode":
+          case "NamedNode":
+            break;
+          default:
+            continue;
+        }
+
+        if (identifierSet.has(quad.subject)) {
+          continue;
+        }
+        identifierSet.add(quad.subject);
+        // Eagerly eliminate the majority of resources that won't match the object types
+        const resource = this.resourceSet.resource(quad.subject);
+        for (const objectType of objectTypes) {
+          if (
+            objectType
+              .$fromRdf(resource, { objectSet: this })
+              .ifRight((object) => {
+                resources.push({ object, objectType, resource });
+              })
+              .isRight()
+          ) {
             break;
           }
         }
       }
+    }
 
-      if (objectEither!.isLeft()) {
-        // Doesn't appear to belong to any of the known object types, just assume the first
-        return objectEither as unknown as purify.Either<
-          Error,
-          readonly ObjectT[]
-        >;
+    if (sortResources) {
+      // Sort resources by identifier so limit and offset are deterministic
+      resources.sort((left, right) =>
+        left.resource.identifier.value.localeCompare(
+          right.resource.identifier.value,
+        ),
+      );
+    }
+
+    let objectI = 0;
+    const objects: ObjectT[] = [];
+    for (let { object, objectType, resource } of resources) {
+      if (!object) {
+        let objectEither: Either<Error, ObjectT>;
+        if (objectType) {
+          objectEither = objectType.$fromRdf(resource, { objectSet: this });
+        } else {
+          objectEither = Left(new Error("no object types"));
+          for (const tryObjectType of objectTypes) {
+            objectEither = tryObjectType.$fromRdf(resource, {
+              objectSet: this,
+            });
+            if (objectEither.isRight()) {
+              objectType = tryObjectType;
+              break;
+            }
+          }
+        }
+        if (objectEither.isLeft()) {
+          return objectEither;
+        }
+        object = objectEither.unsafeCoerce();
       }
-      const object = objectEither!.unsafeCoerce();
+      if (!objectType) {
+        throw new Error("objectType should be set here");
+      }
+
+      if (query?.filter && !objectType.$filter(query.filter, object)) {
+        continue;
+      }
+
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
-          return purify.Either.of(objects);
+          return Either.of(objects);
         }
       }
     }
-
-    return purify.Either.of(objects);
-  }
-
-  protected $objectsCountSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectTypes: readonly {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, number> {
-    return this.$objectsSync<ObjectT, ObjectIdentifierT>(
-      objectTypes,
-      query,
-    ).map((objects) => objects.length);
+    return Either.of(objects);
   }
 }
-
-export const graphqlSchema = new graphql.GraphQLSchema({
-  query: new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({
+export const graphqlSchema = new GraphQLSchema({
+  query: new GraphQLObjectType<null, { objectSet: $ObjectSet }>({
     name: "Query",
     fields: {
       child: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<Child> =>
           (
-            await purify.EitherAsync<Error, Child>(async ({ liftEither }) =>
+            await EitherAsync<Error, Child>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.child(
                   await liftEither(
@@ -3165,13 +3673,10 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(Child.$GraphQL),
+        type: new GraphQLNonNull(Child.$GraphQL),
       },
       childIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
           args: { limit: number | null; offset: number | null },
@@ -3185,19 +3690,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           )
             .unsafeCoerce()
             .map(Child.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       children: {
         args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
         },
         resolve: async (
           _source,
@@ -3209,9 +3708,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly Child[]> =>
           (
-            await purify.EitherAsync<Error, readonly Child[]>(
+            await EitherAsync<Error, readonly Child[]>(
               async ({ liftEither }) => {
-                let where: $ObjectSet.Where<Child.$Identifier> | undefined;
+                let filter: Child.$Filter | undefined;
                 if (args.identifiers) {
                   const identifiers: Child.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
@@ -3221,38 +3720,36 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                       ),
                     );
                   }
-                  where = { identifiers, type: "identifiers" };
+                  filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
                   await objectSet.children({
+                    filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
-                    where,
                   }),
                 );
               },
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Child.$GraphQL)),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(Child.$GraphQL)),
         ),
       },
       childrenCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.childrenCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+        type: new GraphQLNonNull(GraphQLInt),
       },
       nested: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<Nested> =>
           (
-            await purify.EitherAsync<Error, Nested>(async ({ liftEither }) =>
+            await EitherAsync<Error, Nested>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.nested(
                   await liftEither(
@@ -3262,13 +3759,10 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(Nested.$GraphQL),
+        type: new GraphQLNonNull(Nested.$GraphQL),
       },
       nestedIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
           args: { limit: number | null; offset: number | null },
@@ -3282,19 +3776,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           )
             .unsafeCoerce()
             .map(Nested.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       nesteds: {
         args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
         },
         resolve: async (
           _source,
@@ -3306,9 +3794,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly Nested[]> =>
           (
-            await purify.EitherAsync<Error, readonly Nested[]>(
+            await EitherAsync<Error, readonly Nested[]>(
               async ({ liftEither }) => {
-                let where: $ObjectSet.Where<Nested.$Identifier> | undefined;
+                let filter: Nested.$Filter | undefined;
                 if (args.identifiers) {
                   const identifiers: Nested.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
@@ -3318,38 +3806,36 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                       ),
                     );
                   }
-                  where = { identifiers, type: "identifiers" };
+                  filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
                   await objectSet.nesteds({
+                    filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
-                    where,
                   }),
                 );
               },
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.$GraphQL)),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(Nested.$GraphQL)),
         ),
       },
       nestedsCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.nestedsCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+        type: new GraphQLNonNull(GraphQLInt),
       },
       parent: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<Parent> =>
           (
-            await purify.EitherAsync<Error, Parent>(async ({ liftEither }) =>
+            await EitherAsync<Error, Parent>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.parent(
                   await liftEither(
@@ -3359,13 +3845,10 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(ParentStatic.$GraphQL),
+        type: new GraphQLNonNull(ParentStatic.$GraphQL),
       },
       parentIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
           args: { limit: number | null; offset: number | null },
@@ -3379,19 +3862,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           )
             .unsafeCoerce()
             .map(ParentStatic.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       parents: {
         args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
         },
         resolve: async (
           _source,
@@ -3403,11 +3880,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly Parent[]> =>
           (
-            await purify.EitherAsync<Error, readonly Parent[]>(
+            await EitherAsync<Error, readonly Parent[]>(
               async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<ParentStatic.$Identifier>
-                  | undefined;
+                let filter: ParentStatic.$Filter | undefined;
                 if (args.identifiers) {
                   const identifiers: ParentStatic.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
@@ -3417,57 +3892,49 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                       ),
                     );
                   }
-                  where = { identifiers, type: "identifiers" };
+                  filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
                   await objectSet.parents({
+                    filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
-                    where,
                   }),
                 );
               },
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(ParentStatic.$GraphQL),
-          ),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(ParentStatic.$GraphQL)),
         ),
       },
       parentsCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.parentsCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+        type: new GraphQLNonNull(GraphQLInt),
       },
       unionMember1: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<UnionMember1> =>
           (
-            await purify.EitherAsync<Error, UnionMember1>(
-              async ({ liftEither }) =>
-                liftEither(
-                  await objectSet.unionMember1(
-                    await liftEither(
-                      UnionMember1.$Identifier.fromString(args.identifier),
-                    ),
+            await EitherAsync<Error, UnionMember1>(async ({ liftEither }) =>
+              liftEither(
+                await objectSet.unionMember1(
+                  await liftEither(
+                    UnionMember1.$Identifier.fromString(args.identifier),
                   ),
                 ),
+              ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(UnionMember1.$GraphQL),
+        type: new GraphQLNonNull(UnionMember1.$GraphQL),
       },
       unionMember1Identifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
           args: { limit: number | null; offset: number | null },
@@ -3481,19 +3948,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           )
             .unsafeCoerce()
             .map(UnionMember1.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       unionMember1s: {
         args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
         },
         resolve: async (
           _source,
@@ -3505,11 +3966,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly UnionMember1[]> =>
           (
-            await purify.EitherAsync<Error, readonly UnionMember1[]>(
+            await EitherAsync<Error, readonly UnionMember1[]>(
               async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<UnionMember1.$Identifier>
-                  | undefined;
+                let filter: UnionMember1.$Filter | undefined;
                 if (args.identifiers) {
                   const identifiers: UnionMember1.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
@@ -3519,57 +3978,49 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                       ),
                     );
                   }
-                  where = { identifiers, type: "identifiers" };
+                  filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
                   await objectSet.unionMember1s({
+                    filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
-                    where,
                   }),
                 );
               },
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(UnionMember1.$GraphQL),
-          ),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(UnionMember1.$GraphQL)),
         ),
       },
       unionMember1sCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.unionMember1sCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+        type: new GraphQLNonNull(GraphQLInt),
       },
       unionMember2: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<UnionMember2> =>
           (
-            await purify.EitherAsync<Error, UnionMember2>(
-              async ({ liftEither }) =>
-                liftEither(
-                  await objectSet.unionMember2(
-                    await liftEither(
-                      UnionMember2.$Identifier.fromString(args.identifier),
-                    ),
+            await EitherAsync<Error, UnionMember2>(async ({ liftEither }) =>
+              liftEither(
+                await objectSet.unionMember2(
+                  await liftEither(
+                    UnionMember2.$Identifier.fromString(args.identifier),
                   ),
                 ),
+              ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(UnionMember2.$GraphQL),
+        type: new GraphQLNonNull(UnionMember2.$GraphQL),
       },
       unionMember2Identifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
           args: { limit: number | null; offset: number | null },
@@ -3583,19 +4034,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           )
             .unsafeCoerce()
             .map(UnionMember2.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       unionMember2s: {
         args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
         },
         resolve: async (
           _source,
@@ -3607,11 +4052,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly UnionMember2[]> =>
           (
-            await purify.EitherAsync<Error, readonly UnionMember2[]>(
+            await EitherAsync<Error, readonly UnionMember2[]>(
               async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<UnionMember2.$Identifier>
-                  | undefined;
+                let filter: UnionMember2.$Filter | undefined;
                 if (args.identifiers) {
                   const identifiers: UnionMember2.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
@@ -3621,40 +4064,36 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                       ),
                     );
                   }
-                  where = { identifiers, type: "identifiers" };
+                  filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
                   await objectSet.unionMember2s({
+                    filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
-                    where,
                   }),
                 );
               },
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(UnionMember2.$GraphQL),
-          ),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(UnionMember2.$GraphQL)),
         ),
       },
       unionMember2sCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.unionMember2sCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+        type: new GraphQLNonNull(GraphQLInt),
       },
       union: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
         resolve: async (
           _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<Union> =>
           (
-            await purify.EitherAsync<Error, Union>(async ({ liftEither }) =>
+            await EitherAsync<Error, Union>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.union(
                   await liftEither(
@@ -3664,13 +4103,10 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(Union.$GraphQL),
+        type: new GraphQLNonNull(Union.$GraphQL),
       },
       unionIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
         resolve: async (
           _source,
           args: { limit: number | null; offset: number | null },
@@ -3684,19 +4120,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           )
             .unsafeCoerce()
             .map(Union.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       unions: {
         args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
         },
         resolve: async (
           _source,
@@ -3708,9 +4138,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly Union[]> =>
           (
-            await purify.EitherAsync<Error, readonly Union[]>(
+            await EitherAsync<Error, readonly Union[]>(
               async ({ liftEither }) => {
-                let where: $ObjectSet.Where<Union.$Identifier> | undefined;
+                let filter: Union.$Filter | undefined;
                 if (args.identifiers) {
                   const identifiers: Union.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
@@ -3720,26 +4150,26 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                       ),
                     );
                   }
-                  where = { identifiers, type: "identifiers" };
+                  filter = { $identifier: { in: identifiers } };
                 }
                 return await liftEither(
                   await objectSet.unions({
+                    filter,
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
-                    where,
                   }),
                 );
               },
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Union.$GraphQL)),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull(Union.$GraphQL)),
         ),
       },
       unionsCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.unionsCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+        type: new GraphQLNonNull(GraphQLInt),
       },
     },
   }),

@@ -5,9 +5,7 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
-
 import type * as ast from "../../ast/index.js";
-
 import { logger } from "../../logger.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
@@ -31,6 +29,7 @@ import { StringType } from "./StringType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import { code } from "./ts-poet-wrapper.js";
 import { tsName } from "./tsName.js";
 import { UnionType } from "./UnionType.js";
 
@@ -178,7 +177,7 @@ export class TypeFactory {
             name: `${syntheticNamePrefix}identifier`,
             objectType,
             type: identifierType,
-            typeAlias: `${staticModuleName}.${syntheticNamePrefix}Identifier`,
+            typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
             visibility: "public",
           }),
         );

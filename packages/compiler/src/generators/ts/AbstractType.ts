@@ -1,10 +1,8 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
-import type { TsFeature } from "../../enums/index.js";
-import type { Import } from "./Import.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import type { Type } from "./Type.js";
+import { imports } from "./imports.js";
+import type { Typeof } from "./Typeof.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class all types.
@@ -29,18 +27,18 @@ export abstract class AbstractType {
    * A function (reference or declaration) that compares two property values of this type, returning a
    * $EqualsResult.
    */
-  abstract readonly equalsFunction: string;
+  abstract readonly equalsFunction: Code;
 
   /**
    * A function (reference or declaration) that takes a filter of filterType (below) and a value of this type
    * and returns true if the value passes the filter.
    */
-  abstract readonly filterFunction: string;
+  abstract readonly filterFunction: Code;
 
   /**
    * Composite type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
    */
-  abstract readonly filterType: string;
+  abstract readonly filterType: Code;
 
   /**
    * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
@@ -49,7 +47,7 @@ export abstract class AbstractType {
     Record<
       string,
       {
-        type: string;
+        type: Code;
       }
     >
   >;
@@ -77,17 +75,17 @@ export abstract class AbstractType {
   /**
    * TypeScript name of the type.
    */
-  abstract readonly name: string;
+  abstract readonly name: Code | string;
 
   /**
    * TypeScript object describing this type, for runtime use.
    */
-  abstract readonly schema: string;
+  abstract readonly schema: Code;
 
   /**
    * TypeScript type describing .schema.
    */
-  abstract readonly schemaType: string;
+  abstract readonly schemaType: Code;
 
   /**
    * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
@@ -100,14 +98,12 @@ export abstract class AbstractType {
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: prefix to use for new variables
    */
-  abstract readonly sparqlWherePatternsFunction: string;
+  abstract readonly sparqlWherePatternsFunction: Code;
 
   /**
    * JavaScript typeof(s) the type.
    */
-  abstract readonly typeofs: NonEmptyList<
-    "boolean" | "object" | "number" | "string"
-  >;
+  abstract readonly typeofs: NonEmptyList<Typeof>;
 
   constructor({
     comment,
@@ -122,16 +118,7 @@ export abstract class AbstractType {
    */
   protected get schemaObject() {
     return {
-      kind: `${JSON.stringify(this.kind)} as const`,
-    };
-  }
-
-  /**
-   * Helper to compose the result of schemaType along the type hierarchy.
-   */
-  protected get schemaTypeObject() {
-    return {
-      kind: JSON.stringify(this.kind),
+      kind: code`${literalOf(this.kind)} as const`,
     };
   }
 
@@ -141,9 +128,9 @@ export abstract class AbstractType {
    */
   abstract fromJsonExpression(parameters: {
     variables: {
-      value: string;
+      value: Code;
     };
-  }): string;
+  }): Code;
 
   /**
    * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to a
@@ -169,25 +156,25 @@ export abstract class AbstractType {
    */
   abstract fromRdfExpression(parameters: {
     variables: {
-      context: string;
+      context: Code;
       ignoreRdfType?: boolean;
-      objectSet: string;
-      preferredLanguages: string;
-      predicate: string;
-      resource: string;
-      resourceValues: string;
+      objectSet: Code;
+      preferredLanguages: Code;
+      predicate: Code;
+      resource: Code;
+      resourceValues: Code;
     };
-  }): string;
+  }): Code;
 
   /**
    * An expression that resolves a value of this type in the GraphQL server.
    */
   abstract graphqlResolveExpression(parameters: {
     variables: {
-      args: string;
-      value: string;
+      args: Code;
+      value: Code;
     };
-  }): string;
+  }): Code;
 
   /**
    * Statements that use hasher.update to hash a property value of this type.
@@ -195,10 +182,10 @@ export abstract class AbstractType {
   abstract hashStatements(parameters: {
     depth: number;
     variables: {
-      hasher: string;
-      value: string;
+      hasher: Code;
+      value: Code;
     };
-  }): readonly string[];
+  }): readonly Code[];
 
   /**
    * JSON-compatible version of the type.
@@ -211,8 +198,8 @@ export abstract class AbstractType {
    * Element object for a JSON Forms UI schema.
    */
   abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: string };
-  }): Maybe<string>;
+    variables: { scopePrefix: Code };
+  }): Maybe<Code>;
 
   /**
    * Zod schema for the JSON type of this type.
@@ -226,39 +213,26 @@ export abstract class AbstractType {
   abstract jsonZodSchema(parameters: {
     includeDiscriminantProperty?: boolean;
     context: "property" | "type";
-    variables: { zod: string };
-  }): string;
+  }): Code;
 
   /**
-   * Reusable function, type, and other declarations that are not particular to this type but that type-specific code
-   * relies on. For example, the equals function/method of ObjectType has a custom return type that's the same across all
-   * ObjectType's. Instead of re-declaring the return type anonymously on every equals function, declare a named type
-   * as a snippet and reference it.
-   *
-   * Snippets should be named in order to facilitate deduplication. A snippet should usually be a single declaration (e.g.,
-   * a function or a type) and the snippet's name should be the name of that declaration.
-   */
-  abstract snippetDeclarations(parameters: {
-    features: ReadonlySet<TsFeature>;
-    recursionStack: Type[];
-  }): Readonly<Record<string, SnippetDeclaration>>;
-
-  /**
-   * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
+   * SPARQL.js CONSTRUCT template triples for a value of this type as a (runtime) array of sparqljs.Triple.
    *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
    *   variables: runtime variables
    *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
    *     - variablePrefix: prefix to use for variables
+   *
+   * Returns a (runtime) array of sparqljs.Triple.
    */
   abstract sparqlConstructTriples(parameters: {
     allowIgnoreRdfType: boolean;
     variables: {
-      valueVariable: string;
-      variablePrefix: string;
+      valueVariable: Code;
+      variablePrefix: Code;
     };
-  }): readonly (AbstractType.SparqlConstructTriple | string)[];
+  }): Maybe<Code>;
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
@@ -267,9 +241,9 @@ export abstract class AbstractType {
   abstract toJsonExpression(parameters: {
     includeDiscriminantProperty?: boolean;
     variables: {
-      value: string;
+      value: Code;
     };
-  }): string;
+  }): Code;
 
   /**
    * An expression that converts a property value of this type to an array of values that can be .add'd to a rdfjsResource.MutableResource
@@ -277,27 +251,21 @@ export abstract class AbstractType {
    */
   abstract toRdfExpression(parameters: {
     variables: {
-      predicate: string;
-      mutateGraph: string;
-      resource: string;
-      resourceSet: string;
-      value: string;
+      predicate: Code;
+      mutateGraph: Code;
+      resource: Code;
+      resourceSet: Code;
+      value: Code;
     };
-  }): string;
-
-  /**
-   * Imports necessary to use this type.
-   */
-  abstract useImports(parameters: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[];
+  }): Code;
 }
 
 export namespace AbstractType {
   export interface Conversion {
-    readonly conversionExpression: (value: string) => string;
-    readonly sourceTypeCheckExpression: (value: string) => string;
-    readonly sourceTypeName: string;
+    readonly conversionExpression: (value: Code) => Code;
+    readonly sourceTypeCheckExpression: (value: Code) => Code;
+    readonly sourceTypeName: Code | string;
+    readonly sourceTypeof: Typeof;
   }
 
   export interface DiscriminantProperty {
@@ -315,18 +283,18 @@ export namespace AbstractType {
     /**
      * The name of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
      */
-    readonly nullableName: string;
+    readonly nullableName: Code;
 
-    constructor(nullableName: string, parameters?: { nullable: boolean }) {
+    constructor(nullableName: Code, parameters?: { nullable: boolean }) {
       this.nullable = !!parameters?.nullable;
       this.nullableName = nullableName;
     }
 
     @Memoize()
-    get name(): string {
+    get name(): Code {
       return this.nullable
         ? this.nullableName
-        : `new graphql.GraphQLNonNull(${this.nullableName})`;
+        : code`new ${imports.GraphQLNonNull}(${this.nullableName})`;
     }
   }
 
@@ -339,10 +307,10 @@ export namespace AbstractType {
     /**
      * The name of the type when it's required i.e. -- so it should never include "| undefined".
      */
-    readonly requiredName: string;
+    readonly requiredName: Code | string;
 
     constructor(
-      requiredName: string,
+      requiredName: Code | string,
       parameters?: {
         optional: boolean;
       },
@@ -352,16 +320,10 @@ export namespace AbstractType {
     }
 
     @Memoize()
-    get name(): string {
+    get name(): Code | string {
       return this.optional
-        ? `(${this.requiredName}) | undefined`
+        ? code`(${this.requiredName}) | undefined`
         : this.requiredName;
     }
-  }
-
-  export interface SparqlConstructTriple {
-    readonly object: string;
-    readonly predicate: string;
-    readonly subject: string;
   }
 }

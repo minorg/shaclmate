@@ -1,10 +1,10 @@
 import { Maybe } from "purify-ts";
-
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
@@ -31,32 +31,9 @@ export class LazyObjectType extends AbstractLazyObjectType<
       partialType,
       resolvedType,
       runtimeClass: {
-        name: `${syntheticNamePrefix}LazyObject<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
+        name: code`${snippets.LazyObject}<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
         partialPropertyName: "partial",
-        rawName: `${syntheticNamePrefix}LazyObject`,
-        snippetDeclarations: singleEntryRecord(
-          `${syntheticNamePrefix}LazyObject`,
-          `\
-/**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
-  readonly partial: PartialObjectT;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>;
-
-  constructor({ partial, resolver }: {
-    partial: PartialObjectT
-    resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>,
-  }) {
-    this.partial = partial;
-    this.resolver = resolver;
-  }
-
-  resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
-  }
-}`,
-        ),
+        rawName: code`${snippets.LazyObject}`,
       },
     });
   }
@@ -67,11 +44,13 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
     if (this.partialType.kind === "ObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => ${imports.Either}.of(${value} as ${this.resolvedType.name}) })`,
         // Don't check instanceof value since the ObjectType may be an interface
         // Rely on the fact that this will be the last type check on an object
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+        sourceTypeCheckExpression: (value) =>
+          code`typeof ${value} === "object"`,
         sourceTypeName: this.resolvedType.name,
+        sourceTypeof: "object",
       });
     } else if (
       this.resolvedType.kind === "ObjectUnionType" &&
@@ -81,11 +60,13 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolvedType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolvedType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Either}.of(${value} as ${this.resolvedType.name}) })`,
         // Don't check instanceof value since the ObjectUnionType may be an interface
         // Rely on the fact that this will be the last type check on an object
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+        sourceTypeCheckExpression: (value) =>
+          code`typeof ${value} === "object"`,
         sourceTypeName: this.resolvedType.name,
+        sourceTypeof: "object",
       });
     }
 
@@ -94,21 +75,21 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
 
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
-  ): string {
-    return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+  ): Code {
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${imports.Left}(new Error(\`unable to resolve identifier \${${imports.Resource}.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
   }
 
   override fromRdfExpression(
     parameters: Parameters<Super["fromRdfExpression"]>[0],
-  ): string {
+  ): Code {
     const { variables } = parameters;
-    return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
+    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<Super["graphqlResolveExpression"]>[0]): string {
-    return `${variables.value}.resolve().then(either => either.unsafeCoerce())`;
+  }: Parameters<Super["graphqlResolveExpression"]>[0]): Code {
+    return code`${variables.value}.resolve().then(either => either.unsafeCoerce())`;
   }
 }
 

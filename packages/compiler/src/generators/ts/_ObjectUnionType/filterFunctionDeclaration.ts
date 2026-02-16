@@ -1,37 +1,22 @@
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function filterFunctionDeclaration(
-  this: ObjectUnionType,
-): FunctionDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    parameters: [
-      {
-        name: "filter",
-        type: this.filterType,
-      },
-      {
-        name: "value",
-        type: this.name,
-      },
-    ],
-    name: `${syntheticNamePrefix}filter`,
-    returnType: "boolean",
-    statements: [
-      `\
+export function filterFunctionDeclaration(this: ObjectUnionType): Code {
+  return code`\
+export function ${syntheticNamePrefix}filter(filter: ${this.filterType}, value: ${this.name}): boolean {
+${joinCode([
+  code`\
 if (typeof filter.${syntheticNamePrefix}identifier !== "undefined" && !${this.identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
   return false;
 }`,
-      ...this.memberTypes.map(
-        (memberType) => `\
+  ...this.memberTypes.map(
+    (memberType) => code`\
 if (${memberType.staticModuleName}.is${memberType.name}(value) && filter.on?.${memberType.name} && !${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name})) {
   return false;
 }`,
-      ),
-      `return true;`,
-    ],
-  };
+  ),
+  code`return true;`,
+])}
+}`;
 }

@@ -1,26 +1,31 @@
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import {
-  type ModuleDeclarationStructure,
-  StructureKind,
-  type TypeAliasDeclarationStructure,
-} from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
-import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
+import { equalsFunctionDeclaration } from "./_ObjectUnionType/equalsFunctionDeclaration.js";
+import { filterFunctionDeclaration } from "./_ObjectUnionType/filterFunctionDeclaration.js";
+import { filterTypeDeclaration } from "./_ObjectUnionType/filterTypeDeclaration.js";
+import { graphqlTypeVariableStatement } from "./_ObjectUnionType/graphqlTypeVariableStatement.js";
+import { hashFunctionDeclaration } from "./_ObjectUnionType/hashFunctionDeclaration.js";
+import { identifierTypeDeclarations } from "./_ObjectUnionType/identifierTypeDeclarations.js";
+import { isTypeFunctionDeclaration } from "./_ObjectUnionType/isTypeFunctionDeclaration.js";
+import { jsonFunctionDeclarations } from "./_ObjectUnionType/jsonFunctionDeclarations.js";
+import { jsonTypeAliasDeclaration } from "./_ObjectUnionType/jsonTypeAliasDeclaration.js";
+import { MemberType } from "./_ObjectUnionType/MemberType.js";
+import { rdfFunctionDeclarations } from "./_ObjectUnionType/rdfFunctionDeclarations.js";
+import { schemaVariableStatement } from "./_ObjectUnionType/schemaVariableStatement.js";
+import { sparqlFunctionDeclarations } from "./_ObjectUnionType/sparqlFunctionDeclarations.js";
+import { typeAliasDeclaration } from "./_ObjectUnionType/typeAliasDeclaration.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import type { Import } from "./Import.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { imports } from "./imports.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { objectInitializer } from "./objectInitializer.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { tsComment } from "./tsComment.js";
+import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * A union of object types, generated as a type alias
@@ -37,7 +42,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
   readonly kind = "ObjectUnionType";
-  readonly memberTypes: readonly _ObjectUnionType.MemberType[];
+  readonly memberTypes: readonly MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
@@ -57,7 +62,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     invariant(memberTypes.length > 0);
     this.memberTypes = memberTypes.map(
       (memberType) =>
-        new _ObjectUnionType.MemberType({
+        new MemberType({
           delegate: memberType,
           universe: memberTypes,
         }),
@@ -69,48 +74,40 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return [
       {
         conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+        sourceTypeCheckExpression: (value) =>
+          code`typeof ${value} === "object"`,
         sourceTypeName: this.name,
+        sourceTypeof: "object",
       },
     ];
   }
 
-  override get declarationImports(): readonly Import[] {
-    return this.memberTypes.flatMap((memberType) => memberType.useImports());
-  }
+  override get declaration(): Code {
+    const declarations: Code[] = [typeAliasDeclaration.bind(this)()];
 
-  get declarations() {
-    const declarations: (
-      | ModuleDeclarationStructure
-      | TypeAliasDeclarationStructure
-    )[] = [this.typeAliasDeclaration];
-
-    const staticModuleStatements: StaticModuleStatementStructure[] = [
-      ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
-      _ObjectUnionType.filterFunctionDeclaration.bind(this)(),
-      _ObjectUnionType.filterTypeDeclaration.bind(this)(),
-      ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
-      ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
-      ..._ObjectUnionType.jsonDeclarations.bind(this)(),
-      ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
-      _ObjectUnionType.schemaVariableStatement.bind(this)(),
-      ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
-      ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
+    const staticModuleDeclarations: Code[] = [
+      ...equalsFunctionDeclaration.bind(this)().toList(),
+      filterFunctionDeclaration.bind(this)(),
+      filterTypeDeclaration.bind(this)(),
+      ...graphqlTypeVariableStatement.bind(this)().toList(),
+      ...hashFunctionDeclaration.bind(this)().toList(),
+      ...identifierTypeDeclarations.bind(this)(),
+      ...jsonFunctionDeclarations.bind(this)(),
+      ...jsonTypeAliasDeclaration.bind(this)().toList(),
+      ...isTypeFunctionDeclaration.bind(this)().toList(),
+      schemaVariableStatement.bind(this)(),
+      ...rdfFunctionDeclarations.bind(this)(),
+      ...sparqlFunctionDeclarations.bind(this)(),
     ];
 
-    if (staticModuleStatements.length > 0) {
-      declarations.push({
-        isExported: this.export,
-        kind: StructureKind.Module,
-        name: this.staticModuleName,
-        statements: staticModuleStatements.sort(
-          StaticModuleStatementStructure.compare,
-        ),
-      });
+    if (staticModuleDeclarations.length > 0) {
+      declarations.push(code`\
+export namespace ${def(this.staticModuleName)} {
+${joinCode(staticModuleDeclarations, { on: "\n\n" })}
+}`);
     }
 
-    return declarations;
+    return joinCode(declarations, { on: "\n\n" });
   }
 
   @Memoize()
@@ -119,30 +116,30 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get equalsFunction(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}equals`;
+  override get equalsFunction(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
   }
 
   @Memoize()
-  get filterFunction(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}filter`;
+  get filterFunction(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()
-  get filterType(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}Filter`;
+  get filterType(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
   }
 
   @Memoize()
   override get graphqlType(): AbstractDeclaredType.GraphqlType {
     return new AbstractDeclaredType.GraphqlType(
-      `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
+      code`${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
 
   @Memoize()
-  get identifierTypeAlias(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
+  get identifierTypeAlias(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
   }
 
   @Memoize()
@@ -156,21 +153,21 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get schema(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}schema`;
+  override get schema(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}schema`;
   }
 
   @Memoize()
-  override get schemaType(): string {
-    return `typeof ${this.schema}`;
+  override get schemaType(): Code {
+    return code`typeof ${this.schema}`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${syntheticNamePrefix}SparqlPattern[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
+  override get sparqlWherePatternsFunction(): Code {
+    return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
   }
 
-  get staticModuleName() {
+  get staticModuleName(): string {
     return this.name;
   }
 
@@ -202,134 +199,98 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  protected get concreteMemberTypes(): readonly _ObjectUnionType.MemberType[] {
+  protected get concreteMemberTypes(): readonly MemberType[] {
     return this.memberTypes.filter((memberType) => !memberType.abstract);
   }
 
   @Memoize()
-  protected get thisVariable(): string {
-    return `_${camelCase(this.name)}`;
-  }
-
-  private get typeAliasDeclaration(): TypeAliasDeclarationStructure {
-    return {
-      isExported: true,
-      leadingTrivia: this.comment.alt(this.label).map(tsComment).extract(),
-      kind: StructureKind.TypeAlias,
-      name: this.name,
-      type: this.memberTypes.map((memberType) => memberType.name).join(" | "),
-    };
+  protected get thisVariable(): Code {
+    return code`_${camelCase(this.name)}`;
   }
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): Code {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ignoreRdfType: false, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
+    return code`${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ignoreRdfType: false, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
   override graphqlResolveExpression({
     variables,
   }: {
-    variables: { value: string };
-  }): string {
+    variables: { value: Code };
+  }): Code {
     return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly Code[] {
     return [
-      `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+      code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
     ];
   }
 
   @Memoize()
   override jsonType(): AbstractDeclaredType.JsonType {
     return new AbstractDeclaredType.JsonType(
-      this.memberTypes
-        .map((memberType) => memberType.jsonType().name)
-        .join(" | "),
+      joinCode(
+        this.memberTypes.map(
+          (memberType) => code`${memberType.jsonType().name}`,
+        ),
+        { on: "|" },
+      ),
     );
   }
 
-  override jsonUiSchemaElement(): Maybe<string> {
+  override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
   }
 
   override jsonZodSchema({
     context,
-    variables,
-  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractDeclaredType["jsonZodSchema"]
-  > {
-    const expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): Code {
+    const expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     for (const memberType of this.memberTypes) {
       if (
         context === "property" &&
         memberType.properties.some((property) => property.recursive)
       ) {
-        return `${variables.zod}.lazy((): ${variables.zod}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
       }
     }
     return expression;
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { recursionStack } = parameters;
-    if (recursionStack.some((type) => Object.is(type, this))) {
-      return {};
-    }
-    recursionStack.push(this);
-    const snippetDeclarations = this.memberTypes.reduce(
-      (snippetDeclarations, memberType) =>
-        mergeSnippetDeclarations(
-          snippetDeclarations,
-          memberType.snippetDeclarations(parameters),
-        ),
-      {} as Record<string, SnippetDeclaration>,
-    );
-    invariant(Object.is(recursionStack.pop(), this));
-    return snippetDeclarations;
   }
 
   override sparqlConstructTriples({
     variables,
   }: Parameters<
     AbstractDeclaredType["sparqlConstructTriples"]
-  >[0]): readonly string[] {
-    return [
-      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
-        {
-          subject: variables.valueVariable,
-          variablePrefix: variables.variablePrefix,
-        },
-      )})`,
-    ];
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
+        subject: variables.valueVariable,
+        variablePrefix: variables.variablePrefix,
+      }})`,
+    );
   }
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
+  }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): string {
-    return `[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${objectInitializer({ mutateGraph: variables.mutateGraph, resourceSet: variables.resourceSet })}).identifier]`;
-  }
-
-  override useImports(): readonly Import[] {
-    return [];
+  }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): Code {
+    return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${{ mutateGraph: variables.mutateGraph, resourceSet: variables.resourceSet }}).identifier]`;
   }
 }

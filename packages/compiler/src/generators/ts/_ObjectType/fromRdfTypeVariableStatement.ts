@@ -1,35 +1,17 @@
 import { Maybe } from "purify-ts";
-import {
-  StructureKind,
-  VariableDeclarationKind,
-  type VariableStatementStructure,
-} from "ts-morph";
-
+import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function fromRdfTypeVariableStatement(
-  this: ObjectType,
-): Maybe<VariableStatementStructure> {
+export function fromRdfTypeVariableStatement(this: ObjectType): Maybe<Code> {
   if (!this.features.has("rdf")) {
     return Maybe.empty();
   }
 
-  if (this.fromRdfType.isNothing()) {
-    return Maybe.empty();
-  }
-
-  return Maybe.of({
-    declarationKind: VariableDeclarationKind.Const,
-    kind: StructureKind.VariableStatement,
-    declarations: [
-      {
-        name: `${syntheticNamePrefix}fromRdfType`,
-        initializer: rdfjsTermExpression(this.fromRdfType.unsafeCoerce()),
-        type: "rdfjs.NamedNode<string>",
-      },
-    ],
-    isExported: true,
-  } satisfies VariableStatementStructure);
+  return this.fromRdfType.map(
+    (fromRdfType) => code`\
+export const ${syntheticNamePrefix}fromRdfType: ${imports.NamedNode}<string> = ${rdfjsTermExpression(fromRdfType)};`,
+  );
 }

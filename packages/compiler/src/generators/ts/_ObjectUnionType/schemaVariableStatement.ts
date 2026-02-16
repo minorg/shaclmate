@@ -1,17 +1,10 @@
-import {
-  StructureKind,
-  VariableDeclarationKind,
-  type VariableStatementStructure,
-} from "ts-morph";
-
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function schemaVariableStatement(
-  this: ObjectUnionType,
-): VariableStatementStructure {
+export function schemaVariableStatement(this: ObjectUnionType): Code {
   const commonPropertiesByName: Record<
     string,
     {
@@ -46,24 +39,15 @@ export function schemaVariableStatement(
     }
   });
 
-  const propertiesObject: string[] = [];
+  const propertiesObject: Code[] = [];
   for (const name of Object.keys(commonPropertiesByName).toSorted()) {
     const { memberTypesWithProperty, property } = commonPropertiesByName[name];
     if (!memberTypesWithProperty.every((value) => value)) {
       continue;
     }
-    propertiesObject.push(`${property.name}: ${property.schema}`);
+    propertiesObject.push(code`${property.name}: ${property.schema}`);
   }
 
-  return {
-    declarationKind: VariableDeclarationKind.Const,
-    kind: StructureKind.VariableStatement,
-    declarations: [
-      {
-        name: `${syntheticNamePrefix}schema`,
-        initializer: `{ properties: { ${propertiesObject.join(", ")} } } as const`,
-      },
-    ],
-    isExported: true,
-  };
+  return code`\
+export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(propertiesObject, { on: ", " })} } } as const;`;
 }

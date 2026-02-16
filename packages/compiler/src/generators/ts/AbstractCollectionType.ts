@@ -2,11 +2,11 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { codeEquals } from "./codeEquals.js";
+import { imports } from "./imports.js";
+import { snippets } from "./snippets.js";
+import type { Typeof } from "./Typeof.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -54,32 +54,33 @@ export abstract class AbstractCollectionType<
     // array.every(item => typeof item === "string")
 
     const itemTypeConversionsByTypeof = {} as Record<
-      "boolean" | "object" | "number" | "string",
+      Typeof,
       AbstractContainerType.Conversion
     >;
     if (this.itemType.typeofs.length === 1) {
       itemTypeConversionsByTypeof[this.itemType.typeofs[0]] = {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          `typeof ${value} === ${this.itemType.typeofs[0]}`,
+          code`typeof ${value} === ${this.itemType.typeofs[0]}`,
         sourceTypeName: this.itemType.name,
+        sourceTypeof: this.itemType.typeofs[0],
       };
 
       for (const itemTypeConversion of this.itemType.conversions) {
-        if (isTypeofString(itemTypeConversion.sourceTypeName)) {
-          if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
-            itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
-              itemTypeConversion;
-          }
+        if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeof]) {
+          itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeof] =
+            itemTypeConversion;
         }
       }
     }
 
     if (this.minCount === 0) {
       conversions.push({
-        conversionExpression: () => "[]",
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
+        conversionExpression: () => code`[]`,
+        sourceTypeCheckExpression: (value) =>
+          code`typeof ${value} === "undefined"`,
+        sourceTypeName: code`undefined`,
+        sourceTypeof: "undefined",
       });
 
       if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
@@ -88,9 +89,11 @@ export abstract class AbstractCollectionType<
         conversions.push({
           conversionExpression: (value) =>
             // Defensive copy
-            `${value}${this.mutable ? ".concat()" : ""}`,
-          sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
-          sourceTypeName: `readonly (${this.itemType.name})[]`,
+            code`${value}${this.mutable ? ".concat()" : ""}`,
+          sourceTypeCheckExpression: (value) =>
+            code`typeof ${value} === "object"`,
+          sourceTypeName: code`readonly (${this.itemType.name})[]`,
+          sourceTypeof: "object",
         });
       } else {
         // There were additional conversions with different item typeof's.
@@ -98,19 +101,21 @@ export abstract class AbstractCollectionType<
         for (const [itemTypeof, itemTypeofConversion] of Object.entries(
           itemTypeConversionsByTypeof,
         )) {
+          const itemVariable = code`item`;
           conversions.push({
             conversionExpression: (value) => {
               const itemTypeConversionExpression =
-                itemTypeofConversion.conversionExpression("item");
-              return itemTypeConversionExpression !== "item"
-                ? `${value}.map(item => ${itemTypeConversionExpression})`
+                itemTypeofConversion.conversionExpression(itemVariable);
+              return !codeEquals(itemTypeConversionExpression, itemVariable)
+                ? code`${value}.map(item => ${itemTypeConversionExpression})`
                 : // Defensive copy
-                  `${value}${this.mutable ? ".concat()" : ""}`;
+                  code`${value}${this.mutable ? ".concat()" : ""}`;
             },
             sourceTypeCheckExpression: (value) =>
               // Use the type guard functions to discriminate different array types.
-              `${syntheticNamePrefix}isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array(${value})`,
-            sourceTypeName: `readonly (${itemTypeofConversion.sourceTypeName})[]`,
+              code`${(snippets as any)[`isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array`]}(${value})`,
+            sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,
+            sourceTypeof: itemTypeofConversion.sourceTypeof,
           });
         }
       }
@@ -120,8 +125,9 @@ export abstract class AbstractCollectionType<
       conversions.push({
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          `purify.NonEmptyList.isNonEmpty(${value})`,
+          code`${imports.NonEmptyList}.isNonEmpty(${value})`,
         sourceTypeName: this.name,
+        sourceTypeof: "object",
       });
     }
 
@@ -129,24 +135,24 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get equalsFunction(): string {
-    return `((left, right) => ${syntheticNamePrefix}arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
+  override get equalsFunction(): Code {
+    return code`((left, right) => ${snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   @Memoize()
-  get filterFunction(): string {
-    return `${syntheticNamePrefix}filterArray<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  get filterFunction(): Code {
+    return code`${snippets.filterArray}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
-  get filterType(): string {
-    return `${syntheticNamePrefix}CollectionFilter<${this.itemType.filterType}>`;
+  get filterType(): Code {
+    return code`${snippets.CollectionFilter}<${this.itemType.filterType}>`;
   }
 
   @Memoize()
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return new AbstractContainerType.GraphqlType(
-      `new graphql.GraphQLList(${this.itemType.graphqlType.name})`,
+      code`new ${imports.GraphQLList}(${this.itemType.graphqlType.name})`,
     );
   }
 
@@ -155,19 +161,19 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get name(): string {
+  override get name(): Code {
     if (this._mutable) {
-      return `(${this.itemType.name})[]`;
+      return code`(${this.itemType.name})[]`;
     }
     if (this.minCount === 0) {
-      return `readonly (${this.itemType.name})[]`;
+      return code`readonly (${this.itemType.name})[]`;
     }
-    return `purify.NonEmptyList<${this.itemType.name}>`;
+    return code`${imports.NonEmptyList}<${this.itemType.name}>`;
   }
 
   @Memoize()
-  override get schemaType(): string {
-    return `${syntheticNamePrefix}CollectionSchema<${this.itemType.schemaType}>`;
+  override get schemaType(): Code {
+    return code`${snippets.CollectionSchema}<${this.itemType.schemaType}>`;
   }
 
   protected override get schemaObject() {
@@ -181,24 +187,25 @@ export abstract class AbstractCollectionType<
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
-  >[0]): string {
+  >[0]): Code {
     let expression = variables.value;
     if (!this._mutable && this.minCount > 0) {
-      expression = `purify.NonEmptyList.fromArray(${expression}).unsafeCoerce()`;
+      expression = code`${imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
+    const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "item" },
+      variables: { value: valueVariable },
     });
-    return itemFromJsonExpression === "item"
+    return codeEquals(itemFromJsonExpression, valueVariable)
       ? expression
-      : `${expression}.map(item => (${itemFromJsonExpression}))`;
+      : code`${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
   override graphqlResolveExpression({
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
-  >[0]): string {
+  >[0]): Code {
     return variables.value;
   }
 
@@ -207,17 +214,19 @@ export abstract class AbstractCollectionType<
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["hashStatements"]
-  >[0]): readonly string[] {
+  >[0]): readonly Code[] {
     return [
-      `for (const item${depth} of ${variables.value}) { ${this.itemType
-        .hashStatements({
-          depth: depth + 1,
-          variables: {
-            hasher: variables.hasher,
-            value: `item${depth}`,
-          },
-        })
-        .join("\n")} }`,
+      code`for (const item${depth} of ${variables.value}) { ${joinCode(
+        this.itemType
+          .hashStatements({
+            depth: depth + 1,
+            variables: {
+              hasher: variables.hasher,
+              value: code`item${depth}`,
+            },
+          })
+          .concat(),
+      )} }`,
     ];
   }
 
@@ -225,7 +234,7 @@ export abstract class AbstractCollectionType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
     >[0],
-  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]> {
+  ): Maybe<Code> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
@@ -233,226 +242,22 @@ export abstract class AbstractCollectionType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["jsonZodSchema"]
     >[0],
-  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonZodSchema"]> {
-    let schema = `${this.itemType.jsonZodSchema(parameters)}.array()`;
+  ): Code {
+    let schema = code`${this.itemType.jsonZodSchema(parameters)}.array()`;
     if (this.minCount > 0) {
-      schema = `${schema}.nonempty().min(${this.minCount})`;
+      schema = code`${schema}.nonempty().min(${this.minCount})`;
     } else {
-      schema = `${schema}.default(() => [])`;
+      schema = code`${schema}.default(() => [])`;
     }
     return schema;
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    let snippetDeclarations = mergeSnippetDeclarations(
-      this.itemType.snippetDeclarations(parameters),
-      singleEntryRecord(
-        `${syntheticNamePrefix}CollectionFilter`,
-        `\
-type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
-  readonly ${syntheticNamePrefix}maxCount?: number;
-  readonly ${syntheticNamePrefix}minCount?: number;
-};`,
-      ),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterArray`,
-        `\
-function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${syntheticNamePrefix}CollectionFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
-    for (const value of values) {
-      if (!filterItem(filter, value)) {
-        return false;
-      }
-    }
-
-    if (typeof filter.${syntheticNamePrefix}maxCount !== "undefined" && values.length > filter.${syntheticNamePrefix}maxCount) {
-      return false;
-    }
-
-    if (typeof filter.${syntheticNamePrefix}minCount !== "undefined" && values.length < filter.${syntheticNamePrefix}minCount) {
-      return false;
-    }
-
-    return true;
-  }
-}`,
-      ),
-    );
-
-    if (features.has("equals")) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        singleEntryRecord(`${syntheticNamePrefix}arrayEquals`, {
-          code: `\
-/**
- * Compare two arrays element-wise with the provided elementEquals function.
- */  
-function ${syntheticNamePrefix}arrayEquals<T>(
-  leftArray: readonly T[],
-  rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
-): ${syntheticNamePrefix}EqualsResult {
-  if (leftArray.length !== rightArray.length) {
-    return purify.Left({
-      left: leftArray,
-      right: rightArray,
-      type: "ArrayLength",
-    });
-  }
-
-  for (
-    let leftElementIndex = 0;
-    leftElementIndex < leftArray.length;
-    leftElementIndex++
-  ) {
-    const leftElement = leftArray[leftElementIndex];
-
-    const rightUnequals: ${syntheticNamePrefix}EqualsResult.Unequal[] = [];
-    for (
-      let rightElementIndex = 0;
-      rightElementIndex < rightArray.length;
-      rightElementIndex++
-    ) {
-      const rightElement = rightArray[rightElementIndex];
-
-      const leftElementEqualsRightElement =
-        ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-          leftElement,
-          rightElement,
-          elementEquals(leftElement, rightElement),
-        );
-      if (leftElementEqualsRightElement.isRight()) {
-        break; // left element === right element, break out of the right iteration
-      }
-      rightUnequals.push(
-        leftElementEqualsRightElement.extract() as ${syntheticNamePrefix}EqualsResult.Unequal,
-      );
-    }
-
-    if (rightUnequals.length === rightArray.length) {
-      // All right elements were unequal to the left element
-      return purify.Left({
-        left: {
-          array: leftArray,
-          element: leftElement,
-          elementIndex: leftElementIndex,
-        },
-        right: {
-          array: rightArray,
-          unequals: rightUnequals,
-        },
-        type: "ArrayElement",
-      });
-    }
-    // Else there was a right element equal to the left element, continue to the next left element
-  }
-
-  return ${syntheticNamePrefix}EqualsResult.Equal;
-}`,
-          dependencies: { ...sharedSnippetDeclarations.EqualsResult },
-        }),
-      );
-    }
-
-    if (features.has("sparql")) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        singleEntryRecord(
-          `${syntheticNamePrefix}CollectionSchema`,
-          `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
-        ),
-      );
-    }
-
-    for (const conversion of this.conversions) {
-      let sourceTypeCheckExpression =
-        conversion.sourceTypeCheckExpression("ignore");
-      if (!sourceTypeCheckExpression.startsWith(syntheticNamePrefix)) {
-        continue;
-      }
-      sourceTypeCheckExpression = sourceTypeCheckExpression.substring(
-        syntheticNamePrefix.length,
-      );
-      let isReadonlyArraySnippetDeclaration:
-        | Record<string, SnippetDeclaration>
-        | undefined;
-      if (sourceTypeCheckExpression.startsWith("isReadonlyBooleanArray")) {
-        isReadonlyArraySnippetDeclaration = singleEntryRecord(
-          `${syntheticNamePrefix}isReadonlyBooleanArray`,
-          `\
-function ${syntheticNamePrefix}isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
-  return Array.isArray(x) && x.every(z => typeof z === "boolean");
-}`,
-        );
-      } else if (
-        sourceTypeCheckExpression.startsWith("isReadonlyNumberArray")
-      ) {
-        isReadonlyArraySnippetDeclaration = singleEntryRecord(
-          `${syntheticNamePrefix}isReadonlyNumberArray`,
-          `\
-function ${syntheticNamePrefix}isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every(z => typeof z === "number");
-}`,
-        );
-      } else if (
-        sourceTypeCheckExpression.startsWith("isReadonlyObjectArray")
-      ) {
-        isReadonlyArraySnippetDeclaration = singleEntryRecord(
-          `${syntheticNamePrefix}isReadonlyObjectArray`,
-          `\
-function ${syntheticNamePrefix}isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every(z => typeof z === "object");
-}`,
-        );
-      } else if (
-        sourceTypeCheckExpression.startsWith("isReadonlyStringArray")
-      ) {
-        isReadonlyArraySnippetDeclaration = singleEntryRecord(
-          `${syntheticNamePrefix}isReadonlyStringArray`,
-          `\
-function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every(z => typeof z === "string");
-}`,
-        );
-      }
-      if (isReadonlyArraySnippetDeclaration) {
-        snippetDeclarations = mergeSnippetDeclarations(
-          snippetDeclarations,
-          isReadonlyArraySnippetDeclaration,
-        );
-      }
-    }
-
-    return snippetDeclarations;
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["toJsonExpression"]
-  >[0]): string {
-    return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
-  }
-}
-
-function isTypeofString(
-  x: string,
-): x is "boolean" | "object" | "number" | "string" {
-  switch (x) {
-    case "boolean":
-    case "object":
-    case "number":
-    case "string":
-      return true;
-    default:
-      return false;
+  >[0]): Code {
+    return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })}))`;
   }
 }
 
@@ -465,6 +270,4 @@ export namespace AbstractCollectionType {
   export type ItemType = AbstractContainerType.ItemType;
   export const JsonType = AbstractContainerType.JsonType;
   export type JsonType = AbstractContainerType.JsonType;
-  export type SparqlConstructTriple =
-    AbstractContainerType.SparqlConstructTriple;
 }
