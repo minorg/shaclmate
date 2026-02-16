@@ -2,7 +2,7 @@ import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
+import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { equalsFunctionDeclaration } from "./_ObjectUnionType/equalsFunctionDeclaration.js";
 import { filterFunctionDeclaration } from "./_ObjectUnionType/filterFunctionDeclaration.js";
 import { filterTypeDeclaration } from "./_ObjectUnionType/filterTypeDeclaration.js";
@@ -149,7 +149,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return objectSetMethodNames.bind(this)();
+    return ObjectType_objectSetMethodNames.bind(this)();
   }
 
   @Memoize()

@@ -2,7 +2,7 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function isTypeFunctionDeclaration(this: ObjectType): Code {
+export function ObjectType_isTypeFunctionDeclaration(this: ObjectType): Code {
   return code`\
 export function is${this.name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
   switch (object.${this._discriminantProperty.name}) {

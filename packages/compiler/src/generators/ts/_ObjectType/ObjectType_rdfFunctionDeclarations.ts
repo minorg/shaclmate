@@ -6,9 +6,9 @@ import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
-import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./ObjectType_toRdfFunctionOrMethodDeclaration.js";
 
-function fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
+function ObjectType_fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
   if (this.abstract) {
     return Maybe.empty();
   }
@@ -30,7 +30,9 @@ ${joinCode(statements)}
 }`);
 }
 
-function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
+function ObjectType_propertiesFromRdfFunctionDeclaration(
+  this: ObjectType,
+): Code {
   const chains: { expression: Code; variable: string }[] = [];
   const initializers: Code[] = [];
   const propertySignatures: Code[] = [];
@@ -136,22 +138,24 @@ ${joinCode(statements)}
 }`;
 }
 
-export function rdfFunctionDeclarations(this: ObjectType): readonly Code[] {
+export function ObjectType_rdfFunctionDeclarations(
+  this: ObjectType,
+): readonly Code[] {
   if (!this.features.has("rdf")) {
     return [];
   }
 
   return [
-    ...fromRdfFunctionDeclaration.bind(this)().toList(),
-    propertiesFromRdfFunctionDeclaration.bind(this)(),
-    ...toRdfFunctionDeclaration.bind(this)().toList(),
+    ...ObjectType_fromRdfFunctionDeclaration.bind(this)().toList(),
+    ObjectType_propertiesFromRdfFunctionDeclaration.bind(this)(),
+    ...ObjectType_toRdfFunctionDeclaration.bind(this)().toList(),
   ];
 }
 
-function toRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
+function ObjectType_toRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
   if (this.declarationType !== "interface") {
     return Maybe.empty();
   }
 
-  return toRdfFunctionOrMethodDeclaration.bind(this)();
+  return ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)();
 }

@@ -8,27 +8,27 @@ import type {
   IdentifierMintingStrategy,
   TsObjectDeclarationType,
 } from "../../enums/index.js";
-import { classDeclaration } from "./_ObjectType/classDeclaration.js";
-import { createFunctionDeclaration } from "./_ObjectType/createFunctionDeclaration.js";
-import { equalsFunctionOrMethodDeclaration } from "./_ObjectType/equalsFunctionOrMethodDeclaration.js";
-import { filterFunctionDeclaration } from "./_ObjectType/filterFunctionDeclaration.js";
-import { filterTypeDeclaration } from "./_ObjectType/filterTypeDeclaration.js";
-import { fromRdfTypeVariableStatement } from "./_ObjectType/fromRdfTypeVariableStatement.js";
-import { graphqlTypeVariableStatement } from "./_ObjectType/graphqlTypeVariableStatement.js";
-import { hashFunctionOrMethodDeclarations } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
-import { interfaceDeclaration } from "./_ObjectType/interfaceDeclaration.js";
-import { isTypeFunctionDeclaration } from "./_ObjectType/isTypeFunctionDeclaration.js";
-import { jsonFunctionDeclarations } from "./_ObjectType/jsonFunctionDeclarations.js";
-import { jsonTypeAliasDeclaration } from "./_ObjectType/jsonTypeAliasDeclaration.js";
-import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
+import { ObjectType_classDeclaration } from "./_ObjectType/ObjectType_classDeclaration.js";
+import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
+import { ObjectType_equalsFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_equalsFunctionOrMethodDeclaration.js";
+import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
+import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
+import { ObjectType_fromRdfTypeVariableStatement } from "./_ObjectType/ObjectType_fromRdfTypeVariableStatement.js";
+import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
+import { ObjectType_hashFunctionOrMethodDeclarations } from "./_ObjectType/ObjectType_hashFunctionOrMethodDeclarations.js";
+import { ObjectType_interfaceDeclaration } from "./_ObjectType/ObjectType_interfaceDeclaration.js";
+import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
+import { ObjectType_jsonFunctionDeclarations } from "./_ObjectType/ObjectType_jsonFunctionDeclarations.js";
+import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_rdfFunctionDeclarations } from "./_ObjectType/ObjectType_rdfFunctionDeclarations.js";
+import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
+import { ObjectType_sparqlFunctionDeclarations } from "./_ObjectType/ObjectType_sparqlFunctionDeclarations.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
-import { rdfFunctionDeclarations } from "./_ObjectType/rdfFunctionDeclarations.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
-import { schemaVariableStatement } from "./_ObjectType/schemaVariableStatement.js";
-import { sparqlFunctionDeclarations } from "./_ObjectType/sparqlFunctionDeclarations.js";
 import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_ObjectType/TypeDiscriminantProperty.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -158,32 +158,34 @@ export class ObjectType extends AbstractDeclaredType {
 
       switch (this.declarationType) {
         case "class": {
-          declarations.push(classDeclaration.bind(this)());
+          declarations.push(ObjectType_classDeclaration.bind(this)());
           break;
         }
         case "interface": {
-          declarations.push(interfaceDeclaration.bind(this)());
+          declarations.push(ObjectType_interfaceDeclaration.bind(this)());
           staticModuleDeclarations.push(
-            ...createFunctionDeclaration.bind(this)().toList(),
-            ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-            ...hashFunctionOrMethodDeclarations.bind(this)(),
+            ...ObjectType_createFunctionDeclaration.bind(this)().toList(),
+            ...ObjectType_equalsFunctionOrMethodDeclaration.bind(
+              this,
+            )().toList(),
+            ...ObjectType_hashFunctionOrMethodDeclarations.bind(this)(),
           );
           break;
         }
       }
 
       staticModuleDeclarations.push(
-        filterFunctionDeclaration.bind(this)(),
-        filterTypeDeclaration.bind(this)(),
-        ...fromRdfTypeVariableStatement.bind(this)().toList(),
-        ...graphqlTypeVariableStatement.bind(this)().toList(),
+        ObjectType_filterFunctionDeclaration.bind(this)(),
+        ObjectType_filterTypeDeclaration.bind(this)(),
+        ...ObjectType_fromRdfTypeVariableStatement.bind(this)().toList(),
+        ...ObjectType_graphqlTypeVariableStatement.bind(this)().toList(),
         ...identifierTypeDeclarations.bind(this)(),
-        ...jsonFunctionDeclarations.bind(this)(),
-        ...jsonTypeAliasDeclaration.bind(this)().toList(),
-        isTypeFunctionDeclaration.bind(this)(),
-        ...rdfFunctionDeclarations.bind(this)(),
-        schemaVariableStatement.bind(this)(),
-        ...sparqlFunctionDeclarations.bind(this)(),
+        ...ObjectType_jsonFunctionDeclarations.bind(this)(),
+        ...ObjectType_jsonTypeAliasDeclaration.bind(this)().toList(),
+        ObjectType_isTypeFunctionDeclaration.bind(this)(),
+        ...ObjectType_rdfFunctionDeclarations.bind(this)(),
+        ObjectType_schemaVariableStatement.bind(this)(),
+        ...ObjectType_sparqlFunctionDeclarations.bind(this)(),
       );
 
       if (staticModuleDeclarations.length > 0) {
@@ -283,7 +285,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return objectSetMethodNames.bind(this)();
+    return ObjectType_objectSetMethodNames.bind(this)();
   }
 
   @Memoize()

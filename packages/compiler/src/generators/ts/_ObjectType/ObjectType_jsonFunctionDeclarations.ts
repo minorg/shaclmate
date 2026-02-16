@@ -4,9 +4,11 @@ import type { ObjectType } from "../ObjectType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
-import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
+import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./ObjectType_toJsonFunctionOrMethodDeclaration.js";
 
-function fromJsonFunctionDeclarations(this: ObjectType): readonly Code[] {
+function ObjectType_fromJsonFunctionDeclarations(
+  this: ObjectType,
+): readonly Code[] {
   const initializers: string[] = [];
   const propertiesFromJsonReturnType: Code[] = [];
   const propertiesFromJsonStatements: Code[] = [];
@@ -92,14 +94,14 @@ export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}
   return functionDeclarations;
 }
 
-function jsonSchemaFunctionDeclaration(this: ObjectType): Code {
+function ObjectType_jsonSchemaFunctionDeclaration(this: ObjectType): Code {
   return code`\
 export function ${syntheticNamePrefix}jsonSchema() {
   return ${imports.z}.toJSONSchema(${syntheticNamePrefix}jsonZodSchema());
 }`;
 }
 
-function jsonUiSchemaFunctionDeclaration(this: ObjectType): Code {
+function ObjectType_jsonUiSchemaFunctionDeclaration(this: ObjectType): Code {
   const variables = { scopePrefix: code`scopePrefix` };
   const elements: Code[] = this.parentObjectTypes
     .map(
@@ -119,7 +121,7 @@ export function ${syntheticNamePrefix}jsonUiSchema(parameters?: { scopePrefix?: 
 }`;
 }
 
-function jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
+function ObjectType_jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
   const mergeZodObjectSchemas: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     mergeZodObjectSchemas.push(
@@ -155,25 +157,27 @@ export function ${syntheticNamePrefix}jsonZodSchema() {
 }`;
 }
 
-function toJsonFunctionDeclaration(this: ObjectType): Maybe<Code> {
+function ObjectType_toJsonFunctionDeclaration(this: ObjectType): Maybe<Code> {
   if (this.declarationType !== "interface") {
     return Maybe.empty();
   }
 
-  return toJsonFunctionOrMethodDeclaration.bind(this)();
+  return ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)();
 }
 
-export function jsonFunctionDeclarations(this: ObjectType): readonly Code[] {
+export function ObjectType_jsonFunctionDeclarations(
+  this: ObjectType,
+): readonly Code[] {
   if (!this.features.has("json")) {
     return [];
   }
 
   return [
-    ...fromJsonFunctionDeclarations.bind(this)(),
-    jsonSchemaFunctionDeclaration.bind(this)(),
-    jsonUiSchemaFunctionDeclaration.bind(this)(),
-    ...toJsonFunctionDeclaration.bind(this)().toList(),
-    jsonZodSchemaFunctionDeclaration.bind(this)(),
+    ...ObjectType_fromJsonFunctionDeclarations.bind(this)(),
+    ObjectType_jsonSchemaFunctionDeclaration.bind(this)(),
+    ObjectType_jsonUiSchemaFunctionDeclaration.bind(this)(),
+    ...ObjectType_toJsonFunctionDeclaration.bind(this)().toList(),
+    ObjectType_jsonZodSchemaFunctionDeclaration.bind(this)(),
   ];
 }
 

@@ -4,7 +4,9 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function graphqlTypeVariableStatement(this: ObjectType): Maybe<Code> {
+export function ObjectType_graphqlTypeVariableStatement(
+  this: ObjectType,
+): Maybe<Code> {
   if (!this.features.has("graphql")) {
     return Maybe.empty();
   }

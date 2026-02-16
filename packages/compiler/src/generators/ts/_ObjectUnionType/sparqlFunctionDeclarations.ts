@@ -1,6 +1,6 @@
 import { camelCase, pascalCase } from "change-case";
-import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
-import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { snippets } from "../snippets.js";
@@ -15,8 +15,8 @@ export function sparqlFunctionDeclarations(
   }
 
   return [
-    sparqlConstructQueryFunctionDeclaration.bind(this)(),
-    sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
+    ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
+    ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
 export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean, subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(

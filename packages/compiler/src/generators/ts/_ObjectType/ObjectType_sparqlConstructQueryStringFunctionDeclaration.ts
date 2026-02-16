@@ -2,7 +2,7 @@ import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function sparqlConstructQueryStringFunctionDeclaration(this: {
+export function ObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly filterType: Code;
   readonly staticModuleName: string;
 }): Code {

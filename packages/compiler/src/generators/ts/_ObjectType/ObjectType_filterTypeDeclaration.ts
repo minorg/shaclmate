@@ -2,7 +2,7 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function filterTypeDeclaration(this: ObjectType): Code {
+export function ObjectType_filterTypeDeclaration(this: ObjectType): Code {
   const members: Code[] = [];
   if (this.properties.length > 0) {
     const filterProperties: Record<string, Code> = {};

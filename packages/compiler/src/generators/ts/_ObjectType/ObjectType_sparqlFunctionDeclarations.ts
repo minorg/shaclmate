@@ -6,10 +6,12 @@ import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
-import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
-import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 
-export function sparqlFunctionDeclarations(this: ObjectType): readonly Code[] {
+export function ObjectType_sparqlFunctionDeclarations(
+  this: ObjectType,
+): readonly Code[] {
   if (!this.features.has("sparql")) {
     return [];
   }
@@ -137,8 +139,8 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return [
-    sparqlConstructQueryFunctionDeclaration.bind(this)(),
-    sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
+    ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
+    ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
 export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { ignoreRdfType?: boolean; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
 ${

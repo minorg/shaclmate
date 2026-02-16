@@ -4,7 +4,9 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function createFunctionDeclaration(this: ObjectType): Maybe<Code> {
+export function ObjectType_createFunctionDeclaration(
+  this: ObjectType,
+): Maybe<Code> {
   if (!this.features.has("create")) {
     return Maybe.empty();
   }

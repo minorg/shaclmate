@@ -2,7 +2,7 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function filterFunctionDeclaration(this: ObjectType): Code {
+export function ObjectType_filterFunctionDeclaration(this: ObjectType): Code {
   const statements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(

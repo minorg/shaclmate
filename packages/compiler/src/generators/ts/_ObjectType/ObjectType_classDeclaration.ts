@@ -3,12 +3,12 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, def, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
-import { equalsFunctionOrMethodDeclaration } from "./equalsFunctionOrMethodDeclaration.js";
-import { hashFunctionOrMethodDeclarations } from "./hashFunctionOrMethodDeclarations.js";
-import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
-import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
+import { ObjectType_equalsFunctionOrMethodDeclaration } from "./ObjectType_equalsFunctionOrMethodDeclaration.js";
+import { ObjectType_hashFunctionOrMethodDeclarations } from "./ObjectType_hashFunctionOrMethodDeclarations.js";
+import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./ObjectType_toJsonFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./ObjectType_toRdfFunctionOrMethodDeclaration.js";
 
-function constructorDeclaration(this: ObjectType): Code {
+function ObjectType_constructorDeclaration(this: ObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
     property.constructorParametersSignature.toList(),
   );
@@ -58,7 +58,7 @@ ${joinCode(statements)}
 }`;
 }
 
-export function classDeclaration(this: ObjectType): Code {
+export function ObjectType_classDeclaration(this: ObjectType): Code {
   this.ensureAtMostOneSuperObjectType();
 
   return code`\
@@ -71,22 +71,22 @@ ${this.comment
 ${joinCode(
   [
     ...this.properties.flatMap((property) => property.declaration.toList()),
-    constructorDeclaration.bind(this)(),
+    ObjectType_constructorDeclaration.bind(this)(),
     ...this.properties.flatMap((property) =>
       property.getAccessorDeclaration.toList(),
     ),
-    ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...hashFunctionOrMethodDeclarations.bind(this)(),
-    ...toJsonFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...toStringMethodDeclaration.bind(this)().toList(),
+    ...ObjectType_equalsFunctionOrMethodDeclaration.bind(this)().toList(),
+    ...ObjectType_hashFunctionOrMethodDeclarations.bind(this)(),
+    ...ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)().toList(),
+    ...ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
+    ...ObjectType_toStringMethodDeclaration.bind(this)().toList(),
   ],
   { on: "\n\n" },
 )}
 }`;
 }
 
-function toStringMethodDeclaration(this: ObjectType): Maybe<Code> {
+function ObjectType_toStringMethodDeclaration(this: ObjectType): Maybe<Code> {
   if (!this.features.has("json")) {
     return Maybe.empty();
   }
