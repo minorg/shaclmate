@@ -21,11 +21,15 @@ import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_Object
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
 import { interfaceDeclaration } from "./_ObjectType/interfaceDeclaration.js";
+import { isTypeFunctionDeclaration } from "./_ObjectType/isTypeFunctionDeclaration.js";
 import { jsonFunctionDeclarations } from "./_ObjectType/jsonFunctionDeclarations.js";
 import { jsonTypeAliasDeclaration } from "./_ObjectType/jsonTypeAliasDeclaration.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
+import { rdfFunctionDeclarations } from "./_ObjectType/rdfFunctionDeclarations.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
+import { schemaVariableStatement } from "./_ObjectType/schemaVariableStatement.js";
+import { sparqlFunctionDeclarations } from "./_ObjectType/sparqlFunctionDeclarations.js";
 import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_ObjectType/TypeDiscriminantProperty.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -173,20 +177,20 @@ export class ObjectType extends AbstractDeclaredType {
       ...identifierTypeDeclarations.bind(this)(),
       ...jsonFunctionDeclarations.bind(this)(),
       ...jsonTypeAliasDeclaration.bind(this)().toList(),
-      // isTypeFunctionDeclaration.bind(this)(),
-      // ...rdfFunctionDeclarations.bind(this)(),
-      // schemaVariableStatement.bind(this)(),
-      // ...sparqlFunctionDeclarations.bind(this)(),
+      isTypeFunctionDeclaration.bind(this)(),
+      ...rdfFunctionDeclarations.bind(this)(),
+      schemaVariableStatement.bind(this)(),
+      ...sparqlFunctionDeclarations.bind(this)(),
     );
 
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
 export namespace ${this.staticModuleName} {
-${joinCode(staticModuleDeclarations)}
+${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
     }
 
-    return Maybe.of(joinCode(declarations));
+    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
   }
 
   @Memoize()

@@ -107,7 +107,7 @@ function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
   }
 
   const statements: Code[] = [];
-  const resultExpression = `{ ${initializers.join(", ")} }`;
+  const resultExpression = code`{ ${joinCode(initializers, { on: "," })} }`;
   if (chains.length === 0) {
     statements.push(code`return ${imports.Either}.of(${resultExpression});`);
   } else {

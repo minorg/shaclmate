@@ -61,7 +61,12 @@ export class TsGenerator implements Generator {
       0,
       0,
       joinCode(
-        Object.values(snippets).map((snippet) => code`${snippet.ifUsed}`),
+        Object.values(snippets)
+          .sort((left, right) =>
+            left.usageSiteName.localeCompare(right.usageSiteName),
+          )
+          .map((snippet) => code`${snippet.ifUsed}`),
+        { on: "\n\n" },
       ),
     );
 

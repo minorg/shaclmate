@@ -123,6 +123,10 @@ describe("TsGenerator", () => {
           break;
       }
 
+      // if (id !== "kitchenSink") {
+      //   return;
+      // }
+
       compile(generate(shapesGraphEither.unsafeCoerce()), sourceDirectoryPath);
     }, 60000);
   }

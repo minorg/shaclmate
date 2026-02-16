@@ -3,7 +3,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 
 export const snippets_SparqlPattern_isSolutionGenerating = conditionalOutput(
-  `${syntheticNamePrefix}SparqlPattern_isSolutionGenerating`,
+  `${syntheticNamePrefix}SparqlPattern.isSolutionGenerating`,
   code`\
 namespace ${syntheticNamePrefix}SparqlPattern {
   export function isSolutionGenerating(pattern: ${snippets_SparqlPattern}): boolean {

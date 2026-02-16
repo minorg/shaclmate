@@ -32,7 +32,7 @@ export function rdfjsTermExpression(
           case "rest":
           case "subject":
           case "type":
-            return code`${snippets_RdfVocabularies}rdf.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}.rdf.${unqualifiedName}`;
           default:
             logger.warn("unrecognized rdf IRI: %s", rdfjsTerm.value);
         }

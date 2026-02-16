@@ -360,10 +360,10 @@ export class IdentifierProperty extends AbstractProperty<
           );
           break;
         case "interface": {
-          let mintIdentifier: string;
+          let mintIdentifier: Code;
           switch (identifierMintingStrategy) {
             case "blankNode":
-              mintIdentifier = "${imports.dataFactory}.blankNode()";
+              mintIdentifier = code`${imports.dataFactory}.blankNode()`;
               break;
             case "sha256":
               logger.warn(
@@ -373,7 +373,7 @@ export class IdentifierProperty extends AbstractProperty<
               );
               return;
             case "uuidv4":
-              mintIdentifier = `${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
+              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
               break;
           }
           conversionBranches.push(
@@ -411,7 +411,7 @@ export class IdentifierProperty extends AbstractProperty<
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
-        code`(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -420,7 +420,7 @@ export class IdentifierProperty extends AbstractProperty<
       this.type.kind === "NamedNodeType"
     ) {
       return Maybe.of(
-        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -457,10 +457,10 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{
-        filter: `${variables.filter}?.${this.name}`,
+        filter: code`${variables.filter}?.${this.name}`,
         preferredLanguages: variables.preferredLanguages,
-        propertyPatterns: "[]",
-        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
+        propertyPatterns: code`[]`,
+        schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

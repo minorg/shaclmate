@@ -4,7 +4,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function schemaVariableStatement(this: ObjectType): Code {
   return code`\
-export const ${syntheticNamePrefix}Schema = { properties: { ${joinCode(
+export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(
     this.parentObjectTypes
       .map(
         (parentObjectType) =>
@@ -16,6 +16,6 @@ export const ${syntheticNamePrefix}Schema = { properties: { ${joinCode(
         ),
       ),
     { on: ", " },
-  )} } as const;
+  )} } } as const;
 `;
 }
