@@ -154,7 +154,7 @@ export class OptionType<
             },
           })
           .concat(),
-      )} })`,
+      )} });`,
     ];
   }
 

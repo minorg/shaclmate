@@ -107,10 +107,8 @@ export class TermType<
   override jsonZodSchema(
     _parameters: Parameters<AbstractTermType["jsonZodSchema"]>[0],
   ): Code {
-    return code`${imports.z}.discriminatedUnion("termType", [${[
-      ...this.nodeKinds,
-    ]
-      .map((nodeKind) => {
+    return code`${imports.z}.discriminatedUnion("termType", [${joinCode(
+      [...this.nodeKinds].map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
           case "NamedNode":
@@ -120,8 +118,9 @@ export class TermType<
           default:
             throw new RangeError(nodeKind);
         }
-      })
-      .join(", ")}])`;
+      }),
+      { on: "," },
+    )}])`;
   }
 
   override toJsonExpression({

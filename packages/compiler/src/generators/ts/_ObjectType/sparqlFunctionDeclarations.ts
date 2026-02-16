@@ -69,7 +69,7 @@ if (!parameters?.ignoreRdfType) {
       }),
     },
     ${snippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
-        : `${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
+        : code`${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
     }
     {
       triples: [

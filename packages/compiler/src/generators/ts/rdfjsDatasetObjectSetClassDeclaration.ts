@@ -102,7 +102,7 @@ ${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parame
           const fromRdfTypes = objectType.fromRdfTypeVariable
             .toList()
             .concat(objectType.descendantFromRdfTypeVariables);
-          return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? `[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+          return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
         };
 
         switch (objectType.kind) {
