@@ -59,7 +59,7 @@ export function createFunctionDeclaration(this: ObjectType): Maybe<Code> {
   invariant(propertyStatements.length > 0);
 
   return Maybe.of(code`\
-export ${syntheticNamePrefix}create(parameters${parametersHasQuestionToken}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
+export function ${syntheticNamePrefix}create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
   ${joinCode(propertyStatements)}
   return { ${propertyInitializers.join(", ")} };
 }`);

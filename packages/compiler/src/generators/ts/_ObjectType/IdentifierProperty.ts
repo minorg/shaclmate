@@ -77,7 +77,7 @@ export class IdentifierProperty extends AbstractProperty<
     }
 
     return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })}`,
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })};`,
     );
   }
 
@@ -373,7 +373,7 @@ export class IdentifierProperty extends AbstractProperty<
               );
               return;
             case "uuidv4":
-              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
+              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${${imports.uuid}.v4()}\`)`;
               break;
           }
           conversionBranches.push(

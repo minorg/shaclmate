@@ -4,6 +4,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { snippets_arrayIntersection } from "./snippets_arrayIntersection.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
+import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 
 export const snippets_literalSchemaSparqlPatterns = conditionalOutput(
   `${syntheticNamePrefix}literalSchemaSparqlPatterns`,
@@ -27,7 +28,7 @@ function ${syntheticNamePrefix}literalSchemaSparqlPatterns({
   let patterns: ${snippets_SparqlPattern}[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(${snippets_SparqlFilterPattern}({ valueVariable, valueIn: schema.in }));
+    patterns.push(${snippets_sparqlValueInPattern}({ valueVariable, valueIn: schema.in }));
   }
 
   const languageIn = ${snippets_arrayIntersection}(schema.languageIn ?? [], preferredLanguages ?? []);
