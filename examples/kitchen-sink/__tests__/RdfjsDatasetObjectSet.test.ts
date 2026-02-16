@@ -7,9 +7,7 @@ import { testObjectSet } from "./testObjectSet.js";
 describe("RdfjsDatasetObjectSet", () => {
   testObjectSet((...instances: readonly kitchenSink.$Object[]) => {
     const dataset = new N3.Store();
-    const objectSet = new kitchenSink.$RdfjsDatasetObjectSet({
-      dataset,
-    });
+    const objectSet = new kitchenSink.$RdfjsDatasetObjectSet(dataset);
     const resourceSet = new MutableResourceSet({
       dataFactory: N3.DataFactory,
       dataset,
