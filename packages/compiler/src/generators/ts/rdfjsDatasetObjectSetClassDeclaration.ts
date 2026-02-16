@@ -32,7 +32,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
   protected readonly resourceSet: ${imports.ResourceSet};
 
-  constructor({ dataset: ${imports.DatasetCore}) {
+  constructor(dataset: ${imports.DatasetCore}) {
     this.resourceSet = new ${imports.ResourceSet}({ dataset });
   }
 
@@ -69,7 +69,7 @@ async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdenti
           // objectIdentifiersSync
           code`\
 ${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]> {
-  return return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier);
+  return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));
 }`,
 
           // objects
@@ -108,13 +108,13 @@ ${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parame
         switch (objectType.kind) {
           case "ObjectType": {
             return delegatingMethods.concat(code`\
-export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(objectType.filterFunction, objectType)}, query);
 }`);
           }
           case "ObjectUnionType":
             return delegatingMethods.concat(code`\
-export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([
     ${joinCode(
       objectType.memberTypes

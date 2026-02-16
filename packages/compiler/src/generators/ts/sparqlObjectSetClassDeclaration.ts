@@ -14,7 +14,7 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): Code {
-  const sparqlWherePatternsFunctionType = `(parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; }) => readonly ${imports.sparqljs}.Pattern[]`;
+  const sparqlWherePatternsFunctionType = code`(parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; }) => readonly ${imports.sparqljs}.Pattern[]`;
 
   const parameters = {
     constructObjectType: code`objectType: {\
@@ -36,10 +36,9 @@ export function sparqlObjectSetClassDeclaration({
 export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePrefix}ObjectSet {
   protected readonly ${syntheticNamePrefix}countVariable = ${imports.dataFactory}.variable!("count");;
   protected readonly ${syntheticNamePrefix}objectVariable = ${imports.dataFactory}.variable!("object");
-  protected readonly ${syntheticNamePrefix}sparqlClient: { queryBindings: (query: string) => Promise<readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly rdfjs.Quad[]>; }
   protected readonly ${syntheticNamePrefix}sparqlGenerator = new ${imports.sparqljs}.Generator();
 
-  constructor({ sparqlClient }: { sparqlClient: ${syntheticNamePrefix}SparqlObjectSet["${syntheticNamePrefix}sparqlClient"] }) {
+  constructor(protected readonly ${syntheticNamePrefix}sparqlClient: { queryBindings: (query: string) => Promise<readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${imports.Quad}[]>; }) {
     this.sparqlClient = sparqlClient;
   }
 

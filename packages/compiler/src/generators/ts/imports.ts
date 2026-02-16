@@ -26,6 +26,7 @@ export const imports = {
   MutableResourceSet: imp("MutableResourceSet@rdfjs-resource"),
   NamedNode: imp("NamedNode@@rdfjs/types"),
   NonEmptyList: imp("NonEmptyList@purify-ts"),
+  Quad: imp("Quad@@rdfjs/types"),
   Resource: imp("Resource@rdfjs-resource"),
   ResourceSet: imp("ResourceSet@rdfjs-resource"),
   sha256: imp("sha256@js-sha256"),

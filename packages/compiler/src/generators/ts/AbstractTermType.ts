@@ -167,7 +167,7 @@ export abstract class AbstractTermType<
 
   override sparqlConstructTriples(): Code {
     // Terms never have other triples hanging off them.
-    return code`${arrayOf([])}`;
+    return code`[]`;
   }
 
   override toRdfExpression({

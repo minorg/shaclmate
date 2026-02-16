@@ -92,7 +92,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override fromRdfExpression(): Maybe<Code> {
     return !this.abstract && this.objectType.declarationType === "interface"
       ? Maybe.of(
-          code`${imports.Either}.of<Error, ${this.objectType.discriminantValue}>(${this.initializer})`,
+          code`${imports.Either}.of<Error, ${literalOf(this.objectType.discriminantValue)}>(${this.initializer})`,
         )
       : Maybe.empty();
   }

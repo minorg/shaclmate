@@ -1,6 +1,6 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { camelCase } from "change-case";
-import { type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -14,13 +14,13 @@ export function sparqlFunctionDeclarations(this: ObjectType): readonly Code[] {
     return [];
   }
 
-  const subjectDefault = camelCase(this.name);
+  const subjectDefault = literalOf(camelCase(this.name));
 
   const variables = {
     filter: code`parameters?.filter`,
     preferredLanguages: code`parameters?.preferredLanguages`,
     focusIdentifier: code`subject`,
-    variablePrefix: code`(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}"))`,
+    variablePrefix: code`(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : ${subjectDefault}))`,
   };
   const rdfClassVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
@@ -144,8 +144,8 @@ export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTr
 ${
   sparqlConstructTriplesStatements.length > 0
     ? joinCode([
-        code`const subject = parameters?.subject ?? ${imports.dataFactory}.variable!("${subjectDefault}");`,
-        code`${triplesVariableDeclarationKeyword} triples: ${imports.sparqljs}.Triple[] = []`,
+        code`const subject = parameters?.subject ?? ${imports.dataFactory}.variable!(${subjectDefault});`,
+        code`${triplesVariableDeclarationKeyword} triples: ${imports.sparqljs}.Triple[] = [];`,
         ...sparqlConstructTriplesStatements,
         code`return triples;`,
       ])
@@ -158,7 +158,7 @@ ${
   sparqlWherePatternsStatements.length > 0
     ? joinCode([
         code`${patternsVariableDeclarationKeyword} patterns: ${snippets.SparqlPattern}[] = [];`,
-        code`const subject = parameters?.subject ?? ${imports.dataFactory}.variable!("${subjectDefault}");`,
+        code`const subject = parameters?.subject ?? ${imports.dataFactory}.variable!(${subjectDefault});`,
         ...sparqlWherePatternsStatements,
         code`return patterns;`,
       ])

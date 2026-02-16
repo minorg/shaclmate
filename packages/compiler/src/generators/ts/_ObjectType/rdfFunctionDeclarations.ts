@@ -15,7 +15,7 @@ function fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
 
   const statements: Code[] = [
     code`let { context, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});`,
-    code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: resource.dataset }); }`,
+    code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,
   ];
 
   let propertiesFromRdfExpression = code`${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ context, ignoreRdfType, objectSet, preferredLanguages, resource })`;

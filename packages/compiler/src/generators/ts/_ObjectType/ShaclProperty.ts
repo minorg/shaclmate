@@ -2,7 +2,7 @@ import type * as rdfjs from "@rdfjs/types";
 
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
-import { type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
 import { imports } from "../imports.js";
@@ -290,16 +290,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<AbstractProperty<TypeT>["sparqlWherePatterns"]>[0]): ReturnType<
     AbstractProperty<TypeT>["sparqlWherePatterns"]
   > {
-    const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of({
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: this.filterProperty
-          .map(({ name }) => `${variables.filter}?.${name}`)
+          .map(({ name }) => code`${variables.filter}?.${name}`)
           .extract(),
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: [
-          `${{
+          code`${{
             triples: [
               {
                 object: valueVariable,
@@ -307,7 +307,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
                 subject: variables.focusIdentifier,
               },
             ],
-            type: JSON.stringify("bgp"),
+            type: literalOf("bgp"),
           }} satisfies sparqljs.BgpPattern`,
         ],
         schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,

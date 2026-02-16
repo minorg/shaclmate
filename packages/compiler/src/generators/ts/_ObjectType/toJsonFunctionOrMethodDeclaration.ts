@@ -68,7 +68,7 @@ export function toJsonFunctionOrMethodDeclaration(
   // }
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}toJson(${parameters.length > 0 ? code`parameters: ${joinCode(parameters, { on: ", " })}` : ""}): ${this.jsonType().name} {
+${preamble}${syntheticNamePrefix}toJson(${joinCode(parameters, { on: ", " })}): ${this.jsonType().name} {
   return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().name}));
 }`);
 }

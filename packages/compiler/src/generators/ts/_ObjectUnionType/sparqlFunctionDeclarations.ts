@@ -41,7 +41,7 @@ ${joinCode([
           propertyPatterns: [],
           schema: ${this.identifierType.schema},
           valueVariable: subject,
-          variablePrefix: subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}",
+          variablePrefix: subject.termType === "Variable" ? subject.value : ${literalOf(camelCase(this.name))},
       }));
     }`,
   code`patterns.push({ patterns: [${joinCode(
