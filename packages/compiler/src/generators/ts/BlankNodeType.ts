@@ -60,7 +60,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${imports.z}.literal("BlankNode")`
+      ? code`, termType: ${imports.z}.literal("BlankNode")`
       : "";
 
     return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;
@@ -73,7 +73,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.value}.termType`
+      ? code`, termType: ${variables.value}.termType`
       : "";
     return code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
   }

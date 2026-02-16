@@ -65,7 +65,7 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${imports.z}.enum(${JSON.stringify([...this.nodeKinds])})`
+      ? code`, termType: ${imports.z}.enum(${JSON.stringify([...this.nodeKinds])})`
       : "";
 
     return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;
@@ -78,7 +78,7 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
+      ? code`, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
       : "";
     const valueToBlankNode = code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
     const valueToNamedNode = code`{ "@id": ${variables.value}.value${discriminantProperty} }`;

@@ -51,7 +51,7 @@ export class LiteralType extends AbstractLiteralType {
     includeDiscriminantProperty,
   }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${imports.z}.literal("Literal")`
+      ? code`, termType: ${imports.z}.literal("Literal")`
       : "";
 
     return code`${imports.z}.object({ "@language": ${imports.z}.string().optional()${discriminantProperty}, "@type": ${imports.z}.string().optional(), "@value": ${imports.z}.string() })`;

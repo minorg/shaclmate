@@ -102,17 +102,17 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
-    let idSchema: string;
+    let idSchema: Code;
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      idSchema = `${imports.z}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
+      idSchema = code`${imports.z}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
     } else {
-      idSchema = `${imports.z}.string().min(1)`;
+      idSchema = code`${imports.z}.string().min(1)`;
     }
 
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${imports.z}.literal("NamedNode")`
+      ? code`, termType: ${imports.z}.literal("NamedNode")`
       : "";
 
     return code`${imports.z}.object({ "@id": ${idSchema}${discriminantProperty} })`;
@@ -125,7 +125,7 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
     AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.value}.termType`
+      ? code`, termType: ${variables.value}.termType`
       : "";
     return code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
   }

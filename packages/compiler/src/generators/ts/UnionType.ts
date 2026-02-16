@@ -1,6 +1,6 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
@@ -347,7 +347,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
           this.#name = code`(${joinCode(
             this.memberTypes.map(
               (memberType) =>
-                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.name} }`,
+                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: ${literalOf(memberType.discriminantValues[0])}, value: ${memberType.name} }`,
             ),
             { on: "|" },
           )})`;

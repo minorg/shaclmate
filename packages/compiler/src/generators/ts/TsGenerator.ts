@@ -18,7 +18,7 @@ export class TsGenerator implements Generator {
     let objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
-    objectTypesToposorted = objectTypesToposorted.slice(0, 4);
+    objectTypesToposorted = objectTypesToposorted.slice(0, 5);
 
     let objectUnionTypesToposorted = ast_.objectUnionTypes.map(
       (astObjectUnionType) =>
