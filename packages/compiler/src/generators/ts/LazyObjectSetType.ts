@@ -83,7 +83,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
       sourceTypeCheckExpression: (value) =>
         code`typeof ${value} === "undefined"`,
       sourceTypeName: code`undefined`,
-      sourceTypeof: "object",
+      sourceTypeof: "undefined",
     });
 
     return conversions;

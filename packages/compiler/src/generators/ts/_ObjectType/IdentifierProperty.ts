@@ -54,8 +54,12 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get constructorParametersSignature(): Maybe<Code> {
     if (this.abstract) {
-      // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
-      if (this.declaration.isNothing() || this.abstract) {
+      const declaration = this.declaration.extractNullable();
+      if (
+        declaration === null ||
+        declaration.toCodeString([]).startsWith("abstract ")
+      ) {
+        // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
         return Maybe.empty();
       }
     }
