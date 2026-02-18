@@ -94,14 +94,14 @@ export abstract class AbstractLazyObjectType<
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partial(), ...otherParameters }))`;
   }
 
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      partialType: this.partialType.schema,
-      resolvedType: this.resolvedType.schema,
+      partial: code`() => (${this.partialType.schema})`,
+      resolved: code`() => (${this.resolvedType.schema})`,
     };
   }
 

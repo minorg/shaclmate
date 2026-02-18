@@ -178,7 +178,7 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
 };
 
 type $CollectionSchema<ItemSchemaT> = {
-  readonly item: ItemSchemaT;
+  readonly item: () => ItemSchemaT;
   readonly minCount: number;
 };
 
@@ -307,7 +307,7 @@ function $deduplicateSparqlPatterns(
 
 type $DefaultValueSchema<ItemSchemaT> = {
   readonly defaultValue: Literal | NamedNode;
-  readonly item: ItemSchemaT;
+  readonly item: () => ItemSchemaT;
 };
 
 function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
@@ -319,7 +319,7 @@ function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   return ({ schema, ...otherParameters }) => {
     const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
       itemSparqlWherePatternsFunction({
-        schema: schema.item,
+        schema: schema.item(),
         ...otherParameters,
       }),
     );
@@ -959,7 +959,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
           filter: parameters.filter,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
-          schema: parameters.schema.item,
+          schema: parameters.schema.item(),
           valueVariable: item0Variable,
           variablePrefix: variablePrefix("Item0"),
         }),
@@ -1018,7 +1018,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
           filter: parameters.filter,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
-          schema: parameters.schema.item,
+          schema: parameters.schema.item(),
           valueVariable: itemNVariable,
           variablePrefix: variablePrefix("ItemN"),
         }),
@@ -1131,7 +1131,7 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
-type $MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT };
+type $MaybeSchema<ItemSchemaT> = { readonly item: () => ItemSchemaT };
 
 function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
@@ -1148,7 +1148,7 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
           filter,
-          schema: schema.item,
+          schema: schema.item(),
           ...otherParameters,
         }),
       );
@@ -1162,7 +1162,7 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       // Use FILTER NOT EXISTS around the item's patterns
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
-          schema: schema.item,
+          schema: schema.item(),
           ...otherParameters,
         }),
       );
@@ -1183,7 +1183,7 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
     // Treat the item as required.
     return itemSparqlWherePatternsFunction({
       filter,
-      schema: schema.item,
+      schema: schema.item(),
       ...otherParameters,
     });
   };
@@ -1483,7 +1483,7 @@ function $setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   return ({ filter, schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({
       filter,
-      schema: schema.item,
+      schema: schema.item(),
       ...otherParameters,
     });
 
@@ -6693,7 +6693,7 @@ export namespace UnionDiscriminantsClass {
         name: "optionalClassOrClassOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               "0-ClassUnionMember1": {
@@ -6713,7 +6713,7 @@ export namespace UnionDiscriminantsClass {
                 },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalClassOrClassOrStringProperty",
@@ -6724,7 +6724,7 @@ export namespace UnionDiscriminantsClass {
         name: "optionalIriOrLiteralProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               NamedNode: {
@@ -6736,7 +6736,7 @@ export namespace UnionDiscriminantsClass {
                 type: { kind: "LiteralType" as const, languageIn: undefined },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalIriOrLiteralProperty",
@@ -6747,7 +6747,7 @@ export namespace UnionDiscriminantsClass {
         name: "optionalIriOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               object: {
@@ -6763,7 +6763,7 @@ export namespace UnionDiscriminantsClass {
                 },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalIriOrStringProperty",
@@ -6846,7 +6846,7 @@ export namespace UnionDiscriminantsClass {
         name: "setClassOrClassOrStringProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               "0-ClassUnionMember1": {
@@ -6866,7 +6866,7 @@ export namespace UnionDiscriminantsClass {
                 },
               },
             },
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -6878,7 +6878,7 @@ export namespace UnionDiscriminantsClass {
         name: "setIriOrLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               NamedNode: {
@@ -6890,7 +6890,7 @@ export namespace UnionDiscriminantsClass {
                 type: { kind: "LiteralType" as const, languageIn: undefined },
               },
             },
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -6902,7 +6902,7 @@ export namespace UnionDiscriminantsClass {
         name: "setIriOrStringProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               object: {
@@ -6918,7 +6918,7 @@ export namespace UnionDiscriminantsClass {
                 },
               },
             },
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -9340,7 +9340,7 @@ export namespace TermPropertiesClass {
         name: "blankNodeTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: { kind: "BlankNodeType" as const },
+          item: () => ({ kind: "BlankNodeType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/blankNodeTermProperty",
@@ -9351,11 +9351,11 @@ export namespace TermPropertiesClass {
         name: "booleanTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "BooleanType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/booleanTermProperty",
@@ -9366,11 +9366,11 @@ export namespace TermPropertiesClass {
         name: "dateTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "DateType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateTermProperty",
@@ -9381,11 +9381,11 @@ export namespace TermPropertiesClass {
         name: "dateTimeTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "DateTimeType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateTimeTermProperty",
@@ -9396,7 +9396,7 @@ export namespace TermPropertiesClass {
         name: "iriTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: { kind: "NamedNodeType" as const, in: undefined },
+          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
       },
@@ -9405,7 +9405,7 @@ export namespace TermPropertiesClass {
         name: "literalTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: { kind: "LiteralType" as const, languageIn: undefined },
+          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/literalTermProperty",
@@ -9416,11 +9416,11 @@ export namespace TermPropertiesClass {
         name: "numberTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "FloatType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/numberTermProperty",
@@ -9431,11 +9431,11 @@ export namespace TermPropertiesClass {
         name: "stringTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/stringTermProperty",
@@ -9446,7 +9446,7 @@ export namespace TermPropertiesClass {
         name: "termProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
@@ -9454,7 +9454,7 @@ export namespace TermPropertiesClass {
               "Literal" as const,
               "NamedNode" as const,
             ],
-          },
+          }),
         }),
         identifier: dataFactory.namedNode("http://example.com/termProperty"),
       },
@@ -11118,7 +11118,7 @@ export namespace RecursiveClassUnionMember2 {
         name: "recursiveClassUnionMember2Property",
         type: () => ({
           kind: "OptionType" as const,
-          item: RecursiveClassUnion.$schema,
+          item: () => RecursiveClassUnion.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/recursiveClassUnionMember2Property",
@@ -11730,7 +11730,7 @@ export namespace RecursiveClassUnionMember1 {
         name: "recursiveClassUnionMember1Property",
         type: () => ({
           kind: "OptionType" as const,
-          item: RecursiveClassUnion.$schema,
+          item: () => RecursiveClassUnion.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/recursiveClassUnionMember1Property",
@@ -13265,11 +13265,11 @@ export namespace PropertyCardinalitiesClass {
         name: "emptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -13281,11 +13281,11 @@ export namespace PropertyCardinalitiesClass {
         name: "nonEmptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -13297,11 +13297,11 @@ export namespace PropertyCardinalitiesClass {
         name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -19035,15 +19035,15 @@ export namespace MutablePropertiesClass {
         name: "mutableListProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "ListType" as const,
-            item: {
+            item: () => ({
               kind: "StringType" as const,
               languageIn: undefined,
               in: undefined,
-            },
+            }),
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/mutableListProperty",
@@ -19054,11 +19054,11 @@ export namespace MutablePropertiesClass {
         name: "mutableSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -19070,11 +19070,11 @@ export namespace MutablePropertiesClass {
         name: "mutableStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/mutableStringProperty",
@@ -20333,11 +20333,11 @@ export namespace ListPropertiesClass {
         name: "iriListProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "ListType" as const,
-            item: { kind: "NamedNodeType" as const, in: undefined },
+            item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
       },
@@ -20346,11 +20346,11 @@ export namespace ListPropertiesClass {
         name: "objectListProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "ListType" as const,
-            item: NonClass.$schema,
+            item: () => NonClass.$schema,
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/objectListProperty",
@@ -20361,15 +20361,15 @@ export namespace ListPropertiesClass {
         name: "stringListProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "ListType" as const,
-            item: {
+            item: () => ({
               kind: "StringType" as const,
               languageIn: undefined,
               in: undefined,
-            },
+            }),
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/stringListProperty",
@@ -23804,12 +23804,7 @@ export namespace LazyPropertiesInterface {
                                                               ) =>
                                                                 $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
                                                                   {
-                                                                    filter: {
-                                                                      $identifier:
-                                                                        {
-                                                                          in: identifiers,
-                                                                        },
-                                                                    },
+                                                                    identifiers,
                                                                   },
                                                                 ),
                                                             }),
@@ -23891,13 +23886,7 @@ export namespace LazyPropertiesInterface {
                                                                     ) =>
                                                                       $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
                                                                         {
-                                                                          filter:
-                                                                            {
-                                                                              $identifier:
-                                                                                {
-                                                                                  in: identifiers,
-                                                                                },
-                                                                            },
+                                                                          identifiers,
                                                                         },
                                                                       ),
                                                                   }),
@@ -24095,14 +24084,14 @@ export namespace LazyPropertiesInterface {
         name: "optionalLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $DefaultPartial.$schema,
-          },
-          resolvedType: {
+            item: () => $DefaultPartial.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-          },
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceProperty",
@@ -24113,14 +24102,14 @@ export namespace LazyPropertiesInterface {
         name: "optionalLazyToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $DefaultPartial.$schema,
-          },
-          resolvedType: {
+            item: () => $DefaultPartial.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedInterfaceUnion.$schema,
-          },
+            item: () => LazilyResolvedInterfaceUnion.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
@@ -24131,14 +24120,14 @@ export namespace LazyPropertiesInterface {
         name: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $NamedDefaultPartial.$schema,
-          },
-          resolvedType: {
+            item: () => $NamedDefaultPartial.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedIriIdentifierInterface.$schema,
-          },
+            item: () => LazilyResolvedIriIdentifierInterface.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
@@ -24149,14 +24138,14 @@ export namespace LazyPropertiesInterface {
         name: "optionalPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: PartialInterface.$schema,
-          },
-          resolvedType: {
+            item: () => PartialInterface.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-          },
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
@@ -24167,14 +24156,14 @@ export namespace LazyPropertiesInterface {
         name: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: PartialInterface.$schema,
-          },
-          resolvedType: {
+            item: () => PartialInterface.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedInterfaceUnion.$schema,
-          },
+            item: () => LazilyResolvedInterfaceUnion.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
@@ -24185,14 +24174,14 @@ export namespace LazyPropertiesInterface {
         name: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: PartialInterfaceUnion.$schema,
-          },
-          resolvedType: {
+            item: () => PartialInterfaceUnion.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedInterfaceUnion.$schema,
-          },
+            item: () => LazilyResolvedInterfaceUnion.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
@@ -24203,8 +24192,9 @@ export namespace LazyPropertiesInterface {
         name: "requiredLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
-          partialType: $DefaultPartial.$schema,
-          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          partial: () => $DefaultPartial.$schema,
+          resolved: () =>
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedInterfaceProperty",
@@ -24215,8 +24205,9 @@ export namespace LazyPropertiesInterface {
         name: "requiredPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
-          partialType: PartialInterface.$schema,
-          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          partial: () => PartialInterface.$schema,
+          resolved: () =>
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
@@ -24227,16 +24218,16 @@ export namespace LazyPropertiesInterface {
         name: "setLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
-          partialType: {
+          partial: () => ({
             kind: "SetType" as const,
-            item: $DefaultPartial.$schema,
+            item: () => $DefaultPartial.$schema,
             minCount: 0,
-          },
-          resolvedType: {
+          }),
+          resolved: () => ({
             kind: "SetType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedInterfaceProperty",
@@ -24247,16 +24238,16 @@ export namespace LazyPropertiesInterface {
         name: "setPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
-          partialType: {
+          partial: () => ({
             kind: "SetType" as const,
-            item: PartialInterface.$schema,
+            item: () => PartialInterface.$schema,
             minCount: 0,
-          },
-          resolvedType: {
+          }),
+          resolved: () => ({
             kind: "SetType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
@@ -24710,7 +24701,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -24774,7 +24765,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -24839,7 +24830,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter
             ?.optionalLazyToResolvedIriIdentifierInterfaceProperty,
@@ -24906,7 +24897,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceToResolvedInterfaceProperty,
@@ -24973,7 +24964,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
@@ -25030,7 +25021,7 @@ export namespace LazyPropertiesInterface {
               ...otherParameters,
             }),
           ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -25092,7 +25083,7 @@ export namespace LazyPropertiesInterface {
               subject: valueVariable,
               ...otherParameters,
             }),
-          ))({ schema: schema.partialType, ...otherParameters }))({
+          ))({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -25151,7 +25142,7 @@ export namespace LazyPropertiesInterface {
               subject: valueVariable,
               ...otherParameters,
             }),
-          ))({ schema: schema.partialType, ...otherParameters }))({
+          ))({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter
             ?.requiredPartialInterfaceToResolvedInterfaceProperty,
@@ -25218,7 +25209,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.setLazyToResolvedInterfaceProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -25282,7 +25273,7 @@ export namespace LazyPropertiesInterface {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -28047,13 +28038,7 @@ export namespace LazyPropertiesClass {
                                                           identifiers,
                                                         ) =>
                                                           $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
-                                                            {
-                                                              filter: {
-                                                                $identifier: {
-                                                                  in: identifiers,
-                                                                },
-                                                              },
-                                                            },
+                                                            { identifiers },
                                                           ),
                                                       }),
                                                   ),
@@ -28130,12 +28115,7 @@ export namespace LazyPropertiesClass {
                                                               ) =>
                                                                 $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
                                                                   {
-                                                                    filter: {
-                                                                      $identifier:
-                                                                        {
-                                                                          in: identifiers,
-                                                                        },
-                                                                    },
+                                                                    identifiers,
                                                                   },
                                                                 ),
                                                             }),
@@ -28194,14 +28174,14 @@ export namespace LazyPropertiesClass {
         name: "optionalLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $DefaultPartial.$schema,
-          },
-          resolvedType: {
+            item: () => $DefaultPartial.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-          },
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassProperty",
@@ -28212,14 +28192,14 @@ export namespace LazyPropertiesClass {
         name: "optionalLazyToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $DefaultPartial.$schema,
-          },
-          resolvedType: {
+            item: () => $DefaultPartial.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedClassUnion.$schema,
-          },
+            item: () => LazilyResolvedClassUnion.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassUnionProperty",
@@ -28230,14 +28210,14 @@ export namespace LazyPropertiesClass {
         name: "optionalLazyToResolvedIriIdentifierClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $NamedDefaultPartial.$schema,
-          },
-          resolvedType: {
+            item: () => $NamedDefaultPartial.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedIriIdentifierClass.$schema,
-          },
+            item: () => LazilyResolvedIriIdentifierClass.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
@@ -28248,14 +28228,14 @@ export namespace LazyPropertiesClass {
         name: "optionalPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: PartialClass.$schema,
-          },
-          resolvedType: {
+            item: () => PartialClass.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-          },
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassProperty",
@@ -28266,14 +28246,14 @@ export namespace LazyPropertiesClass {
         name: "optionalPartialClassToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: PartialClass.$schema,
-          },
-          resolvedType: {
+            item: () => PartialClass.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedClassUnion.$schema,
-          },
+            item: () => LazilyResolvedClassUnion.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
@@ -28284,14 +28264,14 @@ export namespace LazyPropertiesClass {
         name: "optionalPartialClassUnionToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: PartialClassUnion.$schema,
-          },
-          resolvedType: {
+            item: () => PartialClassUnion.$schema,
+          }),
+          resolved: () => ({
             kind: "OptionType" as const,
-            item: LazilyResolvedClassUnion.$schema,
-          },
+            item: () => LazilyResolvedClassUnion.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
@@ -28302,8 +28282,8 @@ export namespace LazyPropertiesClass {
         name: "requiredLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
-          partialType: $DefaultPartial.$schema,
-          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          partial: () => $DefaultPartial.$schema,
+          resolved: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedClassProperty",
@@ -28314,8 +28294,8 @@ export namespace LazyPropertiesClass {
         name: "requiredPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
-          partialType: PartialClass.$schema,
-          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          partial: () => PartialClass.$schema,
+          resolved: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredPartialClassToResolvedClassProperty",
@@ -28326,16 +28306,16 @@ export namespace LazyPropertiesClass {
         name: "setLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
-          partialType: {
+          partial: () => ({
             kind: "SetType" as const,
-            item: $DefaultPartial.$schema,
+            item: () => $DefaultPartial.$schema,
             minCount: 0,
-          },
-          resolvedType: {
+          }),
+          resolved: () => ({
             kind: "SetType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedClassProperty",
@@ -28346,16 +28326,16 @@ export namespace LazyPropertiesClass {
         name: "setPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
-          partialType: {
+          partial: () => ({
             kind: "SetType" as const,
-            item: PartialClass.$schema,
+            item: () => PartialClass.$schema,
             minCount: 0,
-          },
-          resolvedType: {
+          }),
+          resolved: () => ({
             kind: "SetType" as const,
-            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
             minCount: 0,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setPartialClassToResolvedClassProperty",
@@ -28804,7 +28784,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.optionalLazyToResolvedClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -28868,7 +28848,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -28932,7 +28912,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -28998,7 +28978,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.optionalPartialClassToResolvedClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -29062,7 +29042,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -29118,7 +29098,7 @@ export namespace LazyPropertiesClass {
               ...otherParameters,
             }),
           ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter:
           parameters?.filter
             ?.optionalPartialClassUnionToResolvedClassUnionProperty,
@@ -29180,7 +29160,7 @@ export namespace LazyPropertiesClass {
               subject: valueVariable,
               ...otherParameters,
             }),
-          ))({ schema: schema.partialType, ...otherParameters }))({
+          ))({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.requiredLazyToResolvedClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -29239,7 +29219,7 @@ export namespace LazyPropertiesClass {
               subject: valueVariable,
               ...otherParameters,
             }),
-          ))({ schema: schema.partialType, ...otherParameters }))({
+          ))({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -29303,7 +29283,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.setLazyToResolvedClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -29367,7 +29347,7 @@ export namespace LazyPropertiesClass {
                 ...otherParameters,
               }),
             ),
-        )({ schema: schema.partialType, ...otherParameters }))({
+        )({ schema: schema.partial(), ...otherParameters }))({
         filter: parameters?.filter?.setPartialClassToResolvedClassProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -34643,7 +34623,10 @@ export namespace LanguageInPropertiesClass {
         name: "languageInLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: { kind: "LiteralType" as const, languageIn: ["en", "fr"] },
+          item: () => ({
+            kind: "LiteralType" as const,
+            languageIn: ["en", "fr"],
+          }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -35349,7 +35332,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         name: "jsPrimitiveUnionProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               boolean: {
@@ -35377,7 +35360,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 },
               },
             },
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -39247,7 +39230,7 @@ export namespace IndirectRecursiveHelperClass {
         name: "indirectRecursiveProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: IndirectRecursiveClass.$schema,
+          item: () => IndirectRecursiveClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/indirectRecursiveProperty",
@@ -39858,7 +39841,7 @@ export namespace IndirectRecursiveClass {
         name: "indirectRecursiveHelperProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: IndirectRecursiveHelperClass.$schema,
+          item: () => IndirectRecursiveHelperClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/indirectRecursiveHelperProperty",
@@ -40947,11 +40930,11 @@ export namespace InPropertiesClass {
         name: "inBooleansProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "BooleanType" as const,
             languageIn: undefined,
             in: [true],
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inBooleansProperty",
@@ -40962,11 +40945,11 @@ export namespace InPropertiesClass {
         name: "inDateTimesProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "DateTimeType" as const,
             languageIn: undefined,
             in: [new Date("2018-04-09T10:00:00.000Z")],
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inDateTimesProperty",
@@ -40977,13 +40960,13 @@ export namespace InPropertiesClass {
         name: "inIrisProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "NamedNodeType" as const,
             in: [
               dataFactory.namedNode("http://example.com/InPropertiesIri1"),
               dataFactory.namedNode("http://example.com/InPropertiesIri2"),
             ],
-          },
+          }),
         }),
         identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
       },
@@ -40992,7 +40975,11 @@ export namespace InPropertiesClass {
         name: "inNumbersProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: { kind: "IntType" as const, languageIn: undefined, in: [1, 2] },
+          item: () => ({
+            kind: "IntType" as const,
+            languageIn: undefined,
+            in: [1, 2],
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inNumbersProperty",
@@ -41003,11 +40990,11 @@ export namespace InPropertiesClass {
         name: "inStringsProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: ["text", "html"],
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inStringsProperty",
@@ -41946,11 +41933,11 @@ export namespace InIdentifierClass {
         name: "inIdentifierProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inIdentifierProperty",
@@ -45969,7 +45956,7 @@ export namespace ExternClassPropertyClass {
         name: "externClassProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: ExternClass.$schema,
+          item: () => ExternClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/externClassProperty",
@@ -48373,7 +48360,7 @@ export namespace DirectRecursiveClass {
         name: "directRecursiveProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: DirectRecursiveClass.$schema,
+          item: () => DirectRecursiveClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/directRecursiveProperty",
@@ -49457,11 +49444,11 @@ export namespace DefaultValuePropertiesClass {
         name: "dateDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: {
+          item: () => ({
             kind: "DateType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           defaultValue: dataFactory.literal(
             "2018-04-09",
             $RdfVocabularies.xsd.date,
@@ -49476,11 +49463,11 @@ export namespace DefaultValuePropertiesClass {
         name: "dateTimeDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: {
+          item: () => ({
             kind: "DateTimeType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           defaultValue: dataFactory.literal(
             "2018-04-09T10:00:00Z",
             $RdfVocabularies.xsd.dateTime,
@@ -49495,11 +49482,11 @@ export namespace DefaultValuePropertiesClass {
         name: "falseBooleanDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: {
+          item: () => ({
             kind: "BooleanType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           defaultValue: dataFactory.literal(
             "false",
             $RdfVocabularies.xsd.boolean,
@@ -49514,11 +49501,11 @@ export namespace DefaultValuePropertiesClass {
         name: "numberDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: {
+          item: () => ({
             kind: "IntType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           defaultValue: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
         }),
         identifier: dataFactory.namedNode(
@@ -49530,11 +49517,11 @@ export namespace DefaultValuePropertiesClass {
         name: "stringDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: {
+          item: () => ({
             kind: "StringType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           defaultValue: dataFactory.literal(""),
         }),
         identifier: dataFactory.namedNode(
@@ -49546,11 +49533,11 @@ export namespace DefaultValuePropertiesClass {
         name: "trueBooleanDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: {
+          item: () => ({
             kind: "BooleanType" as const,
             languageIn: undefined,
             in: undefined,
-          },
+          }),
           defaultValue: dataFactory.literal(
             "true",
             $RdfVocabularies.xsd.boolean,
@@ -51493,7 +51480,7 @@ export namespace DateUnionPropertiesClass {
         name: "dateOrDateTimeProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               date: {
@@ -51513,7 +51500,7 @@ export namespace DateUnionPropertiesClass {
                 },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateOrDateTimeProperty",
@@ -51524,7 +51511,7 @@ export namespace DateUnionPropertiesClass {
         name: "dateOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               date: {
@@ -51544,7 +51531,7 @@ export namespace DateUnionPropertiesClass {
                 },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateOrStringProperty",
@@ -51555,7 +51542,7 @@ export namespace DateUnionPropertiesClass {
         name: "dateTimeOrDateProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               dateTime: {
@@ -51575,7 +51562,7 @@ export namespace DateUnionPropertiesClass {
                 },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateTimeOrDateProperty",
@@ -51586,7 +51573,7 @@ export namespace DateUnionPropertiesClass {
         name: "stringOrDateProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "UnionType" as const,
             members: {
               string: {
@@ -51606,7 +51593,7 @@ export namespace DateUnionPropertiesClass {
                 },
               },
             },
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/stringOrDateProperty",
@@ -54153,7 +54140,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleIriNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: { kind: "NamedNodeType" as const, in: undefined },
+          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -54165,7 +54152,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleIriOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: { kind: "NamedNodeType" as const, in: undefined },
+          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriOptionProperty",
@@ -54184,7 +54171,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleIriSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: { kind: "NamedNodeType" as const, in: undefined },
+          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -54196,7 +54183,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleLiteralNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: { kind: "LiteralType" as const, languageIn: undefined },
+          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -54208,7 +54195,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleLiteralOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: { kind: "LiteralType" as const, languageIn: undefined },
+          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralOptionProperty",
@@ -54227,7 +54214,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleLiteralSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: { kind: "LiteralType" as const, languageIn: undefined },
+          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(
@@ -54239,7 +54226,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleTermNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
@@ -54247,7 +54234,7 @@ export namespace ConvertibleTypePropertiesClass {
               "Literal" as const,
               "NamedNode" as const,
             ],
-          },
+          }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -54259,7 +54246,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleTermOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
+          item: () => ({
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
@@ -54267,7 +54254,7 @@ export namespace ConvertibleTypePropertiesClass {
               "Literal" as const,
               "NamedNode" as const,
             ],
-          },
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermOptionProperty",
@@ -54294,7 +54281,7 @@ export namespace ConvertibleTypePropertiesClass {
         name: "convertibleTermSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
+          item: () => ({
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
@@ -54302,7 +54289,7 @@ export namespace ConvertibleTypePropertiesClass {
               "Literal" as const,
               "NamedNode" as const,
             ],
-          },
+          }),
           minCount: 0,
         }),
         identifier: dataFactory.namedNode(

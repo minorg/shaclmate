@@ -55,7 +55,7 @@ export abstract class AbstractContainerType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      item: this.itemType.schema,
+      item: code`() => (${this.itemType.schema})`,
     };
   }
 }
