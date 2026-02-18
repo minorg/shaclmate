@@ -122,7 +122,9 @@ export function $blankNodeFromString(
   ) as Either<Error, BlankNode>;
 }
 
-interface $BlankNodeSchema {}
+interface $BlankNodeSchema {
+  readonly kind: "BlankNodeType";
+}
 
 const $blankNodeSparqlWherePatterns: $SparqlWherePatternsFunction<
   $BlankNodeFilter,
@@ -144,6 +146,7 @@ interface $BooleanFilter {
 }
 
 interface $BooleanSchema {
+  readonly kind: "BooleanType";
   readonly in?: readonly boolean[];
 }
 
@@ -177,10 +180,11 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $minCount?: number;
 };
 
-type $CollectionSchema<ItemSchemaT> = {
+interface $CollectionSchema<ItemSchemaT> {
   readonly item: () => ItemSchemaT;
+  readonly kind: "ListType" | "SetType";
   readonly minCount?: number;
-};
+}
 
 const $datasetFactory = new DatasetFactory();
 
@@ -305,10 +309,11 @@ function $deduplicateSparqlPatterns(
   return deduplicatedPatterns;
 }
 
-type $DefaultValueSchema<ItemSchemaT> = {
+interface $DefaultValueSchema<ItemSchemaT> {
   readonly defaultValue: Literal | NamedNode;
   readonly item: () => ItemSchemaT;
-};
+  readonly kind: "DefaultValueType";
+}
 
 function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
@@ -1131,7 +1136,10 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
-type $MaybeSchema<ItemSchemaT> = { readonly item: () => ItemSchemaT };
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "OptionType";
+}
 
 function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
@@ -1194,8 +1202,8 @@ interface $NamedNodeFilter {
 }
 
 interface $NamedNodeSchema {
-  readonly kind: "NamedNodeType";
   readonly in?: readonly NamedNode[];
+  readonly kind: "NamedNodeType";
 }
 
 const $namedNodeSparqlWherePatterns: $SparqlWherePatternsFunction<
@@ -1339,8 +1347,8 @@ interface $NumberFilter {
 }
 
 interface $NumberSchema {
-  readonly kind: "FloatType" | "IntType";
   readonly in?: readonly number[];
+  readonly kind: "FloatType" | "IntType";
 }
 
 const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
@@ -1669,8 +1677,8 @@ interface $StringFilter {
 }
 
 interface $StringSchema {
-  readonly kind: "StringType";
   readonly in?: readonly string[];
+  readonly kind: "StringType";
 }
 
 const $stringSparqlWherePatterns: $SparqlWherePatternsFunction<

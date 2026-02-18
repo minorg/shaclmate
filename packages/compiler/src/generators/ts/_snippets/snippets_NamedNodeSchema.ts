@@ -6,7 +6,7 @@ export const snippets_NamedNodeSchema = conditionalOutput(
   `${syntheticNamePrefix}NamedNodeSchema`,
   code`\
 interface ${syntheticNamePrefix}NamedNodeSchema {
-  readonly kind: "NamedNodeType";
   readonly in?: readonly ${imports.NamedNode}[];
+  readonly kind: "NamedNodeType";
 }`,
 );

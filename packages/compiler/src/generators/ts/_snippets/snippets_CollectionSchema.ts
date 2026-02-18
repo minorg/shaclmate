@@ -3,5 +3,10 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_CollectionSchema = conditionalOutput(
   `${syntheticNamePrefix}CollectionSchema`,
-  code`type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: () => ItemSchemaT; readonly minCount?: number; }`,
+  code`\
+interface ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "ListType" | "SetType";
+  readonly minCount?: number;
+}`,
 );
