@@ -102,7 +102,8 @@ export abstract class AbstractLazyObjectType<
     return {
       ...super.schemaObject,
       partial: code`() => (${this.partialType.schema})`,
-      resolved: code`() => (${this.resolvedType.schema})`,
+      // Commenting out to reduce schema size
+      // resolved: code`() => (${this.resolvedType.schema})`,
     };
   }
 
