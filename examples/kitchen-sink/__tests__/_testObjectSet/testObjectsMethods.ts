@@ -1,4 +1,5 @@
 import type * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { DataFactory } from "n3";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
 
@@ -25,8 +26,9 @@ export function testObjectsMethods(
     });
 
     describe("identifiers", () => {
+      const objectSet = createObjectSet(...data.concreteChildClasses);
+
       it("empty", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.concreteChildClasses);
         const actual = (
           await objectSet.concreteChildClasses({
             identifiers: [],
@@ -36,7 +38,6 @@ export function testObjectsMethods(
       });
 
       it("all", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.concreteChildClasses);
         const expected = data.concreteChildClasses;
         const actual = (
           await objectSet.concreteChildClasses({
@@ -50,7 +51,6 @@ export function testObjectsMethods(
       });
 
       it("subset", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.concreteChildClasses);
         const expected = data.concreteChildClasses.slice(2);
         const actual = (
           await objectSet.concreteChildClasses({
@@ -61,6 +61,19 @@ export function testObjectsMethods(
         for (let i = 0; i < expected.length; i++) {
           expect(actual[i].$equals(expected[i]).isRight()).toStrictEqual(true);
         }
+      });
+
+      it("missing", async ({ expect }) => {
+        expect(
+          (
+            await objectSet.concreteChildClasses({
+              identifiers: [
+                DataFactory.namedNode("http://example.com/nonextant"),
+                data.concreteChildClasses[0].$identifier,
+              ],
+            })
+          ).isLeft(),
+        ).toStrictEqual(true);
       });
     });
   });

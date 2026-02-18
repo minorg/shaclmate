@@ -1,4 +1,5 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { DataFactory } from "n3";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
 
@@ -36,6 +37,17 @@ export function testObjectMethods(
       expect(actualObject.concreteParentClassProperty).toStrictEqual(
         expectedObject.concreteParentClassProperty,
       );
+    });
+
+    it("missing", async ({ expect }) => {
+      const objectSet = createObjectSet(...data.concreteChildClasses);
+      expect(
+        (
+          await objectSet.concreteChildClass(
+            DataFactory.namedNode("http://example.com/nonextant"),
+          )
+        ).isLeft(),
+      ).toStrictEqual(true);
     });
 
     describe("union", () => {
