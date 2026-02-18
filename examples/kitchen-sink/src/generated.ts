@@ -23818,10 +23818,6 @@ export namespace LazyPropertiesInterface {
             kind: "OptionType" as const,
             item: () => $DefaultPartial.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceProperty",
@@ -23834,10 +23830,6 @@ export namespace LazyPropertiesInterface {
           partial: () => ({
             kind: "OptionType" as const,
             item: () => $DefaultPartial.$schema,
-          }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedInterfaceUnion.$schema,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -23852,10 +23844,6 @@ export namespace LazyPropertiesInterface {
             kind: "OptionType" as const,
             item: () => $NamedDefaultPartial.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedIriIdentifierInterface.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
@@ -23868,10 +23856,6 @@ export namespace LazyPropertiesInterface {
           partial: () => ({
             kind: "OptionType" as const,
             item: () => PartialInterface.$schema,
-          }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -23886,10 +23870,6 @@ export namespace LazyPropertiesInterface {
             kind: "OptionType" as const,
             item: () => PartialInterface.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedInterfaceUnion.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
@@ -23903,10 +23883,6 @@ export namespace LazyPropertiesInterface {
             kind: "OptionType" as const,
             item: () => PartialInterfaceUnion.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedInterfaceUnion.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
@@ -23917,8 +23893,6 @@ export namespace LazyPropertiesInterface {
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => $DefaultPartial.$schema,
-          resolved: () =>
-            LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedInterfaceProperty",
@@ -23929,8 +23903,6 @@ export namespace LazyPropertiesInterface {
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => PartialInterface.$schema,
-          resolved: () =>
-            LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
@@ -23944,10 +23916,6 @@ export namespace LazyPropertiesInterface {
             kind: "SetType" as const,
             item: () => $DefaultPartial.$schema,
           }),
-          resolved: () => ({
-            kind: "SetType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedInterfaceProperty",
@@ -23960,10 +23928,6 @@ export namespace LazyPropertiesInterface {
           partial: () => ({
             kind: "SetType" as const,
             item: () => PartialInterface.$schema,
-          }),
-          resolved: () => ({
-            kind: "SetType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -27885,10 +27849,6 @@ export namespace LazyPropertiesClass {
             kind: "OptionType" as const,
             item: () => $DefaultPartial.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassProperty",
@@ -27901,10 +27861,6 @@ export namespace LazyPropertiesClass {
           partial: () => ({
             kind: "OptionType" as const,
             item: () => $DefaultPartial.$schema,
-          }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedClassUnion.$schema,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -27919,10 +27875,6 @@ export namespace LazyPropertiesClass {
             kind: "OptionType" as const,
             item: () => $NamedDefaultPartial.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedIriIdentifierClass.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
@@ -27935,10 +27887,6 @@ export namespace LazyPropertiesClass {
           partial: () => ({
             kind: "OptionType" as const,
             item: () => PartialClass.$schema,
-          }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -27953,10 +27901,6 @@ export namespace LazyPropertiesClass {
             kind: "OptionType" as const,
             item: () => PartialClass.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedClassUnion.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
@@ -27970,10 +27914,6 @@ export namespace LazyPropertiesClass {
             kind: "OptionType" as const,
             item: () => PartialClassUnion.$schema,
           }),
-          resolved: () => ({
-            kind: "OptionType" as const,
-            item: () => LazilyResolvedClassUnion.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
@@ -27984,7 +27924,6 @@ export namespace LazyPropertiesClass {
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => $DefaultPartial.$schema,
-          resolved: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedClassProperty",
@@ -27995,7 +27934,6 @@ export namespace LazyPropertiesClass {
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => PartialClass.$schema,
-          resolved: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredPartialClassToResolvedClassProperty",
@@ -28009,10 +27947,6 @@ export namespace LazyPropertiesClass {
             kind: "SetType" as const,
             item: () => $DefaultPartial.$schema,
           }),
-          resolved: () => ({
-            kind: "SetType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedClassProperty",
@@ -28025,10 +27959,6 @@ export namespace LazyPropertiesClass {
           partial: () => ({
             kind: "SetType" as const,
             item: () => PartialClass.$schema,
-          }),
-          resolved: () => ({
-            kind: "SetType" as const,
-            item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
           }),
         }),
         identifier: dataFactory.namedNode(

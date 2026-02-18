@@ -793,13 +793,11 @@ export namespace NestedNodeShape {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NestedNodeShape"'],
@@ -807,12 +805,7 @@ export namespace NestedNodeShape {
       },
       requiredStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1574,13 +1567,11 @@ export namespace FormNodeShape {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"FormNodeShape"'],
@@ -1588,15 +1579,9 @@ export namespace FormNodeShape {
       },
       emptyStringSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "emptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
-          minCount: 0,
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
@@ -1604,7 +1589,6 @@ export namespace FormNodeShape {
       },
       nestedObjectProperty: {
         kind: "ShaclProperty" as const,
-        name: "nestedObjectProperty",
         type: () => NestedNodeShape.$schema,
         identifier: dataFactory.namedNode(
           "http://example.com/nestedObjectProperty",
@@ -1612,14 +1596,9 @@ export namespace FormNodeShape {
       },
       nonEmptyStringSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "nonEmptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -1628,14 +1607,9 @@ export namespace FormNodeShape {
       },
       optionalStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -1643,24 +1617,14 @@ export namespace FormNodeShape {
       },
       requiredIntegerProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredIntegerProperty",
-        type: () => ({
-          kind: "IntType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "IntType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredIntegerProperty",
         ),
       },
       requiredStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1774,12 +1738,7 @@ export namespace $Object {
     properties: {
       requiredStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1825,48 +1784,72 @@ export interface $ObjectSet {
   formNodeShape(
     identifier: FormNodeShape.$Identifier,
   ): Promise<Either<Error, FormNodeShape>>;
+
   formNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter>,
+    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape.$Identifier[]>>;
+
   formNodeShapes(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter>,
+    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape[]>>;
+
   formNodeShapesCount(
-    query?: Pick<$ObjectSet.Query<FormNodeShape.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
+
   nestedNodeShape(
     identifier: NestedNodeShape.$Identifier,
   ): Promise<Either<Error, NestedNodeShape>>;
+
   nestedNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<NestedNodeShape.$Filter>,
+    query?: $ObjectSet.Query<
+      NestedNodeShape.$Filter,
+      NestedNodeShape.$Identifier
+    >,
   ): Promise<Either<Error, readonly NestedNodeShape.$Identifier[]>>;
+
   nestedNodeShapes(
-    query?: $ObjectSet.Query<NestedNodeShape.$Filter>,
+    query?: $ObjectSet.Query<
+      NestedNodeShape.$Filter,
+      NestedNodeShape.$Identifier
+    >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>>;
+
   nestedNodeShapesCount(
-    query?: Pick<$ObjectSet.Query<NestedNodeShape.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
+
   object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+
   objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>>;
+
   objects(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>>;
+
   objectsCount(
-    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
 }
 
 export namespace $ObjectSet {
   export interface Query<
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (BlankNode | NamedNode)[];
-      };
-    },
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
   > {
     readonly filter?: ObjectFilterT;
+    readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;
   }
@@ -1883,42 +1866,55 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, FormNodeShape>> {
     return this.formNodeShapeSync(identifier);
   }
+
   formNodeShapeSync(
     identifier: FormNodeShape.$Identifier,
   ): Either<Error, FormNodeShape> {
-    return this.formNodeShapesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.formNodeShapesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async formNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter>,
+    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape.$Identifier[]>> {
     return this.formNodeShapeIdentifiersSync(query);
   }
+
   formNodeShapeIdentifiersSync(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter>,
+    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Either<Error, readonly FormNodeShape.$Identifier[]> {
     return this.formNodeShapesSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async formNodeShapes(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter>,
+    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape[]>> {
     return this.formNodeShapesSync(query);
   }
+
   async formNodeShapesCount(
-    query?: Pick<$ObjectSet.Query<FormNodeShape.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.formNodeShapesCountSync(query);
   }
+
   formNodeShapesCountSync(
-    query?: Pick<$ObjectSet.Query<FormNodeShape.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.formNodeShapesSync(query).map((objects) => objects.length);
   }
+
   formNodeShapesSync(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter>,
+    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Either<Error, readonly FormNodeShape[]> {
     return this.$objectsSync<
       FormNodeShape,
@@ -1933,47 +1929,73 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async nestedNodeShape(
     identifier: NestedNodeShape.$Identifier,
   ): Promise<Either<Error, NestedNodeShape>> {
     return this.nestedNodeShapeSync(identifier);
   }
+
   nestedNodeShapeSync(
     identifier: NestedNodeShape.$Identifier,
   ): Either<Error, NestedNodeShape> {
-    return this.nestedNodeShapesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.nestedNodeShapesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async nestedNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<NestedNodeShape.$Filter>,
+    query?: $ObjectSet.Query<
+      NestedNodeShape.$Filter,
+      NestedNodeShape.$Identifier
+    >,
   ): Promise<Either<Error, readonly NestedNodeShape.$Identifier[]>> {
     return this.nestedNodeShapeIdentifiersSync(query);
   }
+
   nestedNodeShapeIdentifiersSync(
-    query?: $ObjectSet.Query<NestedNodeShape.$Filter>,
+    query?: $ObjectSet.Query<
+      NestedNodeShape.$Filter,
+      NestedNodeShape.$Identifier
+    >,
   ): Either<Error, readonly NestedNodeShape.$Identifier[]> {
     return this.nestedNodeShapesSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async nestedNodeShapes(
-    query?: $ObjectSet.Query<NestedNodeShape.$Filter>,
+    query?: $ObjectSet.Query<
+      NestedNodeShape.$Filter,
+      NestedNodeShape.$Identifier
+    >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>> {
     return this.nestedNodeShapesSync(query);
   }
+
   async nestedNodeShapesCount(
-    query?: Pick<$ObjectSet.Query<NestedNodeShape.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.nestedNodeShapesCountSync(query);
   }
+
   nestedNodeShapesCountSync(
-    query?: Pick<$ObjectSet.Query<NestedNodeShape.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.nestedNodeShapesSync(query).map((objects) => objects.length);
   }
+
   nestedNodeShapesSync(
-    query?: $ObjectSet.Query<NestedNodeShape.$Filter>,
+    query?: $ObjectSet.Query<
+      NestedNodeShape.$Filter,
+      NestedNodeShape.$Identifier
+    >,
   ): Either<Error, readonly NestedNodeShape[]> {
     return this.$objectsSync<
       NestedNodeShape,
@@ -1988,45 +2010,59 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async object(
     identifier: $Object.$Identifier,
   ): Promise<Either<Error, $Object>> {
     return this.objectSync(identifier);
   }
+
   objectSync(identifier: $Object.$Identifier): Either<Error, $Object> {
-    return this.objectsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.objectsSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
     return this.objectIdentifiersSync(query);
   }
+
   objectIdentifiersSync(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
     return this.objectsSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async objects(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>> {
     return this.objectsSync(query);
   }
+
   async objectsCount(
-    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.objectsCountSync(query);
   }
+
   objectsCountSync(
-    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.objectsSync(query).map((objects) => objects.length);
   }
+
   objectsSync(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object[]> {
     return this.$objectUnionsSync<
       $Object,
@@ -2048,13 +2084,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (BlankNode | NamedNode)[];
-      };
-    },
+    ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
     objectType: {
@@ -2065,7 +2098,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     },
-    query?: $ObjectSet.Query<ObjectFilterT>,
+    query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -2079,8 +2112,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let resources: { object?: ObjectT; resource: Resource }[];
     let sortResources: boolean;
-    if (query?.filter?.$identifier?.in) {
-      resources = query.filter.$identifier.in.map((identifier) => ({
+    if (query?.identifiers) {
+      resources = query.identifiers.map((identifier) => ({
         resource: this.resourceSet.resource(identifier),
       }));
       sortResources = false;
@@ -2154,13 +2187,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
     return Either.of(objects);
   }
+
   protected $objectUnionsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (BlankNode | NamedNode)[];
-      };
-    },
+    ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
     objectTypes: readonly {
@@ -2171,7 +2201,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     }[],
-    query?: $ObjectSet.Query<ObjectFilterT>,
+    query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -2196,8 +2226,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resource: Resource;
     }[];
     let sortResources: boolean;
-    if (query?.filter?.$identifier?.in) {
-      resources = query.filter.$identifier.in.map((identifier) => ({
+    if (query?.identifiers) {
+      resources = query.identifiers.map((identifier) => ({
         resource: this.resourceSet.resource(identifier),
       }));
       sortResources = false;
