@@ -21,14 +21,14 @@ function ${syntheticNamePrefix}maybeEquals<T>(
     }
     return ${imports.Left}({
       left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
+      type: "right-null",
     });
   }
 
   if (rightMaybe.isJust()) {
     return ${imports.Left}({
       right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
+      type: "left-null",
     });
   }
 

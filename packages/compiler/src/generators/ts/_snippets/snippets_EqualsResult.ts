@@ -23,7 +23,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
       return Equal;
     }
 
-    return ${imports.Left}({ left, right, type: "BooleanEquals" });
+    return ${imports.Left}({ left, right, type: "boolean" });
   }
 
   export type Unequal =
@@ -37,47 +37,32 @@ export namespace ${syntheticNamePrefix}EqualsResult {
       readonly array: readonly any[];
       readonly unequals: readonly Unequal[];
     };
-    readonly type: "ArrayElement";
+    readonly type: "array-element";
   }
   | {
     readonly left: readonly any[];
     readonly right: readonly any[];
-    readonly type: "ArrayLength";
+    readonly type: "array-length";
   }
   | {
     readonly left: any;
     readonly right: any;
-    readonly type: "BooleanEquals";
-  }
-  | {
-    readonly left: any;
-    readonly right: any;
-    readonly type: "LeftError";
+    readonly type: "boolean";
   }
   | {
     readonly right: any;
-    readonly type: "LeftNull";
-  }
-  | {
-    readonly left: bigint | boolean | number | string;
-    readonly right: bigint | boolean | number | string;
-    readonly type: "Primitive";
+    readonly type: "left-null";
   }
   | {
     readonly left: any;
     readonly right: any;
     readonly propertyName: string;
     readonly propertyValuesUnequal: Unequal;
-    readonly type: "Property";
+    readonly type: "property";
   }
   | {
     readonly left: any;
-    readonly right: any;
-    readonly type: "RightError";
-  }
-  | {
-    readonly left: any;
-    readonly type: "RightNull";
+    readonly type: "right-null";
   };
 }`,
 );
