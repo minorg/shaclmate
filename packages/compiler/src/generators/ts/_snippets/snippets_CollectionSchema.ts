@@ -6,7 +6,7 @@ export const snippets_CollectionSchema = conditionalOutput(
   code`\
 interface ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> {
   readonly item: () => ItemSchemaT;
-  readonly kind: "ListType" | "SetType";
+  readonly kind: "List" | "Set";
   readonly minCount?: number;
 }`,
 );

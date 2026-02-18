@@ -6,8 +6,8 @@ export const snippets_LiteralSchema = conditionalOutput(
   `${syntheticNamePrefix}LiteralSchema`,
   code`\
 interface ${syntheticNamePrefix}LiteralSchema {
-  readonly kind: "LiteralType";
   readonly in?: readonly ${imports.Literal}[];
+  readonly kind: "Literal";
   readonly languageIn?: readonly string[];
 }`,
 );

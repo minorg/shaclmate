@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { imports } from "../imports.js";
+import { removeUndefined } from "../removeUndefined.js";
 import { snippets } from "../snippets.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -166,16 +167,12 @@ export namespace TypeDiscriminantProperty {
 
     @Memoize()
     get schema(): Code {
-      return code`${{
+      return code`${removeUndefined({
         descendantValues:
-          this.descendantValues.length > 0
-            ? this.descendantValues.map((_) => JSON.stringify(_))
-            : undefined,
-        ownValues:
-          this.ownValues.length > 0
-            ? this.ownValues.map((_) => JSON.stringify(_))
-            : undefined,
-      }}`;
+          this.descendantValues.length > 0 ? this.descendantValues : undefined,
+        kind: code`${literalOf("TypeDiscriminant")} as const`,
+        ownValues: this.ownValues.length > 0 ? this.ownValues : undefined,
+      })}`;
     }
 
     @Memoize()

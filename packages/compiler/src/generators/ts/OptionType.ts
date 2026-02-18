@@ -1,12 +1,13 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
@@ -102,6 +103,13 @@ export class OptionType<
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`${snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      kind: code`${literalOf("Maybe")} as const`,
+    };
   }
 
   override fromJsonExpression({

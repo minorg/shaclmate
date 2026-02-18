@@ -8,6 +8,6 @@ export const snippets_DefaultValueSchema = conditionalOutput(
 interface ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> {
   readonly defaultValue: ${imports.Literal} | ${imports.NamedNode};
   readonly item: () => ItemSchemaT;
-  readonly kind: "DefaultValueType";
+  readonly kind: "DefaultValue";
 }`,
 );

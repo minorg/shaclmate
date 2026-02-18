@@ -1,4 +1,5 @@
 import type { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { ObjectType } from "../ObjectType.js";
@@ -126,8 +127,9 @@ export abstract class AbstractProperty<
   }
 
   protected get schemaObject() {
+    invariant(this.kind.endsWith("Property"));
     return {
-      kind: code`${literalOf(this.kind)} as const`,
+      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Property".length))} as const`,
       // name: literalOf(this.name),
       type: code`() => (${this.type.schema})`,
     };

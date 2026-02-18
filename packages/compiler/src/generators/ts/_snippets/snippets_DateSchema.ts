@@ -6,6 +6,6 @@ export const snippets_DateSchema = conditionalOutput(
   code`\
 interface ${syntheticNamePrefix}DateSchema {
   in?: readonly Date[];
-  kind: "DateTimeType" | "DateType",
+  kind: "Date" | "DateTime",
 }`,
 );

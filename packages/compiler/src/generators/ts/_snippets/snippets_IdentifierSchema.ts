@@ -5,6 +5,6 @@ export const snippets_IdentifierSchema = conditionalOutput(
   `${syntheticNamePrefix}IdentifierSchema`,
   code`\
 interface ${syntheticNamePrefix}IdentifierSchema {
-  readonly kind: "IdentifierType";
+  readonly kind: "Identifier";
 }`,
 );

@@ -6,6 +6,6 @@ export const snippets_MaybeSchema = conditionalOutput(
   code`\
 interface ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>{
   readonly item: () => ItemSchemaT;
-  readonly kind: "OptionType";
+  readonly kind: "Maybe";
 }`,
 );
