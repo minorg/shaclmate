@@ -35,17 +35,17 @@ export function objectSetMethodSignatures(parameters: {
     },
     objectIdentifiers: {
       name: methodNames.objectIdentifiers,
-      parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}>`,
+      parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
       returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
     },
     objects: {
       name: methodNames.objects,
-      parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}>`,
+      parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
       returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.name}[]>>`,
     },
     objectsCount: {
       name: methodNames.objectsCount,
-      parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}>, "filter">`,
+      parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>, "filter">`,
       returnType: code`Promise<${imports.Either}<Error, number>>`,
     },
   };

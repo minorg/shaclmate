@@ -35,8 +35,9 @@ export interface ${syntheticNamePrefix}ObjectSet {
 }
 
 export namespace ${syntheticNamePrefix}ObjectSet {
-  export interface Query<ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[] } }> {
+  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}> {
     readonly filter?: ObjectFilterT;
+    readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;
   }
