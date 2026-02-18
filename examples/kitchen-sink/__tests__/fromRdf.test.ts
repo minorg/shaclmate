@@ -27,7 +27,7 @@ describe("fromRdf", () => {
       for (const property of Object.values(
         kitchenSink.LanguageInPropertiesClass.$schema.properties,
       )) {
-        if (property.kind !== "ShaclProperty") {
+        if (property.kind !== "Shacl") {
           continue;
         }
         const predicate = dataFactory.namedNode(property.identifier.value);
