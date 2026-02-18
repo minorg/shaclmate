@@ -179,7 +179,7 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
 
 type $CollectionSchema<ItemSchemaT> = {
   readonly item: () => ItemSchemaT;
-  readonly minCount: number;
+  readonly minCount?: number;
 };
 
 const $datasetFactory = new DatasetFactory();
@@ -1487,7 +1487,7 @@ function $setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       ...otherParameters,
     });
 
-    const minCount = filter?.$minCount ?? schema.minCount;
+    const minCount = filter?.$minCount ?? schema.minCount ?? 0;
     if (minCount > 0) {
       // Required
       return itemSparqlWherePatterns;
@@ -2166,13 +2166,10 @@ export namespace $NamedDefaultPartial {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: undefined,
+        type: () => ({ kind: "NamedNodeType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"$NamedDefaultPartial"'],
@@ -2494,13 +2491,10 @@ export namespace $DefaultPartial {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: undefined,
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"$DefaultPartial"'],
@@ -2929,22 +2923,15 @@ export namespace UuidV4IriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+        type: () => ({ kind: "NamedNodeType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
-        name: "$identifierPrefix",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UuidV4IriIdentifierInterface"'],
@@ -2952,12 +2939,7 @@ export namespace UuidV4IriIdentifierInterface {
       },
       uuidV4IriProperty: {
         kind: "ShaclProperty" as const,
-        name: "uuidV4IriProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/uuidV4IriProperty",
         ),
@@ -3452,22 +3434,15 @@ export namespace UuidV4IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+        type: () => ({ kind: "NamedNodeType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
-        name: "$identifierPrefix",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UuidV4IriIdentifierClass"'],
@@ -3475,12 +3450,7 @@ export namespace UuidV4IriIdentifierClass {
       },
       uuidV4IriProperty: {
         kind: "ShaclProperty" as const,
-        name: "uuidV4IriProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/uuidV4IriProperty",
         ),
@@ -6676,13 +6646,11 @@ export namespace UnionDiscriminantsClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UnionDiscriminantsClass"'],
@@ -6690,7 +6658,6 @@ export namespace UnionDiscriminantsClass {
       },
       optionalClassOrClassOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalClassOrClassOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -6706,11 +6673,7 @@ export namespace UnionDiscriminantsClass {
               },
               "2-string": {
                 discriminantValues: ["2-string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
             },
           }),
@@ -6721,7 +6684,6 @@ export namespace UnionDiscriminantsClass {
       },
       optionalIriOrLiteralProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalIriOrLiteralProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -6729,11 +6691,11 @@ export namespace UnionDiscriminantsClass {
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
-                type: { kind: "NamedNodeType" as const, in: undefined },
+                type: { kind: "NamedNodeType" as const },
               },
               Literal: {
                 discriminantValues: ["Literal"],
-                type: { kind: "LiteralType" as const, languageIn: undefined },
+                type: { kind: "LiteralType" as const },
               },
             },
           }),
@@ -6744,7 +6706,6 @@ export namespace UnionDiscriminantsClass {
       },
       optionalIriOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalIriOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -6752,15 +6713,11 @@ export namespace UnionDiscriminantsClass {
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "NamedNodeType" as const, in: undefined },
+                type: { kind: "NamedNodeType" as const },
               },
               string: {
                 discriminantValues: ["string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
             },
           }),
@@ -6771,7 +6728,6 @@ export namespace UnionDiscriminantsClass {
       },
       requiredClassOrClassOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredClassOrClassOrStringProperty",
         type: () => ({
           kind: "UnionType" as const,
           members: {
@@ -6785,11 +6741,7 @@ export namespace UnionDiscriminantsClass {
             },
             "2-string": {
               discriminantValues: ["2-string"],
-              type: {
-                kind: "StringType" as const,
-                languageIn: undefined,
-                in: undefined,
-              },
+              type: { kind: "StringType" as const },
             },
           },
         }),
@@ -6799,17 +6751,16 @@ export namespace UnionDiscriminantsClass {
       },
       requiredIriOrLiteralProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredIriOrLiteralProperty",
         type: () => ({
           kind: "UnionType" as const,
           members: {
             NamedNode: {
               discriminantValues: ["NamedNode"],
-              type: { kind: "NamedNodeType" as const, in: undefined },
+              type: { kind: "NamedNodeType" as const },
             },
             Literal: {
               discriminantValues: ["Literal"],
-              type: { kind: "LiteralType" as const, languageIn: undefined },
+              type: { kind: "LiteralType" as const },
             },
           },
         }),
@@ -6819,21 +6770,16 @@ export namespace UnionDiscriminantsClass {
       },
       requiredIriOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredIriOrStringProperty",
         type: () => ({
           kind: "UnionType" as const,
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "NamedNodeType" as const, in: undefined },
+              type: { kind: "NamedNodeType" as const },
             },
             string: {
               discriminantValues: ["string"],
-              type: {
-                kind: "StringType" as const,
-                languageIn: undefined,
-                in: undefined,
-              },
+              type: { kind: "StringType" as const },
             },
           },
         }),
@@ -6843,7 +6789,6 @@ export namespace UnionDiscriminantsClass {
       },
       setClassOrClassOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "setClassOrClassOrStringProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
@@ -6859,15 +6804,10 @@ export namespace UnionDiscriminantsClass {
               },
               "2-string": {
                 discriminantValues: ["2-string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
             },
           }),
-          minCount: 0,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setClassOrClassOrStringProperty",
@@ -6875,7 +6815,6 @@ export namespace UnionDiscriminantsClass {
       },
       setIriOrLiteralProperty: {
         kind: "ShaclProperty" as const,
-        name: "setIriOrLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
@@ -6883,15 +6822,14 @@ export namespace UnionDiscriminantsClass {
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
-                type: { kind: "NamedNodeType" as const, in: undefined },
+                type: { kind: "NamedNodeType" as const },
               },
               Literal: {
                 discriminantValues: ["Literal"],
-                type: { kind: "LiteralType" as const, languageIn: undefined },
+                type: { kind: "LiteralType" as const },
               },
             },
           }),
-          minCount: 0,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setIriOrLiteralProperty",
@@ -6899,7 +6837,6 @@ export namespace UnionDiscriminantsClass {
       },
       setIriOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "setIriOrStringProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
@@ -6907,19 +6844,14 @@ export namespace UnionDiscriminantsClass {
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "NamedNodeType" as const, in: undefined },
+                type: { kind: "NamedNodeType" as const },
               },
               string: {
                 discriminantValues: ["string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
             },
           }),
-          minCount: 0,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/setIriOrStringProperty",
@@ -9323,13 +9255,11 @@ export namespace TermPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"TermPropertiesClass"'],
@@ -9337,7 +9267,6 @@ export namespace TermPropertiesClass {
       },
       blankNodeTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "blankNodeTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({ kind: "BlankNodeType" as const }),
@@ -9348,14 +9277,9 @@ export namespace TermPropertiesClass {
       },
       booleanTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "booleanTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "BooleanType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "BooleanType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/booleanTermProperty",
@@ -9363,14 +9287,9 @@ export namespace TermPropertiesClass {
       },
       dateTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "DateType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "DateType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateTermProperty",
@@ -9378,14 +9297,9 @@ export namespace TermPropertiesClass {
       },
       dateTimeTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateTimeTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "DateTimeType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "DateTimeType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/dateTimeTermProperty",
@@ -9393,19 +9307,17 @@ export namespace TermPropertiesClass {
       },
       iriTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "iriTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+          item: () => ({ kind: "NamedNodeType" as const }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
       },
       literalTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "literalTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
+          item: () => ({ kind: "LiteralType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/literalTermProperty",
@@ -9413,14 +9325,9 @@ export namespace TermPropertiesClass {
       },
       numberTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "numberTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "FloatType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "FloatType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/numberTermProperty",
@@ -9428,14 +9335,9 @@ export namespace TermPropertiesClass {
       },
       stringTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "stringTermProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/stringTermProperty",
@@ -9443,12 +9345,10 @@ export namespace TermPropertiesClass {
       },
       termProperty: {
         kind: "ShaclProperty" as const,
-        name: "termProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "TermType" as const,
-            in: undefined,
             nodeKinds: [
               "BlankNode" as const,
               "Literal" as const,
@@ -10509,22 +10409,15 @@ export namespace Sha256IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+        type: () => ({ kind: "NamedNodeType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
-        name: "$identifierPrefix",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"Sha256IriIdentifierClass"'],
@@ -10532,12 +10425,7 @@ export namespace Sha256IriIdentifierClass {
       },
       sha256IriProperty: {
         kind: "ShaclProperty" as const,
-        name: "sha256IriProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/sha256IriProperty",
         ),
@@ -11101,13 +10989,11 @@ export namespace RecursiveClassUnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"RecursiveClassUnionMember2"'],
@@ -11115,7 +11001,6 @@ export namespace RecursiveClassUnionMember2 {
       },
       recursiveClassUnionMember2Property: {
         kind: "ShaclProperty" as const,
-        name: "recursiveClassUnionMember2Property",
         type: () => ({
           kind: "OptionType" as const,
           item: () => RecursiveClassUnion.$schema,
@@ -11713,13 +11598,11 @@ export namespace RecursiveClassUnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"RecursiveClassUnionMember1"'],
@@ -11727,7 +11610,6 @@ export namespace RecursiveClassUnionMember1 {
       },
       recursiveClassUnionMember1Property: {
         kind: "ShaclProperty" as const,
-        name: "recursiveClassUnionMember1Property",
         type: () => ({
           kind: "OptionType" as const,
           item: () => RecursiveClassUnion.$schema,
@@ -12326,13 +12208,11 @@ export namespace PropertyVisibilitiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PropertyVisibilitiesClass"'],
@@ -12340,34 +12220,19 @@ export namespace PropertyVisibilitiesClass {
       },
       privateProperty: {
         kind: "ShaclProperty" as const,
-        name: "privateProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode("http://example.com/privateProperty"),
       },
       protectedProperty: {
         kind: "ShaclProperty" as const,
-        name: "protectedProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/protectedProperty",
         ),
       },
       publicProperty: {
         kind: "ShaclProperty" as const,
-        name: "publicProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode("http://example.com/publicProperty"),
       },
     },
@@ -13248,13 +13113,11 @@ export namespace PropertyCardinalitiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PropertyCardinalitiesClass"'],
@@ -13262,15 +13125,9 @@ export namespace PropertyCardinalitiesClass {
       },
       emptyStringSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "emptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
-          minCount: 0,
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
@@ -13278,14 +13135,9 @@ export namespace PropertyCardinalitiesClass {
       },
       nonEmptyStringSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "nonEmptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "StringType" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -13294,14 +13146,9 @@ export namespace PropertyCardinalitiesClass {
       },
       optionalStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -13309,12 +13156,7 @@ export namespace PropertyCardinalitiesClass {
       },
       requiredStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -14030,13 +13872,11 @@ export namespace PartialInterfaceUnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialInterfaceUnionMember2"'],
@@ -14044,12 +13884,7 @@ export namespace PartialInterfaceUnionMember2 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -14669,13 +14504,11 @@ export namespace PartialInterfaceUnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialInterfaceUnionMember1"'],
@@ -14683,12 +14516,7 @@ export namespace PartialInterfaceUnionMember1 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -15283,13 +15111,11 @@ export namespace PartialClassUnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialClassUnionMember2"'],
@@ -15297,12 +15123,7 @@ export namespace PartialClassUnionMember2 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -15895,13 +15716,11 @@ export namespace PartialClassUnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialClassUnionMember1"'],
@@ -15909,12 +15728,7 @@ export namespace PartialClassUnionMember1 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -16585,13 +16399,11 @@ export namespace OrderedPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"OrderedPropertiesClass"'],
@@ -16599,36 +16411,21 @@ export namespace OrderedPropertiesClass {
       },
       orderedPropertyC: {
         kind: "ShaclProperty" as const,
-        name: "orderedPropertyC",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/orderedPropertyC",
         ),
       },
       orderedPropertyB: {
         kind: "ShaclProperty" as const,
-        name: "orderedPropertyB",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/orderedPropertyB",
         ),
       },
       orderedPropertyA: {
         kind: "ShaclProperty" as const,
-        name: "orderedPropertyA",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/orderedPropertyA",
         ),
@@ -17189,13 +16986,11 @@ export namespace NonClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NonClass"'],
@@ -17203,12 +16998,7 @@ export namespace NonClass {
       },
       nonClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "nonClassProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/nonClassProperty",
         ),
@@ -17659,13 +17449,11 @@ export namespace NoRdfTypeClassUnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NoRdfTypeClassUnionMember2"'],
@@ -17673,12 +17461,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       },
       noRdfTypeClassUnionMember2Property: {
         kind: "ShaclProperty" as const,
-        name: "noRdfTypeClassUnionMember2Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/noRdfTypeClassUnionMember2Property",
         ),
@@ -18149,13 +17932,11 @@ export namespace NoRdfTypeClassUnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NoRdfTypeClassUnionMember1"'],
@@ -18163,12 +17944,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       },
       noRdfTypeClassUnionMember1Property: {
         kind: "ShaclProperty" as const,
-        name: "noRdfTypeClassUnionMember1Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/noRdfTypeClassUnionMember1Property",
         ),
@@ -19009,22 +18785,15 @@ export namespace MutablePropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
-        name: "$identifierPrefix",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"MutablePropertiesClass"'],
@@ -19032,17 +18801,11 @@ export namespace MutablePropertiesClass {
       },
       mutableListProperty: {
         kind: "ShaclProperty" as const,
-        name: "mutableListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "ListType" as const,
-            item: () => ({
-              kind: "StringType" as const,
-              languageIn: undefined,
-              in: undefined,
-            }),
-            minCount: 0,
+            item: () => ({ kind: "StringType" as const }),
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -19051,15 +18814,9 @@ export namespace MutablePropertiesClass {
       },
       mutableSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "mutableSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
-          minCount: 0,
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/mutableSetProperty",
@@ -19067,14 +18824,9 @@ export namespace MutablePropertiesClass {
       },
       mutableStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "mutableStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/mutableStringProperty",
@@ -20316,13 +20068,11 @@ export namespace ListPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ListPropertiesClass"'],
@@ -20330,26 +20080,22 @@ export namespace ListPropertiesClass {
       },
       iriListProperty: {
         kind: "ShaclProperty" as const,
-        name: "iriListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "ListType" as const,
-            item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-            minCount: 0,
+            item: () => ({ kind: "NamedNodeType" as const }),
           }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
       },
       objectListProperty: {
         kind: "ShaclProperty" as const,
-        name: "objectListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "ListType" as const,
             item: () => NonClass.$schema,
-            minCount: 0,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -20358,17 +20104,11 @@ export namespace ListPropertiesClass {
       },
       stringListProperty: {
         kind: "ShaclProperty" as const,
-        name: "stringListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "ListType" as const,
-            item: () => ({
-              kind: "StringType" as const,
-              languageIn: undefined,
-              in: undefined,
-            }),
-            minCount: 0,
+            item: () => ({ kind: "StringType" as const }),
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -21351,13 +21091,11 @@ export namespace PartialInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialInterface"'],
@@ -21365,12 +21103,7 @@ export namespace PartialInterface {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -24067,13 +23800,11 @@ export namespace LazyPropertiesInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazyPropertiesInterface"'],
@@ -24081,7 +23812,6 @@ export namespace LazyPropertiesInterface {
       },
       optionalLazyToResolvedInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -24099,7 +23829,6 @@ export namespace LazyPropertiesInterface {
       },
       optionalLazyToResolvedInterfaceUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -24117,7 +23846,6 @@ export namespace LazyPropertiesInterface {
       },
       optionalLazyToResolvedIriIdentifierInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -24135,7 +23863,6 @@ export namespace LazyPropertiesInterface {
       },
       optionalPartialInterfaceToResolvedInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -24153,7 +23880,6 @@ export namespace LazyPropertiesInterface {
       },
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -24171,7 +23897,6 @@ export namespace LazyPropertiesInterface {
       },
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -24189,7 +23914,6 @@ export namespace LazyPropertiesInterface {
       },
       requiredLazyToResolvedInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => $DefaultPartial.$schema,
@@ -24202,7 +23926,6 @@ export namespace LazyPropertiesInterface {
       },
       requiredPartialInterfaceToResolvedInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => PartialInterface.$schema,
@@ -24215,18 +23938,15 @@ export namespace LazyPropertiesInterface {
       },
       setLazyToResolvedInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "setLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partial: () => ({
             kind: "SetType" as const,
             item: () => $DefaultPartial.$schema,
-            minCount: 0,
           }),
           resolved: () => ({
             kind: "SetType" as const,
             item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-            minCount: 0,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -24235,18 +23955,15 @@ export namespace LazyPropertiesInterface {
       },
       setPartialInterfaceToResolvedInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "setPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partial: () => ({
             kind: "SetType" as const,
             item: () => PartialInterface.$schema,
-            minCount: 0,
           }),
           resolved: () => ({
             kind: "SetType" as const,
             item: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-            minCount: 0,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -25616,13 +25333,11 @@ export namespace PartialClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialClass"'],
@@ -25630,12 +25345,7 @@ export namespace PartialClass {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -28157,13 +27867,11 @@ export namespace LazyPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazyPropertiesClass"'],
@@ -28171,7 +27879,6 @@ export namespace LazyPropertiesClass {
       },
       optionalLazyToResolvedClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -28189,7 +27896,6 @@ export namespace LazyPropertiesClass {
       },
       optionalLazyToResolvedClassUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -28207,7 +27913,6 @@ export namespace LazyPropertiesClass {
       },
       optionalLazyToResolvedIriIdentifierClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyToResolvedIriIdentifierClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -28225,7 +27930,6 @@ export namespace LazyPropertiesClass {
       },
       optionalPartialClassToResolvedClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -28243,7 +27947,6 @@ export namespace LazyPropertiesClass {
       },
       optionalPartialClassToResolvedClassUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalPartialClassToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -28261,7 +27964,6 @@ export namespace LazyPropertiesClass {
       },
       optionalPartialClassUnionToResolvedClassUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalPartialClassUnionToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partial: () => ({
@@ -28279,7 +27981,6 @@ export namespace LazyPropertiesClass {
       },
       requiredLazyToResolvedClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => $DefaultPartial.$schema,
@@ -28291,7 +27992,6 @@ export namespace LazyPropertiesClass {
       },
       requiredPartialClassToResolvedClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partial: () => PartialClass.$schema,
@@ -28303,18 +28003,15 @@ export namespace LazyPropertiesClass {
       },
       setLazyToResolvedClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "setLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partial: () => ({
             kind: "SetType" as const,
             item: () => $DefaultPartial.$schema,
-            minCount: 0,
           }),
           resolved: () => ({
             kind: "SetType" as const,
             item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-            minCount: 0,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -28323,18 +28020,15 @@ export namespace LazyPropertiesClass {
       },
       setPartialClassToResolvedClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "setPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partial: () => ({
             kind: "SetType" as const,
             item: () => PartialClass.$schema,
-            minCount: 0,
           }),
           resolved: () => ({
             kind: "SetType" as const,
             item: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-            minCount: 0,
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -29735,13 +29429,10 @@ export namespace LazilyResolvedIriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: undefined,
+        type: () => ({ kind: "NamedNodeType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedIriIdentifierInterface"'],
@@ -29749,12 +29440,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -30228,13 +29914,10 @@ export namespace LazilyResolvedIriIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: undefined,
+        type: () => ({ kind: "NamedNodeType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedIriIdentifierClass"'],
@@ -30242,12 +29925,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -30785,13 +30463,11 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedInterfaceUnionMember2"'],
@@ -30799,12 +30475,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -31429,13 +31100,11 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedInterfaceUnionMember1"'],
@@ -31443,12 +31112,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -32046,13 +31710,11 @@ export namespace LazilyResolvedClassUnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedClassUnionMember2"'],
@@ -32060,12 +31722,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -32663,13 +32320,11 @@ export namespace LazilyResolvedClassUnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedClassUnionMember1"'],
@@ -32677,12 +32332,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -33319,13 +32969,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedBlankNodeOrIriIdentifierInterface"'],
@@ -33333,12 +32981,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -33946,13 +33589,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedBlankNodeOrIriIdentifierClass"'],
@@ -33960,12 +33601,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       },
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -34606,13 +34242,11 @@ export namespace LanguageInPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LanguageInPropertiesClass"'],
@@ -34620,7 +34254,6 @@ export namespace LanguageInPropertiesClass {
       },
       languageInLiteralProperty: {
         kind: "ShaclProperty" as const,
-        name: "languageInLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
@@ -35315,13 +34948,11 @@ export namespace JsPrimitiveUnionPropertyClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"JsPrimitiveUnionPropertyClass"'],
@@ -35329,7 +34960,6 @@ export namespace JsPrimitiveUnionPropertyClass {
       },
       jsPrimitiveUnionProperty: {
         kind: "ShaclProperty" as const,
-        name: "jsPrimitiveUnionProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
@@ -35337,31 +34967,18 @@ export namespace JsPrimitiveUnionPropertyClass {
             members: {
               boolean: {
                 discriminantValues: ["boolean"],
-                type: {
-                  kind: "BooleanType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "BooleanType" as const },
               },
               number: {
                 discriminantValues: ["number"],
-                type: {
-                  kind: "FloatType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "FloatType" as const },
               },
               string: {
                 discriminantValues: ["string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
             },
           }),
-          minCount: 0,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/jsPrimitiveUnionProperty",
@@ -35972,13 +35589,10 @@ export namespace IriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: undefined,
+        type: () => ({ kind: "NamedNodeType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IriIdentifierInterface"'],
@@ -36445,13 +36059,10 @@ export namespace IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: undefined,
+        type: () => ({ kind: "NamedNodeType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IriIdentifierClass"'],
@@ -36929,13 +36540,11 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: [
             '"InterfaceUnionMember1"',
@@ -36946,12 +36555,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       },
       interfaceUnionMemberCommonParentProperty: {
         kind: "ShaclProperty" as const,
-        name: "interfaceUnionMemberCommonParentProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
@@ -37477,12 +37081,7 @@ export namespace InterfaceUnionMember2 {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
       interfaceUnionMember2Property: {
         kind: "ShaclProperty" as const,
-        name: "interfaceUnionMember2Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMember2Property",
         ),
@@ -38099,12 +37698,7 @@ export namespace InterfaceUnionMember1 {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
       interfaceUnionMember1Property: {
         kind: "ShaclProperty" as const,
-        name: "interfaceUnionMember1Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMember1Property",
         ),
@@ -38657,13 +38251,11 @@ export namespace Interface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"Interface"'],
@@ -38671,12 +38263,7 @@ export namespace Interface {
       },
       interfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "interfaceProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceProperty",
         ),
@@ -39213,13 +38800,11 @@ export namespace IndirectRecursiveHelperClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IndirectRecursiveHelperClass"'],
@@ -39227,7 +38812,6 @@ export namespace IndirectRecursiveHelperClass {
       },
       indirectRecursiveProperty: {
         kind: "ShaclProperty" as const,
-        name: "indirectRecursiveProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => IndirectRecursiveClass.$schema,
@@ -39824,13 +39408,11 @@ export namespace IndirectRecursiveClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IndirectRecursiveClass"'],
@@ -39838,7 +39420,6 @@ export namespace IndirectRecursiveClass {
       },
       indirectRecursiveHelperProperty: {
         kind: "ShaclProperty" as const,
-        name: "indirectRecursiveHelperProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => IndirectRecursiveHelperClass.$schema,
@@ -40913,13 +40494,11 @@ export namespace InPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"InPropertiesClass"'],
@@ -40927,14 +40506,9 @@ export namespace InPropertiesClass {
       },
       inBooleansProperty: {
         kind: "ShaclProperty" as const,
-        name: "inBooleansProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "BooleanType" as const,
-            languageIn: undefined,
-            in: [true],
-          }),
+          item: () => ({ kind: "BooleanType" as const, in: [true] }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inBooleansProperty",
@@ -40942,12 +40516,10 @@ export namespace InPropertiesClass {
       },
       inDateTimesProperty: {
         kind: "ShaclProperty" as const,
-        name: "inDateTimesProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "DateTimeType" as const,
-            languageIn: undefined,
             in: [new Date("2018-04-09T10:00:00.000Z")],
           }),
         }),
@@ -40957,7 +40529,6 @@ export namespace InPropertiesClass {
       },
       inIrisProperty: {
         kind: "ShaclProperty" as const,
-        name: "inIrisProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -40972,14 +40543,9 @@ export namespace InPropertiesClass {
       },
       inNumbersProperty: {
         kind: "ShaclProperty" as const,
-        name: "inNumbersProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "IntType" as const,
-            languageIn: undefined,
-            in: [1, 2],
-          }),
+          item: () => ({ kind: "IntType" as const, in: [1, 2] }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inNumbersProperty",
@@ -40987,14 +40553,9 @@ export namespace InPropertiesClass {
       },
       inStringsProperty: {
         kind: "ShaclProperty" as const,
-        name: "inStringsProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: ["text", "html"],
-          }),
+          item: () => ({ kind: "StringType" as const, in: ["text", "html"] }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inStringsProperty",
@@ -41910,7 +41471,6 @@ export namespace InIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({
           kind: "NamedNodeType" as const,
           in: [
@@ -41918,11 +41478,9 @@ export namespace InIdentifierClass {
             dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
           ],
         }),
-        identifierMintingStrategy: undefined,
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"InIdentifierClass"'],
@@ -41930,14 +41488,9 @@ export namespace InIdentifierClass {
       },
       inIdentifierProperty: {
         kind: "ShaclProperty" as const,
-        name: "inIdentifierProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inIdentifierProperty",
@@ -42468,13 +42021,11 @@ export namespace IdentifierOverride1ClassStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: [
             '"IdentifierOverride3Class"',
@@ -42486,12 +42037,7 @@ export namespace IdentifierOverride1ClassStatic {
       },
       identifierOverrideProperty: {
         kind: "ShaclProperty" as const,
-        name: "identifierOverrideProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/identifierOverrideProperty",
         ),
@@ -44691,13 +44237,11 @@ export namespace HasValuePropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"HasValuePropertiesClass"'],
@@ -44705,20 +44249,14 @@ export namespace HasValuePropertiesClass {
       },
       hasIriValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "hasIriValueProperty",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+        type: () => ({ kind: "NamedNodeType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/hasIriValueProperty",
         ),
       },
       hasLiteralValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "hasLiteralValueProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/hasLiteralValueProperty",
         ),
@@ -45289,13 +44827,11 @@ export namespace FlattenClassUnionMember3 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"FlattenClassUnionMember3"'],
@@ -45303,12 +44839,7 @@ export namespace FlattenClassUnionMember3 {
       },
       flattenClassUnionMember3Property: {
         kind: "ShaclProperty" as const,
-        name: "flattenClassUnionMember3Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/flattenClassUnionMember3Property",
         ),
@@ -45939,13 +45470,11 @@ export namespace ExternClassPropertyClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ExternClassPropertyClass"'],
@@ -45953,7 +45482,6 @@ export namespace ExternClassPropertyClass {
       },
       externClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "externClassProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ExternClass.$schema,
@@ -46525,13 +46053,11 @@ export namespace AbstractBaseClassForExternClassStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: ['"ExternClass"'],
           ownValues: undefined,
@@ -46539,12 +46065,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       },
       abstractBaseClassForExternClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "abstractBaseClassForExternClassProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/abstractBaseClassForExternClassProperty",
         ),
@@ -47057,13 +46578,11 @@ export namespace ExplicitRdfTypeClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ExplicitRdfTypeClass"'],
@@ -47071,12 +46590,7 @@ export namespace ExplicitRdfTypeClass {
       },
       explicitRdfTypeProperty: {
         kind: "ShaclProperty" as const,
-        name: "explicitRdfTypeProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/explicitRdfTypeProperty",
         ),
@@ -47684,13 +47198,11 @@ export namespace ExplicitFromToRdfTypesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ExplicitFromToRdfTypesClass"'],
@@ -47698,12 +47210,7 @@ export namespace ExplicitFromToRdfTypesClass {
       },
       explicitFromToRdfTypesProperty: {
         kind: "ShaclProperty" as const,
-        name: "explicitFromToRdfTypesProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/explicitFromToRdfTypesProperty",
         ),
@@ -48343,13 +47850,11 @@ export namespace DirectRecursiveClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"DirectRecursiveClass"'],
@@ -48357,7 +47862,6 @@ export namespace DirectRecursiveClass {
       },
       directRecursiveProperty: {
         kind: "ShaclProperty" as const,
-        name: "directRecursiveProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => DirectRecursiveClass.$schema,
@@ -49418,22 +48922,15 @@ export namespace DefaultValuePropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
-        name: "$identifierPrefix",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"DefaultValuePropertiesClass"'],
@@ -49441,14 +48938,9 @@ export namespace DefaultValuePropertiesClass {
       },
       dateDefaultValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: () => ({
-            kind: "DateType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "DateType" as const }),
           defaultValue: dataFactory.literal(
             "2018-04-09",
             $RdfVocabularies.xsd.date,
@@ -49460,14 +48952,9 @@ export namespace DefaultValuePropertiesClass {
       },
       dateTimeDefaultValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateTimeDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: () => ({
-            kind: "DateTimeType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "DateTimeType" as const }),
           defaultValue: dataFactory.literal(
             "2018-04-09T10:00:00Z",
             $RdfVocabularies.xsd.dateTime,
@@ -49479,14 +48966,9 @@ export namespace DefaultValuePropertiesClass {
       },
       falseBooleanDefaultValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "falseBooleanDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: () => ({
-            kind: "BooleanType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "BooleanType" as const }),
           defaultValue: dataFactory.literal(
             "false",
             $RdfVocabularies.xsd.boolean,
@@ -49498,14 +48980,9 @@ export namespace DefaultValuePropertiesClass {
       },
       numberDefaultValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "numberDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: () => ({
-            kind: "IntType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "IntType" as const }),
           defaultValue: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
         }),
         identifier: dataFactory.namedNode(
@@ -49514,14 +48991,9 @@ export namespace DefaultValuePropertiesClass {
       },
       stringDefaultValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "stringDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: () => ({
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "StringType" as const }),
           defaultValue: dataFactory.literal(""),
         }),
         identifier: dataFactory.namedNode(
@@ -49530,14 +49002,9 @@ export namespace DefaultValuePropertiesClass {
       },
       trueBooleanDefaultValueProperty: {
         kind: "ShaclProperty" as const,
-        name: "trueBooleanDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
-          item: () => ({
-            kind: "BooleanType" as const,
-            languageIn: undefined,
-            in: undefined,
-          }),
+          item: () => ({ kind: "BooleanType" as const }),
           defaultValue: dataFactory.literal(
             "true",
             $RdfVocabularies.xsd.boolean,
@@ -51463,13 +50930,11 @@ export namespace DateUnionPropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"DateUnionPropertiesClass"'],
@@ -51477,7 +50942,6 @@ export namespace DateUnionPropertiesClass {
       },
       dateOrDateTimeProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateOrDateTimeProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -51485,19 +50949,11 @@ export namespace DateUnionPropertiesClass {
             members: {
               date: {
                 discriminantValues: ["date"],
-                type: {
-                  kind: "DateType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "DateType" as const },
               },
               dateTime: {
                 discriminantValues: ["dateTime"],
-                type: {
-                  kind: "DateTimeType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "DateTimeType" as const },
               },
             },
           }),
@@ -51508,7 +50964,6 @@ export namespace DateUnionPropertiesClass {
       },
       dateOrStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -51516,19 +50971,11 @@ export namespace DateUnionPropertiesClass {
             members: {
               date: {
                 discriminantValues: ["date"],
-                type: {
-                  kind: "DateType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "DateType" as const },
               },
               string: {
                 discriminantValues: ["string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
             },
           }),
@@ -51539,7 +50986,6 @@ export namespace DateUnionPropertiesClass {
       },
       dateTimeOrDateProperty: {
         kind: "ShaclProperty" as const,
-        name: "dateTimeOrDateProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -51547,19 +50993,11 @@ export namespace DateUnionPropertiesClass {
             members: {
               dateTime: {
                 discriminantValues: ["dateTime"],
-                type: {
-                  kind: "DateTimeType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "DateTimeType" as const },
               },
               date: {
                 discriminantValues: ["date"],
-                type: {
-                  kind: "DateType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "DateType" as const },
               },
             },
           }),
@@ -51570,7 +51008,6 @@ export namespace DateUnionPropertiesClass {
       },
       stringOrDateProperty: {
         kind: "ShaclProperty" as const,
-        name: "stringOrDateProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
@@ -51578,19 +51015,11 @@ export namespace DateUnionPropertiesClass {
             members: {
               string: {
                 discriminantValues: ["string"],
-                type: {
-                  kind: "StringType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "StringType" as const },
               },
               date: {
                 discriminantValues: ["date"],
-                type: {
-                  kind: "DateType" as const,
-                  languageIn: undefined,
-                  in: undefined,
-                },
+                type: { kind: "DateType" as const },
               },
             },
           }),
@@ -54123,13 +53552,11 @@ export namespace ConvertibleTypePropertiesClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ConvertibleTypePropertiesClass"'],
@@ -54137,10 +53564,9 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleIriNonEmptySetProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleIriNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+          item: () => ({ kind: "NamedNodeType" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -54149,10 +53575,9 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleIriOptionProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleIriOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+          item: () => ({ kind: "NamedNodeType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriOptionProperty",
@@ -54160,19 +53585,16 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleIriProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleIriProperty",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
+        type: () => ({ kind: "NamedNodeType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriProperty",
         ),
       },
       convertibleIriSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleIriSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-          minCount: 0,
+          item: () => ({ kind: "NamedNodeType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriSetProperty",
@@ -54180,10 +53602,9 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleLiteralNonEmptySetProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleLiteralNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
+          item: () => ({ kind: "LiteralType" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -54192,10 +53613,9 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleLiteralOptionProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleLiteralOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
+          item: () => ({ kind: "LiteralType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralOptionProperty",
@@ -54203,19 +53623,16 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleLiteralProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleLiteralProperty",
-        type: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
+        type: () => ({ kind: "LiteralType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralProperty",
         ),
       },
       convertibleLiteralSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleLiteralSetProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
-          minCount: 0,
+          item: () => ({ kind: "LiteralType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralSetProperty",
@@ -54223,12 +53640,10 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleTermNonEmptySetProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleTermNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
             kind: "TermType" as const,
-            in: undefined,
             nodeKinds: [
               "BlankNode" as const,
               "Literal" as const,
@@ -54243,12 +53658,10 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleTermOptionProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleTermOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: () => ({
             kind: "TermType" as const,
-            in: undefined,
             nodeKinds: [
               "BlankNode" as const,
               "Literal" as const,
@@ -54262,10 +53675,8 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleTermProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleTermProperty",
         type: () => ({
           kind: "TermType" as const,
-          in: undefined,
           nodeKinds: [
             "BlankNode" as const,
             "Literal" as const,
@@ -54278,19 +53689,16 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleTermSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "convertibleTermSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: () => ({
             kind: "TermType" as const,
-            in: undefined,
             nodeKinds: [
               "BlankNode" as const,
               "Literal" as const,
               "NamedNode" as const,
             ],
           }),
-          minCount: 0,
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermSetProperty",
@@ -55614,13 +55022,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: [
             '"BaseInterfaceWithoutProperties"',
@@ -55632,12 +55038,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       },
       baseInterfaceWithPropertiesProperty: {
         kind: "ShaclProperty" as const,
-        name: "baseInterfaceWithPropertiesProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/baseInterfaceWithPropertiesProperty",
         ),
@@ -56804,12 +56205,7 @@ export namespace ConcreteParentInterfaceStatic {
       ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
       concreteParentInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "concreteParentInterfaceProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/concreteParentInterfaceProperty",
         ),
@@ -57449,12 +56845,7 @@ export namespace ConcreteChildInterface {
       ...ConcreteParentInterfaceStatic.$schema.properties,
       concreteChildInterfaceProperty: {
         kind: "ShaclProperty" as const,
-        name: "concreteChildInterfaceProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/concreteChildInterfaceProperty",
         ),
@@ -58019,22 +57410,15 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
-        name: "$identifierPrefix",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: ['"ConcreteChildClass"', '"ConcreteParentClass"'],
           ownValues: undefined,
@@ -58042,12 +57426,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       },
       abstractBaseClassWithPropertiesProperty: {
         kind: "ShaclProperty" as const,
-        name: "abstractBaseClassWithPropertiesProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/abstractBaseClassWithPropertiesProperty",
         ),
@@ -58823,12 +58202,7 @@ export namespace ConcreteParentClassStatic {
       ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
       concreteParentClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "concreteParentClassProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/concreteParentClassProperty",
         ),
@@ -59436,12 +58810,7 @@ export namespace ConcreteChildClass {
       ...ConcreteParentClassStatic.$schema.properties,
       concreteChildClassProperty: {
         kind: "ShaclProperty" as const,
-        name: "concreteChildClassProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/concreteChildClassProperty",
         ),
@@ -59971,13 +59340,11 @@ export namespace ClassUnionMemberCommonParentStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: ['"ClassUnionMember1"', '"ClassUnionMember2"'],
           ownValues: undefined,
@@ -59985,12 +59352,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       },
       classUnionMemberCommonParentProperty: {
         kind: "ShaclProperty" as const,
-        name: "classUnionMemberCommonParentProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMemberCommonParentProperty",
         ),
@@ -60468,12 +59830,7 @@ export namespace ClassUnionMember2 {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
       classUnionMember2Property: {
         kind: "ShaclProperty" as const,
-        name: "classUnionMember2Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMember2Property",
         ),
@@ -61037,12 +60394,7 @@ export namespace ClassUnionMember1 {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
       classUnionMember1Property: {
         kind: "ShaclProperty" as const,
-        name: "classUnionMember1Property",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMember1Property",
         ),
@@ -61591,13 +60943,11 @@ export namespace BlankNodeOrIriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeOrIriIdentifierInterface"'],
@@ -62068,13 +61418,11 @@ export namespace BlankNodeOrIriIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeOrIriIdentifierClass"'],
@@ -62563,13 +61911,11 @@ export namespace BlankNodeIdentifierInterface {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "BlankNodeType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeIdentifierInterface"'],
@@ -63043,13 +62389,11 @@ export namespace BlankNodeIdentifierClass {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "BlankNodeType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeIdentifierClass"'],
@@ -63366,12 +62710,7 @@ export namespace ClassUnion {
     properties: {
       classUnionMemberCommonParentProperty: {
         kind: "ShaclProperty" as const,
-        name: "classUnionMemberCommonParentProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMemberCommonParentProperty",
         ),
@@ -64070,12 +63409,7 @@ export namespace InterfaceUnion {
     properties: {
       interfaceUnionMemberCommonParentProperty: {
         kind: "ShaclProperty" as const,
-        name: "interfaceUnionMemberCommonParentProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
@@ -64425,12 +63759,7 @@ export namespace LazilyResolvedClassUnion {
     properties: {
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -64819,12 +64148,7 @@ export namespace LazilyResolvedInterfaceUnion {
     properties: {
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -65178,12 +64502,7 @@ export namespace PartialClassUnion {
     properties: {
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
@@ -65539,12 +64858,7 @@ export namespace PartialInterfaceUnion {
     properties: {
       lazilyResolvedStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazilyResolvedStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
