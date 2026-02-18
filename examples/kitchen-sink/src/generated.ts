@@ -84556,6 +84556,10 @@ export class $SparqlObjectSet implements $ObjectSet {
     },
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Promise<Either<Error, readonly ObjectIdentifierT[]>> {
+    if (query?.identifiers) {
+      return Either.of(query.identifiers);
+    }
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return Either.of([]);

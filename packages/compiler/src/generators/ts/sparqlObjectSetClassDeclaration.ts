@@ -118,6 +118,10 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
   }
 
   protected async ${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, readonly ObjectIdentifierT[]>> {
+    if (query?.identifiers) {
+      return ${imports.Either}.of(query.identifiers);
+    }
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return ${imports.Either}.of([]);
