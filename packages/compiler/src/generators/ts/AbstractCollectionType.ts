@@ -179,7 +179,7 @@ export abstract class AbstractCollectionType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      minCount: this.minCount,
+      minCount: this.minCount > 0 ? this.minCount : undefined,
     };
   }
 

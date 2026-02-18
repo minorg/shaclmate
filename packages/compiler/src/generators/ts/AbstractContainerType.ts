@@ -12,6 +12,7 @@ import type { LiteralType } from "./LiteralType.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import { removeUndefined } from "./removeUndefined.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -49,13 +50,13 @@ export abstract class AbstractContainerType<
 
   @Memoize()
   get schema(): Code {
-    return code`${this.schemaObject}`;
+    return code`${removeUndefined(this.schemaObject)}`;
   }
 
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      item: this.itemType.schema,
+      item: code`() => (${this.itemType.schema})`,
     };
   }
 }

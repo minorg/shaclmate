@@ -6,6 +6,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { removeUndefined } from "./removeUndefined.js";
 import { snippets } from "./snippets.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -58,7 +59,7 @@ export abstract class AbstractTermType<
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.schemaObject}`;
+    return code`${removeUndefined(this.schemaObject)}`;
   }
 
   @Memoize()

@@ -5,7 +5,7 @@ export const snippets_StringSchema = conditionalOutput(
   `${syntheticNamePrefix}StringSchema`,
   code`\
 interface ${syntheticNamePrefix}StringSchema {
-  readonly kind: "StringType";
   readonly in?: readonly string[];
+  readonly kind: "String";
 }`,
 );

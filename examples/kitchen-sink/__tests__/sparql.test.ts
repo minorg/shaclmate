@@ -17,7 +17,7 @@ describe("sparql", () => {
       for (const property of Object.values(
         kitchenSink.LanguageInPropertiesClass.$schema.properties,
       )) {
-        if (property.kind !== "ShaclProperty") {
+        if (property.kind !== "Shacl") {
           continue;
         }
         languageInDataset.add(

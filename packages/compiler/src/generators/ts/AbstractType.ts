@@ -1,4 +1,5 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { imports } from "./imports.js";
 import type { Typeof } from "./Typeof.js";
@@ -117,8 +118,9 @@ export abstract class AbstractType {
    * Helper to compose the result of schema along the type hierarchy.
    */
   protected get schemaObject() {
+    invariant(this.kind.endsWith("Type"));
     return {
-      kind: code`${literalOf(this.kind)} as const`,
+      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))} as const`,
     };
   }
 

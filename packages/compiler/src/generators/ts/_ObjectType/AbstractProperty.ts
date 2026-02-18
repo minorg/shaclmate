@@ -1,7 +1,9 @@
 import type { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { ObjectType } from "../ObjectType.js";
+import { removeUndefined } from "../removeUndefined.js";
 import type { Type } from "../Type.js";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 
@@ -121,13 +123,14 @@ export abstract class AbstractProperty<
    */
   @Memoize()
   get schema(): Code {
-    return code`${this.schemaObject}`;
+    return code`${removeUndefined(this.schemaObject)}`;
   }
 
   protected get schemaObject() {
+    invariant(this.kind.endsWith("Property"));
     return {
-      kind: code`${literalOf(this.kind)} as const`,
-      name: literalOf(this.name),
+      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Property".length))} as const`,
+      // name: literalOf(this.name),
       type: code`() => (${this.type.schema})`,
     };
   }

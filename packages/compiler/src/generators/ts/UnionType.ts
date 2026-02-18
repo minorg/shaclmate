@@ -292,7 +292,7 @@ ${joinCode(
   ),
 )}
 
-  return ${imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "BooleanEquals" as const }, type: "Property" as const });
+  return ${imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "boolean" as const }, type: "property" as const });
 })`;
   }
 
@@ -379,7 +379,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       // discriminant: {
       //   kind: `${JSON.stringify(this.discriminant.kind)} as const`,
       // },
-      kind: code`${literalOf("UnionType")} as const`,
+      kind: code`${literalOf("Union")} as const`,
       members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>
@@ -398,7 +398,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       // discriminant: {
       //   kind: '"envelope" | "inline" | "typeof"',
       // },
-      kind: literalOf("UnionType"),
+      kind: literalOf("Union"),
       members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>

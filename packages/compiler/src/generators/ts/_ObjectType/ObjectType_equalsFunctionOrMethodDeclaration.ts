@@ -49,7 +49,7 @@ export function ObjectType_equalsFunctionOrMethodDeclaration(
   for (const property of this.ownProperties) {
     property.equalsFunction.ifJust((equalsFunction) => {
       chain.push(
-        code`(${equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "Property" as const }))`,
+        code`(${equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
       );
     });
   }

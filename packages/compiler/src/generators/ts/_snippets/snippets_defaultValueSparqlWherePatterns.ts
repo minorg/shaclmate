@@ -9,7 +9,7 @@ export const snippets_defaultValueSparqlWherePatterns = conditionalOutput(
   code`\
 function ${syntheticNamePrefix}defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ${snippets_DefaultValueSchema}<ItemSchemaT>> {  
   return ({ schema, ...otherParameters }) => {
-    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets_liftSparqlPatterns}(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets_liftSparqlPatterns}(itemSparqlWherePatternsFunction({ schema: schema.item(), ...otherParameters }));
     return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,

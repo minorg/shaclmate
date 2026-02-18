@@ -4,5 +4,10 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_DefaultValueSchema = conditionalOutput(
   `${syntheticNamePrefix}DefaultValueSchema`,
-  code`type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: ${imports.Literal} | ${imports.NamedNode}; readonly item: ItemSchemaT; }`,
+  code`\
+interface ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> {
+  readonly defaultValue: ${imports.Literal} | ${imports.NamedNode};
+  readonly item: () => ItemSchemaT;
+  readonly kind: "DefaultValue";
+}`,
 );

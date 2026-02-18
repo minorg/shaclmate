@@ -537,13 +537,10 @@ export namespace $DefaultPartial {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: undefined,
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"$DefaultPartial"'],
@@ -562,7 +559,8 @@ export class UnionMember2 {
 
   /**
    * Optional string property
-   */ readonly optionalStringProperty: Maybe<string>;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -807,13 +805,11 @@ export namespace UnionMember2 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UnionMember2"'],
@@ -821,14 +817,9 @@ export namespace UnionMember2 {
       },
       optionalStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -847,7 +838,8 @@ export class UnionMember1 {
 
   /**
    * Optional number property
-   */ readonly optionalNumberProperty: Maybe<number>;
+   */
+  readonly optionalNumberProperty: Maybe<number>;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -1084,13 +1076,11 @@ export namespace UnionMember1 {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UnionMember1"'],
@@ -1098,14 +1088,9 @@ export namespace UnionMember1 {
       },
       optionalNumberProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalNumberProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "FloatType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "FloatType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
@@ -1124,15 +1109,18 @@ export class Nested {
 
   /**
    * Optional number property
-   */ readonly optionalNumberProperty: Maybe<number>;
+   */
+  readonly optionalNumberProperty: Maybe<number>;
 
   /**
    * Optional string property
-   */ readonly optionalStringProperty: Maybe<string>;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
   /**
    * Required string property
-   */ readonly requiredStringProperty: string;
+   */
+  readonly requiredStringProperty: string;
 
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -1476,25 +1464,18 @@ export namespace Nested {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({ descendantValues: undefined, ownValues: ['"Nested"'] }),
       },
       optionalNumberProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalNumberProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "FloatType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "FloatType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
@@ -1502,14 +1483,9 @@ export namespace Nested {
       },
       optionalStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -1517,12 +1493,7 @@ export namespace Nested {
       },
       requiredStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1540,7 +1511,8 @@ export class Parent {
 
   /**
    * Parent string property
-   */ readonly parentStringProperty: Maybe<string>;
+   */
+  readonly parentStringProperty: Maybe<string>;
 
   constructor(parameters: {
     readonly $identifier: NamedNode | string;
@@ -1791,13 +1763,10 @@ export namespace ParentStatic {
     properties: {
       $identifier: {
         kind: "IdentifierProperty" as const,
-        name: "$identifier",
-        type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: undefined,
+        type: () => ({ kind: "NamedNodeType" as const }),
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
-        name: "$type",
         type: () => ({
           descendantValues: ['"Child"'],
           ownValues: ['"Parent"'],
@@ -1805,14 +1774,9 @@ export namespace ParentStatic {
       },
       parentStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "parentStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/parentStringProperty",
@@ -1829,11 +1793,13 @@ export class Child extends Parent {
 
   /**
    * Child string property
-   */ readonly childStringProperty: Maybe<string>;
+   */
+  readonly childStringProperty: Maybe<string>;
 
   /**
    * Lazy object set property
-   */ readonly lazyObjectSetProperty: $LazyObjectSet<
+   */
+  readonly lazyObjectSetProperty: $LazyObjectSet<
     Nested.$Identifier,
     $DefaultPartial,
     Nested
@@ -1841,7 +1807,8 @@ export class Child extends Parent {
 
   /**
    * Optional lazy object property
-   */ readonly optionalLazyObjectProperty: $LazyObjectOption<
+   */
+  readonly optionalLazyObjectProperty: $LazyObjectOption<
     Nested.$Identifier,
     $DefaultPartial,
     Nested
@@ -1849,15 +1816,18 @@ export class Child extends Parent {
 
   /**
    * Optional object property
-   */ readonly optionalObjectProperty: Maybe<Nested>;
+   */
+  readonly optionalObjectProperty: Maybe<Nested>;
 
   /**
    * Optional string property
-   */ readonly optionalStringProperty: Maybe<string>;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
   /**
    * Required string property
-   */ readonly requiredStringProperty: string;
+   */
+  readonly requiredStringProperty: string;
 
   constructor(
     parameters: {
@@ -2392,9 +2362,7 @@ export namespace Child {
                       >({
                         partials,
                         resolver: (identifiers) =>
-                          $parameters.objectSet.nesteds({
-                            filter: { $identifier: { in: identifiers } },
-                          }),
+                          $parameters.objectSet.nesteds({ identifiers }),
                       }),
                   ),
                 )
@@ -2569,14 +2537,9 @@ export namespace Child {
       ...ParentStatic.$schema.properties,
       childStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "childStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/childStringProperty",
@@ -2584,19 +2547,12 @@ export namespace Child {
       },
       lazyObjectSetProperty: {
         kind: "ShaclProperty" as const,
-        name: "lazyObjectSetProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
-          partialType: {
+          partial: () => ({
             kind: "SetType" as const,
-            item: $DefaultPartial.$schema,
-            minCount: 0,
-          },
-          resolvedType: {
-            kind: "SetType" as const,
-            item: Nested.$schema,
-            minCount: 0,
-          },
+            item: () => $DefaultPartial.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/lazyObjectSetProperty",
@@ -2604,14 +2560,12 @@ export namespace Child {
       },
       optionalLazyObjectProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalLazyObjectProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
-          partialType: {
+          partial: () => ({
             kind: "OptionType" as const,
-            item: $DefaultPartial.$schema,
-          },
-          resolvedType: { kind: "OptionType" as const, item: Nested.$schema },
+            item: () => $DefaultPartial.$schema,
+          }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyObjectProperty",
@@ -2619,22 +2573,19 @@ export namespace Child {
       },
       optionalObjectProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalObjectProperty",
-        type: () => ({ kind: "OptionType" as const, item: Nested.$schema }),
+        type: () => ({
+          kind: "OptionType" as const,
+          item: () => Nested.$schema,
+        }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalObjectProperty",
         ),
       },
       optionalStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
-          item: {
-            kind: "StringType" as const,
-            languageIn: undefined,
-            in: undefined,
-          },
+          item: () => ({ kind: "StringType" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -2642,12 +2593,7 @@ export namespace Child {
       },
       requiredStringProperty: {
         kind: "ShaclProperty" as const,
-        name: "requiredStringProperty",
-        type: () => ({
-          kind: "StringType" as const,
-          languageIn: undefined,
-          in: undefined,
-        }),
+        type: () => ({ kind: "StringType" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -2911,90 +2857,130 @@ export namespace $Object {
 }
 export interface $ObjectSet {
   child(identifier: Child.$Identifier): Promise<Either<Error, Child>>;
+
   childIdentifiers(
-    query?: $ObjectSet.Query<Child.$Filter>,
+    query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Promise<Either<Error, readonly Child.$Identifier[]>>;
+
   children(
-    query?: $ObjectSet.Query<Child.$Filter>,
+    query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Promise<Either<Error, readonly Child[]>>;
+
   childrenCount(
-    query?: Pick<$ObjectSet.Query<Child.$Filter>, "filter">,
+    query?: Pick<$ObjectSet.Query<Child.$Filter, Child.$Identifier>, "filter">,
   ): Promise<Either<Error, number>>;
+
   nested(identifier: Nested.$Identifier): Promise<Either<Error, Nested>>;
+
   nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.$Filter>,
+    query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Promise<Either<Error, readonly Nested.$Identifier[]>>;
+
   nesteds(
-    query?: $ObjectSet.Query<Nested.$Filter>,
+    query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Promise<Either<Error, readonly Nested[]>>;
+
   nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
+
   parent(identifier: ParentStatic.$Identifier): Promise<Either<Error, Parent>>;
+
   parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
   ): Promise<Either<Error, readonly ParentStatic.$Identifier[]>>;
+
   parents(
-    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
   ): Promise<Either<Error, readonly Parent[]>>;
+
   parentsCount(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
+
   unionMember1(
     identifier: UnionMember1.$Identifier,
   ): Promise<Either<Error, UnionMember1>>;
+
   unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+    query?: $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember1.$Identifier[]>>;
+
   unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+    query?: $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember1[]>>;
+
   unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
+
   unionMember2(
     identifier: UnionMember2.$Identifier,
   ): Promise<Either<Error, UnionMember2>>;
+
   unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+    query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember2.$Identifier[]>>;
+
   unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+    query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember2[]>>;
+
   unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
+
   union(identifier: Union.$Identifier): Promise<Either<Error, Union>>;
+
   unionIdentifiers(
-    query?: $ObjectSet.Query<Union.$Filter>,
+    query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Promise<Either<Error, readonly Union.$Identifier[]>>;
+
   unions(
-    query?: $ObjectSet.Query<Union.$Filter>,
+    query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Promise<Either<Error, readonly Union[]>>;
+
   unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.$Filter>, "filter">,
+    query?: Pick<$ObjectSet.Query<Union.$Filter, Union.$Identifier>, "filter">,
   ): Promise<Either<Error, number>>;
+
   object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+
   objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>>;
+
   objects(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>>;
+
   objectsCount(
-    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>>;
 }
 
 export namespace $ObjectSet {
   export interface Query<
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (BlankNode | NamedNode)[];
-      };
-    },
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
   > {
     readonly filter?: ObjectFilterT;
+    readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;
   }
@@ -3009,40 +2995,47 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async child(identifier: Child.$Identifier): Promise<Either<Error, Child>> {
     return this.childSync(identifier);
   }
+
   childSync(identifier: Child.$Identifier): Either<Error, Child> {
-    return this.childrenSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.childrenSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async childIdentifiers(
-    query?: $ObjectSet.Query<Child.$Filter>,
+    query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Promise<Either<Error, readonly Child.$Identifier[]>> {
     return this.childIdentifiersSync(query);
   }
+
   childIdentifiersSync(
-    query?: $ObjectSet.Query<Child.$Filter>,
+    query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Either<Error, readonly Child.$Identifier[]> {
     return this.childrenSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async children(
-    query?: $ObjectSet.Query<Child.$Filter>,
+    query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Promise<Either<Error, readonly Child[]>> {
     return this.childrenSync(query);
   }
+
   async childrenCount(
-    query?: Pick<$ObjectSet.Query<Child.$Filter>, "filter">,
+    query?: Pick<$ObjectSet.Query<Child.$Filter, Child.$Identifier>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.childrenCountSync(query);
   }
+
   childrenCountSync(
-    query?: Pick<$ObjectSet.Query<Child.$Filter>, "filter">,
+    query?: Pick<$ObjectSet.Query<Child.$Filter, Child.$Identifier>, "filter">,
   ): Either<Error, number> {
     return this.childrenSync(query).map((objects) => objects.length);
   }
+
   childrenSync(
-    query?: $ObjectSet.Query<Child.$Filter>,
+    query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Either<Error, readonly Child[]> {
     return this.$objectsSync<Child, Child.$Filter, Child.$Identifier>(
       {
@@ -3053,43 +3046,57 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async nested(identifier: Nested.$Identifier): Promise<Either<Error, Nested>> {
     return this.nestedSync(identifier);
   }
+
   nestedSync(identifier: Nested.$Identifier): Either<Error, Nested> {
-    return this.nestedsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.nestedsSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.$Filter>,
+    query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Promise<Either<Error, readonly Nested.$Identifier[]>> {
     return this.nestedIdentifiersSync(query);
   }
+
   nestedIdentifiersSync(
-    query?: $ObjectSet.Query<Nested.$Filter>,
+    query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Either<Error, readonly Nested.$Identifier[]> {
     return this.nestedsSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async nesteds(
-    query?: $ObjectSet.Query<Nested.$Filter>,
+    query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Promise<Either<Error, readonly Nested[]>> {
     return this.nestedsSync(query);
   }
+
   async nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.nestedsCountSync(query);
   }
+
   nestedsCountSync(
-    query?: Pick<$ObjectSet.Query<Nested.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.nestedsSync(query).map((objects) => objects.length);
   }
+
   nestedsSync(
-    query?: $ObjectSet.Query<Nested.$Filter>,
+    query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Either<Error, readonly Nested[]> {
     return this.$objectsSync<Nested, Nested.$Filter, Nested.$Identifier>(
       {
@@ -3100,45 +3107,59 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async parent(
     identifier: ParentStatic.$Identifier,
   ): Promise<Either<Error, Parent>> {
     return this.parentSync(identifier);
   }
+
   parentSync(identifier: ParentStatic.$Identifier): Either<Error, Parent> {
-    return this.parentsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.parentsSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
   ): Promise<Either<Error, readonly ParentStatic.$Identifier[]>> {
     return this.parentIdentifiersSync(query);
   }
+
   parentIdentifiersSync(
-    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
   ): Either<Error, readonly ParentStatic.$Identifier[]> {
     return this.parentsSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async parents(
-    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
   ): Promise<Either<Error, readonly Parent[]>> {
     return this.parentsSync(query);
   }
+
   async parentsCount(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.parentsCountSync(query);
   }
+
   parentsCountSync(
-    query?: Pick<$ObjectSet.Query<ParentStatic.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.parentsSync(query).map((objects) => objects.length);
   }
+
   parentsSync(
-    query?: $ObjectSet.Query<ParentStatic.$Filter>,
+    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
   ): Either<Error, readonly Parent[]> {
     return this.$objectsSync<
       Parent,
@@ -3153,47 +3174,61 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async unionMember1(
     identifier: UnionMember1.$Identifier,
   ): Promise<Either<Error, UnionMember1>> {
     return this.unionMember1Sync(identifier);
   }
+
   unionMember1Sync(
     identifier: UnionMember1.$Identifier,
   ): Either<Error, UnionMember1> {
-    return this.unionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.unionMember1sSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+    query?: $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember1.$Identifier[]>> {
     return this.unionMember1IdentifiersSync(query);
   }
+
   unionMember1IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+    query?: $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
   ): Either<Error, readonly UnionMember1.$Identifier[]> {
     return this.unionMember1sSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+    query?: $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember1[]>> {
     return this.unionMember1sSync(query);
   }
+
   async unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.unionMember1sCountSync(query);
   }
+
   unionMember1sCountSync(
-    query?: Pick<$ObjectSet.Query<UnionMember1.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.unionMember1sSync(query).map((objects) => objects.length);
   }
+
   unionMember1sSync(
-    query?: $ObjectSet.Query<UnionMember1.$Filter>,
+    query?: $ObjectSet.Query<UnionMember1.$Filter, UnionMember1.$Identifier>,
   ): Either<Error, readonly UnionMember1[]> {
     return this.$objectsSync<
       UnionMember1,
@@ -3208,47 +3243,61 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async unionMember2(
     identifier: UnionMember2.$Identifier,
   ): Promise<Either<Error, UnionMember2>> {
     return this.unionMember2Sync(identifier);
   }
+
   unionMember2Sync(
     identifier: UnionMember2.$Identifier,
   ): Either<Error, UnionMember2> {
-    return this.unionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.unionMember2sSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+    query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember2.$Identifier[]>> {
     return this.unionMember2IdentifiersSync(query);
   }
+
   unionMember2IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+    query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Either<Error, readonly UnionMember2.$Identifier[]> {
     return this.unionMember2sSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+    query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember2[]>> {
     return this.unionMember2sSync(query);
   }
+
   async unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.unionMember2sCountSync(query);
   }
+
   unionMember2sCountSync(
-    query?: Pick<$ObjectSet.Query<UnionMember2.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.unionMember2sSync(query).map((objects) => objects.length);
   }
+
   unionMember2sSync(
-    query?: $ObjectSet.Query<UnionMember2.$Filter>,
+    query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Either<Error, readonly UnionMember2[]> {
     return this.$objectsSync<
       UnionMember2,
@@ -3263,43 +3312,51 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async union(identifier: Union.$Identifier): Promise<Either<Error, Union>> {
     return this.unionSync(identifier);
   }
+
   unionSync(identifier: Union.$Identifier): Either<Error, Union> {
-    return this.unionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.unionsSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async unionIdentifiers(
-    query?: $ObjectSet.Query<Union.$Filter>,
+    query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Promise<Either<Error, readonly Union.$Identifier[]>> {
     return this.unionIdentifiersSync(query);
   }
+
   unionIdentifiersSync(
-    query?: $ObjectSet.Query<Union.$Filter>,
+    query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Either<Error, readonly Union.$Identifier[]> {
     return this.unionsSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async unions(
-    query?: $ObjectSet.Query<Union.$Filter>,
+    query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Promise<Either<Error, readonly Union[]>> {
     return this.unionsSync(query);
   }
+
   async unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.$Filter>, "filter">,
+    query?: Pick<$ObjectSet.Query<Union.$Filter, Union.$Identifier>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.unionsCountSync(query);
   }
+
   unionsCountSync(
-    query?: Pick<$ObjectSet.Query<Union.$Filter>, "filter">,
+    query?: Pick<$ObjectSet.Query<Union.$Filter, Union.$Identifier>, "filter">,
   ): Either<Error, number> {
     return this.unionsSync(query).map((objects) => objects.length);
   }
+
   unionsSync(
-    query?: $ObjectSet.Query<Union.$Filter>,
+    query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Either<Error, readonly Union[]> {
     return this.$objectUnionsSync<Union, Union.$Filter, Union.$Identifier>(
       [
@@ -3317,45 +3374,59 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async object(
     identifier: $Object.$Identifier,
   ): Promise<Either<Error, $Object>> {
     return this.objectSync(identifier);
   }
+
   objectSync(identifier: $Object.$Identifier): Either<Error, $Object> {
-    return this.objectsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
+    return this.objectsSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
   }
+
   async objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
     return this.objectIdentifiersSync(query);
   }
+
   objectIdentifiersSync(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
     return this.objectsSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
   }
+
   async objects(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>> {
     return this.objectsSync(query);
   }
+
   async objectsCount(
-    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
   ): Promise<Either<Error, number>> {
     return this.objectsCountSync(query);
   }
+
   objectsCountSync(
-    query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
   ): Either<Error, number> {
     return this.objectsSync(query).map((objects) => objects.length);
   }
+
   objectsSync(
-    query?: $ObjectSet.Query<$Object.$Filter>,
+    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object[]> {
     return this.$objectUnionsSync<
       $Object,
@@ -3397,13 +3468,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (BlankNode | NamedNode)[];
-      };
-    },
+    ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
     objectType: {
@@ -3414,7 +3482,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     },
-    query?: $ObjectSet.Query<ObjectFilterT>,
+    query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -3428,8 +3496,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let resources: { object?: ObjectT; resource: Resource }[];
     let sortResources: boolean;
-    if (query?.filter?.$identifier?.in) {
-      resources = query.filter.$identifier.in.map((identifier) => ({
+    if (query?.identifiers) {
+      resources = query.identifiers.map((identifier) => ({
         resource: this.resourceSet.resource(identifier),
       }));
       sortResources = false;
@@ -3503,13 +3571,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
     return Either.of(objects);
   }
+
   protected $objectUnionsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (BlankNode | NamedNode)[];
-      };
-    },
+    ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
     objectTypes: readonly {
@@ -3520,7 +3585,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     }[],
-    query?: $ObjectSet.Query<ObjectFilterT>,
+    query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -3545,8 +3610,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resource: Resource;
     }[];
     let sortResources: boolean;
-    if (query?.filter?.$identifier?.in) {
-      resources = query.filter.$identifier.in.map((identifier) => ({
+    if (query?.identifiers) {
+      resources = query.identifiers.map((identifier) => ({
         resource: this.resourceSet.resource(identifier),
       }));
       sortResources = false;

@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
     return ${imports.Left}({
       left: leftArray,
       right: rightArray,
-      type: "ArrayLength",
+      type: "array-length",
     });
   }
 
@@ -63,7 +63,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
           array: rightArray,
           unequals: rightUnequals,
         },
-        type: "ArrayElement",
+        type: "array-element",
       });
     }
     // Else there was a right element equal to the left element, continue to the next left element

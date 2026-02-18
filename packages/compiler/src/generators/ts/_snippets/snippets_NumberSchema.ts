@@ -5,7 +5,7 @@ export const snippets_NumberSchema = conditionalOutput(
   `${syntheticNamePrefix}NumberSchema`,
   code`\
 interface ${syntheticNamePrefix}NumberSchema {
-  readonly kind: "FloatType" | "IntType";
   readonly in?: readonly number[];
+  readonly kind: "Float" | "Int";
 }`,
 );

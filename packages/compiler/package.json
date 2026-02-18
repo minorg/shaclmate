@@ -56,6 +56,8 @@
     "dist/generators/ts/_ObjectType/*.js",
     "dist/generators/ts/_ObjectUnionType/*.d.ts",
     "dist/generators/ts/_ObjectUnionType/*.js",
+    "dist/generators/ts/_snippets/*.d.ts",
+    "dist/generators/ts/_snippets/*.js",
     "dist/input/*.d.ts",
     "dist/input/*.js"
   ],

@@ -5,6 +5,7 @@ import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
+import { removeUndefined } from "./removeUndefined.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -80,7 +81,7 @@ export abstract class AbstractLazyObjectType<
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.schemaObject}`;
+    return code`${removeUndefined(this.schemaObject)}`;
   }
 
   @Memoize()
@@ -94,14 +95,15 @@ export abstract class AbstractLazyObjectType<
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partial(), ...otherParameters }))`;
   }
 
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      partialType: this.partialType.schema,
-      resolvedType: this.resolvedType.schema,
+      partial: code`() => (${this.partialType.schema})`,
+      // Commenting out to reduce schema size
+      // resolved: code`() => (${this.resolvedType.schema})`,
     };
   }
 

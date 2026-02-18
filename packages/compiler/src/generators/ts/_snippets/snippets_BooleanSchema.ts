@@ -5,6 +5,7 @@ export const snippets_BooleanSchema = conditionalOutput(
   `${syntheticNamePrefix}BooleanSchema`,
   code`\
 interface ${syntheticNamePrefix}BooleanSchema {
+  readonly kind: "Boolean";
   readonly in?: readonly boolean[];
 }`,
 );
