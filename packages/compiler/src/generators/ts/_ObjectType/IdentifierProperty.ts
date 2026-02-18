@@ -252,14 +252,14 @@ export class IdentifierProperty extends AbstractProperty<
     });
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      identifierMintingStrategy: this.identifierMintingStrategy
-        .map((_) => `${literalOf(_)} as const`)
-        .extract(),
-    };
-  }
+  // protected override get schemaObject() {
+  //   return {
+  //     ...super.schemaObject,
+  //     identifierMintingStrategy: this.identifierMintingStrategy
+  //       .map((_) => code`${literalOf(_)} as const`)
+  //       .extract(),
+  //   };
+  // }
 
   private get abstract(): boolean {
     return this.objectType.abstract;

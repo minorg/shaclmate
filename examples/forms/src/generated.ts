@@ -18,7 +18,7 @@ function $arrayEquals<T>(
   elementEquals: (left: T, right: T) => boolean | $EqualsResult,
 ): $EqualsResult {
   if (leftArray.length !== rightArray.length) {
-    return Left({ left: leftArray, right: rightArray, type: "ArrayLength" });
+    return Left({ left: leftArray, right: rightArray, type: "array-length" });
   }
 
   for (
@@ -59,7 +59,7 @@ function $arrayEquals<T>(
           elementIndex: leftElementIndex,
         },
         right: { array: rightArray, unequals: rightUnequals },
-        type: "ArrayElement",
+        type: "array-element",
       });
     }
     // Else there was a right element equal to the left element, continue to the next left element
@@ -103,7 +103,7 @@ export namespace $EqualsResult {
       return Equal;
     }
 
-    return Left({ left, right, type: "BooleanEquals" });
+    return Left({ left, right, type: "boolean" });
   }
 
   export type Unequal =
@@ -117,34 +117,23 @@ export namespace $EqualsResult {
           readonly array: readonly any[];
           readonly unequals: readonly Unequal[];
         };
-        readonly type: "ArrayElement";
+        readonly type: "array-element";
       }
     | {
         readonly left: readonly any[];
         readonly right: readonly any[];
-        readonly type: "ArrayLength";
+        readonly type: "array-length";
       }
-    | {
-        readonly left: any;
-        readonly right: any;
-        readonly type: "BooleanEquals";
-      }
-    | { readonly left: any; readonly right: any; readonly type: "LeftError" }
-    | { readonly right: any; readonly type: "LeftNull" }
-    | {
-        readonly left: bigint | boolean | number | string;
-        readonly right: bigint | boolean | number | string;
-        readonly type: "Primitive";
-      }
+    | { readonly left: any; readonly right: any; readonly type: "boolean" }
+    | { readonly right: any; readonly type: "left-null" }
     | {
         readonly left: any;
         readonly right: any;
         readonly propertyName: string;
         readonly propertyValuesUnequal: Unequal;
-        readonly type: "Property";
+        readonly type: "property";
       }
-    | { readonly left: any; readonly right: any; readonly type: "RightError" }
-    | { readonly left: any; readonly type: "RightNull" };
+    | { readonly left: any; readonly type: "right-null" };
 }
 
 function $filterArray<ItemT, ItemFilterT>(
@@ -390,11 +379,11 @@ function $maybeEquals<T>(
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
       );
     }
-    return Left({ left: leftMaybe.unsafeCoerce(), type: "RightNull" });
+    return Left({ left: leftMaybe.unsafeCoerce(), type: "right-null" });
   }
 
   if (rightMaybe.isJust()) {
-    return Left({ right: rightMaybe.unsafeCoerce(), type: "LeftNull" });
+    return Left({ right: rightMaybe.unsafeCoerce(), type: "left-null" });
   }
 
   return $EqualsResult.Equal;
@@ -519,7 +508,7 @@ export namespace NestedNodeShape {
         right: right,
         propertyName: "$identifier",
         propertyValuesUnequal,
-        type: "Property" as const,
+        type: "property" as const,
       }))
       .chain(() =>
         $strictEquals(left.$type, right.$type).mapLeft(
@@ -528,7 +517,7 @@ export namespace NestedNodeShape {
             right: right,
             propertyName: "$type",
             propertyValuesUnequal,
-            type: "Property" as const,
+            type: "property" as const,
           }),
         ),
       )
@@ -541,7 +530,7 @@ export namespace NestedNodeShape {
           right: right,
           propertyName: "requiredStringProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       );
   }
@@ -792,20 +781,19 @@ export namespace NestedNodeShape {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: "[object Object] as const",
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
+        kind: "TypeDiscriminant" as const,
         type: () => ({
-          descendantValues: undefined,
-          ownValues: ['"NestedNodeShape"'],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NestedNodeShape"],
         }),
       },
       requiredStringProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({ kind: "StringType" as const }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -912,7 +900,7 @@ export namespace FormNodeShape {
         right: right,
         propertyName: "$identifier",
         propertyValuesUnequal,
-        type: "Property" as const,
+        type: "property" as const,
       }))
       .chain(() =>
         $strictEquals(left.$type, right.$type).mapLeft(
@@ -921,7 +909,7 @@ export namespace FormNodeShape {
             right: right,
             propertyName: "$type",
             propertyValuesUnequal,
-            type: "Property" as const,
+            type: "property" as const,
           }),
         ),
       )
@@ -934,7 +922,7 @@ export namespace FormNodeShape {
           right: right,
           propertyName: "emptyStringSetProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       )
       .chain(() =>
@@ -946,7 +934,7 @@ export namespace FormNodeShape {
           right: right,
           propertyName: "nestedObjectProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       )
       .chain(() =>
@@ -958,7 +946,7 @@ export namespace FormNodeShape {
           right: right,
           propertyName: "nonEmptyStringSetProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       )
       .chain(() =>
@@ -970,7 +958,7 @@ export namespace FormNodeShape {
           right: right,
           propertyName: "optionalStringProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       )
       .chain(() =>
@@ -982,7 +970,7 @@ export namespace FormNodeShape {
           right: right,
           propertyName: "requiredIntegerProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       )
       .chain(() =>
@@ -994,7 +982,7 @@ export namespace FormNodeShape {
           right: right,
           propertyName: "requiredStringProperty",
           propertyValuesUnequal,
-          type: "Property" as const,
+          type: "property" as const,
         })),
       );
   }
@@ -1566,39 +1554,38 @@ export namespace FormNodeShape {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: "[object Object] as const",
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
+        kind: "TypeDiscriminant" as const,
         type: () => ({
-          descendantValues: undefined,
-          ownValues: ['"FormNodeShape"'],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["FormNodeShape"],
         }),
       },
       emptyStringSetProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "SetType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Set" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
       },
       nestedObjectProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => NestedNodeShape.$schema,
         identifier: dataFactory.namedNode(
           "http://example.com/nestedObjectProperty",
         ),
       },
       nonEmptyStringSetProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "SetType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Set" as const,
+          item: () => ({ kind: "String" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -1606,25 +1593,25 @@ export namespace FormNodeShape {
         ),
       },
       optionalStringProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredIntegerProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({ kind: "IntType" as const }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Int" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredIntegerProperty",
         ),
       },
       requiredStringProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({ kind: "StringType" as const }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1737,8 +1724,8 @@ export namespace $Object {
   export const $schema = {
     properties: {
       requiredStringProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({ kind: "StringType" as const }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),

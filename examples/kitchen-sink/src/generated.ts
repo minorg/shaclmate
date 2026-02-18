@@ -2921,7 +2921,6 @@ export namespace UuidV4IriIdentifierInterface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "NamedNode" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -3432,7 +3431,6 @@ export namespace UuidV4IriIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "NamedNode" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -6644,7 +6642,6 @@ export namespace UnionDiscriminantsClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -9253,7 +9250,6 @@ export namespace TermPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -10407,7 +10403,6 @@ export namespace Sha256IriIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "NamedNode" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -10987,7 +10982,6 @@ export namespace RecursiveClassUnionMember2 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -11596,7 +11590,6 @@ export namespace RecursiveClassUnionMember1 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -12206,7 +12199,6 @@ export namespace PropertyVisibilitiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -13111,7 +13103,6 @@ export namespace PropertyCardinalitiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -13870,7 +13861,6 @@ export namespace PartialInterfaceUnionMember2 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -14502,7 +14492,6 @@ export namespace PartialInterfaceUnionMember1 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -15109,7 +15098,6 @@ export namespace PartialClassUnionMember2 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -15714,7 +15702,6 @@ export namespace PartialClassUnionMember1 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -16397,7 +16384,6 @@ export namespace OrderedPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -16984,7 +16970,6 @@ export namespace NonClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -17447,7 +17432,6 @@ export namespace NoRdfTypeClassUnionMember2 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -17930,7 +17914,6 @@ export namespace NoRdfTypeClassUnionMember1 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -18783,7 +18766,6 @@ export namespace MutablePropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -20066,7 +20048,6 @@ export namespace ListPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -21086,7 +21067,6 @@ export namespace PartialInterface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -23795,7 +23775,6 @@ export namespace LazyPropertiesInterface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -25292,7 +25271,6 @@ export namespace PartialClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -27826,7 +27804,6 @@ export namespace LazyPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -30388,7 +30365,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -31025,7 +31001,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -31635,7 +31610,6 @@ export namespace LazilyResolvedClassUnionMember2 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -32245,7 +32219,6 @@ export namespace LazilyResolvedClassUnionMember1 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -32894,7 +32867,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -33514,7 +33486,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -34167,7 +34138,6 @@ export namespace LanguageInPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -34870,7 +34840,6 @@ export namespace JsPrimitiveUnionPropertyClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -36462,7 +36431,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -38170,7 +38138,6 @@ export namespace Interface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -38719,7 +38686,6 @@ export namespace IndirectRecursiveHelperClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -39327,7 +39293,6 @@ export namespace IndirectRecursiveClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -40413,7 +40378,6 @@ export namespace InPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -41940,7 +41904,6 @@ export namespace IdentifierOverride1ClassStatic {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -44156,7 +44119,6 @@ export namespace HasValuePropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -44746,7 +44708,6 @@ export namespace FlattenClassUnionMember3 {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -45389,7 +45350,6 @@ export namespace ExternClassPropertyClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -45972,7 +45932,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -46497,7 +46456,6 @@ export namespace ExplicitRdfTypeClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -47117,7 +47075,6 @@ export namespace ExplicitFromToRdfTypesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -47769,7 +47726,6 @@ export namespace DirectRecursiveClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -48841,7 +48797,6 @@ export namespace DefaultValuePropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -50849,7 +50804,6 @@ export namespace DateUnionPropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -53471,7 +53425,6 @@ export namespace ConvertibleTypePropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -54941,7 +54894,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -57330,7 +57282,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -59260,7 +59211,6 @@ export namespace ClassUnionMemberCommonParentStatic {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -60863,7 +60813,6 @@ export namespace BlankNodeOrIriIdentifierInterface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -61338,7 +61287,6 @@ export namespace BlankNodeOrIriIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -61831,7 +61779,6 @@ export namespace BlankNodeIdentifierInterface {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "BlankNode" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -62309,7 +62256,6 @@ export namespace BlankNodeIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "BlankNode" as const }),
-        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminant" as const,

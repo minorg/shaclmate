@@ -536,14 +536,14 @@ export namespace $DefaultPartial {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "IdentifierType" as const }),
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
+        kind: "TypeDiscriminant" as const,
         type: () => ({
-          descendantValues: undefined,
-          ownValues: ['"$DefaultPartial"'],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["$DefaultPartial"],
         }),
       },
     },
@@ -804,22 +804,21 @@ export namespace UnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: "[object Object] as const",
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
+        kind: "TypeDiscriminant" as const,
         type: () => ({
-          descendantValues: undefined,
-          ownValues: ['"UnionMember2"'],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["UnionMember2"],
         }),
       },
       optionalStringProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
@@ -1075,22 +1074,21 @@ export namespace UnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: "[object Object] as const",
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
+        kind: "TypeDiscriminant" as const,
         type: () => ({
-          descendantValues: undefined,
-          ownValues: ['"UnionMember1"'],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["UnionMember1"],
         }),
       },
       optionalNumberProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "FloatType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
@@ -1463,37 +1461,39 @@ export namespace Nested {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: "[object Object] as const",
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
-        type: () => ({ descendantValues: undefined, ownValues: ['"Nested"'] }),
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["Nested"],
+        }),
       },
       optionalNumberProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "FloatType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
       },
       optionalStringProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredStringProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({ kind: "StringType" as const }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1762,21 +1762,22 @@ export namespace ParentStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: "IdentifierProperty" as const,
-        type: () => ({ kind: "NamedNodeType" as const }),
+        kind: "Identifier" as const,
+        type: () => ({ kind: "NamedNode" as const }),
       },
       $type: {
-        kind: "TypeDiscriminantProperty" as const,
+        kind: "TypeDiscriminant" as const,
         type: () => ({
-          descendantValues: ['"Child"'],
-          ownValues: ['"Parent"'],
+          descendantValues: ["Child"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["Parent"],
         }),
       },
       parentStringProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/parentStringProperty",
@@ -2536,21 +2537,21 @@ export namespace Child {
     properties: {
       ...ParentStatic.$schema.properties,
       childStringProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/childStringProperty",
         ),
       },
       lazyObjectSetProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "LazyObjectSetType" as const,
+          kind: "LazyObjectSet" as const,
           partial: () => ({
-            kind: "SetType" as const,
+            kind: "Set" as const,
             item: () => $DefaultPartial.$schema,
           }),
         }),
@@ -2559,11 +2560,11 @@ export namespace Child {
         ),
       },
       optionalLazyObjectProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "LazyObjectOptionType" as const,
+          kind: "LazyObjectOption" as const,
           partial: () => ({
-            kind: "OptionType" as const,
+            kind: "Maybe" as const,
             item: () => $DefaultPartial.$schema,
           }),
         }),
@@ -2572,28 +2573,25 @@ export namespace Child {
         ),
       },
       optionalObjectProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({
-          kind: "OptionType" as const,
-          item: () => Nested.$schema,
-        }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Maybe" as const, item: () => Nested.$schema }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalObjectProperty",
         ),
       },
       optionalStringProperty: {
-        kind: "ShaclProperty" as const,
+        kind: "Shacl" as const,
         type: () => ({
-          kind: "OptionType" as const,
-          item: () => ({ kind: "StringType" as const }),
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredStringProperty: {
-        kind: "ShaclProperty" as const,
-        type: () => ({ kind: "StringType" as const }),
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
