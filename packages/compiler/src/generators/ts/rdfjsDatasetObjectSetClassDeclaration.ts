@@ -151,7 +151,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
   let sortResources: boolean;
   if (query?.identifiers) {
-    resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+    resources = query.identifiers.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
     const identifierSet = new ${snippets.IdentifierSet}();
@@ -234,8 +234,8 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
 
   let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
   let sortResources: boolean;
-  if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
-    resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+  if (query?.identifiers) {
+    resources = query.identifiers.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
     const identifierSet = new ${snippets.IdentifierSet}();

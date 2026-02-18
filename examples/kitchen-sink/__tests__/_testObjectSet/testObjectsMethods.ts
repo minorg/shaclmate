@@ -23,5 +23,45 @@ export function testObjectsMethods(
         );
       }
     });
+
+    describe("identifiers", () => {
+      it("empty", async ({ expect }) => {
+        const objectSet = createObjectSet(...data.concreteChildClasses);
+        const actual = (
+          await objectSet.concreteChildClasses({
+            identifiers: [],
+          })
+        ).unsafeCoerce();
+        expect(actual).toHaveLength(0);
+      });
+
+      it("all", async ({ expect }) => {
+        const objectSet = createObjectSet(...data.concreteChildClasses);
+        const expected = data.concreteChildClasses;
+        const actual = (
+          await objectSet.concreteChildClasses({
+            identifiers: expected.map((_) => _.$identifier),
+          })
+        ).unsafeCoerce();
+        expect(actual).toHaveLength(expected.length);
+        for (let i = 0; i < expected.length; i++) {
+          expect(actual[i].$equals(expected[i]).isRight()).toStrictEqual(true);
+        }
+      });
+
+      it("subset", async ({ expect }) => {
+        const objectSet = createObjectSet(...data.concreteChildClasses);
+        const expected = data.concreteChildClasses.slice(2);
+        const actual = (
+          await objectSet.concreteChildClasses({
+            identifiers: expected.map((_) => _.$identifier),
+          })
+        ).unsafeCoerce();
+        expect(actual).toHaveLength(expected.length);
+        for (let i = 0; i < expected.length; i++) {
+          expect(actual[i].$equals(expected[i]).isRight()).toStrictEqual(true);
+        }
+      });
+    });
   });
 }
