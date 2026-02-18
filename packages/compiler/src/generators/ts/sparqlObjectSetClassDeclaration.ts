@@ -22,13 +22,13 @@ export function sparqlObjectSetClassDeclaration({
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
-    query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT>`,
+    query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
     selectObjectTypeType: code`objectType: { ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
   };
 
   const typeParameters = {
     ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
-    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[] } }`,
+    ObjectFilterT: code`ObjectFilterT`,
     ObjectIdentifierT: code`ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}`,
   };
 
@@ -62,7 +62,7 @@ ${joinCode(
       return [
         code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
-  return (await this.${methodSignatures.objects.name}({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } })).map(objects => objects[0]);
+  return (await this.${methodSignatures.objects.name}({ identifiers: [identifier] })).map(objects => objects[0]);
 }`,
         code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
@@ -74,7 +74,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 }`,
         code`\
 async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.parameters}): ${methodSignatures.objectsCount.returnType} {
-  return this.${syntheticNamePrefix}objectsCount<${objectType.filterType}>(${runtimeObjectType}, query);
+  return this.${syntheticNamePrefix}objectsCount<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
       ];
     },
@@ -118,6 +118,10 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
   }
 
   protected async ${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, readonly ObjectIdentifierT[]>> {
+    if (query?.identifiers) {
+      return ${imports.Either}.of(query.identifiers);
+    }
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return ${imports.Either}.of([]);
@@ -184,7 +188,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
     });
   }
 
-  protected async ${syntheticNamePrefix}objectsCount<${typeParameters.ObjectFilterT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, number>> {
+  protected async ${syntheticNamePrefix}objectsCount<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, number>> {
     const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
     if (wherePatterns.length === 0) {
       return ${imports.Left}(new Error("no SPARQL WHERE patterns for count"));
@@ -219,7 +223,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
     );
   }
 
-  protected ${syntheticNamePrefix}wherePatterns<${typeParameters.ObjectFilterT}>(${parameters.selectObjectTypeType}, ${parameters.query}): readonly ${imports.sparqljs}.Pattern[] {
+  protected ${syntheticNamePrefix}wherePatterns<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): readonly ${imports.sparqljs}.Pattern[] {
     // Patterns should be most to least specific.
     const patterns: ${imports.sparqljs}.Pattern[] = [];
 
@@ -234,6 +238,6 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
 }
   
 export namespace ${syntheticNamePrefix}SparqlObjectSet {
-  export type Query<${typeParameters.ObjectFilterT}> = ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT> & { readonly order?: (objectVariable: ${imports.Variable}) => readonly ${imports.sparqljs}.Ordering[]; readonly where?: (objectVariable: ${imports.Variable}) => readonly ${imports.sparqljs}.Pattern[] };
+  export type Query<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}> = ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT> & { readonly order?: (objectVariable: ${imports.Variable}) => readonly ${imports.sparqljs}.Ordering[]; readonly where?: (objectVariable: ${imports.Variable}) => readonly ${imports.sparqljs}.Pattern[] };
 }`;
 }

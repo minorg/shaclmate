@@ -15,18 +15,22 @@ export function rdfjsDatasetObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): Code {
-  const typeParameters = {
-    ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
-    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[] } }`,
-    ObjectIdentifierT: code`ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}`,
-  };
-
   const objectTypeType = code`\
 {
   ${syntheticNamePrefix}filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
   ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${imports.Either}<Error, ObjectT>;
   ${syntheticNamePrefix}fromRdfTypes: readonly ${imports.NamedNode}[]
 }`;
+
+  const parameters = {
+    query: `query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
+  };
+
+  const typeParameters = {
+    ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
+    ObjectFilterT: code`ObjectFilterT`,
+    ObjectIdentifierT: code`ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}`,
+  };
 
   return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
@@ -59,7 +63,7 @@ async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${
             // objectSync
             code`\
 ${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${imports.Either}<Error, ${objectType.name}> {
-  return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);
+  return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier] }).map(objects => objects[0]);
 }`,
 
             // objectIdentifiers
@@ -137,7 +141,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       ...(objectTypes.length > 0
         ? [
             code`\
-protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${imports.Either}<Error, readonly ObjectT[]> {
+protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
 
@@ -146,8 +150,8 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
 
   let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
   let sortResources: boolean;
-  if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
-    resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+  if (query?.identifiers) {
+    resources = query.identifiers.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
     const identifierSet = new ${snippets.IdentifierSet}();
@@ -221,7 +225,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
       ...(objectUnionTypes.length > 0
         ? [
             code`\
-protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${imports.Either}<Error, readonly ObjectT[]> {
+protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
 
@@ -230,8 +234,8 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
 
   let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
   let sortResources: boolean;
-  if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
-    resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+  if (query?.identifiers) {
+    resources = query.identifiers.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
     const identifierSet = new ${snippets.IdentifierSet}();

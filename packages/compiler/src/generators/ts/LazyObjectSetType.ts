@@ -6,7 +6,6 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LazyObjectSetType extends AbstractLazyObjectType<
@@ -99,7 +98,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     parameters: Parameters<Super["fromRdfExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ filter: { ${syntheticNamePrefix}identifier: { in: identifiers } } }) })))`;
+    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ identifiers }) })))`;
   }
 
   override graphqlResolveExpression({
