@@ -26,18 +26,18 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     parameters.push(code`${this.thisVariable}: ${this.name}`);
   }
   parameters.push(
-    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, ${variables.resourceSet}?: ${imports.ResourceSet} }`,
+    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.graph}?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, ${variables.resourceSet}?: ${imports.ResourceSet} }`,
   );
 
   let usedIgnoreRdfTypeVariable = false;
 
   const statements: Code[] = [
-    code`const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
+    code`const ${variables.graph} = options?.${variables.graph};`,
     code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}({ ${imports.dataFactory}, dataset: ${snippets.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
-    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.mutateGraph}, ${variables.resourceSet} }`;
+    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.graph}, ${variables.resourceSet} }`;
     let superToRdfCall: Code;
     switch (this.declarationType) {
       case "class":
@@ -52,7 +52,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
   } else {
     statements.push(
-      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
+      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.graph} });`,
     );
   }
 
@@ -96,7 +96,7 @@ ${preamble}${syntheticNamePrefix}toRdf(${joinCode(parameters, { on: "," })}): ${
 
 const variables = {
   ignoreRdfType: code`ignoreRdfType`,
-  mutateGraph: code`mutateGraph`,
+  graph: code`graph`,
   resource: code`resource`,
   resourceSet: code`resourceSet`,
 };

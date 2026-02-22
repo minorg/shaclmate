@@ -216,28 +216,24 @@ export class ListType<
     if (itemIndex === 0) {
       currentSubListResource = listResource;
     } else {
-      const newSubListResource = ${variables.resourceSet}.resource(${subListIdentifier}, ${{
-        mutateGraph: variables.mutateGraph,
-      }});
-      currentSubListResource!.add(${rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier);
+      const newSubListResource = ${variables.resourceSet}.resource(${subListIdentifier});
+      currentSubListResource!.add(${rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier, ${variables.graph});
       currentSubListResource = newSubListResource;
     }
     
-    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"))`))}
-        
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ...${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })});
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
+    
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { graph: variables.graph, predicate: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 
     if (itemIndex + 1 === list.length) {
-      currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)});
+      currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)}, ${variables.graph});
     }
     
     return { currentSubListResource, listResource };
   },
   {
     currentSubListResource: null,
-    listResource: resourceSet.resource(${listIdentifier}, ${{
-      mutateGraph: variables.mutateGraph,
-    }}),
+    listResource: resourceSet.resource(${listIdentifier}),
   } as {
     currentSubListResource: ${resourceTypeName} | null;
     listResource: ${resourceTypeName};

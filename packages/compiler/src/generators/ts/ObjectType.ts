@@ -463,9 +463,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
-        return code`[${variables.value}.${syntheticNamePrefix}toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+        return code`[${variables.value}.${syntheticNamePrefix}toRdf({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
       case "interface":
-        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
     }
   }
 
