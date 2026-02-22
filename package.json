@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "tsx": "^4.16.2",
-    "turbo": "^2.5.5",
-    "yaml": "^2.5.0"
+    "tsx": "~4.16.2",
+    "turbo": "~2.5.5",
+    "yaml": "~2.5.0"
   },
   "name": "shaclmate",
   "optionalDependencies": {
