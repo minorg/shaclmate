@@ -14,7 +14,12 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
 
   return {
     expression: {
-      args: [valueVariable, valueIn.map(inValue => ${snippets_literalFactory}.primitive(inValue))],
+      args: [valueVariable, valueIn.map(inValue => {
+        if (typeof inValue !== "object" || inValue instanceof Date) {
+          return ${snippets_literalFactory}.primitive(inValue);
+        }
+        return inValue;
+      })],
       operator: "in",
       type: "operation",
     },

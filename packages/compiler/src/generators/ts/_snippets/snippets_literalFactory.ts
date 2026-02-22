@@ -4,5 +4,5 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_literalFactory = conditionalOutput(
   `${syntheticNamePrefix}literalFactory`,
-  code`const ${syntheticNamePrefix}literalFactory = new ${imports.LiteralFactory}({ dataFactory: ${imports.dataFactory});`,
+  code`const ${syntheticNamePrefix}literalFactory = new ${imports.LiteralFactory}({ dataFactory: ${imports.dataFactory} });`,
 );
