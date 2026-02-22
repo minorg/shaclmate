@@ -8,10 +8,10 @@
     "@mui/x-date-pickers": "~7.17.0",
     "react": "~18",
     "react-dom": "~18",
-    "@rdfjs/types": "~1.1.0",
+    "@rdfjs/types": "~2.0.1",
     "@types/n3": "~1.26.0",
     "n3": "~1.26.0",
-    "purify-ts": "~2.1.0",
+    "purify-ts": "~2.1.4",
     "rdfjs-resource": "1.0.26",
     "zod": "~4.1.12"
   },
@@ -22,11 +22,11 @@
     "vite": "6.0.7",
     "@biomejs/biome": "2.3.10",
     "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.5",
+    "@tsconfig/strictest": "~2.0.8",
     "@types/node": "~22",
     "depcheck": "~1.4.7",
     "rimraf": "~6.0.1",
-    "typescript": "5.8.2"
+    "typescript": "5.9.3"
   },
   "license": "Apache-2.0",
   "name": "@shaclmate/forms-example",
