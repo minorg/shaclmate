@@ -2,10 +2,10 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_DateFilter } from "./snippets_DateFilter.js";
 import { snippets_DateSchema } from "./snippets_DateSchema.js";
+import { snippets_literalFactory } from "./snippets_literalFactory.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
-import { snippets_toLiteral } from "./snippets_toLiteral.js";
 
 export const snippets_dateSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}dateSparqlWherePatterns`,
@@ -20,7 +20,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: "in",
-            args: [valueVariable, filter.in.map(inValue => ${snippets_toLiteral}(inValue))],
+            args: [valueVariable, filter.in.map(inValue => ${snippets_literalFactory}.date(inValue))],
           },
           lift: true,
           type: "filter",
@@ -32,7 +32,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${snippets_toLiteral}(filter.maxExclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxExclusive)],
           },
           lift: true,
           type: "filter"
@@ -44,7 +44,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${snippets_toLiteral}(filter.maxInclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxInclusive)],
           },
           lift: true,
           type: "filter"
@@ -56,7 +56,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${snippets_toLiteral}(filter.minExclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.minExclusive)],
           },
           lift: true,
           type: "filter"
@@ -68,7 +68,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${snippets_toLiteral}(filter.minInclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.minInclusive)],
           },
           lift: true,
           type: "filter"

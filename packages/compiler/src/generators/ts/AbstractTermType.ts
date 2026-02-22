@@ -70,7 +70,15 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`${snippets.toLiteral}(${value})`,
+            code`${snippets.literalFactory}.bigint(${value})`,
+          sourceTypeCheckExpression: (value) =>
+            code`typeof ${value} === "bigint"`,
+          sourceTypeName: code`bigint`,
+          sourceTypeof: "bigint",
+        },
+        {
+          conversionExpression: (value) =>
+            code`${snippets.literalFactory}.boolean(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "boolean"`,
           sourceTypeName: code`boolean`,
@@ -78,7 +86,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.toLiteral}(${value})`,
+            code`${snippets.literalFactory}.dateTime(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: code`Date`,
@@ -86,7 +94,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.toLiteral}(${value})`,
+            code`${snippets.literalFactory}.number(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "number"`,
           sourceTypeName: code`number`,
@@ -94,7 +102,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.toLiteral}(${value})`,
+            code`${snippets.literalFactory}.string(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "string"`,
           sourceTypeName: code`string`,

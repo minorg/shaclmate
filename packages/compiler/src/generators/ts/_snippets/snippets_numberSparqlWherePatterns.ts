@@ -1,12 +1,12 @@
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+import { snippets_literalFactory } from "./snippets_literalFactory.js";
 import { snippets_NumberFilter } from "./snippets_NumberFilter.js";
 import { snippets_NumberSchema } from "./snippets_NumberSchema.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
-import { snippets_toLiteral } from "./snippets_toLiteral.js";
 
 export const snippets_numberSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}numberSparqlWherePatterns`,
@@ -25,7 +25,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets_SparqlWherePat
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${snippets_toLiteral}(filter.maxExclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.number(filter.maxExclusive)],
           },
           lift: true,
           type: "filter",
@@ -37,7 +37,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets_SparqlWherePat
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${snippets_toLiteral}(filter.maxInclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.number(filter.maxInclusive)],
           },
           lift: true,
           type: "filter",
@@ -49,7 +49,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets_SparqlWherePat
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${snippets_toLiteral}(filter.minExclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.number(filter.minExclusive)],
           },
           lift: true,
           type: "filter",
@@ -61,7 +61,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets_SparqlWherePat
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${snippets_toLiteral}(filter.minInclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.number(filter.minInclusive)],
           },
           lift: true,
           type: "filter",

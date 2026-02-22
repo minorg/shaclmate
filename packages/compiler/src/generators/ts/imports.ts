@@ -21,6 +21,7 @@ export const imports = {
   GraphQLUnionType: imp("GraphQLUnionType@graphql"),
   Left: imp("Left@purify-ts"),
   Literal: imp("Literal@@rdfjs/types"),
+  LiteralFactory: imp("LiteralFactory@rdfjs-resource"),
   Maybe: imp("Maybe@purify-ts"),
   MutableResource: imp("MutableResource@rdfjs-resource"),
   MutableResourceSet: imp("MutableResourceSet@rdfjs-resource"),
