@@ -344,7 +344,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${imports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? code`<${imports.NamedNode}>` : ""}`;
+    return code`${imports.Resource}${this.identifierType.kind === "NamedNodeType" ? code`<${imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()

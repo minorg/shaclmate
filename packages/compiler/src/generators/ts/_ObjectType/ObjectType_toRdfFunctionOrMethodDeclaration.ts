@@ -26,14 +26,14 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     parameters.push(code`${this.thisVariable}: ${this.name}`);
   }
   parameters.push(
-    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: ${imports.MutableResource}.MutateGraph, ${variables.resourceSet}?: ${imports.MutableResourceSet} }`,
+    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, ${variables.resourceSet}?: ${imports.ResourceSet} }`,
   );
 
   let usedIgnoreRdfTypeVariable = false;
 
   const statements: Code[] = [
     code`const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.MutableResourceSet}({ ${imports.dataFactory}, dataset: ${snippets.datasetFactory}.dataset() });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}({ ${imports.dataFactory}, dataset: ${snippets.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
@@ -50,13 +50,9 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     }
     statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
     usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
-  } else if (this.identifierType.kind === "NamedNodeType") {
-    statements.push(
-      code`const ${variables.resource} = ${variables.resourceSet}.mutableNamedResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
-    );
   } else {
     statements.push(
-      code`const ${variables.resource} = ${variables.resourceSet}.mutableResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
+      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
     );
   }
 

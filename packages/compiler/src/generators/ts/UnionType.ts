@@ -655,7 +655,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filte
             ...variables,
             value: memberType.payload(variables.value),
           },
-        })} as readonly Parameters<${imports.MutableResource}["add"]>[1][])`,
+        })} as readonly Parameters<${imports.Resource}["add"]>[1][])`,
       variables,
     });
   }

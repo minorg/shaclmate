@@ -180,15 +180,13 @@ export class ListType<
     AbstractCollectionType<ItemTypeT>["toRdfExpression"]
   >[0]): Code {
     let listIdentifier: Code;
-    let mutableResourceTypeName: Code;
-    let resourceSetMethodName: string;
+    let resourceTypeName: Code;
     let subListIdentifier: Code;
     switch (this.identifierNodeKind) {
       case "BlankNode": {
         listIdentifier =
           subListIdentifier = code`${imports.dataFactory}.blankNode()`;
-        mutableResourceTypeName = code`${imports.MutableResource}`;
-        resourceSetMethodName = "mutableResource";
+        resourceTypeName = code`${imports.Resource}<${imports.BlankNode}>`;
         break;
       }
       case "NamedNode": {
@@ -208,8 +206,7 @@ export class ListType<
             listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${imports.uuid}.v4()}\`)`;
             break;
         }
-        mutableResourceTypeName = code`${imports.MutableResource}<${imports.NamedNode}>`;
-        resourceSetMethodName = "mutableNamedResource";
+        resourceTypeName = code`${imports.Resource}<${imports.NamedNode}>`;
         subListIdentifier = code`${imports.dataFactory}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
         break;
       }
@@ -219,7 +216,7 @@ export class ListType<
     if (itemIndex === 0) {
       currentSubListResource = listResource;
     } else {
-      const newSubListResource = ${variables.resourceSet}.${resourceSetMethodName}(${subListIdentifier}, ${{
+      const newSubListResource = ${variables.resourceSet}.resource(${subListIdentifier}, ${{
         mutateGraph: variables.mutateGraph,
       }});
       currentSubListResource!.add(${rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier);
@@ -238,12 +235,12 @@ export class ListType<
   },
   {
     currentSubListResource: null,
-    listResource: resourceSet.${resourceSetMethodName}(${listIdentifier}, ${{
+    listResource: resourceSet.resource(${listIdentifier}, ${{
       mutateGraph: variables.mutateGraph,
     }}),
   } as {
-    currentSubListResource: ${mutableResourceTypeName} | null;
-    listResource: ${mutableResourceTypeName};
+    currentSubListResource: ${resourceTypeName} | null;
+    listResource: ${resourceTypeName};
   },
 ).listResource.identifier : ${rdfjsTermExpression(rdf.nil)}]`;
   }
