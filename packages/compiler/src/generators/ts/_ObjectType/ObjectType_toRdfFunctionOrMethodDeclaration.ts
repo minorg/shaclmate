@@ -33,7 +33,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
 
   const statements: Code[] = [
     code`const ${variables.graph} = options?.${variables.graph};`,
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}({ ${imports.dataFactory}, dataset: ${snippets.datasetFactory}.dataset() });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${snippets.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
@@ -52,7 +52,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
   } else {
     statements.push(
-      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.graph} });`,
+      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name});`,
     );
   }
 
@@ -61,7 +61,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
       code`if (!${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"));`,
+            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"), ${variables.graph});`,
         ),
         { on: " " },
       )} }`,

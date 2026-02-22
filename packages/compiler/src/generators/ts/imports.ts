@@ -26,7 +26,7 @@ export const imports = {
   NamedNode: imp("NamedNode@@rdfjs/types"),
   NonEmptyList: imp("NonEmptyList@purify-ts"),
   Quad: imp("Quad@@rdfjs/types"),
-  Quad_Graph: imp("Quad@@rdfjs/types"),
+  Quad_Graph: imp("Quad_Graph@@rdfjs/types"),
   Resource: imp("Resource@rdfjs-resource"),
   ResourceSet: imp("ResourceSet@rdfjs-resource"),
   sha256: imp("sha256@js-sha256"),

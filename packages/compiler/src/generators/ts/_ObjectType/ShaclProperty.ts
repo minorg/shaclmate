@@ -335,11 +335,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["toRdfStatements"]
   >[0]): readonly Code[] {
     return [
-      code`${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
+      code`${variables.resource}.add(${this.predicate}, ${this.type.toRdfExpression(
         {
           variables: { ...variables, predicate: this.predicate },
         },
-      )});`,
+      )}, ${variables.graph});`,
     ];
   }
 }
