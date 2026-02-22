@@ -37,7 +37,7 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
   protected readonly resourceSet: ${imports.ResourceSet};
 
   constructor(dataset: ${imports.DatasetCore}) {
-    this.resourceSet = new ${imports.ResourceSet}({ dataset });
+    this.resourceSet = new ${imports.ResourceSet}(dataset, { dataFactory: ${imports.dataFactory} });
   }
 
   ${joinCode(
