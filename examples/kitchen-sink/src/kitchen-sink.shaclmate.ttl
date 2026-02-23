@@ -295,7 +295,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:path :dateTimeDefaultValueProperty
     ], [
-        sh:defaultValue 0 ;
+        sh:defaultValue 0.0e0 ;
         sh:maxCount 1 ;
         sh:path :numberDefaultValueProperty
     ] .

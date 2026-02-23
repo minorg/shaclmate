@@ -48076,7 +48076,7 @@ export class DefaultValuePropertiesClass {
         ? [
             $literalFactory.number(
               this.numberDefaultValueProperty,
-              $RdfVocabularies.xsd.integer,
+              $RdfVocabularies.xsd.double,
             ),
           ]
         : [],
@@ -48502,8 +48502,8 @@ export namespace DefaultValuePropertiesClass {
                                 DefaultValuePropertiesClass.$schema.properties
                                   .numberDefaultValueProperty.identifier,
                               term: dataFactory.literal(
-                                "0",
-                                $RdfVocabularies.xsd.integer,
+                                "0.0e0",
+                                $RdfVocabularies.xsd.double,
                               ),
                             }).toValues(),
                       )
@@ -48662,8 +48662,11 @@ export namespace DefaultValuePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "DefaultValue" as const,
-          item: () => ({ kind: "Int" as const }),
-          defaultValue: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
+          item: () => ({ kind: "Float" as const }),
+          defaultValue: dataFactory.literal(
+            "0.0e0",
+            $RdfVocabularies.xsd.double,
+          ),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/numberDefaultValueProperty",
