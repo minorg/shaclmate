@@ -18,7 +18,9 @@ export class DateTimeType extends AbstractDateType {
     return code`${imports.z}.iso.datetime()`;
   }
 
-  protected toIsoStringExpression(variables: { value: Code }): Code {
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractDateType["toJsonExpression"]>[0]): Code {
     return code`${variables.value}.toISOString()`;
   }
 }

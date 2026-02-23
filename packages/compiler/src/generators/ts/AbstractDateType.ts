@@ -68,12 +68,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return new AbstractPrimitiveType.JsonType(code`string`);
   }
 
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): Code {
-    return this.toIsoStringExpression(variables);
-  }
-
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): Code {
@@ -104,6 +98,4 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
       valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
   }
-
-  protected abstract toIsoStringExpression(variables: { value: Code }): Code;
 }

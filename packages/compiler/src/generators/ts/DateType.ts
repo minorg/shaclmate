@@ -19,7 +19,9 @@ export class DateType extends AbstractDateType {
     return code`${imports.z}.iso.date()`;
   }
 
-  protected override toIsoStringExpression(variables: { value: Code }): Code {
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractDateType["toJsonExpression"]>[0]): Code {
     return code`${variables.value}.toISOString().replace(/T.*$/, '')`;
   }
 }
