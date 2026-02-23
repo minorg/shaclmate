@@ -66,8 +66,8 @@ const externalDependencyVersions = {
   zod: {
     zod: "~4.1.12",
   },
-  vitest: { vitest: "~4.0.18" },
-  "@vitest/coverage-v8": { "@vitest/coverage-v8": "~4.0.18" },
+  vitest: { vitest: "^3.2.4" },
+  "@vitest/coverage-v8": { "@vitest/coverage-v8": "^3.2.4" },
 };
 
 // Packages should be topologically sorted
