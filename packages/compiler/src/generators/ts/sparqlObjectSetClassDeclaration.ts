@@ -182,7 +182,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
       const dataset = ${snippets.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}<${imports.NamedNode}>({ dataset, identifier: identifier as ${imports.NamedNode} }), { objectSet: this })));
+        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this })));
       }
       return objects;
     });

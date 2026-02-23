@@ -66,7 +66,7 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
-    return code`[${imports.dataFactory}.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})]`;
+    return code`[${snippets.literalFactory}.number(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({

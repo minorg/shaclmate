@@ -77,7 +77,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): Code {
-    return code`[${imports.dataFactory}.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
+    return code`[${snippets.literalFactory}.date(${variables.value}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
   }
 
   protected override fromRdfExpressionChain({

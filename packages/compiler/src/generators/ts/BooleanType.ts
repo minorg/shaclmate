@@ -1,10 +1,7 @@
-import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -47,7 +44,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): Code {
-    return code`[${imports.dataFactory}.literal(${variables.value}.toString(), ${rdfjsTermExpression(xsd.boolean)})]`;
+    return code`[${snippets.literalFactory}.boolean(${variables.value})]`;
   }
 
   protected override fromRdfExpressionChain({
