@@ -29,15 +29,12 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.graph}?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, ${variables.resourceSet}?: ${imports.ResourceSet} }`,
   );
 
-  let usedIgnoreRdfTypeVariable = false;
-
   const statements: Code[] = [
-    code`const ${variables.graph} = options?.${variables.graph};`,
     code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${snippets.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
-    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.graph}, ${variables.resourceSet} }`;
+    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} }`;
     let superToRdfCall: Code;
     switch (this.declarationType) {
       case "class":
@@ -49,7 +46,6 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
         break;
     }
     statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
-    usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
   } else {
     statements.push(
       code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name});`,
@@ -58,15 +54,14 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
 
   if (this.toRdfTypes.length > 0) {
     statements.push(
-      code`if (!${variables.ignoreRdfType}) { ${joinCode(
+      code`if (!options?.${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"), ${variables.graph});`,
+            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
         ),
         { on: " " },
       )} }`,
     );
-    usedIgnoreRdfTypeVariable = true;
   }
 
   for (const property of this.properties) {
@@ -74,6 +69,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
       ...property.toRdfStatements({
         variables: {
           ...variables,
+          graph: code`options?.${variables.graph}`,
           value: code`${this.thisVariable}.${property.name}`,
         },
       }),
@@ -81,12 +77,6 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
   }
 
   statements.push(code`return ${variables.resource};`);
-
-  if (usedIgnoreRdfTypeVariable) {
-    statements.unshift(
-      code`const ${variables.ignoreRdfType} = !!options?.ignoreRdfType;`,
-    );
-  }
 
   return Maybe.of(code`\
 ${preamble}${syntheticNamePrefix}toRdf(${joinCode(parameters, { on: "," })}): ${this.toRdfjsResourceType} {

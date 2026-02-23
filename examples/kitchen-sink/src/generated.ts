@@ -4,6 +4,7 @@ import type {
   Literal,
   NamedNode,
   Quad,
+  Quad_Graph,
   Variable,
 } from "@rdfjs/types";
 import { sha256 } from "js-sha256";
@@ -753,6 +754,10 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
 
   return patterns;
 };
+
+function $isReadonlyBigintArray(x: unknown): x is readonly bigint[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "bigint");
+}
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every((z) => typeof z === "boolean");
@@ -1919,14 +1924,13 @@ export class $NamedDefaultPartial {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource<NamedNode> {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
 
@@ -2256,14 +2260,13 @@ export class $DefaultPartial {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
 
@@ -2811,22 +2814,21 @@ export namespace UuidV4IriIdentifierInterface {
     _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource<NamedNode> {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _uuidV4IriIdentifierInterface.$identifier,
-      { mutateGraph },
     );
     resource.add(
       UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty
         .identifier,
-      ...[dataFactory.literal(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
+      [$literalFactory.string(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -3135,17 +3137,17 @@ export class UuidV4IriIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource<NamedNode> {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier,
-      ...[dataFactory.literal(this.uuidV4IriProperty)],
+      [$literalFactory.string(this.uuidV4IriProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -4457,119 +4459,235 @@ export class UnionDiscriminantsClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       UnionDiscriminantsClass.$schema.properties
         .optionalClassOrClassOrStringProperty.identifier,
-      ...this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
+      this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         value.type === "2-string"
-          ? ([dataFactory.literal(value.value)] as readonly Parameters<
-              Resource["add"]
-            >[1][])
+          ? ([$literalFactory.string(value.value)] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[])
           : ([
               value.value.$toRdf({
-                mutateGraph: mutateGraph,
+                graph: options?.graph,
                 resourceSet: resourceSet,
               }).identifier,
-            ] as readonly Parameters<Resource["add"]>[1][]),
+            ] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[]),
       ),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty
         .identifier,
-      ...this.optionalIriOrLiteralProperty
+      this.optionalIriOrLiteralProperty
         .toList()
         .flatMap(
-          (value) => [value] as readonly Parameters<Resource["add"]>[1][],
+          (value) =>
+            [value] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[],
         ),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty
         .identifier,
-      ...this.optionalIriOrStringProperty
+      this.optionalIriOrStringProperty
         .toList()
         .flatMap((value) =>
           typeof value === "string"
-            ? ([dataFactory.literal(value)] as readonly Parameters<
-                Resource["add"]
-              >[1][])
-            : ([value] as readonly Parameters<Resource["add"]>[1][]),
+            ? ([$literalFactory.string(value)] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[])
+            : ([value] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[]),
         ),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties
         .requiredClassOrClassOrStringProperty.identifier,
-      ...(this.requiredClassOrClassOrStringProperty.type === "2-string"
+      this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
-            dataFactory.literal(
+            $literalFactory.string(
               this.requiredClassOrClassOrStringProperty.value,
             ),
-          ] as readonly Parameters<Resource["add"]>[1][])
+          ] as (
+            | bigint
+            | boolean
+            | number
+            | string
+            | BlankNode
+            | Literal
+            | NamedNode
+          )[])
         : ([
             this.requiredClassOrClassOrStringProperty.value.$toRdf({
-              mutateGraph: mutateGraph,
+              graph: options?.graph,
               resourceSet: resourceSet,
             }).identifier,
-          ] as readonly Parameters<Resource["add"]>[1][])),
+          ] as (
+            | bigint
+            | boolean
+            | number
+            | string
+            | BlankNode
+            | Literal
+            | NamedNode
+          )[]),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty
         .identifier,
-      ...([this.requiredIriOrLiteralProperty] as readonly Parameters<
-        Resource["add"]
-      >[1][]),
+      [this.requiredIriOrLiteralProperty] as (
+        | bigint
+        | boolean
+        | number
+        | string
+        | BlankNode
+        | Literal
+        | NamedNode
+      )[],
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty
         .identifier,
-      ...(typeof this.requiredIriOrStringProperty === "string"
-        ? ([
-            dataFactory.literal(this.requiredIriOrStringProperty),
-          ] as readonly Parameters<Resource["add"]>[1][])
-        : ([this.requiredIriOrStringProperty] as readonly Parameters<
-            Resource["add"]
-          >[1][])),
+      typeof this.requiredIriOrStringProperty === "string"
+        ? ([$literalFactory.string(this.requiredIriOrStringProperty)] as (
+            | bigint
+            | boolean
+            | number
+            | string
+            | BlankNode
+            | Literal
+            | NamedNode
+          )[])
+        : ([this.requiredIriOrStringProperty] as (
+            | bigint
+            | boolean
+            | number
+            | string
+            | BlankNode
+            | Literal
+            | NamedNode
+          )[]),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty
         .identifier,
-      ...this.setClassOrClassOrStringProperty.flatMap((item) =>
+      this.setClassOrClassOrStringProperty.flatMap((item) =>
         item.type === "2-string"
-          ? ([dataFactory.literal(item.value)] as readonly Parameters<
-              Resource["add"]
-            >[1][])
+          ? ([$literalFactory.string(item.value)] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[])
           : ([
               item.value.$toRdf({
-                mutateGraph: mutateGraph,
+                graph: options?.graph,
                 resourceSet: resourceSet,
               }).identifier,
-            ] as readonly Parameters<Resource["add"]>[1][]),
+            ] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[]),
       ),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty
         .identifier,
-      ...this.setIriOrLiteralProperty.flatMap(
-        (item) => [item] as readonly Parameters<Resource["add"]>[1][],
+      this.setIriOrLiteralProperty.flatMap(
+        (item) =>
+          [item] as (
+            | bigint
+            | boolean
+            | number
+            | string
+            | BlankNode
+            | Literal
+            | NamedNode
+          )[],
       ),
+      options?.graph,
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty
         .identifier,
-      ...this.setIriOrStringProperty.flatMap((item) =>
+      this.setIriOrStringProperty.flatMap((item) =>
         typeof item === "string"
-          ? ([dataFactory.literal(item)] as readonly Parameters<
-              Resource["add"]
-            >[1][])
-          : ([item] as readonly Parameters<Resource["add"]>[1][]),
+          ? ([$literalFactory.string(item)] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[])
+          : ([item] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[]),
       ),
+      options?.graph,
     );
     return resource;
   }
@@ -8058,7 +8176,7 @@ export class TermPropertiesClass {
       parameters?.literalTermProperty instanceof Date
     ) {
       this.literalTermProperty = Maybe.of(
-        $literalFactory.dateTime(parameters?.literalTermProperty),
+        $literalFactory.date(parameters?.literalTermProperty),
       );
     } else if (typeof parameters?.literalTermProperty === "number") {
       this.literalTermProperty = Maybe.of(
@@ -8109,7 +8227,7 @@ export class TermPropertiesClass {
       parameters?.termProperty instanceof Date
     ) {
       this.termProperty = Maybe.of(
-        $literalFactory.dateTime(parameters?.termProperty),
+        $literalFactory.date(parameters?.termProperty),
       );
     } else if (typeof parameters?.termProperty === "number") {
       this.termProperty = Maybe.of(
@@ -8375,80 +8493,80 @@ export class TermPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/TermPropertiesClass"),
+        options?.graph,
       );
     }
     resource.add(
       TermPropertiesClass.$schema.properties.blankNodeTermProperty.identifier,
-      ...this.blankNodeTermProperty.toList(),
+      this.blankNodeTermProperty.toList(),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.booleanTermProperty.identifier,
-      ...this.booleanTermProperty
+      this.booleanTermProperty
         .toList()
-        .flatMap((value) => [
-          dataFactory.literal(value.toString(), $RdfVocabularies.xsd.boolean),
-        ]),
+        .flatMap((value) => [$literalFactory.boolean(value)]),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.dateTermProperty.identifier,
-      ...this.dateTermProperty
+      this.dateTermProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(
-            value.toISOString().replace(/T.*$/, ""),
-            $RdfVocabularies.xsd.date,
-          ),
+          $literalFactory.date(value, $RdfVocabularies.xsd.date),
         ]),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.dateTimeTermProperty.identifier,
-      ...this.dateTimeTermProperty
+      this.dateTimeTermProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(
-            value.toISOString(),
-            $RdfVocabularies.xsd.dateTime,
-          ),
+          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
         ]),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.iriTermProperty.identifier,
-      ...this.iriTermProperty.toList(),
+      this.iriTermProperty.toList(),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
-      ...this.literalTermProperty.toList(),
+      this.literalTermProperty.toList(),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
-      ...this.numberTermProperty
+      this.numberTermProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.decimal),
+          $literalFactory.number(value, $RdfVocabularies.xsd.decimal),
         ]),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.stringTermProperty.identifier,
-      ...this.stringTermProperty
+      this.stringTermProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     resource.add(
       TermPropertiesClass.$schema.properties.termProperty.identifier,
-      ...this.termProperty.toList(),
+      this.termProperty.toList(),
+      options?.graph,
     );
     return resource;
   }
@@ -10109,17 +10227,17 @@ export class Sha256IriIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource<NamedNode> {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier,
-      ...[dataFactory.literal(this.sha256IriProperty)],
+      [$literalFactory.string(this.sha256IriProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -10609,30 +10727,30 @@ export class RecursiveClassUnionMember2 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/RecursiveClassUnionMember2"),
+        options?.graph,
       );
     }
     resource.add(
       RecursiveClassUnionMember2.$schema.properties
         .recursiveClassUnionMember2Property.identifier,
-      ...this.recursiveClassUnionMember2Property.toList().flatMap((value) => [
+      this.recursiveClassUnionMember2Property.toList().flatMap((value) => [
         RecursiveClassUnion.$toRdf(value, {
-          mutateGraph: mutateGraph,
+          graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
       ]),
+      options?.graph,
     );
     return resource;
   }
@@ -11212,30 +11330,30 @@ export class RecursiveClassUnionMember1 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/RecursiveClassUnionMember1"),
+        options?.graph,
       );
     }
     resource.add(
       RecursiveClassUnionMember1.$schema.properties
         .recursiveClassUnionMember1Property.identifier,
-      ...this.recursiveClassUnionMember1Property.toList().flatMap((value) => [
+      this.recursiveClassUnionMember1Property.toList().flatMap((value) => [
         RecursiveClassUnion.$toRdf(value, {
-          mutateGraph: mutateGraph,
+          graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
       ]),
+      options?.graph,
     );
     return resource;
   }
@@ -11827,25 +11945,27 @@ export class PropertyVisibilitiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier,
-      ...[dataFactory.literal(this.privateProperty)],
+      [$literalFactory.string(this.privateProperty)],
+      options?.graph,
     );
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier,
-      ...[dataFactory.literal(this.protectedProperty)],
+      [$literalFactory.string(this.protectedProperty)],
+      options?.graph,
     );
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier,
-      ...[dataFactory.literal(this.publicProperty)],
+      [$literalFactory.string(this.publicProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -12585,39 +12705,42 @@ export class PropertyCardinalitiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty
         .identifier,
-      ...this.emptyStringSetProperty.flatMap((item) => [
-        dataFactory.literal(item),
+      this.emptyStringSetProperty.flatMap((item) => [
+        $literalFactory.string(item),
       ]),
+      options?.graph,
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty
         .identifier,
-      ...this.nonEmptyStringSetProperty.flatMap((item) => [
-        dataFactory.literal(item),
+      this.nonEmptyStringSetProperty.flatMap((item) => [
+        $literalFactory.string(item),
       ]),
+      options?.graph,
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.optionalStringProperty
         .identifier,
-      ...this.optionalStringProperty
+      this.optionalStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.requiredStringProperty
         .identifier,
-      ...[dataFactory.literal(this.requiredStringProperty)],
+      [$literalFactory.string(this.requiredStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -13712,35 +13835,34 @@ export namespace PartialInterfaceUnionMember2 {
     _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _partialInterfaceUnionMember2.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/PartialInterfaceUnionMember2",
         ),
+        options?.graph,
       );
     }
     resource.add(
       PartialInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -14340,35 +14462,34 @@ export namespace PartialInterfaceUnionMember1 {
     _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _partialInterfaceUnionMember1.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/PartialInterfaceUnionMember1",
         ),
+        options?.graph,
       );
     }
     resource.add(
       PartialInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -14733,25 +14854,25 @@ export class PartialClassUnionMember2 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/PartialClassUnionMember2"),
+        options?.graph,
       );
     }
     resource.add(
       PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -15332,25 +15453,25 @@ export class PartialClassUnionMember1 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/PartialClassUnionMember1"),
+        options?.graph,
       );
     }
     resource.add(
       PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -15966,25 +16087,27 @@ export class OrderedPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier,
-      ...[dataFactory.literal(this.orderedPropertyC)],
+      [$literalFactory.string(this.orderedPropertyC)],
+      options?.graph,
     );
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier,
-      ...[dataFactory.literal(this.orderedPropertyB)],
+      [$literalFactory.string(this.orderedPropertyB)],
+      options?.graph,
     );
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier,
-      ...[dataFactory.literal(this.orderedPropertyA)],
+      [$literalFactory.string(this.orderedPropertyA)],
+      options?.graph,
     );
     return resource;
   }
@@ -16650,17 +16773,17 @@ export class NonClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       NonClass.$schema.properties.nonClassProperty.identifier,
-      ...[dataFactory.literal(this.nonClassProperty)],
+      [$literalFactory.string(this.nonClassProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -17086,18 +17209,18 @@ export class NoRdfTypeClassUnionMember2 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       NoRdfTypeClassUnionMember2.$schema.properties
         .noRdfTypeClassUnionMember2Property.identifier,
-      ...[dataFactory.literal(this.noRdfTypeClassUnionMember2Property)],
+      [$literalFactory.string(this.noRdfTypeClassUnionMember2Property)],
+      options?.graph,
     );
     return resource;
   }
@@ -17563,18 +17686,18 @@ export class NoRdfTypeClassUnionMember1 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       NoRdfTypeClassUnionMember1.$schema.properties
         .noRdfTypeClassUnionMember1Property.identifier,
-      ...[dataFactory.literal(this.noRdfTypeClassUnionMember1Property)],
+      [$literalFactory.string(this.noRdfTypeClassUnionMember1Property)],
+      options?.graph,
     );
     return resource;
   }
@@ -18148,24 +18271,23 @@ export class MutablePropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/MutablePropertiesClass"),
+        options?.graph,
       );
     }
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableListProperty.identifier,
-      ...this.mutableListProperty.toList().flatMap((value) => [
+      this.mutableListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -18179,26 +18301,26 @@ export class MutablePropertiesClass {
                 } else {
                   const newSubListResource = resourceSet.resource(
                     dataFactory.blankNode(),
-                    {
-                      mutateGraph: mutateGraph,
-                    },
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
+                    options?.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[dataFactory.literal(item)],
+                  [$literalFactory.string(item)],
+                  options?.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
+                    options?.graph,
                   );
                 }
 
@@ -18206,9 +18328,7 @@ export class MutablePropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode(), {
-                  mutateGraph: mutateGraph,
-                }),
+                listResource: resourceSet.resource(dataFactory.blankNode()),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -18216,17 +18336,20 @@ export class MutablePropertiesClass {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
+      options?.graph,
     );
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableSetProperty.identifier,
-      ...this.mutableSetProperty.flatMap((item) => [dataFactory.literal(item)]),
+      this.mutableSetProperty.flatMap((item) => [$literalFactory.string(item)]),
+      options?.graph,
     );
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableStringProperty
         .identifier,
-      ...this.mutableStringProperty
+      this.mutableStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     return resource;
   }
@@ -19301,24 +19424,23 @@ export class ListPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ListPropertiesClass"),
+        options?.graph,
       );
     }
     resource.add(
       ListPropertiesClass.$schema.properties.iriListProperty.identifier,
-      ...this.iriListProperty.toList().flatMap((value) => [
+      this.iriListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -19332,26 +19454,26 @@ export class ListPropertiesClass {
                 } else {
                   const newSubListResource = resourceSet.resource(
                     dataFactory.blankNode(),
-                    {
-                      mutateGraph: mutateGraph,
-                    },
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
+                    options?.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[item],
+                  [item],
+                  options?.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
+                    options?.graph,
                   );
                 }
 
@@ -19359,9 +19481,7 @@ export class ListPropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode(), {
-                  mutateGraph: mutateGraph,
-                }),
+                listResource: resourceSet.resource(dataFactory.blankNode()),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -19369,10 +19489,11 @@ export class ListPropertiesClass {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
+      options?.graph,
     );
     resource.add(
       ListPropertiesClass.$schema.properties.objectListProperty.identifier,
-      ...this.objectListProperty.toList().flatMap((value) => [
+      this.objectListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -19386,31 +19507,31 @@ export class ListPropertiesClass {
                 } else {
                   const newSubListResource = resourceSet.resource(
                     dataFactory.blankNode(),
-                    {
-                      mutateGraph: mutateGraph,
-                    },
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
+                    options?.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[
+                  [
                     item.$toRdf({
-                      mutateGraph: mutateGraph,
+                      graph: options?.graph,
                       resourceSet: resourceSet,
                     }).identifier,
                   ],
+                  options?.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
+                    options?.graph,
                   );
                 }
 
@@ -19418,9 +19539,7 @@ export class ListPropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode(), {
-                  mutateGraph: mutateGraph,
-                }),
+                listResource: resourceSet.resource(dataFactory.blankNode()),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -19428,10 +19547,11 @@ export class ListPropertiesClass {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
+      options?.graph,
     );
     resource.add(
       ListPropertiesClass.$schema.properties.stringListProperty.identifier,
-      ...this.stringListProperty.toList().flatMap((value) => [
+      this.stringListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -19445,26 +19565,26 @@ export class ListPropertiesClass {
                 } else {
                   const newSubListResource = resourceSet.resource(
                     dataFactory.blankNode(),
-                    {
-                      mutateGraph: mutateGraph,
-                    },
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
+                    options?.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[dataFactory.literal(item)],
+                  [$literalFactory.string(item)],
+                  options?.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
+                    options?.graph,
                   );
                 }
 
@@ -19472,9 +19592,7 @@ export class ListPropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode(), {
-                  mutateGraph: mutateGraph,
-                }),
+                listResource: resourceSet.resource(dataFactory.blankNode()),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -19482,6 +19600,7 @@ export class ListPropertiesClass {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
+      options?.graph,
     );
     return resource;
   }
@@ -20881,21 +21000,19 @@ export namespace PartialInterface {
     _partialInterface: PartialInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_partialInterface.$identifier, {
-      mutateGraph,
-    });
+    const resource = resourceSet.resource(_partialInterface.$identifier);
     resource.add(
       PartialInterface.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[dataFactory.literal(_partialInterface.lazilyResolvedStringProperty)],
+      [$literalFactory.string(_partialInterface.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -23475,132 +23592,138 @@ export namespace LazyPropertiesInterface {
     _lazyPropertiesInterface: LazyPropertiesInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _lazyPropertiesInterface.$identifier,
-      { mutateGraph },
-    );
+    const resource = resourceSet.resource(_lazyPropertiesInterface.$identifier);
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .optionalLazyToResolvedInterfaceProperty.identifier,
-      ..._lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
+      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .optionalLazyToResolvedInterfaceUnionProperty.identifier,
-      ..._lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
+      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .optionalLazyToResolvedIriIdentifierInterfaceProperty.identifier,
-      ..._lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
+      _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .optionalPartialInterfaceToResolvedInterfaceProperty.identifier,
-      ..._lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
+      _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
           PartialInterface.$toRdf(value, {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           }).identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .optionalPartialInterfaceToResolvedInterfaceUnionProperty.identifier,
-      ..._lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
+      _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
           PartialInterface.$toRdf(value, {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           }).identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
         .identifier,
-      ..._lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
+      _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
           PartialInterfaceUnion.$toRdf(value, {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           }).identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .requiredLazyToResolvedInterfaceProperty.identifier,
-      ...[
+      [
         _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toRdf(
           {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           },
         ).identifier,
       ],
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .requiredPartialInterfaceToResolvedInterfaceProperty.identifier,
-      ...[
+      [
         PartialInterface.$toRdf(
           _lazyPropertiesInterface
             .requiredPartialInterfaceToResolvedInterfaceProperty.partial,
           {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           },
         ).identifier,
       ],
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .setLazyToResolvedInterfaceProperty.identifier,
-      ..._lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.flatMap(
+      _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.flatMap(
         (item) => [
-          item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ],
       ),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesInterface.$schema.properties
         .setPartialInterfaceToResolvedInterfaceProperty.identifier,
-      ..._lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.flatMap(
+      _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.flatMap(
         (item) => [
           PartialInterface.$toRdf(item, {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           }).identifier,
         ],
       ),
+      options?.graph,
     );
     return resource;
   }
@@ -24903,17 +25026,17 @@ export class PartialClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -26237,113 +26360,120 @@ export class LazyPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty
         .identifier,
-      ...this.optionalLazyToResolvedClassProperty.partial
+      this.optionalLazyToResolvedClassProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .optionalLazyToResolvedClassUnionProperty.identifier,
-      ...this.optionalLazyToResolvedClassUnionProperty.partial
+      this.optionalLazyToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .optionalLazyToResolvedIriIdentifierClassProperty.identifier,
-      ...this.optionalLazyToResolvedIriIdentifierClassProperty.partial
+      this.optionalLazyToResolvedIriIdentifierClassProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .optionalPartialClassToResolvedClassProperty.identifier,
-      ...this.optionalPartialClassToResolvedClassProperty.partial
+      this.optionalPartialClassToResolvedClassProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .optionalPartialClassToResolvedClassUnionProperty.identifier,
-      ...this.optionalPartialClassToResolvedClassUnionProperty.partial
+      this.optionalPartialClassToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .optionalPartialClassUnionToResolvedClassUnionProperty.identifier,
-      ...this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
+      this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
           PartialClassUnion.$toRdf(value, {
-            mutateGraph: mutateGraph,
+            graph: options?.graph,
             resourceSet: resourceSet,
           }).identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty
         .identifier,
-      ...[
+      [
         this.requiredLazyToResolvedClassProperty.partial.$toRdf({
-          mutateGraph: mutateGraph,
+          graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
       ],
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .requiredPartialClassToResolvedClassProperty.identifier,
-      ...[
+      [
         this.requiredPartialClassToResolvedClassProperty.partial.$toRdf({
-          mutateGraph: mutateGraph,
+          graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
       ],
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty
         .identifier,
-      ...this.setLazyToResolvedClassProperty.partials.flatMap((item) => [
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+      this.setLazyToResolvedClassProperty.partials.flatMap((item) => [
+        item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
           .identifier,
       ]),
+      options?.graph,
     );
     resource.add(
       LazyPropertiesClass.$schema.properties
         .setPartialClassToResolvedClassProperty.identifier,
-      ...this.setPartialClassToResolvedClassProperty.partials.flatMap(
-        (item) => [
-          item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-            .identifier,
-        ],
-      ),
+      this.setPartialClassToResolvedClassProperty.partials.flatMap((item) => [
+        item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+          .identifier,
+      ]),
+      options?.graph,
     );
     return resource;
   }
@@ -29122,26 +29252,25 @@ export namespace LazilyResolvedIriIdentifierInterface {
     _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource<NamedNode> {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _lazilyResolvedIriIdentifierInterface.$identifier,
-      { mutateGraph },
     );
     resource.add(
       LazilyResolvedIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -29411,18 +29540,18 @@ export class LazilyResolvedIriIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource<NamedNode> {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       LazilyResolvedIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -30139,35 +30268,34 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _lazilyResolvedInterfaceUnionMember2.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedInterfaceUnionMember2",
         ),
+        options?.graph,
       );
     }
     resource.add(
       LazilyResolvedInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -30772,35 +30900,34 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _lazilyResolvedInterfaceUnionMember1.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedInterfaceUnionMember1",
         ),
+        options?.graph,
       );
     }
     resource.add(
       LazilyResolvedInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -31165,27 +31292,27 @@ export class LazilyResolvedClassUnionMember2 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedClassUnionMember2",
         ),
+        options?.graph,
       );
     }
     resource.add(
       LazilyResolvedClassUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -31769,27 +31896,27 @@ export class LazilyResolvedClassUnionMember1 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedClassUnionMember1",
         ),
+        options?.graph,
       );
     }
     resource.add(
       LazilyResolvedClassUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -32623,37 +32750,34 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier,
-      {
-        mutateGraph,
-      },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
         ),
+        options?.graph,
       );
     }
     resource.add(
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -33022,27 +33146,27 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
         ),
+        options?.graph,
       );
     }
     resource.add(
       LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -33654,18 +33778,18 @@ export class LanguageInPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty
         .identifier,
-      ...this.languageInLiteralProperty.flatMap((item) => [item]),
+      this.languageInLiteralProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     return resource;
   }
@@ -34256,45 +34380,57 @@ export class JsPrimitiveUnionPropertyClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/JsPrimitiveUnionPropertyClass",
         ),
+        options?.graph,
       );
     }
     resource.add(
       JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty
         .identifier,
-      ...this.jsPrimitiveUnionProperty.flatMap((item) =>
+      this.jsPrimitiveUnionProperty.flatMap((item) =>
         typeof item === "string"
-          ? ([dataFactory.literal(item)] as readonly Parameters<
-              Resource["add"]
-            >[1][])
+          ? ([$literalFactory.string(item)] as (
+              | bigint
+              | boolean
+              | number
+              | string
+              | BlankNode
+              | Literal
+              | NamedNode
+            )[])
           : typeof item === "number"
-            ? ([
-                dataFactory.literal(
-                  item.toString(10),
-                  $RdfVocabularies.xsd.decimal,
-                ),
-              ] as readonly Parameters<Resource["add"]>[1][])
-            : ([
-                dataFactory.literal(
-                  item.toString(),
-                  $RdfVocabularies.xsd.boolean,
-                ),
-              ] as readonly Parameters<Resource["add"]>[1][]),
+            ? ([$literalFactory.number(item, $RdfVocabularies.xsd.decimal)] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[])
+            : ([$literalFactory.boolean(item)] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[]),
       ),
+      options?.graph,
     );
     return resource;
   }
@@ -35231,22 +35367,19 @@ export namespace IriIdentifierInterface {
     _iriIdentifierInterface: IriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource<NamedNode> {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_iriIdentifierInterface.$identifier, {
-      mutateGraph,
-    });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(_iriIdentifierInterface.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IriIdentifierInterface"),
+        options?.graph,
       );
     }
     return resource;
@@ -35514,19 +35647,18 @@ export class IriIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource<NamedNode> {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IriIdentifierClass"),
+        options?.graph,
       );
     }
     return resource;
@@ -36171,26 +36303,25 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _interfaceUnionMemberCommonParent.$identifier,
-      { mutateGraph },
     );
     resource.add(
       InterfaceUnionMemberCommonParentStatic.$schema.properties
         .interfaceUnionMemberCommonParentProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -36693,12 +36824,10 @@ export namespace InterfaceUnionMember2 {
     _interfaceUnionMember2: InterfaceUnionMember2,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -36706,24 +36835,26 @@ export namespace InterfaceUnionMember2 {
       _interfaceUnionMember2,
       {
         ignoreRdfType: true,
-        mutateGraph,
+        graph: options?.graph,
         resourceSet,
       },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
+        options?.graph,
       );
     }
     resource.add(
       InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property
         .identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _interfaceUnionMember2.interfaceUnionMember2Property,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -37307,12 +37438,10 @@ export namespace InterfaceUnionMember1 {
     _interfaceUnionMember1: InterfaceUnionMember1,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -37320,24 +37449,26 @@ export namespace InterfaceUnionMember1 {
       _interfaceUnionMember1,
       {
         ignoreRdfType: true,
-        mutateGraph,
+        graph: options?.graph,
         resourceSet,
       },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
+        options?.graph,
       );
     }
     resource.add(
       InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property
         .identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _interfaceUnionMember1.interfaceUnionMember1Property,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -37875,20 +38006,18 @@ export namespace Interface {
     _interface: Interface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_interface.$identifier, {
-      mutateGraph,
-    });
+    const resource = resourceSet.resource(_interface.$identifier);
     resource.add(
       Interface.$schema.properties.interfaceProperty.identifier,
-      ...[dataFactory.literal(_interface.interfaceProperty)],
+      [$literalFactory.string(_interface.interfaceProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -38167,32 +38296,32 @@ export class IndirectRecursiveHelperClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/IndirectRecursiveHelperClass",
         ),
+        options?.graph,
       );
     }
     resource.add(
       IndirectRecursiveHelperClass.$schema.properties.indirectRecursiveProperty
         .identifier,
-      ...this.indirectRecursiveProperty
+      this.indirectRecursiveProperty
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     return resource;
   }
@@ -38764,30 +38893,30 @@ export class IndirectRecursiveClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IndirectRecursiveClass"),
+        options?.graph,
       );
     }
     resource.add(
       IndirectRecursiveClass.$schema.properties.indirectRecursiveHelperProperty
         .identifier,
-      ...this.indirectRecursiveHelperProperty
+      this.indirectRecursiveHelperProperty
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     return resource;
   }
@@ -39495,57 +39624,56 @@ export class InPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/InPropertiesClass"),
+        options?.graph,
       );
     }
     resource.add(
       InPropertiesClass.$schema.properties.inBooleansProperty.identifier,
-      ...this.inBooleansProperty
+      this.inBooleansProperty
         .toList()
-        .flatMap((value) => [
-          dataFactory.literal(value.toString(), $RdfVocabularies.xsd.boolean),
-        ]),
+        .flatMap((value) => [$literalFactory.boolean(value)]),
+      options?.graph,
     );
     resource.add(
       InPropertiesClass.$schema.properties.inDateTimesProperty.identifier,
-      ...this.inDateTimesProperty
+      this.inDateTimesProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(
-            value.toISOString(),
-            $RdfVocabularies.xsd.dateTime,
-          ),
+          $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
         ]),
+      options?.graph,
     );
     resource.add(
       InPropertiesClass.$schema.properties.inIrisProperty.identifier,
-      ...this.inIrisProperty.toList(),
+      this.inIrisProperty.toList(),
+      options?.graph,
     );
     resource.add(
       InPropertiesClass.$schema.properties.inNumbersProperty.identifier,
-      ...this.inNumbersProperty
+      this.inNumbersProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.integer),
+          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
         ]),
+      options?.graph,
     );
     resource.add(
       InPropertiesClass.$schema.properties.inStringsProperty.identifier,
-      ...this.inStringsProperty
+      this.inStringsProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     return resource;
   }
@@ -40766,26 +40894,26 @@ export class InIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource<NamedNode> {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/InIdentifierClass"),
+        options?.graph,
       );
     }
     resource.add(
       InIdentifierClass.$schema.properties.inIdentifierProperty.identifier,
-      ...this.inIdentifierProperty
+      this.inIdentifierProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     return resource;
   }
@@ -41456,18 +41584,18 @@ export abstract class IdentifierOverride1Class {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       IdentifierOverride1ClassStatic.$schema.properties
         .identifierOverrideProperty.identifier,
-      ...[dataFactory.literal(this.identifierOverrideProperty)],
+      [$literalFactory.string(this.identifierOverrideProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -41844,16 +41972,15 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
     return resource;
@@ -42111,23 +42238,22 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IdentifierOverride3Class"),
+        options?.graph,
       );
     }
     return resource;
@@ -42587,23 +42713,22 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IdentifierOverride4Class"),
+        options?.graph,
       );
     }
     return resource;
@@ -43053,23 +43178,22 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IdentifierOverride5Class"),
+        options?.graph,
       );
     }
     return resource;
@@ -43576,22 +43700,23 @@ export class HasValuePropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       HasValuePropertiesClass.$schema.properties.hasIriValueProperty.identifier,
-      ...[this.hasIriValueProperty],
+      [this.hasIriValueProperty],
+      options?.graph,
     );
     resource.add(
       HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty
         .identifier,
-      ...[dataFactory.literal(this.hasLiteralValueProperty)],
+      [$literalFactory.string(this.hasLiteralValueProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -44169,25 +44294,25 @@ export class FlattenClassUnionMember3 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/FlattenClassUnionMember3"),
+        options?.graph,
       );
     }
     resource.add(
       FlattenClassUnionMember3.$schema.properties
         .flattenClassUnionMember3Property.identifier,
-      ...[dataFactory.literal(this.flattenClassUnionMember3Property)],
+      [$literalFactory.string(this.flattenClassUnionMember3Property)],
+      options?.graph,
     );
     return resource;
   }
@@ -44794,30 +44919,30 @@ export class ExternClassPropertyClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ExternClassPropertyClass"),
+        options?.graph,
       );
     }
     resource.add(
       ExternClassPropertyClass.$schema.properties.externClassProperty
         .identifier,
-      ...this.externClassProperty
+      this.externClassProperty
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     return resource;
   }
@@ -45455,18 +45580,18 @@ export abstract class AbstractBaseClassForExternClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       AbstractBaseClassForExternClassStatic.$schema.properties
         .abstractBaseClassForExternClassProperty.identifier,
-      ...[dataFactory.literal(this.abstractBaseClassForExternClassProperty)],
+      [$literalFactory.string(this.abstractBaseClassForExternClassProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -45909,25 +46034,25 @@ export class ExplicitRdfTypeClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/RdfType"),
+        options?.graph,
       );
     }
     resource.add(
       ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty
         .identifier,
-      ...[dataFactory.literal(this.explicitRdfTypeProperty)],
+      [$literalFactory.string(this.explicitRdfTypeProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -46513,29 +46638,30 @@ export class ExplicitFromToRdfTypesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ToRdfType"),
+        options?.graph,
       );
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/FromRdfType"),
+        options?.graph,
       );
     }
     resource.add(
       ExplicitFromToRdfTypesClass.$schema.properties
         .explicitFromToRdfTypesProperty.identifier,
-      ...[dataFactory.literal(this.explicitFromToRdfTypesProperty)],
+      [$literalFactory.string(this.explicitFromToRdfTypesProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -47143,30 +47269,30 @@ export class DirectRecursiveClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DirectRecursiveClass"),
+        options?.graph,
       );
     }
     resource.add(
       DirectRecursiveClass.$schema.properties.directRecursiveProperty
         .identifier,
-      ...this.directRecursiveProperty
+      this.directRecursiveProperty
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     return resource;
   }
@@ -47886,93 +48012,88 @@ export class DefaultValuePropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DefaultValuePropertiesClass"),
+        options?.graph,
       );
     }
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
         .identifier,
-      ...($dateEquals(
+      $dateEquals(
         this.dateDefaultValueProperty,
         new Date("2018-04-09T00:00:00.000Z"),
       ).isLeft()
         ? [
-            dataFactory.literal(
-              this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
+            $literalFactory.date(
+              this.dateDefaultValueProperty,
               $RdfVocabularies.xsd.date,
             ),
           ]
-        : []),
+        : [],
+      options?.graph,
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .dateTimeDefaultValueProperty.identifier,
-      ...($dateEquals(
+      $dateEquals(
         this.dateTimeDefaultValueProperty,
         new Date("2018-04-09T10:00:00.000Z"),
       ).isLeft()
         ? [
-            dataFactory.literal(
-              this.dateTimeDefaultValueProperty.toISOString(),
+            $literalFactory.date(
+              this.dateTimeDefaultValueProperty,
               $RdfVocabularies.xsd.dateTime,
             ),
           ]
-        : []),
+        : [],
+      options?.graph,
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .falseBooleanDefaultValueProperty.identifier,
-      ...($strictEquals(this.falseBooleanDefaultValueProperty, false).isLeft()
-        ? [
-            dataFactory.literal(
-              this.falseBooleanDefaultValueProperty.toString(),
-              $RdfVocabularies.xsd.boolean,
-            ),
-          ]
-        : []),
+      $strictEquals(this.falseBooleanDefaultValueProperty, false).isLeft()
+        ? [$literalFactory.boolean(this.falseBooleanDefaultValueProperty)]
+        : [],
+      options?.graph,
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty
         .identifier,
-      ...($strictEquals(this.numberDefaultValueProperty, 0).isLeft()
+      $strictEquals(this.numberDefaultValueProperty, 0).isLeft()
         ? [
-            dataFactory.literal(
-              this.numberDefaultValueProperty.toString(10),
+            $literalFactory.number(
+              this.numberDefaultValueProperty,
               $RdfVocabularies.xsd.integer,
             ),
           ]
-        : []),
+        : [],
+      options?.graph,
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty
         .identifier,
-      ...($strictEquals(this.stringDefaultValueProperty, "").isLeft()
-        ? [dataFactory.literal(this.stringDefaultValueProperty)]
-        : []),
+      $strictEquals(this.stringDefaultValueProperty, "").isLeft()
+        ? [$literalFactory.string(this.stringDefaultValueProperty)]
+        : [],
+      options?.graph,
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .trueBooleanDefaultValueProperty.identifier,
-      ...($strictEquals(this.trueBooleanDefaultValueProperty, true).isLeft()
-        ? [
-            dataFactory.literal(
-              this.trueBooleanDefaultValueProperty.toString(),
-              $RdfVocabularies.xsd.boolean,
-            ),
-          ]
-        : []),
+      $strictEquals(this.trueBooleanDefaultValueProperty, true).isLeft()
+        ? [$literalFactory.boolean(this.trueBooleanDefaultValueProperty)]
+        : [],
+      options?.graph,
     );
     return resource;
   }
@@ -49542,98 +49663,149 @@ export class DateUnionPropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DateUnionPropertiesClass"),
+        options?.graph,
       );
     }
     resource.add(
       DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty
         .identifier,
-      ...this.dateOrDateTimeProperty
+      this.dateOrDateTimeProperty
         .toList()
         .flatMap((value) =>
           value.type === "dateTime"
             ? ([
-                dataFactory.literal(
-                  value.value.toISOString(),
+                $literalFactory.date(
+                  value.value,
                   $RdfVocabularies.xsd.dateTime,
                 ),
-              ] as readonly Parameters<Resource["add"]>[1][])
+              ] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[])
             : ([
-                dataFactory.literal(
-                  value.value.toISOString().replace(/T.*$/, ""),
-                  $RdfVocabularies.xsd.date,
-                ),
-              ] as readonly Parameters<Resource["add"]>[1][]),
+                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
+              ] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[]),
         ),
+      options?.graph,
     );
     resource.add(
       DateUnionPropertiesClass.$schema.properties.dateOrStringProperty
         .identifier,
-      ...this.dateOrStringProperty
+      this.dateOrStringProperty
         .toList()
         .flatMap((value) =>
           value.type === "string"
-            ? ([dataFactory.literal(value.value)] as readonly Parameters<
-                Resource["add"]
-              >[1][])
+            ? ([$literalFactory.string(value.value)] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[])
             : ([
-                dataFactory.literal(
-                  value.value.toISOString().replace(/T.*$/, ""),
-                  $RdfVocabularies.xsd.date,
-                ),
-              ] as readonly Parameters<Resource["add"]>[1][]),
+                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
+              ] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[]),
         ),
+      options?.graph,
     );
     resource.add(
       DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty
         .identifier,
-      ...this.dateTimeOrDateProperty
+      this.dateTimeOrDateProperty
         .toList()
         .flatMap((value) =>
           value.type === "date"
             ? ([
-                dataFactory.literal(
-                  value.value.toISOString().replace(/T.*$/, ""),
-                  $RdfVocabularies.xsd.date,
-                ),
-              ] as readonly Parameters<Resource["add"]>[1][])
+                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
+              ] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[])
             : ([
-                dataFactory.literal(
-                  value.value.toISOString(),
+                $literalFactory.date(
+                  value.value,
                   $RdfVocabularies.xsd.dateTime,
                 ),
-              ] as readonly Parameters<Resource["add"]>[1][]),
+              ] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[]),
         ),
+      options?.graph,
     );
     resource.add(
       DateUnionPropertiesClass.$schema.properties.stringOrDateProperty
         .identifier,
-      ...this.stringOrDateProperty
+      this.stringOrDateProperty
         .toList()
         .flatMap((value) =>
           value.type === "date"
             ? ([
-                dataFactory.literal(
-                  value.value.toISOString().replace(/T.*$/, ""),
-                  $RdfVocabularies.xsd.date,
-                ),
-              ] as readonly Parameters<Resource["add"]>[1][])
-            : ([dataFactory.literal(value.value)] as readonly Parameters<
-                Resource["add"]
-              >[1][]),
+                $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
+              ] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[])
+            : ([$literalFactory.string(value.value)] as (
+                | bigint
+                | boolean
+                | number
+                | string
+                | BlankNode
+                | Literal
+                | NamedNode
+              )[]),
         ),
+      options?.graph,
     );
     return resource;
   }
@@ -51334,7 +51506,7 @@ export class ConvertibleTypePropertiesClass {
       parameters.convertibleLiteralOptionProperty instanceof Date
     ) {
       this.convertibleLiteralOptionProperty = Maybe.of(
-        $literalFactory.dateTime(parameters.convertibleLiteralOptionProperty),
+        $literalFactory.date(parameters.convertibleLiteralOptionProperty),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "number"
@@ -51374,7 +51546,7 @@ export class ConvertibleTypePropertiesClass {
       typeof parameters.convertibleLiteralProperty === "object" &&
       parameters.convertibleLiteralProperty instanceof Date
     ) {
-      this.convertibleLiteralProperty = $literalFactory.dateTime(
+      this.convertibleLiteralProperty = $literalFactory.date(
         parameters.convertibleLiteralProperty,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "number") {
@@ -51398,7 +51570,9 @@ export class ConvertibleTypePropertiesClass {
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty;
-    } else if (undefined(parameters.convertibleLiteralSetProperty)) {
+    } else if (
+      $isReadonlyBigintArray(parameters.convertibleLiteralSetProperty)
+    ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
           $literalFactory.bigint(item),
@@ -51446,7 +51620,7 @@ export class ConvertibleTypePropertiesClass {
       parameters.convertibleTermOptionProperty instanceof Date
     ) {
       this.convertibleTermOptionProperty = Maybe.of(
-        $literalFactory.dateTime(parameters.convertibleTermOptionProperty),
+        $literalFactory.date(parameters.convertibleTermOptionProperty),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "number") {
       this.convertibleTermOptionProperty = Maybe.of(
@@ -51480,7 +51654,7 @@ export class ConvertibleTypePropertiesClass {
       typeof parameters.convertibleTermProperty === "object" &&
       parameters.convertibleTermProperty instanceof Date
     ) {
-      this.convertibleTermProperty = $literalFactory.dateTime(
+      this.convertibleTermProperty = $literalFactory.date(
         parameters.convertibleTermProperty,
       );
     } else if (typeof parameters.convertibleTermProperty === "number") {
@@ -51501,7 +51675,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleTermSetProperty = [];
     } else if ($isReadonlyObjectArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
-    } else if (undefined(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyBigintArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
           $literalFactory.bigint(item),
@@ -51908,82 +52082,93 @@ export class ConvertibleTypePropertiesClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/ConvertibleTypePropertiesClass",
         ),
+        options?.graph,
       );
     }
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleIriNonEmptySetProperty.identifier,
-      ...this.convertibleIriNonEmptySetProperty.flatMap((item) => [item]),
+      this.convertibleIriNonEmptySetProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleIriOptionProperty.identifier,
-      ...this.convertibleIriOptionProperty.toList(),
+      this.convertibleIriOptionProperty.toList(),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty
         .identifier,
-      ...[this.convertibleIriProperty],
+      [this.convertibleIriProperty],
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleIriSetProperty.identifier,
-      ...this.convertibleIriSetProperty.flatMap((item) => [item]),
+      this.convertibleIriSetProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleLiteralNonEmptySetProperty.identifier,
-      ...this.convertibleLiteralNonEmptySetProperty.flatMap((item) => [item]),
+      this.convertibleLiteralNonEmptySetProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleLiteralOptionProperty.identifier,
-      ...this.convertibleLiteralOptionProperty.toList(),
+      this.convertibleLiteralOptionProperty.toList(),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleLiteralProperty.identifier,
-      ...[this.convertibleLiteralProperty],
+      [this.convertibleLiteralProperty],
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleLiteralSetProperty.identifier,
-      ...this.convertibleLiteralSetProperty.flatMap((item) => [item]),
+      this.convertibleLiteralSetProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleTermNonEmptySetProperty.identifier,
-      ...this.convertibleTermNonEmptySetProperty.flatMap((item) => [item]),
+      this.convertibleTermNonEmptySetProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleTermOptionProperty.identifier,
-      ...this.convertibleTermOptionProperty.toList(),
+      this.convertibleTermOptionProperty.toList(),
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty
         .identifier,
-      ...[this.convertibleTermProperty],
+      [this.convertibleTermProperty],
+      options?.graph,
     );
     resource.add(
       ConvertibleTypePropertiesClass.$schema.properties
         .convertibleTermSetProperty.identifier,
-      ...this.convertibleTermSetProperty.flatMap((item) => [item]),
+      this.convertibleTermSetProperty.flatMap((item) => [item]),
+      options?.graph,
     );
     return resource;
   }
@@ -54568,33 +54753,32 @@ export namespace BaseInterfaceWithPropertiesStatic {
     _baseInterfaceWithProperties: BaseInterfaceWithProperties,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _baseInterfaceWithProperties.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/BaseInterfaceWithProperties"),
+        options?.graph,
       );
     }
     resource.add(
       BaseInterfaceWithPropertiesStatic.$schema.properties
         .baseInterfaceWithPropertiesProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -55167,12 +55351,10 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -55180,16 +55362,17 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       _baseInterfaceWithoutProperties,
       {
         ignoreRdfType: true,
-        mutateGraph,
+        graph: options?.graph,
         resourceSet,
       },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/BaseInterfaceWithoutProperties",
         ),
+        options?.graph,
       );
     }
     return resource;
@@ -55740,12 +55923,10 @@ export namespace ConcreteParentInterfaceStatic {
     _concreteParentInterface: ConcreteParentInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -55753,24 +55934,26 @@ export namespace ConcreteParentInterfaceStatic {
       _concreteParentInterface,
       {
         ignoreRdfType: true,
-        mutateGraph,
+        graph: options?.graph,
         resourceSet,
       },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ConcreteParentInterface"),
+        options?.graph,
       );
     }
     resource.add(
       ConcreteParentInterfaceStatic.$schema.properties
         .concreteParentInterfaceProperty.identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _concreteParentInterface.concreteParentInterfaceProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -56377,12 +56560,10 @@ export namespace ConcreteChildInterface {
     _concreteChildInterface: ConcreteChildInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -56390,24 +56571,26 @@ export namespace ConcreteChildInterface {
       _concreteChildInterface,
       {
         ignoreRdfType: true,
-        mutateGraph,
+        graph: options?.graph,
         resourceSet,
       },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ConcreteChildInterface"),
+        options?.graph,
       );
     }
     resource.add(
       ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty
         .identifier,
-      ...[
-        dataFactory.literal(
+      [
+        $literalFactory.string(
           _concreteChildInterface.concreteChildInterfaceProperty,
         ),
       ],
+      options?.graph,
     );
     return resource;
   }
@@ -56797,18 +56980,18 @@ export abstract class AbstractBaseClassWithProperties {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       AbstractBaseClassWithPropertiesStatic.$schema.properties
         .abstractBaseClassWithPropertiesProperty.identifier,
-      ...[dataFactory.literal(this.abstractBaseClassWithPropertiesProperty)],
+      [$literalFactory.string(this.abstractBaseClassWithPropertiesProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -57191,16 +57374,15 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
     return resource;
@@ -57502,29 +57684,29 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ConcreteParentClass"),
+        options?.graph,
       );
     }
     resource.add(
       ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty
         .identifier,
-      ...[dataFactory.literal(this.concreteParentClassProperty)],
+      [$literalFactory.string(this.concreteParentClassProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -58116,29 +58298,29 @@ export class ConcreteChildClass extends ConcreteParentClass {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ConcreteChildClass"),
+        options?.graph,
       );
     }
     resource.add(
       ConcreteChildClass.$schema.properties.concreteChildClassProperty
         .identifier,
-      ...[dataFactory.literal(this.concreteChildClassProperty)],
+      [$literalFactory.string(this.concreteChildClassProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -58712,18 +58894,18 @@ export abstract class ClassUnionMemberCommonParent {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
+    const resource = resourceSet.resource(this.$identifier);
     resource.add(
       ClassUnionMemberCommonParentStatic.$schema.properties
         .classUnionMemberCommonParentProperty.identifier,
-      ...[dataFactory.literal(this.classUnionMemberCommonParentProperty)],
+      [$literalFactory.string(this.classUnionMemberCommonParentProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -59129,28 +59311,28 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassUnionMember2"),
+        options?.graph,
       );
     }
     resource.add(
       ClassUnionMember2.$schema.properties.classUnionMember2Property.identifier,
-      ...[dataFactory.literal(this.classUnionMember2Property)],
+      [$literalFactory.string(this.classUnionMember2Property)],
+      options?.graph,
     );
     return resource;
   }
@@ -59690,28 +59872,28 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassUnionMember1"),
+        options?.graph,
       );
     }
     resource.add(
       ClassUnionMember1.$schema.properties.classUnionMember1Property.identifier,
-      ...[dataFactory.literal(this.classUnionMember1Property)],
+      [$literalFactory.string(this.classUnionMember1Property)],
+      options?.graph,
     );
     return resource;
   }
@@ -60457,25 +60639,23 @@ export namespace BlankNodeOrIriIdentifierInterface {
     _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _blankNodeOrIriIdentifierInterface.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/BlankNodeOrIriIdentifierInterface",
         ),
+        options?.graph,
       );
     }
     return resource;
@@ -60760,21 +60940,20 @@ export class BlankNodeOrIriIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/BlankNodeOrIriIdentifierClass",
         ),
+        options?.graph,
       );
     }
     return resource;
@@ -61415,25 +61594,23 @@ export namespace BlankNodeIdentifierInterface {
     _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(
       _blankNodeIdentifierInterface.$identifier,
-      { mutateGraph },
     );
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/BlankNodeIdentifierInterface",
         ),
+        options?.graph,
       );
     }
     return resource;
@@ -61716,19 +61893,18 @@ export class BlankNodeIdentifierClass {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: Exclude<Quad, Variable>;
+    graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier, { mutateGraph });
-    if (!ignoreRdfType) {
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/BlankNodeIdentifierClass"),
+        options?.graph,
       );
     }
     return resource;
@@ -62264,7 +62440,7 @@ export namespace ClassUnion {
   export function $toRdf(
     _classUnion: ClassUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -62618,7 +62794,7 @@ export namespace FlattenClassUnion {
   export function $toRdf(
     _flattenClassUnion: FlattenClassUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -62963,7 +63139,7 @@ export namespace InterfaceUnion {
   export function $toRdf(
     _interfaceUnion: InterfaceUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -63313,7 +63489,7 @@ export namespace LazilyResolvedClassUnion {
   export function $toRdf(
     _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -63702,7 +63878,7 @@ export namespace LazilyResolvedInterfaceUnion {
   export function $toRdf(
     _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -64056,7 +64232,7 @@ export namespace PartialClassUnion {
   export function $toRdf(
     _partialClassUnion: PartialClassUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -64412,7 +64588,7 @@ export namespace PartialInterfaceUnion {
   export function $toRdf(
     _partialInterfaceUnion: PartialInterfaceUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -64763,7 +64939,7 @@ export namespace NoRdfTypeClassUnion {
   export function $toRdf(
     _noRdfTypeClassUnion: NoRdfTypeClassUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -65105,7 +65281,7 @@ export namespace RecursiveClassUnion {
   export function $toRdf(
     _recursiveClassUnion: RecursiveClassUnion,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -68341,7 +68517,7 @@ export namespace $Object {
   export function $toRdf(
     _object: $Object,
     _parameters?: {
-      mutateGraph?: Exclude<Quad, Variable>;
+      graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     },
   ): Resource {
@@ -83481,13 +83657,8 @@ export class $SparqlObjectSet implements $ObjectSet {
         objects.push(
           await liftEither(
             objectType.$fromRdf(
-              new Resource<NamedNode>({
-                dataset,
-                identifier: identifier as NamedNode,
-              }),
-              {
-                objectSet: this,
-              },
+              new Resource(dataset, identifier as NamedNode),
+              { objectSet: this },
             ),
           ),
         );

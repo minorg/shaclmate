@@ -38,6 +38,7 @@ import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
 import { snippets_identifierFromString } from "./_snippets/snippets_identifierFromString.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
+import { snippets_isReadonlyBigintArray } from "./_snippets/snippets_isReadonlyBigintArray.js";
 import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
 import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
 import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
@@ -126,6 +127,7 @@ export const snippets = {
   IdentifierSchema: snippets_IdentifierSchema,
   IdentifierSet: snippets_IdentifierSet,
   identifierSparqlWherePatterns: snippets_identifierSparqlWherePatterns,
+  isReadonlyBigintArray: snippets_isReadonlyBigintArray,
   isReadonlyBooleanArray: snippets_isReadonlyBooleanArray,
   isReadonlyNumberArray: snippets_isReadonlyNumberArray,
   isReadonlyObjectArray: snippets_isReadonlyObjectArray,

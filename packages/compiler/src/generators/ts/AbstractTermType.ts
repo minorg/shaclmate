@@ -86,7 +86,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.literalFactory}.dateTime(${value})`,
+            code`${snippets.literalFactory}.date(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: code`Date`,
