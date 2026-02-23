@@ -9063,7 +9063,7 @@ export namespace TermPropertiesClass {
                       ),
                     )
                       .chain((values) =>
-                        values.chainMap((value) => value.toDate()),
+                        values.chainMap((value) => value.toDateTime()),
                       )
                       .map((values) =>
                         values.length > 0
@@ -40035,9 +40035,9 @@ export namespace InPropertiesClass {
             )
               .chain((values) =>
                 values.chainMap((value) =>
-                  value.toDate().chain((primitiveValue) => {
-                    if (primitiveValue.getTime() === 1523268000000) {
-                      return Either.of<Error, Date>(primitiveValue);
+                  value.toDateTime().chain((dateValue) => {
+                    if (dateValue.getTime() === 1523268000000) {
+                      return Either.of<Error, Date>(dateValue);
                     }
                     return Left<Error, Date>(
                       new Resource.MistypedTermValueError({
@@ -48453,7 +48453,7 @@ export namespace DefaultValuePropertiesClass {
                       ),
                     }).toValues(),
               )
-              .chain((values) => values.chainMap((value) => value.toDate()))
+              .chain((values) => values.chainMap((value) => value.toDateTime()))
               .chain((values) => values.head())
               .chain((dateTimeDefaultValueProperty) =>
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -50345,7 +50345,7 @@ export namespace DateUnionPropertiesClass {
                   () =>
                     valueAsValues
                       .chain((values) =>
-                        values.chainMap((value) => value.toDate()),
+                        values.chainMap((value) => value.toDateTime()),
                       )
                       .map((values) =>
                         values.map(
@@ -50486,7 +50486,7 @@ export namespace DateUnionPropertiesClass {
                       return (
                         valueAsValues
                           .chain((values) =>
-                            values.chainMap((value) => value.toDate()),
+                            values.chainMap((value) => value.toDateTime()),
                           )
                           .map((values) =>
                             values.map(

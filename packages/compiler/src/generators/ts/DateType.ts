@@ -1,5 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { imports } from "./imports.js";
@@ -23,5 +24,11 @@ export class DateType extends AbstractDateType {
     variables,
   }: Parameters<AbstractDateType["toJsonExpression"]>[0]): Code {
     return code`${variables.value}.toISOString().replace(/T.*$/, '')`;
+  }
+
+  protected override fromRdfResourceValueExpression({
+    variables,
+  }: Parameters<AbstractDateType["fromRdfResourceValueExpression"]>[0]): Code {
+    return code`${variables.value}.toDate()`;
   }
 }
