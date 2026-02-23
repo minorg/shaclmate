@@ -300,7 +300,7 @@ export function testObjectFilters(
           (_, i) =>
             new kitchenSink.TermPropertiesClass({
               $identifier: identifiers[i],
-              numberTermProperty: i,
+              doubleTermProperty: i,
             }),
         ),
         new kitchenSink.TermPropertiesClass({
@@ -310,21 +310,21 @@ export function testObjectFilters(
       );
 
       for (const [id, [filter, expected]] of Object.entries({
-        in: [{ numberTermProperty: { in: [0] } }, [identifiers[0]]],
+        in: [{ doubleTermProperty: { in: [0] } }, [identifiers[0]]],
         maxExclusive: [
-          { numberTermProperty: { maxExclusive: 1 } },
+          { doubleTermProperty: { maxExclusive: 1 } },
           [identifiers[0]],
         ],
         maxInclusive: [
-          { numberTermProperty: { maxInclusive: 0 } },
+          { doubleTermProperty: { maxInclusive: 0 } },
           [identifiers[0]],
         ],
         minExclusive: [
-          { numberTermProperty: { minExclusive: 0 } },
+          { doubleTermProperty: { minExclusive: 0 } },
           [identifiers[1]],
         ],
         minInclusive: [
-          { numberTermProperty: { minInclusive: 0 } },
+          { doubleTermProperty: { minInclusive: 0 } },
           [identifiers[0], identifiers[1]],
         ],
       } satisfies Record<
@@ -358,7 +358,7 @@ export function testObjectFilters(
         ),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          numberTermProperty: 0,
+          doubleTermProperty: 0,
         }),
       );
 
@@ -410,7 +410,7 @@ export function testObjectFilters(
         ),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          numberTermProperty: 0,
+          doubleTermProperty: 0,
         }),
       );
 
@@ -576,7 +576,7 @@ export function testObjectFilters(
         ),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          numberTermProperty: 0,
+          doubleTermProperty: 0,
         }),
       );
 

@@ -1575,6 +1575,7 @@
               "memberTypes": [
                 {
                   "kind": "LiteralType",
+                  "comment": "JavaScript boolean",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#boolean"
@@ -1583,15 +1584,16 @@
                 },
                 {
                   "kind": "LiteralType",
+                  "comment": "JavaScript number",
                   "datatype": {
                     "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#decimal"
+                    "value": "http://www.w3.org/2001/XMLSchema#double"
                   },
                   "hasValue": []
                 },
                 {
                   "kind": "LiteralType",
-                  "comment": "String must be last since the date-time is also serialized as a string in JSON.",
+                  "comment": "JavaScript string",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
@@ -4148,8 +4150,26 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/iriTermProperty",
+          "path": "http://example.com/doubleTermProperty",
           "shapeIdentifier": "_:n3-326",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#double"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/iriTermProperty",
+          "shapeIdentifier": "_:n3-327",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4166,29 +4186,11 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/literalTermProperty",
-          "shapeIdentifier": "_:n3-327",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType",
-              "hasValue": []
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/numberTermProperty",
           "shapeIdentifier": "_:n3-328",
           "type": {
             "kind": "OptionType",
             "itemType": {
               "kind": "LiteralType",
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#decimal"
-              },
               "hasValue": []
             }
           },
