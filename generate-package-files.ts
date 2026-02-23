@@ -452,6 +452,8 @@ fs.writeFileSync(
         tsx: "~4.16.2",
         turbo: "~2.5.5",
         yaml: "~2.5.0",
+        ...externalDependencyVersions["vitest"],
+        ...externalDependencyVersions["@vitest/coverage-v8"],
       },
       name: "shaclmate",
       optionalDependencies: {
