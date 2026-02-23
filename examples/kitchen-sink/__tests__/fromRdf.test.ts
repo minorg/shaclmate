@@ -1,7 +1,7 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory as dataFactory } from "n3";
-import { MutableResourceSet, Resource, ResourceSet } from "rdfjs-resource";
+import { Resource, ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
 
@@ -12,12 +12,13 @@ describe("fromRdf", () => {
 
   beforeAll(() => {
     const languageInDataset = new N3.Store();
-    invalidLanguageInResource = new ResourceSet({
-      dataset: languageInDataset,
-    }).resource(dataFactory.blankNode());
-    validLanguageInResource = new ResourceSet({
-      dataset: languageInDataset,
-    }).resource(dataFactory.blankNode());
+    const languageInResourceSet = new ResourceSet(languageInDataset);
+    invalidLanguageInResource = languageInResourceSet.resource(
+      dataFactory.blankNode(),
+    );
+    validLanguageInResource = languageInResourceSet.resource(
+      dataFactory.blankNode(),
+    );
     for (const language of ["", "ar", "en", "fr"]) {
       const languageLiteral =
         language.length > 0
@@ -83,10 +84,9 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
-    const resource = new MutableResourceSet({
+    const resource = new ResourceSet(new N3.Store(), {
       dataFactory,
-      dataset: new N3.Store(),
-    }).mutableResource(dataFactory.blankNode());
+    }).resource(dataFactory.blankNode());
     resource.add(
       rdf.type,
       dataFactory.namedNode("http://example.com/ExplicitFromToRdfTypes"),
@@ -103,10 +103,9 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType accept non-default rdf:type", ({ expect }) => {
-    const resource = new MutableResourceSet({
+    const resource = new ResourceSet(new N3.Store(), {
       dataFactory,
-      dataset: new N3.Store(),
-    }).mutableResource(dataFactory.blankNode());
+    }).resource(dataFactory.blankNode());
     resource.add(
       rdf.type,
       dataFactory.namedNode("http://example.com/FromRdfType"),
@@ -179,9 +178,8 @@ describe("fromRdf", () => {
     );
     expect(
       kitchenSink.HasValuePropertiesClass.$fromRdf(
-        new MutableResourceSet({
+        new ResourceSet(dataset, {
           dataFactory,
-          dataset: dataset,
         }).resource(identifier),
       ).isLeft(),
     );
@@ -202,10 +200,9 @@ describe("fromRdf", () => {
       ),
     );
     const instance = kitchenSink.InIdentifierClass.$fromRdf(
-      new MutableResourceSet({
+      new ResourceSet(dataset, {
         dataFactory,
-        dataset: dataset,
-      }).namedResource(identifier),
+      }).resource(identifier),
     ).extract();
     expect(instance).toBeInstanceOf(Error);
   });
@@ -222,9 +219,8 @@ describe("fromRdf", () => {
       ),
     );
     const result = kitchenSink.InPropertiesClass.$fromRdf(
-      new MutableResourceSet({
+      new ResourceSet(dataset, {
         dataFactory,
-        dataset: dataset,
       }).resource(identifier),
     );
     expect(result.isLeft()).toBe(true);
@@ -251,9 +247,8 @@ describe("fromRdf", () => {
       ),
     );
     const result = kitchenSink.InPropertiesClass.$fromRdf(
-      new MutableResourceSet({
+      new ResourceSet(dataset, {
         dataFactory,
-        dataset: dataset,
       }).resource(identifier),
     );
     expect(result.isLeft()).toBe(true);
@@ -367,13 +362,10 @@ describe("fromRdf", () => {
   it("accept right identifier type (NamedNode)", ({ expect }) => {
     expect(
       kitchenSink.IriIdentifierClass.$fromRdf(
-        new MutableResourceSet({
+        new ResourceSet(new N3.Store(), {
           dataFactory,
-          dataset: new N3.Store(),
         })
-          .mutableResource(
-            dataFactory.namedNode("http://example.com/identifier"),
-          )
+          .resource(dataFactory.namedNode("http://example.com/identifier"))
           .add(rdf.type, kitchenSink.IriIdentifierClass.$fromRdfType),
       ).isRight(),
     ).toBe(true);
@@ -382,11 +374,10 @@ describe("fromRdf", () => {
   it("accept right identifier type (sh:in identifier)", ({ expect }) => {
     expect(
       kitchenSink.InIdentifierClass.$fromRdf(
-        new MutableResourceSet({
+        new ResourceSet(new N3.Store(), {
           dataFactory,
-          dataset: new N3.Store(),
         })
-          .mutableResource(
+          .resource(
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
           )
           .add(rdf.type, kitchenSink.InIdentifierClass.$fromRdfType),
@@ -397,11 +388,10 @@ describe("fromRdf", () => {
   it("reject wrong identifier type (BlankNode)", ({ expect }) => {
     expect(
       kitchenSink.IriIdentifierClass.$fromRdf(
-        new MutableResourceSet({
+        new ResourceSet(new N3.Store(), {
           dataFactory,
-          dataset: new N3.Store(),
         })
-          .mutableResource(dataFactory.blankNode())
+          .resource(dataFactory.blankNode())
           .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
       ).isLeft(),
     ).toBe(true);
@@ -410,11 +400,10 @@ describe("fromRdf", () => {
   it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
     expect(
       kitchenSink.InIdentifierClass.$fromRdf(
-        new MutableResourceSet({
+        new ResourceSet(new N3.Store(), {
           dataFactory,
-          dataset: new N3.Store(),
         })
-          .mutableResource(
+          .resource(
             dataFactory.namedNode("http://example.com/InIdentifierInstance3"),
           )
           .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
@@ -423,13 +412,10 @@ describe("fromRdf", () => {
   });
 
   it("reject malformed list", ({ expect }) => {
-    const resourceSet = new MutableResourceSet({
+    const resourceSet = new ResourceSet(new N3.Store(), {
       dataFactory,
-      dataset: new N3.Store(),
     });
-    const instanceResource = resourceSet.mutableResource(
-      dataFactory.blankNode(),
-    );
+    const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.ListPropertiesClass.$schema.properties.stringListProperty
         .identifier,
@@ -441,14 +427,11 @@ describe("fromRdf", () => {
   });
 
   it("reject mistyped list", ({ expect }) => {
-    const resourceSet = new MutableResourceSet({
+    const resourceSet = new ResourceSet(new N3.Store(), {
       dataFactory,
-      dataset: new N3.Store(),
     });
-    const instanceResource = resourceSet.mutableResource(
-      dataFactory.blankNode(),
-    );
-    const listResource = resourceSet.mutableResource(dataFactory.blankNode());
+    const instanceResource = resourceSet.resource(dataFactory.blankNode());
+    const listResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.ListPropertiesClass.$schema.properties.stringListProperty
         .identifier,
@@ -462,13 +445,10 @@ describe("fromRdf", () => {
   });
 
   it("reject mistyped set", ({ expect }) => {
-    const resourceSet = new MutableResourceSet({
+    const resourceSet = new ResourceSet(new N3.Store(), {
       dataFactory,
-      dataset: new N3.Store(),
     });
-    const instanceResource = resourceSet.mutableResource(
-      dataFactory.blankNode(),
-    );
+    const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.PropertyCardinalitiesClass.$schema.properties
         .emptyStringSetProperty.identifier,
@@ -515,9 +495,7 @@ describe("fromRdf", () => {
         dataset.add(quad);
       }
     }
-    const childResource = new ResourceSet({ dataset }).resource(
-      child.$identifier,
-    );
+    const childResource = new ResourceSet(dataset).resource(child.$identifier);
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
       kitchenSink.ConcreteChildClass.$fromRdf(childResource).isLeft(),

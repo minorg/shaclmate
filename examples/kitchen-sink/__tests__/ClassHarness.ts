@@ -1,9 +1,6 @@
+import type { Quad_Graph, Variable } from "@rdfjs/types";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
-import type {
-  MutableResource,
-  MutableResourceSet,
-  Resource,
-} from "rdfjs-resource";
+import type { Resource, ResourceSet } from "rdfjs-resource";
 import { Harness } from "./Harness.js";
 
 export class ClassHarness<
@@ -12,8 +9,8 @@ export class ClassHarness<
     readonly $identifier: Resource.Identifier;
     $toJson: () => any;
     $toRdf: (options?: {
-      mutateGraph: MutableResource.MutateGraph;
-      resourceSet: MutableResourceSet;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     }) => Resource;
     readonly $type: string;
   },
@@ -31,8 +28,8 @@ export class ClassHarness<
   }
 
   override toRdf(options?: {
-    mutateGraph: MutableResource.MutateGraph;
-    resourceSet: MutableResourceSet;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
   }): Resource {
     return this.instance.$toRdf(options);
   }
