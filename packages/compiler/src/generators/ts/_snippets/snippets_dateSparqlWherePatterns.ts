@@ -3,6 +3,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_DateFilter } from "./snippets_DateFilter.js";
 import { snippets_DateSchema } from "./snippets_DateSchema.js";
 import { snippets_literalFactory } from "./snippets_literalFactory.js";
+import { snippets_RdfVocabularies } from "./snippets_RdfVocabularies.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
@@ -11,7 +12,7 @@ export const snippets_dateSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}dateSparqlWherePatterns`,
   code`\
 const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<${snippets_DateFilter}, ${snippets_DateSchema}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
+  ({ filter, schema, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
     if (filter) {
@@ -20,7 +21,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: "in",
-            args: [valueVariable, filter.in.map(inValue => ${snippets_literalFactory}.date(inValue))],
+            args: [valueVariable, filter.in.map(inValue => ${snippets_literalFactory}.date(inValue, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime))],
           },
           lift: true,
           type: "filter",
@@ -32,7 +33,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxExclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxExclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -44,7 +45,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxInclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxInclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -56,7 +57,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.minExclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.minExclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -68,7 +69,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.minInclusive)],
+            args: [valueVariable, ${snippets_literalFactory}.date(filter.minInclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -76,6 +77,6 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
       }
     }
 
-    return ${snippets_termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets_termSchemaSparqlPatterns}({ filterPatterns, schema, valueVariable, ...otherParameters });
   }`,
 );

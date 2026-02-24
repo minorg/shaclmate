@@ -211,7 +211,7 @@ interface $DateSchema {
 const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
   $DateFilter,
   $DateSchema
-> = ({ filter, valueVariable, ...otherParameters }) => {
+> = ({ filter, schema, valueVariable, ...otherParameters }) => {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
@@ -222,7 +222,14 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
           operator: "in",
           args: [
             valueVariable,
-            filter.in.map((inValue) => $literalFactory.date(inValue)),
+            filter.in.map((inValue) =>
+              $literalFactory.date(
+                inValue,
+                schema.kind === "Date"
+                  ? $RdfVocabularies.xsd.date
+                  : $RdfVocabularies.xsd.dateTime,
+              ),
+            ),
           ],
         },
         lift: true,
@@ -235,7 +242,15 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: "<",
-          args: [valueVariable, $literalFactory.date(filter.maxExclusive)],
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.maxExclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
         },
         lift: true,
         type: "filter",
@@ -247,7 +262,15 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: "<=",
-          args: [valueVariable, $literalFactory.date(filter.maxInclusive)],
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.maxInclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
         },
         lift: true,
         type: "filter",
@@ -259,7 +282,15 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: ">",
-          args: [valueVariable, $literalFactory.date(filter.minExclusive)],
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.minExclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
         },
         lift: true,
         type: "filter",
@@ -271,7 +302,15 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: ">=",
-          args: [valueVariable, $literalFactory.date(filter.minInclusive)],
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.minInclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
         },
         lift: true,
         type: "filter",
@@ -281,6 +320,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
 
   return $termSchemaSparqlPatterns({
     filterPatterns,
+    schema,
     valueVariable,
     ...otherParameters,
   });
