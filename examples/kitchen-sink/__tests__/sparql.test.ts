@@ -2,7 +2,7 @@ import type { NamedNode, Quad } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3, { DataFactory as dataFactory } from "n3";
 import * as oxigraph from "oxigraph";
-import { MutableResourceSet } from "rdfjs-resource";
+import { ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
@@ -82,10 +82,9 @@ describe("sparql", () => {
         oxigraphStore.query(constructQueryString) as Quad[],
       );
       const constructInstanceEither = harness.fromRdf(
-        new MutableResourceSet({
+        new ResourceSet(constructResultDataset, {
           dataFactory,
-          dataset: constructResultDataset,
-        }).namedResource(harness.instance.$identifier as NamedNode),
+        }).resource(harness.instance.$identifier as NamedNode),
         {
           context: {
             extra: 1,

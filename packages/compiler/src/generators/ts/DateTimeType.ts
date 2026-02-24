@@ -1,5 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { AbstractDateType } from "./AbstractDateType.js";
 import { imports } from "./imports.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -18,7 +19,15 @@ export class DateTimeType extends AbstractDateType {
     return code`${imports.z}.iso.datetime()`;
   }
 
-  protected toIsoStringExpression(variables: { value: Code }): Code {
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractDateType["toJsonExpression"]>[0]): Code {
     return code`${variables.value}.toISOString()`;
+  }
+
+  protected override fromRdfResourceValueExpression({
+    variables,
+  }: Parameters<AbstractDateType["fromRdfResourceValueExpression"]>[0]): Code {
+    return code`${variables.value}.toDateTime()`;
   }
 }

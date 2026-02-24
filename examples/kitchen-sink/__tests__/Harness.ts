@@ -1,10 +1,7 @@
+import type { Quad_Graph, Variable } from "@rdfjs/types";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
-import type {
-  MutableResource,
-  MutableResourceSet,
-  Resource,
-} from "rdfjs-resource";
+import type { Resource, ResourceSet } from "rdfjs-resource";
 import type { z as zod } from "zod";
 
 export abstract class Harness<
@@ -42,7 +39,7 @@ export abstract class Harness<
   abstract toJson(): any;
 
   abstract toRdf(kwds: {
-    mutateGraph: MutableResource.MutateGraph;
-    resourceSet: MutableResourceSet;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
   }): Resource;
 }

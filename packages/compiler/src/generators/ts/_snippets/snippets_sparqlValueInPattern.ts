@@ -1,8 +1,8 @@
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+import { snippets_literalFactory } from "./snippets_literalFactory.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_toLiteral } from "./snippets_toLiteral.js";
 
 export const snippets_sparqlValueInPattern = conditionalOutput(
   `${syntheticNamePrefix}sparqlValueInPattern`,
@@ -15,23 +15,11 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
   return {
     expression: {
       args: [valueVariable, valueIn.map(inValue => {
-        switch (typeof inValue) {
-          case "boolean":
-          case "number":
-          case "string":
-            return ${snippets_toLiteral}(inValue)
-          case "object":
-            if (inValue instanceof Date) {
-              return ${snippets_toLiteral}(inValue)
-            }
-
-            return inValue;
-          default:
-            inValue satisfies never;
-            throw new Error("should never reach this point");
-          }
+        if (typeof inValue !== "object" || inValue instanceof Date) {
+          return ${snippets_literalFactory}.primitive(inValue);
         }
-      )],
+        return inValue;
+      })],
       operator: "in",
       type: "operation",
     },

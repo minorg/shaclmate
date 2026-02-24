@@ -53,7 +53,7 @@ function ObjectUnionType_toRdfFunctionDeclaration(this: ObjectUnionType): Code {
   };
 
   return code`\
-export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${parametersVariable}?: { mutateGraph?: ${imports.MutableResource}.MutateGraph, resourceSet?: ${imports.MutableResourceSet} }): ${returnType()} {
+export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${parametersVariable}?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, resourceSet?: ${imports.ResourceSet} }): ${returnType()} {
 ${joinCode(
   this.concreteMemberTypes
     .map((memberType) => {

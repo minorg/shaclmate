@@ -38,6 +38,7 @@ import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
 import { snippets_identifierFromString } from "./_snippets/snippets_identifierFromString.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
+import { snippets_isReadonlyBigintArray } from "./_snippets/snippets_isReadonlyBigintArray.js";
 import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
 import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
 import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
@@ -49,6 +50,7 @@ import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
 import { snippets_listSparqlWherePatterns } from "./_snippets/snippets_listSparqlWherePatterns.js";
+import { snippets_literalFactory } from "./_snippets/snippets_literalFactory.js";
 import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_literalSchemaSparqlPatterns.js";
 import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_literalSparqlWherePatterns.js";
 import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
@@ -82,7 +84,6 @@ import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
-import { snippets_toLiteral } from "./_snippets/snippets_toLiteral.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 
 export const snippets = {
@@ -126,6 +127,7 @@ export const snippets = {
   IdentifierSchema: snippets_IdentifierSchema,
   IdentifierSet: snippets_IdentifierSet,
   identifierSparqlWherePatterns: snippets_identifierSparqlWherePatterns,
+  isReadonlyBigintArray: snippets_isReadonlyBigintArray,
   isReadonlyBooleanArray: snippets_isReadonlyBooleanArray,
   isReadonlyNumberArray: snippets_isReadonlyNumberArray,
   isReadonlyObjectArray: snippets_isReadonlyObjectArray,
@@ -135,6 +137,7 @@ export const snippets = {
   LazyObjectSet: snippets_LazyObjectSet,
   liftSparqlPatterns: snippets_liftSparqlPatterns,
   listSparqlWherePatterns: snippets_listSparqlWherePatterns,
+  literalFactory: snippets_literalFactory,
   LiteralFilter: snippets_LiteralFilter,
   LiteralSchema: snippets_LiteralSchema,
   literalSchemaSparqlPatterns: snippets_literalSchemaSparqlPatterns,
@@ -172,6 +175,5 @@ export const snippets = {
   TermSchema: snippets_TermSchema,
   termSchemaSparqlPatterns: snippets_termSchemaSparqlPatterns,
   termSparqlWherePatterns: snippets_termSparqlWherePatterns,
-  toLiteral: snippets_toLiteral,
   UnwrapR: snippets_UnwrapR,
 };

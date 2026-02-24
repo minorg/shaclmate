@@ -60,7 +60,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
-    return code`[${imports.dataFactory}.literal(${variables.value})]`;
+    return code`[${snippets.literalFactory}.string(${variables.value})]`;
   }
 
   protected override fromRdfExpressionChain({

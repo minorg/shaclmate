@@ -1,5 +1,5 @@
 import N3 from "n3";
-import { MutableResourceSet } from "rdfjs-resource";
+import { ResourceSet } from "rdfjs-resource";
 import {
   Child,
   Nested,
@@ -9,9 +9,8 @@ import {
 } from "./generated.js";
 
 export const dataset = new N3.Store();
-const resourceSet = new MutableResourceSet({
+const resourceSet = new ResourceSet(dataset, {
   dataFactory: N3.DataFactory,
-  dataset,
 });
 for (let i = 0; i < 4; i++) {
   const lazyObject = new Nested({

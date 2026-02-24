@@ -249,12 +249,12 @@ export abstract class AbstractType {
 
   /**
    * An expression that converts a property value of this type to an array of values that can be .add'd to a rdfjsResource.MutableResource
-   * (BlankNode | Literal | NamedNode | boolean | number | string)[].
+   * (BlankNode | Literal | NamedNode | bigint | boolean | number | string)[].
    */
   abstract toRdfExpression(parameters: {
     variables: {
+      graph: Code;
       predicate: Code;
-      mutateGraph: Code;
       resource: Code;
       resourceSet: Code;
       value: Code;

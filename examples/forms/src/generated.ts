@@ -1,12 +1,14 @@
-import type { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
+import type {
+  BlankNode,
+  DatasetCore,
+  Literal,
+  NamedNode,
+  Quad_Graph,
+  Variable,
+} from "@rdfjs/types";
 import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
 import { Either, Left, Maybe, NonEmptyList } from "purify-ts";
-import {
-  type MutableResource,
-  MutableResourceSet,
-  Resource,
-  ResourceSet,
-} from "rdfjs-resource";
+import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 import { z } from "zod";
 
 /**
@@ -365,6 +367,8 @@ class $IdentifierSet {
     }
   }
 }
+
+const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 function $maybeEquals<T>(
   leftMaybe: Maybe<T>,
@@ -757,23 +761,18 @@ export namespace NestedNodeShape {
     _nestedNodeShape: NestedNodeShape,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: MutableResource.MutateGraph;
-      resourceSet?: MutableResourceSet;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  ): MutableResource {
-    const mutateGraph = options?.mutateGraph;
+  ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(_nestedNodeShape.$identifier, {
-      mutateGraph,
-    });
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(_nestedNodeShape.$identifier);
     resource.add(
       NestedNodeShape.$schema.properties.requiredStringProperty.identifier,
-      ...[dataFactory.literal(_nestedNodeShape.requiredStringProperty)],
+      [$literalFactory.string(_nestedNodeShape.requiredStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -1494,59 +1493,59 @@ export namespace FormNodeShape {
     _formNodeShape: FormNodeShape,
     options?: {
       ignoreRdfType?: boolean;
-      mutateGraph?: MutableResource.MutateGraph;
-      resourceSet?: MutableResourceSet;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  ): MutableResource {
-    const mutateGraph = options?.mutateGraph;
+  ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(_formNodeShape.$identifier, {
-      mutateGraph,
-    });
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(_formNodeShape.$identifier);
     resource.add(
       FormNodeShape.$schema.properties.emptyStringSetProperty.identifier,
-      ..._formNodeShape.emptyStringSetProperty.flatMap((item) => [
-        dataFactory.literal(item),
+      _formNodeShape.emptyStringSetProperty.flatMap((item) => [
+        $literalFactory.string(item),
       ]),
+      options?.graph,
     );
     resource.add(
       FormNodeShape.$schema.properties.nestedObjectProperty.identifier,
-      ...[
+      [
         NestedNodeShape.$toRdf(_formNodeShape.nestedObjectProperty, {
-          mutateGraph: mutateGraph,
+          graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
       ],
+      options?.graph,
     );
     resource.add(
       FormNodeShape.$schema.properties.nonEmptyStringSetProperty.identifier,
-      ..._formNodeShape.nonEmptyStringSetProperty.flatMap((item) => [
-        dataFactory.literal(item),
+      _formNodeShape.nonEmptyStringSetProperty.flatMap((item) => [
+        $literalFactory.string(item),
       ]),
+      options?.graph,
     );
     resource.add(
       FormNodeShape.$schema.properties.optionalStringProperty.identifier,
-      ..._formNodeShape.optionalStringProperty
+      _formNodeShape.optionalStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     resource.add(
       FormNodeShape.$schema.properties.requiredIntegerProperty.identifier,
-      ...[
-        dataFactory.literal(
-          _formNodeShape.requiredIntegerProperty.toString(10),
+      [
+        $literalFactory.number(
+          _formNodeShape.requiredIntegerProperty,
           $RdfVocabularies.xsd.integer,
         ),
       ],
+      options?.graph,
     );
     resource.add(
       FormNodeShape.$schema.properties.requiredStringProperty.identifier,
-      ...[dataFactory.literal(_formNodeShape.requiredStringProperty)],
+      [$literalFactory.string(_formNodeShape.requiredStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -1754,10 +1753,10 @@ export namespace $Object {
   export function $toRdf(
     _object: $Object,
     _parameters?: {
-      mutateGraph?: MutableResource.MutateGraph;
-      resourceSet?: MutableResourceSet;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  ): MutableResource {
+  ): Resource {
     if (FormNodeShape.isFormNodeShape(_object)) {
       return FormNodeShape.$toRdf(_object, _parameters);
     }
@@ -1845,7 +1844,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   protected readonly resourceSet: ResourceSet;
 
   constructor(dataset: DatasetCore) {
-    this.resourceSet = new ResourceSet({ dataset });
+    this.resourceSet = new ResourceSet(dataset, { dataFactory: dataFactory });
   }
 
   async formNodeShape(

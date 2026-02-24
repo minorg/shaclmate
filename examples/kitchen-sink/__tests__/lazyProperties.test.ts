@@ -2,7 +2,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 
 import N3 from "n3";
-import { MutableResourceSet } from "rdfjs-resource";
+import { ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, expect, it } from "vitest";
 
 async function expectEmptyOptional<
@@ -188,9 +188,8 @@ describe("lazyProperties", () => {
     });
 
   beforeAll(() => {
-    const resourceSet = new MutableResourceSet({
+    const resourceSet = new ResourceSet(new N3.Store(), {
       dataFactory: N3.DataFactory,
-      dataset: new N3.Store(),
     });
     expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance.$toRdf({
       resourceSet,

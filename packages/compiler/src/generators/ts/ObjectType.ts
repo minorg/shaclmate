@@ -344,7 +344,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${imports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? code`<${imports.NamedNode}>` : ""}`;
+    return code`${imports.Resource}${this.identifierType.kind === "NamedNodeType" ? code`<${imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()
@@ -463,9 +463,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
-        return code`[${variables.value}.${syntheticNamePrefix}toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+        return code`[${variables.value}.${syntheticNamePrefix}toRdf({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
       case "interface":
-        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
     }
   }
 

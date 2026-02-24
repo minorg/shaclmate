@@ -77,7 +77,7 @@
 :optionalNumberProperty
     a sh:PropertyShape ;
     rdfs:comment "Optional number property" ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:double ;
     sh:maxCount 1 ;
     sh:path :optionalNumberProperty .
 

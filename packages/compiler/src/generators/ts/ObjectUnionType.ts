@@ -293,6 +293,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override toRdfExpression({
     variables,
   }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): Code {
-    return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${{ mutateGraph: variables.mutateGraph, resourceSet: variables.resourceSet }}).identifier]`;
+    return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${{ graph: variables.graph, resourceSet: variables.resourceSet }}).identifier]`;
   }
 }

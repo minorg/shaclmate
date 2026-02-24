@@ -68,16 +68,10 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return new AbstractPrimitiveType.JsonType(code`string`);
   }
 
-  override toJsonExpression({
-    variables,
-  }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): Code {
-    return this.toIsoStringExpression(variables);
-  }
-
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): Code {
-    return code`[${imports.dataFactory}.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
+    return code`[${snippets.literalFactory}.date(${variables.value}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -85,13 +79,15 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   }: Parameters<
     AbstractPrimitiveType<Date>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<Date>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = code`value.toDate()`;
+    let fromRdfResourceValueExpression = this.fromRdfResourceValueExpression({
+      variables: { value: code`value` },
+    });
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = code`<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => { ${joinCode(
+      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(dateValue => { ${joinCode(
         this.primitiveIn.map(
           (value) =>
-            code`if (primitiveValue.getTime() === ${value.getTime()}) { return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); }`,
+            code`if (dateValue.getTime() === ${value.getTime()}) { return ${imports.Either}.of${eitherTypeParameters}(dateValue); }`,
         ),
         { on: " " },
       )} return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); })`;
@@ -105,5 +101,9 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     };
   }
 
-  protected abstract toIsoStringExpression(variables: { value: Code }): Code;
+  protected abstract fromRdfResourceValueExpression(variables: {
+    variables: {
+      value: Code;
+    };
+  }): Code;
 }

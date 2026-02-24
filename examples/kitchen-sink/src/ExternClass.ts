@@ -1,4 +1,4 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { BlankNode, NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
 import * as N3 from "n3";
 import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
@@ -43,22 +43,21 @@ export class ExternClass extends AbstractBaseClassForExternClass {
 
   // Called by class methods
   override $toRdf(options?: {
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: rdfjsResource.ResourceSet;
   }) {
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
+      new rdfjsResource.ResourceSet(new N3.Store(), {
         dataFactory: N3.DataFactory,
-        dataset: new N3.Store(),
       });
     const resource = super.$toRdf({
-      mutateGraph: options?.mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
     resource.add(
-      resourceSet.dataFactory.namedNode("http://example.com/extraproperty"),
-      resourceSet.dataFactory.literal("example"),
+      N3.DataFactory.namedNode("http://example.com/extraproperty"),
+      N3.DataFactory.literal("example"),
     );
     return resource;
   }
