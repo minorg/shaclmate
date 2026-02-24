@@ -1,4 +1,11 @@
-import type { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
+import type {
+  BlankNode,
+  DatasetCore,
+  Literal,
+  NamedNode,
+  Quad_Graph,
+  Variable,
+} from "@rdfjs/types";
 import {
   GraphQLFloat,
   GraphQLID,
@@ -12,12 +19,7 @@ import {
 } from "graphql";
 import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
 import { Either, EitherAsync, Left, Maybe } from "purify-ts";
-import {
-  type MutableResource,
-  MutableResourceSet,
-  Resource,
-  ResourceSet,
-} from "rdfjs-resource";
+import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
@@ -355,6 +357,8 @@ export class $LazyObjectSet<
   }
 }
 
+const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
+
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
 interface $NamedNodeFilter {
@@ -450,19 +454,13 @@ export class $DefaultPartial {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: MutableResource.MutateGraph;
-    resourceSet?: MutableResourceSet;
-  }): MutableResource {
-    const mutateGraph = options?.mutateGraph;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
 }
@@ -597,31 +595,26 @@ export class UnionMember2 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: MutableResource.MutateGraph;
-    resourceSet?: MutableResourceSet;
-  }): MutableResource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    if (!ignoreRdfType) {
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMember2"),
+        options?.graph,
       );
     }
     resource.add(
       UnionMember2.$schema.properties.optionalStringProperty.identifier,
-      ...this.optionalStringProperty
+      this.optionalStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     return resource;
   }
@@ -875,33 +868,28 @@ export class UnionMember1 {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: MutableResource.MutateGraph;
-    resourceSet?: MutableResourceSet;
-  }): MutableResource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    if (!ignoreRdfType) {
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMember1"),
+        options?.graph,
       );
     }
     resource.add(
       UnionMember1.$schema.properties.optionalNumberProperty.identifier,
-      ...this.optionalNumberProperty
+      this.optionalNumberProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.decimal),
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
         ]),
+      options?.graph,
     );
     return resource;
   }
@@ -1166,43 +1154,40 @@ export class Nested {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: MutableResource.MutateGraph;
-    resourceSet?: MutableResourceSet;
-  }): MutableResource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    if (!ignoreRdfType) {
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/Nested"),
+        options?.graph,
       );
     }
     resource.add(
       UnionMember1.$schema.properties.optionalNumberProperty.identifier,
-      ...this.optionalNumberProperty
+      this.optionalNumberProperty
         .toList()
         .flatMap((value) => [
-          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.decimal),
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
         ]),
+      options?.graph,
     );
     resource.add(
       UnionMember2.$schema.properties.optionalStringProperty.identifier,
-      ...this.optionalStringProperty
+      this.optionalStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     resource.add(
       Nested.$schema.properties.requiredStringProperty.identifier,
-      ...[dataFactory.literal(this.requiredStringProperty)],
+      [$literalFactory.string(this.requiredStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -1539,31 +1524,26 @@ export class Parent {
 
   $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: MutableResource.MutateGraph;
-    resourceSet?: MutableResourceSet;
-  }): MutableResource<NamedNode> {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableNamedResource(this.$identifier, {
-      mutateGraph,
-    });
-    if (!ignoreRdfType) {
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/Parent"),
+        options?.graph,
       );
     }
     resource.add(
       ParentStatic.$schema.properties.parentStringProperty.identifier,
-      ...this.parentStringProperty
+      this.parentStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     return resource;
   }
@@ -1964,68 +1944,70 @@ export class Child extends Parent {
 
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
-    mutateGraph?: MutableResource.MutateGraph;
-    resourceSet?: MutableResourceSet;
-  }): MutableResource<NamedNode> {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new MutableResourceSet({
-        dataFactory,
-        dataset: $datasetFactory.dataset(),
-      });
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
-      mutateGraph,
+      graph: options?.graph,
       resourceSet,
     });
-    if (!ignoreRdfType) {
+    if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/Child"),
+        options?.graph,
       );
     }
     resource.add(
       Child.$schema.properties.childStringProperty.identifier,
-      ...this.childStringProperty
+      this.childStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     resource.add(
       Child.$schema.properties.lazyObjectSetProperty.identifier,
-      ...this.lazyObjectSetProperty.partials.flatMap((item) => [
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+      this.lazyObjectSetProperty.partials.flatMap((item) => [
+        item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
           .identifier,
       ]),
+      options?.graph,
     );
     resource.add(
       Child.$schema.properties.optionalLazyObjectProperty.identifier,
-      ...this.optionalLazyObjectProperty.partial
+      this.optionalLazyObjectProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       Child.$schema.properties.optionalObjectProperty.identifier,
-      ...this.optionalObjectProperty
+      this.optionalObjectProperty
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
             .identifier,
         ]),
+      options?.graph,
     );
     resource.add(
       UnionMember2.$schema.properties.optionalStringProperty.identifier,
-      ...this.optionalStringProperty
+      this.optionalStringProperty
         .toList()
-        .flatMap((value) => [dataFactory.literal(value)]),
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
     );
     resource.add(
       Nested.$schema.properties.requiredStringProperty.identifier,
-      ...[dataFactory.literal(this.requiredStringProperty)],
+      [$literalFactory.string(this.requiredStringProperty)],
+      options?.graph,
     );
     return resource;
   }
@@ -2680,10 +2662,10 @@ export namespace Union {
   export function $toRdf(
     _union: Union,
     _parameters?: {
-      mutateGraph?: MutableResource.MutateGraph;
-      resourceSet?: MutableResourceSet;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  ): MutableResource {
+  ): Resource {
     if (UnionMember1.isUnionMember1(_union)) {
       return _union.$toRdf(_parameters);
     }
@@ -2828,8 +2810,8 @@ export namespace $Object {
   export function $toRdf(
     _object: $Object,
     _parameters?: {
-      mutateGraph?: MutableResource.MutateGraph;
-      resourceSet?: MutableResourceSet;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
   ): Resource {
     if (Child.isChild(_object)) {
@@ -2987,7 +2969,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   protected readonly resourceSet: ResourceSet;
 
   constructor(dataset: DatasetCore) {
-    this.resourceSet = new ResourceSet({ dataset });
+    this.resourceSet = new ResourceSet(dataset, { dataFactory: dataFactory });
   }
 
   async child(identifier: Child.$Identifier): Promise<Either<Error, Child>> {

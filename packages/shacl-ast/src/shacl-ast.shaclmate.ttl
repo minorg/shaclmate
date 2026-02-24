@@ -324,7 +324,7 @@ shaclmate:ShaclCorePropertyShape-names
 
 shaclmate:ShaclCorePropertyShape-order
     a sh:PropertyShape ;
-    sh:datatype xsd:decimal ;
+    sh:datatype xsd:double ;
     sh:maxCount 1 ;
     sh:path sh:order .
 
