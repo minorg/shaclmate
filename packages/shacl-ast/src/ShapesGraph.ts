@@ -170,7 +170,7 @@ export namespace ShapesGraph {
         return false;
       }
 
-      const resourceSet = new ResourceSet({ dataset });
+      const resourceSet = new ResourceSet(dataset);
 
       const nodeShapesByIdentifier = new TermMap<
         BlankNode | NamedNode,

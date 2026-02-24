@@ -115,10 +115,7 @@ export namespace PropertyPath {
             ),
           );
       }
-      const objectResource = new Resource({
-        dataset: resource.dataset,
-        identifier: quad.object,
-      });
+      const objectResource = new Resource(resource.dataset, quad.object);
 
       // Alternative path
       // sh:path: [ sh:alternativePath ( ex:father ex:mother  ) ]

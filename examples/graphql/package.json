@@ -5,7 +5,7 @@
     "graphql-yoga": "5.14.0",
     "n3": "~1.26.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "2.0.1"
+    "rdfjs-resource": "2.0.2"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
