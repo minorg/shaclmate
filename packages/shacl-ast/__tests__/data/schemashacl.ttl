@@ -1324,7 +1324,7 @@ dash:ScriptAPIShape-generateClass
   sh:group dash:ScriptAPIGenerationRules ;
   sh:name "generate class" ;
   sh:nodeKind sh:IRI ;
-  sh:order "0"^^xsd:decimal ;
+  sh:order 0 ;
 .
 dash:ScriptAPIShape-generatePrefixClasses
   a sh:PropertyShape ;
@@ -1333,7 +1333,7 @@ dash:ScriptAPIShape-generatePrefixClasses
   sh:description "If a prefix (such as \"edg\") is listed here then the API generator will produce classes for all RDFS classes or node shapes from the associated namespace." ;
   sh:group dash:ScriptAPIGenerationRules ;
   sh:name "generate prefix classes" ;
-  sh:order "15"^^xsd:decimal ;
+  sh:order 15 ;
 .
 dash:ScriptAPIShape-generatePrefixConstants
   a sh:PropertyShape ;
@@ -1342,7 +1342,7 @@ dash:ScriptAPIShape-generatePrefixConstants
   sh:description "If a prefix (such as \"edg\") is listed here then the API generator will produce constants for class, datatype, shape and property names." ;
   sh:group dash:ScriptAPIGenerationRules ;
   sh:name "generate prefix constants" ;
-  sh:order "10"^^xsd:decimal ;
+  sh:order 10 ;
 .
 dash:ScriptConstraint
   a dash:ShapeClass ;
@@ -2175,7 +2175,7 @@ dash:isSubClassOf-superclass
   sh:class rdfs:Class ;
   sh:description "The (potential) superclass." ;
   sh:name "superclass" ;
-  sh:order "1"^^xsd:decimal ;
+  sh:order 1 ;
 .
 dash:js
   a rdf:Property ;
