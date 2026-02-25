@@ -1,5 +1,3 @@
-import type { NamedNode } from "@rdfjs/types";
-
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -9,8 +7,6 @@ import { snippets } from "./snippets.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
-  protected abstract readonly xsdDatatype: NamedNode;
-
   override readonly equalsFunction = code`${snippets.dateEquals}`;
   override readonly filterFunction = code`${snippets.filterDate}`;
   override readonly filterType = code`${snippets.DateFilter}`;
@@ -71,7 +67,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): Code {
-    return code`[${snippets.literalFactory}.date(${variables.value}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
+    return code`[${snippets.literalFactory}.date(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({

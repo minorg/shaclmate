@@ -1,14 +1,9 @@
-import type { NamedNode } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { imports } from "./imports.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateType extends AbstractDateType {
-  protected override readonly xsdDatatype: NamedNode = xsd.date;
-
   override readonly graphqlType = new DateTimeType.GraphqlType(
     code`${imports.GraphQLDate}`,
   );

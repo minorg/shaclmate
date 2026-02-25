@@ -55,6 +55,7 @@ export function rdfjsTermExpression(
           case "decimal":
           case "double":
           case "integer":
+          case "string":
             return code`${snippets_RdfVocabularies}.xsd.${unqualifiedName}`;
           default:
             logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);

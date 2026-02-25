@@ -1,8 +1,9 @@
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -60,7 +61,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
-    return code`[${snippets.literalFactory}.string(${variables.value})]`;
+    return code`[${snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${rdfjsTermExpression(this.datatype)}` : ""})]`;
   }
 
   protected override fromRdfExpressionChain({

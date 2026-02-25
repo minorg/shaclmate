@@ -1507,6 +1507,9 @@ namespace $RdfVocabularies {
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
     );
+    export const string = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#string",
+    );
   }
 }
 
@@ -8556,7 +8559,9 @@ export class TermPropertiesClass {
       TermPropertiesClass.$schema.properties.booleanTermProperty.identifier,
       this.booleanTermProperty
         .toList()
-        .flatMap((value) => [$literalFactory.boolean(value)]),
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
       options?.graph,
     );
     resource.add(
@@ -34463,7 +34468,9 @@ export class JsPrimitiveUnionPropertyClass {
                 | Literal
                 | NamedNode
               )[])
-            : ([$literalFactory.boolean(item)] as (
+            : ([
+                $literalFactory.boolean(item, $RdfVocabularies.xsd.boolean),
+              ] as (
                 | bigint
                 | boolean
                 | number
@@ -39685,7 +39692,9 @@ export class InPropertiesClass {
       InPropertiesClass.$schema.properties.inBooleansProperty.identifier,
       this.inBooleansProperty
         .toList()
-        .flatMap((value) => [$literalFactory.boolean(value)]),
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
       options?.graph,
     );
     resource.add(
@@ -48105,7 +48114,12 @@ export class DefaultValuePropertiesClass {
       DefaultValuePropertiesClass.$schema.properties
         .falseBooleanDefaultValueProperty.identifier,
       $strictEquals(this.falseBooleanDefaultValueProperty, false).isLeft()
-        ? [$literalFactory.boolean(this.falseBooleanDefaultValueProperty)]
+        ? [
+            $literalFactory.boolean(
+              this.falseBooleanDefaultValueProperty,
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
         : [],
       options?.graph,
     );
@@ -48134,7 +48148,12 @@ export class DefaultValuePropertiesClass {
       DefaultValuePropertiesClass.$schema.properties
         .trueBooleanDefaultValueProperty.identifier,
       $strictEquals(this.trueBooleanDefaultValueProperty, true).isLeft()
-        ? [$literalFactory.boolean(this.trueBooleanDefaultValueProperty)]
+        ? [
+            $literalFactory.boolean(
+              this.trueBooleanDefaultValueProperty,
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
         : [],
       options?.graph,
     );

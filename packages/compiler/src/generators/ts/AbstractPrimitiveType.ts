@@ -1,3 +1,4 @@
+import type { NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
@@ -7,6 +8,7 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,
 > extends AbstractLiteralType {
+  protected readonly datatype: NamedNode;
   override readonly equalsFunction = code`${snippets.strictEquals}`;
   abstract override readonly kind:
     | "BooleanType"
@@ -19,12 +21,15 @@ export abstract class AbstractPrimitiveType<
   readonly primitiveIn: readonly ValueT[];
 
   constructor({
+    datatype,
     primitiveIn,
     ...superParameters
   }: {
+    datatype: NamedNode;
     primitiveIn: readonly ValueT[];
   } & ConstructorParameters<typeof AbstractLiteralType>[0]) {
     super(superParameters);
+    this.datatype = datatype;
     this.primitiveIn = primitiveIn;
   }
 

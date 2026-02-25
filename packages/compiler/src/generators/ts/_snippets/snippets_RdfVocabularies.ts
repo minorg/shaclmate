@@ -25,6 +25,7 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
     export const decimal = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
     export const double = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double");
     export const integer = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
+    export const string = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#string");
   }
 }
 `,

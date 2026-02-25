@@ -4,6 +4,7 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { fromRdf } from "rdf-literal";
+import { literalDatatypeDefinitions } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
@@ -156,6 +157,7 @@ export class TypeFactory {
               ),
               type: new StringType({
                 comment: astType.comment,
+                datatype: xsd.string,
                 hasValues: [],
                 in_: [],
                 label: astType.label,
@@ -387,53 +389,51 @@ export class TypeFactory {
     if (datatypes.size === 1) {
       const datatype = [...datatypes][0];
 
-      if (datatype.equals(xsd.boolean)) {
-        return new BooleanType({
-          comment: astType.comment,
-          hasValues: astType.hasValues,
-          label: astType.label,
-          languageIn: [],
-          in_: astType.in_,
-          primitiveIn: astType.in_
-            .map((value) => fromRdf(value, true))
-            .filter((value) => typeof value === "boolean"),
-        });
-      }
-
-      if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
-        return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
-          comment: astType.comment,
-          hasValues: astType.hasValues,
-          in_: astType.in_,
-          label: astType.label,
-          languageIn: [],
-          primitiveIn: astType.in_
-            .map((value) => fromRdf(value, true))
-            .filter(
-              (value) => typeof value === "object" && value instanceof Date,
-            ),
-        });
-      }
-
-      if (datatype.equals(xsd.string)) {
-        return new StringType({
-          comment: astType.comment,
-          hasValues: astType.hasValues,
-          label: astType.label,
-          languageIn: astType.languageIn,
-          in_: astType.in_,
-          primitiveIn: astType.in_.map((value) => value.value),
-        });
-      }
-
-      for (const [floatOrInt, numberDatatypes_] of Object.entries(
-        numberDatatypes,
-      )) {
-        for (const numberDatatype of numberDatatypes_) {
-          if (datatype.equals(numberDatatype)) {
-            return new (floatOrInt === "float" ? FloatType : IntType)({
+      const datatypeDefinition = literalDatatypeDefinitions[datatype.value];
+      if (datatypeDefinition) {
+        switch (datatypeDefinition.kind) {
+          case "bigdecimal":
+            // case "bigint":
+            throw new Error(
+              `${datatypeDefinition.kind} datatype ${datatype.value} unsupported`,
+            );
+          case "boolean":
+            return new BooleanType({
               comment: astType.comment,
-              datatype: numberDatatype,
+              datatype,
+              hasValues: astType.hasValues,
+              label: astType.label,
+              languageIn: [],
+              in_: astType.in_,
+              primitiveIn: astType.in_
+                .map((value) => fromRdf(value, true))
+                .filter((value) => typeof value === "boolean"),
+            });
+          case "date":
+          case "datetime":
+            return new (
+              datatypeDefinition.kind === "date" ? DateType : DateTimeType
+            )({
+              comment: astType.comment,
+              datatype,
+              hasValues: astType.hasValues,
+              in_: astType.in_,
+              label: astType.label,
+              languageIn: [],
+              primitiveIn: astType.in_
+                .map((value) => fromRdf(value, true))
+                .filter(
+                  (value) => typeof value === "object" && value instanceof Date,
+                ),
+            });
+          case "bigint":
+          case "float":
+          case "int":
+            return new (
+              datatypeDefinition.kind === "float" ? FloatType : IntType
+            )({
+              comment: astType.comment,
+              datatype,
               hasValues: astType.hasValues,
               in_: astType.in_,
               label: astType.label,
@@ -442,7 +442,20 @@ export class TypeFactory {
                 .map((value) => fromRdf(value, true))
                 .filter((value) => typeof value === "number"),
             });
-          }
+
+          case "string":
+            if (!datatype.equals(rdf.langString)) {
+              return new StringType({
+                comment: astType.comment,
+                datatype,
+                hasValues: astType.hasValues,
+                label: astType.label,
+                languageIn: astType.languageIn,
+                in_: astType.in_,
+                primitiveIn: astType.in_.map((value) => value.value),
+              });
+            }
+            break;
         }
       }
 
@@ -580,22 +593,3 @@ function objectTypeNeedsIdentifierPrefixProperty(
     })
     .orDefault(false);
 }
-
-const numberDatatypes = {
-  float: [xsd.decimal, xsd.double, xsd.float],
-  int: [
-    xsd.byte,
-    xsd.int,
-    xsd.integer,
-    xsd.long,
-    xsd.negativeInteger,
-    xsd.nonNegativeInteger,
-    xsd.nonPositiveInteger,
-    xsd.positiveInteger,
-    xsd.short,
-    xsd.unsignedByte,
-    xsd.unsignedInt,
-    xsd.unsignedLong,
-    xsd.unsignedShort,
-  ],
-};
