@@ -393,8 +393,10 @@ export class TypeFactory {
       if (datatypeDefinition) {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
-          case "bigint":
-            throw new Error("not implemented");
+            // case "bigint":
+            throw new Error(
+              `${datatypeDefinition.kind} datatype ${datatype.value} unsupported`,
+            );
           case "boolean":
             return new BooleanType({
               comment: astType.comment,
@@ -424,6 +426,7 @@ export class TypeFactory {
                   (value) => typeof value === "object" && value instanceof Date,
                 ),
             });
+          case "bigint":
           case "float":
           case "int":
             return new (
