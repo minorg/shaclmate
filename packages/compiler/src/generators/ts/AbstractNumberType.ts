@@ -1,5 +1,3 @@
-import type { NamedNode } from "@rdfjs/types";
-
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -9,23 +7,11 @@ import { snippets } from "./snippets.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
-  private readonly datatype: NamedNode;
-
   override readonly filterFunction = code`${snippets.filterNumber}`;
   override readonly filterType = code`${snippets.NumberFilter}`;
   abstract override readonly kind: "FloatType" | "IntType";
   override readonly schemaType = code`${snippets.NumberSchema}`;
   override readonly typeofs = NonEmptyList(["number" as const]);
-
-  constructor({
-    datatype,
-    ...superParameters
-  }: {
-    datatype: NamedNode;
-  } & ConstructorParameters<typeof AbstractPrimitiveType<number>>[0]) {
-    super(superParameters);
-    this.datatype = datatype;
-  }
 
   @Memoize()
   override get name(): string {
