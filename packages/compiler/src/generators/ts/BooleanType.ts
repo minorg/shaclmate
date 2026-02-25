@@ -2,6 +2,7 @@ import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -44,7 +45,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): Code {
-    return code`[${snippets.literalFactory}.boolean(${variables.value})]`;
+    return code`[${snippets.literalFactory}.boolean(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({
