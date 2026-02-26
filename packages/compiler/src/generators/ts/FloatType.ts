@@ -18,7 +18,7 @@ export class FloatType extends AbstractNumericType<number> {
     return code`${variables.value}.toNumber()`;
   }
 
-  protected override valueToString(value: number): string {
+  protected override literalName(value: number): string {
     return value.toString();
   }
 }

@@ -1,5 +1,6 @@
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
+import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
@@ -68,6 +69,7 @@ export namespace AbstractContainerType {
   export type GraphqlType = AbstractType.GraphqlType;
 
   export type ItemType =
+    | BigIntType
     | BlankNodeType
     | BooleanType
     | DateTimeType
@@ -86,6 +88,7 @@ export namespace AbstractContainerType {
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
+      case "BigIntType":
       case "BlankNodeType":
       case "BooleanType":
       case "DateTimeType":

@@ -27,7 +27,7 @@ export abstract class AbstractNumericType<
   @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
-      return `${this.primitiveIn.map((value) => this.valueToString(value)).join(" | ")}`;
+      return `${this.primitiveIn.map((value) => this.literalName(value)).join(" | ")}`;
     }
     return this.typeofs[0];
   }
@@ -56,11 +56,11 @@ export abstract class AbstractNumericType<
       case 0:
         return code`${imports.z}.${this.typeofs[0]}()`;
       case 1:
-        return code`${imports.z}.literal(${this.valueToString(this.primitiveIn[0])})`;
+        return code`${imports.z}.literal(${this.literalName(this.primitiveIn[0])})`;
       default:
         return code`${imports.z}.union([${joinCode(
           this.primitiveIn.map(
-            (value) => code`${imports.z}.literal(${this.valueToString(value)})`,
+            (value) => code`${imports.z}.literal(${this.literalName(value)})`,
           ),
           { on: "," },
         )}])`;
@@ -83,7 +83,7 @@ export abstract class AbstractNumericType<
     });
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = code`<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${this.valueToString(value)}:`).join(" ")} return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
+      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${this.literalName(value)}:`).join(" ")} return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
     }
 
     return {
@@ -100,5 +100,5 @@ export abstract class AbstractNumericType<
     };
   }): Code;
 
-  protected abstract valueToString(value: ValueT): string;
+  protected abstract literalName(value: ValueT): string;
 }
