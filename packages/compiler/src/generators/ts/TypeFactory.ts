@@ -3,11 +3,11 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
-import { fromRdf } from "rdf-literal";
-import { literalDatatypeDefinitions } from "rdfjs-resource";
+import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
+import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -397,6 +397,18 @@ export class TypeFactory {
             throw new Error(
               `${datatypeDefinition.kind} datatype ${datatype.value} unsupported`,
             );
+          // case "bigint":
+          //   return new BigIntType({
+          //     comment: astType.comment,
+          //     datatype,
+          //     hasValues: astType.hasValues,
+          //     in_: astType.in_,
+          //     label: astType.label,
+          //     languageIn: [],
+          //     primitiveIn: astType.in_.map((value) =>
+          //       LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
+          //     ),
+          //   });
           case "boolean":
             return new BooleanType({
               comment: astType.comment,
@@ -405,9 +417,9 @@ export class TypeFactory {
               label: astType.label,
               languageIn: [],
               in_: astType.in_,
-              primitiveIn: astType.in_
-                .map((value) => fromRdf(value, true))
-                .filter((value) => typeof value === "boolean"),
+              primitiveIn: astType.in_.map((value) =>
+                LiteralDecoder.decodeBooleanLiteral(value).unsafeCoerce(),
+              ),
             });
           case "date":
           case "datetime":
@@ -420,11 +432,11 @@ export class TypeFactory {
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
-              primitiveIn: astType.in_
-                .map((value) => fromRdf(value, true))
-                .filter(
-                  (value) => typeof value === "object" && value instanceof Date,
-                ),
+              primitiveIn: astType.in_.map((value) =>
+                (datatypeDefinition.kind === "date"
+                  ? LiteralDecoder.decodeDateLiteral
+                  : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
+              ),
             });
           case "bigint":
           case "float":
@@ -438,11 +450,12 @@ export class TypeFactory {
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
-              primitiveIn: astType.in_
-                .map((value) => fromRdf(value, true))
-                .filter((value) => typeof value === "number"),
+              primitiveIn: astType.in_.map((value) =>
+                (datatypeDefinition.kind === "float"
+                  ? LiteralDecoder.decodeFloatLiteral
+                  : LiteralDecoder.decodeIntLiteral)(value).unsafeCoerce(),
+              ),
             });
-
           case "string":
             if (!datatype.equals(rdf.langString)) {
               return new StringType({
