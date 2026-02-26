@@ -924,6 +924,71 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :nonClassProperty
     ] .
 
+:NumericPropertiesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Shape with properties that have numeric sh:datatype's" ;
+    sh:property [
+        sh:datatype xsd:byte ;
+        sh:maxCount 1 ;
+        sh:path :byteNumericProperty
+    ], [
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+        sh:path :doubleNumericProperty
+    ], [
+        sh:datatype xsd:float ;
+        sh:maxCount 1 ;
+        sh:path :floatNumericProperty
+    ], [
+        sh:datatype xsd:int ;
+        sh:maxCount 1 ;
+        sh:path :intNumericProperty
+    ], [
+        sh:datatype xsd:integer ;
+        sh:maxCount 1 ;
+        sh:path :integerNumericProperty
+    ], [
+        sh:datatype xsd:long ;
+        sh:maxCount 1 ;
+        sh:path :longNumericProperty
+    ], [
+        sh:datatype xsd:negativeInteger ;
+        sh:maxCount 1 ;
+        sh:path :negativeIntegerNumericProperty
+    ], [
+        sh:datatype xsd:nonNegativeInteger ;
+        sh:maxCount 1 ;
+        sh:path :nonNegativeIntegerNumericProperty
+    ], [
+        sh:datatype xsd:nonPositiveInteger ;
+        sh:maxCount 1 ;
+        sh:path :nonPositiveIntegerNumericProperty
+    ], [
+        sh:datatype xsd:positiveInteger ;
+        sh:maxCount 1 ;
+        sh:path :positiveIntegerNumericProperty
+    ], [
+        sh:datatype xsd:short ;
+        sh:maxCount 1 ;
+        sh:path :shortNumericProperty
+    ], [
+        sh:datatype xsd:unsignedByte ;
+        sh:maxCount 1 ;
+        sh:path :unsignedByteNumericProperty
+    ], [
+        sh:datatype xsd:unsignedInt ;
+        sh:maxCount 1 ;
+        sh:path :unsignedIntNumericProperty
+    ], [
+        sh:datatype xsd:unsignedLong ;
+        sh:maxCount 1 ;
+        sh:path :unsignedLongNumericProperty
+    ], [
+        sh:datatype xsd:unsignedShort ;
+        sh:maxCount 1 ;
+        sh:path :unsignedShortNumericProperty
+    ] .
+
 :ObjectList
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property." ;

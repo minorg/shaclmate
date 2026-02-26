@@ -20,12 +20,24 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
 
   export namespace xsd {
     export const boolean = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
+    export const byte = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#byte");
     export const date = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date");
     export const dateTime = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
     export const decimal = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
     export const double = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double");
+    export const float = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#float");
+    export const int = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#int");
     export const integer = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
+    export const long = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#long");
+    export const nonNegativeInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+    export const nonPositiveInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonPositiveInteger");
+    export const positiveInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#positiveInteger");
+    export const short = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#short");
     export const string = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#string");
+    export const unsignedByte = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedByte");
+    export const unsignedInt = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedInt");
+    export const unsignedLong = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedLong");
+    export const unsignedShort = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#unsignedShort");
   }
 }
 `,

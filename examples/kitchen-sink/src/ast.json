@@ -2565,7 +2565,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-294",
+          "shapeIdentifier": "_:n3-309",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3265,7 +3265,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-299",
+          "shapeIdentifier": "_:n3-314",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3543,6 +3543,292 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with properties that have numeric sh:datatype's",
+      "identifierMintingStrategy": "blankNode",
+      "identifierType": {
+        "kind": "IdentifierType",
+        "hasValue": [],
+        "nodeKinds": [
+          "BlankNode",
+          "NamedNode"
+        ]
+      },
+      "shapeIdentifier": "<http://example.com/NumericPropertiesClass>",
+      "properties": [
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/byteNumericProperty",
+          "shapeIdentifier": "_:n3-285",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#byte"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/doubleNumericProperty",
+          "shapeIdentifier": "_:n3-286",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#double"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/floatNumericProperty",
+          "shapeIdentifier": "_:n3-287",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#float"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/intNumericProperty",
+          "shapeIdentifier": "_:n3-288",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#int"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/integerNumericProperty",
+          "shapeIdentifier": "_:n3-289",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#integer"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/longNumericProperty",
+          "shapeIdentifier": "_:n3-290",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#long"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/negativeIntegerNumericProperty",
+          "shapeIdentifier": "_:n3-291",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#negativeInteger"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/nonNegativeIntegerNumericProperty",
+          "shapeIdentifier": "_:n3-292",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/nonPositiveIntegerNumericProperty",
+          "shapeIdentifier": "_:n3-293",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/positiveIntegerNumericProperty",
+          "shapeIdentifier": "_:n3-294",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#positiveInteger"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/shortNumericProperty",
+          "shapeIdentifier": "_:n3-295",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#short"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/unsignedByteNumericProperty",
+          "shapeIdentifier": "_:n3-296",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedByte"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/unsignedIntNumericProperty",
+          "shapeIdentifier": "_:n3-297",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedInt"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/unsignedLongNumericProperty",
+          "shapeIdentifier": "_:n3-298",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedLong"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/unsignedShortNumericProperty",
+          "shapeIdentifier": "_:n3-299",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#unsignedShort"
+              },
+              "hasValue": []
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
       "comment": "Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
       "identifierMintingStrategy": "blankNode",
       "identifierType": {
@@ -3559,7 +3845,7 @@
           "mutable": false,
           "order": 1,
           "path": "http://example.com/orderedPropertyC",
-          "shapeIdentifier": "_:n3-291",
+          "shapeIdentifier": "_:n3-306",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3574,7 +3860,7 @@
           "mutable": false,
           "order": 2,
           "path": "http://example.com/orderedPropertyB",
-          "shapeIdentifier": "_:n3-293",
+          "shapeIdentifier": "_:n3-308",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3589,7 +3875,7 @@
           "mutable": false,
           "order": 3,
           "path": "http://example.com/orderedPropertyA",
-          "shapeIdentifier": "_:n3-292",
+          "shapeIdentifier": "_:n3-307",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3619,7 +3905,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-297",
+          "shapeIdentifier": "_:n3-312",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3649,7 +3935,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-298",
+          "shapeIdentifier": "_:n3-313",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3679,7 +3965,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-302",
+          "shapeIdentifier": "_:n3-317",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3709,7 +3995,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-303",
+          "shapeIdentifier": "_:n3-318",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3741,7 +4027,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredStringProperty",
-          "shapeIdentifier": "_:n3-304",
+          "shapeIdentifier": "_:n3-319",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3757,7 +4043,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalStringProperty",
-          "shapeIdentifier": "_:n3-305",
+          "shapeIdentifier": "_:n3-320",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3776,7 +4062,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/emptyStringSetProperty",
-          "shapeIdentifier": "_:n3-306",
+          "shapeIdentifier": "_:n3-321",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -3795,7 +4081,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/nonEmptyStringSetProperty",
-          "shapeIdentifier": "_:n3-307",
+          "shapeIdentifier": "_:n3-322",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -3829,7 +4115,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/protectedProperty",
-          "shapeIdentifier": "_:n3-308",
+          "shapeIdentifier": "_:n3-323",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3844,7 +4130,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/privateProperty",
-          "shapeIdentifier": "_:n3-309",
+          "shapeIdentifier": "_:n3-324",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3859,7 +4145,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/publicProperty",
-          "shapeIdentifier": "_:n3-310",
+          "shapeIdentifier": "_:n3-325",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3890,7 +4176,7 @@
           "order": 0,
           "path": "http://example.com/recursiveClassUnionMember1Property",
           "recursive": true,
-          "shapeIdentifier": "_:n3-313",
+          "shapeIdentifier": "_:n3-328",
           "type": {
             "kind": "OptionType",
             "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
@@ -3970,7 +4256,7 @@
           "order": 0,
           "path": "http://example.com/recursiveClassUnionMember2Property",
           "recursive": true,
-          "shapeIdentifier": "_:n3-314",
+          "shapeIdentifier": "_:n3-329",
           "type": {
             "kind": "OptionType",
             "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
@@ -4049,7 +4335,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/sha256IriProperty",
-          "shapeIdentifier": "_:n3-315",
+          "shapeIdentifier": "_:n3-330",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4080,7 +4366,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/blankNodeTermProperty",
-          "shapeIdentifier": "_:n3-322",
+          "shapeIdentifier": "_:n3-337",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4097,7 +4383,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/booleanTermProperty",
-          "shapeIdentifier": "_:n3-323",
+          "shapeIdentifier": "_:n3-338",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4115,7 +4401,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTermProperty",
-          "shapeIdentifier": "_:n3-324",
+          "shapeIdentifier": "_:n3-339",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4133,7 +4419,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTimeTermProperty",
-          "shapeIdentifier": "_:n3-325",
+          "shapeIdentifier": "_:n3-340",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4151,7 +4437,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/numberTermProperty",
-          "shapeIdentifier": "_:n3-326",
+          "shapeIdentifier": "_:n3-341",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4169,7 +4455,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/iriTermProperty",
-          "shapeIdentifier": "_:n3-327",
+          "shapeIdentifier": "_:n3-342",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4186,7 +4472,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/literalTermProperty",
-          "shapeIdentifier": "_:n3-328",
+          "shapeIdentifier": "_:n3-343",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4200,7 +4486,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/stringTermProperty",
-          "shapeIdentifier": "_:n3-329",
+          "shapeIdentifier": "_:n3-344",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4218,7 +4504,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/termProperty",
-          "shapeIdentifier": "_:n3-330",
+          "shapeIdentifier": "_:n3-345",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4248,7 +4534,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalClassOrClassOrStringProperty",
-          "shapeIdentifier": "_:n3-331",
+          "shapeIdentifier": "_:n3-346",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4325,7 +4611,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-338",
+          "shapeIdentifier": "_:n3-353",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4353,7 +4639,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrStringProperty",
-          "shapeIdentifier": "_:n3-343",
+          "shapeIdentifier": "_:n3-358",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4385,7 +4671,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredClassOrClassOrStringProperty",
-          "shapeIdentifier": "_:n3-348",
+          "shapeIdentifier": "_:n3-363",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -4459,7 +4745,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-355",
+          "shapeIdentifier": "_:n3-370",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -4484,7 +4770,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrStringProperty",
-          "shapeIdentifier": "_:n3-360",
+          "shapeIdentifier": "_:n3-375",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -4513,7 +4799,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setClassOrClassOrStringProperty",
-          "shapeIdentifier": "_:n3-365",
+          "shapeIdentifier": "_:n3-380",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -4590,7 +4876,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-372",
+          "shapeIdentifier": "_:n3-387",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -4618,7 +4904,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrStringProperty",
-          "shapeIdentifier": "_:n3-377",
+          "shapeIdentifier": "_:n3-392",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -4664,7 +4950,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
-          "shapeIdentifier": "_:n3-382",
+          "shapeIdentifier": "_:n3-397",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4694,7 +4980,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
-          "shapeIdentifier": "_:n3-383",
+          "shapeIdentifier": "_:n3-398",
           "type": {
             "kind": "LiteralType",
             "datatype": {
