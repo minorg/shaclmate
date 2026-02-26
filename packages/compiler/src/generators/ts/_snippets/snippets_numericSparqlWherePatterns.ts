@@ -1,17 +1,17 @@
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_literalFactory } from "./snippets_literalFactory.js";
-import { snippets_NumberFilter } from "./snippets_NumberFilter.js";
-import { snippets_NumberSchema } from "./snippets_NumberSchema.js";
+import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
+import { snippets_NumericSchema } from "./snippets_NumericSchema.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
 
-export const snippets_numberSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}numberSparqlWherePatterns`,
+export const snippets_numericSparqlWherePatterns = conditionalOutput(
+  `${syntheticNamePrefix}numericSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<${snippets_NumberFilter}, ${snippets_NumberSchema}> =
+const ${syntheticNamePrefix}numericSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<${snippets_NumericFilter}, ${snippets_NumericSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 

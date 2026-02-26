@@ -9,15 +9,15 @@ import { type Code, code } from "./ts-poet-wrapper.js";
  * Abstract base class for TypeScript number types.
  */
 export abstract class AbstractNumberType extends AbstractNumericType<number> {
-  override readonly filterFunction = code`${snippets.filterNumber}`;
-  override readonly filterType = code`${snippets.NumberFilter}`;
+  override readonly filterFunction = code`${snippets.filterNumeric}`;
+  override readonly filterType = code`${snippets.NumericFilter}`;
   abstract override readonly kind: "FloatType" | "IntType";
-  override readonly schemaType = code`${snippets.NumberSchema}`;
+  override readonly schemaType = code`${snippets.NumericSchema}`;
   override readonly typeofs = NonEmptyList(["number" as const]);
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.numberSparqlWherePatterns}`;
+    return code`${snippets.numericSparqlWherePatterns}`;
   }
 
   protected override fromRdfResourceValueExpression({
