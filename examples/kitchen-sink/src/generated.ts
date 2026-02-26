@@ -1519,6 +1519,9 @@ namespace $RdfVocabularies {
     export const long = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#long",
     );
+    export const negativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    );
     export const nonNegativeInteger = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
     );

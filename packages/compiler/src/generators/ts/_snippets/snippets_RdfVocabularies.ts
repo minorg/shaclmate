@@ -29,6 +29,7 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
     export const int = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#int");
     export const integer = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
     export const long = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#long");
+    export const negativeInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#negativeInteger");
     export const nonNegativeInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
     export const nonPositiveInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#nonPositiveInteger");
     export const positiveInteger = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#positiveInteger");
