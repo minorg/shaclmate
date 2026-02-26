@@ -53,7 +53,6 @@ const externalDependencyVersions = {
   n3: { n3: "~1.26.0" },
   pino: { pino: "~9.1.0" },
   "purify-ts": { "purify-ts": "~2.1.4" },
-  "rdf-literal": { "rdf-literal": "~1.3.2" }, // TODO: remove me
   "rdf-validate-shacl": { "rdf-validate-shacl": "0.5.8" },
   "rdfjs-resource": { "rdfjs-resource": "2.0.2" },
   rimraf: { rimraf: "~6.0.1" },
@@ -149,7 +148,6 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["pino"],
         plur: "~5.1.0",
         ...externalDependencyVersions["purify-ts"],
-        ...externalDependencyVersions["rdf-literal"],
         ...externalDependencyVersions["rdfjs-resource"],
         "reserved-identifiers": "~1.0.0",
         toposort: "2.0.2",
