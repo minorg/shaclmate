@@ -16808,19 +16808,19 @@ export class NumericPropertiesClass {
 
   readonly floatNumericProperty: Maybe<number>;
 
-  readonly integerNumericProperty: Maybe<number>;
+  readonly integerNumericProperty: Maybe<bigint>;
 
   readonly intNumericProperty: Maybe<number>;
 
-  readonly longNumericProperty: Maybe<number>;
+  readonly longNumericProperty: Maybe<bigint>;
 
-  readonly negativeIntegerNumericProperty: Maybe<number>;
+  readonly negativeIntegerNumericProperty: Maybe<bigint>;
 
-  readonly nonNegativeIntegerNumericProperty: Maybe<number>;
+  readonly nonNegativeIntegerNumericProperty: Maybe<bigint>;
 
-  readonly nonPositiveIntegerNumericProperty: Maybe<number>;
+  readonly nonPositiveIntegerNumericProperty: Maybe<bigint>;
 
-  readonly positiveIntegerNumericProperty: Maybe<number>;
+  readonly positiveIntegerNumericProperty: Maybe<bigint>;
 
   readonly shortNumericProperty: Maybe<number>;
 
@@ -16828,7 +16828,7 @@ export class NumericPropertiesClass {
 
   readonly unsignedIntNumericProperty: Maybe<number>;
 
-  readonly unsignedLongNumericProperty: Maybe<number>;
+  readonly unsignedLongNumericProperty: Maybe<bigint>;
 
   readonly unsignedShortNumericProperty: Maybe<number>;
 
@@ -16837,17 +16837,17 @@ export class NumericPropertiesClass {
     readonly byteNumericProperty?: Maybe<number> | number;
     readonly doubleNumericProperty?: Maybe<number> | number;
     readonly floatNumericProperty?: Maybe<number> | number;
-    readonly integerNumericProperty?: Maybe<number> | number;
+    readonly integerNumericProperty?: Maybe<bigint> | bigint;
     readonly intNumericProperty?: Maybe<number> | number;
-    readonly longNumericProperty?: Maybe<number> | number;
-    readonly negativeIntegerNumericProperty?: Maybe<number> | number;
-    readonly nonNegativeIntegerNumericProperty?: Maybe<number> | number;
-    readonly nonPositiveIntegerNumericProperty?: Maybe<number> | number;
-    readonly positiveIntegerNumericProperty?: Maybe<number> | number;
+    readonly longNumericProperty?: Maybe<bigint> | bigint;
+    readonly negativeIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly nonNegativeIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly nonPositiveIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly positiveIntegerNumericProperty?: Maybe<bigint> | bigint;
     readonly shortNumericProperty?: Maybe<number> | number;
     readonly unsignedByteNumericProperty?: Maybe<number> | number;
     readonly unsignedIntNumericProperty?: Maybe<number> | number;
-    readonly unsignedLongNumericProperty?: Maybe<number> | number;
+    readonly unsignedLongNumericProperty?: Maybe<bigint> | bigint;
     readonly unsignedShortNumericProperty?: Maybe<number> | number;
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -16890,7 +16890,7 @@ export class NumericPropertiesClass {
     }
     if (Maybe.isMaybe(parameters?.integerNumericProperty)) {
       this.integerNumericProperty = parameters?.integerNumericProperty;
-    } else if (typeof parameters?.integerNumericProperty === "number") {
+    } else if (typeof parameters?.integerNumericProperty === "bigint") {
       this.integerNumericProperty = Maybe.of(
         parameters?.integerNumericProperty,
       );
@@ -16911,7 +16911,7 @@ export class NumericPropertiesClass {
     }
     if (Maybe.isMaybe(parameters?.longNumericProperty)) {
       this.longNumericProperty = parameters?.longNumericProperty;
-    } else if (typeof parameters?.longNumericProperty === "number") {
+    } else if (typeof parameters?.longNumericProperty === "bigint") {
       this.longNumericProperty = Maybe.of(parameters?.longNumericProperty);
     } else if (typeof parameters?.longNumericProperty === "undefined") {
       this.longNumericProperty = Maybe.empty();
@@ -16922,7 +16922,7 @@ export class NumericPropertiesClass {
     if (Maybe.isMaybe(parameters?.negativeIntegerNumericProperty)) {
       this.negativeIntegerNumericProperty =
         parameters?.negativeIntegerNumericProperty;
-    } else if (typeof parameters?.negativeIntegerNumericProperty === "number") {
+    } else if (typeof parameters?.negativeIntegerNumericProperty === "bigint") {
       this.negativeIntegerNumericProperty = Maybe.of(
         parameters?.negativeIntegerNumericProperty,
       );
@@ -16938,7 +16938,7 @@ export class NumericPropertiesClass {
       this.nonNegativeIntegerNumericProperty =
         parameters?.nonNegativeIntegerNumericProperty;
     } else if (
-      typeof parameters?.nonNegativeIntegerNumericProperty === "number"
+      typeof parameters?.nonNegativeIntegerNumericProperty === "bigint"
     ) {
       this.nonNegativeIntegerNumericProperty = Maybe.of(
         parameters?.nonNegativeIntegerNumericProperty,
@@ -16955,7 +16955,7 @@ export class NumericPropertiesClass {
       this.nonPositiveIntegerNumericProperty =
         parameters?.nonPositiveIntegerNumericProperty;
     } else if (
-      typeof parameters?.nonPositiveIntegerNumericProperty === "number"
+      typeof parameters?.nonPositiveIntegerNumericProperty === "bigint"
     ) {
       this.nonPositiveIntegerNumericProperty = Maybe.of(
         parameters?.nonPositiveIntegerNumericProperty,
@@ -16971,7 +16971,7 @@ export class NumericPropertiesClass {
     if (Maybe.isMaybe(parameters?.positiveIntegerNumericProperty)) {
       this.positiveIntegerNumericProperty =
         parameters?.positiveIntegerNumericProperty;
-    } else if (typeof parameters?.positiveIntegerNumericProperty === "number") {
+    } else if (typeof parameters?.positiveIntegerNumericProperty === "bigint") {
       this.positiveIntegerNumericProperty = Maybe.of(
         parameters?.positiveIntegerNumericProperty,
       );
@@ -17021,7 +17021,7 @@ export class NumericPropertiesClass {
     if (Maybe.isMaybe(parameters?.unsignedLongNumericProperty)) {
       this.unsignedLongNumericProperty =
         parameters?.unsignedLongNumericProperty;
-    } else if (typeof parameters?.unsignedLongNumericProperty === "number") {
+    } else if (typeof parameters?.unsignedLongNumericProperty === "bigint") {
       this.unsignedLongNumericProperty = Maybe.of(
         parameters?.unsignedLongNumericProperty,
       );
@@ -17333,23 +17333,27 @@ export class NumericPropertiesClass {
           .map((item) => item)
           .extract(),
         integerNumericProperty: this.integerNumericProperty
-          .map((item) => item)
+          .map((item) => item.toString())
           .extract(),
         intNumericProperty: this.intNumericProperty
           .map((item) => item)
           .extract(),
         longNumericProperty: this.longNumericProperty
-          .map((item) => item)
+          .map((item) => item.toString())
           .extract(),
         negativeIntegerNumericProperty: this.negativeIntegerNumericProperty
-          .map((item) => item)
+          .map((item) => item.toString())
           .extract(),
         nonNegativeIntegerNumericProperty:
-          this.nonNegativeIntegerNumericProperty.map((item) => item).extract(),
+          this.nonNegativeIntegerNumericProperty
+            .map((item) => item.toString())
+            .extract(),
         nonPositiveIntegerNumericProperty:
-          this.nonPositiveIntegerNumericProperty.map((item) => item).extract(),
+          this.nonPositiveIntegerNumericProperty
+            .map((item) => item.toString())
+            .extract(),
         positiveIntegerNumericProperty: this.positiveIntegerNumericProperty
-          .map((item) => item)
+          .map((item) => item.toString())
           .extract(),
         shortNumericProperty: this.shortNumericProperty
           .map((item) => item)
@@ -17361,7 +17365,7 @@ export class NumericPropertiesClass {
           .map((item) => item)
           .extract(),
         unsignedLongNumericProperty: this.unsignedLongNumericProperty
-          .map((item) => item)
+          .map((item) => item.toString())
           .extract(),
         unsignedShortNumericProperty: this.unsignedShortNumericProperty
           .map((item) => item)
@@ -17420,7 +17424,7 @@ export class NumericPropertiesClass {
       this.integerNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -17438,7 +17442,7 @@ export class NumericPropertiesClass {
       this.longNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.long),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.long),
         ]),
       options?.graph,
     );
@@ -17448,7 +17452,7 @@ export class NumericPropertiesClass {
       this.negativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.negativeInteger),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.negativeInteger),
         ]),
       options?.graph,
     );
@@ -17458,7 +17462,7 @@ export class NumericPropertiesClass {
       this.nonNegativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(
+          $literalFactory.bigint(
             value,
             $RdfVocabularies.xsd.nonNegativeInteger,
           ),
@@ -17471,7 +17475,7 @@ export class NumericPropertiesClass {
       this.nonPositiveIntegerNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(
+          $literalFactory.bigint(
             value,
             $RdfVocabularies.xsd.nonPositiveInteger,
           ),
@@ -17484,7 +17488,7 @@ export class NumericPropertiesClass {
       this.positiveIntegerNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.positiveInteger),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.positiveInteger),
         ]),
       options?.graph,
     );
@@ -17523,7 +17527,7 @@ export class NumericPropertiesClass {
       this.unsignedLongNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedLong),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.unsignedLong),
         ]),
       options?.graph,
     );
@@ -17585,7 +17589,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.integerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.integerNumericProperty,
         value.integerNumericProperty,
       )
@@ -17603,7 +17607,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.longNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.longNumericProperty,
         value.longNumericProperty,
       )
@@ -17612,7 +17616,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.negativeIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.negativeIntegerNumericProperty,
         value.negativeIntegerNumericProperty,
       )
@@ -17621,7 +17625,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.nonNegativeIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.nonNegativeIntegerNumericProperty,
         value.nonNegativeIntegerNumericProperty,
       )
@@ -17630,7 +17634,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.nonPositiveIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.nonPositiveIntegerNumericProperty,
         value.nonPositiveIntegerNumericProperty,
       )
@@ -17639,7 +17643,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.positiveIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.positiveIntegerNumericProperty,
         value.positiveIntegerNumericProperty,
       )
@@ -17675,7 +17679,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.unsignedLongNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.unsignedLongNumericProperty,
         value.unsignedLongNumericProperty,
       )
@@ -17699,25 +17703,25 @@ export namespace NumericPropertiesClass {
     readonly byteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly floatNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly intNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly longNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly longNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly negativeIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<number>
+      $NumericFilter<bigint>
     >;
     readonly nonNegativeIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<number>
+      $NumericFilter<bigint>
     >;
     readonly nonPositiveIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<number>
+      $NumericFilter<bigint>
     >;
     readonly positiveIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<number>
+      $NumericFilter<bigint>
     >;
     readonly shortNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly unsignedByteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly unsignedIntNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly unsignedShortNumericProperty?: $MaybeFilter<
       $NumericFilter<number>
     >;
@@ -17741,17 +17745,17 @@ export namespace NumericPropertiesClass {
       byteNumericProperty: Maybe<number>;
       doubleNumericProperty: Maybe<number>;
       floatNumericProperty: Maybe<number>;
-      integerNumericProperty: Maybe<number>;
+      integerNumericProperty: Maybe<bigint>;
       intNumericProperty: Maybe<number>;
-      longNumericProperty: Maybe<number>;
-      negativeIntegerNumericProperty: Maybe<number>;
-      nonNegativeIntegerNumericProperty: Maybe<number>;
-      nonPositiveIntegerNumericProperty: Maybe<number>;
-      positiveIntegerNumericProperty: Maybe<number>;
+      longNumericProperty: Maybe<bigint>;
+      negativeIntegerNumericProperty: Maybe<bigint>;
+      nonNegativeIntegerNumericProperty: Maybe<bigint>;
+      nonPositiveIntegerNumericProperty: Maybe<bigint>;
+      positiveIntegerNumericProperty: Maybe<bigint>;
       shortNumericProperty: Maybe<number>;
       unsignedByteNumericProperty: Maybe<number>;
       unsignedIntNumericProperty: Maybe<number>;
-      unsignedLongNumericProperty: Maybe<number>;
+      unsignedLongNumericProperty: Maybe<bigint>;
       unsignedShortNumericProperty: Maybe<number>;
     }
   > {
@@ -17933,17 +17937,17 @@ export namespace NumericPropertiesClass {
       byteNumericProperty: z.number().optional(),
       doubleNumericProperty: z.number().optional(),
       floatNumericProperty: z.number().optional(),
-      integerNumericProperty: z.number().optional(),
+      integerNumericProperty: z.bigint().optional(),
       intNumericProperty: z.number().optional(),
-      longNumericProperty: z.number().optional(),
-      negativeIntegerNumericProperty: z.number().optional(),
-      nonNegativeIntegerNumericProperty: z.number().optional(),
-      nonPositiveIntegerNumericProperty: z.number().optional(),
-      positiveIntegerNumericProperty: z.number().optional(),
+      longNumericProperty: z.bigint().optional(),
+      negativeIntegerNumericProperty: z.bigint().optional(),
+      nonNegativeIntegerNumericProperty: z.bigint().optional(),
+      nonPositiveIntegerNumericProperty: z.bigint().optional(),
+      positiveIntegerNumericProperty: z.bigint().optional(),
       shortNumericProperty: z.number().optional(),
       unsignedByteNumericProperty: z.number().optional(),
       unsignedIntNumericProperty: z.number().optional(),
-      unsignedLongNumericProperty: z.number().optional(),
+      unsignedLongNumericProperty: z.bigint().optional(),
       unsignedShortNumericProperty: z.number().optional(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -17954,17 +17958,17 @@ export namespace NumericPropertiesClass {
     readonly byteNumericProperty?: number;
     readonly doubleNumericProperty?: number;
     readonly floatNumericProperty?: number;
-    readonly integerNumericProperty?: number;
+    readonly integerNumericProperty?: bigint;
     readonly intNumericProperty?: number;
-    readonly longNumericProperty?: number;
-    readonly negativeIntegerNumericProperty?: number;
-    readonly nonNegativeIntegerNumericProperty?: number;
-    readonly nonPositiveIntegerNumericProperty?: number;
-    readonly positiveIntegerNumericProperty?: number;
+    readonly longNumericProperty?: bigint;
+    readonly negativeIntegerNumericProperty?: bigint;
+    readonly nonNegativeIntegerNumericProperty?: bigint;
+    readonly nonPositiveIntegerNumericProperty?: bigint;
+    readonly positiveIntegerNumericProperty?: bigint;
     readonly shortNumericProperty?: number;
     readonly unsignedByteNumericProperty?: number;
     readonly unsignedIntNumericProperty?: number;
-    readonly unsignedLongNumericProperty?: number;
+    readonly unsignedLongNumericProperty?: bigint;
     readonly unsignedShortNumericProperty?: number;
   };
 
@@ -18010,17 +18014,17 @@ export namespace NumericPropertiesClass {
       byteNumericProperty: Maybe<number>;
       doubleNumericProperty: Maybe<number>;
       floatNumericProperty: Maybe<number>;
-      integerNumericProperty: Maybe<number>;
+      integerNumericProperty: Maybe<bigint>;
       intNumericProperty: Maybe<number>;
-      longNumericProperty: Maybe<number>;
-      negativeIntegerNumericProperty: Maybe<number>;
-      nonNegativeIntegerNumericProperty: Maybe<number>;
-      nonPositiveIntegerNumericProperty: Maybe<number>;
-      positiveIntegerNumericProperty: Maybe<number>;
+      longNumericProperty: Maybe<bigint>;
+      negativeIntegerNumericProperty: Maybe<bigint>;
+      nonNegativeIntegerNumericProperty: Maybe<bigint>;
+      nonPositiveIntegerNumericProperty: Maybe<bigint>;
+      positiveIntegerNumericProperty: Maybe<bigint>;
       shortNumericProperty: Maybe<number>;
       unsignedByteNumericProperty: Maybe<number>;
       unsignedIntNumericProperty: Maybe<number>;
-      unsignedLongNumericProperty: Maybe<number>;
+      unsignedLongNumericProperty: Maybe<bigint>;
       unsignedShortNumericProperty: Maybe<number>;
     }
   > {
@@ -18127,12 +18131,12 @@ export namespace NumericPropertiesClass {
                       ),
                     )
                       .chain((values) =>
-                        values.chainMap((value) => value.toNumber()),
+                        values.chainMap((value) => value.toBigInt()),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<number>>({
+                          : Resource.Values.fromValue<Maybe<bigint>>({
                               focusResource: $parameters.resource,
                               predicate:
                                 NumericPropertiesClass.$schema.properties
@@ -18175,12 +18179,12 @@ export namespace NumericPropertiesClass {
                               ),
                             )
                               .chain((values) =>
-                                values.chainMap((value) => value.toNumber()),
+                                values.chainMap((value) => value.toBigInt()),
                               )
                               .map((values) =>
                                 values.length > 0
                                   ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<Maybe<number>>({
+                                  : Resource.Values.fromValue<Maybe<bigint>>({
                                       focusResource: $parameters.resource,
                                       predicate:
                                         NumericPropertiesClass.$schema
@@ -18206,14 +18210,14 @@ export namespace NumericPropertiesClass {
                                 )
                                   .chain((values) =>
                                     values.chainMap((value) =>
-                                      value.toNumber(),
+                                      value.toBigInt(),
                                     ),
                                   )
                                   .map((values) =>
                                     values.length > 0
                                       ? values.map((value) => Maybe.of(value))
                                       : Resource.Values.fromValue<
-                                          Maybe<number>
+                                          Maybe<bigint>
                                         >({
                                           focusResource: $parameters.resource,
                                           predicate:
@@ -18241,7 +18245,7 @@ export namespace NumericPropertiesClass {
                                     )
                                       .chain((values) =>
                                         values.chainMap((value) =>
-                                          value.toNumber(),
+                                          value.toBigInt(),
                                         ),
                                       )
                                       .map((values) =>
@@ -18250,7 +18254,7 @@ export namespace NumericPropertiesClass {
                                               Maybe.of(value),
                                             )
                                           : Resource.Values.fromValue<
-                                              Maybe<number>
+                                              Maybe<bigint>
                                             >({
                                               focusResource:
                                                 $parameters.resource,
@@ -18278,7 +18282,7 @@ export namespace NumericPropertiesClass {
                                           )
                                             .chain((values) =>
                                               values.chainMap((value) =>
-                                                value.toNumber(),
+                                                value.toBigInt(),
                                               ),
                                             )
                                             .map((values) =>
@@ -18287,7 +18291,7 @@ export namespace NumericPropertiesClass {
                                                     Maybe.of(value),
                                                   )
                                                 : Resource.Values.fromValue<
-                                                    Maybe<number>
+                                                    Maybe<bigint>
                                                   >({
                                                     focusResource:
                                                       $parameters.resource,
@@ -18317,7 +18321,7 @@ export namespace NumericPropertiesClass {
                                                 )
                                                   .chain((values) =>
                                                     values.chainMap((value) =>
-                                                      value.toNumber(),
+                                                      value.toBigInt(),
                                                     ),
                                                   )
                                                   .map((values) =>
@@ -18326,7 +18330,7 @@ export namespace NumericPropertiesClass {
                                                           Maybe.of(value),
                                                         )
                                                       : Resource.Values.fromValue<
-                                                          Maybe<number>
+                                                          Maybe<bigint>
                                                         >({
                                                           focusResource:
                                                             $parameters.resource,
@@ -18532,7 +18536,7 @@ export namespace NumericPropertiesClass {
                                                                                 (
                                                                                   value,
                                                                                 ) =>
-                                                                                  value.toNumber(),
+                                                                                  value.toBigInt(),
                                                                               ),
                                                                           )
                                                                           .map(
@@ -18550,7 +18554,7 @@ export namespace NumericPropertiesClass {
                                                                                       ),
                                                                                   )
                                                                                 : Resource.Values.fromValue<
-                                                                                    Maybe<number>
+                                                                                    Maybe<bigint>
                                                                                   >(
                                                                                     {
                                                                                       focusResource:
@@ -18725,7 +18729,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/integerNumericProperty",
@@ -18745,7 +18749,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/longNumericProperty",
@@ -18755,7 +18759,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/negativeIntegerNumericProperty",
@@ -18765,7 +18769,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/nonNegativeIntegerNumericProperty",
@@ -18775,7 +18779,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/nonPositiveIntegerNumericProperty",
@@ -18785,7 +18789,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/positiveIntegerNumericProperty",
@@ -18825,7 +18829,7 @@ export namespace NumericPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/unsignedLongNumericProperty",
@@ -19399,8 +19403,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.integerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19489,8 +19493,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.longNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19534,8 +19538,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.negativeIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19579,8 +19583,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.nonNegativeIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19624,8 +19628,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.nonPositiveIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19669,8 +19673,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.positiveIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19849,8 +19853,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.unsignedLongNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -42658,7 +42662,7 @@ export class InPropertiesClass {
     >
   >;
 
-  readonly inNumbersProperty: Maybe<1 | 2>;
+  readonly inNumbersProperty: Maybe<1n | 2n>;
 
   readonly inStringsProperty: Maybe<"text" | "html">;
 
@@ -42679,7 +42683,7 @@ export class InPropertiesClass {
         >
       | "http://example.com/InPropertiesIri1"
       | "http://example.com/InPropertiesIri2";
-    readonly inNumbersProperty?: Maybe<1 | 2> | 1 | 2;
+    readonly inNumbersProperty?: Maybe<1n | 2n> | 1n | 2n;
     readonly inStringsProperty?: Maybe<"text" | "html"> | "text" | "html";
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -42727,7 +42731,7 @@ export class InPropertiesClass {
     }
     if (Maybe.isMaybe(parameters?.inNumbersProperty)) {
       this.inNumbersProperty = parameters?.inNumbersProperty;
-    } else if (typeof parameters?.inNumbersProperty === "number") {
+    } else if (typeof parameters?.inNumbersProperty === "bigint") {
       this.inNumbersProperty = Maybe.of(parameters?.inNumbersProperty);
     } else if (typeof parameters?.inNumbersProperty === "undefined") {
       this.inNumbersProperty = Maybe.empty();
@@ -42880,7 +42884,9 @@ export class InPropertiesClass {
         inIrisProperty: this.inIrisProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
-        inNumbersProperty: this.inNumbersProperty.map((item) => item).extract(),
+        inNumbersProperty: this.inNumbersProperty
+          .map((item) => item.toString())
+          .extract(),
         inStringsProperty: this.inStringsProperty.map((item) => item).extract(),
       } satisfies InPropertiesClass.$Json),
     );
@@ -42930,7 +42936,7 @@ export class InPropertiesClass {
       this.inNumbersProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -42992,7 +42998,7 @@ export namespace InPropertiesClass {
     }
     if (
       typeof filter.inNumbersProperty !== "undefined" &&
-      !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<1n | 2n, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.inNumbersProperty,
         value.inNumbersProperty,
       )
@@ -43016,7 +43022,7 @@ export namespace InPropertiesClass {
     readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
     readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
     readonly inIrisProperty?: $MaybeFilter<$NamedNodeFilter>;
-    readonly inNumbersProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly inNumbersProperty?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -43043,7 +43049,7 @@ export namespace InPropertiesClass {
           | "http://example.com/InPropertiesIri2"
         >
       >;
-      inNumbersProperty: Maybe<1 | 2>;
+      inNumbersProperty: Maybe<1n | 2n>;
       inStringsProperty: Maybe<"text" | "html">;
     }
   > {
@@ -43149,7 +43155,7 @@ export namespace InPropertiesClass {
           ]),
         })
         .optional(),
-      inNumbersProperty: z.union([z.literal(1), z.literal(2)]).optional(),
+      inNumbersProperty: z.union([z.literal(1n), z.literal(2n)]).optional(),
       inStringsProperty: z.enum(["text", "html"]).optional(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -43164,7 +43170,7 @@ export namespace InPropertiesClass {
         | "http://example.com/InPropertiesIri1"
         | "http://example.com/InPropertiesIri2";
     };
-    readonly inNumbersProperty?: 1 | 2;
+    readonly inNumbersProperty?: 1n | 2n;
     readonly inStringsProperty?: "text" | "html";
   };
 
@@ -43215,7 +43221,7 @@ export namespace InPropertiesClass {
           | "http://example.com/InPropertiesIri2"
         >
       >;
-      inNumbersProperty: Maybe<1 | 2>;
+      inNumbersProperty: Maybe<1n | 2n>;
       inStringsProperty: Maybe<"text" | "html">;
     }
   > {
@@ -43408,16 +43414,18 @@ export namespace InPropertiesClass {
                     )
                       .chain((values) =>
                         values.chainMap((value) =>
-                          value.toNumber().chain((primitiveValue) => {
+                          value.toBigInt().chain((primitiveValue) => {
                             switch (primitiveValue) {
-                              case 1:
-                              case 2:
-                                return Either.of<Error, 1 | 2>(primitiveValue);
+                              case 1n:
+                              case 2n:
+                                return Either.of<Error, 1n | 2n>(
+                                  primitiveValue,
+                                );
                               default:
-                                return Left<Error, 1 | 2>(
+                                return Left<Error, 1n | 2n>(
                                   new Resource.MistypedTermValueError({
                                     actualValue: value.toTerm(),
-                                    expectedValueType: "1 | 2",
+                                    expectedValueType: "1n | 2n",
                                     focusResource: $parameters.resource,
                                     predicate:
                                       InPropertiesClass.$schema.properties
@@ -43431,7 +43439,7 @@ export namespace InPropertiesClass {
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<1 | 2>>({
+                          : Resource.Values.fromValue<Maybe<1n | 2n>>({
                               focusResource: $parameters.resource,
                               predicate:
                                 InPropertiesClass.$schema.properties
@@ -43566,7 +43574,7 @@ export namespace InPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const, in: [1, 2] }),
+          item: () => ({ kind: "BigInt" as const, in: [1n, 2n] }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/inNumbersProperty",
@@ -43967,8 +43975,8 @@ export namespace InPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
       )({
         filter: parameters?.filter?.inNumbersProperty,
         preferredLanguages: parameters?.preferredLanguages,

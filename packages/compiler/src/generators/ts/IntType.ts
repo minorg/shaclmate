@@ -18,7 +18,7 @@ export class IntType extends AbstractNumericType<number> {
     return code`${variables.value}.toNumber()`;
   }
 
-  protected override literalName(value: number): string {
+  protected override literalOf(value: number): string {
     return value.toString();
   }
 }

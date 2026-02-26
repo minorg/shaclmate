@@ -397,18 +397,18 @@ export class TypeFactory {
             throw new Error(
               `${datatypeDefinition.kind} datatype ${datatype.value} unsupported`,
             );
-          // case "bigint":
-          //   return new BigIntType({
-          //     comment: astType.comment,
-          //     datatype,
-          //     hasValues: astType.hasValues,
-          //     in_: astType.in_,
-          //     label: astType.label,
-          //     languageIn: [],
-          //     primitiveIn: astType.in_.map((value) =>
-          //       LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
-          //     ),
-          //   });
+          case "bigint":
+            return new BigIntType({
+              comment: astType.comment,
+              datatype,
+              hasValues: astType.hasValues,
+              in_: astType.in_,
+              label: astType.label,
+              languageIn: [],
+              primitiveIn: astType.in_.map((value) =>
+                LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
+              ),
+            });
           case "boolean":
             return new BooleanType({
               comment: astType.comment,
@@ -438,7 +438,6 @@ export class TypeFactory {
                   : LiteralDecoder.decodeDateTimeLiteral)(value).unsafeCoerce(),
               ),
             });
-          case "bigint":
           case "float":
           case "int":
             return new (
