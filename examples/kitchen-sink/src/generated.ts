@@ -559,7 +559,10 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
   return true;
 }
 
-function $filterNumeric(filter: $NumericFilter, value: number) {
+function $filterNumeric<T extends bigint | number>(
+  filter: $NumericFilter<T>,
+  value: T,
+) {
   if (
     typeof filter.in !== "undefined" &&
     !filter.in.some((inValue) => inValue === value)
@@ -794,6 +797,10 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
 
   return patterns;
 };
+
+function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "bigint");
+}
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every((z) => typeof z === "boolean");
@@ -1098,7 +1105,15 @@ function $literalSchemaSparqlPatterns({
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
     languageIn?: readonly string[];
-    in?: readonly (boolean | Date | string | number | Literal | NamedNode)[];
+    in?: readonly (
+      | bigint
+      | boolean
+      | Date
+      | string
+      | number
+      | Literal
+      | NamedNode
+    )[];
   }>;
   valueVariable: Variable;
 }): readonly $SparqlPattern[] {
@@ -1365,23 +1380,27 @@ function $normalizeSparqlWherePatterns(
   return normalizedPatterns;
 }
 
-interface $NumericFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface $NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }
 
-interface $NumericSchema {
-  readonly in?: readonly number[];
-  readonly kind: "Float" | "Int";
+interface $NumericSchema<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly kind: "BigInt" | "Float" | "Int";
 }
 
-const $numericSparqlWherePatterns: $SparqlWherePatternsFunction<
-  $NumericFilter,
-  $NumericSchema
-> = ({ filter, valueVariable, ...otherParameters }) => {
+function $numericSparqlWherePatterns<T extends bigint | number>({
+  filter,
+  valueVariable,
+  ...otherParameters
+}: $SparqlWherePatternsFunctionParameters<
+  $NumericFilter<T>,
+  $NumericSchema<T>
+>): readonly $SparqlPattern[] {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
@@ -1400,7 +1419,7 @@ const $numericSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: "<",
-          args: [valueVariable, $literalFactory.number(filter.maxExclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.maxExclusive)],
         },
         lift: true,
         type: "filter",
@@ -1412,7 +1431,7 @@ const $numericSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: "<=",
-          args: [valueVariable, $literalFactory.number(filter.maxInclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.maxInclusive)],
         },
         lift: true,
         type: "filter",
@@ -1424,7 +1443,7 @@ const $numericSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: ">",
-          args: [valueVariable, $literalFactory.number(filter.minExclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.minExclusive)],
         },
         lift: true,
         type: "filter",
@@ -1436,7 +1455,7 @@ const $numericSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: ">=",
-          args: [valueVariable, $literalFactory.number(filter.minInclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.minInclusive)],
         },
         lift: true,
         type: "filter",
@@ -1449,7 +1468,7 @@ const $numericSparqlWherePatterns: $SparqlWherePatternsFunction<
     valueVariable,
     ...otherParameters,
   });
-};
+}
 
 type $PropertiesFromRdfParameters = {
   context?: any;
@@ -1678,7 +1697,15 @@ function $sparqlValueInPattern({
   valueVariable,
 }: {
   lift?: boolean;
-  valueIn: readonly (boolean | Date | number | string | Literal | NamedNode)[];
+  valueIn: readonly (
+    | bigint
+    | boolean
+    | Date
+    | number
+    | string
+    | Literal
+    | NamedNode
+  )[];
   valueVariable: Variable;
 }): $SparqlFilterPattern {
   if (valueIn.length === 0) {
@@ -1918,7 +1945,15 @@ function $termSchemaSparqlPatterns({
   filterPatterns: readonly $SparqlFilterPattern[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    in?: readonly (boolean | Date | string | number | Literal | NamedNode)[];
+    in?: readonly (
+      | bigint
+      | boolean
+      | Date
+      | string
+      | number
+      | Literal
+      | NamedNode
+    )[];
   }>;
   valueVariable: Variable;
 }): readonly $SparqlPattern[] {
@@ -8723,7 +8758,7 @@ export namespace TermPropertiesClass {
     }
     if (
       typeof filter.numberTermProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.numberTermProperty,
         value.numberTermProperty,
       )
@@ -8759,7 +8794,7 @@ export namespace TermPropertiesClass {
     readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
     readonly iriTermProperty?: $MaybeFilter<$NamedNodeFilter>;
     readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
-    readonly numberTermProperty?: $MaybeFilter<$NumericFilter>;
+    readonly numberTermProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
     readonly termProperty?: $MaybeFilter<$TermFilter>;
   };
@@ -10051,8 +10086,8 @@ export namespace TermPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.numberTermProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -17523,7 +17558,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.byteNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.byteNumericProperty,
         value.byteNumericProperty,
       )
@@ -17532,7 +17567,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.doubleNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.doubleNumericProperty,
         value.doubleNumericProperty,
       )
@@ -17541,7 +17576,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.floatNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.floatNumericProperty,
         value.floatNumericProperty,
       )
@@ -17550,7 +17585,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.integerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.integerNumericProperty,
         value.integerNumericProperty,
       )
@@ -17559,7 +17594,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.intNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.intNumericProperty,
         value.intNumericProperty,
       )
@@ -17568,7 +17603,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.longNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.longNumericProperty,
         value.longNumericProperty,
       )
@@ -17577,7 +17612,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.negativeIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.negativeIntegerNumericProperty,
         value.negativeIntegerNumericProperty,
       )
@@ -17586,7 +17621,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.nonNegativeIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.nonNegativeIntegerNumericProperty,
         value.nonNegativeIntegerNumericProperty,
       )
@@ -17595,7 +17630,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.nonPositiveIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.nonPositiveIntegerNumericProperty,
         value.nonPositiveIntegerNumericProperty,
       )
@@ -17604,7 +17639,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.positiveIntegerNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.positiveIntegerNumericProperty,
         value.positiveIntegerNumericProperty,
       )
@@ -17613,7 +17648,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.shortNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.shortNumericProperty,
         value.shortNumericProperty,
       )
@@ -17622,7 +17657,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.unsignedByteNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedByteNumericProperty,
         value.unsignedByteNumericProperty,
       )
@@ -17631,7 +17666,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.unsignedIntNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedIntNumericProperty,
         value.unsignedIntNumericProperty,
       )
@@ -17640,7 +17675,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.unsignedLongNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedLongNumericProperty,
         value.unsignedLongNumericProperty,
       )
@@ -17649,7 +17684,7 @@ export namespace NumericPropertiesClass {
     }
     if (
       typeof filter.unsignedShortNumericProperty !== "undefined" &&
-      !$filterMaybe<number, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedShortNumericProperty,
         value.unsignedShortNumericProperty,
       )
@@ -17661,21 +17696,31 @@ export namespace NumericPropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly byteNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly floatNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly intNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly longNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly negativeIntegerNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly nonNegativeIntegerNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly nonPositiveIntegerNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly positiveIntegerNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly shortNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly unsignedByteNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly unsignedIntNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter>;
-    readonly unsignedShortNumericProperty?: $MaybeFilter<$NumericFilter>;
+    readonly byteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly floatNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly intNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly longNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly negativeIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
+    readonly nonNegativeIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
+    readonly nonPositiveIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
+    readonly positiveIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
+    readonly shortNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedByteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedIntNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedShortNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -19219,8 +19264,8 @@ export namespace NumericPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.byteNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19264,8 +19309,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.doubleNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19309,8 +19354,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.floatNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19354,8 +19399,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.integerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19399,8 +19444,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.intNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19444,8 +19489,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.longNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19489,8 +19534,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.negativeIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19534,8 +19579,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.nonNegativeIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19579,8 +19624,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.nonPositiveIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19624,8 +19669,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.positiveIntegerNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19669,8 +19714,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.shortNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19714,8 +19759,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.unsignedByteNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19759,8 +19804,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.unsignedIntNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19804,8 +19849,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.unsignedLongNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -19849,8 +19894,8 @@ export namespace NumericPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.unsignedShortNumericProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -37677,7 +37722,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         {
           readonly on?: {
             readonly boolean?: $BooleanFilter;
-            readonly number?: $NumericFilter;
+            readonly number?: $NumericFilter<number>;
             readonly string?: $StringFilter;
           };
         }
@@ -37686,7 +37731,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           filter: {
             readonly on?: {
               readonly boolean?: $BooleanFilter;
-              readonly number?: $NumericFilter;
+              readonly number?: $NumericFilter<number>;
               readonly string?: $StringFilter;
             };
           },
@@ -37704,7 +37749,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           if (typeof filter.on?.["number"] !== "undefined") {
             switch (typeof value) {
               case "number":
-                if (!$filterNumeric(filter.on["number"], value)) {
+                if (!$filterNumeric<number>(filter.on["number"], value)) {
                   return false;
                 }
                 break;
@@ -37734,7 +37779,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     readonly jsPrimitiveUnionProperty?: $CollectionFilter<{
       readonly on?: {
         readonly boolean?: $BooleanFilter;
-        readonly number?: $NumericFilter;
+        readonly number?: $NumericFilter<number>;
         readonly string?: $StringFilter;
       };
     }>;
@@ -38216,7 +38261,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         {
           readonly on?: {
             readonly boolean?: $BooleanFilter;
-            readonly number?: $NumericFilter;
+            readonly number?: $NumericFilter<number>;
             readonly string?: $StringFilter;
           };
         },
@@ -38229,7 +38274,7 @@ export namespace JsPrimitiveUnionPropertyClass {
             };
             readonly number: {
               discriminantValues: readonly string[];
-              type: $NumericSchema;
+              type: $NumericSchema<number>;
             };
             readonly string: {
               discriminantValues: readonly string[];
@@ -38249,7 +38294,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           type: "group",
         });
         unionPatterns.push({
-          patterns: $numericSparqlWherePatterns({
+          patterns: $numericSparqlWherePatterns<number>({
             filter: filter?.on?.["number"],
             schema: schema.members["number"].type,
             ...otherParameters,
@@ -42947,7 +42992,7 @@ export namespace InPropertiesClass {
     }
     if (
       typeof filter.inNumbersProperty !== "undefined" &&
-      !$filterMaybe<1 | 2, $NumericFilter>($filterNumeric)(
+      !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
         filter.inNumbersProperty,
         value.inNumbersProperty,
       )
@@ -42971,7 +43016,7 @@ export namespace InPropertiesClass {
     readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
     readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
     readonly inIrisProperty?: $MaybeFilter<$NamedNodeFilter>;
-    readonly inNumbersProperty?: $MaybeFilter<$NumericFilter>;
+    readonly inNumbersProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -43922,8 +43967,8 @@ export namespace InPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
       )({
         filter: parameters?.filter?.inNumbersProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -51374,7 +51419,7 @@ export namespace DefaultValuePropertiesClass {
     }
     if (
       typeof filter.numberDefaultValueProperty !== "undefined" &&
-      !$filterNumeric(
+      !$filterNumeric<number>(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
       )
@@ -51407,7 +51452,7 @@ export namespace DefaultValuePropertiesClass {
     readonly dateDefaultValueProperty?: $DateFilter;
     readonly dateTimeDefaultValueProperty?: $DateFilter;
     readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
-    readonly numberDefaultValueProperty?: $NumericFilter;
+    readonly numberDefaultValueProperty?: $NumericFilter<number>;
     readonly stringDefaultValueProperty?: $StringFilter;
     readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
   };
@@ -52342,9 +52387,10 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$NumericFilter, $NumericSchema>(
-        $numericSparqlWherePatterns,
-      )({
+      $defaultValueSparqlWherePatterns<
+        $NumericFilter<number>,
+        $NumericSchema<number>
+      >($numericSparqlWherePatterns<number>)({
         filter: parameters?.filter?.numberDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -54804,7 +54850,9 @@ export class ConvertibleTypePropertiesClass {
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty;
-    } else if (undefined(parameters.convertibleLiteralSetProperty)) {
+    } else if (
+      $isReadonlyBigIntArray(parameters.convertibleLiteralSetProperty)
+    ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
           $literalFactory.bigint(item),
@@ -54907,7 +54955,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleTermSetProperty = [];
     } else if ($isReadonlyObjectArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
-    } else if (undefined(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyBigIntArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
           $literalFactory.bigint(item),

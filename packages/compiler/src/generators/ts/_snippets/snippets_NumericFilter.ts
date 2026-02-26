@@ -4,11 +4,11 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_NumericFilter = conditionalOutput(
   `${syntheticNamePrefix}NumericFilter`,
   code`\
-interface ${syntheticNamePrefix}NumericFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface ${syntheticNamePrefix}NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }`,
 );
