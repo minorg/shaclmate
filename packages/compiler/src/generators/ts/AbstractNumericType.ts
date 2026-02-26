@@ -105,3 +105,8 @@ export abstract class AbstractNumericType<
 
   protected abstract literalOf(value: ValueT): string;
 }
+
+export namespace AbstractNumericType {
+  export const JsonType = AbstractPrimitiveType.JsonType;
+  export type JsonType = AbstractPrimitiveType.JsonType;
+}

@@ -448,17 +448,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:path :inDateTimesProperty
     ], [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegersProperty
+    ], [
         sh:in (:InPropertiesIri1
             :InPropertiesIri2
         ) ;
         sh:maxCount 1 ;
         sh:path :inIrisProperty
     ], [
-        sh:in (1
-            2
+        sh:in (1.0e0
+            2.0e0
         ) ;
         sh:maxCount 1 ;
-        sh:path :inNumbersProperty
+        sh:path :inDoublesProperty
     ], [
         sh:in ("text"
             "html"
