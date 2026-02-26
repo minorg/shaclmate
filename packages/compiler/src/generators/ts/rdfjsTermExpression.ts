@@ -59,6 +59,7 @@ export function rdfjsTermExpression(
           case "int":
           case "integer":
           case "long":
+          case "negativeInteger":
           case "nonNegativeInteger":
           case "nonPositiveInteger":
           case "positiveInteger":

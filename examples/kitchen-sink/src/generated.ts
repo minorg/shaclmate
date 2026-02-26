@@ -17413,12 +17413,7 @@ export class NumericPropertiesClass {
       this.negativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(
-            value,
-            dataFactory.namedNode(
-              "http://www.w3.org/2001/XMLSchema#negativeInteger",
-            ),
-          ),
+          $literalFactory.number(value, $RdfVocabularies.xsd.negativeInteger),
         ]),
       options?.graph,
     );

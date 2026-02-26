@@ -12,7 +12,10 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractNumericType<
   ValueT extends bigint | number,
 > extends AbstractPrimitiveType<ValueT> {
+  override readonly filterFunction = code`${snippets.filterNumeric}`;
+  override readonly filterType = code`${snippets.NumericFilter}`;
   abstract override readonly kind: "BigIntType" | "FloatType" | "IntType";
+  override readonly schemaType = code`${snippets.NumericSchema}`;
 
   @Memoize()
   override get name(): string {
@@ -20,6 +23,11 @@ export abstract class AbstractNumericType<
       return `${this.primitiveIn.map((value) => this.valueToString(value)).join(" | ")}`;
     }
     return this.typeofs[0];
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): Code {
+    return code`${snippets.numericSparqlWherePatterns}`;
   }
 
   protected override get schemaObject() {
