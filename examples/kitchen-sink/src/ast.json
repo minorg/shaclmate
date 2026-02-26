@@ -4150,7 +4150,7 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/doubleTermProperty",
+          "path": "http://example.com/numberTermProperty",
           "shapeIdentifier": "_:n3-326",
           "type": {
             "kind": "OptionType",

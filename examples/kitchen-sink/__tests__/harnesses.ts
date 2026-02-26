@@ -617,7 +617,7 @@ export const harnesses = {
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
       dateTimeTermProperty: new Date(1523268000000),
-      doubleTermProperty: 1.0,
+      numberTermProperty: 1.0,
       $identifier,
       iriTermProperty: dataFactory.namedNode("http://example.com"),
       literalTermProperty: dataFactory.literal("test"),

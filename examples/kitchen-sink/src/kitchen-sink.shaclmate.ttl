@@ -1170,7 +1170,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         sh:datatype xsd:double ;
         sh:maxCount 1 ;
-        sh:path :doubleTermProperty
+        sh:path :numberTermProperty
     ], [
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;

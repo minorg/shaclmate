@@ -8102,11 +8102,11 @@ export class TermPropertiesClass {
 
   readonly dateTimeTermProperty: Maybe<Date>;
 
-  readonly doubleTermProperty: Maybe<number>;
-
   readonly iriTermProperty: Maybe<NamedNode>;
 
   readonly literalTermProperty: Maybe<Literal>;
+
+  readonly numberTermProperty: Maybe<number>;
 
   readonly stringTermProperty: Maybe<string>;
 
@@ -8118,7 +8118,6 @@ export class TermPropertiesClass {
     readonly booleanTermProperty?: Maybe<boolean> | boolean;
     readonly dateTermProperty?: Maybe<Date> | Date;
     readonly dateTimeTermProperty?: Maybe<Date> | Date;
-    readonly doubleTermProperty?: Maybe<number> | number;
     readonly iriTermProperty?: Maybe<NamedNode> | NamedNode | string;
     readonly literalTermProperty?:
       | Maybe<Literal>
@@ -8128,6 +8127,7 @@ export class TermPropertiesClass {
       | number
       | string
       | Literal;
+    readonly numberTermProperty?: Maybe<number> | number;
     readonly stringTermProperty?: Maybe<string> | string;
     readonly termProperty?:
       | Maybe<BlankNode | Literal | NamedNode>
@@ -8191,15 +8191,6 @@ export class TermPropertiesClass {
       this.dateTimeTermProperty =
         parameters?.dateTimeTermProperty satisfies never;
     }
-    if (Maybe.isMaybe(parameters?.doubleTermProperty)) {
-      this.doubleTermProperty = parameters?.doubleTermProperty;
-    } else if (typeof parameters?.doubleTermProperty === "number") {
-      this.doubleTermProperty = Maybe.of(parameters?.doubleTermProperty);
-    } else if (typeof parameters?.doubleTermProperty === "undefined") {
-      this.doubleTermProperty = Maybe.empty();
-    } else {
-      this.doubleTermProperty = parameters?.doubleTermProperty satisfies never;
-    }
     if (Maybe.isMaybe(parameters?.iriTermProperty)) {
       this.iriTermProperty = parameters?.iriTermProperty;
     } else if (typeof parameters?.iriTermProperty === "object") {
@@ -8245,6 +8236,15 @@ export class TermPropertiesClass {
     } else {
       this.literalTermProperty =
         parameters?.literalTermProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.numberTermProperty)) {
+      this.numberTermProperty = parameters?.numberTermProperty;
+    } else if (typeof parameters?.numberTermProperty === "number") {
+      this.numberTermProperty = Maybe.of(parameters?.numberTermProperty);
+    } else if (typeof parameters?.numberTermProperty === "undefined") {
+      this.numberTermProperty = Maybe.empty();
+    } else {
+      this.numberTermProperty = parameters?.numberTermProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters?.stringTermProperty)) {
       this.stringTermProperty = parameters?.stringTermProperty;
@@ -8365,18 +8365,6 @@ export class TermPropertiesClass {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.doubleTermProperty,
-          other.doubleTermProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "doubleTermProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.iriTermProperty,
           other.iriTermProperty,
@@ -8396,6 +8384,18 @@ export class TermPropertiesClass {
           left: this,
           right: other,
           propertyName: "literalTermProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.numberTermProperty,
+          other.numberTermProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "numberTermProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -8449,9 +8449,6 @@ export class TermPropertiesClass {
     this.dateTimeTermProperty.ifJust((value0) => {
       _hasher.update(value0.toISOString());
     });
-    this.doubleTermProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
     this.iriTermProperty.ifJust((value0) => {
       _hasher.update(value0.termType);
       _hasher.update(value0.value);
@@ -8461,6 +8458,9 @@ export class TermPropertiesClass {
       _hasher.update(value0.value);
       _hasher.update(value0.datatype.value);
       _hasher.update(value0.language);
+    });
+    this.numberTermProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     this.stringTermProperty.ifJust((value0) => {
       _hasher.update(value0);
@@ -8492,9 +8492,6 @@ export class TermPropertiesClass {
         dateTimeTermProperty: this.dateTimeTermProperty
           .map((item) => item.toISOString())
           .extract(),
-        doubleTermProperty: this.doubleTermProperty
-          .map((item) => item)
-          .extract(),
         iriTermProperty: this.iriTermProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
@@ -8507,6 +8504,9 @@ export class TermPropertiesClass {
                 : undefined,
             "@value": item.value,
           }))
+          .extract(),
+        numberTermProperty: this.numberTermProperty
+          .map((item) => item)
           .extract(),
         stringTermProperty: this.stringTermProperty
           .map((item) => item)
@@ -8583,15 +8583,6 @@ export class TermPropertiesClass {
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.doubleTermProperty.identifier,
-      this.doubleTermProperty
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
-      options?.graph,
-    );
-    resource.add(
       TermPropertiesClass.$schema.properties.iriTermProperty.identifier,
       this.iriTermProperty.toList(),
       options?.graph,
@@ -8599,6 +8590,15 @@ export class TermPropertiesClass {
     resource.add(
       TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
       this.literalTermProperty.toList(),
+      options?.graph,
+    );
+    resource.add(
+      TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
+      this.numberTermProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
       options?.graph,
     );
     resource.add(
@@ -8669,15 +8669,6 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.doubleTermProperty !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
-        filter.doubleTermProperty,
-        value.doubleTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
       typeof filter.iriTermProperty !== "undefined" &&
       !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
         filter.iriTermProperty,
@@ -8691,6 +8682,15 @@ export namespace TermPropertiesClass {
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.literalTermProperty,
         value.literalTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.numberTermProperty !== "undefined" &&
+      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+        filter.numberTermProperty,
+        value.numberTermProperty,
       )
     ) {
       return false;
@@ -8722,9 +8722,9 @@ export namespace TermPropertiesClass {
     readonly booleanTermProperty?: $MaybeFilter<$BooleanFilter>;
     readonly dateTermProperty?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
-    readonly doubleTermProperty?: $MaybeFilter<$NumberFilter>;
     readonly iriTermProperty?: $MaybeFilter<$NamedNodeFilter>;
     readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly numberTermProperty?: $MaybeFilter<$NumberFilter>;
     readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
     readonly termProperty?: $MaybeFilter<$TermFilter>;
   };
@@ -8748,9 +8748,9 @@ export namespace TermPropertiesClass {
       booleanTermProperty: Maybe<boolean>;
       dateTermProperty: Maybe<Date>;
       dateTimeTermProperty: Maybe<Date>;
-      doubleTermProperty: Maybe<number>;
       iriTermProperty: Maybe<NamedNode>;
       literalTermProperty: Maybe<Literal>;
+      numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
       termProperty: Maybe<BlankNode | Literal | NamedNode>;
     }
@@ -8775,9 +8775,6 @@ export namespace TermPropertiesClass {
     const dateTimeTermProperty = Maybe.fromNullable(
       $jsonObject["dateTimeTermProperty"],
     ).map((item) => new Date(item));
-    const doubleTermProperty = Maybe.fromNullable(
-      $jsonObject["doubleTermProperty"],
-    );
     const iriTermProperty = Maybe.fromNullable(
       $jsonObject["iriTermProperty"],
     ).map((item) => dataFactory.namedNode(item["@id"]));
@@ -8792,6 +8789,9 @@ export namespace TermPropertiesClass {
             ? dataFactory.namedNode(item["@type"])
             : undefined,
       ),
+    );
+    const numberTermProperty = Maybe.fromNullable(
+      $jsonObject["numberTermProperty"],
     );
     const stringTermProperty = Maybe.fromNullable(
       $jsonObject["stringTermProperty"],
@@ -8817,9 +8817,9 @@ export namespace TermPropertiesClass {
       booleanTermProperty,
       dateTermProperty,
       dateTimeTermProperty,
-      doubleTermProperty,
       iriTermProperty,
       literalTermProperty,
+      numberTermProperty,
       stringTermProperty,
       termProperty,
     });
@@ -8873,13 +8873,13 @@ export namespace TermPropertiesClass {
           scope: `${scopePrefix}/properties/dateTimeTermProperty`,
           type: "Control",
         },
-        {
-          scope: `${scopePrefix}/properties/doubleTermProperty`,
-          type: "Control",
-        },
         { scope: `${scopePrefix}/properties/iriTermProperty`, type: "Control" },
         {
           scope: `${scopePrefix}/properties/literalTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/numberTermProperty`,
           type: "Control",
         },
         {
@@ -8901,7 +8901,6 @@ export namespace TermPropertiesClass {
       booleanTermProperty: z.boolean().optional(),
       dateTermProperty: z.iso.date().optional(),
       dateTimeTermProperty: z.iso.datetime().optional(),
-      doubleTermProperty: z.number().optional(),
       iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
       literalTermProperty: z
         .object({
@@ -8910,6 +8909,7 @@ export namespace TermPropertiesClass {
           "@value": z.string(),
         })
         .optional(),
+      numberTermProperty: z.number().optional(),
       stringTermProperty: z.string().optional(),
       termProperty: z
         .discriminatedUnion("termType", [
@@ -8939,13 +8939,13 @@ export namespace TermPropertiesClass {
     readonly booleanTermProperty?: boolean;
     readonly dateTermProperty?: string;
     readonly dateTimeTermProperty?: string;
-    readonly doubleTermProperty?: number;
     readonly iriTermProperty?: { readonly "@id": string };
     readonly literalTermProperty?: {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
     };
+    readonly numberTermProperty?: number;
     readonly stringTermProperty?: string;
     readonly termProperty?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
@@ -9000,9 +9000,9 @@ export namespace TermPropertiesClass {
       booleanTermProperty: Maybe<boolean>;
       dateTermProperty: Maybe<Date>;
       dateTimeTermProperty: Maybe<Date>;
-      doubleTermProperty: Maybe<number>;
       iriTermProperty: Maybe<NamedNode>;
       literalTermProperty: Maybe<Literal>;
+      numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
       termProperty: Maybe<BlankNode | Literal | NamedNode>;
     }
@@ -9125,97 +9125,94 @@ export namespace TermPropertiesClass {
                       .chain((dateTimeTermProperty) =>
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
-                            $schema.properties.doubleTermProperty.identifier,
+                            $schema.properties.iriTermProperty.identifier,
                             { unique: true },
                           ),
                         )
                           .chain((values) =>
-                            values.chainMap((value) => value.toNumber()),
+                            values.chainMap((value) => value.toIri()),
                           )
                           .map((values) =>
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<Maybe<number>>({
+                              : Resource.Values.fromValue<Maybe<NamedNode>>({
                                   focusResource: $parameters.resource,
                                   predicate:
                                     TermPropertiesClass.$schema.properties
-                                      .doubleTermProperty.identifier,
+                                      .iriTermProperty.identifier,
                                   value: Maybe.empty(),
                                 }),
                           )
                           .chain((values) => values.head())
-                          .chain((doubleTermProperty) =>
+                          .chain((iriTermProperty) =>
                             Either.of<
                               Error,
                               Resource.Values<Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $schema.properties.iriTermProperty.identifier,
+                                $schema.properties.literalTermProperty
+                                  .identifier,
                                 { unique: true },
                               ),
                             )
                               .chain((values) =>
-                                values.chainMap((value) => value.toIri()),
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    TermPropertiesClass.$schema.properties
+                                      .literalTermProperty.identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toLiteral()),
                               )
                               .map((values) =>
                                 values.length > 0
                                   ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<Maybe<NamedNode>>(
-                                      {
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          TermPropertiesClass.$schema.properties
-                                            .iriTermProperty.identifier,
-                                        value: Maybe.empty(),
-                                      },
-                                    ),
+                                  : Resource.Values.fromValue<Maybe<Literal>>({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        TermPropertiesClass.$schema.properties
+                                          .literalTermProperty.identifier,
+                                      value: Maybe.empty(),
+                                    }),
                               )
                               .chain((values) => values.head())
-                              .chain((iriTermProperty) =>
+                              .chain((literalTermProperty) =>
                                 Either.of<
                                   Error,
                                   Resource.Values<Resource.TermValue>
                                 >(
                                   $parameters.resource.values(
-                                    $schema.properties.literalTermProperty
+                                    $schema.properties.numberTermProperty
                                       .identifier,
-                                    {
-                                      unique: true,
-                                    },
+                                    { unique: true },
                                   ),
                                 )
                                   .chain((values) =>
-                                    $fromRdfPreferredLanguages({
-                                      focusResource: $parameters.resource,
-                                      predicate:
-                                        TermPropertiesClass.$schema.properties
-                                          .literalTermProperty.identifier,
-                                      preferredLanguages:
-                                        $parameters.preferredLanguages,
-                                      values,
-                                    }),
-                                  )
-                                  .chain((values) =>
                                     values.chainMap((value) =>
-                                      value.toLiteral(),
+                                      value.toNumber(),
                                     ),
                                   )
                                   .map((values) =>
                                     values.length > 0
                                       ? values.map((value) => Maybe.of(value))
                                       : Resource.Values.fromValue<
-                                          Maybe<Literal>
+                                          Maybe<number>
                                         >({
                                           focusResource: $parameters.resource,
                                           predicate:
                                             TermPropertiesClass.$schema
-                                              .properties.literalTermProperty
+                                              .properties.numberTermProperty
                                               .identifier,
                                           value: Maybe.empty(),
                                         }),
                                   )
                                   .chain((values) => values.head())
-                                  .chain((literalTermProperty) =>
+                                  .chain((numberTermProperty) =>
                                     Either.of<
                                       Error,
                                       Resource.Values<Resource.TermValue>
@@ -9310,9 +9307,9 @@ export namespace TermPropertiesClass {
                                             booleanTermProperty,
                                             dateTermProperty,
                                             dateTimeTermProperty,
-                                            doubleTermProperty,
                                             iriTermProperty,
                                             literalTermProperty,
+                                            numberTermProperty,
                                             stringTermProperty,
                                             termProperty,
                                           })),
@@ -9381,16 +9378,6 @@ export namespace TermPropertiesClass {
           "http://example.com/dateTimeTermProperty",
         ),
       },
-      doubleTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/doubleTermProperty",
-        ),
-      },
       iriTermProperty: {
         kind: "Shacl" as const,
         type: () => ({
@@ -9407,6 +9394,16 @@ export namespace TermPropertiesClass {
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/literalTermProperty",
+        ),
+      },
+      numberTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/numberTermProperty",
         ),
       },
       stringTermProperty: {
@@ -9602,21 +9599,6 @@ export namespace TermPropertiesClass {
             (subject.termType === "Variable"
               ? subject.value
               : "termPropertiesClass")
-          }DoubleTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.doubleTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
           }IriTermProperty`,
         ),
         predicate:
@@ -9636,6 +9618,21 @@ export namespace TermPropertiesClass {
         ),
         predicate:
           TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "termPropertiesClass")
+          }NumberTermProperty`,
+        ),
+        predicate:
+          TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
         subject: subject,
       },
     ]);
@@ -9930,51 +9927,6 @@ export namespace TermPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumberFilter, $NumberSchema>(
-        $numberSparqlWherePatterns,
-      )({
-        filter: parameters?.filter?.doubleTermProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
-                      : "termPropertiesClass")
-                  }DoubleTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.doubleTermProperty
-                    .identifier,
-                subject: subject,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.doubleTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }DoubleTermProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
-            : "termPropertiesClass")
-        }DoubleTermProperty`,
-      }),
-    );
-    patterns = patterns.concat(
       $maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
         $namedNodeSparqlWherePatterns,
       )({
@@ -10061,6 +10013,51 @@ export namespace TermPropertiesClass {
             ? subject.value
             : "termPropertiesClass")
         }LiteralTermProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumberFilter, $NumberSchema>(
+        $numberSparqlWherePatterns,
+      )({
+        filter: parameters?.filter?.numberTermProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "termPropertiesClass")
+                  }NumberTermProperty`,
+                ),
+                predicate:
+                  TermPropertiesClass.$schema.properties.numberTermProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          TermPropertiesClass.$schema.properties.numberTermProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "termPropertiesClass")
+          }NumberTermProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass")
+        }NumberTermProperty`,
       }),
     );
     patterns = patterns.concat(
