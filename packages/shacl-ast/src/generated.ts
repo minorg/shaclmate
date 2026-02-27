@@ -115,7 +115,10 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
   return true;
 }
 
-function $filterNumber(filter: $NumberFilter, value: number) {
+function $filterNumeric<T extends bigint | number>(
+  filter: $NumericFilter<T>,
+  value: T,
+) {
   if (
     typeof filter.in !== "undefined" &&
     !filter.in.some((inValue) => inValue === value)
@@ -321,12 +324,12 @@ interface $NamedNodeFilter {
   readonly in?: readonly NamedNode[];
 }
 
-interface $NumberFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface $NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }
 
 type $PropertiesFromRdfParameters = {
@@ -366,6 +369,9 @@ namespace $RdfVocabularies {
     export const boolean = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#boolean",
     );
+    export const byte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#byte",
+    );
     export const date = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#date",
     );
@@ -378,8 +384,47 @@ namespace $RdfVocabularies {
     export const double = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#double",
     );
+    export const float = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#float",
+    );
+    export const int = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#int",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
+    );
+    export const long = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#long",
+    );
+    export const negativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    );
+    export const nonNegativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+    );
+    export const nonPositiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+    );
+    export const positiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#positiveInteger",
+    );
+    export const short = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#short",
+    );
+    export const string = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#string",
+    );
+    export const unsignedByte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedByte",
+    );
+    export const unsignedInt = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedInt",
+    );
+    export const unsignedLong = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedLong",
+    );
+    export const unsignedShort = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedShort",
     );
   }
 }
@@ -554,7 +599,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.maxCount !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.maxCount,
         value.maxCount,
       )
@@ -581,7 +626,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.maxLength !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.maxLength,
         value.maxLength,
       )
@@ -590,7 +635,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.minCount !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.minCount,
         value.minCount,
       )
@@ -617,7 +662,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.minLength !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.minLength,
         value.minLength,
       )
@@ -707,14 +752,14 @@ export namespace BaseShaclCoreShapeStatic {
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
     readonly labels?: $CollectionFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
-    readonly maxCount?: $MaybeFilter<$NumberFilter>;
+    readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly maxInclusive?: $MaybeFilter<$LiteralFilter>;
-    readonly maxLength?: $MaybeFilter<$NumberFilter>;
-    readonly minCount?: $MaybeFilter<$NumberFilter>;
+    readonly maxLength?: $MaybeFilter<$NumericFilter<number>>;
+    readonly minCount?: $MaybeFilter<$NumericFilter<number>>;
     readonly minExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minInclusive?: $MaybeFilter<$LiteralFilter>;
-    readonly minLength?: $MaybeFilter<$NumberFilter>;
+    readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
     readonly nodeKind?: $MaybeFilter<$NamedNodeFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
@@ -2538,7 +2583,9 @@ export namespace BaseShaclCoreShapeStatic {
       BaseShaclCoreShapeStatic.$schema.properties.deactivated.identifier,
       _baseShaclCoreShape.deactivated
         .toList()
-        .flatMap((value) => [$literalFactory.boolean(value)]),
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
       options?.graph,
     );
     resource.add(
@@ -2676,7 +2723,7 @@ export namespace BaseShaclCoreShapeStatic {
       _baseShaclCoreShape.maxCount
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
         ]),
       options?.graph,
     );
@@ -2695,7 +2742,7 @@ export namespace BaseShaclCoreShapeStatic {
       _baseShaclCoreShape.maxLength
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
         ]),
       options?.graph,
     );
@@ -2704,7 +2751,7 @@ export namespace BaseShaclCoreShapeStatic {
       _baseShaclCoreShape.minCount
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
         ]),
       options?.graph,
     );
@@ -2723,7 +2770,7 @@ export namespace BaseShaclCoreShapeStatic {
       _baseShaclCoreShape.minLength
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
         ]),
       options?.graph,
     );
@@ -3198,7 +3245,7 @@ export namespace ShaclCorePropertyShape {
     }
     if (
       typeof filter.order !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.order,
         value.order,
       )
@@ -3229,7 +3276,7 @@ export namespace ShaclCorePropertyShape {
     readonly descriptions?: $CollectionFilter<$StringFilter>;
     readonly groups?: $CollectionFilter<$IdentifierFilter>;
     readonly names?: $CollectionFilter<$StringFilter>;
-    readonly order?: $MaybeFilter<$NumberFilter>;
+    readonly order?: $MaybeFilter<$NumericFilter<number>>;
     readonly path?: PropertyPath.$Filter;
     readonly uniqueLang?: $MaybeFilter<$BooleanFilter>;
   } & BaseShaclCoreShapeStatic.$Filter;
@@ -3637,7 +3684,9 @@ export namespace ShaclCorePropertyShape {
       ShaclCorePropertyShape.$schema.properties.uniqueLang.identifier,
       _shaclCorePropertyShape.uniqueLang
         .toList()
-        .flatMap((value) => [$literalFactory.boolean(value)]),
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
       options?.graph,
     );
     return resource;
@@ -4253,7 +4302,9 @@ export namespace ShaclCoreNodeShape {
       ShaclCoreNodeShape.$schema.properties.closed.identifier,
       _shaclCoreNodeShape.closed
         .toList()
-        .flatMap((value) => [$literalFactory.boolean(value)]),
+        .flatMap((value) => [
+          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
+        ]),
       options?.graph,
     );
     resource.add(

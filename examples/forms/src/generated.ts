@@ -870,7 +870,7 @@ export interface FormNodeShape {
    * Required integer
    */;
 
-  readonly requiredIntegerProperty: bigint /**
+  readonly requiredIntegerProperty: number /**
    * Required string
    */;
 
@@ -884,7 +884,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty: NestedNodeShape;
     readonly nonEmptyStringSetProperty: NonEmptyList<string>;
     readonly optionalStringProperty?: Maybe<string> | string;
-    readonly requiredIntegerProperty: bigint;
+    readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   }): FormNodeShape {
     let $identifier: FormNodeShape.$Identifier;
@@ -1108,7 +1108,7 @@ export namespace FormNodeShape {
     }
     if (
       typeof filter.requiredIntegerProperty !== "undefined" &&
-      !$filterNumeric<bigint>(
+      !$filterNumeric<number>(
         filter.requiredIntegerProperty,
         value.requiredIntegerProperty,
       )
@@ -1133,7 +1133,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty?: NestedNodeShape.$Filter;
     readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredIntegerProperty?: $NumericFilter<bigint>;
+    readonly requiredIntegerProperty?: $NumericFilter<number>;
     readonly requiredStringProperty?: $StringFilter;
   };
 
@@ -1153,7 +1153,7 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape;
       nonEmptyStringSetProperty: NonEmptyList<string>;
       optionalStringProperty: Maybe<string>;
-      requiredIntegerProperty: bigint;
+      requiredIntegerProperty: number;
       requiredStringProperty: string;
     }
   > {
@@ -1176,9 +1176,7 @@ export namespace FormNodeShape {
     const optionalStringProperty = Maybe.fromNullable(
       $jsonObject["optionalStringProperty"],
     );
-    const requiredIntegerProperty = BigInt(
-      $jsonObject["requiredIntegerProperty"],
-    );
+    const requiredIntegerProperty = $jsonObject["requiredIntegerProperty"];
     const requiredStringProperty = $jsonObject["requiredStringProperty"];
     return Either.of({
       $identifier,
@@ -1274,8 +1272,7 @@ export namespace FormNodeShape {
         optionalStringProperty: _formNodeShape.optionalStringProperty
           .map((item) => item)
           .extract(),
-        requiredIntegerProperty:
-          _formNodeShape.requiredIntegerProperty.toString(),
+        requiredIntegerProperty: _formNodeShape.requiredIntegerProperty,
         requiredStringProperty: _formNodeShape.requiredStringProperty,
       } satisfies FormNodeShape.$Json),
     );
@@ -1292,7 +1289,7 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape.$jsonZodSchema(),
       nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
       optionalStringProperty: z.string().optional(),
-      requiredIntegerProperty: z.string(),
+      requiredIntegerProperty: z.number(),
       requiredStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -1304,7 +1301,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty: NestedNodeShape.$Json;
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
-    readonly requiredIntegerProperty: string;
+    readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   };
 
@@ -1350,7 +1347,7 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape;
       nonEmptyStringSetProperty: NonEmptyList<string>;
       optionalStringProperty: Maybe<string>;
-      requiredIntegerProperty: bigint;
+      requiredIntegerProperty: number;
       requiredStringProperty: string;
     }
   > {
@@ -1487,7 +1484,7 @@ export namespace FormNodeShape {
                             ),
                           )
                             .chain((values) =>
-                              values.chainMap((value) => value.toBigInt()),
+                              values.chainMap((value) => value.toNumber()),
                             )
                             .chain((values) => values.head())
                             .chain((requiredIntegerProperty) =>
@@ -1583,9 +1580,9 @@ export namespace FormNodeShape {
     resource.add(
       FormNodeShape.$schema.properties.requiredIntegerProperty.identifier,
       [
-        $literalFactory.bigint(
+        $literalFactory.number(
           _formNodeShape.requiredIntegerProperty,
-          $RdfVocabularies.xsd.integer,
+          $RdfVocabularies.xsd.int,
         ),
       ],
       options?.graph,
@@ -1651,7 +1648,7 @@ export namespace FormNodeShape {
       },
       requiredIntegerProperty: {
         kind: "Shacl" as const,
-        type: () => ({ kind: "BigInt" as const }),
+        type: () => ({ kind: "Int" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredIntegerProperty",
         ),

@@ -85,7 +85,7 @@ shaclmate:BaseShaclCoreShape-languageIn
 
 shaclmate:BaseShaclCoreShape-maxCount
     a sh:PropertyShape ;
-    sh:datatype xsd:integer ;
+    sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:maxCount .
 
@@ -103,13 +103,13 @@ shaclmate:BaseShaclCoreShape-maxInclusive
 
 shaclmate:BaseShaclCoreShape-maxLength
     a sh:PropertyShape ;
-    sh:datatype xsd:integer ;
+    sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:maxLength .
 
 shaclmate:BaseShaclCoreShape-minCount
     a sh:PropertyShape ;
-    sh:datatype xsd:integer ;
+    sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:minCount .
 
@@ -127,7 +127,7 @@ shaclmate:BaseShaclCoreShape-minInclusive
 
 shaclmate:BaseShaclCoreShape-minLength
     a sh:PropertyShape ;
-    sh:datatype xsd:integer ;
+    sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:minLength .
 
