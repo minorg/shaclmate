@@ -110,7 +110,10 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
   return true;
 }
 
-function $filterNumber(filter: $NumberFilter, value: number) {
+function $filterNumeric<T extends bigint | number>(
+  filter: $NumericFilter<T>,
+  value: T,
+) {
   if (
     typeof filter.in !== "undefined" &&
     !filter.in.some((inValue) => inValue === value)
@@ -365,12 +368,12 @@ interface $NamedNodeFilter {
   readonly in?: readonly NamedNode[];
 }
 
-interface $NumberFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface $NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }
 
 type $PropertiesFromRdfParameters = {
@@ -410,6 +413,9 @@ namespace $RdfVocabularies {
     export const boolean = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#boolean",
     );
+    export const byte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#byte",
+    );
     export const date = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#date",
     );
@@ -422,8 +428,47 @@ namespace $RdfVocabularies {
     export const double = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#double",
     );
+    export const float = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#float",
+    );
+    export const int = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#int",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
+    );
+    export const long = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#long",
+    );
+    export const negativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    );
+    export const nonNegativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+    );
+    export const nonPositiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+    );
+    export const positiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#positiveInteger",
+    );
+    export const short = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#short",
+    );
+    export const string = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#string",
+    );
+    export const unsignedByte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedByte",
+    );
+    export const unsignedInt = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedInt",
+    );
+    export const unsignedLong = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedLong",
+    );
+    export const unsignedShort = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedShort",
     );
   }
 }
@@ -568,7 +613,7 @@ export class UnionMember2 {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -578,7 +623,7 @@ export class UnionMember2 {
       this.optionalStringProperty = Maybe.of(
         parameters?.optionalStringProperty,
       );
-    } else if (typeof parameters?.optionalStringProperty === "undefined") {
+    } else if (parameters?.optionalStringProperty === undefined) {
       this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =
@@ -587,7 +632,7 @@ export class UnionMember2 {
   }
 
   get $identifier(): UnionMember2.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -841,7 +886,7 @@ export class UnionMember1 {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -851,7 +896,7 @@ export class UnionMember1 {
       this.optionalNumberProperty = Maybe.of(
         parameters?.optionalNumberProperty,
       );
-    } else if (typeof parameters?.optionalNumberProperty === "undefined") {
+    } else if (parameters?.optionalNumberProperty === undefined) {
       this.optionalNumberProperty = Maybe.empty();
     } else {
       this.optionalNumberProperty =
@@ -860,7 +905,7 @@ export class UnionMember1 {
   }
 
   get $identifier(): UnionMember1.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -908,7 +953,7 @@ export namespace UnionMember1 {
     }
     if (
       typeof filter.optionalNumberProperty !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.optionalNumberProperty,
         value.optionalNumberProperty,
       )
@@ -920,7 +965,7 @@ export namespace UnionMember1 {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumberFilter>;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -1118,7 +1163,7 @@ export class Nested {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -1126,7 +1171,7 @@ export class Nested {
       this.optionalNumberProperty = parameters.optionalNumberProperty;
     } else if (typeof parameters.optionalNumberProperty === "number") {
       this.optionalNumberProperty = Maybe.of(parameters.optionalNumberProperty);
-    } else if (typeof parameters.optionalNumberProperty === "undefined") {
+    } else if (parameters.optionalNumberProperty === undefined) {
       this.optionalNumberProperty = Maybe.empty();
     } else {
       this.optionalNumberProperty =
@@ -1136,7 +1181,7 @@ export class Nested {
       this.optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
       this.optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
+    } else if (parameters.optionalStringProperty === undefined) {
       this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =
@@ -1146,7 +1191,7 @@ export class Nested {
   }
 
   get $identifier(): Nested.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -1203,7 +1248,7 @@ export namespace Nested {
     }
     if (
       typeof filter.optionalNumberProperty !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.optionalNumberProperty,
         value.optionalNumberProperty,
       )
@@ -1233,7 +1278,7 @@ export namespace Nested {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumberFilter>;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
   };
@@ -1514,7 +1559,7 @@ export class Parent {
       this.parentStringProperty = parameters.parentStringProperty;
     } else if (typeof parameters.parentStringProperty === "string") {
       this.parentStringProperty = Maybe.of(parameters.parentStringProperty);
-    } else if (typeof parameters.parentStringProperty === "undefined") {
+    } else if (parameters.parentStringProperty === undefined) {
       this.parentStringProperty = Maybe.empty();
     } else {
       this.parentStringProperty =
@@ -1831,7 +1876,7 @@ export class Child extends Parent {
       this.childStringProperty = parameters.childStringProperty;
     } else if (typeof parameters.childStringProperty === "string") {
       this.childStringProperty = Maybe.of(parameters.childStringProperty);
-    } else if (typeof parameters.childStringProperty === "undefined") {
+    } else if (parameters.childStringProperty === undefined) {
       this.childStringProperty = Maybe.empty();
     } else {
       this.childStringProperty = parameters.childStringProperty satisfies never;
@@ -1853,7 +1898,7 @@ export class Child extends Parent {
         resolver: async () =>
           Either.of(parameters.lazyObjectSetProperty as readonly Nested[]),
       });
-    } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
+    } else if (parameters.lazyObjectSetProperty === undefined) {
       this.lazyObjectSetProperty = new $LazyObjectSet<
         Nested.$Identifier,
         $DefaultPartial,
@@ -1901,7 +1946,7 @@ export class Child extends Parent {
         resolver: async () =>
           Either.of(parameters.optionalLazyObjectProperty as Nested),
       });
-    } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
+    } else if (parameters.optionalLazyObjectProperty === undefined) {
       this.optionalLazyObjectProperty = new $LazyObjectOption<
         Nested.$Identifier,
         $DefaultPartial,
@@ -1923,7 +1968,7 @@ export class Child extends Parent {
       parameters.optionalObjectProperty instanceof Nested
     ) {
       this.optionalObjectProperty = Maybe.of(parameters.optionalObjectProperty);
-    } else if (typeof parameters.optionalObjectProperty === "undefined") {
+    } else if (parameters.optionalObjectProperty === undefined) {
       this.optionalObjectProperty = Maybe.empty();
     } else {
       this.optionalObjectProperty =
@@ -1933,7 +1978,7 @@ export class Child extends Parent {
       this.optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
       this.optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
+    } else if (parameters.optionalStringProperty === undefined) {
       this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =

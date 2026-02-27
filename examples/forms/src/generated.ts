@@ -209,7 +209,10 @@ function $filterMaybe<ItemT, ItemFilterT>(
   };
 }
 
-function $filterNumber(filter: $NumberFilter, value: number) {
+function $filterNumeric<T extends bigint | number>(
+  filter: $NumericFilter<T>,
+  value: T,
+) {
   if (
     typeof filter.in !== "undefined" &&
     !filter.in.some((inValue) => inValue === value)
@@ -395,12 +398,12 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
-interface $NumberFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface $NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }
 
 type $PropertiesFromRdfParameters = {
@@ -440,6 +443,9 @@ namespace $RdfVocabularies {
     export const boolean = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#boolean",
     );
+    export const byte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#byte",
+    );
     export const date = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#date",
     );
@@ -452,8 +458,47 @@ namespace $RdfVocabularies {
     export const double = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#double",
     );
+    export const float = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#float",
+    );
+    export const int = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#int",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
+    );
+    export const long = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#long",
+    );
+    export const negativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    );
+    export const nonNegativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+    );
+    export const nonPositiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+    );
+    export const positiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#positiveInteger",
+    );
+    export const short = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#short",
+    );
+    export const string = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#string",
+    );
+    export const unsignedByte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedByte",
+    );
+    export const unsignedInt = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedInt",
+    );
+    export const unsignedLong = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedLong",
+    );
+    export const unsignedShort = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedShort",
     );
   }
 }
@@ -492,7 +537,7 @@ export namespace NestedNodeShape {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -825,7 +870,7 @@ export interface FormNodeShape {
    * Required integer
    */;
 
-  readonly requiredIntegerProperty: number /**
+  readonly requiredIntegerProperty: bigint /**
    * Required string
    */;
 
@@ -839,7 +884,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty: NestedNodeShape;
     readonly nonEmptyStringSetProperty: NonEmptyList<string>;
     readonly optionalStringProperty?: Maybe<string> | string;
-    readonly requiredIntegerProperty: number;
+    readonly requiredIntegerProperty: bigint;
     readonly requiredStringProperty: string;
   }): FormNodeShape {
     let $identifier: FormNodeShape.$Identifier;
@@ -847,14 +892,14 @@ export namespace FormNodeShape {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
     }
     const $type = "FormNodeShape" as const;
     let emptyStringSetProperty: readonly string[];
-    if (typeof parameters.emptyStringSetProperty === "undefined") {
+    if (parameters.emptyStringSetProperty === undefined) {
       emptyStringSetProperty = [];
     } else if (typeof parameters.emptyStringSetProperty === "object") {
       emptyStringSetProperty = parameters.emptyStringSetProperty;
@@ -869,7 +914,7 @@ export namespace FormNodeShape {
       optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
       optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
+    } else if (parameters.optionalStringProperty === undefined) {
       optionalStringProperty = Maybe.empty();
     } else {
       optionalStringProperty =
@@ -1063,7 +1108,7 @@ export namespace FormNodeShape {
     }
     if (
       typeof filter.requiredIntegerProperty !== "undefined" &&
-      !$filterNumber(
+      !$filterNumeric<bigint>(
         filter.requiredIntegerProperty,
         value.requiredIntegerProperty,
       )
@@ -1088,7 +1133,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty?: NestedNodeShape.$Filter;
     readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredIntegerProperty?: $NumberFilter;
+    readonly requiredIntegerProperty?: $NumericFilter<bigint>;
     readonly requiredStringProperty?: $StringFilter;
   };
 
@@ -1108,7 +1153,7 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape;
       nonEmptyStringSetProperty: NonEmptyList<string>;
       optionalStringProperty: Maybe<string>;
-      requiredIntegerProperty: number;
+      requiredIntegerProperty: bigint;
       requiredStringProperty: string;
     }
   > {
@@ -1131,7 +1176,9 @@ export namespace FormNodeShape {
     const optionalStringProperty = Maybe.fromNullable(
       $jsonObject["optionalStringProperty"],
     );
-    const requiredIntegerProperty = $jsonObject["requiredIntegerProperty"];
+    const requiredIntegerProperty = BigInt(
+      $jsonObject["requiredIntegerProperty"],
+    );
     const requiredStringProperty = $jsonObject["requiredStringProperty"];
     return Either.of({
       $identifier,
@@ -1227,7 +1274,8 @@ export namespace FormNodeShape {
         optionalStringProperty: _formNodeShape.optionalStringProperty
           .map((item) => item)
           .extract(),
-        requiredIntegerProperty: _formNodeShape.requiredIntegerProperty,
+        requiredIntegerProperty:
+          _formNodeShape.requiredIntegerProperty.toString(),
         requiredStringProperty: _formNodeShape.requiredStringProperty,
       } satisfies FormNodeShape.$Json),
     );
@@ -1244,7 +1292,7 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape.$jsonZodSchema(),
       nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
       optionalStringProperty: z.string().optional(),
-      requiredIntegerProperty: z.number(),
+      requiredIntegerProperty: z.string(),
       requiredStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -1256,7 +1304,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty: NestedNodeShape.$Json;
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
-    readonly requiredIntegerProperty: number;
+    readonly requiredIntegerProperty: string;
     readonly requiredStringProperty: string;
   };
 
@@ -1302,7 +1350,7 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape;
       nonEmptyStringSetProperty: NonEmptyList<string>;
       optionalStringProperty: Maybe<string>;
-      requiredIntegerProperty: number;
+      requiredIntegerProperty: bigint;
       requiredStringProperty: string;
     }
   > {
@@ -1439,7 +1487,7 @@ export namespace FormNodeShape {
                             ),
                           )
                             .chain((values) =>
-                              values.chainMap((value) => value.toNumber()),
+                              values.chainMap((value) => value.toBigInt()),
                             )
                             .chain((values) => values.head())
                             .chain((requiredIntegerProperty) =>
@@ -1535,7 +1583,7 @@ export namespace FormNodeShape {
     resource.add(
       FormNodeShape.$schema.properties.requiredIntegerProperty.identifier,
       [
-        $literalFactory.number(
+        $literalFactory.bigint(
           _formNodeShape.requiredIntegerProperty,
           $RdfVocabularies.xsd.integer,
         ),
@@ -1603,7 +1651,7 @@ export namespace FormNodeShape {
       },
       requiredIntegerProperty: {
         kind: "Shacl" as const,
-        type: () => ({ kind: "Int" as const }),
+        type: () => ({ kind: "BigInt" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/requiredIntegerProperty",
         ),
