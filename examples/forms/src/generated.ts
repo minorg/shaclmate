@@ -1,3 +1,5 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
   DatasetCore,
@@ -6,7 +8,6 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
 import { Either, Left, Maybe, NonEmptyList } from "purify-ts";
 import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 import { z } from "zod";
@@ -84,8 +85,6 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
-
-const $datasetFactory = new DatasetFactory();
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
 
@@ -812,7 +811,7 @@ export namespace NestedNodeShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_nestedNodeShape.$identifier);
     resource.add(
       NestedNodeShape.$schema.properties.requiredStringProperty.identifier,
@@ -1544,7 +1543,7 @@ export namespace FormNodeShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_formNodeShape.$identifier);
     resource.add(
       FormNodeShape.$schema.properties.emptyStringSetProperty.identifier,
