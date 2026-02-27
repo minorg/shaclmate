@@ -373,17 +373,19 @@ export class TypeFactory {
     // Otherwise default to rdfjs.Literal
     const datatypes = new TermSet<NamedNode>();
     astType.datatype.ifJust((datatype) => datatypes.add(datatype));
-    if (
-      parameters?.defaultValue &&
-      parameters.defaultValue.termType === "Literal"
-    ) {
-      datatypes.add(parameters.defaultValue.datatype);
-    }
-    for (const hasValue of astType.hasValues) {
-      datatypes.add(hasValue.datatype);
-    }
-    for (const value of astType.in_) {
-      datatypes.add(value.datatype);
+    if (datatypes.size === 0) {
+      if (
+        parameters?.defaultValue &&
+        parameters.defaultValue.termType === "Literal"
+      ) {
+        datatypes.add(parameters.defaultValue.datatype);
+      }
+      for (const hasValue of astType.hasValues) {
+        datatypes.add(hasValue.datatype);
+      }
+      for (const value of astType.in_) {
+        datatypes.add(value.datatype);
+      }
     }
 
     if (datatypes.size === 1) {
