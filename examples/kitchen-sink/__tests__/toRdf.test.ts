@@ -2,17 +2,18 @@ import { fail } from "node:assert";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import N3, { DataFactory as dataFactory, Parser, Store } from "n3";
+import { Parser, Writer } from "n3";
 import SHACLValidator from "rdf-validate-shacl";
 import { describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 
 describe("toRdf", async () => {
-  const shapesGraph = new Store();
-  shapesGraph.addQuads(
+  const shapesGraph = datasetFactory.dataset(
     new Parser({ format: "Turtle" }).parse(
       (
         await fs.readFile(
@@ -55,7 +56,7 @@ describe("toRdf", async () => {
 
   it("should produce serializable RDF", ({ expect }) => {
     const resource = harnesses.nonClass.toRdf();
-    const ttl = new N3.Writer({ format: "text/turtle" }).quadsToString([
+    const ttl = new Writer({ format: "text/turtle" }).quadsToString([
       ...resource.dataset,
     ]);
     expect(ttl).not.toHaveLength(0);
