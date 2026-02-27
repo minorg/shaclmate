@@ -1,11 +1,11 @@
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import type { TsFeature } from "enums/TsFeature.js";
 import { Either, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import type { TsFeature } from "../enums/TsFeature.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";

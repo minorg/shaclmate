@@ -115,14 +115,16 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/term-map"],
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
-        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
         ...externalDependencyVersions["typescript-memoize"],
@@ -130,6 +132,8 @@ const packages: readonly Package[] = [
     },
     devDependencies: {
       external: {
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["ts-invariant"],
       },
     },
@@ -141,18 +145,20 @@ const packages: readonly Package[] = [
     dependencies: {
       external: {
         ...externalDependencyVersions["@rdfjs/prefix-map"],
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/term-map"],
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         "@sindresorhus/base62": "~0.1.0",
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
         "@types/toposort": "2.0.7",
         "change-case": "~5.4.4",
-        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["pino"],
         plur: "~5.1.0",
         ...externalDependencyVersions["purify-ts"],
@@ -166,6 +172,10 @@ const packages: readonly Package[] = [
       internal: ["shacl-ast"],
     },
     devDependencies: {
+      external: {
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["n3"],
+      },
       internal: ["kitchen-sink-example"],
     },
     directory: "packages",
@@ -204,7 +214,11 @@ const packages: readonly Package[] = [
         "@mui/x-date-pickers": "~7.17.0",
         react: "~18",
         "react-dom": "~18",
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/n3"],
         ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
