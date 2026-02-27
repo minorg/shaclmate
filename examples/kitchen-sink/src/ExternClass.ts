@@ -1,5 +1,6 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import type { BlankNode, NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
-import * as N3 from "n3";
 import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 
@@ -48,16 +49,16 @@ export class ExternClass extends AbstractBaseClassForExternClass {
   }) {
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.ResourceSet(new N3.Store(), {
-        dataFactory: N3.DataFactory,
+      new rdfjsResource.ResourceSet(datasetFactory.dataset(), {
+        dataFactory,
       });
     const resource = super.$toRdf({
       graph: options?.graph,
       resourceSet,
     });
     resource.add(
-      N3.DataFactory.namedNode("http://example.com/extraproperty"),
-      N3.DataFactory.literal("example"),
+      dataFactory.namedNode("http://example.com/extraproperty"),
+      dataFactory.literal("example"),
     );
     return resource;
   }
@@ -107,7 +108,7 @@ export namespace ExternClass {
   }
 
   export const $filter = AbstractBaseClassForExternClassStatic.$filter;
-  export const $fromRdfType = N3.DataFactory.namedNode(
+  export const $fromRdfType = dataFactory.namedNode(
     "http://example.com/ExternClass",
   );
   export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
