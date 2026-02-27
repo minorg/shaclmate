@@ -559,7 +559,10 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
   return true;
 }
 
-function $filterNumber(filter: $NumberFilter, value: number) {
+function $filterNumeric<T extends bigint | number>(
+  filter: $NumericFilter<T>,
+  value: T,
+) {
   if (
     typeof filter.in !== "undefined" &&
     !filter.in.some((inValue) => inValue === value)
@@ -795,7 +798,7 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
   return patterns;
 };
 
-function $isReadonlyBigintArray(x: unknown): x is readonly bigint[] {
+function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
   return Array.isArray(x) && x.every((z) => typeof z === "bigint");
 }
 
@@ -1102,7 +1105,15 @@ function $literalSchemaSparqlPatterns({
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
     languageIn?: readonly string[];
-    in?: readonly (boolean | Date | string | number | Literal | NamedNode)[];
+    in?: readonly (
+      | bigint
+      | boolean
+      | Date
+      | string
+      | number
+      | Literal
+      | NamedNode
+    )[];
   }>;
   valueVariable: Variable;
 }): readonly $SparqlPattern[] {
@@ -1369,23 +1380,27 @@ function $normalizeSparqlWherePatterns(
   return normalizedPatterns;
 }
 
-interface $NumberFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface $NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }
 
-interface $NumberSchema {
-  readonly in?: readonly number[];
-  readonly kind: "Float" | "Int";
+interface $NumericSchema<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly kind: "BigInt" | "Float" | "Int";
 }
 
-const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
-  $NumberFilter,
-  $NumberSchema
-> = ({ filter, valueVariable, ...otherParameters }) => {
+function $numericSparqlWherePatterns<T extends bigint | number>({
+  filter,
+  valueVariable,
+  ...otherParameters
+}: $SparqlWherePatternsFunctionParameters<
+  $NumericFilter<T>,
+  $NumericSchema<T>
+>): readonly $SparqlPattern[] {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
@@ -1404,7 +1419,7 @@ const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: "<",
-          args: [valueVariable, $literalFactory.number(filter.maxExclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.maxExclusive)],
         },
         lift: true,
         type: "filter",
@@ -1416,7 +1431,7 @@ const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: "<=",
-          args: [valueVariable, $literalFactory.number(filter.maxInclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.maxInclusive)],
         },
         lift: true,
         type: "filter",
@@ -1428,7 +1443,7 @@ const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: ">",
-          args: [valueVariable, $literalFactory.number(filter.minExclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.minExclusive)],
         },
         lift: true,
         type: "filter",
@@ -1440,7 +1455,7 @@ const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
         expression: {
           type: "operation",
           operator: ">=",
-          args: [valueVariable, $literalFactory.number(filter.minInclusive)],
+          args: [valueVariable, $literalFactory.primitive(filter.minInclusive)],
         },
         lift: true,
         type: "filter",
@@ -1453,7 +1468,7 @@ const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
     valueVariable,
     ...otherParameters,
   });
-};
+}
 
 type $PropertiesFromRdfParameters = {
   context?: any;
@@ -1492,6 +1507,9 @@ namespace $RdfVocabularies {
     export const boolean = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#boolean",
     );
+    export const byte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#byte",
+    );
     export const date = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#date",
     );
@@ -1504,11 +1522,47 @@ namespace $RdfVocabularies {
     export const double = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#double",
     );
+    export const float = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#float",
+    );
+    export const int = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#int",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
     );
+    export const long = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#long",
+    );
+    export const negativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    );
+    export const nonNegativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+    );
+    export const nonPositiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+    );
+    export const positiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#positiveInteger",
+    );
+    export const short = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#short",
+    );
     export const string = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#string",
+    );
+    export const unsignedByte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedByte",
+    );
+    export const unsignedInt = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedInt",
+    );
+    export const unsignedLong = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedLong",
+    );
+    export const unsignedShort = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedShort",
     );
   }
 }
@@ -1643,7 +1697,15 @@ function $sparqlValueInPattern({
   valueVariable,
 }: {
   lift?: boolean;
-  valueIn: readonly (boolean | Date | number | string | Literal | NamedNode)[];
+  valueIn: readonly (
+    | bigint
+    | boolean
+    | Date
+    | number
+    | string
+    | Literal
+    | NamedNode
+  )[];
   valueVariable: Variable;
 }): $SparqlFilterPattern {
   if (valueIn.length === 0) {
@@ -1883,7 +1945,15 @@ function $termSchemaSparqlPatterns({
   filterPatterns: readonly $SparqlFilterPattern[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    in?: readonly (boolean | Date | string | number | Literal | NamedNode)[];
+    in?: readonly (
+      | bigint
+      | boolean
+      | Date
+      | string
+      | number
+      | Literal
+      | NamedNode
+    )[];
   }>;
   valueVariable: Variable;
 }): readonly $SparqlPattern[] {
@@ -8102,11 +8172,11 @@ export class TermPropertiesClass {
 
   readonly dateTimeTermProperty: Maybe<Date>;
 
-  readonly doubleTermProperty: Maybe<number>;
-
   readonly iriTermProperty: Maybe<NamedNode>;
 
   readonly literalTermProperty: Maybe<Literal>;
+
+  readonly numberTermProperty: Maybe<number>;
 
   readonly stringTermProperty: Maybe<string>;
 
@@ -8118,7 +8188,6 @@ export class TermPropertiesClass {
     readonly booleanTermProperty?: Maybe<boolean> | boolean;
     readonly dateTermProperty?: Maybe<Date> | Date;
     readonly dateTimeTermProperty?: Maybe<Date> | Date;
-    readonly doubleTermProperty?: Maybe<number> | number;
     readonly iriTermProperty?: Maybe<NamedNode> | NamedNode | string;
     readonly literalTermProperty?:
       | Maybe<Literal>
@@ -8128,6 +8197,7 @@ export class TermPropertiesClass {
       | number
       | string
       | Literal;
+    readonly numberTermProperty?: Maybe<number> | number;
     readonly stringTermProperty?: Maybe<string> | string;
     readonly termProperty?:
       | Maybe<BlankNode | Literal | NamedNode>
@@ -8191,15 +8261,6 @@ export class TermPropertiesClass {
       this.dateTimeTermProperty =
         parameters?.dateTimeTermProperty satisfies never;
     }
-    if (Maybe.isMaybe(parameters?.doubleTermProperty)) {
-      this.doubleTermProperty = parameters?.doubleTermProperty;
-    } else if (typeof parameters?.doubleTermProperty === "number") {
-      this.doubleTermProperty = Maybe.of(parameters?.doubleTermProperty);
-    } else if (typeof parameters?.doubleTermProperty === "undefined") {
-      this.doubleTermProperty = Maybe.empty();
-    } else {
-      this.doubleTermProperty = parameters?.doubleTermProperty satisfies never;
-    }
     if (Maybe.isMaybe(parameters?.iriTermProperty)) {
       this.iriTermProperty = parameters?.iriTermProperty;
     } else if (typeof parameters?.iriTermProperty === "object") {
@@ -8245,6 +8306,15 @@ export class TermPropertiesClass {
     } else {
       this.literalTermProperty =
         parameters?.literalTermProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.numberTermProperty)) {
+      this.numberTermProperty = parameters?.numberTermProperty;
+    } else if (typeof parameters?.numberTermProperty === "number") {
+      this.numberTermProperty = Maybe.of(parameters?.numberTermProperty);
+    } else if (typeof parameters?.numberTermProperty === "undefined") {
+      this.numberTermProperty = Maybe.empty();
+    } else {
+      this.numberTermProperty = parameters?.numberTermProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters?.stringTermProperty)) {
       this.stringTermProperty = parameters?.stringTermProperty;
@@ -8365,18 +8435,6 @@ export class TermPropertiesClass {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.doubleTermProperty,
-          other.doubleTermProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "doubleTermProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.iriTermProperty,
           other.iriTermProperty,
@@ -8396,6 +8454,18 @@ export class TermPropertiesClass {
           left: this,
           right: other,
           propertyName: "literalTermProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.numberTermProperty,
+          other.numberTermProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "numberTermProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -8449,9 +8519,6 @@ export class TermPropertiesClass {
     this.dateTimeTermProperty.ifJust((value0) => {
       _hasher.update(value0.toISOString());
     });
-    this.doubleTermProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
     this.iriTermProperty.ifJust((value0) => {
       _hasher.update(value0.termType);
       _hasher.update(value0.value);
@@ -8461,6 +8528,9 @@ export class TermPropertiesClass {
       _hasher.update(value0.value);
       _hasher.update(value0.datatype.value);
       _hasher.update(value0.language);
+    });
+    this.numberTermProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
     });
     this.stringTermProperty.ifJust((value0) => {
       _hasher.update(value0);
@@ -8492,9 +8562,6 @@ export class TermPropertiesClass {
         dateTimeTermProperty: this.dateTimeTermProperty
           .map((item) => item.toISOString())
           .extract(),
-        doubleTermProperty: this.doubleTermProperty
-          .map((item) => item)
-          .extract(),
         iriTermProperty: this.iriTermProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
@@ -8507,6 +8574,9 @@ export class TermPropertiesClass {
                 : undefined,
             "@value": item.value,
           }))
+          .extract(),
+        numberTermProperty: this.numberTermProperty
+          .map((item) => item)
           .extract(),
         stringTermProperty: this.stringTermProperty
           .map((item) => item)
@@ -8583,15 +8653,6 @@ export class TermPropertiesClass {
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.doubleTermProperty.identifier,
-      this.doubleTermProperty
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.double),
-        ]),
-      options?.graph,
-    );
-    resource.add(
       TermPropertiesClass.$schema.properties.iriTermProperty.identifier,
       this.iriTermProperty.toList(),
       options?.graph,
@@ -8599,6 +8660,15 @@ export class TermPropertiesClass {
     resource.add(
       TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
       this.literalTermProperty.toList(),
+      options?.graph,
+    );
+    resource.add(
+      TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
+      this.numberTermProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
       options?.graph,
     );
     resource.add(
@@ -8669,15 +8739,6 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.doubleTermProperty !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
-        filter.doubleTermProperty,
-        value.doubleTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
       typeof filter.iriTermProperty !== "undefined" &&
       !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
         filter.iriTermProperty,
@@ -8691,6 +8752,15 @@ export namespace TermPropertiesClass {
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.literalTermProperty,
         value.literalTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.numberTermProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.numberTermProperty,
+        value.numberTermProperty,
       )
     ) {
       return false;
@@ -8722,9 +8792,9 @@ export namespace TermPropertiesClass {
     readonly booleanTermProperty?: $MaybeFilter<$BooleanFilter>;
     readonly dateTermProperty?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
-    readonly doubleTermProperty?: $MaybeFilter<$NumberFilter>;
     readonly iriTermProperty?: $MaybeFilter<$NamedNodeFilter>;
     readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly numberTermProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
     readonly termProperty?: $MaybeFilter<$TermFilter>;
   };
@@ -8748,9 +8818,9 @@ export namespace TermPropertiesClass {
       booleanTermProperty: Maybe<boolean>;
       dateTermProperty: Maybe<Date>;
       dateTimeTermProperty: Maybe<Date>;
-      doubleTermProperty: Maybe<number>;
       iriTermProperty: Maybe<NamedNode>;
       literalTermProperty: Maybe<Literal>;
+      numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
       termProperty: Maybe<BlankNode | Literal | NamedNode>;
     }
@@ -8775,9 +8845,6 @@ export namespace TermPropertiesClass {
     const dateTimeTermProperty = Maybe.fromNullable(
       $jsonObject["dateTimeTermProperty"],
     ).map((item) => new Date(item));
-    const doubleTermProperty = Maybe.fromNullable(
-      $jsonObject["doubleTermProperty"],
-    );
     const iriTermProperty = Maybe.fromNullable(
       $jsonObject["iriTermProperty"],
     ).map((item) => dataFactory.namedNode(item["@id"]));
@@ -8792,6 +8859,9 @@ export namespace TermPropertiesClass {
             ? dataFactory.namedNode(item["@type"])
             : undefined,
       ),
+    );
+    const numberTermProperty = Maybe.fromNullable(
+      $jsonObject["numberTermProperty"],
     );
     const stringTermProperty = Maybe.fromNullable(
       $jsonObject["stringTermProperty"],
@@ -8817,9 +8887,9 @@ export namespace TermPropertiesClass {
       booleanTermProperty,
       dateTermProperty,
       dateTimeTermProperty,
-      doubleTermProperty,
       iriTermProperty,
       literalTermProperty,
+      numberTermProperty,
       stringTermProperty,
       termProperty,
     });
@@ -8873,13 +8943,13 @@ export namespace TermPropertiesClass {
           scope: `${scopePrefix}/properties/dateTimeTermProperty`,
           type: "Control",
         },
-        {
-          scope: `${scopePrefix}/properties/doubleTermProperty`,
-          type: "Control",
-        },
         { scope: `${scopePrefix}/properties/iriTermProperty`, type: "Control" },
         {
           scope: `${scopePrefix}/properties/literalTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/numberTermProperty`,
           type: "Control",
         },
         {
@@ -8901,7 +8971,6 @@ export namespace TermPropertiesClass {
       booleanTermProperty: z.boolean().optional(),
       dateTermProperty: z.iso.date().optional(),
       dateTimeTermProperty: z.iso.datetime().optional(),
-      doubleTermProperty: z.number().optional(),
       iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
       literalTermProperty: z
         .object({
@@ -8910,6 +8979,7 @@ export namespace TermPropertiesClass {
           "@value": z.string(),
         })
         .optional(),
+      numberTermProperty: z.number().optional(),
       stringTermProperty: z.string().optional(),
       termProperty: z
         .discriminatedUnion("termType", [
@@ -8939,13 +9009,13 @@ export namespace TermPropertiesClass {
     readonly booleanTermProperty?: boolean;
     readonly dateTermProperty?: string;
     readonly dateTimeTermProperty?: string;
-    readonly doubleTermProperty?: number;
     readonly iriTermProperty?: { readonly "@id": string };
     readonly literalTermProperty?: {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
     };
+    readonly numberTermProperty?: number;
     readonly stringTermProperty?: string;
     readonly termProperty?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
@@ -9000,9 +9070,9 @@ export namespace TermPropertiesClass {
       booleanTermProperty: Maybe<boolean>;
       dateTermProperty: Maybe<Date>;
       dateTimeTermProperty: Maybe<Date>;
-      doubleTermProperty: Maybe<number>;
       iriTermProperty: Maybe<NamedNode>;
       literalTermProperty: Maybe<Literal>;
+      numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
       termProperty: Maybe<BlankNode | Literal | NamedNode>;
     }
@@ -9125,97 +9195,94 @@ export namespace TermPropertiesClass {
                       .chain((dateTimeTermProperty) =>
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
-                            $schema.properties.doubleTermProperty.identifier,
+                            $schema.properties.iriTermProperty.identifier,
                             { unique: true },
                           ),
                         )
                           .chain((values) =>
-                            values.chainMap((value) => value.toNumber()),
+                            values.chainMap((value) => value.toIri()),
                           )
                           .map((values) =>
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<Maybe<number>>({
+                              : Resource.Values.fromValue<Maybe<NamedNode>>({
                                   focusResource: $parameters.resource,
                                   predicate:
                                     TermPropertiesClass.$schema.properties
-                                      .doubleTermProperty.identifier,
+                                      .iriTermProperty.identifier,
                                   value: Maybe.empty(),
                                 }),
                           )
                           .chain((values) => values.head())
-                          .chain((doubleTermProperty) =>
+                          .chain((iriTermProperty) =>
                             Either.of<
                               Error,
                               Resource.Values<Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $schema.properties.iriTermProperty.identifier,
+                                $schema.properties.literalTermProperty
+                                  .identifier,
                                 { unique: true },
                               ),
                             )
                               .chain((values) =>
-                                values.chainMap((value) => value.toIri()),
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    TermPropertiesClass.$schema.properties
+                                      .literalTermProperty.identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toLiteral()),
                               )
                               .map((values) =>
                                 values.length > 0
                                   ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<Maybe<NamedNode>>(
-                                      {
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          TermPropertiesClass.$schema.properties
-                                            .iriTermProperty.identifier,
-                                        value: Maybe.empty(),
-                                      },
-                                    ),
+                                  : Resource.Values.fromValue<Maybe<Literal>>({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        TermPropertiesClass.$schema.properties
+                                          .literalTermProperty.identifier,
+                                      value: Maybe.empty(),
+                                    }),
                               )
                               .chain((values) => values.head())
-                              .chain((iriTermProperty) =>
+                              .chain((literalTermProperty) =>
                                 Either.of<
                                   Error,
                                   Resource.Values<Resource.TermValue>
                                 >(
                                   $parameters.resource.values(
-                                    $schema.properties.literalTermProperty
+                                    $schema.properties.numberTermProperty
                                       .identifier,
-                                    {
-                                      unique: true,
-                                    },
+                                    { unique: true },
                                   ),
                                 )
                                   .chain((values) =>
-                                    $fromRdfPreferredLanguages({
-                                      focusResource: $parameters.resource,
-                                      predicate:
-                                        TermPropertiesClass.$schema.properties
-                                          .literalTermProperty.identifier,
-                                      preferredLanguages:
-                                        $parameters.preferredLanguages,
-                                      values,
-                                    }),
-                                  )
-                                  .chain((values) =>
                                     values.chainMap((value) =>
-                                      value.toLiteral(),
+                                      value.toNumber(),
                                     ),
                                   )
                                   .map((values) =>
                                     values.length > 0
                                       ? values.map((value) => Maybe.of(value))
                                       : Resource.Values.fromValue<
-                                          Maybe<Literal>
+                                          Maybe<number>
                                         >({
                                           focusResource: $parameters.resource,
                                           predicate:
                                             TermPropertiesClass.$schema
-                                              .properties.literalTermProperty
+                                              .properties.numberTermProperty
                                               .identifier,
                                           value: Maybe.empty(),
                                         }),
                                   )
                                   .chain((values) => values.head())
-                                  .chain((literalTermProperty) =>
+                                  .chain((numberTermProperty) =>
                                     Either.of<
                                       Error,
                                       Resource.Values<Resource.TermValue>
@@ -9310,9 +9377,9 @@ export namespace TermPropertiesClass {
                                             booleanTermProperty,
                                             dateTermProperty,
                                             dateTimeTermProperty,
-                                            doubleTermProperty,
                                             iriTermProperty,
                                             literalTermProperty,
+                                            numberTermProperty,
                                             stringTermProperty,
                                             termProperty,
                                           })),
@@ -9381,16 +9448,6 @@ export namespace TermPropertiesClass {
           "http://example.com/dateTimeTermProperty",
         ),
       },
-      doubleTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/doubleTermProperty",
-        ),
-      },
       iriTermProperty: {
         kind: "Shacl" as const,
         type: () => ({
@@ -9407,6 +9464,16 @@ export namespace TermPropertiesClass {
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/literalTermProperty",
+        ),
+      },
+      numberTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/numberTermProperty",
         ),
       },
       stringTermProperty: {
@@ -9602,21 +9669,6 @@ export namespace TermPropertiesClass {
             (subject.termType === "Variable"
               ? subject.value
               : "termPropertiesClass")
-          }DoubleTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.doubleTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
           }IriTermProperty`,
         ),
         predicate:
@@ -9636,6 +9688,21 @@ export namespace TermPropertiesClass {
         ),
         predicate:
           TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "termPropertiesClass")
+          }NumberTermProperty`,
+        ),
+        predicate:
+          TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
         subject: subject,
       },
     ]);
@@ -9930,51 +9997,6 @@ export namespace TermPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumberFilter, $NumberSchema>(
-        $numberSparqlWherePatterns,
-      )({
-        filter: parameters?.filter?.doubleTermProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
-                      : "termPropertiesClass")
-                  }DoubleTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.doubleTermProperty
-                    .identifier,
-                subject: subject,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.doubleTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }DoubleTermProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
-            : "termPropertiesClass")
-        }DoubleTermProperty`,
-      }),
-    );
-    patterns = patterns.concat(
       $maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
         $namedNodeSparqlWherePatterns,
       )({
@@ -10061,6 +10083,51 @@ export namespace TermPropertiesClass {
             ? subject.value
             : "termPropertiesClass")
         }LiteralTermProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.numberTermProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "termPropertiesClass")
+                  }NumberTermProperty`,
+                ),
+                predicate:
+                  TermPropertiesClass.$schema.properties.numberTermProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          TermPropertiesClass.$schema.properties.numberTermProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "termPropertiesClass")
+          }NumberTermProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass")
+        }NumberTermProperty`,
       }),
     );
     patterns = patterns.concat(
@@ -16722,6 +16789,3157 @@ export namespace OrderedPropertiesClass {
             ? subject.value
             : "orderedPropertiesClass")
         }OrderedPropertyA`,
+      }),
+    );
+    return patterns;
+  }
+} /**
+ * Shape with properties that have numeric sh:datatype's
+ */
+
+export class NumericPropertiesClass {
+  private _$identifier?: NumericPropertiesClass.$Identifier;
+
+  readonly $type: "NumericPropertiesClass" = "NumericPropertiesClass" as const;
+
+  readonly byteNumericProperty: Maybe<number>;
+
+  readonly doubleNumericProperty: Maybe<number>;
+
+  readonly floatNumericProperty: Maybe<number>;
+
+  readonly integerNumericProperty: Maybe<bigint>;
+
+  readonly intNumericProperty: Maybe<number>;
+
+  readonly longNumericProperty: Maybe<bigint>;
+
+  readonly negativeIntegerNumericProperty: Maybe<bigint>;
+
+  readonly nonNegativeIntegerNumericProperty: Maybe<bigint>;
+
+  readonly nonPositiveIntegerNumericProperty: Maybe<bigint>;
+
+  readonly positiveIntegerNumericProperty: Maybe<bigint>;
+
+  readonly shortNumericProperty: Maybe<number>;
+
+  readonly unsignedByteNumericProperty: Maybe<number>;
+
+  readonly unsignedIntNumericProperty: Maybe<number>;
+
+  readonly unsignedLongNumericProperty: Maybe<bigint>;
+
+  readonly unsignedShortNumericProperty: Maybe<number>;
+
+  constructor(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly byteNumericProperty?: Maybe<number> | number;
+    readonly doubleNumericProperty?: Maybe<number> | number;
+    readonly floatNumericProperty?: Maybe<number> | number;
+    readonly integerNumericProperty?: Maybe<bigint> | bigint;
+    readonly intNumericProperty?: Maybe<number> | number;
+    readonly longNumericProperty?: Maybe<bigint> | bigint;
+    readonly negativeIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly nonNegativeIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly nonPositiveIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly positiveIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly shortNumericProperty?: Maybe<number> | number;
+    readonly unsignedByteNumericProperty?: Maybe<number> | number;
+    readonly unsignedIntNumericProperty?: Maybe<number> | number;
+    readonly unsignedLongNumericProperty?: Maybe<bigint> | bigint;
+    readonly unsignedShortNumericProperty?: Maybe<number> | number;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.byteNumericProperty)) {
+      this.byteNumericProperty = parameters?.byteNumericProperty;
+    } else if (typeof parameters?.byteNumericProperty === "number") {
+      this.byteNumericProperty = Maybe.of(parameters?.byteNumericProperty);
+    } else if (typeof parameters?.byteNumericProperty === "undefined") {
+      this.byteNumericProperty = Maybe.empty();
+    } else {
+      this.byteNumericProperty =
+        parameters?.byteNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.doubleNumericProperty)) {
+      this.doubleNumericProperty = parameters?.doubleNumericProperty;
+    } else if (typeof parameters?.doubleNumericProperty === "number") {
+      this.doubleNumericProperty = Maybe.of(parameters?.doubleNumericProperty);
+    } else if (typeof parameters?.doubleNumericProperty === "undefined") {
+      this.doubleNumericProperty = Maybe.empty();
+    } else {
+      this.doubleNumericProperty =
+        parameters?.doubleNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.floatNumericProperty)) {
+      this.floatNumericProperty = parameters?.floatNumericProperty;
+    } else if (typeof parameters?.floatNumericProperty === "number") {
+      this.floatNumericProperty = Maybe.of(parameters?.floatNumericProperty);
+    } else if (typeof parameters?.floatNumericProperty === "undefined") {
+      this.floatNumericProperty = Maybe.empty();
+    } else {
+      this.floatNumericProperty =
+        parameters?.floatNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.integerNumericProperty)) {
+      this.integerNumericProperty = parameters?.integerNumericProperty;
+    } else if (typeof parameters?.integerNumericProperty === "bigint") {
+      this.integerNumericProperty = Maybe.of(
+        parameters?.integerNumericProperty,
+      );
+    } else if (typeof parameters?.integerNumericProperty === "undefined") {
+      this.integerNumericProperty = Maybe.empty();
+    } else {
+      this.integerNumericProperty =
+        parameters?.integerNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.intNumericProperty)) {
+      this.intNumericProperty = parameters?.intNumericProperty;
+    } else if (typeof parameters?.intNumericProperty === "number") {
+      this.intNumericProperty = Maybe.of(parameters?.intNumericProperty);
+    } else if (typeof parameters?.intNumericProperty === "undefined") {
+      this.intNumericProperty = Maybe.empty();
+    } else {
+      this.intNumericProperty = parameters?.intNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.longNumericProperty)) {
+      this.longNumericProperty = parameters?.longNumericProperty;
+    } else if (typeof parameters?.longNumericProperty === "bigint") {
+      this.longNumericProperty = Maybe.of(parameters?.longNumericProperty);
+    } else if (typeof parameters?.longNumericProperty === "undefined") {
+      this.longNumericProperty = Maybe.empty();
+    } else {
+      this.longNumericProperty =
+        parameters?.longNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.negativeIntegerNumericProperty)) {
+      this.negativeIntegerNumericProperty =
+        parameters?.negativeIntegerNumericProperty;
+    } else if (typeof parameters?.negativeIntegerNumericProperty === "bigint") {
+      this.negativeIntegerNumericProperty = Maybe.of(
+        parameters?.negativeIntegerNumericProperty,
+      );
+    } else if (
+      typeof parameters?.negativeIntegerNumericProperty === "undefined"
+    ) {
+      this.negativeIntegerNumericProperty = Maybe.empty();
+    } else {
+      this.negativeIntegerNumericProperty =
+        parameters?.negativeIntegerNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.nonNegativeIntegerNumericProperty)) {
+      this.nonNegativeIntegerNumericProperty =
+        parameters?.nonNegativeIntegerNumericProperty;
+    } else if (
+      typeof parameters?.nonNegativeIntegerNumericProperty === "bigint"
+    ) {
+      this.nonNegativeIntegerNumericProperty = Maybe.of(
+        parameters?.nonNegativeIntegerNumericProperty,
+      );
+    } else if (
+      typeof parameters?.nonNegativeIntegerNumericProperty === "undefined"
+    ) {
+      this.nonNegativeIntegerNumericProperty = Maybe.empty();
+    } else {
+      this.nonNegativeIntegerNumericProperty =
+        parameters?.nonNegativeIntegerNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.nonPositiveIntegerNumericProperty)) {
+      this.nonPositiveIntegerNumericProperty =
+        parameters?.nonPositiveIntegerNumericProperty;
+    } else if (
+      typeof parameters?.nonPositiveIntegerNumericProperty === "bigint"
+    ) {
+      this.nonPositiveIntegerNumericProperty = Maybe.of(
+        parameters?.nonPositiveIntegerNumericProperty,
+      );
+    } else if (
+      typeof parameters?.nonPositiveIntegerNumericProperty === "undefined"
+    ) {
+      this.nonPositiveIntegerNumericProperty = Maybe.empty();
+    } else {
+      this.nonPositiveIntegerNumericProperty =
+        parameters?.nonPositiveIntegerNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.positiveIntegerNumericProperty)) {
+      this.positiveIntegerNumericProperty =
+        parameters?.positiveIntegerNumericProperty;
+    } else if (typeof parameters?.positiveIntegerNumericProperty === "bigint") {
+      this.positiveIntegerNumericProperty = Maybe.of(
+        parameters?.positiveIntegerNumericProperty,
+      );
+    } else if (
+      typeof parameters?.positiveIntegerNumericProperty === "undefined"
+    ) {
+      this.positiveIntegerNumericProperty = Maybe.empty();
+    } else {
+      this.positiveIntegerNumericProperty =
+        parameters?.positiveIntegerNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.shortNumericProperty)) {
+      this.shortNumericProperty = parameters?.shortNumericProperty;
+    } else if (typeof parameters?.shortNumericProperty === "number") {
+      this.shortNumericProperty = Maybe.of(parameters?.shortNumericProperty);
+    } else if (typeof parameters?.shortNumericProperty === "undefined") {
+      this.shortNumericProperty = Maybe.empty();
+    } else {
+      this.shortNumericProperty =
+        parameters?.shortNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.unsignedByteNumericProperty)) {
+      this.unsignedByteNumericProperty =
+        parameters?.unsignedByteNumericProperty;
+    } else if (typeof parameters?.unsignedByteNumericProperty === "number") {
+      this.unsignedByteNumericProperty = Maybe.of(
+        parameters?.unsignedByteNumericProperty,
+      );
+    } else if (typeof parameters?.unsignedByteNumericProperty === "undefined") {
+      this.unsignedByteNumericProperty = Maybe.empty();
+    } else {
+      this.unsignedByteNumericProperty =
+        parameters?.unsignedByteNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.unsignedIntNumericProperty)) {
+      this.unsignedIntNumericProperty = parameters?.unsignedIntNumericProperty;
+    } else if (typeof parameters?.unsignedIntNumericProperty === "number") {
+      this.unsignedIntNumericProperty = Maybe.of(
+        parameters?.unsignedIntNumericProperty,
+      );
+    } else if (typeof parameters?.unsignedIntNumericProperty === "undefined") {
+      this.unsignedIntNumericProperty = Maybe.empty();
+    } else {
+      this.unsignedIntNumericProperty =
+        parameters?.unsignedIntNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.unsignedLongNumericProperty)) {
+      this.unsignedLongNumericProperty =
+        parameters?.unsignedLongNumericProperty;
+    } else if (typeof parameters?.unsignedLongNumericProperty === "bigint") {
+      this.unsignedLongNumericProperty = Maybe.of(
+        parameters?.unsignedLongNumericProperty,
+      );
+    } else if (typeof parameters?.unsignedLongNumericProperty === "undefined") {
+      this.unsignedLongNumericProperty = Maybe.empty();
+    } else {
+      this.unsignedLongNumericProperty =
+        parameters?.unsignedLongNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.unsignedShortNumericProperty)) {
+      this.unsignedShortNumericProperty =
+        parameters?.unsignedShortNumericProperty;
+    } else if (typeof parameters?.unsignedShortNumericProperty === "number") {
+      this.unsignedShortNumericProperty = Maybe.of(
+        parameters?.unsignedShortNumericProperty,
+      );
+    } else if (
+      typeof parameters?.unsignedShortNumericProperty === "undefined"
+    ) {
+      this.unsignedShortNumericProperty = Maybe.empty();
+    } else {
+      this.unsignedShortNumericProperty =
+        parameters?.unsignedShortNumericProperty satisfies never;
+    }
+  }
+
+  get $identifier(): NumericPropertiesClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: NumericPropertiesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.byteNumericProperty,
+          other.byteNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "byteNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.doubleNumericProperty,
+          other.doubleNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "doubleNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.floatNumericProperty,
+          other.floatNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "floatNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.integerNumericProperty,
+          other.integerNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "integerNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.intNumericProperty,
+          other.intNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "intNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.longNumericProperty,
+          other.longNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "longNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.negativeIntegerNumericProperty,
+          other.negativeIntegerNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "negativeIntegerNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.nonNegativeIntegerNumericProperty,
+          other.nonNegativeIntegerNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "nonNegativeIntegerNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.nonPositiveIntegerNumericProperty,
+          other.nonPositiveIntegerNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "nonPositiveIntegerNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.positiveIntegerNumericProperty,
+          other.positiveIntegerNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "positiveIntegerNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.shortNumericProperty,
+          other.shortNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "shortNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.unsignedByteNumericProperty,
+          other.unsignedByteNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "unsignedByteNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.unsignedIntNumericProperty,
+          other.unsignedIntNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "unsignedIntNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.unsignedLongNumericProperty,
+          other.unsignedLongNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "unsignedLongNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.unsignedShortNumericProperty,
+          other.unsignedShortNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "unsignedShortNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    this.byteNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.doubleNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.floatNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.integerNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.intNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.longNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.negativeIntegerNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.nonNegativeIntegerNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.nonPositiveIntegerNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.positiveIntegerNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.shortNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.unsignedByteNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.unsignedIntNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.unsignedLongNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.unsignedShortNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    return _hasher;
+  }
+
+  $toJson(): NumericPropertiesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        byteNumericProperty: this.byteNumericProperty
+          .map((item) => item)
+          .extract(),
+        doubleNumericProperty: this.doubleNumericProperty
+          .map((item) => item)
+          .extract(),
+        floatNumericProperty: this.floatNumericProperty
+          .map((item) => item)
+          .extract(),
+        integerNumericProperty: this.integerNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        intNumericProperty: this.intNumericProperty
+          .map((item) => item)
+          .extract(),
+        longNumericProperty: this.longNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        negativeIntegerNumericProperty: this.negativeIntegerNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        nonNegativeIntegerNumericProperty:
+          this.nonNegativeIntegerNumericProperty
+            .map((item) => item.toString())
+            .extract(),
+        nonPositiveIntegerNumericProperty:
+          this.nonPositiveIntegerNumericProperty
+            .map((item) => item.toString())
+            .extract(),
+        positiveIntegerNumericProperty: this.positiveIntegerNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        shortNumericProperty: this.shortNumericProperty
+          .map((item) => item)
+          .extract(),
+        unsignedByteNumericProperty: this.unsignedByteNumericProperty
+          .map((item) => item)
+          .extract(),
+        unsignedIntNumericProperty: this.unsignedIntNumericProperty
+          .map((item) => item)
+          .extract(),
+        unsignedLongNumericProperty: this.unsignedLongNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        unsignedShortNumericProperty: this.unsignedShortNumericProperty
+          .map((item) => item)
+          .extract(),
+      } satisfies NumericPropertiesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/NumericPropertiesClass"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      NumericPropertiesClass.$schema.properties.byteNumericProperty.identifier,
+      this.byteNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.byte),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.doubleNumericProperty
+        .identifier,
+      this.doubleNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.floatNumericProperty.identifier,
+      this.floatNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.float),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.integerNumericProperty
+        .identifier,
+      this.integerNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.intNumericProperty.identifier,
+      this.intNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.int),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.longNumericProperty.identifier,
+      this.longNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.long),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.negativeIntegerNumericProperty
+        .identifier,
+      this.negativeIntegerNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.negativeInteger),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties
+        .nonNegativeIntegerNumericProperty.identifier,
+      this.nonNegativeIntegerNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(
+            value,
+            $RdfVocabularies.xsd.nonNegativeInteger,
+          ),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties
+        .nonPositiveIntegerNumericProperty.identifier,
+      this.nonPositiveIntegerNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(
+            value,
+            $RdfVocabularies.xsd.nonPositiveInteger,
+          ),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.positiveIntegerNumericProperty
+        .identifier,
+      this.positiveIntegerNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.positiveInteger),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.shortNumericProperty.identifier,
+      this.shortNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.short),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.unsignedByteNumericProperty
+        .identifier,
+      this.unsignedByteNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedByte),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.unsignedIntNumericProperty
+        .identifier,
+      this.unsignedIntNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.unsignedLongNumericProperty
+        .identifier,
+      this.unsignedLongNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.unsignedLong),
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.unsignedShortNumericProperty
+        .identifier,
+      this.unsignedShortNumericProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedShort),
+        ]),
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NumericPropertiesClass {
+  export function $filter(
+    filter: NumericPropertiesClass.$Filter,
+    value: NumericPropertiesClass,
+  ): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.byteNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.byteNumericProperty,
+        value.byteNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.doubleNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.doubleNumericProperty,
+        value.doubleNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.floatNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.floatNumericProperty,
+        value.floatNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.integerNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.integerNumericProperty,
+        value.integerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.intNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.intNumericProperty,
+        value.intNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.longNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.longNumericProperty,
+        value.longNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.negativeIntegerNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.negativeIntegerNumericProperty,
+        value.negativeIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.nonNegativeIntegerNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.nonNegativeIntegerNumericProperty,
+        value.nonNegativeIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.nonPositiveIntegerNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.nonPositiveIntegerNumericProperty,
+        value.nonPositiveIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.positiveIntegerNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.positiveIntegerNumericProperty,
+        value.positiveIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.shortNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.shortNumericProperty,
+        value.shortNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.unsignedByteNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.unsignedByteNumericProperty,
+        value.unsignedByteNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.unsignedIntNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.unsignedIntNumericProperty,
+        value.unsignedIntNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.unsignedLongNumericProperty !== "undefined" &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.unsignedLongNumericProperty,
+        value.unsignedLongNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.unsignedShortNumericProperty !== "undefined" &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.unsignedShortNumericProperty,
+        value.unsignedShortNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly byteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly floatNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly intNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly longNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly negativeIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly nonNegativeIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly nonPositiveIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly positiveIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly shortNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedByteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedIntNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly unsignedShortNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
+  };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NumericPropertiesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      byteNumericProperty: Maybe<number>;
+      doubleNumericProperty: Maybe<number>;
+      floatNumericProperty: Maybe<number>;
+      integerNumericProperty: Maybe<bigint>;
+      intNumericProperty: Maybe<number>;
+      longNumericProperty: Maybe<bigint>;
+      negativeIntegerNumericProperty: Maybe<bigint>;
+      nonNegativeIntegerNumericProperty: Maybe<bigint>;
+      nonPositiveIntegerNumericProperty: Maybe<bigint>;
+      positiveIntegerNumericProperty: Maybe<bigint>;
+      shortNumericProperty: Maybe<number>;
+      unsignedByteNumericProperty: Maybe<number>;
+      unsignedIntNumericProperty: Maybe<number>;
+      unsignedLongNumericProperty: Maybe<bigint>;
+      unsignedShortNumericProperty: Maybe<number>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const byteNumericProperty = Maybe.fromNullable(
+      $jsonObject["byteNumericProperty"],
+    );
+    const doubleNumericProperty = Maybe.fromNullable(
+      $jsonObject["doubleNumericProperty"],
+    );
+    const floatNumericProperty = Maybe.fromNullable(
+      $jsonObject["floatNumericProperty"],
+    );
+    const integerNumericProperty = Maybe.fromNullable(
+      $jsonObject["integerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const intNumericProperty = Maybe.fromNullable(
+      $jsonObject["intNumericProperty"],
+    );
+    const longNumericProperty = Maybe.fromNullable(
+      $jsonObject["longNumericProperty"],
+    ).map((item) => BigInt(item));
+    const negativeIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["negativeIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["nonNegativeIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["nonPositiveIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const positiveIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["positiveIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const shortNumericProperty = Maybe.fromNullable(
+      $jsonObject["shortNumericProperty"],
+    );
+    const unsignedByteNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedByteNumericProperty"],
+    );
+    const unsignedIntNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedIntNumericProperty"],
+    );
+    const unsignedLongNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedLongNumericProperty"],
+    ).map((item) => BigInt(item));
+    const unsignedShortNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedShortNumericProperty"],
+    );
+    return Either.of({
+      $identifier,
+      byteNumericProperty,
+      doubleNumericProperty,
+      floatNumericProperty,
+      integerNumericProperty,
+      intNumericProperty,
+      longNumericProperty,
+      negativeIntegerNumericProperty,
+      nonNegativeIntegerNumericProperty,
+      nonPositiveIntegerNumericProperty,
+      positiveIntegerNumericProperty,
+      shortNumericProperty,
+      unsignedByteNumericProperty,
+      unsignedIntNumericProperty,
+      unsignedLongNumericProperty,
+      unsignedShortNumericProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, NumericPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NumericPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NumericPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/byteNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/doubleNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/floatNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/integerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/intNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/longNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/negativeIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonNegativeIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonPositiveIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/positiveIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/shortNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedByteNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedIntNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedLongNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedShortNumericProperty`,
+          type: "Control",
+        },
+      ],
+      label: "NumericPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("NumericPropertiesClass"),
+      byteNumericProperty: z.number().optional(),
+      doubleNumericProperty: z.number().optional(),
+      floatNumericProperty: z.number().optional(),
+      integerNumericProperty: z.string().optional(),
+      intNumericProperty: z.number().optional(),
+      longNumericProperty: z.string().optional(),
+      negativeIntegerNumericProperty: z.string().optional(),
+      nonNegativeIntegerNumericProperty: z.string().optional(),
+      nonPositiveIntegerNumericProperty: z.string().optional(),
+      positiveIntegerNumericProperty: z.string().optional(),
+      shortNumericProperty: z.number().optional(),
+      unsignedByteNumericProperty: z.number().optional(),
+      unsignedIntNumericProperty: z.number().optional(),
+      unsignedLongNumericProperty: z.string().optional(),
+      unsignedShortNumericProperty: z.number().optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NumericPropertiesClass";
+    readonly byteNumericProperty?: number;
+    readonly doubleNumericProperty?: number;
+    readonly floatNumericProperty?: number;
+    readonly integerNumericProperty?: string;
+    readonly intNumericProperty?: number;
+    readonly longNumericProperty?: string;
+    readonly negativeIntegerNumericProperty?: string;
+    readonly nonNegativeIntegerNumericProperty?: string;
+    readonly nonPositiveIntegerNumericProperty?: string;
+    readonly positiveIntegerNumericProperty?: string;
+    readonly shortNumericProperty?: number;
+    readonly unsignedByteNumericProperty?: number;
+    readonly unsignedIntNumericProperty?: number;
+    readonly unsignedLongNumericProperty?: string;
+    readonly unsignedShortNumericProperty?: number;
+  };
+
+  export function isNumericPropertiesClass(
+    object: $Object,
+  ): object is NumericPropertiesClass {
+    switch (object.$type) {
+      case "NumericPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NumericPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NumericPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NumericPropertiesClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    {
+      $identifier: BlankNode | NamedNode;
+      byteNumericProperty: Maybe<number>;
+      doubleNumericProperty: Maybe<number>;
+      floatNumericProperty: Maybe<number>;
+      integerNumericProperty: Maybe<bigint>;
+      intNumericProperty: Maybe<number>;
+      longNumericProperty: Maybe<bigint>;
+      negativeIntegerNumericProperty: Maybe<bigint>;
+      nonNegativeIntegerNumericProperty: Maybe<bigint>;
+      nonPositiveIntegerNumericProperty: Maybe<bigint>;
+      positiveIntegerNumericProperty: Maybe<bigint>;
+      shortNumericProperty: Maybe<number>;
+      unsignedByteNumericProperty: Maybe<number>;
+      unsignedIntNumericProperty: Maybe<number>;
+      unsignedLongNumericProperty: Maybe<bigint>;
+      unsignedShortNumericProperty: Maybe<number>;
+    }
+  > {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/NumericPropertiesClass":
+                  return Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  NumericPropertiesClass.$fromRdfType,
+                )
+              ) {
+                return Either.of<Error, true>(true);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NumericPropertiesClass)`,
+                ),
+              );
+            })
+        : Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      Either.of<Error, NumericPropertiesClass.$Identifier>(
+        $parameters.resource.identifier as NumericPropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        Either.of<Error, Resource.Values<Resource.TermValue>>(
+          $parameters.resource.values(
+            $schema.properties.byteNumericProperty.identifier,
+            { unique: true },
+          ),
+        )
+          .chain((values) => values.chainMap((value) => value.toNumber()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => Maybe.of(value))
+              : Resource.Values.fromValue<Maybe<number>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    NumericPropertiesClass.$schema.properties
+                      .byteNumericProperty.identifier,
+                  value: Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .chain((byteNumericProperty) =>
+            Either.of<Error, Resource.Values<Resource.TermValue>>(
+              $parameters.resource.values(
+                $schema.properties.doubleNumericProperty.identifier,
+                { unique: true },
+              ),
+            )
+              .chain((values) => values.chainMap((value) => value.toNumber()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => Maybe.of(value))
+                  : Resource.Values.fromValue<Maybe<number>>({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        NumericPropertiesClass.$schema.properties
+                          .doubleNumericProperty.identifier,
+                      value: Maybe.empty(),
+                    }),
+              )
+              .chain((values) => values.head())
+              .chain((doubleNumericProperty) =>
+                Either.of<Error, Resource.Values<Resource.TermValue>>(
+                  $parameters.resource.values(
+                    $schema.properties.floatNumericProperty.identifier,
+                    { unique: true },
+                  ),
+                )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toNumber()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<number>>({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            NumericPropertiesClass.$schema.properties
+                              .floatNumericProperty.identifier,
+                          value: Maybe.empty(),
+                        }),
+                  )
+                  .chain((values) => values.head())
+                  .chain((floatNumericProperty) =>
+                    Either.of<Error, Resource.Values<Resource.TermValue>>(
+                      $parameters.resource.values(
+                        $schema.properties.integerNumericProperty.identifier,
+                        { unique: true },
+                      ),
+                    )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toBigInt()),
+                      )
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<Maybe<bigint>>({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                NumericPropertiesClass.$schema.properties
+                                  .integerNumericProperty.identifier,
+                              value: Maybe.empty(),
+                            }),
+                      )
+                      .chain((values) => values.head())
+                      .chain((integerNumericProperty) =>
+                        Either.of<Error, Resource.Values<Resource.TermValue>>(
+                          $parameters.resource.values(
+                            $schema.properties.intNumericProperty.identifier,
+                            { unique: true },
+                          ),
+                        )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toNumber()),
+                          )
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => Maybe.of(value))
+                              : Resource.Values.fromValue<Maybe<number>>({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    NumericPropertiesClass.$schema.properties
+                                      .intNumericProperty.identifier,
+                                  value: Maybe.empty(),
+                                }),
+                          )
+                          .chain((values) => values.head())
+                          .chain((intNumericProperty) =>
+                            Either.of<
+                              Error,
+                              Resource.Values<Resource.TermValue>
+                            >(
+                              $parameters.resource.values(
+                                $schema.properties.longNumericProperty
+                                  .identifier,
+                                { unique: true },
+                              ),
+                            )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toBigInt()),
+                              )
+                              .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) => Maybe.of(value))
+                                  : Resource.Values.fromValue<Maybe<bigint>>({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        NumericPropertiesClass.$schema
+                                          .properties.longNumericProperty
+                                          .identifier,
+                                      value: Maybe.empty(),
+                                    }),
+                              )
+                              .chain((values) => values.head())
+                              .chain((longNumericProperty) =>
+                                Either.of<
+                                  Error,
+                                  Resource.Values<Resource.TermValue>
+                                >(
+                                  $parameters.resource.values(
+                                    $schema.properties
+                                      .negativeIntegerNumericProperty
+                                      .identifier,
+                                    {
+                                      unique: true,
+                                    },
+                                  ),
+                                )
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toBigInt(),
+                                    ),
+                                  )
+                                  .map((values) =>
+                                    values.length > 0
+                                      ? values.map((value) => Maybe.of(value))
+                                      : Resource.Values.fromValue<
+                                          Maybe<bigint>
+                                        >({
+                                          focusResource: $parameters.resource,
+                                          predicate:
+                                            NumericPropertiesClass.$schema
+                                              .properties
+                                              .negativeIntegerNumericProperty
+                                              .identifier,
+                                          value: Maybe.empty(),
+                                        }),
+                                  )
+                                  .chain((values) => values.head())
+                                  .chain((negativeIntegerNumericProperty) =>
+                                    Either.of<
+                                      Error,
+                                      Resource.Values<Resource.TermValue>
+                                    >(
+                                      $parameters.resource.values(
+                                        $schema.properties
+                                          .nonNegativeIntegerNumericProperty
+                                          .identifier,
+                                        {
+                                          unique: true,
+                                        },
+                                      ),
+                                    )
+                                      .chain((values) =>
+                                        values.chainMap((value) =>
+                                          value.toBigInt(),
+                                        ),
+                                      )
+                                      .map((values) =>
+                                        values.length > 0
+                                          ? values.map((value) =>
+                                              Maybe.of(value),
+                                            )
+                                          : Resource.Values.fromValue<
+                                              Maybe<bigint>
+                                            >({
+                                              focusResource:
+                                                $parameters.resource,
+                                              predicate:
+                                                NumericPropertiesClass.$schema
+                                                  .properties
+                                                  .nonNegativeIntegerNumericProperty
+                                                  .identifier,
+                                              value: Maybe.empty(),
+                                            }),
+                                      )
+                                      .chain((values) => values.head())
+                                      .chain(
+                                        (nonNegativeIntegerNumericProperty) =>
+                                          Either.of<
+                                            Error,
+                                            Resource.Values<Resource.TermValue>
+                                          >(
+                                            $parameters.resource.values(
+                                              $schema.properties
+                                                .nonPositiveIntegerNumericProperty
+                                                .identifier,
+                                              { unique: true },
+                                            ),
+                                          )
+                                            .chain((values) =>
+                                              values.chainMap((value) =>
+                                                value.toBigInt(),
+                                              ),
+                                            )
+                                            .map((values) =>
+                                              values.length > 0
+                                                ? values.map((value) =>
+                                                    Maybe.of(value),
+                                                  )
+                                                : Resource.Values.fromValue<
+                                                    Maybe<bigint>
+                                                  >({
+                                                    focusResource:
+                                                      $parameters.resource,
+                                                    predicate:
+                                                      NumericPropertiesClass
+                                                        .$schema.properties
+                                                        .nonPositiveIntegerNumericProperty
+                                                        .identifier,
+                                                    value: Maybe.empty(),
+                                                  }),
+                                            )
+                                            .chain((values) => values.head())
+                                            .chain(
+                                              (
+                                                nonPositiveIntegerNumericProperty,
+                                              ) =>
+                                                Either.of<
+                                                  Error,
+                                                  Resource.Values<Resource.TermValue>
+                                                >(
+                                                  $parameters.resource.values(
+                                                    $schema.properties
+                                                      .positiveIntegerNumericProperty
+                                                      .identifier,
+                                                    { unique: true },
+                                                  ),
+                                                )
+                                                  .chain((values) =>
+                                                    values.chainMap((value) =>
+                                                      value.toBigInt(),
+                                                    ),
+                                                  )
+                                                  .map((values) =>
+                                                    values.length > 0
+                                                      ? values.map((value) =>
+                                                          Maybe.of(value),
+                                                        )
+                                                      : Resource.Values.fromValue<
+                                                          Maybe<bigint>
+                                                        >({
+                                                          focusResource:
+                                                            $parameters.resource,
+                                                          predicate:
+                                                            NumericPropertiesClass
+                                                              .$schema
+                                                              .properties
+                                                              .positiveIntegerNumericProperty
+                                                              .identifier,
+                                                          value: Maybe.empty(),
+                                                        }),
+                                                  )
+                                                  .chain((values) =>
+                                                    values.head(),
+                                                  )
+                                                  .chain(
+                                                    (
+                                                      positiveIntegerNumericProperty,
+                                                    ) =>
+                                                      Either.of<
+                                                        Error,
+                                                        Resource.Values<Resource.TermValue>
+                                                      >(
+                                                        $parameters.resource.values(
+                                                          $schema.properties
+                                                            .shortNumericProperty
+                                                            .identifier,
+                                                          {
+                                                            unique: true,
+                                                          },
+                                                        ),
+                                                      )
+                                                        .chain((values) =>
+                                                          values.chainMap(
+                                                            (value) =>
+                                                              value.toNumber(),
+                                                          ),
+                                                        )
+                                                        .map((values) =>
+                                                          values.length > 0
+                                                            ? values.map(
+                                                                (value) =>
+                                                                  Maybe.of(
+                                                                    value,
+                                                                  ),
+                                                              )
+                                                            : Resource.Values.fromValue<
+                                                                Maybe<number>
+                                                              >({
+                                                                focusResource:
+                                                                  $parameters.resource,
+                                                                predicate:
+                                                                  NumericPropertiesClass
+                                                                    .$schema
+                                                                    .properties
+                                                                    .shortNumericProperty
+                                                                    .identifier,
+                                                                value:
+                                                                  Maybe.empty(),
+                                                              }),
+                                                        )
+                                                        .chain((values) =>
+                                                          values.head(),
+                                                        )
+                                                        .chain(
+                                                          (
+                                                            shortNumericProperty,
+                                                          ) =>
+                                                            Either.of<
+                                                              Error,
+                                                              Resource.Values<Resource.TermValue>
+                                                            >(
+                                                              $parameters.resource.values(
+                                                                $schema
+                                                                  .properties
+                                                                  .unsignedByteNumericProperty
+                                                                  .identifier,
+                                                                {
+                                                                  unique: true,
+                                                                },
+                                                              ),
+                                                            )
+                                                              .chain((values) =>
+                                                                values.chainMap(
+                                                                  (value) =>
+                                                                    value.toNumber(),
+                                                                ),
+                                                              )
+                                                              .map((values) =>
+                                                                values.length >
+                                                                0
+                                                                  ? values.map(
+                                                                      (value) =>
+                                                                        Maybe.of(
+                                                                          value,
+                                                                        ),
+                                                                    )
+                                                                  : Resource.Values.fromValue<
+                                                                      Maybe<number>
+                                                                    >({
+                                                                      focusResource:
+                                                                        $parameters.resource,
+                                                                      predicate:
+                                                                        NumericPropertiesClass
+                                                                          .$schema
+                                                                          .properties
+                                                                          .unsignedByteNumericProperty
+                                                                          .identifier,
+                                                                      value:
+                                                                        Maybe.empty(),
+                                                                    }),
+                                                              )
+                                                              .chain((values) =>
+                                                                values.head(),
+                                                              )
+                                                              .chain(
+                                                                (
+                                                                  unsignedByteNumericProperty,
+                                                                ) =>
+                                                                  Either.of<
+                                                                    Error,
+                                                                    Resource.Values<Resource.TermValue>
+                                                                  >(
+                                                                    $parameters.resource.values(
+                                                                      $schema
+                                                                        .properties
+                                                                        .unsignedIntNumericProperty
+                                                                        .identifier,
+                                                                      {
+                                                                        unique: true,
+                                                                      },
+                                                                    ),
+                                                                  )
+                                                                    .chain(
+                                                                      (
+                                                                        values,
+                                                                      ) =>
+                                                                        values.chainMap(
+                                                                          (
+                                                                            value,
+                                                                          ) =>
+                                                                            value.toNumber(),
+                                                                        ),
+                                                                    )
+                                                                    .map(
+                                                                      (
+                                                                        values,
+                                                                      ) =>
+                                                                        values.length >
+                                                                        0
+                                                                          ? values.map(
+                                                                              (
+                                                                                value,
+                                                                              ) =>
+                                                                                Maybe.of(
+                                                                                  value,
+                                                                                ),
+                                                                            )
+                                                                          : Resource.Values.fromValue<
+                                                                              Maybe<number>
+                                                                            >({
+                                                                              focusResource:
+                                                                                $parameters.resource,
+                                                                              predicate:
+                                                                                NumericPropertiesClass
+                                                                                  .$schema
+                                                                                  .properties
+                                                                                  .unsignedIntNumericProperty
+                                                                                  .identifier,
+                                                                              value:
+                                                                                Maybe.empty(),
+                                                                            }),
+                                                                    )
+                                                                    .chain(
+                                                                      (
+                                                                        values,
+                                                                      ) =>
+                                                                        values.head(),
+                                                                    )
+                                                                    .chain(
+                                                                      (
+                                                                        unsignedIntNumericProperty,
+                                                                      ) =>
+                                                                        Either.of<
+                                                                          Error,
+                                                                          Resource.Values<Resource.TermValue>
+                                                                        >(
+                                                                          $parameters.resource.values(
+                                                                            $schema
+                                                                              .properties
+                                                                              .unsignedLongNumericProperty
+                                                                              .identifier,
+                                                                            {
+                                                                              unique: true,
+                                                                            },
+                                                                          ),
+                                                                        )
+                                                                          .chain(
+                                                                            (
+                                                                              values,
+                                                                            ) =>
+                                                                              values.chainMap(
+                                                                                (
+                                                                                  value,
+                                                                                ) =>
+                                                                                  value.toBigInt(),
+                                                                              ),
+                                                                          )
+                                                                          .map(
+                                                                            (
+                                                                              values,
+                                                                            ) =>
+                                                                              values.length >
+                                                                              0
+                                                                                ? values.map(
+                                                                                    (
+                                                                                      value,
+                                                                                    ) =>
+                                                                                      Maybe.of(
+                                                                                        value,
+                                                                                      ),
+                                                                                  )
+                                                                                : Resource.Values.fromValue<
+                                                                                    Maybe<bigint>
+                                                                                  >(
+                                                                                    {
+                                                                                      focusResource:
+                                                                                        $parameters.resource,
+                                                                                      predicate:
+                                                                                        NumericPropertiesClass
+                                                                                          .$schema
+                                                                                          .properties
+                                                                                          .unsignedLongNumericProperty
+                                                                                          .identifier,
+                                                                                      value:
+                                                                                        Maybe.empty(),
+                                                                                    },
+                                                                                  ),
+                                                                          )
+                                                                          .chain(
+                                                                            (
+                                                                              values,
+                                                                            ) =>
+                                                                              values.head(),
+                                                                          )
+                                                                          .chain(
+                                                                            (
+                                                                              unsignedLongNumericProperty,
+                                                                            ) =>
+                                                                              Either.of<
+                                                                                Error,
+                                                                                Resource.Values<Resource.TermValue>
+                                                                              >(
+                                                                                $parameters.resource.values(
+                                                                                  $schema
+                                                                                    .properties
+                                                                                    .unsignedShortNumericProperty
+                                                                                    .identifier,
+                                                                                  {
+                                                                                    unique: true,
+                                                                                  },
+                                                                                ),
+                                                                              )
+                                                                                .chain(
+                                                                                  (
+                                                                                    values,
+                                                                                  ) =>
+                                                                                    values.chainMap(
+                                                                                      (
+                                                                                        value,
+                                                                                      ) =>
+                                                                                        value.toNumber(),
+                                                                                    ),
+                                                                                )
+                                                                                .map(
+                                                                                  (
+                                                                                    values,
+                                                                                  ) =>
+                                                                                    values.length >
+                                                                                    0
+                                                                                      ? values.map(
+                                                                                          (
+                                                                                            value,
+                                                                                          ) =>
+                                                                                            Maybe.of(
+                                                                                              value,
+                                                                                            ),
+                                                                                        )
+                                                                                      : Resource.Values.fromValue<
+                                                                                          Maybe<number>
+                                                                                        >(
+                                                                                          {
+                                                                                            focusResource:
+                                                                                              $parameters.resource,
+                                                                                            predicate:
+                                                                                              NumericPropertiesClass
+                                                                                                .$schema
+                                                                                                .properties
+                                                                                                .unsignedShortNumericProperty
+                                                                                                .identifier,
+                                                                                            value:
+                                                                                              Maybe.empty(),
+                                                                                          },
+                                                                                        ),
+                                                                                )
+                                                                                .chain(
+                                                                                  (
+                                                                                    values,
+                                                                                  ) =>
+                                                                                    values.head(),
+                                                                                )
+                                                                                .map(
+                                                                                  (
+                                                                                    unsignedShortNumericProperty,
+                                                                                  ) => ({
+                                                                                    $identifier,
+                                                                                    byteNumericProperty,
+                                                                                    doubleNumericProperty,
+                                                                                    floatNumericProperty,
+                                                                                    integerNumericProperty,
+                                                                                    intNumericProperty,
+                                                                                    longNumericProperty,
+                                                                                    negativeIntegerNumericProperty,
+                                                                                    nonNegativeIntegerNumericProperty,
+                                                                                    nonPositiveIntegerNumericProperty,
+                                                                                    positiveIntegerNumericProperty,
+                                                                                    shortNumericProperty,
+                                                                                    unsignedByteNumericProperty,
+                                                                                    unsignedIntNumericProperty,
+                                                                                    unsignedLongNumericProperty,
+                                                                                    unsignedShortNumericProperty,
+                                                                                  }),
+                                                                                ),
+                                                                          ),
+                                                                    ),
+                                                              ),
+                                                        ),
+                                                  ),
+                                            ),
+                                      ),
+                                  ),
+                              ),
+                          ),
+                      ),
+                  ),
+              ),
+          ),
+      ),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NumericPropertiesClass"],
+        }),
+      },
+      byteNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/byteNumericProperty",
+        ),
+      },
+      doubleNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/doubleNumericProperty",
+        ),
+      },
+      floatNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/floatNumericProperty",
+        ),
+      },
+      integerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/integerNumericProperty",
+        ),
+      },
+      intNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/intNumericProperty",
+        ),
+      },
+      longNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/longNumericProperty",
+        ),
+      },
+      negativeIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/negativeIntegerNumericProperty",
+        ),
+      },
+      nonNegativeIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/nonNegativeIntegerNumericProperty",
+        ),
+      },
+      nonPositiveIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/nonPositiveIntegerNumericProperty",
+        ),
+      },
+      positiveIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/positiveIntegerNumericProperty",
+        ),
+      },
+      shortNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/shortNumericProperty",
+        ),
+      },
+      unsignedByteNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/unsignedByteNumericProperty",
+        ),
+      },
+      unsignedIntNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/unsignedIntNumericProperty",
+        ),
+      },
+      unsignedLongNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/unsignedLongNumericProperty",
+        ),
+      },
+      unsignedShortNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/unsignedShortNumericProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: NumericPropertiesClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NumericPropertiesClass.$sparqlConstructTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NumericPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: NumericPropertiesClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NumericPropertiesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("numericPropertiesClass");
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (subject.termType === "Variable"
+                ? subject.value
+                : "numericPropertiesClass")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (subject.termType === "Variable"
+                ? subject.value
+                : "numericPropertiesClass")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (subject.termType === "Variable"
+                ? subject.value
+                : "numericPropertiesClass")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }ByteNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.byteNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }DoubleNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.doubleNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }FloatNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.floatNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }IntegerNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.integerNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }IntNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.intNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }LongNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.longNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }NegativeIntegerNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties
+            .negativeIntegerNumericProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }NonNegativeIntegerNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties
+            .nonNegativeIntegerNumericProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }NonPositiveIntegerNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties
+            .nonPositiveIntegerNumericProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }PositiveIntegerNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties
+            .positiveIntegerNumericProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }ShortNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.shortNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedByteNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.unsignedByteNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedIntNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.unsignedIntNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedLongNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.unsignedLongNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedShortNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.unsignedShortNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: NumericPropertiesClass.$Filter;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("numericPropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (subject.termType === "Variable"
+          ? subject.value
+          : "numericPropertiesClass")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NumericPropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (subject.termType === "Variable"
+                        ? subject.value
+                        : "numericPropertiesClass")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (subject.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: NumericPropertiesClass.$schema.properties.$identifier.type(),
+          valueVariable: subject,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.byteNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }ByteNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties.byteNumericProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.byteNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }ByteNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }ByteNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.doubleNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }DoubleNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .doubleNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.doubleNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }DoubleNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }DoubleNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.floatNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }FloatNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties.floatNumericProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.floatNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }FloatNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }FloatNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.integerNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }IntegerNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .integerNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.integerNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }IntegerNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }IntegerNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.intNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }IntNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties.intNumericProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.intNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }IntNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }IntNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.longNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }LongNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties.longNumericProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.longNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }LongNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }LongNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.negativeIntegerNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }NegativeIntegerNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .negativeIntegerNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.negativeIntegerNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }NegativeIntegerNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }NegativeIntegerNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.nonNegativeIntegerNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }NonNegativeIntegerNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .nonNegativeIntegerNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.nonNegativeIntegerNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }NonNegativeIntegerNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }NonNegativeIntegerNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.nonPositiveIntegerNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }NonPositiveIntegerNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .nonPositiveIntegerNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.nonPositiveIntegerNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }NonPositiveIntegerNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }NonPositiveIntegerNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.positiveIntegerNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }PositiveIntegerNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .positiveIntegerNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.positiveIntegerNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }PositiveIntegerNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }PositiveIntegerNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.shortNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }ShortNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties.shortNumericProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.shortNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }ShortNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }ShortNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.unsignedByteNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }UnsignedByteNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .unsignedByteNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.unsignedByteNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedByteNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }UnsignedByteNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.unsignedIntNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }UnsignedIntNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .unsignedIntNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.unsignedIntNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedIntNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }UnsignedIntNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.unsignedLongNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }UnsignedLongNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .unsignedLongNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.unsignedLongNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedLongNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }UnsignedLongNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.unsignedShortNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }UnsignedShortNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .unsignedShortNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.unsignedShortNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }UnsignedShortNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }UnsignedShortNumericProperty`,
       }),
     );
     return patterns;
@@ -34508,7 +37726,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         {
           readonly on?: {
             readonly boolean?: $BooleanFilter;
-            readonly number?: $NumberFilter;
+            readonly number?: $NumericFilter<number>;
             readonly string?: $StringFilter;
           };
         }
@@ -34517,7 +37735,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           filter: {
             readonly on?: {
               readonly boolean?: $BooleanFilter;
-              readonly number?: $NumberFilter;
+              readonly number?: $NumericFilter<number>;
               readonly string?: $StringFilter;
             };
           },
@@ -34535,7 +37753,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           if (typeof filter.on?.["number"] !== "undefined") {
             switch (typeof value) {
               case "number":
-                if (!$filterNumber(filter.on["number"], value)) {
+                if (!$filterNumeric<number>(filter.on["number"], value)) {
                   return false;
                 }
                 break;
@@ -34565,7 +37783,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     readonly jsPrimitiveUnionProperty?: $CollectionFilter<{
       readonly on?: {
         readonly boolean?: $BooleanFilter;
-        readonly number?: $NumberFilter;
+        readonly number?: $NumericFilter<number>;
         readonly string?: $StringFilter;
       };
     }>;
@@ -35047,7 +38265,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         {
           readonly on?: {
             readonly boolean?: $BooleanFilter;
-            readonly number?: $NumberFilter;
+            readonly number?: $NumericFilter<number>;
             readonly string?: $StringFilter;
           };
         },
@@ -35060,7 +38278,7 @@ export namespace JsPrimitiveUnionPropertyClass {
             };
             readonly number: {
               discriminantValues: readonly string[];
-              type: $NumberSchema;
+              type: $NumericSchema<number>;
             };
             readonly string: {
               discriminantValues: readonly string[];
@@ -35080,7 +38298,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           type: "group",
         });
         unionPatterns.push({
-          patterns: $numberSparqlWherePatterns({
+          patterns: $numericSparqlWherePatterns<number>({
             filter: filter?.on?.["number"],
             schema: schema.members["number"].type,
             ...otherParameters,
@@ -39437,6 +42655,10 @@ export class InPropertiesClass {
 
   readonly inDateTimesProperty: Maybe<Date>;
 
+  readonly inDoublesProperty: Maybe<1 | 2>;
+
+  readonly inIntegersProperty: Maybe<1n | 2n>;
+
   readonly inIrisProperty: Maybe<
     NamedNode<
       | "http://example.com/InPropertiesIri1"
@@ -39444,14 +42666,14 @@ export class InPropertiesClass {
     >
   >;
 
-  readonly inNumbersProperty: Maybe<1 | 2>;
-
   readonly inStringsProperty: Maybe<"text" | "html">;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly inBooleansProperty?: Maybe<true> | true;
     readonly inDateTimesProperty?: Maybe<Date> | Date;
+    readonly inDoublesProperty?: Maybe<1 | 2> | 1 | 2;
+    readonly inIntegersProperty?: Maybe<1n | 2n> | 1n | 2n;
     readonly inIrisProperty?:
       | Maybe<
           NamedNode<
@@ -39465,7 +42687,6 @@ export class InPropertiesClass {
         >
       | "http://example.com/InPropertiesIri1"
       | "http://example.com/InPropertiesIri2";
-    readonly inNumbersProperty?: Maybe<1 | 2> | 1 | 2;
     readonly inStringsProperty?: Maybe<"text" | "html"> | "text" | "html";
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -39498,6 +42719,24 @@ export class InPropertiesClass {
       this.inDateTimesProperty =
         parameters?.inDateTimesProperty satisfies never;
     }
+    if (Maybe.isMaybe(parameters?.inDoublesProperty)) {
+      this.inDoublesProperty = parameters?.inDoublesProperty;
+    } else if (typeof parameters?.inDoublesProperty === "number") {
+      this.inDoublesProperty = Maybe.of(parameters?.inDoublesProperty);
+    } else if (typeof parameters?.inDoublesProperty === "undefined") {
+      this.inDoublesProperty = Maybe.empty();
+    } else {
+      this.inDoublesProperty = parameters?.inDoublesProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.inIntegersProperty)) {
+      this.inIntegersProperty = parameters?.inIntegersProperty;
+    } else if (typeof parameters?.inIntegersProperty === "bigint") {
+      this.inIntegersProperty = Maybe.of(parameters?.inIntegersProperty);
+    } else if (typeof parameters?.inIntegersProperty === "undefined") {
+      this.inIntegersProperty = Maybe.empty();
+    } else {
+      this.inIntegersProperty = parameters?.inIntegersProperty satisfies never;
+    }
     if (Maybe.isMaybe(parameters?.inIrisProperty)) {
       this.inIrisProperty = parameters?.inIrisProperty;
     } else if (typeof parameters?.inIrisProperty === "object") {
@@ -39510,15 +42749,6 @@ export class InPropertiesClass {
       this.inIrisProperty = Maybe.empty();
     } else {
       this.inIrisProperty = parameters?.inIrisProperty satisfies never;
-    }
-    if (Maybe.isMaybe(parameters?.inNumbersProperty)) {
-      this.inNumbersProperty = parameters?.inNumbersProperty;
-    } else if (typeof parameters?.inNumbersProperty === "number") {
-      this.inNumbersProperty = Maybe.of(parameters?.inNumbersProperty);
-    } else if (typeof parameters?.inNumbersProperty === "undefined") {
-      this.inNumbersProperty = Maybe.empty();
-    } else {
-      this.inNumbersProperty = parameters?.inNumbersProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters?.inStringsProperty)) {
       this.inStringsProperty = parameters?.inStringsProperty;
@@ -39583,6 +42813,30 @@ export class InPropertiesClass {
         })),
       )
       .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.inDoublesProperty,
+          other.inDoublesProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "inDoublesProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.inIntegersProperty,
+          other.inIntegersProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "inIntegersProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.inIrisProperty,
           other.inIrisProperty,
@@ -39590,18 +42844,6 @@ export class InPropertiesClass {
           left: this,
           right: other,
           propertyName: "inIrisProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.inNumbersProperty,
-          other.inNumbersProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "inNumbersProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -39636,12 +42878,15 @@ export class InPropertiesClass {
     this.inDateTimesProperty.ifJust((value0) => {
       _hasher.update(value0.toISOString());
     });
+    this.inDoublesProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
+    this.inIntegersProperty.ifJust((value0) => {
+      _hasher.update(value0.toString());
+    });
     this.inIrisProperty.ifJust((value0) => {
       _hasher.update(value0.termType);
       _hasher.update(value0.value);
-    });
-    this.inNumbersProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
     });
     this.inStringsProperty.ifJust((value0) => {
       _hasher.update(value0);
@@ -39663,10 +42908,13 @@ export class InPropertiesClass {
         inDateTimesProperty: this.inDateTimesProperty
           .map((item) => item.toISOString())
           .extract(),
+        inDoublesProperty: this.inDoublesProperty.map((item) => item).extract(),
+        inIntegersProperty: this.inIntegersProperty
+          .map((item) => item.toString())
+          .extract(),
         inIrisProperty: this.inIrisProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
-        inNumbersProperty: this.inNumbersProperty.map((item) => item).extract(),
         inStringsProperty: this.inStringsProperty.map((item) => item).extract(),
       } satisfies InPropertiesClass.$Json),
     );
@@ -39707,17 +42955,26 @@ export class InPropertiesClass {
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inIrisProperty.identifier,
-      this.inIrisProperty.toList(),
+      InPropertiesClass.$schema.properties.inDoublesProperty.identifier,
+      this.inDoublesProperty
+        .toList()
+        .flatMap((value) => [
+          $literalFactory.number(value, $RdfVocabularies.xsd.double),
+        ]),
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inNumbersProperty.identifier,
-      this.inNumbersProperty
+      InPropertiesClass.$schema.properties.inIntegersProperty.identifier,
+      this.inIntegersProperty
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.integer),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
+      options?.graph,
+    );
+    resource.add(
+      InPropertiesClass.$schema.properties.inIrisProperty.identifier,
+      this.inIrisProperty.toList(),
       options?.graph,
     );
     resource.add(
@@ -39765,6 +43022,24 @@ export namespace InPropertiesClass {
       return false;
     }
     if (
+      typeof filter.inDoublesProperty !== "undefined" &&
+      !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.inDoublesProperty,
+        value.inDoublesProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      typeof filter.inIntegersProperty !== "undefined" &&
+      !$filterMaybe<1n | 2n, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.inIntegersProperty,
+        value.inIntegersProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
       typeof filter.inIrisProperty !== "undefined" &&
       !$filterMaybe<
         NamedNode<
@@ -39773,15 +43048,6 @@ export namespace InPropertiesClass {
         >,
         $NamedNodeFilter
       >($filterNamedNode)(filter.inIrisProperty, value.inIrisProperty)
-    ) {
-      return false;
-    }
-    if (
-      typeof filter.inNumbersProperty !== "undefined" &&
-      !$filterMaybe<1 | 2, $NumberFilter>($filterNumber)(
-        filter.inNumbersProperty,
-        value.inNumbersProperty,
-      )
     ) {
       return false;
     }
@@ -39801,8 +43067,9 @@ export namespace InPropertiesClass {
     readonly $identifier?: $IdentifierFilter;
     readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
     readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
+    readonly inDoublesProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly inIntegersProperty?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly inIrisProperty?: $MaybeFilter<$NamedNodeFilter>;
-    readonly inNumbersProperty?: $MaybeFilter<$NumberFilter>;
     readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -39823,13 +43090,14 @@ export namespace InPropertiesClass {
       $identifier: BlankNode | NamedNode;
       inBooleansProperty: Maybe<true>;
       inDateTimesProperty: Maybe<Date>;
+      inDoublesProperty: Maybe<1 | 2>;
+      inIntegersProperty: Maybe<1n | 2n>;
       inIrisProperty: Maybe<
         NamedNode<
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
         >
       >;
-      inNumbersProperty: Maybe<1 | 2>;
       inStringsProperty: Maybe<"text" | "html">;
     }
   > {
@@ -39847,12 +43115,15 @@ export namespace InPropertiesClass {
     const inDateTimesProperty = Maybe.fromNullable(
       $jsonObject["inDateTimesProperty"],
     ).map((item) => new Date(item));
+    const inDoublesProperty = Maybe.fromNullable(
+      $jsonObject["inDoublesProperty"],
+    );
+    const inIntegersProperty = Maybe.fromNullable(
+      $jsonObject["inIntegersProperty"],
+    ).map((item) => BigInt(item) as 1n | 2n);
     const inIrisProperty = Maybe.fromNullable(
       $jsonObject["inIrisProperty"],
     ).map((item) => dataFactory.namedNode(item["@id"]));
-    const inNumbersProperty = Maybe.fromNullable(
-      $jsonObject["inNumbersProperty"],
-    );
     const inStringsProperty = Maybe.fromNullable(
       $jsonObject["inStringsProperty"],
     );
@@ -39860,8 +43131,9 @@ export namespace InPropertiesClass {
       $identifier,
       inBooleansProperty,
       inDateTimesProperty,
+      inDoublesProperty,
+      inIntegersProperty,
       inIrisProperty,
-      inNumbersProperty,
       inStringsProperty,
     });
   }
@@ -39906,11 +43178,15 @@ export namespace InPropertiesClass {
           scope: `${scopePrefix}/properties/inDateTimesProperty`,
           type: "Control",
         },
-        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
         {
-          scope: `${scopePrefix}/properties/inNumbersProperty`,
+          scope: `${scopePrefix}/properties/inDoublesProperty`,
           type: "Control",
         },
+        {
+          scope: `${scopePrefix}/properties/inIntegersProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
         {
           scope: `${scopePrefix}/properties/inStringsProperty`,
           type: "Control",
@@ -39927,6 +43203,8 @@ export namespace InPropertiesClass {
       $type: z.literal("InPropertiesClass"),
       inBooleansProperty: z.literal(true).optional(),
       inDateTimesProperty: z.iso.datetime().optional(),
+      inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
+      inIntegersProperty: z.enum(["1", "2"]).optional(),
       inIrisProperty: z
         .object({
           "@id": z.enum([
@@ -39935,7 +43213,6 @@ export namespace InPropertiesClass {
           ]),
         })
         .optional(),
-      inNumbersProperty: z.union([z.literal(1), z.literal(2)]).optional(),
       inStringsProperty: z.enum(["text", "html"]).optional(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -39945,12 +43222,13 @@ export namespace InPropertiesClass {
     readonly $type: "InPropertiesClass";
     readonly inBooleansProperty?: true;
     readonly inDateTimesProperty?: string;
+    readonly inDoublesProperty?: 1 | 2;
+    readonly inIntegersProperty?: string;
     readonly inIrisProperty?: {
       readonly "@id":
         | "http://example.com/InPropertiesIri1"
         | "http://example.com/InPropertiesIri2";
     };
-    readonly inNumbersProperty?: 1 | 2;
     readonly inStringsProperty?: "text" | "html";
   };
 
@@ -39995,13 +43273,14 @@ export namespace InPropertiesClass {
       $identifier: BlankNode | NamedNode;
       inBooleansProperty: Maybe<true>;
       inDateTimesProperty: Maybe<Date>;
+      inDoublesProperty: Maybe<1 | 2>;
+      inIntegersProperty: Maybe<1n | 2n>;
       inIrisProperty: Maybe<
         NamedNode<
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
         >
       >;
-      inNumbersProperty: Maybe<1 | 2>;
       inStringsProperty: Maybe<"text" | "html">;
     }
   > {
@@ -40116,50 +43395,26 @@ export namespace InPropertiesClass {
               .chain((inDateTimesProperty) =>
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
-                    $schema.properties.inIrisProperty.identifier,
+                    $schema.properties.inDoublesProperty.identifier,
                     { unique: true },
                   ),
                 )
                   .chain((values) =>
                     values.chainMap((value) =>
-                      value.toIri().chain((iri) => {
-                        switch (iri.value) {
-                          case "http://example.com/InPropertiesIri1":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://example.com/InPropertiesIri1"
-                                | "http://example.com/InPropertiesIri2"
-                              >
-                            >(
-                              iri as NamedNode<"http://example.com/InPropertiesIri1">,
-                            );
-                          case "http://example.com/InPropertiesIri2":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://example.com/InPropertiesIri1"
-                                | "http://example.com/InPropertiesIri2"
-                              >
-                            >(
-                              iri as NamedNode<"http://example.com/InPropertiesIri2">,
-                            );
+                      value.toNumber().chain((primitiveValue) => {
+                        switch (primitiveValue) {
+                          case 1:
+                          case 2:
+                            return Either.of<Error, 1 | 2>(primitiveValue);
                           default:
-                            return Left<
-                              Error,
-                              NamedNode<
-                                | "http://example.com/InPropertiesIri1"
-                                | "http://example.com/InPropertiesIri2"
-                              >
-                            >(
+                            return Left<Error, 1 | 2>(
                               new Resource.MistypedTermValueError({
-                                actualValue: iri,
-                                expectedValueType:
-                                  'NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
+                                actualValue: value.toTerm(),
+                                expectedValueType: "1 | 2",
                                 focusResource: $parameters.resource,
                                 predicate:
                                   InPropertiesClass.$schema.properties
-                                    .inIrisProperty.identifier,
+                                    .inDoublesProperty.identifier,
                               }),
                             );
                         }
@@ -40169,45 +43424,40 @@ export namespace InPropertiesClass {
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<
-                          Maybe<
-                            NamedNode<
-                              | "http://example.com/InPropertiesIri1"
-                              | "http://example.com/InPropertiesIri2"
-                            >
-                          >
-                        >({
+                      : Resource.Values.fromValue<Maybe<1 | 2>>({
                           focusResource: $parameters.resource,
                           predicate:
-                            InPropertiesClass.$schema.properties.inIrisProperty
-                              .identifier,
+                            InPropertiesClass.$schema.properties
+                              .inDoublesProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   )
                   .chain((values) => values.head())
-                  .chain((inIrisProperty) =>
+                  .chain((inDoublesProperty) =>
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
-                        $schema.properties.inNumbersProperty.identifier,
+                        $schema.properties.inIntegersProperty.identifier,
                         { unique: true },
                       ),
                     )
                       .chain((values) =>
                         values.chainMap((value) =>
-                          value.toNumber().chain((primitiveValue) => {
+                          value.toBigInt().chain((primitiveValue) => {
                             switch (primitiveValue) {
-                              case 1:
-                              case 2:
-                                return Either.of<Error, 1 | 2>(primitiveValue);
+                              case 1n:
+                              case 2n:
+                                return Either.of<Error, 1n | 2n>(
+                                  primitiveValue,
+                                );
                               default:
-                                return Left<Error, 1 | 2>(
+                                return Left<Error, 1n | 2n>(
                                   new Resource.MistypedTermValueError({
                                     actualValue: value.toTerm(),
-                                    expectedValueType: "1 | 2",
+                                    expectedValueType: "1n | 2n",
                                     focusResource: $parameters.resource,
                                     predicate:
                                       InPropertiesClass.$schema.properties
-                                        .inNumbersProperty.identifier,
+                                        .inIntegersProperty.identifier,
                                   }),
                                 );
                             }
@@ -40217,51 +43467,62 @@ export namespace InPropertiesClass {
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<1 | 2>>({
+                          : Resource.Values.fromValue<Maybe<1n | 2n>>({
                               focusResource: $parameters.resource,
                               predicate:
                                 InPropertiesClass.$schema.properties
-                                  .inNumbersProperty.identifier,
+                                  .inIntegersProperty.identifier,
                               value: Maybe.empty(),
                             }),
                       )
                       .chain((values) => values.head())
-                      .chain((inNumbersProperty) =>
+                      .chain((inIntegersProperty) =>
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
-                            $schema.properties.inStringsProperty.identifier,
+                            $schema.properties.inIrisProperty.identifier,
                             { unique: true },
                           ),
                         )
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                InPropertiesClass.$schema.properties
-                                  .inStringsProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
-                              values,
-                            }),
-                          )
-                          .chain((values) =>
                             values.chainMap((value) =>
-                              value.toString().chain((string_) => {
-                                switch (string_) {
-                                  case "text":
-                                  case "html":
-                                    return Either.of<Error, "text" | "html">(
-                                      string_,
+                              value.toIri().chain((iri) => {
+                                switch (iri.value) {
+                                  case "http://example.com/InPropertiesIri1":
+                                    return Either.of<
+                                      Error,
+                                      NamedNode<
+                                        | "http://example.com/InPropertiesIri1"
+                                        | "http://example.com/InPropertiesIri2"
+                                      >
+                                    >(
+                                      iri as NamedNode<"http://example.com/InPropertiesIri1">,
+                                    );
+                                  case "http://example.com/InPropertiesIri2":
+                                    return Either.of<
+                                      Error,
+                                      NamedNode<
+                                        | "http://example.com/InPropertiesIri1"
+                                        | "http://example.com/InPropertiesIri2"
+                                      >
+                                    >(
+                                      iri as NamedNode<"http://example.com/InPropertiesIri2">,
                                     );
                                   default:
-                                    return Left<Error, "text" | "html">(
+                                    return Left<
+                                      Error,
+                                      NamedNode<
+                                        | "http://example.com/InPropertiesIri1"
+                                        | "http://example.com/InPropertiesIri2"
+                                      >
+                                    >(
                                       new Resource.MistypedTermValueError({
-                                        actualValue: value.toTerm(),
-                                        expectedValueType: '"text" | "html"',
+                                        actualValue: iri,
+                                        expectedValueType:
+                                          'NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
                                         focusResource: $parameters.resource,
                                         predicate:
                                           InPropertiesClass.$schema.properties
-                                            .inStringsProperty.identifier,
+                                            .inIrisProperty.identifier,
                                       }),
                                     );
                                 }
@@ -40272,24 +43533,93 @@ export namespace InPropertiesClass {
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<
-                                  Maybe<"text" | "html">
+                                  Maybe<
+                                    NamedNode<
+                                      | "http://example.com/InPropertiesIri1"
+                                      | "http://example.com/InPropertiesIri2"
+                                    >
+                                  >
                                 >({
                                   focusResource: $parameters.resource,
                                   predicate:
                                     InPropertiesClass.$schema.properties
-                                      .inStringsProperty.identifier,
+                                      .inIrisProperty.identifier,
                                   value: Maybe.empty(),
                                 }),
                           )
                           .chain((values) => values.head())
-                          .map((inStringsProperty) => ({
-                            $identifier,
-                            inBooleansProperty,
-                            inDateTimesProperty,
-                            inIrisProperty,
-                            inNumbersProperty,
-                            inStringsProperty,
-                          })),
+                          .chain((inIrisProperty) =>
+                            Either.of<
+                              Error,
+                              Resource.Values<Resource.TermValue>
+                            >(
+                              $parameters.resource.values(
+                                $schema.properties.inStringsProperty.identifier,
+                                { unique: true },
+                              ),
+                            )
+                              .chain((values) =>
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    InPropertiesClass.$schema.properties
+                                      .inStringsProperty.identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) =>
+                                  value.toString().chain((string_) => {
+                                    switch (string_) {
+                                      case "text":
+                                      case "html":
+                                        return Either.of<
+                                          Error,
+                                          "text" | "html"
+                                        >(string_);
+                                      default:
+                                        return Left<Error, "text" | "html">(
+                                          new Resource.MistypedTermValueError({
+                                            actualValue: value.toTerm(),
+                                            expectedValueType:
+                                              '"text" | "html"',
+                                            focusResource: $parameters.resource,
+                                            predicate:
+                                              InPropertiesClass.$schema
+                                                .properties.inStringsProperty
+                                                .identifier,
+                                          }),
+                                        );
+                                    }
+                                  }),
+                                ),
+                              )
+                              .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) => Maybe.of(value))
+                                  : Resource.Values.fromValue<
+                                      Maybe<"text" | "html">
+                                    >({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        InPropertiesClass.$schema.properties
+                                          .inStringsProperty.identifier,
+                                      value: Maybe.empty(),
+                                    }),
+                              )
+                              .chain((values) => values.head())
+                              .map((inStringsProperty) => ({
+                                $identifier,
+                                inBooleansProperty,
+                                inDateTimesProperty,
+                                inDoublesProperty,
+                                inIntegersProperty,
+                                inIrisProperty,
+                                inStringsProperty,
+                              })),
+                          ),
                       ),
                   ),
               ),
@@ -40334,6 +43664,26 @@ export namespace InPropertiesClass {
           "http://example.com/inDateTimesProperty",
         ),
       },
+      inDoublesProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const, in: [1, 2] }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/inDoublesProperty",
+        ),
+      },
+      inIntegersProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const, in: [1n, 2n] }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/inIntegersProperty",
+        ),
+      },
       inIrisProperty: {
         kind: "Shacl" as const,
         type: () => ({
@@ -40347,16 +43697,6 @@ export namespace InPropertiesClass {
           }),
         }),
         identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
-      },
-      inNumbersProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const, in: [1, 2] }),
-        }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inNumbersProperty",
-        ),
       },
       inStringsProperty: {
         kind: "Shacl" as const,
@@ -40504,10 +43844,10 @@ export namespace InPropertiesClass {
             (subject.termType === "Variable"
               ? subject.value
               : "inPropertiesClass")
-          }InIrisProperty`,
+          }InDoublesProperty`,
         ),
         predicate:
-          InPropertiesClass.$schema.properties.inIrisProperty.identifier,
+          InPropertiesClass.$schema.properties.inDoublesProperty.identifier,
         subject: subject,
       },
     ]);
@@ -40519,10 +43859,25 @@ export namespace InPropertiesClass {
             (subject.termType === "Variable"
               ? subject.value
               : "inPropertiesClass")
-          }InNumbersProperty`,
+          }InIntegersProperty`,
         ),
         predicate:
-          InPropertiesClass.$schema.properties.inNumbersProperty.identifier,
+          InPropertiesClass.$schema.properties.inIntegersProperty.identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "inPropertiesClass")
+          }InIrisProperty`,
+        ),
+        predicate:
+          InPropertiesClass.$schema.properties.inIrisProperty.identifier,
         subject: subject,
       },
     ]);
@@ -40709,6 +44064,94 @@ export namespace InPropertiesClass {
       }),
     );
     patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
+        $numericSparqlWherePatterns<number>,
+      )({
+        filter: parameters?.filter?.inDoublesProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "inPropertiesClass")
+                  }InDoublesProperty`,
+                ),
+                predicate:
+                  InPropertiesClass.$schema.properties.inDoublesProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema: InPropertiesClass.$schema.properties.inDoublesProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "inPropertiesClass")
+          }InDoublesProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass")
+        }InDoublesProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
+        $numericSparqlWherePatterns<bigint>,
+      )({
+        filter: parameters?.filter?.inIntegersProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "inPropertiesClass")
+                  }InIntegersProperty`,
+                ),
+                predicate:
+                  InPropertiesClass.$schema.properties.inIntegersProperty
+                    .identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema: InPropertiesClass.$schema.properties.inIntegersProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "inPropertiesClass")
+          }InIntegersProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass")
+        }InIntegersProperty`,
+      }),
+    );
+    patterns = patterns.concat(
       $maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
         $namedNodeSparqlWherePatterns,
       )({
@@ -40750,50 +44193,6 @@ export namespace InPropertiesClass {
             ? subject.value
             : "inPropertiesClass")
         }InIrisProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumberFilter, $NumberSchema>(
-        $numberSparqlWherePatterns,
-      )({
-        filter: parameters?.filter?.inNumbersProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
-                      : "inPropertiesClass")
-                  }InNumbersProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inNumbersProperty
-                    .identifier,
-                subject: subject,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inNumbersProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InNumbersProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
-            : "inPropertiesClass")
-        }InNumbersProperty`,
       }),
     );
     patterns = patterns.concat(
@@ -48205,7 +51604,7 @@ export namespace DefaultValuePropertiesClass {
     }
     if (
       typeof filter.numberDefaultValueProperty !== "undefined" &&
-      !$filterNumber(
+      !$filterNumeric<number>(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
       )
@@ -48238,7 +51637,7 @@ export namespace DefaultValuePropertiesClass {
     readonly dateDefaultValueProperty?: $DateFilter;
     readonly dateTimeDefaultValueProperty?: $DateFilter;
     readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
-    readonly numberDefaultValueProperty?: $NumberFilter;
+    readonly numberDefaultValueProperty?: $NumericFilter<number>;
     readonly stringDefaultValueProperty?: $StringFilter;
     readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
   };
@@ -49173,9 +52572,10 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$NumberFilter, $NumberSchema>(
-        $numberSparqlWherePatterns,
-      )({
+      $defaultValueSparqlWherePatterns<
+        $NumericFilter<number>,
+        $NumericSchema<number>
+      >($numericSparqlWherePatterns<number>)({
         filter: parameters?.filter?.numberDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -51636,7 +55036,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty;
     } else if (
-      $isReadonlyBigintArray(parameters.convertibleLiteralSetProperty)
+      $isReadonlyBigIntArray(parameters.convertibleLiteralSetProperty)
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
@@ -51740,7 +55140,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleTermSetProperty = [];
     } else if ($isReadonlyObjectArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
-    } else if ($isReadonlyBigintArray(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyBigIntArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
           $literalFactory.bigint(item),
@@ -65570,6 +68970,7 @@ export type $Object =
   | NoRdfTypeClassUnionMember1
   | NoRdfTypeClassUnionMember2
   | NonClass
+  | NumericPropertiesClass
   | OrderedPropertiesClass
   | PartialClassUnionMember1
   | PartialClassUnionMember2
@@ -65838,6 +69239,9 @@ export namespace $Object {
       }
       if (NonClass.isNonClass(left)) {
         return left.$equals(right as unknown as NonClass);
+      }
+      if (NumericPropertiesClass.isNumericPropertiesClass(left)) {
+        return left.$equals(right as unknown as NumericPropertiesClass);
       }
       if (OrderedPropertiesClass.isOrderedPropertiesClass(left)) {
         return left.$equals(right as unknown as OrderedPropertiesClass);
@@ -66519,6 +69923,16 @@ export namespace $Object {
       return false;
     }
     if (
+      NumericPropertiesClass.isNumericPropertiesClass(value) &&
+      filter.on?.NumericPropertiesClass &&
+      !NumericPropertiesClass.$filter(
+        filter.on.NumericPropertiesClass,
+        value as NumericPropertiesClass,
+      )
+    ) {
+      return false;
+    }
+    if (
       OrderedPropertiesClass.isOrderedPropertiesClass(value) &&
       filter.on?.OrderedPropertiesClass &&
       !OrderedPropertiesClass.$filter(
@@ -66908,6 +70322,10 @@ export namespace $Object {
         "$identifier"
       >;
       readonly NonClass?: Omit<NonClass.$Filter, "$identifier">;
+      readonly NumericPropertiesClass?: Omit<
+        NumericPropertiesClass.$Filter,
+        "$identifier"
+      >;
       readonly OrderedPropertiesClass?: Omit<
         OrderedPropertiesClass.$Filter,
         "$identifier"
@@ -67177,6 +70595,9 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
     if (NonClass.isNonClass(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
       return _object.$hash(_hasher);
     }
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
@@ -67525,6 +70946,10 @@ export namespace $Object {
       .altLazy(() => NonClass.$fromJson(json) as Either<z.ZodError, $Object>)
       .altLazy(
         () =>
+          NumericPropertiesClass.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
+      .altLazy(
+        () =>
           OrderedPropertiesClass.$fromJson(json) as Either<z.ZodError, $Object>,
       )
       .altLazy(
@@ -67678,6 +71103,7 @@ export namespace $Object {
       NoRdfTypeClassUnionMember1.$jsonZodSchema(),
       NoRdfTypeClassUnionMember2.$jsonZodSchema(),
       NonClass.$jsonZodSchema(),
+      NumericPropertiesClass.$jsonZodSchema(),
       OrderedPropertiesClass.$jsonZodSchema(),
       PartialClassUnionMember1.$jsonZodSchema(),
       PartialClassUnionMember2.$jsonZodSchema(),
@@ -67759,6 +71185,7 @@ export namespace $Object {
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json
     | NonClass.$Json
+    | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
     | PartialClassUnionMember1.$Json
     | PartialClassUnionMember2.$Json
@@ -67975,6 +71402,9 @@ export namespace $Object {
     if (NonClass.isNonClass(_object)) {
       return _object.$toJson();
     }
+    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
       return _object.$toJson();
     }
@@ -68079,6 +71509,7 @@ export namespace $Object {
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json
     | NonClass.$Json
+    | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
     | PartialClassUnionMember1.$Json
     | PartialClassUnionMember2.$Json
@@ -68467,6 +71898,13 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          NumericPropertiesClass.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           OrderedPropertiesClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -68787,6 +72225,9 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
     if (NonClass.isNonClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
       return _object.$toRdf(_parameters);
     }
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
@@ -69315,6 +72756,14 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NonClass`
           : "objectNonClass",
+      }).concat(),
+      ...NumericPropertiesClass.$sparqlConstructTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!("objectNumericPropertiesClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NumericPropertiesClass`
+          : "objectNumericPropertiesClass",
       }).concat(),
       ...OrderedPropertiesClass.$sparqlConstructTriples({
         subject:
@@ -70114,6 +73563,18 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NonClass`
               : "objectNonClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NumericPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NumericPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectNumericPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NumericPropertiesClass`
+              : "objectNumericPropertiesClass",
           }).concat(),
           type: "group",
         },
@@ -71743,6 +75204,34 @@ export interface $ObjectSet {
       $ObjectSet.Query<
         NoRdfTypeClassUnionMember2.$Filter,
         NoRdfTypeClassUnionMember2.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  numericPropertiesClass(
+    identifier: NumericPropertiesClass.$Identifier,
+  ): Promise<Either<Error, NumericPropertiesClass>>;
+
+  numericPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericPropertiesClass.$Identifier[]>>;
+
+  numericPropertiesClasses(
+    query?: $ObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericPropertiesClass[]>>;
+
+  numericPropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        NumericPropertiesClass.$Filter,
+        NumericPropertiesClass.$Identifier
       >,
       "filter"
     >,
@@ -76958,6 +80447,95 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async numericPropertiesClass(
+    identifier: NumericPropertiesClass.$Identifier,
+  ): Promise<Either<Error, NumericPropertiesClass>> {
+    return this.numericPropertiesClassSync(identifier);
+  }
+
+  numericPropertiesClassSync(
+    identifier: NumericPropertiesClass.$Identifier,
+  ): Either<Error, NumericPropertiesClass> {
+    return this.numericPropertiesClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async numericPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericPropertiesClass.$Identifier[]>> {
+    return this.numericPropertiesClassIdentifiersSync(query);
+  }
+
+  numericPropertiesClassIdentifiersSync(
+    query?: $ObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Either<Error, readonly NumericPropertiesClass.$Identifier[]> {
+    return this.numericPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async numericPropertiesClasses(
+    query?: $ObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericPropertiesClass[]>> {
+    return this.numericPropertiesClassesSync(query);
+  }
+
+  async numericPropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        NumericPropertiesClass.$Filter,
+        NumericPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.numericPropertiesClassesCountSync(query);
+  }
+
+  numericPropertiesClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        NumericPropertiesClass.$Filter,
+        NumericPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.numericPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  numericPropertiesClassesSync(
+    query?: $ObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Either<Error, readonly NumericPropertiesClass[]> {
+    return this.$objectsSync<
+      NumericPropertiesClass,
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >(
+      {
+        $filter: NumericPropertiesClass.$filter,
+        $fromRdf: NumericPropertiesClass.$fromRdf,
+        $fromRdfTypes: [NumericPropertiesClass.$fromRdfType],
+      },
+      query,
+    );
+  }
+
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<Either<Error, OrderedPropertiesClass>> {
@@ -79543,6 +83121,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: NonClass.$fromRdf,
           $fromRdfTypes: [],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: NumericPropertiesClass.$fromRdf,
+          $fromRdfTypes: [NumericPropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -82334,6 +85917,54 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember2.$Filter,
       NoRdfTypeClassUnionMember2.$Identifier
     >(NoRdfTypeClassUnionMember2, query);
+  }
+
+  async numericPropertiesClass(
+    identifier: NumericPropertiesClass.$Identifier,
+  ): Promise<Either<Error, NumericPropertiesClass>> {
+    return (
+      await this.numericPropertiesClasses({ identifiers: [identifier] })
+    ).map((objects) => objects[0]);
+  }
+
+  async numericPropertiesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericPropertiesClass.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >(NumericPropertiesClass, query);
+  }
+
+  async numericPropertiesClasses(
+    query?: $SparqlObjectSet.Query<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericPropertiesClass[]>> {
+    return this.$objects<
+      NumericPropertiesClass,
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >(NumericPropertiesClass, query);
+  }
+
+  async numericPropertiesClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NumericPropertiesClass.$Filter,
+        NumericPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectsCount<
+      NumericPropertiesClass.$Filter,
+      NumericPropertiesClass.$Identifier
+    >(NumericPropertiesClass, query);
   }
 
   async orderedPropertiesClass(

@@ -1,7 +1,7 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe, NonEmptyList } from "purify-ts";
-import { fromRdf } from "rdf-literal";
+import { LiteralDecoder } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
@@ -91,17 +91,36 @@ export class DefaultValueType<
   @Memoize()
   private get defaultValuePrimitiveExpression(): Maybe<Code> {
     switch (this.itemType.kind) {
-      case "DateTimeType":
+      case "BigIntType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(
+          code`${LiteralDecoder.decodeBigIntLiteral(this.defaultValue).unsafeCoerce()}n`,
+        );
+      case "BooleanType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(
+          code`${LiteralDecoder.decodeBooleanLiteral(this.defaultValue).unsafeCoerce()}`,
+        );
       case "DateType":
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(
-          code`new Date("${fromRdf(this.defaultValue, true).toISOString()}")`,
+          code`new Date("${LiteralDecoder.decodeDateLiteral(this.defaultValue).unsafeCoerce().toISOString()}")`,
         );
-      case "BooleanType":
+      case "DateTimeType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(
+          code`new Date("${LiteralDecoder.decodeDateTimeLiteral(this.defaultValue).unsafeCoerce().toISOString()}")`,
+        );
       case "FloatType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(
+          code`${LiteralDecoder.decodeFloatLiteral(this.defaultValue).unsafeCoerce()}`,
+        );
       case "IntType":
         invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(code`${fromRdf(this.defaultValue, true)}`);
+        return Maybe.of(
+          code`${LiteralDecoder.decodeIntLiteral(this.defaultValue).unsafeCoerce()}`,
+        );
       case "StringType":
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(code`${literalOf(this.defaultValue.value)}`);

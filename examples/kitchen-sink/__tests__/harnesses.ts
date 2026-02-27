@@ -1,7 +1,7 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
-
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
 import { InterfaceHarness } from "./InterfaceHarness.js";
@@ -277,18 +277,15 @@ export const harnesses = {
     }),
     kitchenSink.InIdentifierClass,
   ),
-  inIrisPropertyClass: new ClassHarness(
+  inPropertiesClass: new ClassHarness(
     new kitchenSink.InPropertiesClass({
       $identifier,
+      inBooleansProperty: true,
+      inDateTimesProperty: new Date("2018-04-09T10:00:00.000Z"),
+      inDoublesProperty: 1,
       inIrisProperty: dataFactory.namedNode(
         "http://example.com/InPropertiesIri1",
       ),
-    }),
-    kitchenSink.InPropertiesClass,
-  ),
-  inLiteralsPropertyClass: new ClassHarness(
-    new kitchenSink.InPropertiesClass({
-      $identifier,
       inStringsProperty: "text",
     }),
     kitchenSink.InPropertiesClass,
@@ -546,6 +543,27 @@ export const harnesses = {
     kitchenSink.NoRdfTypeClassUnion,
     "NoRdfTypeClassUnion",
   ),
+  numericPropertiesClass: new ClassHarness(
+    new kitchenSink.NumericPropertiesClass({
+      $identifier,
+      byteNumericProperty: -1,
+      doubleNumericProperty: 1.1,
+      floatNumericProperty: 1.1,
+      intNumericProperty: -1,
+      integerNumericProperty: 1n,
+      longNumericProperty: -1n,
+      negativeIntegerNumericProperty: -1n,
+      nonNegativeIntegerNumericProperty: 0n,
+      nonPositiveIntegerNumericProperty: 0n,
+      positiveIntegerNumericProperty: 1n,
+      shortNumericProperty: 1,
+      unsignedByteNumericProperty: 1,
+      unsignedIntNumericProperty: 1,
+      unsignedLongNumericProperty: 1n,
+      unsignedShortNumericProperty: 1,
+    }),
+    kitchenSink.NumericPropertiesClass,
+  ),
   objectListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
       $identifier,
@@ -617,12 +635,12 @@ export const harnesses = {
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
       dateTimeTermProperty: new Date(1523268000000),
-      doubleTermProperty: 1.0,
       $identifier,
       iriTermProperty: dataFactory.namedNode("http://example.com"),
       literalTermProperty: dataFactory.literal("test"),
+      numberTermProperty: 1.0,
       stringTermProperty: "test",
-      termProperty: 1,
+      termProperty: dataFactory.literal("1", xsd.decimal), // Use a literal instead of a number to avoid an issue with Oxigraph literal normalization (https://github.com/oxigraph/oxigraph/issues/526)
     }),
     kitchenSink.TermPropertiesClass,
   ),

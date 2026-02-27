@@ -300,7 +300,7 @@ export function testObjectFilters(
           (_, i) =>
             new kitchenSink.TermPropertiesClass({
               $identifier: identifiers[i],
-              doubleTermProperty: i,
+              numberTermProperty: i,
             }),
         ),
         new kitchenSink.TermPropertiesClass({
@@ -310,21 +310,21 @@ export function testObjectFilters(
       );
 
       for (const [id, [filter, expected]] of Object.entries({
-        in: [{ doubleTermProperty: { in: [0] } }, [identifiers[0]]],
+        in: [{ numberTermProperty: { in: [0] } }, [identifiers[0]]],
         maxExclusive: [
-          { doubleTermProperty: { maxExclusive: 1 } },
+          { numberTermProperty: { maxExclusive: 1 } },
           [identifiers[0]],
         ],
         maxInclusive: [
-          { doubleTermProperty: { maxInclusive: 0 } },
+          { numberTermProperty: { maxInclusive: 0 } },
           [identifiers[0]],
         ],
         minExclusive: [
-          { doubleTermProperty: { minExclusive: 0 } },
+          { numberTermProperty: { minExclusive: 0 } },
           [identifiers[1]],
         ],
         minInclusive: [
-          { doubleTermProperty: { minInclusive: 0 } },
+          { numberTermProperty: { minInclusive: 0 } },
           [identifiers[0], identifiers[1]],
         ],
       } satisfies Record<
@@ -358,7 +358,7 @@ export function testObjectFilters(
         ),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          doubleTermProperty: 0,
+          numberTermProperty: 0,
         }),
       );
 
@@ -410,7 +410,7 @@ export function testObjectFilters(
         ),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          doubleTermProperty: 0,
+          numberTermProperty: 0,
         }),
       );
 
@@ -576,7 +576,7 @@ export function testObjectFilters(
         ),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          doubleTermProperty: 0,
+          numberTermProperty: 0,
         }),
       );
 

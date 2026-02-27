@@ -50,12 +50,25 @@ export function rdfjsTermExpression(
         const unqualifiedName = rdfjsTerm.value.substring(xsd[""].value.length);
         switch (unqualifiedName) {
           case "boolean":
+          case "byte":
+          case "float":
           case "date":
           case "dateTime":
           case "decimal":
           case "double":
+          case "int":
           case "integer":
+          case "long":
+          case "negativeInteger":
+          case "nonNegativeInteger":
+          case "nonPositiveInteger":
+          case "positiveInteger":
+          case "short":
           case "string":
+          case "unsignedByte":
+          case "unsignedInt":
+          case "unsignedLong":
+          case "unsignedShort":
             return code`${snippets_RdfVocabularies}.xsd.${unqualifiedName}`;
           default:
             logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);

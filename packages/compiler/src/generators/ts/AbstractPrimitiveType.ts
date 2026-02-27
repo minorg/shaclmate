@@ -6,11 +6,12 @@ import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
-  ValueT extends boolean | Date | string | number,
+  ValueT extends bigint | boolean | Date | string | number,
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
   override readonly equalsFunction = code`${snippets.strictEquals}`;
   abstract override readonly kind:
+    | "BigIntType"
     | "BooleanType"
     | "DateTimeType"
     | "DateType"

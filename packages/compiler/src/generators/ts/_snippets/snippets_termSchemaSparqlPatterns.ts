@@ -17,7 +17,7 @@ function ${syntheticNamePrefix}termSchemaSparqlPatterns({
   filterPatterns: readonly ${snippets_SparqlFilterPattern}[],
   propertyPatterns: readonly ${imports.sparqljs}.BgpPattern[];
   schema: Readonly<{
-    in?: readonly (boolean | Date | string | number | ${imports.Literal} | ${imports.NamedNode})[];
+    in?: readonly (bigint | boolean | Date | string | number | ${imports.Literal} | ${imports.NamedNode})[];
   }>,
   valueVariable: ${imports.Variable};
 }): readonly ${snippets_SparqlPattern}[] {

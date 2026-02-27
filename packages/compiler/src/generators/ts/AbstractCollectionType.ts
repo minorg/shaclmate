@@ -1,6 +1,11 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import { snippets_isReadonlyBigIntArray } from "./_snippets/snippets_isReadonlyBigIntArray.js";
+import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
+import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
+import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
+import { snippets_isReadonlyStringArray } from "./_snippets/snippets_isReadonlyStringArray.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
@@ -102,6 +107,7 @@ export abstract class AbstractCollectionType<
           itemTypeConversionsByTypeof,
         )) {
           const itemVariable = code`item`;
+
           conversions.push({
             conversionExpression: (value) => {
               const itemTypeConversionExpression =
@@ -111,9 +117,24 @@ export abstract class AbstractCollectionType<
                 : // Defensive copy
                   code`${value}${this.mutable ? ".concat()" : ""}`;
             },
-            sourceTypeCheckExpression: (value) =>
-              // Use the type guard functions to discriminate different array types.
-              code`${(snippets as any)[`isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array`]}(${value})`,
+            sourceTypeCheckExpression: (value) => {
+              switch (itemTypeof as Typeof) {
+                case "bigint":
+                  return code`${snippets_isReadonlyBigIntArray}(${value})`;
+                case "boolean":
+                  return code`${snippets_isReadonlyBooleanArray}(${value})`;
+                case "number":
+                  return code`${snippets_isReadonlyNumberArray}(${value})`;
+                case "object":
+                  return code`${snippets_isReadonlyObjectArray}(${value})`;
+                case "string":
+                  return code`${snippets_isReadonlyStringArray}(${value})`;
+                case "function":
+                case "symbol":
+                case "undefined":
+                  throw new Error("not implemented");
+              }
+            },
             sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,
             sourceTypeof: itemTypeofConversion.sourceTypeof,
           });

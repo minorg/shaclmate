@@ -1,3 +1,4 @@
+import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
@@ -21,6 +22,7 @@ import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
 
 export type Type =
+  | BigIntType
   | BlankNodeType
   | BooleanType
   | DateTimeType

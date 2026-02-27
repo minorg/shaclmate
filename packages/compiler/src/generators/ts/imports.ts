@@ -7,6 +7,7 @@ export const imports = {
   DatasetFactory: imp("StoreFactory:DatasetFactory@n3"),
   Either: imp("Either@purify-ts"),
   EitherAsync: imp("EitherAsync@purify-ts"),
+  GraphQLBigInt: imp("BigInt:GraphQLBigInt@graphql-scalars"),
   GraphQLBoolean: imp("GraphQLBoolean@graphql"),
   GraphQLDate: imp("Date:GraphQLDate@graphql-scalars"),
   GraphQLDateTime: imp("DateTime:GraphQLDateTime@graphql-scalars"),

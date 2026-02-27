@@ -38,7 +38,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       it("should transform object types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.objectTypes).toHaveLength(76);
+          expect(ast.objectTypes).toHaveLength(77);
         } else {
           expect(ast.objectTypes).not.toHaveLength(0);
         }
