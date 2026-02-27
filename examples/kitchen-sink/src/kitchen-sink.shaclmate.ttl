@@ -443,7 +443,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:path :inBooleansProperty
     ], [
-        sh:in ("2018-04-09T10:00:00Z"^^xsd:dateTime
+        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
         ) ;
         sh:maxCount 1 ;
         sh:path :inDateTimesProperty
@@ -460,8 +460,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:path :inIrisProperty
     ], [
-        sh:in (1.0e0
-            2.0e0
+        sh:in (1e0
+            2e0
         ) ;
         sh:maxCount 1 ;
         sh:path :inDoublesProperty
