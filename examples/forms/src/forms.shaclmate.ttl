@@ -41,7 +41,7 @@
         sh:path :nonEmptyStringSetProperty
     ], [
         rdfs:label "Required integer" ;
-        sh:datatype xsd:integer ;
+        sh:datatype xsd:int ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:name "requiredIntegerProperty" ;

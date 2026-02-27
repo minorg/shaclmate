@@ -104,8 +104,7 @@ export class LazyObjectOptionType extends Super {
     conversions.push({
       conversionExpression: () =>
         code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
-      sourceTypeCheckExpression: (value) =>
-        code`typeof ${value} === "undefined"`,
+      sourceTypeCheckExpression: (value) => code`${value} === undefined`,
       sourceTypeName: code`undefined`,
       sourceTypeof: "undefined",
     });

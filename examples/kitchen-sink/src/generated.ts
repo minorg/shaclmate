@@ -1193,7 +1193,7 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   $MaybeSchema<ItemSchemaT>
 > {
   return ({ filter, schema, ...otherParameters }) => {
-    if (typeof filter === "undefined") {
+    if (filter === undefined) {
       // Treat the item's patterns as optional
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
@@ -2643,7 +2643,7 @@ export namespace UuidV4IriIdentifierInterface {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.namedNode(
         `${parameters.$identifierPrefix ?? "urn:shaclmate:UuidV4IriIdentifierInterface:"}${uuid.v4()}`,
       );
@@ -3152,7 +3152,7 @@ export class UuidV4IriIdentifierClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -3161,7 +3161,7 @@ export class UuidV4IriIdentifierClass {
   }
 
   get $identifier(): UuidV4IriIdentifierClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${uuid.v4()}`,
       );
@@ -3757,7 +3757,7 @@ export class UnionDiscriminantsClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -3770,9 +3770,7 @@ export class UnionDiscriminantsClass {
       this.optionalClassOrClassOrStringProperty = Maybe.of(
         parameters.optionalClassOrClassOrStringProperty,
       );
-    } else if (
-      typeof parameters.optionalClassOrClassOrStringProperty === "undefined"
-    ) {
+    } else if (parameters.optionalClassOrClassOrStringProperty === undefined) {
       this.optionalClassOrClassOrStringProperty = Maybe.empty();
     } else {
       this.optionalClassOrClassOrStringProperty =
@@ -3785,7 +3783,7 @@ export class UnionDiscriminantsClass {
       this.optionalIriOrLiteralProperty = Maybe.of(
         parameters.optionalIriOrLiteralProperty,
       );
-    } else if (typeof parameters.optionalIriOrLiteralProperty === "undefined") {
+    } else if (parameters.optionalIriOrLiteralProperty === undefined) {
       this.optionalIriOrLiteralProperty = Maybe.empty();
     } else {
       this.optionalIriOrLiteralProperty =
@@ -3801,7 +3799,7 @@ export class UnionDiscriminantsClass {
       this.optionalIriOrStringProperty = Maybe.of(
         parameters.optionalIriOrStringProperty,
       );
-    } else if (typeof parameters.optionalIriOrStringProperty === "undefined") {
+    } else if (parameters.optionalIriOrStringProperty === undefined) {
       this.optionalIriOrStringProperty = Maybe.empty();
     } else {
       this.optionalIriOrStringProperty =
@@ -3818,7 +3816,7 @@ export class UnionDiscriminantsClass {
       this.requiredIriOrStringProperty =
         parameters.requiredIriOrStringProperty satisfies never;
     }
-    if (typeof parameters.setClassOrClassOrStringProperty === "undefined") {
+    if (parameters.setClassOrClassOrStringProperty === undefined) {
       this.setClassOrClassOrStringProperty = [];
     } else if (typeof parameters.setClassOrClassOrStringProperty === "object") {
       this.setClassOrClassOrStringProperty =
@@ -3827,7 +3825,7 @@ export class UnionDiscriminantsClass {
       this.setClassOrClassOrStringProperty =
         parameters.setClassOrClassOrStringProperty satisfies never;
     }
-    if (typeof parameters.setIriOrLiteralProperty === "undefined") {
+    if (parameters.setIriOrLiteralProperty === undefined) {
       this.setIriOrLiteralProperty = [];
     } else if (typeof parameters.setIriOrLiteralProperty === "object") {
       this.setIriOrLiteralProperty = parameters.setIriOrLiteralProperty;
@@ -3835,7 +3833,7 @@ export class UnionDiscriminantsClass {
       this.setIriOrLiteralProperty =
         parameters.setIriOrLiteralProperty satisfies never;
     }
-    if (typeof parameters.setIriOrStringProperty === "undefined") {
+    if (parameters.setIriOrStringProperty === undefined) {
       this.setIriOrStringProperty = [];
     } else if (typeof parameters.setIriOrStringProperty === "object") {
       this.setIriOrStringProperty = parameters.setIriOrStringProperty;
@@ -3846,7 +3844,7 @@ export class UnionDiscriminantsClass {
   }
 
   get $identifier(): UnionDiscriminantsClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -8212,7 +8210,7 @@ export class TermPropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -8220,7 +8218,7 @@ export class TermPropertiesClass {
       this.blankNodeTermProperty = parameters?.blankNodeTermProperty;
     } else if (typeof parameters?.blankNodeTermProperty === "object") {
       this.blankNodeTermProperty = Maybe.of(parameters?.blankNodeTermProperty);
-    } else if (typeof parameters?.blankNodeTermProperty === "undefined") {
+    } else if (parameters?.blankNodeTermProperty === undefined) {
       this.blankNodeTermProperty = Maybe.empty();
     } else {
       this.blankNodeTermProperty =
@@ -8230,7 +8228,7 @@ export class TermPropertiesClass {
       this.booleanTermProperty = parameters?.booleanTermProperty;
     } else if (typeof parameters?.booleanTermProperty === "boolean") {
       this.booleanTermProperty = Maybe.of(parameters?.booleanTermProperty);
-    } else if (typeof parameters?.booleanTermProperty === "undefined") {
+    } else if (parameters?.booleanTermProperty === undefined) {
       this.booleanTermProperty = Maybe.empty();
     } else {
       this.booleanTermProperty =
@@ -8243,7 +8241,7 @@ export class TermPropertiesClass {
       parameters?.dateTermProperty instanceof Date
     ) {
       this.dateTermProperty = Maybe.of(parameters?.dateTermProperty);
-    } else if (typeof parameters?.dateTermProperty === "undefined") {
+    } else if (parameters?.dateTermProperty === undefined) {
       this.dateTermProperty = Maybe.empty();
     } else {
       this.dateTermProperty = parameters?.dateTermProperty satisfies never;
@@ -8255,7 +8253,7 @@ export class TermPropertiesClass {
       parameters?.dateTimeTermProperty instanceof Date
     ) {
       this.dateTimeTermProperty = Maybe.of(parameters?.dateTimeTermProperty);
-    } else if (typeof parameters?.dateTimeTermProperty === "undefined") {
+    } else if (parameters?.dateTimeTermProperty === undefined) {
       this.dateTimeTermProperty = Maybe.empty();
     } else {
       this.dateTimeTermProperty =
@@ -8269,7 +8267,7 @@ export class TermPropertiesClass {
       this.iriTermProperty = Maybe.of(
         dataFactory.namedNode(parameters?.iriTermProperty),
       );
-    } else if (typeof parameters?.iriTermProperty === "undefined") {
+    } else if (parameters?.iriTermProperty === undefined) {
       this.iriTermProperty = Maybe.empty();
     } else {
       this.iriTermProperty = parameters?.iriTermProperty satisfies never;
@@ -8301,7 +8299,7 @@ export class TermPropertiesClass {
       );
     } else if (typeof parameters?.literalTermProperty === "object") {
       this.literalTermProperty = Maybe.of(parameters?.literalTermProperty);
-    } else if (typeof parameters?.literalTermProperty === "undefined") {
+    } else if (parameters?.literalTermProperty === undefined) {
       this.literalTermProperty = Maybe.empty();
     } else {
       this.literalTermProperty =
@@ -8311,7 +8309,7 @@ export class TermPropertiesClass {
       this.numberTermProperty = parameters?.numberTermProperty;
     } else if (typeof parameters?.numberTermProperty === "number") {
       this.numberTermProperty = Maybe.of(parameters?.numberTermProperty);
-    } else if (typeof parameters?.numberTermProperty === "undefined") {
+    } else if (parameters?.numberTermProperty === undefined) {
       this.numberTermProperty = Maybe.empty();
     } else {
       this.numberTermProperty = parameters?.numberTermProperty satisfies never;
@@ -8320,7 +8318,7 @@ export class TermPropertiesClass {
       this.stringTermProperty = parameters?.stringTermProperty;
     } else if (typeof parameters?.stringTermProperty === "string") {
       this.stringTermProperty = Maybe.of(parameters?.stringTermProperty);
-    } else if (typeof parameters?.stringTermProperty === "undefined") {
+    } else if (parameters?.stringTermProperty === undefined) {
       this.stringTermProperty = Maybe.empty();
     } else {
       this.stringTermProperty = parameters?.stringTermProperty satisfies never;
@@ -8352,7 +8350,7 @@ export class TermPropertiesClass {
       );
     } else if (typeof parameters?.termProperty === "object") {
       this.termProperty = Maybe.of(parameters?.termProperty);
-    } else if (typeof parameters?.termProperty === "undefined") {
+    } else if (parameters?.termProperty === undefined) {
       this.termProperty = Maybe.empty();
     } else {
       this.termProperty = parameters?.termProperty satisfies never;
@@ -8360,7 +8358,7 @@ export class TermPropertiesClass {
   }
 
   get $identifier(): TermPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -10244,7 +10242,7 @@ export class Sha256IriIdentifierClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -10253,7 +10251,7 @@ export class Sha256IriIdentifierClass {
   }
 
   get $identifier(): Sha256IriIdentifierClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -10743,7 +10741,7 @@ export class RecursiveClassUnionMember2 {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -10756,9 +10754,7 @@ export class RecursiveClassUnionMember2 {
       this.recursiveClassUnionMember2Property = Maybe.of(
         parameters?.recursiveClassUnionMember2Property,
       );
-    } else if (
-      typeof parameters?.recursiveClassUnionMember2Property === "undefined"
-    ) {
+    } else if (parameters?.recursiveClassUnionMember2Property === undefined) {
       this.recursiveClassUnionMember2Property = Maybe.empty();
     } else {
       this.recursiveClassUnionMember2Property =
@@ -10767,7 +10763,7 @@ export class RecursiveClassUnionMember2 {
   }
 
   get $identifier(): RecursiveClassUnionMember2.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -11346,7 +11342,7 @@ export class RecursiveClassUnionMember1 {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -11359,9 +11355,7 @@ export class RecursiveClassUnionMember1 {
       this.recursiveClassUnionMember1Property = Maybe.of(
         parameters?.recursiveClassUnionMember1Property,
       );
-    } else if (
-      typeof parameters?.recursiveClassUnionMember1Property === "undefined"
-    ) {
+    } else if (parameters?.recursiveClassUnionMember1Property === undefined) {
       this.recursiveClassUnionMember1Property = Maybe.empty();
     } else {
       this.recursiveClassUnionMember1Property =
@@ -11370,7 +11364,7 @@ export class RecursiveClassUnionMember1 {
   }
 
   get $identifier(): RecursiveClassUnionMember1.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -11956,7 +11950,7 @@ export class PropertyVisibilitiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -11966,7 +11960,7 @@ export class PropertyVisibilitiesClass {
   }
 
   get $identifier(): PropertyVisibilitiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -12672,11 +12666,11 @@ export class PropertyCardinalitiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
-    if (typeof parameters.emptyStringSetProperty === "undefined") {
+    if (parameters.emptyStringSetProperty === undefined) {
       this.emptyStringSetProperty = [];
     } else if (typeof parameters.emptyStringSetProperty === "object") {
       this.emptyStringSetProperty = parameters.emptyStringSetProperty;
@@ -12689,7 +12683,7 @@ export class PropertyCardinalitiesClass {
       this.optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
       this.optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
+    } else if (parameters.optionalStringProperty === undefined) {
       this.optionalStringProperty = Maybe.empty();
     } else {
       this.optionalStringProperty =
@@ -12699,7 +12693,7 @@ export class PropertyCardinalitiesClass {
   }
 
   get $identifier(): PropertyCardinalitiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -13638,7 +13632,7 @@ export namespace PartialInterfaceUnionMember2 {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -14265,7 +14259,7 @@ export namespace PartialInterfaceUnionMember1 {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -14892,7 +14886,7 @@ export class PartialClassUnionMember2 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -14900,7 +14894,7 @@ export class PartialClassUnionMember2 {
   }
 
   get $identifier(): PartialClassUnionMember2.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -15491,7 +15485,7 @@ export class PartialClassUnionMember1 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -15499,7 +15493,7 @@ export class PartialClassUnionMember1 {
   }
 
   get $identifier(): PartialClassUnionMember1.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -16098,7 +16092,7 @@ export class OrderedPropertiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -16108,7 +16102,7 @@ export class OrderedPropertiesClass {
   }
 
   get $identifier(): OrderedPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -16854,7 +16848,7 @@ export class NumericPropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -16862,7 +16856,7 @@ export class NumericPropertiesClass {
       this.byteNumericProperty = parameters?.byteNumericProperty;
     } else if (typeof parameters?.byteNumericProperty === "number") {
       this.byteNumericProperty = Maybe.of(parameters?.byteNumericProperty);
-    } else if (typeof parameters?.byteNumericProperty === "undefined") {
+    } else if (parameters?.byteNumericProperty === undefined) {
       this.byteNumericProperty = Maybe.empty();
     } else {
       this.byteNumericProperty =
@@ -16872,7 +16866,7 @@ export class NumericPropertiesClass {
       this.doubleNumericProperty = parameters?.doubleNumericProperty;
     } else if (typeof parameters?.doubleNumericProperty === "number") {
       this.doubleNumericProperty = Maybe.of(parameters?.doubleNumericProperty);
-    } else if (typeof parameters?.doubleNumericProperty === "undefined") {
+    } else if (parameters?.doubleNumericProperty === undefined) {
       this.doubleNumericProperty = Maybe.empty();
     } else {
       this.doubleNumericProperty =
@@ -16882,7 +16876,7 @@ export class NumericPropertiesClass {
       this.floatNumericProperty = parameters?.floatNumericProperty;
     } else if (typeof parameters?.floatNumericProperty === "number") {
       this.floatNumericProperty = Maybe.of(parameters?.floatNumericProperty);
-    } else if (typeof parameters?.floatNumericProperty === "undefined") {
+    } else if (parameters?.floatNumericProperty === undefined) {
       this.floatNumericProperty = Maybe.empty();
     } else {
       this.floatNumericProperty =
@@ -16894,7 +16888,7 @@ export class NumericPropertiesClass {
       this.integerNumericProperty = Maybe.of(
         parameters?.integerNumericProperty,
       );
-    } else if (typeof parameters?.integerNumericProperty === "undefined") {
+    } else if (parameters?.integerNumericProperty === undefined) {
       this.integerNumericProperty = Maybe.empty();
     } else {
       this.integerNumericProperty =
@@ -16904,7 +16898,7 @@ export class NumericPropertiesClass {
       this.intNumericProperty = parameters?.intNumericProperty;
     } else if (typeof parameters?.intNumericProperty === "number") {
       this.intNumericProperty = Maybe.of(parameters?.intNumericProperty);
-    } else if (typeof parameters?.intNumericProperty === "undefined") {
+    } else if (parameters?.intNumericProperty === undefined) {
       this.intNumericProperty = Maybe.empty();
     } else {
       this.intNumericProperty = parameters?.intNumericProperty satisfies never;
@@ -16913,7 +16907,7 @@ export class NumericPropertiesClass {
       this.longNumericProperty = parameters?.longNumericProperty;
     } else if (typeof parameters?.longNumericProperty === "bigint") {
       this.longNumericProperty = Maybe.of(parameters?.longNumericProperty);
-    } else if (typeof parameters?.longNumericProperty === "undefined") {
+    } else if (parameters?.longNumericProperty === undefined) {
       this.longNumericProperty = Maybe.empty();
     } else {
       this.longNumericProperty =
@@ -16926,9 +16920,7 @@ export class NumericPropertiesClass {
       this.negativeIntegerNumericProperty = Maybe.of(
         parameters?.negativeIntegerNumericProperty,
       );
-    } else if (
-      typeof parameters?.negativeIntegerNumericProperty === "undefined"
-    ) {
+    } else if (parameters?.negativeIntegerNumericProperty === undefined) {
       this.negativeIntegerNumericProperty = Maybe.empty();
     } else {
       this.negativeIntegerNumericProperty =
@@ -16943,9 +16935,7 @@ export class NumericPropertiesClass {
       this.nonNegativeIntegerNumericProperty = Maybe.of(
         parameters?.nonNegativeIntegerNumericProperty,
       );
-    } else if (
-      typeof parameters?.nonNegativeIntegerNumericProperty === "undefined"
-    ) {
+    } else if (parameters?.nonNegativeIntegerNumericProperty === undefined) {
       this.nonNegativeIntegerNumericProperty = Maybe.empty();
     } else {
       this.nonNegativeIntegerNumericProperty =
@@ -16960,9 +16950,7 @@ export class NumericPropertiesClass {
       this.nonPositiveIntegerNumericProperty = Maybe.of(
         parameters?.nonPositiveIntegerNumericProperty,
       );
-    } else if (
-      typeof parameters?.nonPositiveIntegerNumericProperty === "undefined"
-    ) {
+    } else if (parameters?.nonPositiveIntegerNumericProperty === undefined) {
       this.nonPositiveIntegerNumericProperty = Maybe.empty();
     } else {
       this.nonPositiveIntegerNumericProperty =
@@ -16975,9 +16963,7 @@ export class NumericPropertiesClass {
       this.positiveIntegerNumericProperty = Maybe.of(
         parameters?.positiveIntegerNumericProperty,
       );
-    } else if (
-      typeof parameters?.positiveIntegerNumericProperty === "undefined"
-    ) {
+    } else if (parameters?.positiveIntegerNumericProperty === undefined) {
       this.positiveIntegerNumericProperty = Maybe.empty();
     } else {
       this.positiveIntegerNumericProperty =
@@ -16987,7 +16973,7 @@ export class NumericPropertiesClass {
       this.shortNumericProperty = parameters?.shortNumericProperty;
     } else if (typeof parameters?.shortNumericProperty === "number") {
       this.shortNumericProperty = Maybe.of(parameters?.shortNumericProperty);
-    } else if (typeof parameters?.shortNumericProperty === "undefined") {
+    } else if (parameters?.shortNumericProperty === undefined) {
       this.shortNumericProperty = Maybe.empty();
     } else {
       this.shortNumericProperty =
@@ -17000,7 +16986,7 @@ export class NumericPropertiesClass {
       this.unsignedByteNumericProperty = Maybe.of(
         parameters?.unsignedByteNumericProperty,
       );
-    } else if (typeof parameters?.unsignedByteNumericProperty === "undefined") {
+    } else if (parameters?.unsignedByteNumericProperty === undefined) {
       this.unsignedByteNumericProperty = Maybe.empty();
     } else {
       this.unsignedByteNumericProperty =
@@ -17012,7 +16998,7 @@ export class NumericPropertiesClass {
       this.unsignedIntNumericProperty = Maybe.of(
         parameters?.unsignedIntNumericProperty,
       );
-    } else if (typeof parameters?.unsignedIntNumericProperty === "undefined") {
+    } else if (parameters?.unsignedIntNumericProperty === undefined) {
       this.unsignedIntNumericProperty = Maybe.empty();
     } else {
       this.unsignedIntNumericProperty =
@@ -17025,7 +17011,7 @@ export class NumericPropertiesClass {
       this.unsignedLongNumericProperty = Maybe.of(
         parameters?.unsignedLongNumericProperty,
       );
-    } else if (typeof parameters?.unsignedLongNumericProperty === "undefined") {
+    } else if (parameters?.unsignedLongNumericProperty === undefined) {
       this.unsignedLongNumericProperty = Maybe.empty();
     } else {
       this.unsignedLongNumericProperty =
@@ -17038,9 +17024,7 @@ export class NumericPropertiesClass {
       this.unsignedShortNumericProperty = Maybe.of(
         parameters?.unsignedShortNumericProperty,
       );
-    } else if (
-      typeof parameters?.unsignedShortNumericProperty === "undefined"
-    ) {
+    } else if (parameters?.unsignedShortNumericProperty === undefined) {
       this.unsignedShortNumericProperty = Maybe.empty();
     } else {
       this.unsignedShortNumericProperty =
@@ -17049,7 +17033,7 @@ export class NumericPropertiesClass {
   }
 
   get $identifier(): NumericPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -19963,7 +19947,7 @@ export class NonClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -19971,7 +19955,7 @@ export class NonClass {
   }
 
   get $identifier(): NonClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -20396,7 +20380,7 @@ export class NoRdfTypeClassUnionMember2 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -20405,7 +20389,7 @@ export class NoRdfTypeClassUnionMember2 {
   }
 
   get $identifier(): NoRdfTypeClassUnionMember2.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -20873,7 +20857,7 @@ export class NoRdfTypeClassUnionMember1 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -20882,7 +20866,7 @@ export class NoRdfTypeClassUnionMember1 {
   }
 
   get $identifier(): NoRdfTypeClassUnionMember1.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -21370,14 +21354,14 @@ export class MutablePropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
     this._$identifierPrefix = parameters?.$identifierPrefix;
     if (Maybe.isMaybe(parameters?.mutableListProperty)) {
       this.mutableListProperty = parameters?.mutableListProperty;
-    } else if (typeof parameters?.mutableListProperty === "undefined") {
+    } else if (parameters?.mutableListProperty === undefined) {
       this.mutableListProperty = Maybe.of([]);
     } else if (typeof parameters?.mutableListProperty === "object") {
       this.mutableListProperty = Maybe.of(
@@ -21387,7 +21371,7 @@ export class MutablePropertiesClass {
       this.mutableListProperty =
         parameters?.mutableListProperty satisfies never;
     }
-    if (typeof parameters?.mutableSetProperty === "undefined") {
+    if (parameters?.mutableSetProperty === undefined) {
       this.mutableSetProperty = [];
     } else if (typeof parameters?.mutableSetProperty === "object") {
       this.mutableSetProperty = parameters?.mutableSetProperty.concat();
@@ -21398,7 +21382,7 @@ export class MutablePropertiesClass {
       this.mutableStringProperty = parameters?.mutableStringProperty;
     } else if (typeof parameters?.mutableStringProperty === "string") {
       this.mutableStringProperty = Maybe.of(parameters?.mutableStringProperty);
-    } else if (typeof parameters?.mutableStringProperty === "undefined") {
+    } else if (parameters?.mutableStringProperty === undefined) {
       this.mutableStringProperty = Maybe.empty();
     } else {
       this.mutableStringProperty =
@@ -21407,7 +21391,7 @@ export class MutablePropertiesClass {
   }
 
   get $identifier(): MutablePropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       return dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -22530,13 +22514,13 @@ export class ListPropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
     if (Maybe.isMaybe(parameters?.iriListProperty)) {
       this.iriListProperty = parameters?.iriListProperty;
-    } else if (typeof parameters?.iriListProperty === "undefined") {
+    } else if (parameters?.iriListProperty === undefined) {
       this.iriListProperty = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.iriListProperty)) {
       this.iriListProperty = Maybe.of(parameters?.iriListProperty);
@@ -22549,7 +22533,7 @@ export class ListPropertiesClass {
     }
     if (Maybe.isMaybe(parameters?.objectListProperty)) {
       this.objectListProperty = parameters?.objectListProperty;
-    } else if (typeof parameters?.objectListProperty === "undefined") {
+    } else if (parameters?.objectListProperty === undefined) {
       this.objectListProperty = Maybe.of([]);
     } else if (typeof parameters?.objectListProperty === "object") {
       this.objectListProperty = Maybe.of(parameters?.objectListProperty);
@@ -22558,7 +22542,7 @@ export class ListPropertiesClass {
     }
     if (Maybe.isMaybe(parameters?.stringListProperty)) {
       this.stringListProperty = parameters?.stringListProperty;
-    } else if (typeof parameters?.stringListProperty === "undefined") {
+    } else if (parameters?.stringListProperty === undefined) {
       this.stringListProperty = Maybe.of([]);
     } else if (typeof parameters?.stringListProperty === "object") {
       this.stringListProperty = Maybe.of(parameters?.stringListProperty);
@@ -22568,7 +22552,7 @@ export class ListPropertiesClass {
   }
 
   get $identifier(): ListPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -23995,7 +23979,7 @@ export namespace PartialInterface {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -24598,7 +24582,7 @@ export namespace LazyPropertiesInterface {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -24653,7 +24637,7 @@ export namespace LazyPropertiesInterface {
           ),
       });
     } else if (
-      typeof parameters.optionalLazyToResolvedInterfaceProperty === "undefined"
+      parameters.optionalLazyToResolvedInterfaceProperty === undefined
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyObjectOption<
         LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
@@ -24720,8 +24704,7 @@ export namespace LazyPropertiesInterface {
           ),
       });
     } else if (
-      typeof parameters.optionalLazyToResolvedInterfaceUnionProperty ===
-      "undefined"
+      parameters.optionalLazyToResolvedInterfaceUnionProperty === undefined
     ) {
       optionalLazyToResolvedInterfaceUnionProperty = new $LazyObjectOption<
         LazilyResolvedInterfaceUnion.$Identifier,
@@ -24793,8 +24776,8 @@ export namespace LazyPropertiesInterface {
             ),
         });
     } else if (
-      typeof parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty ===
-      "undefined"
+      parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty ===
+      undefined
     ) {
       optionalLazyToResolvedIriIdentifierInterfaceProperty =
         new $LazyObjectOption<
@@ -24867,8 +24850,8 @@ export namespace LazyPropertiesInterface {
             ),
         });
     } else if (
-      typeof parameters.optionalPartialInterfaceToResolvedInterfaceProperty ===
-      "undefined"
+      parameters.optionalPartialInterfaceToResolvedInterfaceProperty ===
+      undefined
     ) {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyObjectOption<
@@ -24941,8 +24924,8 @@ export namespace LazyPropertiesInterface {
             ),
         });
     } else if (
-      typeof parameters.optionalPartialInterfaceToResolvedInterfaceUnionProperty ===
-      "undefined"
+      parameters.optionalPartialInterfaceToResolvedInterfaceUnionProperty ===
+      undefined
     ) {
       optionalPartialInterfaceToResolvedInterfaceUnionProperty =
         new $LazyObjectOption<
@@ -25033,8 +25016,8 @@ export namespace LazyPropertiesInterface {
             ),
         });
     } else if (
-      typeof parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty ===
-      "undefined"
+      parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty ===
+      undefined
     ) {
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyObjectOption<
@@ -25143,9 +25126,7 @@ export namespace LazyPropertiesInterface {
             parameters.setLazyToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[],
           ),
       });
-    } else if (
-      typeof parameters.setLazyToResolvedInterfaceProperty === "undefined"
-    ) {
+    } else if (parameters.setLazyToResolvedInterfaceProperty === undefined) {
       setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
@@ -25191,8 +25172,7 @@ export namespace LazyPropertiesInterface {
           ),
       });
     } else if (
-      typeof parameters.setPartialInterfaceToResolvedInterfaceProperty ===
-      "undefined"
+      parameters.setPartialInterfaceToResolvedInterfaceProperty === undefined
     ) {
       setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
@@ -28215,7 +28195,7 @@ export class PartialClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -28223,7 +28203,7 @@ export class PartialClass {
   }
 
   get $identifier(): PartialClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -28802,7 +28782,7 @@ export class LazyPropertiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -28845,9 +28825,7 @@ export class LazyPropertiesClass {
             parameters.optionalLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
-    } else if (
-      typeof parameters.optionalLazyToResolvedClassProperty === "undefined"
-    ) {
+    } else if (parameters.optionalLazyToResolvedClassProperty === undefined) {
       this.optionalLazyToResolvedClassProperty = new $LazyObjectOption<
         LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
@@ -28906,7 +28884,7 @@ export class LazyPropertiesClass {
           ),
       });
     } else if (
-      typeof parameters.optionalLazyToResolvedClassUnionProperty === "undefined"
+      parameters.optionalLazyToResolvedClassUnionProperty === undefined
     ) {
       this.optionalLazyToResolvedClassUnionProperty = new $LazyObjectOption<
         LazilyResolvedClassUnion.$Identifier,
@@ -28971,8 +28949,7 @@ export class LazyPropertiesClass {
             ),
         });
     } else if (
-      typeof parameters.optionalLazyToResolvedIriIdentifierClassProperty ===
-      "undefined"
+      parameters.optionalLazyToResolvedIriIdentifierClassProperty === undefined
     ) {
       this.optionalLazyToResolvedIriIdentifierClassProperty =
         new $LazyObjectOption<
@@ -29034,8 +29011,7 @@ export class LazyPropertiesClass {
           ),
       });
     } else if (
-      typeof parameters.optionalPartialClassToResolvedClassProperty ===
-      "undefined"
+      parameters.optionalPartialClassToResolvedClassProperty === undefined
     ) {
       this.optionalPartialClassToResolvedClassProperty = new $LazyObjectOption<
         LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
@@ -29100,8 +29076,7 @@ export class LazyPropertiesClass {
             ),
         });
     } else if (
-      typeof parameters.optionalPartialClassToResolvedClassUnionProperty ===
-      "undefined"
+      parameters.optionalPartialClassToResolvedClassUnionProperty === undefined
     ) {
       this.optionalPartialClassToResolvedClassUnionProperty =
         new $LazyObjectOption<
@@ -29187,8 +29162,8 @@ export class LazyPropertiesClass {
             ),
         });
     } else if (
-      typeof parameters.optionalPartialClassUnionToResolvedClassUnionProperty ===
-      "undefined"
+      parameters.optionalPartialClassUnionToResolvedClassUnionProperty ===
+      undefined
     ) {
       this.optionalPartialClassUnionToResolvedClassUnionProperty =
         new $LazyObjectOption<
@@ -29279,9 +29254,7 @@ export class LazyPropertiesClass {
             parameters.setLazyToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierClass[],
           ),
       });
-    } else if (
-      typeof parameters.setLazyToResolvedClassProperty === "undefined"
-    ) {
+    } else if (parameters.setLazyToResolvedClassProperty === undefined) {
       this.setLazyToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
@@ -29320,7 +29293,7 @@ export class LazyPropertiesClass {
           ),
       });
     } else if (
-      typeof parameters.setPartialClassToResolvedClassProperty === "undefined"
+      parameters.setPartialClassToResolvedClassProperty === undefined
     ) {
       this.setPartialClassToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
@@ -29339,7 +29312,7 @@ export class LazyPropertiesClass {
   }
 
   get $identifier(): LazyPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -33217,7 +33190,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -33849,7 +33822,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -34481,7 +34454,7 @@ export class LazilyResolvedClassUnionMember2 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -34489,7 +34462,7 @@ export class LazilyResolvedClassUnionMember2 {
   }
 
   get $identifier(): LazilyResolvedClassUnionMember2.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -35085,7 +35058,7 @@ export class LazilyResolvedClassUnionMember1 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -35093,7 +35066,7 @@ export class LazilyResolvedClassUnionMember1 {
   }
 
   get $identifier(): LazilyResolvedClassUnionMember1.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -35692,7 +35665,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -36335,7 +36308,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -36343,7 +36316,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   }
 
   get $identifier(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -36953,7 +36926,7 @@ export class LanguageInPropertiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -36961,7 +36934,7 @@ export class LanguageInPropertiesClass {
   }
 
   get $identifier(): LanguageInPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -37512,11 +37485,11 @@ export class JsPrimitiveUnionPropertyClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
-    if (typeof parameters?.jsPrimitiveUnionProperty === "undefined") {
+    if (parameters?.jsPrimitiveUnionProperty === undefined) {
       this.jsPrimitiveUnionProperty = [];
     } else if (typeof parameters?.jsPrimitiveUnionProperty === "object") {
       this.jsPrimitiveUnionProperty = parameters?.jsPrimitiveUnionProperty;
@@ -37527,7 +37500,7 @@ export class JsPrimitiveUnionPropertyClass {
   }
 
   get $identifier(): JsPrimitiveUnionPropertyClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -39326,7 +39299,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -39793,7 +39766,7 @@ export namespace InterfaceUnionMember2 {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -40407,7 +40380,7 @@ export namespace InterfaceUnionMember1 {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -41021,7 +40994,7 @@ export namespace Interface {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -41468,7 +41441,7 @@ export class IndirectRecursiveHelperClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -41481,7 +41454,7 @@ export class IndirectRecursiveHelperClass {
       this.indirectRecursiveProperty = Maybe.of(
         parameters?.indirectRecursiveProperty,
       );
-    } else if (typeof parameters?.indirectRecursiveProperty === "undefined") {
+    } else if (parameters?.indirectRecursiveProperty === undefined) {
       this.indirectRecursiveProperty = Maybe.empty();
     } else {
       this.indirectRecursiveProperty =
@@ -41490,7 +41463,7 @@ export class IndirectRecursiveHelperClass {
   }
 
   get $identifier(): IndirectRecursiveHelperClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -42061,7 +42034,7 @@ export class IndirectRecursiveClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -42076,9 +42049,7 @@ export class IndirectRecursiveClass {
       this.indirectRecursiveHelperProperty = Maybe.of(
         parameters?.indirectRecursiveHelperProperty,
       );
-    } else if (
-      typeof parameters?.indirectRecursiveHelperProperty === "undefined"
-    ) {
+    } else if (parameters?.indirectRecursiveHelperProperty === undefined) {
       this.indirectRecursiveHelperProperty = Maybe.empty();
     } else {
       this.indirectRecursiveHelperProperty =
@@ -42087,7 +42058,7 @@ export class IndirectRecursiveClass {
   }
 
   get $identifier(): IndirectRecursiveClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -42693,7 +42664,7 @@ export class InPropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -42701,7 +42672,7 @@ export class InPropertiesClass {
       this.inBooleansProperty = parameters?.inBooleansProperty;
     } else if (typeof parameters?.inBooleansProperty === "boolean") {
       this.inBooleansProperty = Maybe.of(parameters?.inBooleansProperty);
-    } else if (typeof parameters?.inBooleansProperty === "undefined") {
+    } else if (parameters?.inBooleansProperty === undefined) {
       this.inBooleansProperty = Maybe.empty();
     } else {
       this.inBooleansProperty = parameters?.inBooleansProperty satisfies never;
@@ -42713,7 +42684,7 @@ export class InPropertiesClass {
       parameters?.inDateTimesProperty instanceof Date
     ) {
       this.inDateTimesProperty = Maybe.of(parameters?.inDateTimesProperty);
-    } else if (typeof parameters?.inDateTimesProperty === "undefined") {
+    } else if (parameters?.inDateTimesProperty === undefined) {
       this.inDateTimesProperty = Maybe.empty();
     } else {
       this.inDateTimesProperty =
@@ -42723,7 +42694,7 @@ export class InPropertiesClass {
       this.inDoublesProperty = parameters?.inDoublesProperty;
     } else if (typeof parameters?.inDoublesProperty === "number") {
       this.inDoublesProperty = Maybe.of(parameters?.inDoublesProperty);
-    } else if (typeof parameters?.inDoublesProperty === "undefined") {
+    } else if (parameters?.inDoublesProperty === undefined) {
       this.inDoublesProperty = Maybe.empty();
     } else {
       this.inDoublesProperty = parameters?.inDoublesProperty satisfies never;
@@ -42732,7 +42703,7 @@ export class InPropertiesClass {
       this.inIntegersProperty = parameters?.inIntegersProperty;
     } else if (typeof parameters?.inIntegersProperty === "bigint") {
       this.inIntegersProperty = Maybe.of(parameters?.inIntegersProperty);
-    } else if (typeof parameters?.inIntegersProperty === "undefined") {
+    } else if (parameters?.inIntegersProperty === undefined) {
       this.inIntegersProperty = Maybe.empty();
     } else {
       this.inIntegersProperty = parameters?.inIntegersProperty satisfies never;
@@ -42745,7 +42716,7 @@ export class InPropertiesClass {
       this.inIrisProperty = Maybe.of(
         dataFactory.namedNode(parameters?.inIrisProperty),
       );
-    } else if (typeof parameters?.inIrisProperty === "undefined") {
+    } else if (parameters?.inIrisProperty === undefined) {
       this.inIrisProperty = Maybe.empty();
     } else {
       this.inIrisProperty = parameters?.inIrisProperty satisfies never;
@@ -42754,7 +42725,7 @@ export class InPropertiesClass {
       this.inStringsProperty = parameters?.inStringsProperty;
     } else if (typeof parameters?.inStringsProperty === "string") {
       this.inStringsProperty = Maybe.of(parameters?.inStringsProperty);
-    } else if (typeof parameters?.inStringsProperty === "undefined") {
+    } else if (parameters?.inStringsProperty === undefined) {
       this.inStringsProperty = Maybe.empty();
     } else {
       this.inStringsProperty = parameters?.inStringsProperty satisfies never;
@@ -42762,7 +42733,7 @@ export class InPropertiesClass {
   }
 
   get $identifier(): InPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -44273,7 +44244,7 @@ export class InIdentifierClass {
       this.inIdentifierProperty = parameters.inIdentifierProperty;
     } else if (typeof parameters.inIdentifierProperty === "string") {
       this.inIdentifierProperty = Maybe.of(parameters.inIdentifierProperty);
-    } else if (typeof parameters.inIdentifierProperty === "undefined") {
+    } else if (parameters.inIdentifierProperty === undefined) {
       this.inIdentifierProperty = Maybe.empty();
     } else {
       this.inIdentifierProperty =
@@ -44958,7 +44929,7 @@ export abstract class IdentifierOverride1Class {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -44966,7 +44937,7 @@ export abstract class IdentifierOverride1Class {
   }
 
   get $identifier(): IdentifierOverride1ClassStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -46143,7 +46114,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
   }
 
   override get $identifier(): IdentifierOverride4ClassStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${uuid.v4()}`,
       );
@@ -46608,7 +46579,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
   }
 
   override get $identifier(): IdentifierOverride5Class.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -47050,7 +47021,7 @@ export class HasValuePropertiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -47067,7 +47038,7 @@ export class HasValuePropertiesClass {
   }
 
   get $identifier(): HasValuePropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -47667,7 +47638,7 @@ export class FlattenClassUnionMember3 {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -47676,7 +47647,7 @@ export class FlattenClassUnionMember3 {
   }
 
   get $identifier(): FlattenClassUnionMember3.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -48276,7 +48247,7 @@ export class ExternClassPropertyClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -48287,7 +48258,7 @@ export class ExternClassPropertyClass {
       parameters?.externClassProperty instanceof ExternClass
     ) {
       this.externClassProperty = Maybe.of(parameters?.externClassProperty);
-    } else if (typeof parameters?.externClassProperty === "undefined") {
+    } else if (parameters?.externClassProperty === undefined) {
       this.externClassProperty = Maybe.empty();
     } else {
       this.externClassProperty =
@@ -48296,7 +48267,7 @@ export class ExternClassPropertyClass {
   }
 
   get $identifier(): ExternClassPropertyClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -48952,7 +48923,7 @@ export abstract class AbstractBaseClassForExternClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -48961,7 +48932,7 @@ export abstract class AbstractBaseClassForExternClass {
   }
 
   get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -49408,7 +49379,7 @@ export class ExplicitRdfTypeClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -49416,7 +49387,7 @@ export class ExplicitRdfTypeClass {
   }
 
   get $identifier(): ExplicitRdfTypeClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -50011,7 +49982,7 @@ export class ExplicitFromToRdfTypesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -50020,7 +49991,7 @@ export class ExplicitFromToRdfTypesClass {
   }
 
   get $identifier(): ExplicitFromToRdfTypesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -50624,7 +50595,7 @@ export class DirectRecursiveClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -50637,7 +50608,7 @@ export class DirectRecursiveClass {
       this.directRecursiveProperty = Maybe.of(
         parameters?.directRecursiveProperty,
       );
-    } else if (typeof parameters?.directRecursiveProperty === "undefined") {
+    } else if (parameters?.directRecursiveProperty === undefined) {
       this.directRecursiveProperty = Maybe.empty();
     } else {
       this.directRecursiveProperty =
@@ -50646,7 +50617,7 @@ export class DirectRecursiveClass {
   }
 
   get $identifier(): DirectRecursiveClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -51231,7 +51202,7 @@ export class DefaultValuePropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -51241,7 +51212,7 @@ export class DefaultValuePropertiesClass {
       parameters?.dateDefaultValueProperty instanceof Date
     ) {
       this.dateDefaultValueProperty = parameters?.dateDefaultValueProperty;
-    } else if (typeof parameters?.dateDefaultValueProperty === "undefined") {
+    } else if (parameters?.dateDefaultValueProperty === undefined) {
       this.dateDefaultValueProperty = new Date("2018-04-09T00:00:00.000Z");
     } else {
       this.dateDefaultValueProperty =
@@ -51253,9 +51224,7 @@ export class DefaultValuePropertiesClass {
     ) {
       this.dateTimeDefaultValueProperty =
         parameters?.dateTimeDefaultValueProperty;
-    } else if (
-      typeof parameters?.dateTimeDefaultValueProperty === "undefined"
-    ) {
+    } else if (parameters?.dateTimeDefaultValueProperty === undefined) {
       this.dateTimeDefaultValueProperty = new Date("2018-04-09T10:00:00.000Z");
     } else {
       this.dateTimeDefaultValueProperty =
@@ -51264,9 +51233,7 @@ export class DefaultValuePropertiesClass {
     if (typeof parameters?.falseBooleanDefaultValueProperty === "boolean") {
       this.falseBooleanDefaultValueProperty =
         parameters?.falseBooleanDefaultValueProperty;
-    } else if (
-      typeof parameters?.falseBooleanDefaultValueProperty === "undefined"
-    ) {
+    } else if (parameters?.falseBooleanDefaultValueProperty === undefined) {
       this.falseBooleanDefaultValueProperty = false;
     } else {
       this.falseBooleanDefaultValueProperty =
@@ -51274,7 +51241,7 @@ export class DefaultValuePropertiesClass {
     }
     if (typeof parameters?.numberDefaultValueProperty === "number") {
       this.numberDefaultValueProperty = parameters?.numberDefaultValueProperty;
-    } else if (typeof parameters?.numberDefaultValueProperty === "undefined") {
+    } else if (parameters?.numberDefaultValueProperty === undefined) {
       this.numberDefaultValueProperty = 0;
     } else {
       this.numberDefaultValueProperty =
@@ -51282,7 +51249,7 @@ export class DefaultValuePropertiesClass {
     }
     if (typeof parameters?.stringDefaultValueProperty === "string") {
       this.stringDefaultValueProperty = parameters?.stringDefaultValueProperty;
-    } else if (typeof parameters?.stringDefaultValueProperty === "undefined") {
+    } else if (parameters?.stringDefaultValueProperty === undefined) {
       this.stringDefaultValueProperty = "";
     } else {
       this.stringDefaultValueProperty =
@@ -51291,9 +51258,7 @@ export class DefaultValuePropertiesClass {
     if (typeof parameters?.trueBooleanDefaultValueProperty === "boolean") {
       this.trueBooleanDefaultValueProperty =
         parameters?.trueBooleanDefaultValueProperty;
-    } else if (
-      typeof parameters?.trueBooleanDefaultValueProperty === "undefined"
-    ) {
+    } else if (parameters?.trueBooleanDefaultValueProperty === undefined) {
       this.trueBooleanDefaultValueProperty = true;
     } else {
       this.trueBooleanDefaultValueProperty =
@@ -51302,7 +51267,7 @@ export class DefaultValuePropertiesClass {
   }
 
   get $identifier(): DefaultValuePropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -52754,7 +52719,7 @@ export class DateUnionPropertiesClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
@@ -52764,7 +52729,7 @@ export class DateUnionPropertiesClass {
       this.dateOrDateTimeProperty = Maybe.of(
         parameters?.dateOrDateTimeProperty,
       );
-    } else if (typeof parameters?.dateOrDateTimeProperty === "undefined") {
+    } else if (parameters?.dateOrDateTimeProperty === undefined) {
       this.dateOrDateTimeProperty = Maybe.empty();
     } else {
       this.dateOrDateTimeProperty =
@@ -52774,7 +52739,7 @@ export class DateUnionPropertiesClass {
       this.dateOrStringProperty = parameters?.dateOrStringProperty;
     } else if (typeof parameters?.dateOrStringProperty === "object") {
       this.dateOrStringProperty = Maybe.of(parameters?.dateOrStringProperty);
-    } else if (typeof parameters?.dateOrStringProperty === "undefined") {
+    } else if (parameters?.dateOrStringProperty === undefined) {
       this.dateOrStringProperty = Maybe.empty();
     } else {
       this.dateOrStringProperty =
@@ -52786,7 +52751,7 @@ export class DateUnionPropertiesClass {
       this.dateTimeOrDateProperty = Maybe.of(
         parameters?.dateTimeOrDateProperty,
       );
-    } else if (typeof parameters?.dateTimeOrDateProperty === "undefined") {
+    } else if (parameters?.dateTimeOrDateProperty === undefined) {
       this.dateTimeOrDateProperty = Maybe.empty();
     } else {
       this.dateTimeOrDateProperty =
@@ -52796,7 +52761,7 @@ export class DateUnionPropertiesClass {
       this.stringOrDateProperty = parameters?.stringOrDateProperty;
     } else if (typeof parameters?.stringOrDateProperty === "object") {
       this.stringOrDateProperty = Maybe.of(parameters?.stringOrDateProperty);
-    } else if (typeof parameters?.stringOrDateProperty === "undefined") {
+    } else if (parameters?.stringOrDateProperty === undefined) {
       this.stringOrDateProperty = Maybe.empty();
     } else {
       this.stringOrDateProperty =
@@ -52805,7 +52770,7 @@ export class DateUnionPropertiesClass {
   }
 
   get $identifier(): DateUnionPropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -54904,7 +54869,7 @@ export class ConvertibleTypePropertiesClass {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -54921,7 +54886,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleIriOptionProperty = Maybe.of(
         dataFactory.namedNode(parameters.convertibleIriOptionProperty),
       );
-    } else if (typeof parameters.convertibleIriOptionProperty === "undefined") {
+    } else if (parameters.convertibleIriOptionProperty === undefined) {
       this.convertibleIriOptionProperty = Maybe.empty();
     } else {
       this.convertibleIriOptionProperty =
@@ -54937,7 +54902,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleIriProperty =
         parameters.convertibleIriProperty satisfies never;
     }
-    if (typeof parameters.convertibleIriSetProperty === "undefined") {
+    if (parameters.convertibleIriSetProperty === undefined) {
       this.convertibleIriSetProperty = [];
     } else if ($isReadonlyObjectArray(parameters.convertibleIriSetProperty)) {
       this.convertibleIriSetProperty = parameters.convertibleIriSetProperty;
@@ -54991,9 +54956,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleLiteralOptionProperty = Maybe.of(
         parameters.convertibleLiteralOptionProperty,
       );
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "undefined"
-    ) {
+    } else if (parameters.convertibleLiteralOptionProperty === undefined) {
       this.convertibleLiteralOptionProperty = Maybe.empty();
     } else {
       this.convertibleLiteralOptionProperty =
@@ -55028,7 +54991,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleLiteralProperty =
         parameters.convertibleLiteralProperty satisfies never;
     }
-    if (typeof parameters.convertibleLiteralSetProperty === "undefined") {
+    if (parameters.convertibleLiteralSetProperty === undefined) {
       this.convertibleLiteralSetProperty = [];
     } else if (
       $isReadonlyObjectArray(parameters.convertibleLiteralSetProperty)
@@ -55099,9 +55062,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleTermOptionProperty = Maybe.of(
         parameters.convertibleTermOptionProperty,
       );
-    } else if (
-      typeof parameters.convertibleTermOptionProperty === "undefined"
-    ) {
+    } else if (parameters.convertibleTermOptionProperty === undefined) {
       this.convertibleTermOptionProperty = Maybe.empty();
     } else {
       this.convertibleTermOptionProperty =
@@ -55136,7 +55097,7 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleTermProperty =
         parameters.convertibleTermProperty satisfies never;
     }
-    if (typeof parameters.convertibleTermSetProperty === "undefined") {
+    if (parameters.convertibleTermSetProperty === undefined) {
       this.convertibleTermSetProperty = [];
     } else if ($isReadonlyObjectArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
@@ -55167,7 +55128,7 @@ export class ConvertibleTypePropertiesClass {
   }
 
   get $identifier(): ConvertibleTypePropertiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -57875,7 +57836,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -58570,7 +58531,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -59086,7 +59047,7 @@ export namespace ConcreteParentInterfaceStatic {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -59730,7 +59691,7 @@ export namespace ConcreteChildInterface {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -60346,7 +60307,7 @@ export abstract class AbstractBaseClassWithProperties {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -60356,7 +60317,7 @@ export abstract class AbstractBaseClassWithProperties {
   }
 
   get $identifier(): AbstractBaseClassWithPropertiesStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -60823,7 +60784,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
   }
 
   override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -61096,7 +61057,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override get $identifier(): ConcreteParentClassStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -61710,7 +61671,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override get $identifier(): ConcreteChildClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
@@ -62280,7 +62241,7 @@ export abstract class ClassUnionMemberCommonParent {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -62289,7 +62250,7 @@ export abstract class ClassUnionMemberCommonParent {
   }
 
   get $identifier(): ClassUnionMemberCommonParentStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -62731,7 +62692,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
   }
 
   override get $identifier(): ClassUnionMember2.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -63292,7 +63253,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
   }
 
   override get $identifier(): ClassUnionMember1.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -63854,7 +63815,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       $identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters?.$identifier satisfies never;
@@ -64343,14 +64304,14 @@ export class BlankNodeOrIriIdentifierClass {
       this._$identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
   }
 
   get $identifier(): BlankNodeOrIriIdentifierClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
@@ -64810,7 +64771,7 @@ export namespace BlankNodeIdentifierInterface {
     let $identifier: BlankNodeIdentifierInterface.$Identifier;
     if (typeof parameters?.$identifier === "object") {
       $identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters?.$identifier satisfies never;
@@ -65294,14 +65255,14 @@ export class BlankNodeIdentifierClass {
   constructor(parameters?: { readonly $identifier?: BlankNode }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "undefined") {
+    } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
   }
 
   get $identifier(): BlankNodeIdentifierClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
+    if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
     if (this._$identifier.termType !== "BlankNode") {
@@ -87212,7 +87173,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       return Left(new Error("more than one result row"));
     }
     const count = bindings[0][variable];
-    if (typeof count === "undefined") {
+    if (count === undefined) {
       return Left(new Error("no 'count' variable in result row"));
     }
     if (count.termType !== "Literal") {

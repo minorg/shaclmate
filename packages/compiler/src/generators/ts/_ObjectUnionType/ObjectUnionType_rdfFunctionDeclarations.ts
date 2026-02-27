@@ -42,7 +42,7 @@ function ObjectUnionType_toRdfFunctionDeclaration(this: ObjectUnionType): Code {
     for (const memberType of this.concreteMemberTypes) {
       const memberRdfjsResourceType = memberType.toRdfjsResourceType;
 
-      if (typeof returnType === "undefined") {
+      if (returnType === undefined) {
         returnType = memberRdfjsResourceType;
       } else if (!codeEquals(memberRdfjsResourceType, returnType)) {
         return code`${imports.Resource}`;

@@ -24,10 +24,10 @@ export class CurieFactory {
         const prefix = split[0];
         const reference = split[1];
 
-        if (typeof this.referenceCounts[reference] === "undefined") {
+        if (this.referenceCounts[reference] === undefined) {
           this.referenceCounts[reference] = {};
         }
-        if (typeof this.referenceCounts[reference][prefix] === "undefined") {
+        if (this.referenceCounts[reference][prefix] === undefined) {
           this.referenceCounts[reference][prefix] = 1;
         } else {
           this.referenceCounts[reference][prefix] += 1;

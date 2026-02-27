@@ -209,7 +209,10 @@ function $filterMaybe<ItemT, ItemFilterT>(
   };
 }
 
-function $filterNumber(filter: $NumberFilter, value: number) {
+function $filterNumeric<T extends bigint | number>(
+  filter: $NumericFilter<T>,
+  value: T,
+) {
   if (
     typeof filter.in !== "undefined" &&
     !filter.in.some((inValue) => inValue === value)
@@ -395,12 +398,12 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
-interface $NumberFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
+interface $NumericFilter<T extends bigint | number> {
+  readonly in?: readonly T[];
+  readonly maxExclusive?: T;
+  readonly maxInclusive?: T;
+  readonly minExclusive?: T;
+  readonly minInclusive?: T;
 }
 
 type $PropertiesFromRdfParameters = {
@@ -440,6 +443,9 @@ namespace $RdfVocabularies {
     export const boolean = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#boolean",
     );
+    export const byte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#byte",
+    );
     export const date = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#date",
     );
@@ -452,8 +458,47 @@ namespace $RdfVocabularies {
     export const double = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#double",
     );
+    export const float = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#float",
+    );
+    export const int = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#int",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
+    );
+    export const long = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#long",
+    );
+    export const negativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    );
+    export const nonNegativeInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+    );
+    export const nonPositiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+    );
+    export const positiveInteger = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#positiveInteger",
+    );
+    export const short = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#short",
+    );
+    export const string = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#string",
+    );
+    export const unsignedByte = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedByte",
+    );
+    export const unsignedInt = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedInt",
+    );
+    export const unsignedLong = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedLong",
+    );
+    export const unsignedShort = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#unsignedShort",
     );
   }
 }
@@ -492,7 +537,7 @@ export namespace NestedNodeShape {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
@@ -847,14 +892,14 @@ export namespace FormNodeShape {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    } else if (parameters.$identifier === undefined) {
       $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
     }
     const $type = "FormNodeShape" as const;
     let emptyStringSetProperty: readonly string[];
-    if (typeof parameters.emptyStringSetProperty === "undefined") {
+    if (parameters.emptyStringSetProperty === undefined) {
       emptyStringSetProperty = [];
     } else if (typeof parameters.emptyStringSetProperty === "object") {
       emptyStringSetProperty = parameters.emptyStringSetProperty;
@@ -869,7 +914,7 @@ export namespace FormNodeShape {
       optionalStringProperty = parameters.optionalStringProperty;
     } else if (typeof parameters.optionalStringProperty === "string") {
       optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
+    } else if (parameters.optionalStringProperty === undefined) {
       optionalStringProperty = Maybe.empty();
     } else {
       optionalStringProperty =
@@ -1063,7 +1108,7 @@ export namespace FormNodeShape {
     }
     if (
       typeof filter.requiredIntegerProperty !== "undefined" &&
-      !$filterNumber(
+      !$filterNumeric<number>(
         filter.requiredIntegerProperty,
         value.requiredIntegerProperty,
       )
@@ -1088,7 +1133,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty?: NestedNodeShape.$Filter;
     readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredIntegerProperty?: $NumberFilter;
+    readonly requiredIntegerProperty?: $NumericFilter<number>;
     readonly requiredStringProperty?: $StringFilter;
   };
 
@@ -1537,7 +1582,7 @@ export namespace FormNodeShape {
       [
         $literalFactory.number(
           _formNodeShape.requiredIntegerProperty,
-          $RdfVocabularies.xsd.integer,
+          $RdfVocabularies.xsd.int,
         ),
       ],
       options?.graph,

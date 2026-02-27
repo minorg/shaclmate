@@ -38,8 +38,7 @@ export class DefaultValueType<
     this.defaultValuePrimitiveExpression.ifJust((defaultValue) => {
       conversions = conversions.concat({
         conversionExpression: () => code`${defaultValue}`,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "undefined"`,
+        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
         sourceTypeName: code`undefined`,
         sourceTypeof: "undefined",
       });

@@ -90,7 +90,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
       return ${imports.Left}(new Error("more than one result row"));
     }
     const count = bindings[0][variable];
-    if (typeof count === "undefined") {
+    if (count === undefined) {
       return ${imports.Left}(new Error("no 'count' variable in result row"));
     }
     if (count.termType !== "Literal") {
