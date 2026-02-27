@@ -62,7 +62,7 @@ export function recordEquals<KeyT extends keyof any, ValueT>(
     for (const leftKey of leftKeys) {
       const leftValue = left[leftKey];
       const rightValue = right[leftKey];
-      if (typeof rightValue === "undefined") {
+      if (rightValue === undefined) {
         return false;
       }
       if (!valueEquals(leftValue, rightValue)) {

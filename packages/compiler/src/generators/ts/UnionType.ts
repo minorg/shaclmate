@@ -341,7 +341,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   @Memoize()
   override get name(): Code {
-    if (typeof this.#name === "undefined") {
+    if (this.#name === undefined) {
       switch (this.discriminant.kind) {
         case "envelope":
           this.#name = code`(${joinCode(

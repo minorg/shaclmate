@@ -50,8 +50,7 @@ export class OptionType<
     ) {
       conversions.push({
         conversionExpression: () => code`${imports.Maybe}.empty()`,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "undefined"`,
+        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
         sourceTypeName: code`undefined`,
         sourceTypeof: "undefined",
       });

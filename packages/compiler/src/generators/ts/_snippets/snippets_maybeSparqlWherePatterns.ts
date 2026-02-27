@@ -10,7 +10,7 @@ export const snippets_maybeSparqlWherePatterns = conditionalOutput(
   code`\
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlWherePatternsFunction}<${snippets_MaybeFilter}<ItemFilterT>, ${snippets_MaybeSchema}<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
-    if (typeof filter === "undefined") {
+    if (filter === undefined) {
       // Treat the item's patterns as optional
       const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets_liftSparqlPatterns}(itemSparqlWherePatternsFunction({ filter, schema: schema.item(), ...otherParameters }));
       return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];

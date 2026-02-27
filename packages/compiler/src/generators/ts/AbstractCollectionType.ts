@@ -82,8 +82,7 @@ export abstract class AbstractCollectionType<
     if (this.minCount === 0) {
       conversions.push({
         conversionExpression: () => code`[]`,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "undefined"`,
+        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
         sourceTypeName: code`undefined`,
         sourceTypeof: "undefined",
       });

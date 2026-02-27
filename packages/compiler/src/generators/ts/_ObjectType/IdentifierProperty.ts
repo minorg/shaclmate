@@ -165,7 +165,7 @@ export class IdentifierProperty extends AbstractProperty<
       return Maybe.of(code`\
       ${this.override ? "override " : ""} get ${this.name}(): ${this.typeAlias} { ${joinCode(
         [
-          code`if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
+          code`if (this._${this.name} === undefined) { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
           ...checkIdentifierTermTypeStatements(`this._${this.name}`),
           code`return this._${this.name};`,
         ],
@@ -207,7 +207,7 @@ export class IdentifierProperty extends AbstractProperty<
       return Maybe.of(
         code`${this.override ? "override " : ""}get ${this.name}(): ${this.typeAlias} { ${joinCode(
           [
-            code`if (typeof this.${this.declarationName} === "undefined") { throw new Error("unable to mint identifier"); }`,
+            code`if (this.${this.declarationName} === undefined) { throw new Error("unable to mint identifier"); }`,
             code`return this.${this.declarationName};`,
           ],
         )}`,
@@ -382,7 +382,7 @@ export class IdentifierProperty extends AbstractProperty<
           // The identifier will be minted lazily in the get accessor
           invariant(this.getAccessorDeclaration.isJust());
           conversionBranches.push(
-            code`if (typeof ${variables.parameter} === "undefined") { }`,
+            code`if (${variables.parameter} === undefined) { }`,
           );
           break;
         case "interface": {
@@ -403,7 +403,7 @@ export class IdentifierProperty extends AbstractProperty<
               break;
           }
           conversionBranches.push(
-            code`if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
+            code`if (${variables.parameter} === undefined) { ${lhs} = ${mintIdentifier}; }`,
           );
         }
       }

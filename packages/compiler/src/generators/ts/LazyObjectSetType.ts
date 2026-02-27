@@ -79,8 +79,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     conversions.push({
       conversionExpression: () =>
         code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
-      sourceTypeCheckExpression: (value) =>
-        code`typeof ${value} === "undefined"`,
+      sourceTypeCheckExpression: (value) => code`${value} === undefined`,
       sourceTypeName: code`undefined`,
       sourceTypeof: "undefined",
     });
