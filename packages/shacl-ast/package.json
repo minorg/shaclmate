@@ -9,7 +9,7 @@
     "@types/rdfjs__term-set": "~2.0.9",
     "n3": "~1.26.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "2.0.2",
+    "rdfjs-resource": "2.0.5",
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {

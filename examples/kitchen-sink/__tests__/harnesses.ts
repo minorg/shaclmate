@@ -281,7 +281,7 @@ export const harnesses = {
     new kitchenSink.InPropertiesClass({
       $identifier,
       inBooleansProperty: true,
-      inDateTimesProperty: new Date("2018-04-09T10:00:00Z"),
+      inDateTimesProperty: new Date("2018-04-09T10:00:00.000Z"),
       inDoublesProperty: 1,
       inIrisProperty: dataFactory.namedNode(
         "http://example.com/InPropertiesIri1",
