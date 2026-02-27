@@ -179,7 +179,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
 
       const quads = await this.${syntheticNamePrefix}sparqlClient.queryQuads(constructQueryString);
 
-      const dataset = ${snippets.datasetFactory}.dataset(quads.concat());
+      const dataset = ${imports.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
         objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this })));

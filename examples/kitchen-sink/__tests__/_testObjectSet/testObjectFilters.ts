@@ -1,7 +1,7 @@
-import type { BlankNode } from "@rdfjs/types";
+import dataFactory from "@rdfjs/data-model";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-import { DataFactory, type NamedNode } from "n3";
 import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
 
@@ -12,13 +12,13 @@ export function testObjectFilters(
 ) {
   describe("object filters", () => {
     const identifiers = [...new Array(10)].map((_, i) =>
-      DataFactory.namedNode(`http://example.com/${i}`),
+      dataFactory.namedNode(`http://example.com/${i}`),
     );
 
     describe("blank node", () => {
       const objectSet = createObjectSet(
         new kitchenSink.TermPropertiesClass({
-          blankNodeTermProperty: DataFactory.blankNode(),
+          blankNodeTermProperty: dataFactory.blankNode(),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[1],
@@ -147,8 +147,8 @@ export function testObjectFilters(
     });
 
     describe("identifier", () => {
-      const blankNodeIdentifier = DataFactory.blankNode();
-      const namedNodeIdentifier = DataFactory.namedNode("http://example.com");
+      const blankNodeIdentifier = dataFactory.blankNode();
+      const namedNodeIdentifier = dataFactory.namedNode("http://example.com");
 
       const objectSet = createObjectSet(
         new kitchenSink.TermPropertiesClass({
@@ -207,15 +207,15 @@ export function testObjectFilters(
       const objectSet = createObjectSet(
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[0],
-          literalTermProperty: DataFactory.literal("test"),
+          literalTermProperty: dataFactory.literal("test"),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[1],
-          literalTermProperty: DataFactory.literal("test", "en"),
+          literalTermProperty: dataFactory.literal("test", "en"),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          literalTermProperty: DataFactory.literal(1, xsd.integer),
+          literalTermProperty: dataFactory.literal("1", xsd.integer),
         }),
       );
 
@@ -225,7 +225,7 @@ export function testObjectFilters(
           [identifiers[2]],
         ],
         in: [
-          { literalTermProperty: { in: [DataFactory.literal("test")] } },
+          { literalTermProperty: { in: [dataFactory.literal("test")] } },
           [identifiers[0]],
         ],
         languageIn: [
@@ -256,7 +256,7 @@ export function testObjectFilters(
           (_, i) =>
             new kitchenSink.TermPropertiesClass({
               $identifier: identifiers[i],
-              iriTermProperty: DataFactory.namedNode(
+              iriTermProperty: dataFactory.namedNode(
                 `http://example.com/prop${i}`,
               ),
             }),
@@ -271,7 +271,7 @@ export function testObjectFilters(
         in: [
           {
             iriTermProperty: {
-              in: [DataFactory.namedNode("http://example.com/prop0")],
+              in: [dataFactory.namedNode("http://example.com/prop0")],
             },
           },
           [identifiers[0]],
@@ -606,19 +606,19 @@ export function testObjectFilters(
       const objectSet = createObjectSet(
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[0],
-          termProperty: DataFactory.literal("test"),
+          termProperty: dataFactory.literal("test"),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[1],
-          termProperty: DataFactory.literal("test", "en"),
+          termProperty: dataFactory.literal("test", "en"),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[2],
-          termProperty: DataFactory.literal(1, xsd.integer),
+          termProperty: dataFactory.literal("1", xsd.integer),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[3],
-          termProperty: DataFactory.namedNode("http://example.com"),
+          termProperty: dataFactory.namedNode("http://example.com"),
         }),
         new kitchenSink.TermPropertiesClass({
           $identifier: identifiers[4],
@@ -632,7 +632,7 @@ export function testObjectFilters(
           [identifiers[2]],
         ],
         in: [
-          { termProperty: { in: [DataFactory.literal("test")] } },
+          { termProperty: { in: [dataFactory.literal("test")] } },
           [identifiers[0]],
         ],
         languageIn: [
@@ -665,17 +665,17 @@ export function testObjectFilters(
           requiredClassOrClassOrStringProperty: {
             type: "0-ClassUnionMember1",
             value: new kitchenSink.ClassUnionMember1({
-              $identifier: DataFactory.namedNode(
+              $identifier: dataFactory.namedNode(
                 "http://example.com/classUnionMember1",
               ),
               classUnionMember1Property: "http://example.com/test0",
               classUnionMemberCommonParentProperty: "http://example.com/test0",
             }),
           },
-          requiredIriOrLiteralProperty: DataFactory.namedNode(
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
             "http://example.com/test0",
           ),
-          requiredIriOrStringProperty: DataFactory.namedNode(
+          requiredIriOrStringProperty: dataFactory.namedNode(
             "http://example.com/test0",
           ),
         }),
@@ -685,7 +685,7 @@ export function testObjectFilters(
             type: "2-string",
             value: "http://example.com/test1",
           },
-          requiredIriOrLiteralProperty: DataFactory.literal(
+          requiredIriOrLiteralProperty: dataFactory.literal(
             "http://example.com/test1",
           ),
           requiredIriOrStringProperty: "http://example.com/test1",
@@ -738,10 +738,10 @@ export function testObjectFilters(
             requiredIriOrLiteralProperty: {
               on: {
                 Literal: {
-                  in: [DataFactory.literal("http://example.com/test0")],
+                  in: [dataFactory.literal("http://example.com/test0")],
                 },
                 NamedNode: {
-                  in: [DataFactory.namedNode("http://example.com/test0")],
+                  in: [dataFactory.namedNode("http://example.com/test0")],
                 },
               },
             },
@@ -753,10 +753,10 @@ export function testObjectFilters(
             requiredIriOrLiteralProperty: {
               on: {
                 Literal: {
-                  in: [DataFactory.literal("http://example.com/testXXX")],
+                  in: [dataFactory.literal("http://example.com/testXXX")],
                 },
                 NamedNode: {
-                  in: [DataFactory.namedNode("http://example.com/testXXX")],
+                  in: [dataFactory.namedNode("http://example.com/testXXX")],
                 },
               },
             },
@@ -768,7 +768,7 @@ export function testObjectFilters(
             requiredIriOrStringProperty: {
               on: {
                 object: {
-                  in: [DataFactory.namedNode("http://example.com/test0")],
+                  in: [dataFactory.namedNode("http://example.com/test0")],
                 },
                 string: { in: ["http://example.com/test0"] },
               },
@@ -781,7 +781,7 @@ export function testObjectFilters(
             requiredIriOrStringProperty: {
               on: {
                 object: {
-                  in: [DataFactory.namedNode("http://example.com/testx")],
+                  in: [dataFactory.namedNode("http://example.com/testx")],
                 },
                 string: { in: ["http://example.com/testx"] },
               },

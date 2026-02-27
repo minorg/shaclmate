@@ -18,8 +18,7 @@ import {
   subcommands,
 } from "cmd-ts";
 import { ExistingPath } from "cmd-ts/dist/cjs/batteries/fs.js";
-import * as N3 from "n3";
-import { DataFactory, Parser, Store } from "n3";
+import { DataFactory, Parser, Store, Writer } from "n3";
 import { pino } from "pino";
 import SHACLValidator from "rdf-validate-shacl";
 import { shaclShaclDataset } from "./shaclShaclDataset.js";
@@ -108,7 +107,7 @@ function generate({
       for (const prefixEntry of iriPrefixMap.entries()) {
         n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
       }
-      const n3Writer = new N3.Writer({
+      const n3Writer = new Writer({
         format: "text/turtle",
         prefixes: n3WriterPrefixes,
       });

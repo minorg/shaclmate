@@ -1,6 +1,6 @@
+import dataFactory from "@rdfjs/data-model";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";

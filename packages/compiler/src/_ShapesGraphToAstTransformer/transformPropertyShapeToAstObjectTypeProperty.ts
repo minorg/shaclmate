@@ -1,4 +1,4 @@
-import { DataFactory } from "n3";
+import dataFactory from "@rdfjs/data-model";
 import { Either, Left, Maybe } from "purify-ts";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
@@ -37,7 +37,7 @@ function synthesizePartialAstObjectType({
     identifierMintingStrategy: Maybe.empty(),
     label: Maybe.empty(),
     name: Maybe.of(syntheticName),
-    shapeIdentifier: DataFactory.namedNode(
+    shapeIdentifier: dataFactory.namedNode(
       `urn:shaclmate:synthetic:${syntheticName}`,
     ),
     synthetic: true,

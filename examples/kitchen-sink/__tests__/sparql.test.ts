@@ -1,6 +1,7 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import type { NamedNode, Quad } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import N3, { DataFactory as dataFactory } from "n3";
 import * as oxigraph from "oxigraph";
 import { ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
@@ -74,7 +75,7 @@ describe("sparql", () => {
       const constructQueryString = harness.sparqlConstructQueryString();
 
       // Add to a Dataset to deduplicate the quads
-      const constructResultDataset = new N3.Store(
+      const constructResultDataset = datasetFactory.dataset(
         oxigraphStore.query(constructQueryString) as Quad[],
       );
       const constructInstanceEither = harness.fromRdf(

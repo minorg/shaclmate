@@ -1,5 +1,5 @@
+import dataFactory from "@rdfjs/data-model";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import N3 from "n3";
 
 export const data = {
   blankNodeOrIriIdentifierClasses: [...new Array(4)].map(
@@ -7,8 +7,8 @@ export const data = {
       new kitchenSink.BlankNodeOrIriIdentifierClass({
         $identifier:
           i % 2 === 0
-            ? N3.DataFactory.blankNode()
-            : N3.DataFactory.namedNode(
+            ? dataFactory.blankNode()
+            : dataFactory.namedNode(
                 `http://example.com/blankNodeOrIriIdentifierClass${i}`,
               ),
       }),
@@ -18,7 +18,7 @@ export const data = {
     switch (i % 2) {
       case 0:
         return new kitchenSink.ClassUnionMember1({
-          $identifier: N3.DataFactory.namedNode(
+          $identifier: dataFactory.namedNode(
             `http://example.com/classUnion${i}`,
           ),
           classUnionMemberCommonParentProperty: `common parent ${i}`,
@@ -26,7 +26,7 @@ export const data = {
         });
       case 1:
         return new kitchenSink.ClassUnionMember2({
-          $identifier: N3.DataFactory.namedNode(
+          $identifier: dataFactory.namedNode(
             `http://example.com/classUnion${i}`,
           ),
           classUnionMemberCommonParentProperty: `common parent ${i}`,
@@ -43,7 +43,7 @@ export const data = {
         abstractBaseClassWithPropertiesProperty: `ABC string ${i}`,
         concreteChildClassProperty: `child string ${i}`,
         concreteParentClassProperty: `parent string ${i}`,
-        $identifier: N3.DataFactory.namedNode(
+        $identifier: dataFactory.namedNode(
           `http://example.com/concreteChildClass${i}`,
         ),
       }),
@@ -53,11 +53,11 @@ export const data = {
   //   (_, i) =>
   //     new kitchenSink.DirectRecursiveClass({
   //       directRecursiveProperty: new kitchenSink.DirectRecursiveClass({
-  //         $identifier: N3.DataFactory.namedNode(
+  //         $identifier: dataFactory.namedNode(
   //           `http://example.com/directRecursiveClass${i}/directRecursiveProperty/value`,
   //         ),
   //       }),
-  //       $identifier: N3.DataFactory.namedNode(
+  //       $identifier: dataFactory.namedNode(
   //         `http://example.com/directRecursiveClass${i}`,
   //       ),
   //     }),
@@ -67,7 +67,7 @@ export const data = {
     switch (i % 2) {
       case 0:
         return {
-          $identifier: N3.DataFactory.namedNode(
+          $identifier: dataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
@@ -76,7 +76,7 @@ export const data = {
         } satisfies kitchenSink.InterfaceUnion;
       case 1:
         return {
-          $identifier: N3.DataFactory.namedNode(
+          $identifier: dataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
@@ -92,14 +92,14 @@ export const data = {
     switch (i % 2) {
       case 0:
         return new kitchenSink.NoRdfTypeClassUnionMember1({
-          $identifier: N3.DataFactory.namedNode(
+          $identifier: dataFactory.namedNode(
             `http://example.com/noRdfTypeClassUnion${i}`,
           ),
           noRdfTypeClassUnionMember1Property: `member ${i}`,
         });
       case 1:
         return new kitchenSink.NoRdfTypeClassUnionMember2({
-          $identifier: N3.DataFactory.namedNode(
+          $identifier: dataFactory.namedNode(
             `http://example.com/noRdfTypeClassUnion${i}`,
           ),
           noRdfTypeClassUnionMember2Property: `member ${i}`,

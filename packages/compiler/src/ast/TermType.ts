@@ -1,5 +1,4 @@
-import type { Literal, NamedNode } from "@rdfjs/types";
-import type { BlankNode } from "n3";
+import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
 
 /**
