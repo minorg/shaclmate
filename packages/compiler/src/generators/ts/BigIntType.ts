@@ -3,7 +3,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import { imports } from "./imports.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly graphqlType = new AbstractNumericType.GraphqlType(
@@ -27,15 +27,12 @@ export class BigIntType extends AbstractNumericType<bigint> {
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${imports.z}.bigint().transform(_ => _.toString())`;
+        return code`${imports.z}.string()`;
       case 1:
-        return code`${imports.z}.literal(${this.literalOf(this.primitiveIn[0])}).transform(() => "${this.primitiveIn[0].toString()}" as const)`;
+        return code`${imports.z}.literal(${literalOf(this.primitiveIn[0].toString())})`;
       default:
-        return code`${imports.z}.union([${joinCode(
-          this.primitiveIn.map(
-            (value) =>
-              code`${imports.z}.literal(${this.literalOf(value)}).transform(() => "${value.toString()}" as const)`,
-          ),
+        return code`${imports.z}.enum([${joinCode(
+          this.primitiveIn.map((value) => code`${literalOf(value.toString())}`),
           { on: "," },
         )}])`;
     }

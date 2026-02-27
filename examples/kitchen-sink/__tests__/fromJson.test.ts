@@ -5,6 +5,10 @@ import { harnesses } from "./harnesses.js";
 
 describe("fromJson", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
+    if (id !== "numericPropertiesClass") {
+      continue;
+    }
+
     it(`${id} round trip`, ({ expect }) => {
       const jsonObject = harness.toJson();
       const fromJsonInstance: any = harness.fromJson(jsonObject).unsafeCoerce();

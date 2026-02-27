@@ -17937,38 +17937,17 @@ export namespace NumericPropertiesClass {
       byteNumericProperty: z.number().optional(),
       doubleNumericProperty: z.number().optional(),
       floatNumericProperty: z.number().optional(),
-      integerNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
+      integerNumericProperty: z.string().optional(),
       intNumericProperty: z.number().optional(),
-      longNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
-      negativeIntegerNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
-      nonNegativeIntegerNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
-      nonPositiveIntegerNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
-      positiveIntegerNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
+      longNumericProperty: z.string().optional(),
+      negativeIntegerNumericProperty: z.string().optional(),
+      nonNegativeIntegerNumericProperty: z.string().optional(),
+      nonPositiveIntegerNumericProperty: z.string().optional(),
+      positiveIntegerNumericProperty: z.string().optional(),
       shortNumericProperty: z.number().optional(),
       unsignedByteNumericProperty: z.number().optional(),
       unsignedIntNumericProperty: z.number().optional(),
-      unsignedLongNumericProperty: z
-        .bigint()
-        .transform((_) => _.toString())
-        .optional(),
+      unsignedLongNumericProperty: z.string().optional(),
       unsignedShortNumericProperty: z.number().optional(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -43225,12 +43204,7 @@ export namespace InPropertiesClass {
       inBooleansProperty: z.literal(true).optional(),
       inDateTimesProperty: z.iso.datetime().optional(),
       inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
-      inIntegersProperty: z
-        .union([
-          z.literal(1n).transform(() => "1" as const),
-          z.literal(2n).transform(() => "2" as const),
-        ])
-        .optional(),
+      inIntegersProperty: z.enum(["1", "2"]).optional(),
       inIrisProperty: z
         .object({
           "@id": z.enum([
