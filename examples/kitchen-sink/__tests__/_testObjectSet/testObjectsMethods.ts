@@ -1,5 +1,5 @@
+import dataFactory from "@rdfjs/data-model";
 import type * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import { DataFactory } from "n3";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
 
@@ -68,7 +68,7 @@ export function testObjectsMethods(
           (
             await objectSet.concreteChildClasses({
               identifiers: [
-                DataFactory.namedNode("http://example.com/nonextant"),
+                dataFactory.namedNode("http://example.com/nonextant"),
                 data.concreteChildClasses[0].$identifier,
               ],
             })

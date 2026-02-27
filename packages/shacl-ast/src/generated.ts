@@ -1,3 +1,5 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
   DatasetCore,
@@ -6,7 +8,6 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 
@@ -18,8 +19,6 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
-
-const $datasetFactory = new DatasetFactory();
 
 function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
@@ -2507,7 +2506,7 @@ export namespace BaseShaclCoreShapeStatic {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_baseShaclCoreShape.$identifier);
     resource.add(
       BaseShaclCoreShapeStatic.$schema.properties.and.identifier,
@@ -3624,7 +3623,7 @@ export namespace ShaclCorePropertyShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = BaseShaclCoreShapeStatic.$toRdf(_shaclCorePropertyShape, {
       ignoreRdfType: true,
       graph: options?.graph,
@@ -3971,7 +3970,7 @@ export namespace ShaclCorePropertyGroup {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_shaclCorePropertyGroup.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -4285,7 +4284,7 @@ export namespace ShaclCoreNodeShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = BaseShaclCoreShapeStatic.$toRdf(_shaclCoreNodeShape, {
       ignoreRdfType: true,
       graph: options?.graph,
@@ -4561,7 +4560,7 @@ export namespace OwlOntology {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_owlOntology.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(

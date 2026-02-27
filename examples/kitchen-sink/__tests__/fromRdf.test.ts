@@ -1,6 +1,7 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
-import N3, { DataFactory as dataFactory } from "n3";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
@@ -11,7 +12,7 @@ describe("fromRdf", () => {
   const validLanguageInLanguage = ["en", "fr"];
 
   beforeAll(() => {
-    const languageInDataset = new N3.Store();
+    const languageInDataset = datasetFactory.dataset();
     const languageInResourceSet = new ResourceSet(languageInDataset);
     invalidLanguageInResource = languageInResourceSet.resource(
       dataFactory.blankNode(),
@@ -84,7 +85,7 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
-    const resource = new ResourceSet(new N3.Store(), {
+    const resource = new ResourceSet(datasetFactory.dataset(), {
       dataFactory,
     }).resource(dataFactory.blankNode());
     resource.add(
@@ -103,7 +104,7 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType accept non-default rdf:type", ({ expect }) => {
-    const resource = new ResourceSet(new N3.Store(), {
+    const resource = new ResourceSet(datasetFactory.dataset(), {
       dataFactory,
     }).resource(dataFactory.blankNode());
     resource.add(
@@ -158,7 +159,7 @@ describe("fromRdf", () => {
   });
 
   it("reject invalid values (sh:hasValue)", ({ expect }) => {
-    const dataset = new N3.Store();
+    const dataset = datasetFactory.dataset();
     const identifier = dataFactory.blankNode();
     dataset.add(
       dataFactory.quad(
@@ -187,7 +188,7 @@ describe("fromRdf", () => {
   });
 
   it("reject invalid identifier values (sh:in)", ({ expect }) => {
-    const dataset = new N3.Store();
+    const dataset = datasetFactory.dataset();
     const identifier = dataFactory.namedNode(
       "http://example.com/InvalidIdentifier",
     );
@@ -208,7 +209,7 @@ describe("fromRdf", () => {
   });
 
   it("reject invalid IRI property values (sh:in)", ({ expect }) => {
-    const dataset = new N3.Store();
+    const dataset = datasetFactory.dataset();
     const identifier = dataFactory.blankNode();
     dataset.add(
       dataFactory.quad(
@@ -228,7 +229,7 @@ describe("fromRdf", () => {
   });
 
   it("reject invalid literal property values (sh:in)", ({ expect }) => {
-    const dataset = new N3.Store();
+    const dataset = datasetFactory.dataset();
     const identifier = dataFactory.blankNode();
     const object = dataFactory.literal("somethingelse");
     dataset.add(
@@ -362,7 +363,7 @@ describe("fromRdf", () => {
   it("accept right identifier type (NamedNode)", ({ expect }) => {
     expect(
       kitchenSink.IriIdentifierClass.$fromRdf(
-        new ResourceSet(new N3.Store(), {
+        new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
           .resource(dataFactory.namedNode("http://example.com/identifier"))
@@ -374,7 +375,7 @@ describe("fromRdf", () => {
   it("accept right identifier type (sh:in identifier)", ({ expect }) => {
     expect(
       kitchenSink.InIdentifierClass.$fromRdf(
-        new ResourceSet(new N3.Store(), {
+        new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
           .resource(
@@ -388,7 +389,7 @@ describe("fromRdf", () => {
   it("reject wrong identifier type (BlankNode)", ({ expect }) => {
     expect(
       kitchenSink.IriIdentifierClass.$fromRdf(
-        new ResourceSet(new N3.Store(), {
+        new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
           .resource(dataFactory.blankNode())
@@ -400,7 +401,7 @@ describe("fromRdf", () => {
   it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
     expect(
       kitchenSink.InIdentifierClass.$fromRdf(
-        new ResourceSet(new N3.Store(), {
+        new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
           .resource(
@@ -412,7 +413,7 @@ describe("fromRdf", () => {
   });
 
   it("reject malformed list", ({ expect }) => {
-    const resourceSet = new ResourceSet(new N3.Store(), {
+    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
       dataFactory,
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
@@ -427,7 +428,7 @@ describe("fromRdf", () => {
   });
 
   it("reject mistyped list", ({ expect }) => {
-    const resourceSet = new ResourceSet(new N3.Store(), {
+    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
       dataFactory,
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
@@ -445,7 +446,7 @@ describe("fromRdf", () => {
   });
 
   it("reject mistyped set", ({ expect }) => {
-    const resourceSet = new ResourceSet(new N3.Store(), {
+    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
       dataFactory,
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
@@ -489,7 +490,7 @@ describe("fromRdf", () => {
       concreteChildClassProperty: "child",
       concreteParentClassProperty: "parent",
     });
-    const dataset = new N3.Store();
+    const dataset = datasetFactory.dataset();
     for (const quad of child.$toRdf().dataset) {
       if (!quad.predicate.equals(rdf.type)) {
         dataset.add(quad);

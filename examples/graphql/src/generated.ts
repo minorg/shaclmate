@@ -1,3 +1,5 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
   DatasetCore,
@@ -17,7 +19,6 @@ import {
   GraphQLString,
   GraphQLUnionType,
 } from "graphql";
-import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
 import { Either, EitherAsync, Left, Maybe } from "purify-ts";
 import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 
@@ -25,8 +26,6 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
-
-const $datasetFactory = new DatasetFactory();
 
 function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
@@ -504,7 +503,7 @@ export class $DefaultPartial {
   }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
@@ -645,7 +644,7 @@ export class UnionMember2 {
   }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -918,7 +917,7 @@ export class UnionMember1 {
   }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -1204,7 +1203,7 @@ export class Nested {
   }): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -1574,7 +1573,7 @@ export class Parent {
   }): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -1994,7 +1993,7 @@ export class Child extends Parent {
   }): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet($datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = super.$toRdf({
       ignoreRdfType: true,
       graph: options?.graph,

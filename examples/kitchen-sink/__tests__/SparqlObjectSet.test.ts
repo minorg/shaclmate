@@ -1,6 +1,6 @@
 import { OxigraphSparqlClient } from "@kos-kit/sparql-client";
+import dataFactory from "@rdfjs/data-model";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import N3 from "n3";
 import * as oxigraph from "oxigraph";
 import { describe } from "vitest";
 import { testObjectSet } from "./testObjectSet.js";
@@ -10,7 +10,7 @@ describe("SparqlObjectSet", () => {
     const oxigraphStore = new oxigraph.Store();
     const objectSet = new kitchenSink.$SparqlObjectSet(
       new OxigraphSparqlClient({
-        dataFactory: N3.DataFactory,
+        dataFactory,
         store: oxigraphStore,
       }),
     );

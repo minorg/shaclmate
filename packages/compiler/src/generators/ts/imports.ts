@@ -2,9 +2,9 @@ import { imp } from "./ts-poet-wrapper.js";
 
 export const imports = {
   BlankNode: imp("BlankNode@@rdfjs/types"),
-  dataFactory: imp("DataFactory:dataFactory@n3"),
+  dataFactory: imp("dataFactory=@rdfjs/data-model"),
   DatasetCore: imp("DatasetCore@@rdfjs/types"),
-  DatasetFactory: imp("StoreFactory:DatasetFactory@n3"),
+  datasetFactory: imp("datasetFactory=@rdfjs/dataset"),
   Either: imp("Either@purify-ts"),
   EitherAsync: imp("EitherAsync@purify-ts"),
   GraphQLBigInt: imp("BigInt:GraphQLBigInt@graphql-scalars"),

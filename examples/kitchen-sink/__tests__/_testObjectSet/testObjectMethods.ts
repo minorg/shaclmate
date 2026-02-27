@@ -1,5 +1,5 @@
+import dataFactory from "@rdfjs/data-model";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import { DataFactory } from "n3";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
 
@@ -44,7 +44,7 @@ export function testObjectMethods(
       expect(
         (
           await objectSet.concreteChildClass(
-            DataFactory.namedNode("http://example.com/nonextant"),
+            dataFactory.namedNode("http://example.com/nonextant"),
           )
         ).isLeft(),
       ).toStrictEqual(true);

@@ -1,4 +1,4 @@
-import { DataFactory } from "n3";
+import dataFactory from "@rdfjs/data-model";
 import { invariant } from "ts-invariant";
 import { describe, it } from "vitest";
 import { testData } from "./testData.js";
@@ -7,7 +7,7 @@ describe("PropertyPath", () => {
   function propertyShape(name: string) {
     return testData.propertyPaths.shapesGraph
       .propertyShapeByIdentifier(
-        DataFactory.namedNode(`http://example.com/${name}`),
+        dataFactory.namedNode(`http://example.com/${name}`),
       )
       .unsafeCoerce();
   }

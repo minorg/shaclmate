@@ -3,7 +3,6 @@ import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -30,7 +29,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
   );
 
   const statements: Code[] = [
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${snippets.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${imports.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {

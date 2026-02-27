@@ -1,8 +1,8 @@
+import dataFactory from "@rdfjs/data-model";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import Serializer from "@rdfjs/serializer-turtle";
 import type { Quad } from "@rdfjs/types";
 import { rdf, rdfs, sh, xsd } from "@tpluscode/rdf-ns-builders";
-import { DataFactory } from "n3";
 
 const prefixMap = new PrefixMap(
   [
@@ -11,7 +11,7 @@ const prefixMap = new PrefixMap(
     ["sh", sh[""]],
     ["xsd", xsd[""]],
   ],
-  { factory: DataFactory },
+  { factory: dataFactory },
 );
 
 const serializer = new Serializer({ prefixes: prefixMap });

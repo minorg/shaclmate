@@ -13,7 +13,6 @@ import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
-import { snippets_datasetFactory } from "./_snippets/snippets_datasetFactory.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
@@ -99,7 +98,6 @@ export const snippets = {
   booleanSparqlWherePatterns: snippets_booleanSparqlWherePatterns,
   CollectionFilter: snippets_CollectionFilter,
   CollectionSchema: snippets_CollectionSchema,
-  datasetFactory: snippets_datasetFactory,
   dateEquals: snippets_dateEquals,
   DateFilter: snippets_DateFilter,
   DateSchema: snippets_DateSchema,

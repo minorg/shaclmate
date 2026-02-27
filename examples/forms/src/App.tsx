@@ -5,11 +5,11 @@ import {
 import { JsonForms } from "@jsonforms/react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import * as N3 from "n3";
-const dataFactory = N3.DataFactory;
+import dataFactory from "@rdfjs/data-model";
 import { NonEmptyList } from "purify-ts";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./generated.js";
+import { Writer } from "n3";
 
 const classes = {
   container: {
@@ -65,7 +65,7 @@ const App: FC = () => {
       generated.FormNodeShape.$fromJson(data)
         .mapLeft((error) => error.toString())
         .map((instance) => {
-          return new N3.Writer({ format: "N-Triples" }).quadsToString([
+          return new Writer({ format: "N-Triples" }).quadsToString([
             ...generated.FormNodeShape.$toRdf(instance).dataset,
           ]);
         })

@@ -28,6 +28,8 @@ interface Package {
 
 const externalDependencyVersions = {
   "@biomejs/biome": { "@biomejs/biome": "2.3.10" },
+  "@rdfjs/data-model": { "@rdfjs/data-model": "~2.1.1" },
+  "@rdfjs/dataset": { "@rdfjs/dataset": "~2.0.2" },
   "@rdfjs/prefix-map": { "@rdfjs/prefix-map": "~0.1.2" },
   "@rdfjs/serializer-turtle": { "@rdfjs/serializer-turtle": "~1.1.5" },
   "@rdfjs/term-map": { "@rdfjs/term-map": "~2.0.2" },
@@ -38,6 +40,8 @@ const externalDependencyVersions = {
   "@tsconfig/strictest": { "@tsconfig/strictest": "~2.0.8" },
   "@types/node": { "@types/node": "~22" },
   "@types/n3": { "@types/n3": "~1.26.0" },
+  "@types/rdfjs__data-model": { "@types/rdfjs__data-model": "~2.0.9" },
+  "@types/rdfjs__dataset": { "@types/rdfjs__dataset": "~2.0.7" },
   "@types/rdfjs__prefix-map": { "@types/rdfjs__prefix-map": "~0.1.5" },
   "@types/rdfjs__serializer-turtle": {
     "@types/rdfjs__serializer-turtle": "~1.1.0",
@@ -75,12 +79,10 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/types"],
-        ...externalDependencyVersions["@types/n3"],
-        ...externalDependencyVersions["@types/sparqljs"],
-        ...externalDependencyVersions["@types/uuid"],
         ...externalDependencyVersions["js-sha256"],
-        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
         ...externalDependencyVersions["sparqljs"],
@@ -94,8 +96,14 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["@rdfjs/prefix-map"],
         ...externalDependencyVersions["@rdfjs/serializer-turtle"],
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         ...externalDependencyVersions["@types/rdfjs__serializer-turtle"],
+        ...externalDependencyVersions["@types/sparqljs"],
+        ...externalDependencyVersions["@types/uuid"],
+        ...externalDependencyVersions["n3"],
         oxigraph: "0.4.11",
         ...externalDependencyVersions["rdf-validate-shacl"],
       },
@@ -107,14 +115,16 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/term-map"],
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
-        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
         ...externalDependencyVersions["typescript-memoize"],
@@ -122,6 +132,8 @@ const packages: readonly Package[] = [
     },
     devDependencies: {
       external: {
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["ts-invariant"],
       },
     },
@@ -133,18 +145,20 @@ const packages: readonly Package[] = [
     dependencies: {
       external: {
         ...externalDependencyVersions["@rdfjs/prefix-map"],
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/term-map"],
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         "@sindresorhus/base62": "~0.1.0",
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
         "@types/toposort": "2.0.7",
         "change-case": "~5.4.4",
-        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["pino"],
         plur: "~5.1.0",
         ...externalDependencyVersions["purify-ts"],
@@ -158,6 +172,10 @@ const packages: readonly Package[] = [
       internal: ["shacl-ast"],
     },
     devDependencies: {
+      external: {
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["n3"],
+      },
       internal: ["kitchen-sink-example"],
     },
     directory: "packages",
@@ -196,7 +214,11 @@ const packages: readonly Package[] = [
         "@mui/x-date-pickers": "~7.17.0",
         react: "~18",
         "react-dom": "~18",
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
         ...externalDependencyVersions["@types/n3"],
         ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
@@ -225,12 +247,19 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/data-model"],
+        ...externalDependencyVersions["@rdfjs/dataset"],
         ...externalDependencyVersions["@rdfjs/types"],
         ...externalDependencyVersions["graphql"],
         "graphql-yoga": "5.14.0",
-        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
+      },
+    },
+    devDependencies: {
+      external: {
+        ...externalDependencyVersions["@types/rdfjs__data-model"],
+        ...externalDependencyVersions["@types/rdfjs__dataset"],
       },
     },
     directory: "examples",

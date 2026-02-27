@@ -1,6 +1,6 @@
+import dataFactory from "@rdfjs/data-model";
 import type { NamedNode } from "@rdfjs/types";
 import { dash, schema, xsd } from "@tpluscode/rdf-ns-builders";
-import { DataFactory as dataFactory } from "n3";
 import { describe, expect, it } from "vitest";
 import { testData } from "./testData.js";
 

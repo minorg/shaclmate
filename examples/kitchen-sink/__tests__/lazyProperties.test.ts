@@ -1,7 +1,7 @@
+import dataFactory from "@rdfjs/data-model";
+import datasetFactory from "@rdfjs/dataset";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-
-import N3 from "n3";
 import { ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -146,50 +146,50 @@ describe("lazyProperties", () => {
 
   const expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance =
     new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
-      $identifier: N3.DataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance =
     kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-      $identifier: N3.DataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedIriIdentifierClassInstance =
     new kitchenSink.LazilyResolvedIriIdentifierClass({
-      $identifier: N3.DataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedIriIdentifierClassInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedIriIdentifierInterfaceInstance =
     kitchenSink.LazilyResolvedIriIdentifierInterface.$create({
-      $identifier: N3.DataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedIriIdentifierClassInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedClassUnionInstance =
     new kitchenSink.LazilyResolvedClassUnionMember1({
-      $identifier: N3.DataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedClassUnionInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedInterfaceUnionInstance =
     kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
-      $identifier: N3.DataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedInterfaceUnionInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
 
   beforeAll(() => {
-    const resourceSet = new ResourceSet(new N3.Store(), {
-      dataFactory: N3.DataFactory,
+    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
+      dataFactory: dataFactory,
     });
     expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance.$toRdf({
       resourceSet,

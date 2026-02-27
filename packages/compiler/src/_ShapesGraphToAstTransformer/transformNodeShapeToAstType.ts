@@ -1,12 +1,12 @@
+import dataFactory from "@rdfjs/data-model";
 import type { NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import type { TsFeature } from "enums/TsFeature.js";
-import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
+import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -74,7 +74,7 @@ const listPropertiesObjectType = new ast.ObjectType({
   toRdfTypes: [],
   tsFeatures: new Set<TsFeature>([]),
   tsObjectDeclarationType: "class",
-  shapeIdentifier: DataFactory.blankNode(),
+  shapeIdentifier: dataFactory.blankNode(),
   synthetic: true,
   tsImports: [],
 });
