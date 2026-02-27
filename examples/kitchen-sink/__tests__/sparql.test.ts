@@ -62,10 +62,6 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      // if (id !== "inLiteralsPropertyClass") {
-      //   return;
-      // }
-
       const toRdfDataset = harness.toRdf().dataset;
       const toRdfQuads: Quad[] = [];
 

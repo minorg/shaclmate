@@ -1,7 +1,7 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
-
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
 import { InterfaceHarness } from "./InterfaceHarness.js";
@@ -640,7 +640,7 @@ export const harnesses = {
       literalTermProperty: dataFactory.literal("test"),
       numberTermProperty: 1.0,
       stringTermProperty: "test",
-      termProperty: 1,
+      termProperty: dataFactory.literal("1", xsd.decimal), // Use a literal instead of a number to avoid an issue with Oxigraph literal normalization (https://github.com/oxigraph/oxigraph/issues/526)
     }),
     kitchenSink.TermPropertiesClass,
   ),
