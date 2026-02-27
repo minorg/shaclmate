@@ -4,8 +4,8 @@ import { testData } from "./testData.js";
 
 describe("ShapesGraph: kitchen sink", () => {
   it("should parse the shapes correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(129);
-    expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(140);
+    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(130);
+    expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(156);
   });
 
   it("should parse ontologies correctly", ({ expect }) => {
