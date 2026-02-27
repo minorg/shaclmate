@@ -11,9 +11,10 @@ import { Memoize } from "typescript-memoize";
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function parseDataset(filePath: string): DatasetCore {
-  const parser = new Parser({ format: "Turtle" });
   return datasetFactory.dataset(
-    parser.parse(fs.readFileSync(filePath).toString()),
+    new Parser({ format: "Turtle" }).parse(
+      fs.readFileSync(filePath).toString(),
+    ),
   );
 }
 
