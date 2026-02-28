@@ -6,8 +6,8 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
+import type { IriType } from "./IriType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -31,7 +31,7 @@ export class ListType<
    */
   readonly identifierNodeKind: IdentifierNodeKind;
 
-  readonly kind = "ListType";
+  override readonly kind = "ListType";
 
   /**
    * Strategy for minting new list and sub-list identifiers.
@@ -81,8 +81,8 @@ export namespace ListType {
     | BlankNodeType
     | IdentifierType
     | IntersectionType
+    | IriType
     | LiteralType
-    | NamedNodeType
     | ObjectIntersectionType
     | ObjectType
     | ObjectUnionType
@@ -95,8 +95,8 @@ export namespace ListType {
       case "BlankNodeType":
       case "IdentifierType":
       case "IntersectionType":
+      case "IriType":
       case "LiteralType":
-      case "NamedNodeType":
       case "ObjectIntersectionType":
       case "ObjectType":
       case "ObjectUnionType":

@@ -6,7 +6,7 @@ import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
-  "NamedNode",
+  "IRI",
 ]);
 
 export function nodeShapeIdentifierMintingStrategy(

@@ -165,18 +165,18 @@ export namespace Shape {
               break;
             case "http://www.w3.org/ns/shacl#BlankNodeOrIRI":
               nodeKinds.add("BlankNode");
-              nodeKinds.add("NamedNode");
+              nodeKinds.add("IRI");
               break;
             case "http://www.w3.org/ns/shacl#BlankNodeOrLiteral":
               nodeKinds.add("BlankNode");
               nodeKinds.add("Literal");
               break;
             case "http://www.w3.org/ns/shacl#IRI":
-              nodeKinds.add("NamedNode");
+              nodeKinds.add("IRI");
               break;
             case "http://www.w3.org/ns/shacl#IRIOrLiteral":
+              nodeKinds.add("IRI");
               nodeKinds.add("Literal");
-              nodeKinds.add("NamedNode");
               break;
             case "http://www.w3.org/ns/shacl#Literal":
               nodeKinds.add("Literal");

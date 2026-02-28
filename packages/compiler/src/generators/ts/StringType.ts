@@ -13,7 +13,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${imports.GraphQLString}`,
   );
-  readonly kind = "StringType";
+  override readonly kind = "StringType";
   override readonly schemaType = code`${snippets.StringSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.stringSparqlWherePatterns}`;

@@ -186,7 +186,7 @@ describe("Shape", () => {
     const nodeKinds = findPropertyShape(schema.Person, schema.parent)
       .constraints.nodeKinds;
     expect(nodeKinds.size).toStrictEqual(1);
-    expect(nodeKinds.has("NamedNode")).toStrictEqual(true);
+    expect(nodeKinds.has("IRI")).toStrictEqual(true);
   });
 
   // No shape in the test data with a clean sh:not

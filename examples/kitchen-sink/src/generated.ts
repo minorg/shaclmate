@@ -521,6 +521,17 @@ function $filterIdentifier(
   return true;
 }
 
+function $filterIri(filter: $IriFilter, value: NamedNode) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue.equals(value))
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function $filterLiteral(filter: $LiteralFilter, value: Literal): boolean {
   return $filterTerm(filter, value);
 }
@@ -545,17 +556,6 @@ function $filterMaybe<ItemT, ItemFilterT>(
 
     return true;
   };
-}
-
-function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
-  if (
-    typeof filter.in !== "undefined" &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  return true;
 }
 
 function $filterNumeric<T extends bigint | number>(
@@ -795,6 +795,34 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
   }
 
   return patterns;
+};
+
+interface $IriFilter {
+  readonly in?: readonly NamedNode[];
+}
+
+interface $IriSchema {
+  readonly in?: readonly NamedNode[];
+  readonly kind: "Iri";
+}
+
+const $iriSparqlWherePatterns: $SparqlWherePatternsFunction<
+  $IriFilter,
+  $IriSchema
+> = ({ filter, valueVariable, ...otherParameters }) => {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
+    filterPatterns.push(
+      $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
+    );
+  }
+
+  return $termSchemaSparqlPatterns({
+    filterPatterns,
+    valueVariable,
+    ...otherParameters,
+  });
 };
 
 function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
@@ -1237,34 +1265,6 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
     });
   };
 }
-
-interface $NamedNodeFilter {
-  readonly in?: readonly NamedNode[];
-}
-
-interface $NamedNodeSchema {
-  readonly in?: readonly NamedNode[];
-  readonly kind: "NamedNode";
-}
-
-const $namedNodeSparqlWherePatterns: $SparqlWherePatternsFunction<
-  $NamedNodeFilter,
-  $NamedNodeSchema
-> = ({ filter, valueVariable, ...otherParameters }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
-
-  if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
-    filterPatterns.push(
-      $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
-    );
-  }
-
-  return $termSchemaSparqlPatterns({
-    filterPatterns,
-    valueVariable,
-    ...otherParameters,
-  });
-};
 
 function $normalizeSparqlWherePatterns(
   patterns: readonly $SparqlPattern[],
@@ -1932,7 +1932,6 @@ function $termFilterSparqlPatterns({
 interface $TermSchema {
   readonly in?: readonly (Literal | NamedNode)[];
   readonly kind: "Term";
-  readonly nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }
 
 function $termSchemaSparqlPatterns({
@@ -2058,14 +2057,14 @@ export namespace $NamedDefaultPartial {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     return true;
   }
 
-  export type $Filter = { readonly $identifier?: $NamedNodeFilter };
+  export type $Filter = { readonly $identifier?: $IriFilter };
 
   export type $Identifier = NamedNode;
 
@@ -2202,7 +2201,7 @@ export namespace $NamedDefaultPartial {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -2289,7 +2288,7 @@ export namespace $NamedDefaultPartial {
       parameters?.subject ?? dataFactory.variable!("namedDefaultPartial");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -2717,7 +2716,7 @@ export namespace UuidV4IriIdentifierInterface {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -2731,7 +2730,7 @@ export namespace UuidV4IriIdentifierInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly uuidV4IriProperty?: $StringFilter;
   };
 
@@ -2949,7 +2948,7 @@ export namespace UuidV4IriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -3068,7 +3067,7 @@ export namespace UuidV4IriIdentifierInterface {
       dataFactory.variable!("uuidV4IriIdentifierInterface");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -3167,7 +3166,7 @@ export class UuidV4IriIdentifierClass {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -3276,7 +3275,7 @@ export namespace UuidV4IriIdentifierClass {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -3290,7 +3289,7 @@ export namespace UuidV4IriIdentifierClass {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly uuidV4IriProperty?: $StringFilter;
   };
 
@@ -3454,7 +3453,7 @@ export namespace UuidV4IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -3571,7 +3570,7 @@ export namespace UuidV4IriIdentifierClass {
       parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -4904,7 +4903,7 @@ export namespace UnionDiscriminantsClass {
         NamedNode | Literal,
         {
           readonly on?: {
-            readonly NamedNode?: $NamedNodeFilter;
+            readonly NamedNode?: $IriFilter;
             readonly Literal?: $LiteralFilter;
           };
         }
@@ -4912,7 +4911,7 @@ export namespace UnionDiscriminantsClass {
         (
           filter: {
             readonly on?: {
-              readonly NamedNode?: $NamedNodeFilter;
+              readonly NamedNode?: $IriFilter;
               readonly Literal?: $LiteralFilter;
             };
           },
@@ -4921,7 +4920,7 @@ export namespace UnionDiscriminantsClass {
           if (typeof filter.on?.["NamedNode"] !== "undefined") {
             switch (value.termType) {
               case "NamedNode":
-                if (!$filterNamedNode(filter.on["NamedNode"], value)) {
+                if (!$filterIri(filter.on["NamedNode"], value)) {
                   return false;
                 }
                 break;
@@ -4949,7 +4948,7 @@ export namespace UnionDiscriminantsClass {
         NamedNode | string,
         {
           readonly on?: {
-            readonly object?: $NamedNodeFilter;
+            readonly object?: $IriFilter;
             readonly string?: $StringFilter;
           };
         }
@@ -4957,7 +4956,7 @@ export namespace UnionDiscriminantsClass {
         (
           filter: {
             readonly on?: {
-              readonly object?: $NamedNodeFilter;
+              readonly object?: $IriFilter;
               readonly string?: $StringFilter;
             };
           },
@@ -4966,7 +4965,7 @@ export namespace UnionDiscriminantsClass {
           if (typeof filter.on?.["object"] !== "undefined") {
             switch (typeof value) {
               case "object":
-                if (!$filterNamedNode(filter.on["object"], value)) {
+                if (!$filterIri(filter.on["object"], value)) {
                   return false;
                 }
                 break;
@@ -5057,7 +5056,7 @@ export namespace UnionDiscriminantsClass {
       !((
         filter: {
           readonly on?: {
-            readonly NamedNode?: $NamedNodeFilter;
+            readonly NamedNode?: $IriFilter;
             readonly Literal?: $LiteralFilter;
           };
         },
@@ -5066,7 +5065,7 @@ export namespace UnionDiscriminantsClass {
         if (typeof filter.on?.["NamedNode"] !== "undefined") {
           switch (value.termType) {
             case "NamedNode":
-              if (!$filterNamedNode(filter.on["NamedNode"], value)) {
+              if (!$filterIri(filter.on["NamedNode"], value)) {
                 return false;
               }
               break;
@@ -5095,7 +5094,7 @@ export namespace UnionDiscriminantsClass {
       !((
         filter: {
           readonly on?: {
-            readonly object?: $NamedNodeFilter;
+            readonly object?: $IriFilter;
             readonly string?: $StringFilter;
           };
         },
@@ -5104,7 +5103,7 @@ export namespace UnionDiscriminantsClass {
         if (typeof filter.on?.["object"] !== "undefined") {
           switch (typeof value) {
             case "object":
-              if (!$filterNamedNode(filter.on["object"], value)) {
+              if (!$filterIri(filter.on["object"], value)) {
                 return false;
               }
               break;
@@ -5211,7 +5210,7 @@ export namespace UnionDiscriminantsClass {
         NamedNode | Literal,
         {
           readonly on?: {
-            readonly NamedNode?: $NamedNodeFilter;
+            readonly NamedNode?: $IriFilter;
             readonly Literal?: $LiteralFilter;
           };
         }
@@ -5219,7 +5218,7 @@ export namespace UnionDiscriminantsClass {
         (
           filter: {
             readonly on?: {
-              readonly NamedNode?: $NamedNodeFilter;
+              readonly NamedNode?: $IriFilter;
               readonly Literal?: $LiteralFilter;
             };
           },
@@ -5228,7 +5227,7 @@ export namespace UnionDiscriminantsClass {
           if (typeof filter.on?.["NamedNode"] !== "undefined") {
             switch (value.termType) {
               case "NamedNode":
-                if (!$filterNamedNode(filter.on["NamedNode"], value)) {
+                if (!$filterIri(filter.on["NamedNode"], value)) {
                   return false;
                 }
                 break;
@@ -5256,7 +5255,7 @@ export namespace UnionDiscriminantsClass {
         NamedNode | string,
         {
           readonly on?: {
-            readonly object?: $NamedNodeFilter;
+            readonly object?: $IriFilter;
             readonly string?: $StringFilter;
           };
         }
@@ -5264,7 +5263,7 @@ export namespace UnionDiscriminantsClass {
         (
           filter: {
             readonly on?: {
-              readonly object?: $NamedNodeFilter;
+              readonly object?: $IriFilter;
               readonly string?: $StringFilter;
             };
           },
@@ -5273,7 +5272,7 @@ export namespace UnionDiscriminantsClass {
           if (typeof filter.on?.["object"] !== "undefined") {
             switch (typeof value) {
               case "object":
-                if (!$filterNamedNode(filter.on["object"], value)) {
+                if (!$filterIri(filter.on["object"], value)) {
                   return false;
                 }
                 break;
@@ -5309,13 +5308,13 @@ export namespace UnionDiscriminantsClass {
     }>;
     readonly optionalIriOrLiteralProperty?: $MaybeFilter<{
       readonly on?: {
-        readonly NamedNode?: $NamedNodeFilter;
+        readonly NamedNode?: $IriFilter;
         readonly Literal?: $LiteralFilter;
       };
     }>;
     readonly optionalIriOrStringProperty?: $MaybeFilter<{
       readonly on?: {
-        readonly object?: $NamedNodeFilter;
+        readonly object?: $IriFilter;
         readonly string?: $StringFilter;
       };
     }>;
@@ -5328,13 +5327,13 @@ export namespace UnionDiscriminantsClass {
     };
     readonly requiredIriOrLiteralProperty?: {
       readonly on?: {
-        readonly NamedNode?: $NamedNodeFilter;
+        readonly NamedNode?: $IriFilter;
         readonly Literal?: $LiteralFilter;
       };
     };
     readonly requiredIriOrStringProperty?: {
       readonly on?: {
-        readonly object?: $NamedNodeFilter;
+        readonly object?: $IriFilter;
         readonly string?: $StringFilter;
       };
     };
@@ -5347,13 +5346,13 @@ export namespace UnionDiscriminantsClass {
     }>;
     readonly setIriOrLiteralProperty?: $CollectionFilter<{
       readonly on?: {
-        readonly NamedNode?: $NamedNodeFilter;
+        readonly NamedNode?: $IriFilter;
         readonly Literal?: $LiteralFilter;
       };
     }>;
     readonly setIriOrStringProperty?: $CollectionFilter<{
       readonly on?: {
-        readonly object?: $NamedNodeFilter;
+        readonly object?: $IriFilter;
         readonly string?: $StringFilter;
       };
     }>;
@@ -6817,7 +6816,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               Literal: {
                 discriminantValues: ["Literal"],
@@ -6839,7 +6838,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               string: {
                 discriminantValues: ["string"],
@@ -6882,7 +6881,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             NamedNode: {
               discriminantValues: ["NamedNode"],
-              type: { kind: "NamedNode" as const },
+              type: { kind: "Iri" as const },
             },
             Literal: {
               discriminantValues: ["Literal"],
@@ -6901,7 +6900,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "NamedNode" as const },
+              type: { kind: "Iri" as const },
             },
             string: {
               discriminantValues: ["string"],
@@ -6948,7 +6947,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               Literal: {
                 discriminantValues: ["Literal"],
@@ -6970,7 +6969,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               string: {
                 discriminantValues: ["string"],
@@ -7461,7 +7460,7 @@ export namespace UnionDiscriminantsClass {
       $maybeSparqlWherePatterns<
         {
           readonly on?: {
-            readonly NamedNode?: $NamedNodeFilter;
+            readonly NamedNode?: $IriFilter;
             readonly Literal?: $LiteralFilter;
           };
         },
@@ -7470,7 +7469,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             readonly NamedNode: {
               discriminantValues: readonly string[];
-              type: $NamedNodeSchema;
+              type: $IriSchema;
             };
             readonly Literal: {
               discriminantValues: readonly string[];
@@ -7482,7 +7481,7 @@ export namespace UnionDiscriminantsClass {
         const unionPatterns: sparqljs.GroupPattern[] = [];
 
         unionPatterns.push({
-          patterns: $namedNodeSparqlWherePatterns({
+          patterns: $iriSparqlWherePatterns({
             filter: filter?.on?.["NamedNode"],
             schema: schema.members["NamedNode"].type,
             ...otherParameters,
@@ -7545,7 +7544,7 @@ export namespace UnionDiscriminantsClass {
       $maybeSparqlWherePatterns<
         {
           readonly on?: {
-            readonly object?: $NamedNodeFilter;
+            readonly object?: $IriFilter;
             readonly string?: $StringFilter;
           };
         },
@@ -7554,7 +7553,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             readonly object: {
               discriminantValues: readonly string[];
-              type: $NamedNodeSchema;
+              type: $IriSchema;
             };
             readonly string: {
               discriminantValues: readonly string[];
@@ -7566,7 +7565,7 @@ export namespace UnionDiscriminantsClass {
         const unionPatterns: sparqljs.GroupPattern[] = [];
 
         unionPatterns.push({
-          patterns: $namedNodeSparqlWherePatterns({
+          patterns: $iriSparqlWherePatterns({
             filter: filter?.on?.["object"],
             schema: schema.members["object"].type,
             ...otherParameters,
@@ -7732,7 +7731,7 @@ export namespace UnionDiscriminantsClass {
         const unionPatterns: sparqljs.GroupPattern[] = [];
 
         unionPatterns.push({
-          patterns: $namedNodeSparqlWherePatterns({
+          patterns: $iriSparqlWherePatterns({
             filter: filter?.on?.["NamedNode"],
             schema: schema.members["NamedNode"].type,
             ...otherParameters,
@@ -7796,7 +7795,7 @@ export namespace UnionDiscriminantsClass {
         const unionPatterns: sparqljs.GroupPattern[] = [];
 
         unionPatterns.push({
-          patterns: $namedNodeSparqlWherePatterns({
+          patterns: $iriSparqlWherePatterns({
             filter: filter?.on?.["object"],
             schema: schema.members["object"].type,
             ...otherParameters,
@@ -7986,7 +7985,7 @@ export namespace UnionDiscriminantsClass {
       $setSparqlWherePatterns<
         {
           readonly on?: {
-            readonly NamedNode?: $NamedNodeFilter;
+            readonly NamedNode?: $IriFilter;
             readonly Literal?: $LiteralFilter;
           };
         },
@@ -7995,7 +7994,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             readonly NamedNode: {
               discriminantValues: readonly string[];
-              type: $NamedNodeSchema;
+              type: $IriSchema;
             };
             readonly Literal: {
               discriminantValues: readonly string[];
@@ -8007,7 +8006,7 @@ export namespace UnionDiscriminantsClass {
         const unionPatterns: sparqljs.GroupPattern[] = [];
 
         unionPatterns.push({
-          patterns: $namedNodeSparqlWherePatterns({
+          patterns: $iriSparqlWherePatterns({
             filter: filter?.on?.["NamedNode"],
             schema: schema.members["NamedNode"].type,
             ...otherParameters,
@@ -8070,7 +8069,7 @@ export namespace UnionDiscriminantsClass {
       $setSparqlWherePatterns<
         {
           readonly on?: {
-            readonly object?: $NamedNodeFilter;
+            readonly object?: $IriFilter;
             readonly string?: $StringFilter;
           };
         },
@@ -8079,7 +8078,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             readonly object: {
               discriminantValues: readonly string[];
-              type: $NamedNodeSchema;
+              type: $IriSchema;
             };
             readonly string: {
               discriminantValues: readonly string[];
@@ -8091,7 +8090,7 @@ export namespace UnionDiscriminantsClass {
         const unionPatterns: sparqljs.GroupPattern[] = [];
 
         unionPatterns.push({
-          patterns: $namedNodeSparqlWherePatterns({
+          patterns: $iriSparqlWherePatterns({
             filter: filter?.on?.["object"],
             schema: schema.members["object"].type,
             ...otherParameters,
@@ -8177,7 +8176,7 @@ export class TermPropertiesClass {
 
   readonly stringTermProperty: Maybe<string>;
 
-  readonly termProperty: Maybe<BlankNode | Literal | NamedNode>;
+  readonly termProperty: Maybe<BlankNode | NamedNode | Literal>;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -8197,13 +8196,13 @@ export class TermPropertiesClass {
     readonly numberTermProperty?: Maybe<number> | number;
     readonly stringTermProperty?: Maybe<string> | string;
     readonly termProperty?:
-      | Maybe<BlankNode | Literal | NamedNode>
+      | Maybe<BlankNode | NamedNode | Literal>
       | bigint
       | boolean
       | Date
       | number
       | string
-      | (BlankNode | Literal | NamedNode);
+      | (BlankNode | NamedNode | Literal);
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -8580,20 +8579,20 @@ export class TermPropertiesClass {
           .extract(),
         termProperty: this.termProperty
           .map((item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
@@ -8737,7 +8736,7 @@ export namespace TermPropertiesClass {
     }
     if (
       typeof filter.iriTermProperty !== "undefined" &&
-      !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.iriTermProperty,
         value.iriTermProperty,
       )
@@ -8773,7 +8772,7 @@ export namespace TermPropertiesClass {
     }
     if (
       typeof filter.termProperty !== "undefined" &&
-      !$filterMaybe<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.termProperty,
         value.termProperty,
       )
@@ -8789,7 +8788,7 @@ export namespace TermPropertiesClass {
     readonly booleanTermProperty?: $MaybeFilter<$BooleanFilter>;
     readonly dateTermProperty?: $MaybeFilter<$DateFilter>;
     readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
-    readonly iriTermProperty?: $MaybeFilter<$NamedNodeFilter>;
+    readonly iriTermProperty?: $MaybeFilter<$IriFilter>;
     readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
     readonly numberTermProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
@@ -8819,7 +8818,7 @@ export namespace TermPropertiesClass {
       literalTermProperty: Maybe<Literal>;
       numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
-      termProperty: Maybe<BlankNode | Literal | NamedNode>;
+      termProperty: Maybe<BlankNode | NamedNode | Literal>;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -8865,17 +8864,17 @@ export namespace TermPropertiesClass {
     );
     const termProperty = Maybe.fromNullable($jsonObject["termProperty"]).map(
       (item) =>
-        item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : item.termType === "Literal"
-            ? dataFactory.literal(
-                item["@value"],
-                typeof item["@language"] !== "undefined"
-                  ? item["@language"]
-                  : typeof item["@type"] !== "undefined"
-                    ? dataFactory.namedNode(item["@type"])
-                    : undefined,
-              )
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
             : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return Either.of({
@@ -8985,14 +8984,14 @@ export namespace TermPropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .optional(),
@@ -9071,7 +9070,7 @@ export namespace TermPropertiesClass {
       literalTermProperty: Maybe<Literal>;
       numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
-      termProperty: Maybe<BlankNode | Literal | NamedNode>;
+      termProperty: Maybe<BlankNode | NamedNode | Literal>;
     }
   > {
     return (
@@ -9354,8 +9353,8 @@ export namespace TermPropertiesClass {
                                               : Resource.Values.fromValue<
                                                   Maybe<
                                                     | BlankNode
-                                                    | Literal
                                                     | NamedNode
+                                                    | Literal
                                                   >
                                                 >({
                                                   focusResource:
@@ -9449,7 +9448,7 @@ export namespace TermPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
       },
@@ -9487,14 +9486,7 @@ export namespace TermPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode("http://example.com/termProperty"),
       },
@@ -9994,8 +9986,8 @@ export namespace TermPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
-        $namedNodeSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$IriFilter, $IriSchema>(
+        $iriSparqlWherePatterns,
       )({
         filter: parameters?.filter?.iriTermProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -10257,7 +10249,7 @@ export class Sha256IriIdentifierClass {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -10366,7 +10358,7 @@ export namespace Sha256IriIdentifierClass {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -10380,7 +10372,7 @@ export namespace Sha256IriIdentifierClass {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly sha256IriProperty?: $StringFilter;
   };
 
@@ -10544,7 +10536,7 @@ export namespace Sha256IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -10661,7 +10653,7 @@ export namespace Sha256IriIdentifierClass {
       parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -22872,8 +22864,8 @@ export namespace ListPropertiesClass {
     }
     if (
       typeof filter.iriListProperty !== "undefined" &&
-      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$NamedNodeFilter>>(
-        $filterArray<NamedNode, $NamedNodeFilter>($filterNamedNode),
+      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
+        $filterArray<NamedNode, $IriFilter>($filterIri),
       )(filter.iriListProperty, value.iriListProperty)
     ) {
       return false;
@@ -22899,9 +22891,7 @@ export namespace ListPropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly iriListProperty?: $MaybeFilter<
-      $CollectionFilter<$NamedNodeFilter>
-    >;
+    readonly iriListProperty?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
     readonly objectListProperty?: $MaybeFilter<
       $CollectionFilter<NonClass.$Filter>
     >;
@@ -23272,7 +23262,7 @@ export namespace ListPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
-            item: () => ({ kind: "NamedNode" as const }),
+            item: () => ({ kind: "Iri" as const }),
           }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
@@ -23794,11 +23784,11 @@ export namespace ListPropertiesClass {
     }
     patterns = patterns.concat(
       $maybeSparqlWherePatterns<
-        $CollectionFilter<$NamedNodeFilter>,
-        $CollectionSchema<$NamedNodeSchema>
+        $CollectionFilter<$IriFilter>,
+        $CollectionSchema<$IriSchema>
       >(
-        $listSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
-          $namedNodeSparqlWherePatterns,
+        $listSparqlWherePatterns<$IriFilter, $IriSchema>(
+          $iriSparqlWherePatterns,
         ),
       )({
         filter: parameters?.filter?.iriListProperty,
@@ -32274,7 +32264,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -32291,7 +32281,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
@@ -32517,7 +32507,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -32632,7 +32622,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -32806,7 +32796,7 @@ export namespace LazilyResolvedIriIdentifierClass {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -32823,7 +32813,7 @@ export namespace LazilyResolvedIriIdentifierClass {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
@@ -32997,7 +32987,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -33112,7 +33102,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       dataFactory.variable!("lazilyResolvedIriIdentifierClass");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -38407,14 +38397,14 @@ export namespace IriIdentifierInterface {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     return true;
   }
 
-  export type $Filter = { readonly $identifier?: $NamedNodeFilter };
+  export type $Filter = { readonly $identifier?: $IriFilter };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://example.com/IriIdentifierInterface",
@@ -38629,7 +38619,7 @@ export namespace IriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -38806,7 +38796,7 @@ export namespace IriIdentifierInterface {
     }
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -38916,14 +38906,14 @@ export namespace IriIdentifierClass {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     return true;
   }
 
-  export type $Filter = { readonly $identifier?: $NamedNodeFilter };
+  export type $Filter = { readonly $identifier?: $IriFilter };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://example.com/IriIdentifierClass",
@@ -39093,7 +39083,7 @@ export namespace IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -39265,7 +39255,7 @@ export namespace IriIdentifierClass {
     }
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -43016,8 +43006,8 @@ export namespace InPropertiesClass {
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.inIrisProperty, value.inIrisProperty)
+        $IriFilter
+      >($filterIri)(filter.inIrisProperty, value.inIrisProperty)
     ) {
       return false;
     }
@@ -43039,7 +43029,7 @@ export namespace InPropertiesClass {
     readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
     readonly inDoublesProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly inIntegersProperty?: $MaybeFilter<$NumericFilter<bigint>>;
-    readonly inIrisProperty?: $MaybeFilter<$NamedNodeFilter>;
+    readonly inIrisProperty?: $MaybeFilter<$IriFilter>;
     readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -43659,7 +43649,7 @@ export namespace InPropertiesClass {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode("http://example.com/InPropertiesIri1"),
               dataFactory.namedNode("http://example.com/InPropertiesIri2"),
@@ -44122,8 +44112,8 @@ export namespace InPropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
-        $namedNodeSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$IriFilter, $IriSchema>(
+        $iriSparqlWherePatterns,
       )({
         filter: parameters?.filter?.inIrisProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -44351,7 +44341,7 @@ export namespace InIdentifierClass {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -44368,7 +44358,7 @@ export namespace InIdentifierClass {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly inIdentifierProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -44643,7 +44633,7 @@ export namespace InIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({
-          kind: "NamedNode" as const,
+          kind: "Iri" as const,
           in: [
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
             dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
@@ -44845,7 +44835,7 @@ export namespace InIdentifierClass {
     }
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
-        $namedNodeSparqlWherePatterns({
+        $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
@@ -45385,7 +45375,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     const identifier = super.$identifier;
     if (identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${identifier.termType}`,
+        `expected identifier to be IRI, not ${identifier.termType}`,
       );
     }
     return identifier;
@@ -45424,7 +45414,7 @@ export namespace IdentifierOverride2ClassStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
   } & IdentifierOverride1ClassStatic.$Filter;
 
   export type $Identifier = NamedNode;
@@ -45697,7 +45687,7 @@ export namespace IdentifierOverride3ClassStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
   } & IdentifierOverride2ClassStatic.$Filter;
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -46120,7 +46110,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -46172,7 +46162,7 @@ export namespace IdentifierOverride4ClassStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
   } & IdentifierOverride3ClassStatic.$Filter;
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -46585,7 +46575,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -46637,7 +46627,7 @@ export namespace IdentifierOverride5Class {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
   } & IdentifierOverride4ClassStatic.$Filter;
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -47160,7 +47150,7 @@ export namespace HasValuePropertiesClass {
     }
     if (
       typeof filter.hasIriValueProperty !== "undefined" &&
-      !$filterNamedNode(filter.hasIriValueProperty, value.hasIriValueProperty)
+      !$filterIri(filter.hasIriValueProperty, value.hasIriValueProperty)
     ) {
       return false;
     }
@@ -47178,7 +47168,7 @@ export namespace HasValuePropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly hasIriValueProperty?: $NamedNodeFilter;
+    readonly hasIriValueProperty?: $IriFilter;
     readonly hasLiteralValueProperty?: $StringFilter;
   };
 
@@ -47393,7 +47383,7 @@ export namespace HasValuePropertiesClass {
       },
       hasIriValueProperty: {
         kind: "Shacl" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/hasIriValueProperty",
         ),
@@ -47533,7 +47523,7 @@ export namespace HasValuePropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $namedNodeSparqlWherePatterns({
+      $iriSparqlWherePatterns({
         filter: parameters?.filter?.hasIriValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -54791,19 +54781,19 @@ export class ConvertibleTypePropertiesClass {
   readonly convertibleLiteralSetProperty: readonly Literal[];
 
   readonly convertibleTermNonEmptySetProperty: NonEmptyList<
-    BlankNode | Literal | NamedNode
+    BlankNode | NamedNode | Literal
   >;
 
   readonly convertibleTermOptionProperty: Maybe<
-    BlankNode | Literal | NamedNode
+    BlankNode | NamedNode | Literal
   >;
 
-  readonly convertibleTermProperty: BlankNode | Literal | NamedNode;
+  readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
 
   readonly convertibleTermSetProperty: readonly (
     | BlankNode
-    | Literal
     | NamedNode
+    | Literal
   )[];
 
   constructor(parameters: {
@@ -54840,25 +54830,25 @@ export class ConvertibleTypePropertiesClass {
       | readonly number[]
       | readonly string[];
     readonly convertibleTermNonEmptySetProperty: NonEmptyList<
-      BlankNode | Literal | NamedNode
+      BlankNode | NamedNode | Literal
     >;
     readonly convertibleTermOptionProperty?:
-      | Maybe<BlankNode | Literal | NamedNode>
+      | Maybe<BlankNode | NamedNode | Literal>
       | bigint
       | boolean
       | Date
       | number
       | string
-      | (BlankNode | Literal | NamedNode);
+      | (BlankNode | NamedNode | Literal);
     readonly convertibleTermProperty:
       | bigint
       | boolean
       | Date
       | number
       | string
-      | (BlankNode | Literal | NamedNode);
+      | (BlankNode | NamedNode | Literal);
     readonly convertibleTermSetProperty?:
-      | readonly (BlankNode | Literal | NamedNode)[]
+      | readonly (BlankNode | NamedNode | Literal)[]
       | readonly bigint[]
       | readonly boolean[]
       | readonly number[]
@@ -55424,60 +55414,60 @@ export class ConvertibleTypePropertiesClass {
         ),
         convertibleTermNonEmptySetProperty:
           this.convertibleTermNonEmptySetProperty.map((item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           ),
         convertibleTermOptionProperty: this.convertibleTermOptionProperty
           .map((item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
         convertibleTermProperty:
-          this.convertibleTermProperty.termType === "NamedNode"
+          this.convertibleTermProperty.termType === "Literal"
             ? {
-                "@id": this.convertibleTermProperty.value,
-                termType: "NamedNode" as const,
+                "@language":
+                  this.convertibleTermProperty.language.length > 0
+                    ? this.convertibleTermProperty.language
+                    : undefined,
+                "@type":
+                  this.convertibleTermProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.convertibleTermProperty.datatype.value
+                    : undefined,
+                "@value": this.convertibleTermProperty.value,
+                termType: "Literal" as const,
               }
-            : this.convertibleTermProperty.termType === "Literal"
+            : this.convertibleTermProperty.termType === "NamedNode"
               ? {
-                  "@language":
-                    this.convertibleTermProperty.language.length > 0
-                      ? this.convertibleTermProperty.language
-                      : undefined,
-                  "@type":
-                    this.convertibleTermProperty.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? this.convertibleTermProperty.datatype.value
-                      : undefined,
-                  "@value": this.convertibleTermProperty.value,
-                  termType: "Literal" as const,
+                  "@id": this.convertibleTermProperty.value,
+                  termType: "NamedNode" as const,
                 }
               : {
                   "@id": `_:${this.convertibleTermProperty.value}`,
@@ -55485,20 +55475,20 @@ export class ConvertibleTypePropertiesClass {
                 },
         convertibleTermSetProperty: this.convertibleTermSetProperty.map(
           (item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
         ),
       } satisfies ConvertibleTypePropertiesClass.$Json),
@@ -55616,7 +55606,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleIriNonEmptySetProperty !== "undefined" &&
-      !$filterArray<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriNonEmptySetProperty,
         value.convertibleIriNonEmptySetProperty,
       )
@@ -55625,7 +55615,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleIriOptionProperty !== "undefined" &&
-      !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriOptionProperty,
         value.convertibleIriOptionProperty,
       )
@@ -55634,16 +55624,13 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleIriProperty !== "undefined" &&
-      !$filterNamedNode(
-        filter.convertibleIriProperty,
-        value.convertibleIriProperty,
-      )
+      !$filterIri(filter.convertibleIriProperty, value.convertibleIriProperty)
     ) {
       return false;
     }
     if (
       typeof filter.convertibleIriSetProperty !== "undefined" &&
-      !$filterArray<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriSetProperty,
         value.convertibleIriSetProperty,
       )
@@ -55688,7 +55675,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleTermNonEmptySetProperty !== "undefined" &&
-      !$filterArray<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermNonEmptySetProperty,
         value.convertibleTermNonEmptySetProperty,
       )
@@ -55697,7 +55684,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleTermOptionProperty !== "undefined" &&
-      !$filterMaybe<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermOptionProperty,
         value.convertibleTermOptionProperty,
       )
@@ -55715,7 +55702,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleTermSetProperty !== "undefined" &&
-      !$filterArray<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermSetProperty,
         value.convertibleTermSetProperty,
       )
@@ -55727,10 +55714,10 @@ export namespace ConvertibleTypePropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$NamedNodeFilter>;
-    readonly convertibleIriOptionProperty?: $MaybeFilter<$NamedNodeFilter>;
-    readonly convertibleIriProperty?: $NamedNodeFilter;
-    readonly convertibleIriSetProperty?: $CollectionFilter<$NamedNodeFilter>;
+    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$IriFilter>;
+    readonly convertibleIriOptionProperty?: $MaybeFilter<$IriFilter>;
+    readonly convertibleIriProperty?: $IriFilter;
+    readonly convertibleIriSetProperty?: $CollectionFilter<$IriFilter>;
     readonly convertibleLiteralNonEmptySetProperty?: $CollectionFilter<$LiteralFilter>;
     readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
     readonly convertibleLiteralProperty?: $LiteralFilter;
@@ -55765,11 +55752,11 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleLiteralProperty: Literal;
       convertibleLiteralSetProperty: readonly Literal[];
       convertibleTermNonEmptySetProperty: NonEmptyList<
-        BlankNode | Literal | NamedNode
+        BlankNode | NamedNode | Literal
       >;
-      convertibleTermOptionProperty: Maybe<BlankNode | Literal | NamedNode>;
-      convertibleTermProperty: BlankNode | Literal | NamedNode;
-      convertibleTermSetProperty: readonly (BlankNode | Literal | NamedNode)[];
+      convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
+      convertibleTermProperty: BlankNode | NamedNode | Literal;
+      convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -55849,25 +55836,7 @@ export namespace ConvertibleTypePropertiesClass {
     )
       .unsafeCoerce()
       .map((item) =>
-        item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : item.termType === "Literal"
-            ? dataFactory.literal(
-                item["@value"],
-                typeof item["@language"] !== "undefined"
-                  ? item["@language"]
-                  : typeof item["@type"] !== "undefined"
-                    ? dataFactory.namedNode(item["@type"])
-                    : undefined,
-              )
-            : dataFactory.blankNode(item["@id"].substring(2)),
-      );
-    const convertibleTermOptionProperty = Maybe.fromNullable(
-      $jsonObject["convertibleTermOptionProperty"],
-    ).map((item) =>
-      item.termType === "NamedNode"
-        ? dataFactory.namedNode(item["@id"])
-        : item.termType === "Literal"
+        item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
               typeof item["@language"] !== "undefined"
@@ -55876,41 +55845,59 @@ export namespace ConvertibleTypePropertiesClass {
                   ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+      );
+    const convertibleTermOptionProperty = Maybe.fromNullable(
+      $jsonObject["convertibleTermOptionProperty"],
+    ).map((item) =>
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     const convertibleTermProperty =
-      $jsonObject["convertibleTermProperty"].termType === "NamedNode"
-        ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
-        : $jsonObject["convertibleTermProperty"].termType === "Literal"
-          ? dataFactory.literal(
-              $jsonObject["convertibleTermProperty"]["@value"],
-              typeof $jsonObject["convertibleTermProperty"]["@language"] !==
-                "undefined"
-                ? $jsonObject["convertibleTermProperty"]["@language"]
-                : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
-                    "undefined"
-                  ? dataFactory.namedNode(
-                      $jsonObject["convertibleTermProperty"]["@type"],
-                    )
-                  : undefined,
-            )
+      $jsonObject["convertibleTermProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["convertibleTermProperty"]["@value"],
+            typeof $jsonObject["convertibleTermProperty"]["@language"] !==
+              "undefined"
+              ? $jsonObject["convertibleTermProperty"]["@language"]
+              : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
+                  "undefined"
+                ? dataFactory.namedNode(
+                    $jsonObject["convertibleTermProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : $jsonObject["convertibleTermProperty"].termType === "NamedNode"
+          ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
           : dataFactory.blankNode(
               $jsonObject["convertibleTermProperty"]["@id"].substring(2),
             );
     const convertibleTermSetProperty = $jsonObject[
       "convertibleTermSetProperty"
     ].map((item) =>
-      item.termType === "NamedNode"
-        ? dataFactory.namedNode(item["@id"])
-        : item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              typeof item["@language"] !== "undefined"
-                ? item["@language"]
-                : typeof item["@type"] !== "undefined"
-                  ? dataFactory.namedNode(item["@type"])
-                  : undefined,
-            )
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return Either.of({
@@ -56069,14 +56056,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .array()
@@ -56089,14 +56076,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .optional(),
@@ -56106,14 +56093,14 @@ export namespace ConvertibleTypePropertiesClass {
           termType: z.literal("BlankNode"),
         }),
         z.object({
+          "@id": z.string().min(1),
+          termType: z.literal("NamedNode"),
+        }),
+        z.object({
           "@language": z.string().optional(),
           "@type": z.string().optional(),
           "@value": z.string(),
           termType: z.literal("Literal"),
-        }),
-        z.object({
-          "@id": z.string().min(1),
-          termType: z.literal("NamedNode"),
         }),
       ]),
       convertibleTermSetProperty: z
@@ -56123,14 +56110,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .array()
@@ -56251,11 +56238,11 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleLiteralProperty: Literal;
       convertibleLiteralSetProperty: readonly Literal[];
       convertibleTermNonEmptySetProperty: NonEmptyList<
-        BlankNode | Literal | NamedNode
+        BlankNode | NamedNode | Literal
       >;
-      convertibleTermOptionProperty: Maybe<BlankNode | Literal | NamedNode>;
-      convertibleTermProperty: BlankNode | Literal | NamedNode;
-      convertibleTermSetProperty: readonly (BlankNode | Literal | NamedNode)[];
+      convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
+      convertibleTermProperty: BlankNode | NamedNode | Literal;
+      convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
     }
   > {
     return (
@@ -56610,8 +56597,8 @@ export namespace ConvertibleTypePropertiesClass {
                                                     : Resource.Values.fromValue<
                                                         Maybe<
                                                           | BlankNode
-                                                          | Literal
                                                           | NamedNode
+                                                          | Literal
                                                         >
                                                       >({
                                                         focusResource:
@@ -56760,7 +56747,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -56771,7 +56758,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriOptionProperty",
@@ -56779,7 +56766,7 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleIriProperty: {
         kind: "Shacl" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriProperty",
         ),
@@ -56788,7 +56775,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriSetProperty",
@@ -56836,14 +56823,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -56854,14 +56834,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermOptionProperty",
@@ -56869,14 +56842,7 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleTermProperty: {
         kind: "Shacl" as const,
-        type: () => ({
-          kind: "Term" as const,
-          nodeKinds: [
-            "BlankNode" as const,
-            "Literal" as const,
-            "NamedNode" as const,
-          ],
-        }),
+        type: () => ({ kind: "Term" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermProperty",
         ),
@@ -56885,14 +56851,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermSetProperty",
@@ -57276,9 +57235,7 @@ export namespace ConvertibleTypePropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
-        $namedNodeSparqlWherePatterns,
-      )({
+      $setSparqlWherePatterns<$IriFilter, $IriSchema>($iriSparqlWherePatterns)({
         filter: parameters?.filter?.convertibleIriNonEmptySetProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -57321,8 +57278,8 @@ export namespace ConvertibleTypePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
-        $namedNodeSparqlWherePatterns,
+      $maybeSparqlWherePatterns<$IriFilter, $IriSchema>(
+        $iriSparqlWherePatterns,
       )({
         filter: parameters?.filter?.convertibleIriOptionProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -57366,7 +57323,7 @@ export namespace ConvertibleTypePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $namedNodeSparqlWherePatterns({
+      $iriSparqlWherePatterns({
         filter: parameters?.filter?.convertibleIriProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -57409,9 +57366,7 @@ export namespace ConvertibleTypePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>(
-        $namedNodeSparqlWherePatterns,
-      )({
+      $setSparqlWherePatterns<$IriFilter, $IriSchema>($iriSparqlWherePatterns)({
         filter: parameters?.filter?.convertibleIriSetProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [

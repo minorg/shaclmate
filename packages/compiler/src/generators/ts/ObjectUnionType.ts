@@ -20,8 +20,8 @@ import { ObjectUnionType_typeAliasDeclaration } from "./_ObjectUnionType/ObjectU
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -40,8 +40,8 @@ import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 export class ObjectUnionType extends AbstractDeclaredType {
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
-  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
-  readonly kind = "ObjectUnionType";
+  readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  override readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
 
@@ -52,7 +52,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }: ConstructorParameters<typeof AbstractDeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
-    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
+    identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
     memberTypes: readonly ObjectType[];
     name: string;

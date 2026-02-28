@@ -1,7 +1,6 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-
+import { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe, NonEmptyList } from "purify-ts";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
@@ -21,7 +20,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractTermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
-  RuntimeTermT extends BlankNode | Literal | NamedNode =
+  _RuntimeTermT extends BlankNode | Literal | NamedNode =
     | BlankNode
     | Literal
     | NamedNode,
@@ -31,7 +30,7 @@ export abstract class AbstractTermType<
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
-  readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
+  abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
     "object" as const,
   ]);
@@ -39,18 +38,14 @@ export abstract class AbstractTermType<
   constructor({
     hasValues,
     in_,
-    nodeKinds,
     ...superParameters
   }: {
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-    nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
-    this.nodeKinds = nodeKinds;
-    invariant(this.nodeKinds.size > 0, "empty nodeKinds");
   }
 
   get constrained(): boolean {
@@ -125,7 +120,7 @@ export abstract class AbstractTermType<
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       name: "termType",
-      ownValues: [...this.nodeKinds],
+      ownValues: [...this.nodeKinds].map(NodeKind.toTermType),
       descendantValues: [],
       type: "string" as const,
     });
@@ -205,7 +200,7 @@ export abstract class AbstractTermType<
       const eitherTypeParameters = code`<Error, ${this.name}>`;
       valueToExpression = code`${valueToExpression}.chain(term => {
   switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
+  ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
   default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, predicate: variables.predicate }}));
 }})`;
     }

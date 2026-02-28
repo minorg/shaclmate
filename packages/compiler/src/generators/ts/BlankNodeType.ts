@@ -11,8 +11,9 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly filterType = code`${snippets.BlankNodeFilter}`;
   readonly fromStringFunction =
     code`export const fromString = ${snippets.blankNodeFromString};`;
-  readonly kind = "BlankNodeType";
+  override readonly kind = "BlankNodeType";
   readonly name = code`${imports.BlankNode}`;
+  override readonly nodeKinds = nodeKinds;
   readonly schemaType = code`${snippets.BlankNodeSchema}`;
   readonly sparqlWherePatternsFunction =
     code`${snippets.blankNodeSparqlWherePatterns}`;
@@ -27,7 +28,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       ...superParameters,
       hasValues: [],
       in_: [],
-      nodeKinds,
     });
   }
 

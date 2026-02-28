@@ -14,9 +14,9 @@ import type { DateType } from "./DateType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
+import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -34,7 +34,7 @@ export class ListType<
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
-  readonly kind = "ListType";
+  override readonly kind = "ListType";
 
   constructor({
     identifierNodeKind,
@@ -190,7 +190,7 @@ export class ListType<
         resourceTypeName = code`${imports.Resource}<${imports.BlankNode}>`;
         break;
       }
-      case "NamedNode": {
+      case "IRI": {
         switch (this.identifierMintingStrategy) {
           case "blankNode":
             throw new RangeError(this.identifierMintingStrategy);
@@ -253,8 +253,8 @@ export namespace ListType {
     | FloatType
     | IdentifierType
     | IntType
+    | IriType
     | LiteralType
-    | NamedNodeType
     | ObjectType
     | ObjectUnionType
     | StringType
@@ -270,9 +270,9 @@ export namespace ListType {
       case "DateType":
       case "FloatType":
       case "IdentifierType":
+      case "IriType":
       case "IntType":
       case "LiteralType":
-      case "NamedNodeType":
       case "ObjectType":
       case "ObjectUnionType":
       case "StringType":

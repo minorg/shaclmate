@@ -1,4 +1,4 @@
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
@@ -13,8 +13,8 @@ import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
+import type { IriType } from "../IriType.js";
 import { imports } from "../imports.js";
-import type { NamedNodeType } from "../NamedNodeType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import {
@@ -27,13 +27,13 @@ import {
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<
-  BlankNodeType | IdentifierType | NamedNodeType
+  BlankNodeType | IdentifierType | IriType
 > {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: Code;
 
-  readonly kind = "IdentifierProperty";
+  override readonly kind = "IdentifierProperty";
   override readonly mutable = false;
   override readonly recursive = false;
 
@@ -45,7 +45,7 @@ export class IdentifierProperty extends AbstractProperty<
   }: {
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierPrefixPropertyName: string;
-    type: BlankNodeType | IdentifierType | NamedNodeType;
+    type: BlankNodeType | IdentifierType | IriType;
     typeAlias: Code;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
@@ -126,7 +126,7 @@ export class IdentifierProperty extends AbstractProperty<
       }
 
       const expectedNodeKind: IdentifierNodeKind =
-        this.type.kind !== "NamedNodeType" ? "BlankNode" : "NamedNode";
+        this.type.kind === "IriType" ? "IRI" : "BlankNode";
 
       if (identifierVariableNodeKinds) {
         if (
@@ -138,7 +138,7 @@ export class IdentifierProperty extends AbstractProperty<
       }
 
       return [
-        code`if (${identifierVariable}.termType !== "${expectedNodeKind}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
+        code`if (${identifierVariable}.termType !== "${NodeKind.toTermType(expectedNodeKind)}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
       ];
     };
 
@@ -238,7 +238,7 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get jsonZodSchema(): AbstractProperty<IdentifierType>["jsonZodSchema"] {
     let schema: Code;
-    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
+    if (this.type.in_.length > 0 && this.type.kind === "IriType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       schema = code`${imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
@@ -433,7 +433,7 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
   >[0]): Maybe<Code> {
-    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
+    if (this.type.in_.length > 0 && this.type.kind === "IriType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
@@ -447,10 +447,7 @@ export class IdentifierProperty extends AbstractProperty<
       );
     }
 
-    if (
-      this.type.kind === "BlankNodeType" ||
-      this.type.kind === "NamedNodeType"
-    ) {
+    if (this.type.kind === "BlankNodeType" || this.type.kind === "IriType") {
       return Maybe.of(
         code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
@@ -509,7 +506,7 @@ export class IdentifierProperty extends AbstractProperty<
       switch (nodeKind) {
         case "BlankNode":
           return code`\`_:\${${variables.value}.value}\``;
-        case "NamedNode":
+        case "IRI":
           return code`${variables.value}.value`;
         default:
           throw new RangeError(nodeKind);
@@ -520,7 +517,7 @@ export class IdentifierProperty extends AbstractProperty<
     }
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
-      code`"@id": ${variables.value}.termType === "${nodeKinds[0]}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+      code`"@id": ${variables.value}.termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
     );
   }
 

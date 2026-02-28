@@ -15,7 +15,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override readonly getAccessorDeclaration: Maybe<Code> = Maybe.empty();
   override readonly graphqlField: AbstractProperty<TypeDiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
-  readonly kind = "TypeDiscriminantProperty";
+  override readonly kind = "TypeDiscriminantProperty";
   override readonly mutable = false;
   override readonly recursive = false;
 

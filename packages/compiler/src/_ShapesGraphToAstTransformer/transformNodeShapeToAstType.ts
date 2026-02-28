@@ -17,7 +17,7 @@ import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
-  "NamedNode",
+  "IRI",
 ]);
 
 function isObjectTypePropertyRequired(property: {
@@ -40,10 +40,10 @@ function isObjectTypePropertyRequired(property: {
       );
     case "BlankNodeType":
     case "IdentifierType":
+    case "IriType":
     case "LazyObjectType":
     case "ListType":
     case "LiteralType":
-    case "NamedNodeType":
     case "ObjectType":
     case "ObjectUnionType":
     case "PlaceholderType":
@@ -98,9 +98,7 @@ function transformNodeShapeToAstListType(
     // Remove the placeholder if the transformation fails.
     const listType = new ast.ListType({
       comment: nodeShape.comment,
-      identifierNodeKind: nodeKinds.has("BlankNode")
-        ? "BlankNode"
-        : "NamedNode",
+      identifierNodeKind: nodeKinds.has("BlankNode") ? "BlankNode" : "IRI",
       itemType: ast.PlaceholderType.instance as ast.ListType.ItemType,
       label: nodeShape.label,
       mutable: nodeShape.mutable.orDefault(false),
@@ -390,10 +388,7 @@ export function transformNodeShapeToAstType(
         );
       }
 
-      let identifierType:
-        | ast.BlankNodeType
-        | ast.IdentifierType
-        | ast.NamedNodeType;
+      let identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
       if (nodeKinds.size === 2) {
         invariant(nodeShape.identifierIn.length === 0);
         identifierType = new ast.IdentifierType({
@@ -409,16 +404,16 @@ export function transformNodeShapeToAstType(
               label: Maybe.empty(),
             });
             break;
-          case "Literal":
-            throw new Error("should never happen");
-          case "NamedNode":
-            identifierType = new ast.NamedNodeType({
+          case "IRI":
+            identifierType = new ast.IriType({
               comment: Maybe.empty(),
               hasValues: [],
               in_: nodeShape.identifierIn,
               label: Maybe.empty(),
             });
             break;
+          case "Literal":
+            throw new Error("should never happen");
         }
       }
 

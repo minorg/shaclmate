@@ -5,7 +5,9 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
+
 import type * as ast from "../../ast/index.js";
+
 import { logger } from "../../logger.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -16,12 +18,12 @@ import { DefaultValueType } from "./DefaultValueType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IntType } from "./IntType.js";
+import { IriType } from "./IriType.js";
 import { LazyObjectOptionType } from "./LazyObjectOptionType.js";
 import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
-import { NamedNodeType } from "./NamedNodeType.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
@@ -242,6 +244,8 @@ export class TypeFactory {
         return this.createIdentifierType(astType);
       case "IntersectionType":
         throw new Error("not implemented");
+      case "IriType":
+        return this.createIriType(astType);
       case "LazyObjectOptionType":
         return this.createLazyObjectOptionType(astType);
       case "LazyObjectSetType":
@@ -252,8 +256,6 @@ export class TypeFactory {
         return this.createListType(astType);
       case "LiteralType":
         return this.createLiteralType(astType, parameters);
-      case "NamedNodeType":
-        return this.createNamedNodeType(astType);
       case "ObjectIntersectionType":
         throw new Error("not implemented");
       case "ObjectType":
@@ -294,8 +296,8 @@ export class TypeFactory {
   }
 
   private createIdentifierType(
-    astType: ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType,
-  ): BlankNodeType | IdentifierType | NamedNodeType {
+    astType: ast.BlankNodeType | ast.IdentifierType | ast.IriType,
+  ): BlankNodeType | IdentifierType | IriType {
     switch (astType.kind) {
       case "BlankNodeType":
         return this.createBlankNodeType(astType);
@@ -304,9 +306,18 @@ export class TypeFactory {
           comment: astType.comment,
           label: astType.label,
         });
-      case "NamedNodeType":
-        return this.createNamedNodeType(astType);
+      case "IriType":
+        return this.createIriType(astType);
     }
+  }
+
+  private createIriType(astType: ast.IriType): IriType {
+    return new IriType({
+      comment: astType.comment,
+      hasValues: astType.hasValues,
+      in_: astType.in_,
+      label: astType.label,
+    });
   }
 
   private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
@@ -493,15 +504,6 @@ export class TypeFactory {
       in_: astType.in_,
       label: astType.label,
       languageIn: astType.languageIn,
-    });
-  }
-
-  private createNamedNodeType(astType: ast.NamedNodeType): NamedNodeType {
-    return new NamedNodeType({
-      comment: astType.comment,
-      hasValues: astType.hasValues,
-      in_: astType.in_,
-      label: astType.label,
     });
   }
 

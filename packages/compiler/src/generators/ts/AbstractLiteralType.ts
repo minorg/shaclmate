@@ -8,19 +8,16 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
+  override readonly nodeKinds = nodeKinds;
   protected readonly languageIn: readonly string[];
 
   constructor({
     languageIn,
     ...superParameters
-  }: { languageIn: readonly string[] } & Omit<
-    ConstructorParameters<typeof AbstractTermType<Literal, Literal>>[0],
-    "nodeKinds"
-  >) {
-    super({
-      ...superParameters,
-      nodeKinds: new Set<"Literal">(["Literal"]),
-    });
+  }: { languageIn: readonly string[] } & ConstructorParameters<
+    typeof AbstractTermType<Literal, Literal>
+  >[0]) {
+    super(superParameters);
     this.languageIn = languageIn;
   }
 
@@ -63,3 +60,5 @@ export namespace AbstractLiteralType {
   export const JsonType = AbstractTermType.JsonType;
   export type JsonType = AbstractTermType.JsonType;
 }
+
+const nodeKinds: ReadonlySet<"Literal"> = new Set(["Literal"]);

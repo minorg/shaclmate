@@ -20,7 +20,7 @@ export class DefaultValueType<
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly kind = "DefaultValueType";
+  override readonly kind = "DefaultValueType";
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
@@ -124,7 +124,7 @@ export class DefaultValueType<
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(code`${literalOf(this.defaultValue.value)}`);
       case "IdentifierType":
-      case "NamedNodeType":
+      case "IriType":
         invariant(this.defaultValue.termType === "NamedNode");
         return Maybe.of(this.defaultValueTermExpression);
       case "LiteralType":

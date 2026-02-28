@@ -1,5 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
@@ -16,6 +16,7 @@ export class IdentifierType extends AbstractIdentifierType<
     code`export const fromString = ${snippets.identifierFromString};`;
   override readonly kind = "IdentifierType";
   override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
+  override readonly nodeKinds = nodeKinds;
   override readonly schemaType = code`${snippets.IdentifierSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.identifierSparqlWherePatterns}`;
@@ -32,7 +33,6 @@ export class IdentifierType extends AbstractIdentifierType<
       ...parameters,
       hasValues: [],
       in_: [],
-      nodeKinds,
     });
   }
 
@@ -76,7 +76,7 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
+      ? code`, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${NodeKind.toTermType(nodeKind)}"`).join(" | ")}`
       : "";
     const valueToBlankNode = code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
     const valueToNamedNode = code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
@@ -97,5 +97,5 @@ export class IdentifierType extends AbstractIdentifierType<
 
 const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([
   "BlankNode",
-  "NamedNode",
+  "IRI",
 ]);

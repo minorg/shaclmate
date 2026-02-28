@@ -1,4 +1,5 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
+
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { termEquals } from "./equals.js";
@@ -17,7 +18,7 @@ export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType = DefaultValueType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
   readonly defaultValue: Literal | NamedNode;
-  readonly kind = "DefaultValueType";
+  override readonly kind = "DefaultValueType";
 
   constructor({
     defaultValue,

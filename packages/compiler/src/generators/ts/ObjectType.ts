@@ -33,8 +33,8 @@ import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_Object
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -51,8 +51,8 @@ export class ObjectType extends AbstractDeclaredType {
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
-  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
-  readonly kind = "ObjectType";
+  readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  override readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -80,7 +80,7 @@ export class ObjectType extends AbstractDeclaredType {
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
+    identifierType: BlankNodeType | IdentifierType | IriType;
     imports: readonly string[];
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly ObjectType[];
@@ -344,7 +344,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${imports.Resource}${this.identifierType.kind === "NamedNodeType" ? code`<${imports.NamedNode}>` : ""}`;
+    return code`${imports.Resource}${this.identifierType.kind === "IriType" ? code`<${imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()

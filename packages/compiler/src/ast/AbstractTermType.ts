@@ -4,7 +4,7 @@ import { AbstractType } from "./AbstractType.js";
 import { arrayEquals, setEquals, strictEquals, termEquals } from "./equals.js";
 
 /**
- * Abstract base class of term types (BlankNodeType, IdentifierType, LiteralType, NamedNodeType, TermType).
+ * Abstract base class of term types (BlankNodeType, IdentifierType, LiteralType, IriType, TermType).
  *
  * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
  * RuntimeTermT is the type of values at runtime.
@@ -23,25 +23,22 @@ export abstract class AbstractTermType<
   abstract readonly kind:
     | "BlankNodeType"
     | "IdentifierType"
+    | "IriType"
     | "LiteralType"
-    | "NamedNodeType"
     | "TermType";
-  readonly nodeKinds: ReadonlySet<_RuntimeTermT["termType"]>;
+  abstract readonly nodeKinds: ReadonlySet<NodeKind>;
 
   constructor({
     hasValues,
     in_,
-    nodeKinds,
     ...superParameters
   }: {
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-    nodeKinds: ReadonlySet<NodeKind>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
-    this.nodeKinds = nodeKinds;
   }
 
   override equals(

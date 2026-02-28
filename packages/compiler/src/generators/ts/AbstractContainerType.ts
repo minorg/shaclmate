@@ -8,9 +8,9 @@ import type { DateType } from "./DateType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
+import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { removeUndefined } from "./removeUndefined.js";
@@ -77,9 +77,9 @@ export namespace AbstractContainerType {
     | FloatType
     | IdentifierType
     | IntType
+    | IriType
     | ListType<ListType.ItemType>
     | LiteralType
-    | NamedNodeType
     | ObjectType
     | ObjectUnionType
     | StringType
@@ -96,9 +96,9 @@ export namespace AbstractContainerType {
       case "FloatType":
       case "IdentifierType":
       case "IntType":
+      case "IriType":
       case "ListType":
       case "LiteralType":
-      case "NamedNodeType":
       case "ObjectType":
       case "ObjectUnionType":
       case "StringType":

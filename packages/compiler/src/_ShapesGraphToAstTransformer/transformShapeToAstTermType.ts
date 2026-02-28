@@ -11,11 +11,11 @@ import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAst
 type AstTermType =
   | ast.BlankNodeType
   | ast.DefaultValueType<
-      ast.IdentifierType | ast.LiteralType | ast.NamedNodeType | ast.TermType
+      ast.IdentifierType | ast.LiteralType | ast.IriType | ast.TermType
     >
   | ast.IdentifierType
+  | ast.IriType
   | ast.LiteralType
-  | ast.NamedNodeType
   | ast.TermType;
 
 /**
@@ -38,8 +38,8 @@ export function transformShapeToAstTermType(
       let termType:
         | ast.BlankNodeType
         | ast.IdentifierType
+        | ast.IriType
         | ast.LiteralType
-        | ast.NamedNodeType
         | ast.TermType;
 
       if (nodeKinds.size === 1) {
@@ -49,6 +49,13 @@ export function transformShapeToAstTermType(
             invariant(in_.length === 0);
             termType = new ast.BlankNodeType({
               ...astAbstractTypeProperties,
+            });
+            break;
+          case "IRI":
+            termType = new ast.IriType({
+              ...astAbstractTypeProperties,
+              hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
+              in_: in_.filter((_) => _.termType === "NamedNode"),
             });
             break;
           case "Literal":
@@ -64,18 +71,11 @@ export function transformShapeToAstTermType(
               minInclusive: shape.constraints.minInclusive,
             });
             break;
-          case "NamedNode":
-            termType = new ast.NamedNodeType({
-              ...astAbstractTypeProperties,
-              hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
-              in_: in_.filter((_) => _.termType === "NamedNode"),
-            });
-            break;
         }
       } else if (
         nodeKinds.size === 2 &&
         nodeKinds.has("BlankNode") &&
-        nodeKinds.has("NamedNode")
+        nodeKinds.has("IRI")
       ) {
         invariant(in_.length === 0);
         termType = new ast.IdentifierType({

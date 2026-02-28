@@ -12,7 +12,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${imports.GraphQLBoolean}`,
   );
-  readonly kind = "BooleanType";
+  override readonly kind = "BooleanType";
   override readonly schemaType = code`${snippets.BooleanSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.booleanSparqlWherePatterns}`;

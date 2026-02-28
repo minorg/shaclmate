@@ -7,12 +7,12 @@ import type { DefaultValueType } from "./DefaultValueType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
+import type { IriType } from "./IriType.js";
 import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";
 import type { LazyObjectSetType } from "./LazyObjectSetType.js";
 import type { LazyObjectType } from "./LazyObjectType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
@@ -31,12 +31,12 @@ export type Type =
   | FloatType
   | IdentifierType
   | IntType
+  | IriType
   | LazyObjectOptionType
   | LazyObjectSetType
   | LazyObjectType
   | ListType<ListType.ItemType>
   | LiteralType
-  | NamedNodeType
   | ObjectType
   | ObjectUnionType
   | OptionType<OptionType.ItemType>

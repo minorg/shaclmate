@@ -1,6 +1,6 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { NodeKind } from "./NodeKind.js";
 
 /**
  * TypeScript enum corresponding to sh:NodeKind, for simpler manipulation.
  */
-export type IdentifierNodeKind = (BlankNode | NamedNode)["termType"];
+export type IdentifierNodeKind = Exclude<NodeKind, "Literal">;

@@ -1,12 +1,13 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-import type { Maybe } from "purify-ts";
-import { AbstractTermType } from "./AbstractTermType.js";
 
-const nodeKinds: ReadonlySet<"Literal"> = new Set(["Literal"]);
+import type { Maybe } from "purify-ts";
+
+import { AbstractTermType } from "./AbstractTermType.js";
 
 export class LiteralType extends AbstractTermType<Literal, Literal> {
   readonly datatype: Maybe<NamedNode>;
   override readonly kind = "LiteralType";
+  override readonly nodeKinds = nodeKinds;
   readonly languageIn: readonly string[];
   readonly maxExclusive: Maybe<Literal>;
   readonly maxInclusive: Maybe<Literal>;
@@ -32,7 +33,7 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
     ConstructorParameters<typeof AbstractTermType<Literal, Literal>>[0],
     "nodeKinds"
   >) {
-    super({ ...superParameters, nodeKinds });
+    super(superParameters);
     this.datatype = datatype;
     this.languageIn = languageIn;
     this.maxExclusive = maxExclusive;
@@ -45,3 +46,5 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
     return `${this.kind}()`;
   }
 }
+
+const nodeKinds: ReadonlySet<"Literal"> = new Set(["Literal"]);

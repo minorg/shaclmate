@@ -13,22 +13,14 @@ import {
   literalOf,
 } from "./ts-poet-wrapper.js";
 
-export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = code`${snippets.filterNamedNode}`;
-  override readonly filterType = code`${snippets.NamedNodeFilter}`;
-  readonly kind = "NamedNodeType";
-  override readonly schemaType = code`${snippets.NamedNodeSchema}`;
+export class IriType extends AbstractIdentifierType<NamedNode> {
+  override readonly filterFunction = code`${snippets.filterIri}`;
+  override readonly filterType = code`${snippets.IriFilter}`;
+  override readonly kind = "IriType";
+  override readonly nodeKinds = nodeKinds;
+  override readonly schemaType = code`${snippets.IriSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${snippets.namedNodeSparqlWherePatterns}`;
-
-  constructor(
-    parameters: Omit<
-      ConstructorParameters<typeof AbstractIdentifierType<NamedNode>>[0],
-      "nodeKinds"
-    >,
-  ) {
-    super({ ...parameters, nodeKinds });
-  }
+    code`${snippets.iriSparqlWherePatterns}`;
 
   @Memoize()
   get fromStringFunction(): Code {
@@ -158,4 +150,4 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
   }
 }
 
-const nodeKinds: ReadonlySet<"NamedNode"> = new Set(["NamedNode"]);
+const nodeKinds: ReadonlySet<"IRI"> = new Set(["IRI"]);

@@ -10,7 +10,7 @@ export class SetType<
 > extends AbstractCollectionType<ItemTypeT> {
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  readonly kind = "SetType";
+  override readonly kind = "SetType";
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {

@@ -24,9 +24,9 @@ import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.j
 import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
 import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
+import { snippets_filterIri } from "./_snippets/snippets_filterIri.js";
 import { snippets_filterLiteral } from "./_snippets/snippets_filterLiteral.js";
 import { snippets_filterMaybe } from "./_snippets/snippets_filterMaybe.js";
-import { snippets_filterNamedNode } from "./_snippets/snippets_filterNamedNode.js";
 import { snippets_filterNumeric } from "./_snippets/snippets_filterNumeric.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
@@ -35,8 +35,11 @@ import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
 import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
 import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema.js";
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
+import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
+import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierFromString } from "./_snippets/snippets_identifierFromString.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
+import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_isReadonlyBigIntArray } from "./_snippets/snippets_isReadonlyBigIntArray.js";
 import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
 import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
@@ -56,11 +59,8 @@ import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
 import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
-import { snippets_NamedNodeFilter } from "./_snippets/snippets_NamedNodeFilter.js";
-import { snippets_NamedNodeSchema } from "./_snippets/snippets_NamedNodeSchema.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
-import { snippets_namedNodeSparqlWherePatterns } from "./_snippets/snippets_namedNodeSparqlWherePatterns.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
 import { snippets_PropertiesFromRdfParameters } from "./_snippets/snippets_PropertiesFromRdfParameters.js";
@@ -111,9 +111,9 @@ export const snippets = {
   filterBoolean: snippets_filterBoolean,
   filterDate: snippets_filterDate,
   filterIdentifier: snippets_filterIdentifier,
+  filterIri: snippets_filterIri,
   filterLiteral: snippets_filterLiteral,
   filterMaybe: snippets_filterMaybe,
-  filterNamedNode: snippets_filterNamedNode,
   filterNumeric: snippets_filterNumeric,
   filterString: snippets_filterString,
   filterTerm: snippets_filterTerm,
@@ -144,9 +144,9 @@ export const snippets = {
   MaybeFilter: snippets_MaybeFilter,
   MaybeSchema: snippets_MaybeSchema,
   maybeSparqlWherePatterns: snippets_maybeSparqlWherePatterns,
-  NamedNodeFilter: snippets_NamedNodeFilter,
-  NamedNodeSchema: snippets_NamedNodeSchema,
-  namedNodeSparqlWherePatterns: snippets_namedNodeSparqlWherePatterns,
+  IriFilter: snippets_IriFilter,
+  IriSchema: snippets_IriSchema,
+  iriSparqlWherePatterns: snippets_iriSparqlWherePatterns,
   normalizeSparqlWherePatterns: snippets_normalizeSparqlWherePatterns,
   NumericFilter: snippets_NumericFilter,
   NumericSchema: snippets_NumericSchema,
