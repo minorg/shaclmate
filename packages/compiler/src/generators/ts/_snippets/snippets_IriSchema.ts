@@ -7,6 +7,6 @@ export const snippets_IriSchema = conditionalOutput(
   code`\
 interface ${syntheticNamePrefix}IriSchema {
   readonly in?: readonly ${imports.NamedNode}[];
-  readonly kind: "NamedNode";
+  readonly kind: "Iri";
 }`,
 );
