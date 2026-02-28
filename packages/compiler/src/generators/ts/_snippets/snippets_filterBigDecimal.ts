@@ -3,10 +3,10 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
 
-export const snippets_filterDecimal = conditionalOutput(
-  `${syntheticNamePrefix}filterDecimal`,
+export const snippets_filterBigDecimal = conditionalOutput(
+  `${syntheticNamePrefix}filterBigDecimal`,
   code`\
-function ${syntheticNamePrefix}filterDecimal(filter: ${snippets_NumericFilter}<${imports.Decimal}>, value: ${imports.Decimal}) {
+function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets_NumericFilter}<${imports.Decimal}>, value: ${imports.Decimal}) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
