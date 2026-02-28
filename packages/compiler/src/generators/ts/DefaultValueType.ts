@@ -90,6 +90,11 @@ export class DefaultValueType<
   @Memoize()
   private get defaultValuePrimitiveExpression(): Maybe<Code> {
     switch (this.itemType.kind) {
+      case "BigDecimalType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(
+          code`new ${imports.BigDecimal}(${literalOf(this.defaultValue.value)})`,
+        );
       case "BigIntType":
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(

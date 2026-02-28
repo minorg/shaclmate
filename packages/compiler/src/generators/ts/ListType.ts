@@ -6,6 +6,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
@@ -245,6 +246,7 @@ export class ListType<
 
 export namespace ListType {
   export type ItemType =
+    | BigDecimalType
     | BigIntType
     | BlankNodeType
     | BooleanType
@@ -263,6 +265,7 @@ export namespace ListType {
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
+      case "BigDecimalType":
       case "BigIntType":
       case "BlankNodeType":
       case "BooleanType":

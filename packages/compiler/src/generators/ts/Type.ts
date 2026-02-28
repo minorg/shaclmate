@@ -1,3 +1,4 @@
+import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
@@ -22,6 +23,7 @@ import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
 
 export type Type =
+  | BigDecimalType
   | BigIntType
   | BlankNodeType
   | BooleanType
