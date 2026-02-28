@@ -16,7 +16,7 @@ import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
-import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeDecimalLiteral.js";
+import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBigDecimalLiteral.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
