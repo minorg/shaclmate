@@ -5,6 +5,7 @@ import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.j
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
 import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
+import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_blankNodeFromString } from "./_snippets/snippets_blankNodeFromString.js";
 import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blankNodeSparqlWherePatterns.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
@@ -92,6 +93,7 @@ export const snippets = {
   arrayIntersection: snippets_arrayIntersection,
   arrayEquals: snippets_arrayEquals,
   bigDecimalLiteral: snippets_bigDecimalLiteral,
+  bigDecimalSparqlWherePatterns: snippets_bigDecimalSparqlWherePatterns,
   BlankNodeFilter: snippets_BlankNodeFilter,
   BlankNodeSchema: snippets_BlankNodeSchema,
   blankNodeFromString: snippets_blankNodeFromString,
