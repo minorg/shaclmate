@@ -16,7 +16,7 @@ export abstract class AbstractIdentifierType<
   abstract override readonly kind:
     | "BlankNodeType"
     | "IdentifierType"
-    | "NamedNodeType";
+    | "IriType";
   readonly toStringFunction = // Re-export rdfjsResource.Resource.Identifier.toString
     code`\
 // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString

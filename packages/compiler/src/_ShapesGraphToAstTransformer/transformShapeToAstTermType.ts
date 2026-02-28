@@ -11,11 +11,11 @@ import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAst
 type AstTermType =
   | ast.BlankNodeType
   | ast.DefaultValueType<
-      ast.IdentifierType | ast.LiteralType | ast.NamedNodeType | ast.TermType
+      ast.IdentifierType | ast.LiteralType | ast.IriType | ast.TermType
     >
   | ast.IdentifierType
+  | ast.IriType
   | ast.LiteralType
-  | ast.NamedNodeType
   | ast.TermType;
 
 /**
@@ -38,8 +38,8 @@ export function transformShapeToAstTermType(
       let termType:
         | ast.BlankNodeType
         | ast.IdentifierType
+        | ast.IriType
         | ast.LiteralType
-        | ast.NamedNodeType
         | ast.TermType;
 
       if (nodeKinds.size === 1) {
@@ -65,7 +65,7 @@ export function transformShapeToAstTermType(
             });
             break;
           case "NamedNode":
-            termType = new ast.NamedNodeType({
+            termType = new ast.IriType({
               ...astAbstractTypeProperties,
               hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
               in_: in_.filter((_) => _.termType === "NamedNode"),

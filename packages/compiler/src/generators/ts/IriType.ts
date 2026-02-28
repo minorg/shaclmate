@@ -13,10 +13,10 @@ import {
   literalOf,
 } from "./ts-poet-wrapper.js";
 
-export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
+export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${snippets.filterNamedNode}`;
   override readonly filterType = code`${snippets.NamedNodeFilter}`;
-  readonly kind = "NamedNodeType";
+  readonly kind = "IriType";
   override readonly schemaType = code`${snippets.NamedNodeSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.namedNodeSparqlWherePatterns}`;

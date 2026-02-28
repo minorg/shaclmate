@@ -12,7 +12,7 @@ function synthesizePartialAstObjectType({
   identifierType,
   tsFeatures,
 }: {
-  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType;
+  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
   tsFeatures: ReadonlySet<TsFeature>;
 }): ast.ObjectType {
   let syntheticName: string;
@@ -22,7 +22,7 @@ function synthesizePartialAstObjectType({
     case "IdentifierType":
       syntheticName = "DefaultPartial";
       break;
-    case "NamedNodeType":
+    case "IriType":
       syntheticName = "NamedDefaultPartial";
       break;
   }

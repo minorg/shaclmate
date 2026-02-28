@@ -3,7 +3,7 @@ import { Maybe } from "purify-ts";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
-import { NamedNodeType } from "./NamedNodeType.js";
+import { IriType } from "./IriType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -25,7 +25,7 @@ export function synthesizeUberObjectUnionType(parameters: {
     return nodeKinds;
   }, new Set<IdentifierNodeKind>());
 
-  let identifierType: BlankNodeType | IdentifierType | NamedNodeType;
+  let identifierType: BlankNodeType | IdentifierType | IriType;
   if (nodeKinds.size === 2) {
     identifierType = new IdentifierType({
       comment: Maybe.empty(),
@@ -40,7 +40,7 @@ export function synthesizeUberObjectUnionType(parameters: {
         });
         break;
       case "NamedNode":
-        identifierType = new NamedNodeType({
+        identifierType = new IriType({
           comment: Maybe.empty(),
           hasValues: [],
           in_: [],

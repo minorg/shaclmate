@@ -6,7 +6,7 @@ const nodeKinds: ReadonlySet<"NamedNode"> = new Set(["NamedNode"]);
 /**
  * A type corresponding to sh:nodeKind sh:IRI.
  */
-export class NamedNodeType extends AbstractTermType<NamedNode, NamedNode> {
+export class IriType extends AbstractTermType<NamedNode, NamedNode> {
   constructor(
     superParameters: Omit<
       ConstructorParameters<typeof AbstractTermType<NamedNode, NamedNode>>[0],
@@ -19,5 +19,5 @@ export class NamedNodeType extends AbstractTermType<NamedNode, NamedNode> {
     });
   }
 
-  override readonly kind = "NamedNodeType";
+  override readonly kind = "IriType";
 }

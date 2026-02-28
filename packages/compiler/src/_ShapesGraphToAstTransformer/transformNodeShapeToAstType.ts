@@ -40,10 +40,10 @@ function isObjectTypePropertyRequired(property: {
       );
     case "BlankNodeType":
     case "IdentifierType":
+    case "IriType":
     case "LazyObjectType":
     case "ListType":
     case "LiteralType":
-    case "NamedNodeType":
     case "ObjectType":
     case "ObjectUnionType":
     case "PlaceholderType":
@@ -390,10 +390,7 @@ export function transformNodeShapeToAstType(
         );
       }
 
-      let identifierType:
-        | ast.BlankNodeType
-        | ast.IdentifierType
-        | ast.NamedNodeType;
+      let identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
       if (nodeKinds.size === 2) {
         invariant(nodeShape.identifierIn.length === 0);
         identifierType = new ast.IdentifierType({
@@ -412,7 +409,7 @@ export function transformNodeShapeToAstType(
           case "Literal":
             throw new Error("should never happen");
           case "NamedNode":
-            identifierType = new ast.NamedNodeType({
+            identifierType = new ast.IriType({
               comment: Maybe.empty(),
               hasValues: [],
               in_: nodeShape.identifierIn,

@@ -9,7 +9,7 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
-import { NamedNodeType } from "./NamedNodeType.js";
+import { IriType } from "./IriType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -74,7 +74,7 @@ export abstract class AbstractObjectCompoundType<
   }
 
   @Memoize()
-  get identifierType(): BlankNodeType | IdentifierType | NamedNodeType {
+  get identifierType(): BlankNodeType | IdentifierType | IriType {
     const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
     for (const memberType of this.memberTypes) {
@@ -105,7 +105,7 @@ export abstract class AbstractObjectCompoundType<
           label: Maybe.empty(),
         });
       case "NamedNode":
-        return new NamedNodeType({
+        return new IriType({
           comment: Maybe.empty(),
           hasValues: [],
           in_: [...memberIdentifierTypesIn],

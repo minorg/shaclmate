@@ -15,7 +15,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Curie } from "./Curie.js";
 import { arrayEquals } from "./equals.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
+import type { IriType } from "./IriType.js";
 import { Type } from "./Type.js";
 
 export class ObjectType extends AbstractType {
@@ -77,7 +77,7 @@ export class ObjectType extends AbstractType {
   /**
    * Identifier type.
    */
-  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
+  readonly identifierType: BlankNodeType | IdentifierType | IriType;
 
   /**
    * Type discriminant.
@@ -162,7 +162,7 @@ export class ObjectType extends AbstractType {
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
+    identifierType: BlankNodeType | IdentifierType | IriType;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
@@ -433,8 +433,8 @@ export namespace ObjectType {
         switch (currentPropertyType.kind) {
           case "BlankNodeType":
           case "IdentifierType":
+          case "IriType":
           case "LiteralType":
-          case "NamedNodeType":
           case "PlaceholderType":
           case "TermType":
             return false;

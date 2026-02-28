@@ -60,7 +60,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
   switch (type.kind) {
     case "BlankNodeType":
     case "IdentifierType":
-    case "NamedNodeType":
+    case "IriType":
       return {
         ...common,
         hasValue: type.hasValues.map(termToJson),
