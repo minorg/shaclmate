@@ -20,7 +20,7 @@ export class DefaultValueType<
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly kind = "DefaultValueType";
+  override readonly kind = "DefaultValueType";
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({

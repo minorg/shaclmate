@@ -1,7 +1,6 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe, NonEmptyList } from "purify-ts";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
@@ -21,7 +20,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractTermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
-  RuntimeTermT extends BlankNode | Literal | NamedNode =
+  _RuntimeTermT extends BlankNode | Literal | NamedNode =
     | BlankNode
     | Literal
     | NamedNode,
@@ -31,7 +30,7 @@ export abstract class AbstractTermType<
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
-  readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
+  abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
     "object" as const,
   ]);
@@ -39,18 +38,14 @@ export abstract class AbstractTermType<
   constructor({
     hasValues,
     in_,
-    nodeKinds,
     ...superParameters
   }: {
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-    nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
-    this.nodeKinds = nodeKinds;
-    invariant(this.nodeKinds.size > 0, "empty nodeKinds");
   }
 
   get constrained(): boolean {

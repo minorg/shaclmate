@@ -51,6 +51,13 @@ export function transformShapeToAstTermType(
               ...astAbstractTypeProperties,
             });
             break;
+          case "IRI":
+            termType = new ast.IriType({
+              ...astAbstractTypeProperties,
+              hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
+              in_: in_.filter((_) => _.termType === "NamedNode"),
+            });
+            break;
           case "Literal":
             termType = new ast.LiteralType({
               ...astAbstractTypeProperties,
@@ -64,18 +71,11 @@ export function transformShapeToAstTermType(
               minInclusive: shape.constraints.minInclusive,
             });
             break;
-          case "NamedNode":
-            termType = new ast.IriType({
-              ...astAbstractTypeProperties,
-              hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
-              in_: in_.filter((_) => _.termType === "NamedNode"),
-            });
-            break;
         }
       } else if (
         nodeKinds.size === 2 &&
         nodeKinds.has("BlankNode") &&
-        nodeKinds.has("NamedNode")
+        nodeKinds.has("IRI")
       ) {
         invariant(in_.length === 0);
         termType = new ast.IdentifierType({

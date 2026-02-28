@@ -31,7 +31,7 @@ export class ListType<
    */
   readonly identifierNodeKind: IdentifierNodeKind;
 
-  readonly kind = "ListType";
+  override readonly kind = "ListType";
 
   /**
    * Strategy for minting new list and sub-list identifiers.

@@ -41,7 +41,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
-  readonly kind = "ObjectUnionType";
+  override readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
 

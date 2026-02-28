@@ -104,7 +104,7 @@ export abstract class AbstractObjectCompoundType<
           comment: Maybe.empty(),
           label: Maybe.empty(),
         });
-      case "NamedNode":
+      case "IRI":
         return new IriType({
           comment: Maybe.empty(),
           hasValues: [],

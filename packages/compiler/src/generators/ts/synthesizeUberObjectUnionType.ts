@@ -39,7 +39,7 @@ export function synthesizeUberObjectUnionType(parameters: {
           label: Maybe.empty(),
         });
         break;
-      case "NamedNode":
+      case "IRI":
         identifierType = new IriType({
           comment: Maybe.empty(),
           hasValues: [],

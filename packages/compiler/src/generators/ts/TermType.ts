@@ -1,6 +1,6 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
@@ -19,19 +19,24 @@ export class TermType<
   override readonly filterFunction = code`${snippets.filterTerm}`;
   override readonly filterType = code`${snippets.TermFilter}`;
   override readonly kind = "TermType";
+  override readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly schemaType = code`${snippets.TermSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.termSparqlWherePatterns}`;
 
-  constructor(
-    superParameters: ConstructorParameters<
-      typeof AbstractTermType<ConstantTermT, RuntimeTermT>
-    >[0],
-  ) {
+  constructor({
+    nodeKinds,
+    ...superParameters
+  }: ConstructorParameters<
+    typeof AbstractTermType<ConstantTermT, RuntimeTermT>
+  >[0] & {
+    nodeKinds: ReadonlySet<NodeKind>;
+  }) {
     super(superParameters);
+    this.nodeKinds = nodeKinds;
     invariant(
       this.nodeKinds.has("Literal") &&
-        (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
+        (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("IRI")),
       "should be IdentifierType or LiteralType",
     );
   }
@@ -66,11 +71,11 @@ export class TermType<
           case "BlankNode":
             valueToNodeKind = code`${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
             break;
+          case "IRI":
+            valueToNodeKind = code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            break;
           case "Literal":
             valueToNodeKind = code`${imports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
-            break;
-          case "NamedNode":
-            valueToNodeKind = code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
             break;
           default:
             throw new RangeError(nodeKind);
@@ -108,7 +113,7 @@ export class TermType<
       [...this.nodeKinds].map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
-          case "NamedNode":
+          case "IRI":
             return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1), termType: ${imports.z}.literal("${nodeKind}") })`;
           case "Literal":
             return code`${imports.z}.object({ "@language": ${imports.z}.string().optional(), "@type": ${imports.z}.string().optional(), "@value": ${imports.z}.string(), termType: ${imports.z}.literal("Literal") })`;
@@ -130,11 +135,11 @@ export class TermType<
           case "BlankNode":
             valueToNodeKind = code`{ "@id": \`_:\${${variables.value}.value}\`, termType: "${nodeKind}" as const }`;
             break;
+          case "IRI":
+            valueToNodeKind = code`{ "@id": ${variables.value}.value, termType: "${nodeKind}" as const }`;
+            break;
           case "Literal":
             valueToNodeKind = code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${nodeKind}" as const }`;
-            break;
-          case "NamedNode":
-            valueToNodeKind = code`{ "@id": ${variables.value}.value, termType: "${nodeKind}" as const }`;
             break;
           default:
             throw new RangeError(nodeKind);

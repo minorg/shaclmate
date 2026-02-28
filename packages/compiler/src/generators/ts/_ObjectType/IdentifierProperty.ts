@@ -33,7 +33,7 @@ export class IdentifierProperty extends AbstractProperty<
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: Code;
 
-  readonly kind = "IdentifierProperty";
+  override readonly kind = "IdentifierProperty";
   override readonly mutable = false;
   override readonly recursive = false;
 
@@ -126,7 +126,7 @@ export class IdentifierProperty extends AbstractProperty<
       }
 
       const expectedNodeKind: IdentifierNodeKind =
-        this.type.kind !== "IriType" ? "BlankNode" : "NamedNode";
+        this.type.kind === "IriType" ? "IRI" : "BlankNode";
 
       if (identifierVariableNodeKinds) {
         if (
@@ -506,7 +506,7 @@ export class IdentifierProperty extends AbstractProperty<
       switch (nodeKind) {
         case "BlankNode":
           return code`\`_:\${${variables.value}.value}\``;
-        case "NamedNode":
+        case "IRI":
           return code`${variables.value}.value`;
         default:
           throw new RangeError(nodeKind);

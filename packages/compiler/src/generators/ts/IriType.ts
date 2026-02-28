@@ -16,19 +16,11 @@ import {
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${snippets.filterIri}`;
   override readonly filterType = code`${snippets.IriFilter}`;
-  readonly kind = "IriType";
+  override readonly kind = "IriType";
+  override readonly nodeKinds = nodeKinds;
   override readonly schemaType = code`${snippets.IriSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.iriSparqlWherePatterns}`;
-
-  constructor(
-    parameters: Omit<
-      ConstructorParameters<typeof AbstractIdentifierType<NamedNode>>[0],
-      "nodeKinds"
-    >,
-  ) {
-    super({ ...parameters, nodeKinds });
-  }
 
   @Memoize()
   get fromStringFunction(): Code {
@@ -158,4 +150,4 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
   }
 }
 
-const nodeKinds: ReadonlySet<"NamedNode"> = new Set(["NamedNode"]);
+const nodeKinds: ReadonlySet<"IRI"> = new Set(["IRI"]);

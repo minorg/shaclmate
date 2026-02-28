@@ -17,7 +17,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   override readonly jsonSignature: Maybe<Code> = Maybe.empty();
   override readonly jsonZodSchema: AbstractProperty<StringType>["jsonZodSchema"] =
     Maybe.empty();
-  readonly kind = "IdentifierPrefixProperty";
+  override readonly kind = "IdentifierPrefixProperty";
   override readonly mutable = false;
   override readonly recursive = false;
 

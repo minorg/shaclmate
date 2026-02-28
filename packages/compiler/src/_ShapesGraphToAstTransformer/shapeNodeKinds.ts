@@ -1,17 +1,17 @@
-import type { NodeKind } from "@shaclmate/shacl-ast";
+import { NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left } from "purify-ts";
 import type * as input from "../input/index.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
+  "IRI",
   "Literal",
-  "NamedNode",
 ]);
 
 const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
+  "IRI",
   "Literal",
-  "NamedNode",
 ]);
 
 function nodeShapeNodeKinds(
@@ -75,7 +75,10 @@ export function shapeNodeKinds(
           .map(() => ["Literal"])
           .orDefault([]) as readonly NodeKind[],
       ],
-      ["sh:in", shape.constraints.in_.map((in_) => in_.termType)],
+      [
+        "sh:in",
+        shape.constraints.in_.map((in_) => NodeKind.fromTermType(in_.termType)),
+      ],
       [
         "sh:languageIn",
         shape.constraints.languageIn.length > 0
@@ -110,12 +113,16 @@ export function shapeNodeKinds(
       // We don't want sh:defaultValue earlier because it should only determine the node kinds if nothing else did.
       [
         "sh:hasValue",
-        shape.constraints.hasValues.map((value) => value.termType),
+        shape.constraints.hasValues.map((value) =>
+          NodeKind.fromTermType(value.termType),
+        ),
       ],
       [
         "sh:defaultValue",
         shape.kind === "PropertyShape"
-          ? shape.defaultValue.map((value) => value.termType).toList()
+          ? shape.defaultValue
+              .map((value) => NodeKind.fromTermType(value.termType))
+              .toList()
           : [],
       ],
     ] as const) {

@@ -34,7 +34,7 @@ export class ListType<
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
-  readonly kind = "ListType";
+  override readonly kind = "ListType";
 
   constructor({
     identifierNodeKind,
@@ -190,7 +190,7 @@ export class ListType<
         resourceTypeName = code`${imports.Resource}<${imports.BlankNode}>`;
         break;
       }
-      case "NamedNode": {
+      case "IRI": {
         switch (this.identifierMintingStrategy) {
           case "blankNode":
             throw new RangeError(this.identifierMintingStrategy);

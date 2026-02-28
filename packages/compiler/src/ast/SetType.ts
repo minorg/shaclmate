@@ -7,7 +7,7 @@ import type { PlaceholderType } from "./PlaceholderType.js";
 export class SetType<
   ItemTypeT extends SetType.ItemType = SetType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
-  readonly kind = "SetType";
+  override readonly kind = "SetType";
 
   /**
    * Minimum number of items in the set.

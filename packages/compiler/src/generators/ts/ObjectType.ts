@@ -52,7 +52,7 @@ export class ObjectType extends AbstractDeclaredType {
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
-  readonly kind = "ObjectType";
+  override readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);

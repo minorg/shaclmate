@@ -16,7 +16,7 @@ export class OptionType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  readonly kind = "OptionType";
+  override readonly kind = "OptionType";
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()

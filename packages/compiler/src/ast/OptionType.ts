@@ -7,7 +7,7 @@ import type { PlaceholderType } from "./PlaceholderType.js";
 export class OptionType<
   ItemTypeT extends OptionType.ItemType = OptionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  readonly kind = "OptionType";
+  override readonly kind = "OptionType";
 
   constructor({
     itemType,

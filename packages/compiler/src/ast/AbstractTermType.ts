@@ -26,22 +26,19 @@ export abstract class AbstractTermType<
     | "IriType"
     | "LiteralType"
     | "TermType";
-  readonly nodeKinds: ReadonlySet<_RuntimeTermT["termType"]>;
+  abstract readonly nodeKinds: ReadonlySet<NodeKind>;
 
   constructor({
     hasValues,
     in_,
-    nodeKinds,
     ...superParameters
   }: {
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-    nodeKinds: ReadonlySet<NodeKind>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.hasValues = hasValues;
     this.in_ = in_;
-    this.nodeKinds = nodeKinds;
   }
 
   override equals(

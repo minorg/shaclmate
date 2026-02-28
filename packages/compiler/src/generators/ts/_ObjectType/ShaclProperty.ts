@@ -17,7 +17,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly description: Maybe<string>;
   private readonly label: Maybe<string>;
 
-  readonly kind = "ShaclProperty";
+  override readonly kind = "ShaclProperty";
   override readonly mutable: boolean;
   readonly path: rdfjs.NamedNode;
   override readonly recursive: boolean;

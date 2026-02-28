@@ -16,6 +16,7 @@ export class IdentifierType extends AbstractIdentifierType<
     code`export const fromString = ${snippets.identifierFromString};`;
   override readonly kind = "IdentifierType";
   override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
+  override readonly nodeKinds = nodeKinds;
   override readonly schemaType = code`${snippets.IdentifierSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${snippets.identifierSparqlWherePatterns}`;
@@ -32,7 +33,6 @@ export class IdentifierType extends AbstractIdentifierType<
       ...parameters,
       hasValues: [],
       in_: [],
-      nodeKinds,
     });
   }
 
@@ -97,5 +97,5 @@ export class IdentifierType extends AbstractIdentifierType<
 
 const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([
   "BlankNode",
-  "NamedNode",
+  "IRI",
 ]);

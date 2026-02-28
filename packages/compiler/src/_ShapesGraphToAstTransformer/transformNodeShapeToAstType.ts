@@ -17,7 +17,7 @@ import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
-  "NamedNode",
+  "IRI",
 ]);
 
 function isObjectTypePropertyRequired(property: {
@@ -98,9 +98,7 @@ function transformNodeShapeToAstListType(
     // Remove the placeholder if the transformation fails.
     const listType = new ast.ListType({
       comment: nodeShape.comment,
-      identifierNodeKind: nodeKinds.has("BlankNode")
-        ? "BlankNode"
-        : "NamedNode",
+      identifierNodeKind: nodeKinds.has("BlankNode") ? "BlankNode" : "IRI",
       itemType: ast.PlaceholderType.instance as ast.ListType.ItemType,
       label: nodeShape.label,
       mutable: nodeShape.mutable.orDefault(false),
@@ -406,9 +404,7 @@ export function transformNodeShapeToAstType(
               label: Maybe.empty(),
             });
             break;
-          case "Literal":
-            throw new Error("should never happen");
-          case "NamedNode":
+          case "IRI":
             identifierType = new ast.IriType({
               comment: Maybe.empty(),
               hasValues: [],
@@ -416,6 +412,8 @@ export function transformNodeShapeToAstType(
               label: Maybe.empty(),
             });
             break;
+          case "Literal":
+            throw new Error("should never happen");
         }
       }
 

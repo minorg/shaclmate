@@ -168,7 +168,7 @@ export class UnionType extends AbstractType {
   #name?: Code;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly kind = "UnionType";
+  override readonly kind = "UnionType";
 
   constructor({
     memberDiscriminantValues,
