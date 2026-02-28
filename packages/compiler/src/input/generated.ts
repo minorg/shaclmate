@@ -77,6 +77,17 @@ function $filterIdentifier(
   return true;
 }
 
+function $filterIri(filter: $IriFilter, value: NamedNode) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue.equals(value))
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function $filterLiteral(filter: $LiteralFilter, value: Literal): boolean {
   return $filterTerm(filter, value);
 }
@@ -101,17 +112,6 @@ function $filterMaybe<ItemT, ItemFilterT>(
 
     return true;
   };
-}
-
-function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
-  if (
-    typeof filter.in !== "undefined" &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  return true;
 }
 
 function $filterNumeric<T extends bigint | number>(
@@ -311,6 +311,10 @@ class $IdentifierSet {
   }
 }
 
+interface $IriFilter {
+  readonly in?: readonly NamedNode[];
+}
+
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
@@ -318,10 +322,6 @@ interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
 }
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
-
-interface $NamedNodeFilter {
-  readonly in?: readonly NamedNode[];
-}
 
 interface $NumericFilter<T extends bigint | number> {
   readonly in?: readonly T[];
@@ -455,8 +455,8 @@ export interface BaseShaclCoreShape {
   readonly datatype: Maybe<NamedNode>;
   readonly deactivated: Maybe<boolean>;
   readonly flags: readonly string[];
-  readonly hasValues: readonly (Literal | NamedNode)[];
-  readonly in_: Maybe<readonly (Literal | NamedNode)[]>;
+  readonly hasValues: readonly (NamedNode | Literal)[];
+  readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
   readonly labels: readonly string[];
   readonly languageIn: Maybe<readonly string[]>;
@@ -511,7 +511,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.classes !== "undefined" &&
-      !$filterArray<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.classes,
         value.classes,
       )
@@ -529,7 +529,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.datatype !== "undefined" &&
-      !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.datatype,
         value.datatype,
       )
@@ -556,7 +556,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
     if (
       typeof filter.hasValues !== "undefined" &&
-      !$filterArray<Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterArray<NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.hasValues,
         value.hasValues,
       )
@@ -566,9 +566,9 @@ export namespace BaseShaclCoreShapeStatic {
     if (
       typeof filter.in_ !== "undefined" &&
       !$filterMaybe<
-        readonly (Literal | NamedNode)[],
+        readonly (NamedNode | Literal)[],
         $CollectionFilter<$TermFilter>
-      >($filterArray<Literal | NamedNode, $TermFilter>($filterTerm))(
+      >($filterArray<NamedNode | Literal, $TermFilter>($filterTerm))(
         filter.in_,
         value.in_,
       )
@@ -683,8 +683,8 @@ export namespace BaseShaclCoreShapeStatic {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.nodeKind, value.nodeKind)
+        $IriFilter
+      >($filterIri)(filter.nodeKind, value.nodeKind)
     ) {
       return false;
     }
@@ -745,9 +745,9 @@ export namespace BaseShaclCoreShapeStatic {
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
-    readonly classes?: $CollectionFilter<$NamedNodeFilter>;
+    readonly classes?: $CollectionFilter<$IriFilter>;
     readonly comments?: $CollectionFilter<$StringFilter>;
-    readonly datatype?: $MaybeFilter<$NamedNodeFilter>;
+    readonly datatype?: $MaybeFilter<$IriFilter>;
     readonly deactivated?: $MaybeFilter<$BooleanFilter>;
     readonly flags?: $CollectionFilter<$StringFilter>;
     readonly hasValues?: $CollectionFilter<$TermFilter>;
@@ -763,7 +763,7 @@ export namespace BaseShaclCoreShapeStatic {
     readonly minExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minInclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
-    readonly nodeKind?: $MaybeFilter<$NamedNodeFilter>;
+    readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
     readonly or?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
@@ -804,8 +804,8 @@ export namespace BaseShaclCoreShapeStatic {
       datatype: Maybe<NamedNode>;
       deactivated: Maybe<boolean>;
       flags: readonly string[];
-      hasValues: readonly (Literal | NamedNode)[];
-      in_: Maybe<readonly (Literal | NamedNode)[]>;
+      hasValues: readonly (NamedNode | Literal)[];
+      in_: Maybe<readonly (NamedNode | Literal)[]>;
       isDefinedBy: Maybe<BlankNode | NamedNode>;
       labels: readonly string[];
       languageIn: Maybe<readonly string[]>;
@@ -1008,22 +1008,22 @@ export namespace BaseShaclCoreShapeStatic {
                                       BlankNode | Literal | NamedNode
                                     >(value.toTerm()).chain((term) => {
                                       switch (term.termType) {
-                                        case "Literal":
                                         case "NamedNode":
+                                        case "Literal":
                                           return Either.of<
                                             Error,
-                                            Literal | NamedNode
+                                            NamedNode | Literal
                                           >(term);
                                         default:
                                           return Left<
                                             Error,
-                                            Literal | NamedNode
+                                            NamedNode | Literal
                                           >(
                                             new Resource.MistypedTermValueError(
                                               {
                                                 actualValue: term,
                                                 expectedValueType:
-                                                  "(Literal | NamedNode)",
+                                                  "(NamedNode | Literal)",
                                                 focusResource:
                                                   $parameters.resource,
                                                 predicate:
@@ -1083,22 +1083,22 @@ export namespace BaseShaclCoreShapeStatic {
                                               BlankNode | Literal | NamedNode
                                             >(value.toTerm()).chain((term) => {
                                               switch (term.termType) {
-                                                case "Literal":
                                                 case "NamedNode":
+                                                case "Literal":
                                                   return Either.of<
                                                     Error,
-                                                    Literal | NamedNode
+                                                    NamedNode | Literal
                                                   >(term);
                                                 default:
                                                   return Left<
                                                     Error,
-                                                    Literal | NamedNode
+                                                    NamedNode | Literal
                                                   >(
                                                     new Resource.MistypedTermValueError(
                                                       {
                                                         actualValue: term,
                                                         expectedValueType:
-                                                          "(Literal | NamedNode)",
+                                                          "(NamedNode | Literal)",
                                                         focusResource:
                                                           $parameters.resource,
                                                         predicate:
@@ -1124,7 +1124,7 @@ export namespace BaseShaclCoreShapeStatic {
                                         ? values.map((value) => Maybe.of(value))
                                         : Resource.Values.fromValue<
                                             Maybe<
-                                              readonly (Literal | NamedNode)[]
+                                              readonly (NamedNode | Literal)[]
                                             >
                                           >({
                                             focusResource: $parameters.resource,
@@ -2943,7 +2943,7 @@ export namespace BaseShaclCoreShapeStatic {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
@@ -2961,7 +2961,7 @@ export namespace BaseShaclCoreShapeStatic {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#datatype",
@@ -2989,10 +2989,7 @@ export namespace BaseShaclCoreShapeStatic {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: ["Literal" as const, "NamedNode" as const],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#hasValue",
@@ -3004,10 +3001,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
-            item: () => ({
-              kind: "Term" as const,
-              nodeKinds: ["Literal" as const, "NamedNode" as const],
-            }),
+            item: () => ({ kind: "Term" as const }),
           }),
         }),
         identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
@@ -3130,7 +3124,7 @@ export namespace BaseShaclCoreShapeStatic {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode("http://www.w3.org/ns/shacl#BlankNode"),
               dataFactory.namedNode(
@@ -3201,7 +3195,7 @@ export namespace BaseShaclCoreShapeStatic {
 export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
   readonly $identifier: ShaclCorePropertyShapeStatic.$Identifier;
   readonly $type: "ShaclCorePropertyShape" | "ShaclmatePropertyShape";
-  readonly defaultValue: Maybe<Literal | NamedNode>;
+  readonly defaultValue: Maybe<NamedNode | Literal>;
   readonly descriptions: readonly string[];
   readonly groups: readonly (BlankNode | NamedNode)[];
   readonly names: readonly string[];
@@ -3220,7 +3214,7 @@ export namespace ShaclCorePropertyShapeStatic {
     }
     if (
       typeof filter.defaultValue !== "undefined" &&
-      !$filterMaybe<Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterMaybe<NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.defaultValue,
         value.defaultValue,
       )
@@ -3343,7 +3337,7 @@ export namespace ShaclCorePropertyShapeStatic {
     {
       $identifier: BlankNode | NamedNode;
       $type: "ShaclCorePropertyShape" | "ShaclmatePropertyShape";
-      defaultValue: Maybe<Literal | NamedNode>;
+      defaultValue: Maybe<NamedNode | Literal>;
       descriptions: readonly string[];
       groups: readonly (BlankNode | NamedNode)[];
       names: readonly string[];
@@ -3405,14 +3399,14 @@ export namespace ShaclCorePropertyShapeStatic {
                     value.toTerm(),
                   ).chain((term) => {
                     switch (term.termType) {
-                      case "Literal":
                       case "NamedNode":
-                        return Either.of<Error, Literal | NamedNode>(term);
+                      case "Literal":
+                        return Either.of<Error, NamedNode | Literal>(term);
                       default:
-                        return Left<Error, Literal | NamedNode>(
+                        return Left<Error, NamedNode | Literal>(
                           new Resource.MistypedTermValueError({
                             actualValue: term,
-                            expectedValueType: "(Literal | NamedNode)",
+                            expectedValueType: "(NamedNode | Literal)",
                             focusResource: $parameters.resource,
                             predicate:
                               ShaclCorePropertyShapeStatic.$schema.properties
@@ -3426,7 +3420,7 @@ export namespace ShaclCorePropertyShapeStatic {
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<Literal | NamedNode>>({
+                  : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
                       focusResource: $parameters.resource,
                       predicate:
                         ShaclCorePropertyShapeStatic.$schema.properties
@@ -3711,10 +3705,7 @@ export namespace ShaclCorePropertyShapeStatic {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: ["Literal" as const, "NamedNode" as const],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#defaultValue",
@@ -3839,8 +3830,8 @@ export namespace ShaclmatePropertyShape {
           | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
           | "http://purl.org/shaclmate/ontology#_Visibility_Public"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.visibility, value.visibility)
+        $IriFilter
+      >($filterIri)(filter.visibility, value.visibility)
     ) {
       return false;
     }
@@ -3853,7 +3844,7 @@ export namespace ShaclmatePropertyShape {
     readonly mutable?: $MaybeFilter<$BooleanFilter>;
     readonly name?: $MaybeFilter<$StringFilter>;
     readonly partial?: $MaybeFilter<$IdentifierFilter>;
-    readonly visibility?: $MaybeFilter<$NamedNodeFilter>;
+    readonly visibility?: $MaybeFilter<$IriFilter>;
   } & ShaclCorePropertyShapeStatic.$Filter;
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -4281,7 +4272,7 @@ export namespace ShaclmatePropertyShape {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_Visibility_Private",
@@ -4568,8 +4559,8 @@ export namespace ShaclmateOntology {
           | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
           | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.tsFeatureExcludes, value.tsFeatureExcludes)
+        $IriFilter
+      >($filterIri)(filter.tsFeatureExcludes, value.tsFeatureExcludes)
     ) {
       return false;
     }
@@ -4588,8 +4579,8 @@ export namespace ShaclmateOntology {
           | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
           | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.tsFeatureIncludes, value.tsFeatureIncludes)
+        $IriFilter
+      >($filterIri)(filter.tsFeatureIncludes, value.tsFeatureIncludes)
     ) {
       return false;
     }
@@ -4609,8 +4600,8 @@ export namespace ShaclmateOntology {
           | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
           | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(
+        $IriFilter
+      >($filterIri)(
         filter.tsObjectDeclarationType,
         value.tsObjectDeclarationType,
       )
@@ -4622,10 +4613,10 @@ export namespace ShaclmateOntology {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly tsFeatureExcludes?: $CollectionFilter<$NamedNodeFilter>;
-    readonly tsFeatureIncludes?: $CollectionFilter<$NamedNodeFilter>;
+    readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
+    readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
-    readonly tsObjectDeclarationType?: $MaybeFilter<$NamedNodeFilter>;
+    readonly tsObjectDeclarationType?: $MaybeFilter<$IriFilter>;
   } & OwlOntologyStatic.$Filter;
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -5395,7 +5386,7 @@ export namespace ShaclmateOntology {
         type: () => ({
           kind: "Set" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_TsFeatures_All",
@@ -5439,7 +5430,7 @@ export namespace ShaclmateOntology {
         type: () => ({
           kind: "Set" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_TsFeatures_All",
@@ -5493,7 +5484,7 @@ export namespace ShaclmateOntology {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
@@ -5538,8 +5529,8 @@ export namespace ShaclCoreNodeShapeStatic {
     }
     if (
       typeof filter.ignoredProperties !== "undefined" &&
-      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$NamedNodeFilter>>(
-        $filterArray<NamedNode, $NamedNodeFilter>($filterNamedNode),
+      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
+        $filterArray<NamedNode, $IriFilter>($filterIri),
       )(filter.ignoredProperties, value.ignoredProperties)
     ) {
       return false;
@@ -5558,9 +5549,7 @@ export namespace ShaclCoreNodeShapeStatic {
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly closed?: $MaybeFilter<$BooleanFilter>;
-    readonly ignoredProperties?: $MaybeFilter<
-      $CollectionFilter<$NamedNodeFilter>
-    >;
+    readonly ignoredProperties?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
     readonly properties?: $CollectionFilter<$IdentifierFilter>;
   } & BaseShaclCoreShapeStatic.$Filter;
 
@@ -5866,7 +5855,7 @@ export namespace ShaclCoreNodeShapeStatic {
           kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
-            item: () => ({ kind: "NamedNode" as const }),
+            item: () => ({ kind: "Iri" as const }),
           }),
         }),
         identifier: dataFactory.namedNode(
@@ -5984,7 +5973,7 @@ export namespace ShaclmateNodeShape {
     }
     if (
       typeof filter.fromRdfType !== "undefined" &&
-      !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.fromRdfType,
         value.fromRdfType,
       )
@@ -5999,8 +5988,8 @@ export namespace ShaclmateNodeShape {
           | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
           | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(
+        $IriFilter
+      >($filterIri)(
         filter.identifierMintingStrategy,
         value.identifierMintingStrategy,
       )
@@ -6027,7 +6016,7 @@ export namespace ShaclmateNodeShape {
     }
     if (
       typeof filter.rdfType !== "undefined" &&
-      !$filterMaybe<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.rdfType,
         value.rdfType,
       )
@@ -6036,7 +6025,7 @@ export namespace ShaclmateNodeShape {
     }
     if (
       typeof filter.toRdfTypes !== "undefined" &&
-      !$filterArray<NamedNode, $NamedNodeFilter>($filterNamedNode)(
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.toRdfTypes,
         value.toRdfTypes,
       )
@@ -6058,8 +6047,8 @@ export namespace ShaclmateNodeShape {
           | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
           | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.tsFeatureExcludes, value.tsFeatureExcludes)
+        $IriFilter
+      >($filterIri)(filter.tsFeatureExcludes, value.tsFeatureExcludes)
     ) {
       return false;
     }
@@ -6078,8 +6067,8 @@ export namespace ShaclmateNodeShape {
           | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
           | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(filter.tsFeatureIncludes, value.tsFeatureIncludes)
+        $IriFilter
+      >($filterIri)(filter.tsFeatureIncludes, value.tsFeatureIncludes)
     ) {
       return false;
     }
@@ -6099,8 +6088,8 @@ export namespace ShaclmateNodeShape {
           | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
           | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
         >,
-        $NamedNodeFilter
-      >($filterNamedNode)(
+        $IriFilter
+      >($filterIri)(
         filter.tsObjectDeclarationType,
         value.tsObjectDeclarationType,
       )
@@ -6116,16 +6105,16 @@ export namespace ShaclmateNodeShape {
     readonly discriminantValue?: $MaybeFilter<$StringFilter>;
     readonly export_?: $MaybeFilter<$BooleanFilter>;
     readonly extern?: $MaybeFilter<$BooleanFilter>;
-    readonly fromRdfType?: $MaybeFilter<$NamedNodeFilter>;
-    readonly identifierMintingStrategy?: $MaybeFilter<$NamedNodeFilter>;
+    readonly fromRdfType?: $MaybeFilter<$IriFilter>;
+    readonly identifierMintingStrategy?: $MaybeFilter<$IriFilter>;
     readonly mutable?: $MaybeFilter<$BooleanFilter>;
     readonly name?: $MaybeFilter<$StringFilter>;
-    readonly rdfType?: $MaybeFilter<$NamedNodeFilter>;
-    readonly toRdfTypes?: $CollectionFilter<$NamedNodeFilter>;
-    readonly tsFeatureExcludes?: $CollectionFilter<$NamedNodeFilter>;
-    readonly tsFeatureIncludes?: $CollectionFilter<$NamedNodeFilter>;
+    readonly rdfType?: $MaybeFilter<$IriFilter>;
+    readonly toRdfTypes?: $CollectionFilter<$IriFilter>;
+    readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
+    readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
-    readonly tsObjectDeclarationType?: $MaybeFilter<$NamedNodeFilter>;
+    readonly tsObjectDeclarationType?: $MaybeFilter<$IriFilter>;
   } & ShaclCoreNodeShapeStatic.$Filter;
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -7572,7 +7561,7 @@ export namespace ShaclmateNodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#fromRdfType",
@@ -7583,7 +7572,7 @@ export namespace ShaclmateNodeShape {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode",
@@ -7625,7 +7614,7 @@ export namespace ShaclmateNodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#rdfType",
@@ -7635,7 +7624,7 @@ export namespace ShaclmateNodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#toRdfType",
@@ -7646,7 +7635,7 @@ export namespace ShaclmateNodeShape {
         type: () => ({
           kind: "Set" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_TsFeatures_All",
@@ -7690,7 +7679,7 @@ export namespace ShaclmateNodeShape {
         type: () => ({
           kind: "Set" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_TsFeatures_All",
@@ -7744,7 +7733,7 @@ export namespace ShaclmateNodeShape {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode(
                 "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
@@ -8116,7 +8105,7 @@ export namespace ShaclCoreShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
@@ -8134,7 +8123,7 @@ export namespace ShaclCoreShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#datatype",
@@ -8162,10 +8151,7 @@ export namespace ShaclCoreShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: ["Literal" as const, "NamedNode" as const],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#hasValue",
@@ -8177,10 +8163,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
-            item: () => ({
-              kind: "Term" as const,
-              nodeKinds: ["Literal" as const, "NamedNode" as const],
-            }),
+            item: () => ({ kind: "Term" as const }),
           }),
         }),
         identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
@@ -8303,7 +8286,7 @@ export namespace ShaclCoreShape {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode("http://www.w3.org/ns/shacl#BlankNode"),
               dataFactory.namedNode(
@@ -8488,7 +8471,7 @@ export namespace ShaclmateShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
@@ -8506,7 +8489,7 @@ export namespace ShaclmateShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#datatype",
@@ -8534,10 +8517,7 @@ export namespace ShaclmateShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: ["Literal" as const, "NamedNode" as const],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#hasValue",
@@ -8549,10 +8529,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
-            item: () => ({
-              kind: "Term" as const,
-              nodeKinds: ["Literal" as const, "NamedNode" as const],
-            }),
+            item: () => ({ kind: "Term" as const }),
           }),
         }),
         identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
@@ -8675,7 +8652,7 @@ export namespace ShaclmateShape {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode("http://www.w3.org/ns/shacl#BlankNode"),
               dataFactory.namedNode(
