@@ -76,6 +76,17 @@ function $filterIdentifier(
   return true;
 }
 
+function $filterIri(filter: $IriFilter, value: NamedNode) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue.equals(value))
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function $filterMaybe<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
 ) {
@@ -96,17 +107,6 @@ function $filterMaybe<ItemT, ItemFilterT>(
 
     return true;
   };
-}
-
-function $filterNamedNode(filter: $NamedNodeFilter, value: NamedNode) {
-  if (
-    typeof filter.in !== "undefined" &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  return true;
 }
 
 function $filterNumeric<T extends bigint | number>(
@@ -267,6 +267,10 @@ class $IdentifierSet {
   }
 }
 
+interface $IriFilter {
+  readonly in?: readonly NamedNode[];
+}
+
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -362,10 +366,6 @@ export class $LazyObjectSet<
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
-
-interface $NamedNodeFilter {
-  readonly in?: readonly NamedNode[];
-}
 
 interface $NumericFilter<T extends bigint | number> {
   readonly in?: readonly T[];
@@ -1600,7 +1600,7 @@ export namespace ParentStatic {
   ): boolean {
     if (
       typeof filter.$identifier !== "undefined" &&
-      !$filterNamedNode(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
@@ -1617,7 +1617,7 @@ export namespace ParentStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly parentStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -1787,7 +1787,7 @@ export namespace ParentStatic {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -2132,7 +2132,7 @@ export namespace Child {
   }
 
   export type $Filter = {
-    readonly $identifier?: $NamedNodeFilter;
+    readonly $identifier?: $IriFilter;
     readonly childStringProperty?: $MaybeFilter<$StringFilter>;
     readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
     readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
