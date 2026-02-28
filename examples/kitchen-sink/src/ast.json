@@ -9,7 +9,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/AbstractBaseClassForExternClass>",
@@ -40,7 +40,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/AbstractBaseClassWithProperties>",
@@ -71,7 +71,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/AbstractBaseClassWithoutProperties>",
@@ -86,7 +86,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/BaseInterfaceWithProperties>",
@@ -117,7 +117,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/BaseInterfaceWithoutProperties>",
@@ -160,7 +160,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/BlankNodeOrIriIdentifierClass>",
@@ -175,7 +175,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/BlankNodeOrIriIdentifierInterface>",
@@ -189,7 +189,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
@@ -219,7 +219,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
@@ -249,7 +249,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ClassUnionMemberCommonParent>",
@@ -280,7 +280,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ConcreteChildClass>",
@@ -311,7 +311,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ConcreteParentClass>",
@@ -342,7 +342,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ConcreteChildInterface>",
@@ -373,7 +373,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ConcreteParentInterface>",
@@ -404,7 +404,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ConvertibleTypePropertiesClass>",
@@ -481,7 +481,7 @@
             "kind": "IriType",
             "hasValue": [],
             "nodeKinds": [
-              "NamedNode"
+              "IRI"
             ]
           },
           "visibility": "public"
@@ -497,7 +497,7 @@
               "kind": "IriType",
               "hasValue": [],
               "nodeKinds": [
-                "NamedNode"
+                "IRI"
               ]
             }
           },
@@ -514,7 +514,7 @@
               "kind": "IriType",
               "hasValue": [],
               "nodeKinds": [
-                "NamedNode"
+                "IRI"
               ]
             }
           },
@@ -531,7 +531,7 @@
               "kind": "IriType",
               "hasValue": [],
               "nodeKinds": [
-                "NamedNode"
+                "IRI"
               ]
             }
           },
@@ -587,7 +587,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/DateUnionPropertiesClass>",
@@ -743,7 +743,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/DefaultValuePropertiesClass>",
@@ -842,7 +842,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/DirectRecursiveClass>",
@@ -868,7 +868,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -892,7 +892,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ExplicitFromToRdfTypesClass>",
@@ -923,7 +923,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ExplicitRdfTypeClass>",
@@ -954,7 +954,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ExternClass>",
@@ -969,7 +969,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ExternClassPropertyClass>",
@@ -999,7 +999,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -1022,7 +1022,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/FlattenClassUnionMember3>",
@@ -1053,7 +1053,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/HasValuePropertiesClass>",
@@ -1072,7 +1072,7 @@
               }
             ],
             "nodeKinds": [
-              "NamedNode"
+              "IRI"
             ]
           },
           "visibility": "public"
@@ -1106,7 +1106,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IdentifierOverride1Class>",
@@ -1135,7 +1135,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IdentifierOverride2Class>",
@@ -1148,7 +1148,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IdentifierOverride3Class>",
@@ -1162,7 +1162,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IdentifierOverride4Class>",
@@ -1176,7 +1176,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IdentifierOverride5Class>",
@@ -1189,7 +1189,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/InIdentifierClass>",
@@ -1223,7 +1223,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/InPropertiesClass>",
@@ -1281,7 +1281,7 @@
               "kind": "IriType",
               "hasValue": [],
               "nodeKinds": [
-                "NamedNode"
+                "IRI"
               ]
             }
           },
@@ -1325,7 +1325,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IndirectRecursiveClass>",
@@ -1351,7 +1351,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -1374,7 +1374,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IndirectRecursiveHelperClass>",
@@ -1400,7 +1400,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -1424,7 +1424,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/Interface>",
@@ -1454,7 +1454,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/InterfaceUnionMember1>",
@@ -1484,7 +1484,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/InterfaceUnionMember2>",
@@ -1514,7 +1514,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/InterfaceUnionMemberCommonParent>",
@@ -1543,7 +1543,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IriIdentifierClass>",
@@ -1556,7 +1556,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/IriIdentifierInterface>",
@@ -1571,7 +1571,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/JsPrimitiveUnionPropertyClass>",
@@ -1630,7 +1630,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LanguageInPropertiesClass>",
@@ -1661,7 +1661,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
@@ -1692,7 +1692,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
@@ -1722,7 +1722,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
@@ -1752,7 +1752,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
@@ -1782,7 +1782,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
@@ -1812,7 +1812,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
@@ -1841,7 +1841,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>",
@@ -1870,7 +1870,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierInterface>",
@@ -1901,7 +1901,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazyPropertiesClass>",
@@ -1922,7 +1922,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "synthetic": true
@@ -1941,7 +1941,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -1971,7 +1971,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -1988,7 +1988,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2014,7 +2014,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -2040,7 +2040,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2063,7 +2063,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2100,7 +2100,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2122,7 +2122,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -2156,7 +2156,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2178,7 +2178,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -2209,7 +2209,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               }
             },
@@ -2227,7 +2227,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -2260,7 +2260,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2285,7 +2285,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2308,7 +2308,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2352,7 +2352,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2375,7 +2375,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2409,7 +2409,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2432,7 +2432,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2467,7 +2467,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -2490,7 +2490,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -2522,7 +2522,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -2545,7 +2545,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -2570,7 +2570,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PartialClass>",
@@ -2601,7 +2601,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/LazyPropertiesInterface>",
@@ -2622,7 +2622,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "synthetic": true
@@ -2641,7 +2641,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -2671,7 +2671,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -2688,7 +2688,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2714,7 +2714,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -2740,7 +2740,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2763,7 +2763,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -2800,7 +2800,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2822,7 +2822,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -2856,7 +2856,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2878,7 +2878,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -2909,7 +2909,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               }
             },
@@ -2927,7 +2927,7 @@
                 "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "toRdfTypes": [
@@ -2960,7 +2960,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               }
@@ -2985,7 +2985,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -3008,7 +3008,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -3052,7 +3052,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -3075,7 +3075,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -3109,7 +3109,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -3132,7 +3132,7 @@
                       "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
-                        "NamedNode"
+                        "IRI"
                       ]
                     },
                     "toRdfTypes": [
@@ -3167,7 +3167,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -3190,7 +3190,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -3222,7 +3222,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "synthetic": true
@@ -3245,7 +3245,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -3270,7 +3270,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PartialInterface>",
@@ -3301,7 +3301,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/ListPropertiesClass>",
@@ -3327,7 +3327,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 }
               },
@@ -3351,7 +3351,7 @@
                 "kind": "IriType",
                 "hasValue": [],
                 "nodeKinds": [
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               "mutable": false
@@ -3394,7 +3394,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/MutablePropertiesClass>",
@@ -3472,7 +3472,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/NoRdfTypeClassUnionMember1>",
@@ -3502,7 +3502,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/NoRdfTypeClassUnionMember2>",
@@ -3533,7 +3533,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/NonClass>",
@@ -3564,7 +3564,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/NumericPropertiesClass>",
@@ -3850,7 +3850,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/OrderedPropertiesClass>",
@@ -3910,7 +3910,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
@@ -3940,7 +3940,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PartialClassUnionMember2>",
@@ -3970,7 +3970,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
@@ -4000,7 +4000,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember2>",
@@ -4031,7 +4031,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PropertyCardinalitiesClass>",
@@ -4120,7 +4120,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/PropertyVisibilitiesClass>",
@@ -4180,7 +4180,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
@@ -4211,7 +4211,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4234,7 +4234,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4260,7 +4260,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
@@ -4291,7 +4291,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4314,7 +4314,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4340,7 +4340,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/Sha256IriIdentifierClass>",
@@ -4371,7 +4371,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/TermPropertiesClass>",
@@ -4476,7 +4476,7 @@
               "kind": "IriType",
               "hasValue": [],
               "nodeKinds": [
-                "NamedNode"
+                "IRI"
               ]
             }
           },
@@ -4538,7 +4538,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/UnionDiscriminantsClass>",
@@ -4571,7 +4571,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4597,7 +4597,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4636,7 +4636,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 {
@@ -4664,7 +4664,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 {
@@ -4706,7 +4706,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -4732,7 +4732,7 @@
                   "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 "toRdfTypes": [
@@ -4768,7 +4768,7 @@
                 "kind": "IriType",
                 "hasValue": [],
                 "nodeKinds": [
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               {
@@ -4793,7 +4793,7 @@
                 "kind": "IriType",
                 "hasValue": [],
                 "nodeKinds": [
-                  "NamedNode"
+                  "IRI"
                 ]
               },
               {
@@ -4836,7 +4836,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4862,7 +4862,7 @@
                     "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
-                      "NamedNode"
+                      "IRI"
                     ]
                   },
                   "toRdfTypes": [
@@ -4901,7 +4901,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 {
@@ -4929,7 +4929,7 @@
                   "kind": "IriType",
                   "hasValue": [],
                   "nodeKinds": [
-                    "NamedNode"
+                    "IRI"
                   ]
                 },
                 {
@@ -4955,7 +4955,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/UuidV4IriIdentifierClass>",
@@ -4985,7 +4985,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "shapeIdentifier": "<http://example.com/UuidV4IriIdentifierInterface>",
@@ -5014,7 +5014,7 @@
         "hasValue": [],
         "nodeKinds": [
           "BlankNode",
-          "NamedNode"
+          "IRI"
         ]
       },
       "name": "DefaultPartial",
@@ -5027,7 +5027,7 @@
         "kind": "IriType",
         "hasValue": [],
         "nodeKinds": [
-          "NamedNode"
+          "IRI"
         ]
       },
       "name": "NamedDefaultPartial",

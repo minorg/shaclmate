@@ -1,4 +1,4 @@
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
@@ -138,7 +138,7 @@ export class IdentifierProperty extends AbstractProperty<
       }
 
       return [
-        code`if (${identifierVariable}.termType !== "${expectedNodeKind}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
+        code`if (${identifierVariable}.termType !== "${NodeKind.toTermType(expectedNodeKind)}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
       ];
     };
 
@@ -517,7 +517,7 @@ export class IdentifierProperty extends AbstractProperty<
     }
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
-      code`"@id": ${variables.value}.termType === "${nodeKinds[0]}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+      code`"@id": ${variables.value}.termType === "${NodeKind.toTermType(nodeKinds[0])}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
     );
   }
 

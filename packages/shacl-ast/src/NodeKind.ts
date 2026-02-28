@@ -9,4 +9,10 @@ export namespace NodeKind {
   ): NodeKind {
     return termType === "NamedNode" ? "IRI" : termType;
   }
+
+  export function toTermType(
+    nodeKind: NodeKind,
+  ): "BlankNode" | "Literal" | "NamedNode" {
+    return nodeKind === "IRI" ? "NamedNode" : nodeKind;
+  }
 }

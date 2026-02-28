@@ -1932,7 +1932,6 @@ function $termFilterSparqlPatterns({
 interface $TermSchema {
   readonly in?: readonly (Literal | NamedNode)[];
   readonly kind: "Term";
-  readonly nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }
 
 function $termSchemaSparqlPatterns({
@@ -3167,7 +3166,7 @@ export class UuidV4IriIdentifierClass {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -8177,7 +8176,7 @@ export class TermPropertiesClass {
 
   readonly stringTermProperty: Maybe<string>;
 
-  readonly termProperty: Maybe<BlankNode | Literal | NamedNode>;
+  readonly termProperty: Maybe<BlankNode | NamedNode | Literal>;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -8197,13 +8196,13 @@ export class TermPropertiesClass {
     readonly numberTermProperty?: Maybe<number> | number;
     readonly stringTermProperty?: Maybe<string> | string;
     readonly termProperty?:
-      | Maybe<BlankNode | Literal | NamedNode>
+      | Maybe<BlankNode | NamedNode | Literal>
       | bigint
       | boolean
       | Date
       | number
       | string
-      | (BlankNode | Literal | NamedNode);
+      | (BlankNode | NamedNode | Literal);
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -8580,20 +8579,20 @@ export class TermPropertiesClass {
           .extract(),
         termProperty: this.termProperty
           .map((item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
@@ -8773,7 +8772,7 @@ export namespace TermPropertiesClass {
     }
     if (
       typeof filter.termProperty !== "undefined" &&
-      !$filterMaybe<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.termProperty,
         value.termProperty,
       )
@@ -8819,7 +8818,7 @@ export namespace TermPropertiesClass {
       literalTermProperty: Maybe<Literal>;
       numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
-      termProperty: Maybe<BlankNode | Literal | NamedNode>;
+      termProperty: Maybe<BlankNode | NamedNode | Literal>;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -8865,17 +8864,17 @@ export namespace TermPropertiesClass {
     );
     const termProperty = Maybe.fromNullable($jsonObject["termProperty"]).map(
       (item) =>
-        item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : item.termType === "Literal"
-            ? dataFactory.literal(
-                item["@value"],
-                typeof item["@language"] !== "undefined"
-                  ? item["@language"]
-                  : typeof item["@type"] !== "undefined"
-                    ? dataFactory.namedNode(item["@type"])
-                    : undefined,
-              )
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
             : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return Either.of({
@@ -8985,14 +8984,14 @@ export namespace TermPropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .optional(),
@@ -9071,7 +9070,7 @@ export namespace TermPropertiesClass {
       literalTermProperty: Maybe<Literal>;
       numberTermProperty: Maybe<number>;
       stringTermProperty: Maybe<string>;
-      termProperty: Maybe<BlankNode | Literal | NamedNode>;
+      termProperty: Maybe<BlankNode | NamedNode | Literal>;
     }
   > {
     return (
@@ -9354,8 +9353,8 @@ export namespace TermPropertiesClass {
                                               : Resource.Values.fromValue<
                                                   Maybe<
                                                     | BlankNode
-                                                    | Literal
                                                     | NamedNode
+                                                    | Literal
                                                   >
                                                 >({
                                                   focusResource:
@@ -9487,14 +9486,7 @@ export namespace TermPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode("http://example.com/termProperty"),
       },
@@ -10257,7 +10249,7 @@ export class Sha256IriIdentifierClass {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -45383,7 +45375,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     const identifier = super.$identifier;
     if (identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${identifier.termType}`,
+        `expected identifier to be IRI, not ${identifier.termType}`,
       );
     }
     return identifier;
@@ -46118,7 +46110,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -46583,7 +46575,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
     }
     if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
     return this._$identifier;
@@ -54789,19 +54781,19 @@ export class ConvertibleTypePropertiesClass {
   readonly convertibleLiteralSetProperty: readonly Literal[];
 
   readonly convertibleTermNonEmptySetProperty: NonEmptyList<
-    BlankNode | Literal | NamedNode
+    BlankNode | NamedNode | Literal
   >;
 
   readonly convertibleTermOptionProperty: Maybe<
-    BlankNode | Literal | NamedNode
+    BlankNode | NamedNode | Literal
   >;
 
-  readonly convertibleTermProperty: BlankNode | Literal | NamedNode;
+  readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
 
   readonly convertibleTermSetProperty: readonly (
     | BlankNode
-    | Literal
     | NamedNode
+    | Literal
   )[];
 
   constructor(parameters: {
@@ -54838,25 +54830,25 @@ export class ConvertibleTypePropertiesClass {
       | readonly number[]
       | readonly string[];
     readonly convertibleTermNonEmptySetProperty: NonEmptyList<
-      BlankNode | Literal | NamedNode
+      BlankNode | NamedNode | Literal
     >;
     readonly convertibleTermOptionProperty?:
-      | Maybe<BlankNode | Literal | NamedNode>
+      | Maybe<BlankNode | NamedNode | Literal>
       | bigint
       | boolean
       | Date
       | number
       | string
-      | (BlankNode | Literal | NamedNode);
+      | (BlankNode | NamedNode | Literal);
     readonly convertibleTermProperty:
       | bigint
       | boolean
       | Date
       | number
       | string
-      | (BlankNode | Literal | NamedNode);
+      | (BlankNode | NamedNode | Literal);
     readonly convertibleTermSetProperty?:
-      | readonly (BlankNode | Literal | NamedNode)[]
+      | readonly (BlankNode | NamedNode | Literal)[]
       | readonly bigint[]
       | readonly boolean[]
       | readonly number[]
@@ -55422,60 +55414,60 @@ export class ConvertibleTypePropertiesClass {
         ),
         convertibleTermNonEmptySetProperty:
           this.convertibleTermNonEmptySetProperty.map((item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           ),
         convertibleTermOptionProperty: this.convertibleTermOptionProperty
           .map((item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
         convertibleTermProperty:
-          this.convertibleTermProperty.termType === "NamedNode"
+          this.convertibleTermProperty.termType === "Literal"
             ? {
-                "@id": this.convertibleTermProperty.value,
-                termType: "NamedNode" as const,
+                "@language":
+                  this.convertibleTermProperty.language.length > 0
+                    ? this.convertibleTermProperty.language
+                    : undefined,
+                "@type":
+                  this.convertibleTermProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.convertibleTermProperty.datatype.value
+                    : undefined,
+                "@value": this.convertibleTermProperty.value,
+                termType: "Literal" as const,
               }
-            : this.convertibleTermProperty.termType === "Literal"
+            : this.convertibleTermProperty.termType === "NamedNode"
               ? {
-                  "@language":
-                    this.convertibleTermProperty.language.length > 0
-                      ? this.convertibleTermProperty.language
-                      : undefined,
-                  "@type":
-                    this.convertibleTermProperty.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? this.convertibleTermProperty.datatype.value
-                      : undefined,
-                  "@value": this.convertibleTermProperty.value,
-                  termType: "Literal" as const,
+                  "@id": this.convertibleTermProperty.value,
+                  termType: "NamedNode" as const,
                 }
               : {
                   "@id": `_:${this.convertibleTermProperty.value}`,
@@ -55483,20 +55475,20 @@ export class ConvertibleTypePropertiesClass {
                 },
         convertibleTermSetProperty: this.convertibleTermSetProperty.map(
           (item) =>
-            item.termType === "NamedNode"
-              ? { "@id": item.value, termType: "NamedNode" as const }
-              : item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
         ),
       } satisfies ConvertibleTypePropertiesClass.$Json),
@@ -55683,7 +55675,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleTermNonEmptySetProperty !== "undefined" &&
-      !$filterArray<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermNonEmptySetProperty,
         value.convertibleTermNonEmptySetProperty,
       )
@@ -55692,7 +55684,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleTermOptionProperty !== "undefined" &&
-      !$filterMaybe<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermOptionProperty,
         value.convertibleTermOptionProperty,
       )
@@ -55710,7 +55702,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
     if (
       typeof filter.convertibleTermSetProperty !== "undefined" &&
-      !$filterArray<BlankNode | Literal | NamedNode, $TermFilter>($filterTerm)(
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermSetProperty,
         value.convertibleTermSetProperty,
       )
@@ -55760,11 +55752,11 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleLiteralProperty: Literal;
       convertibleLiteralSetProperty: readonly Literal[];
       convertibleTermNonEmptySetProperty: NonEmptyList<
-        BlankNode | Literal | NamedNode
+        BlankNode | NamedNode | Literal
       >;
-      convertibleTermOptionProperty: Maybe<BlankNode | Literal | NamedNode>;
-      convertibleTermProperty: BlankNode | Literal | NamedNode;
-      convertibleTermSetProperty: readonly (BlankNode | Literal | NamedNode)[];
+      convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
+      convertibleTermProperty: BlankNode | NamedNode | Literal;
+      convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -55844,25 +55836,7 @@ export namespace ConvertibleTypePropertiesClass {
     )
       .unsafeCoerce()
       .map((item) =>
-        item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : item.termType === "Literal"
-            ? dataFactory.literal(
-                item["@value"],
-                typeof item["@language"] !== "undefined"
-                  ? item["@language"]
-                  : typeof item["@type"] !== "undefined"
-                    ? dataFactory.namedNode(item["@type"])
-                    : undefined,
-              )
-            : dataFactory.blankNode(item["@id"].substring(2)),
-      );
-    const convertibleTermOptionProperty = Maybe.fromNullable(
-      $jsonObject["convertibleTermOptionProperty"],
-    ).map((item) =>
-      item.termType === "NamedNode"
-        ? dataFactory.namedNode(item["@id"])
-        : item.termType === "Literal"
+        item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
               typeof item["@language"] !== "undefined"
@@ -55871,41 +55845,59 @@ export namespace ConvertibleTypePropertiesClass {
                   ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+      );
+    const convertibleTermOptionProperty = Maybe.fromNullable(
+      $jsonObject["convertibleTermOptionProperty"],
+    ).map((item) =>
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     const convertibleTermProperty =
-      $jsonObject["convertibleTermProperty"].termType === "NamedNode"
-        ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
-        : $jsonObject["convertibleTermProperty"].termType === "Literal"
-          ? dataFactory.literal(
-              $jsonObject["convertibleTermProperty"]["@value"],
-              typeof $jsonObject["convertibleTermProperty"]["@language"] !==
-                "undefined"
-                ? $jsonObject["convertibleTermProperty"]["@language"]
-                : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
-                    "undefined"
-                  ? dataFactory.namedNode(
-                      $jsonObject["convertibleTermProperty"]["@type"],
-                    )
-                  : undefined,
-            )
+      $jsonObject["convertibleTermProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["convertibleTermProperty"]["@value"],
+            typeof $jsonObject["convertibleTermProperty"]["@language"] !==
+              "undefined"
+              ? $jsonObject["convertibleTermProperty"]["@language"]
+              : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
+                  "undefined"
+                ? dataFactory.namedNode(
+                    $jsonObject["convertibleTermProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : $jsonObject["convertibleTermProperty"].termType === "NamedNode"
+          ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
           : dataFactory.blankNode(
               $jsonObject["convertibleTermProperty"]["@id"].substring(2),
             );
     const convertibleTermSetProperty = $jsonObject[
       "convertibleTermSetProperty"
     ].map((item) =>
-      item.termType === "NamedNode"
-        ? dataFactory.namedNode(item["@id"])
-        : item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              typeof item["@language"] !== "undefined"
-                ? item["@language"]
-                : typeof item["@type"] !== "undefined"
-                  ? dataFactory.namedNode(item["@type"])
-                  : undefined,
-            )
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return Either.of({
@@ -56064,14 +56056,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .array()
@@ -56084,14 +56076,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .optional(),
@@ -56101,14 +56093,14 @@ export namespace ConvertibleTypePropertiesClass {
           termType: z.literal("BlankNode"),
         }),
         z.object({
+          "@id": z.string().min(1),
+          termType: z.literal("NamedNode"),
+        }),
+        z.object({
           "@language": z.string().optional(),
           "@type": z.string().optional(),
           "@value": z.string(),
           termType: z.literal("Literal"),
-        }),
-        z.object({
-          "@id": z.string().min(1),
-          termType: z.literal("NamedNode"),
         }),
       ]),
       convertibleTermSetProperty: z
@@ -56118,14 +56110,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: z.literal("BlankNode"),
           }),
           z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
             "@language": z.string().optional(),
             "@type": z.string().optional(),
             "@value": z.string(),
             termType: z.literal("Literal"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
           }),
         ])
         .array()
@@ -56246,11 +56238,11 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleLiteralProperty: Literal;
       convertibleLiteralSetProperty: readonly Literal[];
       convertibleTermNonEmptySetProperty: NonEmptyList<
-        BlankNode | Literal | NamedNode
+        BlankNode | NamedNode | Literal
       >;
-      convertibleTermOptionProperty: Maybe<BlankNode | Literal | NamedNode>;
-      convertibleTermProperty: BlankNode | Literal | NamedNode;
-      convertibleTermSetProperty: readonly (BlankNode | Literal | NamedNode)[];
+      convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
+      convertibleTermProperty: BlankNode | NamedNode | Literal;
+      convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
     }
   > {
     return (
@@ -56605,8 +56597,8 @@ export namespace ConvertibleTypePropertiesClass {
                                                     : Resource.Values.fromValue<
                                                         Maybe<
                                                           | BlankNode
-                                                          | Literal
                                                           | NamedNode
+                                                          | Literal
                                                         >
                                                       >({
                                                         focusResource:
@@ -56831,14 +56823,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -56849,14 +56834,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermOptionProperty",
@@ -56864,14 +56842,7 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleTermProperty: {
         kind: "Shacl" as const,
-        type: () => ({
-          kind: "Term" as const,
-          nodeKinds: [
-            "BlankNode" as const,
-            "Literal" as const,
-            "NamedNode" as const,
-          ],
-        }),
+        type: () => ({ kind: "Term" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermProperty",
         ),
@@ -56880,14 +56851,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({
-            kind: "Term" as const,
-            nodeKinds: [
-              "BlankNode" as const,
-              "Literal" as const,
-              "NamedNode" as const,
-            ],
-          }),
+          item: () => ({ kind: "Term" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermSetProperty",

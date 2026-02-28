@@ -8,6 +8,5 @@ export const snippets_TermSchema = conditionalOutput(
 interface ${syntheticNamePrefix}TermSchema {
   readonly in?: readonly (${imports.Literal} | ${imports.NamedNode})[];
   readonly kind: "Term";
-  readonly nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[],
 }`,
 );

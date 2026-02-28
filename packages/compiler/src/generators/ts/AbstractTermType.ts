@@ -1,5 +1,5 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import type { NodeKind } from "@shaclmate/shacl-ast";
+import { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
@@ -120,7 +120,7 @@ export abstract class AbstractTermType<
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       name: "termType",
-      ownValues: [...this.nodeKinds],
+      ownValues: [...this.nodeKinds].map(NodeKind.toTermType),
       descendantValues: [],
       type: "string" as const,
     });
@@ -200,7 +200,7 @@ export abstract class AbstractTermType<
       const eitherTypeParameters = code`<Error, ${this.name}>`;
       valueToExpression = code`${valueToExpression}.chain(term => {
   switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
+  ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
   default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, predicate: variables.predicate }}));
 }})`;
     }
