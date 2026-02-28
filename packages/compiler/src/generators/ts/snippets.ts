@@ -23,6 +23,7 @@ import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
 import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.js";
 import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
+import { snippets_filterDecimal } from "./_snippets/snippets_filterDecimal.js";
 import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
 import { snippets_filterIri } from "./_snippets/snippets_filterIri.js";
 import { snippets_filterLiteral } from "./_snippets/snippets_filterLiteral.js";
@@ -110,6 +111,7 @@ export const snippets = {
   filterBlankNode: snippets_filterBlankNode,
   filterBoolean: snippets_filterBoolean,
   filterDate: snippets_filterDate,
+  filterDecimal: snippets_filterDecimal,
   filterIdentifier: snippets_filterIdentifier,
   filterIri: snippets_filterIri,
   filterLiteral: snippets_filterLiteral,
