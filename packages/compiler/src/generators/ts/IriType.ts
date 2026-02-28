@@ -14,12 +14,12 @@ import {
 } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = code`${snippets.filterNamedNode}`;
-  override readonly filterType = code`${snippets.NamedNodeFilter}`;
+  override readonly filterFunction = code`${snippets.filterIri}`;
+  override readonly filterType = code`${snippets.IriFilter}`;
   readonly kind = "IriType";
-  override readonly schemaType = code`${snippets.NamedNodeSchema}`;
+  override readonly schemaType = code`${snippets.IriSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${snippets.namedNodeSparqlWherePatterns}`;
+    code`${snippets.iriSparqlWherePatterns}`;
 
   constructor(
     parameters: Omit<

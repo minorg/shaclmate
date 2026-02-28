@@ -2202,7 +2202,7 @@ export namespace $NamedDefaultPartial {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -2949,7 +2949,7 @@ export namespace UuidV4IriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -3454,7 +3454,7 @@ export namespace UuidV4IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -6817,7 +6817,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               Literal: {
                 discriminantValues: ["Literal"],
@@ -6839,7 +6839,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               string: {
                 discriminantValues: ["string"],
@@ -6882,7 +6882,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             NamedNode: {
               discriminantValues: ["NamedNode"],
-              type: { kind: "NamedNode" as const },
+              type: { kind: "Iri" as const },
             },
             Literal: {
               discriminantValues: ["Literal"],
@@ -6901,7 +6901,7 @@ export namespace UnionDiscriminantsClass {
           members: {
             object: {
               discriminantValues: ["object"],
-              type: { kind: "NamedNode" as const },
+              type: { kind: "Iri" as const },
             },
             string: {
               discriminantValues: ["string"],
@@ -6948,7 +6948,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               Literal: {
                 discriminantValues: ["Literal"],
@@ -6970,7 +6970,7 @@ export namespace UnionDiscriminantsClass {
             members: {
               object: {
                 discriminantValues: ["object"],
-                type: { kind: "NamedNode" as const },
+                type: { kind: "Iri" as const },
               },
               string: {
                 discriminantValues: ["string"],
@@ -9449,7 +9449,7 @@ export namespace TermPropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
       },
@@ -10544,7 +10544,7 @@ export namespace Sha256IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $identifierPrefix: {
         kind: "IdentifierPrefix" as const,
@@ -23272,7 +23272,7 @@ export namespace ListPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
-            item: () => ({ kind: "NamedNode" as const }),
+            item: () => ({ kind: "Iri" as const }),
           }),
         }),
         identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
@@ -32517,7 +32517,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -32997,7 +32997,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -38629,7 +38629,7 @@ export namespace IriIdentifierInterface {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -39093,7 +39093,7 @@ export namespace IriIdentifierClass {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
       },
       $type: {
         kind: "TypeDiscriminant" as const,
@@ -43659,7 +43659,7 @@ export namespace InPropertiesClass {
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({
-            kind: "NamedNode" as const,
+            kind: "Iri" as const,
             in: [
               dataFactory.namedNode("http://example.com/InPropertiesIri1"),
               dataFactory.namedNode("http://example.com/InPropertiesIri2"),
@@ -44643,7 +44643,7 @@ export namespace InIdentifierClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({
-          kind: "NamedNode" as const,
+          kind: "Iri" as const,
           in: [
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
             dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
@@ -47393,7 +47393,7 @@ export namespace HasValuePropertiesClass {
       },
       hasIriValueProperty: {
         kind: "Shacl" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/hasIriValueProperty",
         ),
@@ -56760,7 +56760,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -56771,7 +56771,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriOptionProperty",
@@ -56779,7 +56779,7 @@ export namespace ConvertibleTypePropertiesClass {
       },
       convertibleIriProperty: {
         kind: "Shacl" as const,
-        type: () => ({ kind: "NamedNode" as const }),
+        type: () => ({ kind: "Iri" as const }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriProperty",
         ),
@@ -56788,7 +56788,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
-          item: () => ({ kind: "NamedNode" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriSetProperty",
