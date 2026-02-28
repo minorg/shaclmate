@@ -938,6 +938,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:path :byteNumericProperty
     ], [
+        sh:datatype xsd:decimal ;
+        sh:maxCount 1 ;
+        sh:path :decimalNumericProperty
+    ], [
         sh:datatype xsd:double ;
         sh:maxCount 1 ;
         sh:path :doubleNumericProperty
