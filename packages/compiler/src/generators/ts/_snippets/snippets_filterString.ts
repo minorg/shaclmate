@@ -6,15 +6,15 @@ export const snippets_filterString = conditionalOutput(
   `${syntheticNamePrefix}filterString`,
   code`\
 function ${syntheticNamePrefix}filterString(filter: ${snippets_StringFilter}, value: string) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
+  if (filter.in !== undefined && !filter.in.some(inValue => inValue === value)) {
     return false;
   }
 
-  if (typeof filter.maxLength !== "undefined" && value.length > filter.maxLength) {
+  if (filter.maxLength !== undefined && value.length > filter.maxLength) {
     return false;
   }
 
-  if (typeof filter.minLength !== "undefined" && value.length < filter.minLength) {
+  if (filter.minLength !== undefined && value.length < filter.minLength) {
     return false;
   }
 

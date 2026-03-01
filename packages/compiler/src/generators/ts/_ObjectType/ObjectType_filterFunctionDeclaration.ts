@@ -14,7 +14,7 @@ export function ObjectType_filterFunctionDeclaration(this: ObjectType): Code {
     for (const ownProperty of this.ownProperties) {
       ownProperty.filterProperty.ifJust(({ name }) => {
         statements.push(
-          code`if (typeof filter.${name} !== "undefined" && !${ownProperty.type.filterFunction}(filter.${name}, value.${ownProperty.name})) { return false; }`,
+          code`if (filter.${name} !== undefined && !${ownProperty.type.filterFunction}(filter.${name}, value.${ownProperty.name})) { return false; }`,
         );
       });
     }

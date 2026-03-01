@@ -9,7 +9,7 @@ export function ObjectUnionType_filterFunctionDeclaration(
 export function ${syntheticNamePrefix}filter(filter: ${this.filterType}, value: ${this.name}): boolean {
 ${joinCode([
   code`\
-if (typeof filter.${syntheticNamePrefix}identifier !== "undefined" && !${this.identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
+if (filter.${syntheticNamePrefix}identifier !== undefined && !${this.identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
   return false;
 }`,
   ...this.memberTypes.map(

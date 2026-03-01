@@ -14,7 +14,7 @@ const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets_SparqlWherePatter
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
-    if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
+    if (filter?.in !== undefined && filter.in.length > 0) {
       filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
     }
 

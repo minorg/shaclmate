@@ -144,7 +144,7 @@ export abstract class AbstractTermType<
         chain.languageIn,
         chain.preferredLanguages,
         chain.valueTo,
-      ].filter((_) => typeof _ !== "undefined"),
+      ].filter((_) => _ !== undefined),
       { on: "." },
     );
   }

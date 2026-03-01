@@ -7,23 +7,23 @@ export const snippets_filterBigDecimal = conditionalOutput(
   `${syntheticNamePrefix}filterBigDecimal`,
   code`\
 function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets_NumericFilter}<${imports.BigDecimal}>, value: ${imports.BigDecimal}) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
+  if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
 
-  if (typeof filter.maxExclusive !== "undefined" && value.greaterThanOrEqualTo(filter.maxExclusive)) {
+  if (filter.maxExclusive !== undefined && value.greaterThanOrEqualTo(filter.maxExclusive)) {
     return false;
   }
 
-  if (typeof filter.maxInclusive !== "undefined" && value.greaterThan(filter.maxInclusive)) {
+  if (filter.maxInclusive !== undefined && value.greaterThan(filter.maxInclusive)) {
     return false;
   }
 
-  if (typeof filter.minExclusive !== "undefined" && value.lessThanOrEqualTo(filter.minExclusive)) {
+  if (filter.minExclusive !== undefined && value.lessThanOrEqualTo(filter.minExclusive)) {
     return false;
   }
 
-  if (typeof filter.minInclusive !== "undefined" && value.lessThan(filter.minInclusive)) {
+  if (filter.minInclusive !== undefined && value.lessThan(filter.minInclusive)) {
     return false;
   }
 

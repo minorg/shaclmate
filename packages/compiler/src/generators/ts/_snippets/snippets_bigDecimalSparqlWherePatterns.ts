@@ -15,7 +15,7 @@ function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyP
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+    if (filter.in !== undefined && filter.in.length > 0) {
       filterPatterns.push({
         expression: {
           args: [valueVariable, filter.in.map(${snippets_bigDecimalLiteral})],
@@ -27,7 +27,7 @@ function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyP
       });
     }
 
-    if (typeof filter.maxExclusive !== "undefined") {
+    if (filter.maxExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -39,7 +39,7 @@ function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyP
       });
     }
 
-    if (typeof filter.maxInclusive !== "undefined") {
+    if (filter.maxInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -51,7 +51,7 @@ function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyP
       });
     }
 
-    if (typeof filter.minExclusive !== "undefined") {
+    if (filter.minExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -63,7 +63,7 @@ function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyP
       });
     }
 
-    if (typeof filter.minInclusive !== "undefined") {
+    if (filter.minInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",

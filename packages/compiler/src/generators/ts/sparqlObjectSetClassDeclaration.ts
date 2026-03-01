@@ -108,7 +108,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
     for (const bindings_ of bindings) {
       const identifier = bindings_[variable];
       if (
-        typeof identifier !== "undefined" &&
+        identifier !== undefined &&
         identifier.termType === "NamedNode"
       ) {
         identifiers.push(identifier);

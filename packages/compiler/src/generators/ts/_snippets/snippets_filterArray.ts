@@ -13,11 +13,11 @@ function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (item
       }
     }
 
-    if (typeof filter.${syntheticNamePrefix}maxCount !== "undefined" && values.length > filter.${syntheticNamePrefix}maxCount) {
+    if (filter.${syntheticNamePrefix}maxCount !== undefined && values.length > filter.${syntheticNamePrefix}maxCount) {
       return false;
     }
 
-    if (typeof filter.${syntheticNamePrefix}minCount !== "undefined" && values.length < filter.${syntheticNamePrefix}minCount) {
+    if (filter.${syntheticNamePrefix}minCount !== undefined && values.length < filter.${syntheticNamePrefix}minCount) {
       return false;
     }
 

@@ -303,7 +303,7 @@ ${joinCode(
 ${joinCode(
   this.memberTypes.map(
     (memberType) => code`\
-if (typeof filter.on?.["${memberType.discriminantValues[0]}"] !== "undefined") {
+if (filter.on?.["${memberType.discriminantValues[0]}"] !== undefined) {
   switch (${this.discriminantVariable(code`value`)}) {
 ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminantValue}":`)}
     if (!${memberType.filterFunction}(filter.on["${memberType.discriminantValues[0]}"], ${memberType.payload(code`value`)})) {

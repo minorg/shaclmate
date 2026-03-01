@@ -88,7 +88,7 @@ export class TermType<
             valueToNodeKind = code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
             break;
           case "Literal":
-            valueToNodeKind = code`${imports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+            valueToNodeKind = code`${imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
             break;
           default:
             throw new RangeError(nodeKind);

@@ -16,11 +16,11 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_SparqlWherePat
     const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
     if (filter) {
-      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+      if (filter.in !== undefined && filter.in.length > 0) {
         filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
-      if (typeof filter.maxLength !== "undefined") {
+      if (filter.maxLength !== undefined) {
         filterPatterns.push({
           expression: {
             type: "operation",
@@ -32,7 +32,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_SparqlWherePat
         });
       }
 
-      if (typeof filter.minLength !== "undefined") {
+      if (filter.minLength !== undefined) {
         filterPatterns.push({
           expression: {
             type: "operation",
