@@ -2,6 +2,7 @@ import dataFactory from "@rdfjs/data-model";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Decimal } from "decimal.js";
 import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
 
@@ -39,6 +40,111 @@ export function testObjectFilters(
         it(id, async ({ expect }) => {
           const actual = (
             await objectSet.termPropertiesClassIdentifiers({
+              filter,
+            })
+          ).unsafeCoerce();
+          expect(actual).toHaveLength(expected.length);
+          for (let i = 0; i < expected.length; i++) {
+            expect(expected[i].equals(actual[i]));
+          }
+        });
+      }
+    });
+
+    describe("BigDecimal", () => {
+      const objectSet = createObjectSet(
+        ...[...new Array(2)].map(
+          (_, i) =>
+            new kitchenSink.NumericPropertiesClass({
+              $identifier: identifiers[i],
+              decimalNumericProperty: new Decimal(i),
+            }),
+        ),
+        new kitchenSink.TermPropertiesClass({
+          $identifier: identifiers[2],
+          stringTermProperty: "test",
+        }),
+      );
+
+      for (const [id, [filter, expected]] of Object.entries({
+        in: [
+          { decimalNumericProperty: { in: [new Decimal(0)] } },
+          [identifiers[0]],
+        ],
+        maxExclusive: [
+          { decimalNumericProperty: { maxExclusive: new Decimal(1) } },
+          [identifiers[0]],
+        ],
+        maxInclusive: [
+          { decimalNumericProperty: { maxInclusive: new Decimal(0) } },
+          [identifiers[0]],
+        ],
+        minExclusive: [
+          { decimalNumericProperty: { minExclusive: new Decimal(0) } },
+          [identifiers[1]],
+        ],
+        minInclusive: [
+          { decimalNumericProperty: { minInclusive: new Decimal(0) } },
+          [identifiers[0], identifiers[1]],
+        ],
+      } satisfies Record<
+        string,
+        [kitchenSink.NumericPropertiesClass.$Filter, readonly NamedNode[]]
+      >)) {
+        it(id, async ({ expect }) => {
+          const actual = (
+            await objectSet.numericPropertiesClassIdentifiers({
+              filter,
+            })
+          ).unsafeCoerce();
+          expect(actual).toHaveLength(expected.length);
+          for (let i = 0; i < expected.length; i++) {
+            expect(expected[i].equals(actual[i]));
+          }
+        });
+      }
+    });
+
+    describe("bigint", () => {
+      const objectSet = createObjectSet(
+        ...[...new Array(2)].map(
+          (_, i) =>
+            new kitchenSink.NumericPropertiesClass({
+              $identifier: identifiers[i],
+              integerNumericProperty: BigInt(i),
+            }),
+        ),
+        new kitchenSink.TermPropertiesClass({
+          $identifier: identifiers[2],
+          stringTermProperty: "test",
+        }),
+      );
+
+      for (const [id, [filter, expected]] of Object.entries({
+        in: [{ integerNumericProperty: { in: [0n] } }, [identifiers[0]]],
+        maxExclusive: [
+          { integerNumericProperty: { maxExclusive: 1n } },
+          [identifiers[0]],
+        ],
+        maxInclusive: [
+          { integerNumericProperty: { maxInclusive: 0n } },
+          [identifiers[0]],
+        ],
+        minExclusive: [
+          { integerNumericProperty: { minExclusive: 0n } },
+          [identifiers[1]],
+        ],
+        minInclusive: [
+          { integerNumericProperty: { minInclusive: 0n } },
+          [identifiers[0], identifiers[1]],
+        ],
+      } satisfies Record<
+        string,
+        [kitchenSink.NumericPropertiesClass.$Filter, readonly NamedNode[]]
+      >)) {
+        it(id, async ({ expect }) => {
+          const actual = (
+            await objectSet.numericPropertiesClassIdentifiers({
               filter,
             })
           ).unsafeCoerce();

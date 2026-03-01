@@ -9,6 +9,7 @@ import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
 
 import { logger } from "../../logger.js";
+import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
@@ -406,10 +407,13 @@ export class TypeFactory {
       if (datatypeDefinition) {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
-            // case "bigint":
-            throw new Error(
-              `${datatypeDefinition.kind} datatype ${datatype.value} unsupported`,
-            );
+            return new BigDecimalType({
+              comment: astType.comment,
+              hasValues: astType.hasValues,
+              in_: astType.in_,
+              label: astType.label,
+              languageIn: [],
+            });
           case "bigint":
             return new BigIntType({
               comment: astType.comment,

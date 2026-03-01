@@ -61,7 +61,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   override get getAccessorDeclaration(): Maybe<Code> {
     return Maybe.of(code`\
 protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} {
-  return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\`;
+  return (this._${this.name} !== undefined) ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\`;
 }`);
   }
 

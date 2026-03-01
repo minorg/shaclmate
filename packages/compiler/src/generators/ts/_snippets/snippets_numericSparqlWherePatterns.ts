@@ -16,11 +16,11 @@ function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | num
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+    if (filter.in !== undefined && filter.in.length > 0) {
       filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
-    if (typeof filter.maxExclusive !== "undefined") {
+    if (filter.maxExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -32,7 +32,7 @@ function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | num
       });
     }
 
-    if (typeof filter.maxInclusive !== "undefined") {
+    if (filter.maxInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -44,7 +44,7 @@ function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | num
       });
     }
 
-    if (typeof filter.minExclusive !== "undefined") {
+    if (filter.minExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -56,7 +56,7 @@ function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | num
       });
     }
 
-    if (typeof filter.minInclusive !== "undefined") {
+    if (filter.minInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",

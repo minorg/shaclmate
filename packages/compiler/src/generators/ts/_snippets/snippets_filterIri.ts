@@ -7,7 +7,7 @@ export const snippets_filterIri = conditionalOutput(
   `${syntheticNamePrefix}filterIri`,
   code`\
 function ${syntheticNamePrefix}filterIri(filter: ${snippets_IriFilter}, value: ${imports.NamedNode}) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
+  if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
 

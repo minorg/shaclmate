@@ -9,6 +9,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import { Decimal as BigDecimal } from "decimal.js";
 import { sha256 } from "js-sha256";
 import { Either, EitherAsync, Left, Maybe, NonEmptyList } from "purify-ts";
 import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
@@ -105,6 +106,104 @@ function $arrayIntersection<T>(
   return [...intersection];
 }
 
+/**
+ * Create a Literal from a BigDecimal.
+ */
+function $bigDecimalLiteral(value: BigDecimal): Literal {
+  return dataFactory.literal(value.toFixed(), $RdfVocabularies.xsd.decimal);
+}
+
+function $bigDecimalSparqlWherePatterns({
+  filter,
+  propertyPatterns,
+  schema,
+  valueVariable,
+}: $SparqlWherePatternsFunctionParameters<
+  $NumericFilter<BigDecimal>,
+  $NumericSchema<BigDecimal>
+>): readonly $SparqlPattern[] {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter) {
+    if (filter.in !== undefined && filter.in.length > 0) {
+      filterPatterns.push({
+        expression: {
+          args: [valueVariable, filter.in.map($bigDecimalLiteral)],
+          operator: "in",
+          type: "operation",
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [valueVariable, $bigDecimalLiteral(filter.maxExclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [valueVariable, $bigDecimalLiteral(filter.maxInclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [valueVariable, $bigDecimalLiteral(filter.minExclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [valueVariable, $bigDecimalLiteral(filter.minInclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+  }
+
+  const schemaPatterns: $SparqlPattern[] = [];
+  if (schema.in && schema.in.length > 0) {
+    schemaPatterns.push({
+      expression: {
+        args: [valueVariable, schema.in.map($bigDecimalLiteral)],
+        operator: "in",
+        type: "operation",
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  return (propertyPatterns as readonly $SparqlPattern[])
+    .concat(schemaPatterns)
+    .concat(filterPatterns);
+}
+
 interface $BlankNodeFilter {}
 
 export function $blankNodeFromString(
@@ -154,7 +253,7 @@ const $booleanSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.value !== "undefined") {
+    if (filter.value !== undefined) {
       filterPatterns.push(
         $sparqlValueInPattern({
           lift: true,
@@ -214,7 +313,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+    if (filter.in !== undefined && filter.in.length > 0) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -236,7 +335,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
       });
     }
 
-    if (typeof filter.maxExclusive !== "undefined") {
+    if (filter.maxExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -256,7 +355,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
       });
     }
 
-    if (typeof filter.maxInclusive !== "undefined") {
+    if (filter.maxInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -276,7 +375,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
       });
     }
 
-    if (typeof filter.minExclusive !== "undefined") {
+    if (filter.minExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -296,7 +395,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
       });
     }
 
-    if (typeof filter.minInclusive !== "undefined") {
+    if (filter.minInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -324,6 +423,13 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
     ...otherParameters,
   });
 };
+
+/**
+ * Decidoe a BigDecimal from a Literal.
+ */
+function $decodeBigDecimalLiteral(literal: Literal): Either<Error, BigDecimal> {
+  return Either.encase(() => new BigDecimal(literal.value));
+}
 
 function $deduplicateSparqlPatterns(
   patterns: readonly $SparqlPattern[],
@@ -434,17 +540,11 @@ function $filterArray<ItemT, ItemFilterT>(
       }
     }
 
-    if (
-      typeof filter.$maxCount !== "undefined" &&
-      values.length > filter.$maxCount
-    ) {
+    if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
       return false;
     }
 
-    if (
-      typeof filter.$minCount !== "undefined" &&
-      values.length < filter.$minCount
-    ) {
+    if (filter.$minCount !== undefined && values.length < filter.$minCount) {
       return false;
     }
 
@@ -452,12 +552,54 @@ function $filterArray<ItemT, ItemFilterT>(
   };
 }
 
+function $filterBigDecimal(
+  filter: $NumericFilter<BigDecimal>,
+  value: BigDecimal,
+) {
+  if (
+    filter.in !== undefined &&
+    !filter.in.some((inValue) => inValue.equals(value))
+  ) {
+    return false;
+  }
+
+  if (
+    filter.maxExclusive !== undefined &&
+    value.greaterThanOrEqualTo(filter.maxExclusive)
+  ) {
+    return false;
+  }
+
+  if (
+    filter.maxInclusive !== undefined &&
+    value.greaterThan(filter.maxInclusive)
+  ) {
+    return false;
+  }
+
+  if (
+    filter.minExclusive !== undefined &&
+    value.lessThanOrEqualTo(filter.minExclusive)
+  ) {
+    return false;
+  }
+
+  if (
+    filter.minInclusive !== undefined &&
+    value.lessThan(filter.minInclusive)
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function $filterBlankNode(_filter: $BlankNodeFilter, _value: BlankNode) {
   return true;
 }
 
 function $filterBoolean(filter: $BooleanFilter, value: boolean) {
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
+  if (filter.value !== undefined && value !== filter.value) {
     return false;
   }
 
@@ -466,35 +608,35 @@ function $filterBoolean(filter: $BooleanFilter, value: boolean) {
 
 function $filterDate(filter: $DateFilter, value: Date) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.getTime() === value.getTime())
   ) {
     return false;
   }
 
   if (
-    typeof filter.maxExclusive !== "undefined" &&
+    filter.maxExclusive !== undefined &&
     value.getTime() >= filter.maxExclusive.getTime()
   ) {
     return false;
   }
 
   if (
-    typeof filter.maxInclusive !== "undefined" &&
+    filter.maxInclusive !== undefined &&
     value.getTime() > filter.maxInclusive.getTime()
   ) {
     return false;
   }
 
   if (
-    typeof filter.minExclusive !== "undefined" &&
+    filter.minExclusive !== undefined &&
     value.getTime() <= filter.minExclusive.getTime()
   ) {
     return false;
   }
 
   if (
-    typeof filter.minInclusive !== "undefined" &&
+    filter.minInclusive !== undefined &&
     value.getTime() < filter.minInclusive.getTime()
   ) {
     return false;
@@ -508,13 +650,13 @@ function $filterIdentifier(
   value: BlankNode | NamedNode,
 ) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
   }
 
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (filter.type !== undefined && value.termType !== filter.type) {
     return false;
   }
 
@@ -523,7 +665,7 @@ function $filterIdentifier(
 
 function $filterIri(filter: $IriFilter, value: NamedNode) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
@@ -563,37 +705,25 @@ function $filterNumeric<T extends bigint | number>(
   value: T,
 ) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
   ) {
     return false;
   }
 
-  if (
-    typeof filter.maxExclusive !== "undefined" &&
-    value >= filter.maxExclusive
-  ) {
+  if (filter.maxExclusive !== undefined && value >= filter.maxExclusive) {
     return false;
   }
 
-  if (
-    typeof filter.maxInclusive !== "undefined" &&
-    value > filter.maxInclusive
-  ) {
+  if (filter.maxInclusive !== undefined && value > filter.maxInclusive) {
     return false;
   }
 
-  if (
-    typeof filter.minExclusive !== "undefined" &&
-    value <= filter.minExclusive
-  ) {
+  if (filter.minExclusive !== undefined && value <= filter.minExclusive) {
     return false;
   }
 
-  if (
-    typeof filter.minInclusive !== "undefined" &&
-    value < filter.minInclusive
-  ) {
+  if (filter.minInclusive !== undefined && value < filter.minInclusive) {
     return false;
   }
 
@@ -602,23 +732,17 @@ function $filterNumeric<T extends bigint | number>(
 
 function $filterString(filter: $StringFilter, value: string) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
   ) {
     return false;
   }
 
-  if (
-    typeof filter.maxLength !== "undefined" &&
-    value.length > filter.maxLength
-  ) {
+  if (filter.maxLength !== undefined && value.length > filter.maxLength) {
     return false;
   }
 
-  if (
-    typeof filter.minLength !== "undefined" &&
-    value.length < filter.minLength
-  ) {
+  if (filter.minLength !== undefined && value.length < filter.minLength) {
     return false;
   }
 
@@ -630,7 +754,7 @@ function $filterTerm(
   value: BlankNode | Literal | NamedNode,
 ): boolean {
   if (
-    typeof filter.datatypeIn !== "undefined" &&
+    filter.datatypeIn !== undefined &&
     (value.termType !== "Literal" ||
       !filter.datatypeIn.some((inDatatype) =>
         inDatatype.equals(value.datatype),
@@ -640,14 +764,14 @@ function $filterTerm(
   }
 
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inTerm) => inTerm.equals(value))
   ) {
     return false;
   }
 
   if (
-    typeof filter.languageIn !== "undefined" &&
+    filter.languageIn !== undefined &&
     (value.termType !== "Literal" ||
       !filter.languageIn.some((inLanguage) => inLanguage === value.language))
   ) {
@@ -655,7 +779,7 @@ function $filterTerm(
   }
 
   if (
-    typeof filter.typeIn !== "undefined" &&
+    filter.typeIn !== undefined &&
     !filter.typeIn.some((inType) => inType === value.termType)
   ) {
     return false;
@@ -770,7 +894,7 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
   const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (filter) {
-    if (typeof filter.in !== "undefined") {
+    if (filter.in !== undefined) {
       const valueIn = filter.in.filter(
         (identifier) => identifier.termType === "NamedNode",
       );
@@ -781,7 +905,7 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
       }
     }
 
-    if (typeof filter.type !== "undefined") {
+    if (filter.type !== undefined) {
       patterns.push({
         expression: {
           type: "operation",
@@ -812,7 +936,7 @@ const $iriSparqlWherePatterns: $SparqlWherePatternsFunction<
 > = ({ filter, valueVariable, ...otherParameters }) => {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
-  if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
+  if (filter?.in !== undefined && filter.in.length > 0) {
     filterPatterns.push(
       $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
     );
@@ -1379,7 +1503,7 @@ function $normalizeSparqlWherePatterns(
   return normalizedPatterns;
 }
 
-interface $NumericFilter<T extends bigint | number> {
+interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;
@@ -1387,9 +1511,9 @@ interface $NumericFilter<T extends bigint | number> {
   readonly minInclusive?: T;
 }
 
-interface $NumericSchema<T extends bigint | number> {
+interface $NumericSchema<T> {
   readonly in?: readonly T[];
-  readonly kind: "BigInt" | "Float" | "Int";
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
 function $numericSparqlWherePatterns<T extends bigint | number>({
@@ -1403,7 +1527,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+    if (filter.in !== undefined && filter.in.length > 0) {
       filterPatterns.push(
         $sparqlValueInPattern({
           lift: true,
@@ -1413,7 +1537,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
       );
     }
 
-    if (typeof filter.maxExclusive !== "undefined") {
+    if (filter.maxExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1425,7 +1549,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
       });
     }
 
-    if (typeof filter.maxInclusive !== "undefined") {
+    if (filter.maxInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1437,7 +1561,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
       });
     }
 
-    if (typeof filter.minExclusive !== "undefined") {
+    if (filter.minExclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1449,7 +1573,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
       });
     }
 
-    if (typeof filter.minInclusive !== "undefined") {
+    if (filter.minInclusive !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1772,7 +1896,7 @@ const $stringSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+    if (filter.in !== undefined && filter.in.length > 0) {
       filterPatterns.push(
         $sparqlValueInPattern({
           lift: true,
@@ -1782,7 +1906,7 @@ const $stringSparqlWherePatterns: $SparqlWherePatternsFunction<
       );
     }
 
-    if (typeof filter.maxLength !== "undefined") {
+    if (filter.maxLength !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1797,7 +1921,7 @@ const $stringSparqlWherePatterns: $SparqlWherePatternsFunction<
       });
     }
 
-    if (typeof filter.minLength !== "undefined") {
+    if (filter.minLength !== undefined) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1840,10 +1964,7 @@ function $termFilterSparqlPatterns({
 
   const filterPatterns: $SparqlFilterPattern[] = [];
 
-  if (
-    typeof filter.datatypeIn !== "undefined" &&
-    filter.datatypeIn.length > 0
-  ) {
+  if (filter.datatypeIn !== undefined && filter.datatypeIn.length > 0) {
     filterPatterns.push({
       expression: {
         type: "operation",
@@ -1858,16 +1979,13 @@ function $termFilterSparqlPatterns({
     });
   }
 
-  if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+  if (filter.in !== undefined && filter.in.length > 0) {
     filterPatterns.push(
       $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
     );
   }
 
-  if (
-    typeof filter.languageIn !== "undefined" &&
-    filter.languageIn.length > 0
-  ) {
+  if (filter.languageIn !== undefined && filter.languageIn.length > 0) {
     filterPatterns.push({
       expression: {
         type: "operation",
@@ -1882,7 +2000,7 @@ function $termFilterSparqlPatterns({
     });
   }
 
-  if (typeof filter.typeIn !== "undefined") {
+  if (filter.typeIn !== undefined) {
     const typeInExpressions = filter.typeIn
       .map((inType) => {
         switch (inType) {
@@ -2056,7 +2174,7 @@ export namespace $NamedDefaultPartial {
     value: $NamedDefaultPartial,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -2392,7 +2510,7 @@ export namespace $DefaultPartial {
     value: $DefaultPartial,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -2715,13 +2833,13 @@ export namespace UuidV4IriIdentifierInterface {
     value: UuidV4IriIdentifierInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.uuidV4IriProperty !== "undefined" &&
+      filter.uuidV4IriProperty !== undefined &&
       !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
     ) {
       return false;
@@ -3173,7 +3291,7 @@ export class UuidV4IriIdentifierClass {
   }
 
   protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -3274,13 +3392,13 @@ export namespace UuidV4IriIdentifierClass {
     value: UuidV4IriIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.uuidV4IriProperty !== "undefined" &&
+      filter.uuidV4IriProperty !== undefined &&
       !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
     ) {
       return false;
@@ -4812,13 +4930,13 @@ export namespace UnionDiscriminantsClass {
     value: UnionDiscriminantsClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.optionalClassOrClassOrStringProperty !== "undefined" &&
+      filter.optionalClassOrClassOrStringProperty !== undefined &&
       !$filterMaybe<
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | {
@@ -4850,7 +4968,7 @@ export namespace UnionDiscriminantsClass {
               }
             | { type: "2-string"; value: string },
         ) => {
-          if (typeof filter.on?.["0-ClassUnionMember1"] !== "undefined") {
+          if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
             switch (value.type) {
               case "0-ClassUnionMember1":
                 if (
@@ -4864,7 +4982,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
+          if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
             switch (value.type) {
               case "1-ClassUnionMember2":
                 if (
@@ -4878,7 +4996,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["2-string"] !== "undefined") {
+          if (filter.on?.["2-string"] !== undefined) {
             switch (value.type) {
               case "2-string":
                 if (!$filterString(filter.on["2-string"], value.value)) {
@@ -4898,7 +5016,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.optionalIriOrLiteralProperty !== "undefined" &&
+      filter.optionalIriOrLiteralProperty !== undefined &&
       !$filterMaybe<
         NamedNode | Literal,
         {
@@ -4917,7 +5035,7 @@ export namespace UnionDiscriminantsClass {
           },
           value: NamedNode | Literal,
         ) => {
-          if (typeof filter.on?.["NamedNode"] !== "undefined") {
+          if (filter.on?.["NamedNode"] !== undefined) {
             switch (value.termType) {
               case "NamedNode":
                 if (!$filterIri(filter.on["NamedNode"], value)) {
@@ -4926,7 +5044,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["Literal"] !== "undefined") {
+          if (filter.on?.["Literal"] !== undefined) {
             switch (value.termType) {
               case "Literal":
                 if (!$filterLiteral(filter.on["Literal"], value)) {
@@ -4943,7 +5061,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.optionalIriOrStringProperty !== "undefined" &&
+      filter.optionalIriOrStringProperty !== undefined &&
       !$filterMaybe<
         NamedNode | string,
         {
@@ -4962,7 +5080,7 @@ export namespace UnionDiscriminantsClass {
           },
           value: NamedNode | string,
         ) => {
-          if (typeof filter.on?.["object"] !== "undefined") {
+          if (filter.on?.["object"] !== undefined) {
             switch (typeof value) {
               case "object":
                 if (!$filterIri(filter.on["object"], value)) {
@@ -4971,7 +5089,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["string"] !== "undefined") {
+          if (filter.on?.["string"] !== undefined) {
             switch (typeof value) {
               case "string":
                 if (!$filterString(filter.on["string"], value)) {
@@ -4988,7 +5106,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.requiredClassOrClassOrStringProperty !== "undefined" &&
+      filter.requiredClassOrClassOrStringProperty !== undefined &&
       !((
         filter: {
           readonly on?: {
@@ -5005,7 +5123,7 @@ export namespace UnionDiscriminantsClass {
             }
           | { type: "2-string"; value: string },
       ) => {
-        if (typeof filter.on?.["0-ClassUnionMember1"] !== "undefined") {
+        if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
           switch (value.type) {
             case "0-ClassUnionMember1":
               if (
@@ -5019,7 +5137,7 @@ export namespace UnionDiscriminantsClass {
               break;
           }
         }
-        if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
+        if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
           switch (value.type) {
             case "1-ClassUnionMember2":
               if (
@@ -5033,7 +5151,7 @@ export namespace UnionDiscriminantsClass {
               break;
           }
         }
-        if (typeof filter.on?.["2-string"] !== "undefined") {
+        if (filter.on?.["2-string"] !== undefined) {
           switch (value.type) {
             case "2-string":
               if (!$filterString(filter.on["2-string"], value.value)) {
@@ -5052,7 +5170,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.requiredIriOrLiteralProperty !== "undefined" &&
+      filter.requiredIriOrLiteralProperty !== undefined &&
       !((
         filter: {
           readonly on?: {
@@ -5062,7 +5180,7 @@ export namespace UnionDiscriminantsClass {
         },
         value: NamedNode | Literal,
       ) => {
-        if (typeof filter.on?.["NamedNode"] !== "undefined") {
+        if (filter.on?.["NamedNode"] !== undefined) {
           switch (value.termType) {
             case "NamedNode":
               if (!$filterIri(filter.on["NamedNode"], value)) {
@@ -5071,7 +5189,7 @@ export namespace UnionDiscriminantsClass {
               break;
           }
         }
-        if (typeof filter.on?.["Literal"] !== "undefined") {
+        if (filter.on?.["Literal"] !== undefined) {
           switch (value.termType) {
             case "Literal":
               if (!$filterLiteral(filter.on["Literal"], value)) {
@@ -5090,7 +5208,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.requiredIriOrStringProperty !== "undefined" &&
+      filter.requiredIriOrStringProperty !== undefined &&
       !((
         filter: {
           readonly on?: {
@@ -5100,7 +5218,7 @@ export namespace UnionDiscriminantsClass {
         },
         value: NamedNode | string,
       ) => {
-        if (typeof filter.on?.["object"] !== "undefined") {
+        if (filter.on?.["object"] !== undefined) {
           switch (typeof value) {
             case "object":
               if (!$filterIri(filter.on["object"], value)) {
@@ -5109,7 +5227,7 @@ export namespace UnionDiscriminantsClass {
               break;
           }
         }
-        if (typeof filter.on?.["string"] !== "undefined") {
+        if (filter.on?.["string"] !== undefined) {
           switch (typeof value) {
             case "string":
               if (!$filterString(filter.on["string"], value)) {
@@ -5125,7 +5243,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.setClassOrClassOrStringProperty !== "undefined" &&
+      filter.setClassOrClassOrStringProperty !== undefined &&
       !$filterArray<
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | {
@@ -5157,7 +5275,7 @@ export namespace UnionDiscriminantsClass {
               }
             | { type: "2-string"; value: string },
         ) => {
-          if (typeof filter.on?.["0-ClassUnionMember1"] !== "undefined") {
+          if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
             switch (value.type) {
               case "0-ClassUnionMember1":
                 if (
@@ -5171,7 +5289,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
+          if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
             switch (value.type) {
               case "1-ClassUnionMember2":
                 if (
@@ -5185,7 +5303,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["2-string"] !== "undefined") {
+          if (filter.on?.["2-string"] !== undefined) {
             switch (value.type) {
               case "2-string":
                 if (!$filterString(filter.on["2-string"], value.value)) {
@@ -5205,7 +5323,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.setIriOrLiteralProperty !== "undefined" &&
+      filter.setIriOrLiteralProperty !== undefined &&
       !$filterArray<
         NamedNode | Literal,
         {
@@ -5224,7 +5342,7 @@ export namespace UnionDiscriminantsClass {
           },
           value: NamedNode | Literal,
         ) => {
-          if (typeof filter.on?.["NamedNode"] !== "undefined") {
+          if (filter.on?.["NamedNode"] !== undefined) {
             switch (value.termType) {
               case "NamedNode":
                 if (!$filterIri(filter.on["NamedNode"], value)) {
@@ -5233,7 +5351,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["Literal"] !== "undefined") {
+          if (filter.on?.["Literal"] !== undefined) {
             switch (value.termType) {
               case "Literal":
                 if (!$filterLiteral(filter.on["Literal"], value)) {
@@ -5250,7 +5368,7 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
-      typeof filter.setIriOrStringProperty !== "undefined" &&
+      filter.setIriOrStringProperty !== undefined &&
       !$filterArray<
         NamedNode | string,
         {
@@ -5269,7 +5387,7 @@ export namespace UnionDiscriminantsClass {
           },
           value: NamedNode | string,
         ) => {
-          if (typeof filter.on?.["object"] !== "undefined") {
+          if (filter.on?.["object"] !== undefined) {
             switch (typeof value) {
               case "object":
                 if (!$filterIri(filter.on["object"], value)) {
@@ -5278,7 +5396,7 @@ export namespace UnionDiscriminantsClass {
                 break;
             }
           }
-          if (typeof filter.on?.["string"] !== "undefined") {
+          if (filter.on?.["string"] !== undefined) {
             switch (typeof value) {
               case "string":
                 if (!$filterString(filter.on["string"], value)) {
@@ -5429,9 +5547,9 @@ export namespace UnionDiscriminantsClass {
       item.termType === "Literal"
         ? dataFactory.literal(
             item["@value"],
-            typeof item["@language"] !== "undefined"
+            item["@language"] !== undefined
               ? item["@language"]
-              : typeof item["@type"] !== "undefined"
+              : item["@type"] !== undefined
                 ? dataFactory.namedNode(item["@type"])
                 : undefined,
           )
@@ -5466,11 +5584,11 @@ export namespace UnionDiscriminantsClass {
       $jsonObject["requiredIriOrLiteralProperty"].termType === "Literal"
         ? dataFactory.literal(
             $jsonObject["requiredIriOrLiteralProperty"]["@value"],
-            typeof $jsonObject["requiredIriOrLiteralProperty"]["@language"] !==
-              "undefined"
+            $jsonObject["requiredIriOrLiteralProperty"]["@language"] !==
+              undefined
               ? $jsonObject["requiredIriOrLiteralProperty"]["@language"]
-              : typeof $jsonObject["requiredIriOrLiteralProperty"]["@type"] !==
-                  "undefined"
+              : $jsonObject["requiredIriOrLiteralProperty"]["@type"] !==
+                  undefined
                 ? dataFactory.namedNode(
                     $jsonObject["requiredIriOrLiteralProperty"]["@type"],
                   )
@@ -5505,9 +5623,9 @@ export namespace UnionDiscriminantsClass {
         item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
-              typeof item["@language"] !== "undefined"
+              item["@language"] !== undefined
                 ? item["@language"]
-                : typeof item["@type"] !== "undefined"
+                : item["@type"] !== undefined
                   ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
@@ -8693,13 +8811,13 @@ export namespace TermPropertiesClass {
     value: TermPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.blankNodeTermProperty !== "undefined" &&
+      filter.blankNodeTermProperty !== undefined &&
       !$filterMaybe<BlankNode, $BlankNodeFilter>($filterBlankNode)(
         filter.blankNodeTermProperty,
         value.blankNodeTermProperty,
@@ -8708,7 +8826,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.booleanTermProperty !== "undefined" &&
+      filter.booleanTermProperty !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.booleanTermProperty,
         value.booleanTermProperty,
@@ -8717,7 +8835,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.dateTermProperty !== "undefined" &&
+      filter.dateTermProperty !== undefined &&
       !$filterMaybe<Date, $DateFilter>($filterDate)(
         filter.dateTermProperty,
         value.dateTermProperty,
@@ -8726,7 +8844,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.dateTimeTermProperty !== "undefined" &&
+      filter.dateTimeTermProperty !== undefined &&
       !$filterMaybe<Date, $DateFilter>($filterDate)(
         filter.dateTimeTermProperty,
         value.dateTimeTermProperty,
@@ -8735,7 +8853,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.iriTermProperty !== "undefined" &&
+      filter.iriTermProperty !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.iriTermProperty,
         value.iriTermProperty,
@@ -8744,7 +8862,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.literalTermProperty !== "undefined" &&
+      filter.literalTermProperty !== undefined &&
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.literalTermProperty,
         value.literalTermProperty,
@@ -8753,7 +8871,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.numberTermProperty !== "undefined" &&
+      filter.numberTermProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.numberTermProperty,
         value.numberTermProperty,
@@ -8762,7 +8880,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.stringTermProperty !== "undefined" &&
+      filter.stringTermProperty !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.stringTermProperty,
         value.stringTermProperty,
@@ -8771,7 +8889,7 @@ export namespace TermPropertiesClass {
       return false;
     }
     if (
-      typeof filter.termProperty !== "undefined" &&
+      filter.termProperty !== undefined &&
       !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.termProperty,
         value.termProperty,
@@ -8849,9 +8967,9 @@ export namespace TermPropertiesClass {
     ).map((item) =>
       dataFactory.literal(
         item["@value"],
-        typeof item["@language"] !== "undefined"
+        item["@language"] !== undefined
           ? item["@language"]
-          : typeof item["@type"] !== "undefined"
+          : item["@type"] !== undefined
             ? dataFactory.namedNode(item["@type"])
             : undefined,
       ),
@@ -8867,9 +8985,9 @@ export namespace TermPropertiesClass {
         item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
-              typeof item["@language"] !== "undefined"
+              item["@language"] !== undefined
                 ? item["@language"]
-                : typeof item["@type"] !== "undefined"
+                : item["@type"] !== undefined
                   ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
@@ -10256,7 +10374,7 @@ export class Sha256IriIdentifierClass {
   }
 
   protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -10357,13 +10475,13 @@ export namespace Sha256IriIdentifierClass {
     value: Sha256IriIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.sha256IriProperty !== "undefined" &&
+      filter.sha256IriProperty !== undefined &&
       !$filterString(filter.sha256IriProperty, value.sha256IriProperty)
     ) {
       return false;
@@ -10868,13 +10986,13 @@ export namespace RecursiveClassUnionMember2 {
     value: RecursiveClassUnionMember2,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.recursiveClassUnionMember2Property !== "undefined" &&
+      filter.recursiveClassUnionMember2Property !== undefined &&
       !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
         RecursiveClassUnion.$filter,
       )(
@@ -11469,13 +11587,13 @@ export namespace RecursiveClassUnionMember1 {
     value: RecursiveClassUnionMember1,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.recursiveClassUnionMember1Property !== "undefined" &&
+      filter.recursiveClassUnionMember1Property !== undefined &&
       !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
         RecursiveClassUnion.$filter,
       )(
@@ -12081,13 +12199,13 @@ export namespace PropertyVisibilitiesClass {
     value: PropertyVisibilitiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.publicProperty !== "undefined" &&
+      filter.publicProperty !== undefined &&
       !$filterString(filter.publicProperty, value.publicProperty)
     ) {
       return false;
@@ -12856,13 +12974,13 @@ export namespace PropertyCardinalitiesClass {
     value: PropertyCardinalitiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.emptyStringSetProperty !== "undefined" &&
+      filter.emptyStringSetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.emptyStringSetProperty,
         value.emptyStringSetProperty,
@@ -12871,7 +12989,7 @@ export namespace PropertyCardinalitiesClass {
       return false;
     }
     if (
-      typeof filter.nonEmptyStringSetProperty !== "undefined" &&
+      filter.nonEmptyStringSetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.nonEmptyStringSetProperty,
         value.nonEmptyStringSetProperty,
@@ -12880,7 +12998,7 @@ export namespace PropertyCardinalitiesClass {
       return false;
     }
     if (
-      typeof filter.optionalStringProperty !== "undefined" &&
+      filter.optionalStringProperty !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.optionalStringProperty,
         value.optionalStringProperty,
@@ -12889,7 +13007,7 @@ export namespace PropertyCardinalitiesClass {
       return false;
     }
     if (
-      typeof filter.requiredStringProperty !== "undefined" &&
+      filter.requiredStringProperty !== undefined &&
       !$filterString(
         filter.requiredStringProperty,
         value.requiredStringProperty,
@@ -13697,13 +13815,13 @@ export namespace PartialInterfaceUnionMember2 {
     value: PartialInterfaceUnionMember2,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -14324,13 +14442,13 @@ export namespace PartialInterfaceUnionMember1 {
     value: PartialInterfaceUnionMember1,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -14988,13 +15106,13 @@ export namespace PartialClassUnionMember2 {
     value: PartialClassUnionMember2,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -15587,13 +15705,13 @@ export namespace PartialClassUnionMember1 {
     value: PartialClassUnionMember1,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -16223,25 +16341,25 @@ export namespace OrderedPropertiesClass {
     value: OrderedPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.orderedPropertyC !== "undefined" &&
+      filter.orderedPropertyC !== undefined &&
       !$filterString(filter.orderedPropertyC, value.orderedPropertyC)
     ) {
       return false;
     }
     if (
-      typeof filter.orderedPropertyB !== "undefined" &&
+      filter.orderedPropertyB !== undefined &&
       !$filterString(filter.orderedPropertyB, value.orderedPropertyB)
     ) {
       return false;
     }
     if (
-      typeof filter.orderedPropertyA !== "undefined" &&
+      filter.orderedPropertyA !== undefined &&
       !$filterString(filter.orderedPropertyA, value.orderedPropertyA)
     ) {
       return false;
@@ -16789,6 +16907,8 @@ export class NumericPropertiesClass {
 
   readonly byteNumericProperty: Maybe<number>;
 
+  readonly decimalNumericProperty: Maybe<BigDecimal>;
+
   readonly doubleNumericProperty: Maybe<number>;
 
   readonly floatNumericProperty: Maybe<number>;
@@ -16820,6 +16940,7 @@ export class NumericPropertiesClass {
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly byteNumericProperty?: Maybe<number> | number;
+    readonly decimalNumericProperty?: Maybe<BigDecimal> | BigDecimal;
     readonly doubleNumericProperty?: Maybe<number> | number;
     readonly floatNumericProperty?: Maybe<number> | number;
     readonly integerNumericProperty?: Maybe<bigint> | bigint;
@@ -16852,6 +16973,18 @@ export class NumericPropertiesClass {
     } else {
       this.byteNumericProperty =
         parameters?.byteNumericProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.decimalNumericProperty)) {
+      this.decimalNumericProperty = parameters?.decimalNumericProperty;
+    } else if (typeof parameters?.decimalNumericProperty === "object") {
+      this.decimalNumericProperty = Maybe.of(
+        parameters?.decimalNumericProperty,
+      );
+    } else if (parameters?.decimalNumericProperty === undefined) {
+      this.decimalNumericProperty = Maybe.empty();
+    } else {
+      this.decimalNumericProperty =
+        parameters?.decimalNumericProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters?.doubleNumericProperty)) {
       this.doubleNumericProperty = parameters?.doubleNumericProperty;
@@ -17063,6 +17196,18 @@ export class NumericPropertiesClass {
         })),
       )
       .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.decimalNumericProperty,
+          other.decimalNumericProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "decimalNumericProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.doubleNumericProperty,
           other.doubleNumericProperty,
@@ -17245,6 +17390,9 @@ export class NumericPropertiesClass {
     this.byteNumericProperty.ifJust((value0) => {
       _hasher.update(value0.toString());
     });
+    this.decimalNumericProperty.ifJust((value0) => {
+      _hasher.update(value0.toFixed());
+    });
     this.doubleNumericProperty.ifJust((value0) => {
       _hasher.update(value0.toString());
     });
@@ -17300,6 +17448,9 @@ export class NumericPropertiesClass {
         $type: this.$type,
         byteNumericProperty: this.byteNumericProperty
           .map((item) => item)
+          .extract(),
+        decimalNumericProperty: this.decimalNumericProperty
+          .map((item) => item.toFixed())
           .extract(),
         doubleNumericProperty: this.doubleNumericProperty
           .map((item) => item)
@@ -17372,6 +17523,14 @@ export class NumericPropertiesClass {
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.byte),
         ]),
+      options?.graph,
+    );
+    resource.add(
+      NumericPropertiesClass.$schema.properties.decimalNumericProperty
+        .identifier,
+      this.decimalNumericProperty
+        .toList()
+        .flatMap((value) => [$bigDecimalLiteral(value)]),
       options?.graph,
     );
     resource.add(
@@ -17530,13 +17689,13 @@ export namespace NumericPropertiesClass {
     value: NumericPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.byteNumericProperty !== "undefined" &&
+      filter.byteNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.byteNumericProperty,
         value.byteNumericProperty,
@@ -17545,7 +17704,16 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.doubleNumericProperty !== "undefined" &&
+      filter.decimalNumericProperty !== undefined &&
+      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($filterBigDecimal)(
+        filter.decimalNumericProperty,
+        value.decimalNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.doubleNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.doubleNumericProperty,
         value.doubleNumericProperty,
@@ -17554,7 +17722,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.floatNumericProperty !== "undefined" &&
+      filter.floatNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.floatNumericProperty,
         value.floatNumericProperty,
@@ -17563,7 +17731,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.integerNumericProperty !== "undefined" &&
+      filter.integerNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.integerNumericProperty,
         value.integerNumericProperty,
@@ -17572,7 +17740,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.intNumericProperty !== "undefined" &&
+      filter.intNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.intNumericProperty,
         value.intNumericProperty,
@@ -17581,7 +17749,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.longNumericProperty !== "undefined" &&
+      filter.longNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.longNumericProperty,
         value.longNumericProperty,
@@ -17590,7 +17758,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.negativeIntegerNumericProperty !== "undefined" &&
+      filter.negativeIntegerNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.negativeIntegerNumericProperty,
         value.negativeIntegerNumericProperty,
@@ -17599,7 +17767,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.nonNegativeIntegerNumericProperty !== "undefined" &&
+      filter.nonNegativeIntegerNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.nonNegativeIntegerNumericProperty,
         value.nonNegativeIntegerNumericProperty,
@@ -17608,7 +17776,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.nonPositiveIntegerNumericProperty !== "undefined" &&
+      filter.nonPositiveIntegerNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.nonPositiveIntegerNumericProperty,
         value.nonPositiveIntegerNumericProperty,
@@ -17617,7 +17785,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.positiveIntegerNumericProperty !== "undefined" &&
+      filter.positiveIntegerNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.positiveIntegerNumericProperty,
         value.positiveIntegerNumericProperty,
@@ -17626,7 +17794,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.shortNumericProperty !== "undefined" &&
+      filter.shortNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.shortNumericProperty,
         value.shortNumericProperty,
@@ -17635,7 +17803,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.unsignedByteNumericProperty !== "undefined" &&
+      filter.unsignedByteNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedByteNumericProperty,
         value.unsignedByteNumericProperty,
@@ -17644,7 +17812,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.unsignedIntNumericProperty !== "undefined" &&
+      filter.unsignedIntNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedIntNumericProperty,
         value.unsignedIntNumericProperty,
@@ -17653,7 +17821,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.unsignedLongNumericProperty !== "undefined" &&
+      filter.unsignedLongNumericProperty !== undefined &&
       !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.unsignedLongNumericProperty,
         value.unsignedLongNumericProperty,
@@ -17662,7 +17830,7 @@ export namespace NumericPropertiesClass {
       return false;
     }
     if (
-      typeof filter.unsignedShortNumericProperty !== "undefined" &&
+      filter.unsignedShortNumericProperty !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.unsignedShortNumericProperty,
         value.unsignedShortNumericProperty,
@@ -17676,6 +17844,7 @@ export namespace NumericPropertiesClass {
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly byteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly decimalNumericProperty?: $MaybeFilter<$NumericFilter<BigDecimal>>;
     readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly floatNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
     readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
@@ -17718,6 +17887,7 @@ export namespace NumericPropertiesClass {
     {
       $identifier: BlankNode | NamedNode;
       byteNumericProperty: Maybe<number>;
+      decimalNumericProperty: Maybe<BigDecimal>;
       doubleNumericProperty: Maybe<number>;
       floatNumericProperty: Maybe<number>;
       integerNumericProperty: Maybe<bigint>;
@@ -17745,6 +17915,9 @@ export namespace NumericPropertiesClass {
     const byteNumericProperty = Maybe.fromNullable(
       $jsonObject["byteNumericProperty"],
     );
+    const decimalNumericProperty = Maybe.fromNullable(
+      $jsonObject["decimalNumericProperty"],
+    ).map((item) => new BigDecimal(item));
     const doubleNumericProperty = Maybe.fromNullable(
       $jsonObject["doubleNumericProperty"],
     );
@@ -17790,6 +17963,7 @@ export namespace NumericPropertiesClass {
     return Either.of({
       $identifier,
       byteNumericProperty,
+      decimalNumericProperty,
       doubleNumericProperty,
       floatNumericProperty,
       integerNumericProperty,
@@ -17841,6 +18015,10 @@ export namespace NumericPropertiesClass {
         },
         {
           scope: `${scopePrefix}/properties/byteNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/decimalNumericProperty`,
           type: "Control",
         },
         {
@@ -17910,6 +18088,7 @@ export namespace NumericPropertiesClass {
       "@id": z.string().min(1),
       $type: z.literal("NumericPropertiesClass"),
       byteNumericProperty: z.number().optional(),
+      decimalNumericProperty: z.string().optional(),
       doubleNumericProperty: z.number().optional(),
       floatNumericProperty: z.number().optional(),
       integerNumericProperty: z.string().optional(),
@@ -17931,6 +18110,7 @@ export namespace NumericPropertiesClass {
     readonly "@id": string;
     readonly $type: "NumericPropertiesClass";
     readonly byteNumericProperty?: number;
+    readonly decimalNumericProperty?: string;
     readonly doubleNumericProperty?: number;
     readonly floatNumericProperty?: number;
     readonly integerNumericProperty?: string;
@@ -17987,6 +18167,7 @@ export namespace NumericPropertiesClass {
     {
       $identifier: BlankNode | NamedNode;
       byteNumericProperty: Maybe<number>;
+      decimalNumericProperty: Maybe<BigDecimal>;
       doubleNumericProperty: Maybe<number>;
       floatNumericProperty: Maybe<number>;
       integerNumericProperty: Maybe<bigint>;
@@ -18059,27 +18240,41 @@ export namespace NumericPropertiesClass {
           .chain((byteNumericProperty) =>
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
-                $schema.properties.doubleNumericProperty.identifier,
+                $schema.properties.decimalNumericProperty.identifier,
                 { unique: true },
               ),
             )
-              .chain((values) => values.chainMap((value) => value.toNumber()))
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    NumericPropertiesClass.$schema.properties
+                      .decimalNumericProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toLiteral().chain($decodeBigDecimalLiteral),
+                ),
+              )
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<number>>({
+                  : Resource.Values.fromValue<Maybe<BigDecimal>>({
                       focusResource: $parameters.resource,
                       predicate:
                         NumericPropertiesClass.$schema.properties
-                          .doubleNumericProperty.identifier,
+                          .decimalNumericProperty.identifier,
                       value: Maybe.empty(),
                     }),
               )
               .chain((values) => values.head())
-              .chain((doubleNumericProperty) =>
+              .chain((decimalNumericProperty) =>
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
-                    $schema.properties.floatNumericProperty.identifier,
+                    $schema.properties.doubleNumericProperty.identifier,
                     { unique: true },
                   ),
                 )
@@ -18093,90 +18288,90 @@ export namespace NumericPropertiesClass {
                           focusResource: $parameters.resource,
                           predicate:
                             NumericPropertiesClass.$schema.properties
-                              .floatNumericProperty.identifier,
+                              .doubleNumericProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   )
                   .chain((values) => values.head())
-                  .chain((floatNumericProperty) =>
+                  .chain((doubleNumericProperty) =>
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
-                        $schema.properties.integerNumericProperty.identifier,
+                        $schema.properties.floatNumericProperty.identifier,
                         { unique: true },
                       ),
                     )
                       .chain((values) =>
-                        values.chainMap((value) => value.toBigInt()),
+                        values.chainMap((value) => value.toNumber()),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<bigint>>({
+                          : Resource.Values.fromValue<Maybe<number>>({
                               focusResource: $parameters.resource,
                               predicate:
                                 NumericPropertiesClass.$schema.properties
-                                  .integerNumericProperty.identifier,
+                                  .floatNumericProperty.identifier,
                               value: Maybe.empty(),
                             }),
                       )
                       .chain((values) => values.head())
-                      .chain((integerNumericProperty) =>
+                      .chain((floatNumericProperty) =>
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
-                            $schema.properties.intNumericProperty.identifier,
+                            $schema.properties.integerNumericProperty
+                              .identifier,
                             { unique: true },
                           ),
                         )
                           .chain((values) =>
-                            values.chainMap((value) => value.toNumber()),
+                            values.chainMap((value) => value.toBigInt()),
                           )
                           .map((values) =>
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<Maybe<number>>({
+                              : Resource.Values.fromValue<Maybe<bigint>>({
                                   focusResource: $parameters.resource,
                                   predicate:
                                     NumericPropertiesClass.$schema.properties
-                                      .intNumericProperty.identifier,
+                                      .integerNumericProperty.identifier,
                                   value: Maybe.empty(),
                                 }),
                           )
                           .chain((values) => values.head())
-                          .chain((intNumericProperty) =>
+                          .chain((integerNumericProperty) =>
                             Either.of<
                               Error,
                               Resource.Values<Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $schema.properties.longNumericProperty
+                                $schema.properties.intNumericProperty
                                   .identifier,
                                 { unique: true },
                               ),
                             )
                               .chain((values) =>
-                                values.chainMap((value) => value.toBigInt()),
+                                values.chainMap((value) => value.toNumber()),
                               )
                               .map((values) =>
                                 values.length > 0
                                   ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<Maybe<bigint>>({
+                                  : Resource.Values.fromValue<Maybe<number>>({
                                       focusResource: $parameters.resource,
                                       predicate:
                                         NumericPropertiesClass.$schema
-                                          .properties.longNumericProperty
+                                          .properties.intNumericProperty
                                           .identifier,
                                       value: Maybe.empty(),
                                     }),
                               )
                               .chain((values) => values.head())
-                              .chain((longNumericProperty) =>
+                              .chain((intNumericProperty) =>
                                 Either.of<
                                   Error,
                                   Resource.Values<Resource.TermValue>
                                 >(
                                   $parameters.resource.values(
-                                    $schema.properties
-                                      .negativeIntegerNumericProperty
+                                    $schema.properties.longNumericProperty
                                       .identifier,
                                     {
                                       unique: true,
@@ -18197,21 +18392,20 @@ export namespace NumericPropertiesClass {
                                           focusResource: $parameters.resource,
                                           predicate:
                                             NumericPropertiesClass.$schema
-                                              .properties
-                                              .negativeIntegerNumericProperty
+                                              .properties.longNumericProperty
                                               .identifier,
                                           value: Maybe.empty(),
                                         }),
                                   )
                                   .chain((values) => values.head())
-                                  .chain((negativeIntegerNumericProperty) =>
+                                  .chain((longNumericProperty) =>
                                     Either.of<
                                       Error,
                                       Resource.Values<Resource.TermValue>
                                     >(
                                       $parameters.resource.values(
                                         $schema.properties
-                                          .nonNegativeIntegerNumericProperty
+                                          .negativeIntegerNumericProperty
                                           .identifier,
                                         {
                                           unique: true,
@@ -18236,415 +18430,469 @@ export namespace NumericPropertiesClass {
                                               predicate:
                                                 NumericPropertiesClass.$schema
                                                   .properties
-                                                  .nonNegativeIntegerNumericProperty
+                                                  .negativeIntegerNumericProperty
                                                   .identifier,
                                               value: Maybe.empty(),
                                             }),
                                       )
                                       .chain((values) => values.head())
-                                      .chain(
-                                        (nonNegativeIntegerNumericProperty) =>
-                                          Either.of<
-                                            Error,
-                                            Resource.Values<Resource.TermValue>
-                                          >(
-                                            $parameters.resource.values(
-                                              $schema.properties
-                                                .nonPositiveIntegerNumericProperty
-                                                .identifier,
-                                              { unique: true },
+                                      .chain((negativeIntegerNumericProperty) =>
+                                        Either.of<
+                                          Error,
+                                          Resource.Values<Resource.TermValue>
+                                        >(
+                                          $parameters.resource.values(
+                                            $schema.properties
+                                              .nonNegativeIntegerNumericProperty
+                                              .identifier,
+                                            { unique: true },
+                                          ),
+                                        )
+                                          .chain((values) =>
+                                            values.chainMap((value) =>
+                                              value.toBigInt(),
                                             ),
                                           )
-                                            .chain((values) =>
-                                              values.chainMap((value) =>
-                                                value.toBigInt(),
-                                              ),
-                                            )
-                                            .map((values) =>
-                                              values.length > 0
-                                                ? values.map((value) =>
-                                                    Maybe.of(value),
-                                                  )
-                                                : Resource.Values.fromValue<
-                                                    Maybe<bigint>
-                                                  >({
-                                                    focusResource:
-                                                      $parameters.resource,
-                                                    predicate:
-                                                      NumericPropertiesClass
-                                                        .$schema.properties
-                                                        .nonPositiveIntegerNumericProperty
-                                                        .identifier,
-                                                    value: Maybe.empty(),
-                                                  }),
-                                            )
-                                            .chain((values) => values.head())
-                                            .chain(
-                                              (
-                                                nonPositiveIntegerNumericProperty,
-                                              ) =>
-                                                Either.of<
-                                                  Error,
-                                                  Resource.Values<Resource.TermValue>
-                                                >(
-                                                  $parameters.resource.values(
-                                                    $schema.properties
-                                                      .positiveIntegerNumericProperty
+                                          .map((values) =>
+                                            values.length > 0
+                                              ? values.map((value) =>
+                                                  Maybe.of(value),
+                                                )
+                                              : Resource.Values.fromValue<
+                                                  Maybe<bigint>
+                                                >({
+                                                  focusResource:
+                                                    $parameters.resource,
+                                                  predicate:
+                                                    NumericPropertiesClass
+                                                      .$schema.properties
+                                                      .nonNegativeIntegerNumericProperty
                                                       .identifier,
-                                                    { unique: true },
+                                                  value: Maybe.empty(),
+                                                }),
+                                          )
+                                          .chain((values) => values.head())
+                                          .chain(
+                                            (
+                                              nonNegativeIntegerNumericProperty,
+                                            ) =>
+                                              Either.of<
+                                                Error,
+                                                Resource.Values<Resource.TermValue>
+                                              >(
+                                                $parameters.resource.values(
+                                                  $schema.properties
+                                                    .nonPositiveIntegerNumericProperty
+                                                    .identifier,
+                                                  { unique: true },
+                                                ),
+                                              )
+                                                .chain((values) =>
+                                                  values.chainMap((value) =>
+                                                    value.toBigInt(),
                                                   ),
                                                 )
-                                                  .chain((values) =>
-                                                    values.chainMap((value) =>
-                                                      value.toBigInt(),
-                                                    ),
-                                                  )
-                                                  .map((values) =>
-                                                    values.length > 0
-                                                      ? values.map((value) =>
-                                                          Maybe.of(value),
-                                                        )
-                                                      : Resource.Values.fromValue<
-                                                          Maybe<bigint>
-                                                        >({
-                                                          focusResource:
-                                                            $parameters.resource,
-                                                          predicate:
-                                                            NumericPropertiesClass
-                                                              .$schema
-                                                              .properties
-                                                              .positiveIntegerNumericProperty
-                                                              .identifier,
-                                                          value: Maybe.empty(),
-                                                        }),
-                                                  )
-                                                  .chain((values) =>
-                                                    values.head(),
-                                                  )
-                                                  .chain(
-                                                    (
-                                                      positiveIntegerNumericProperty,
-                                                    ) =>
-                                                      Either.of<
-                                                        Error,
-                                                        Resource.Values<Resource.TermValue>
-                                                      >(
-                                                        $parameters.resource.values(
-                                                          $schema.properties
-                                                            .shortNumericProperty
+                                                .map((values) =>
+                                                  values.length > 0
+                                                    ? values.map((value) =>
+                                                        Maybe.of(value),
+                                                      )
+                                                    : Resource.Values.fromValue<
+                                                        Maybe<bigint>
+                                                      >({
+                                                        focusResource:
+                                                          $parameters.resource,
+                                                        predicate:
+                                                          NumericPropertiesClass
+                                                            .$schema.properties
+                                                            .nonPositiveIntegerNumericProperty
                                                             .identifier,
-                                                          {
-                                                            unique: true,
-                                                          },
+                                                        value: Maybe.empty(),
+                                                      }),
+                                                )
+                                                .chain((values) =>
+                                                  values.head(),
+                                                )
+                                                .chain(
+                                                  (
+                                                    nonPositiveIntegerNumericProperty,
+                                                  ) =>
+                                                    Either.of<
+                                                      Error,
+                                                      Resource.Values<Resource.TermValue>
+                                                    >(
+                                                      $parameters.resource.values(
+                                                        $schema.properties
+                                                          .positiveIntegerNumericProperty
+                                                          .identifier,
+                                                        { unique: true },
+                                                      ),
+                                                    )
+                                                      .chain((values) =>
+                                                        values.chainMap(
+                                                          (value) =>
+                                                            value.toBigInt(),
                                                         ),
                                                       )
-                                                        .chain((values) =>
-                                                          values.chainMap(
-                                                            (value) =>
-                                                              value.toNumber(),
-                                                          ),
-                                                        )
-                                                        .map((values) =>
-                                                          values.length > 0
-                                                            ? values.map(
-                                                                (value) =>
-                                                                  Maybe.of(
-                                                                    value,
-                                                                  ),
-                                                              )
-                                                            : Resource.Values.fromValue<
-                                                                Maybe<number>
-                                                              >({
-                                                                focusResource:
-                                                                  $parameters.resource,
-                                                                predicate:
-                                                                  NumericPropertiesClass
-                                                                    .$schema
-                                                                    .properties
-                                                                    .shortNumericProperty
-                                                                    .identifier,
-                                                                value:
-                                                                  Maybe.empty(),
-                                                              }),
-                                                        )
-                                                        .chain((values) =>
-                                                          values.head(),
-                                                        )
-                                                        .chain(
-                                                          (
-                                                            shortNumericProperty,
-                                                          ) =>
-                                                            Either.of<
-                                                              Error,
-                                                              Resource.Values<Resource.TermValue>
-                                                            >(
-                                                              $parameters.resource.values(
-                                                                $schema
+                                                      .map((values) =>
+                                                        values.length > 0
+                                                          ? values.map(
+                                                              (value) =>
+                                                                Maybe.of(value),
+                                                            )
+                                                          : Resource.Values.fromValue<
+                                                              Maybe<bigint>
+                                                            >({
+                                                              focusResource:
+                                                                $parameters.resource,
+                                                              predicate:
+                                                                NumericPropertiesClass
+                                                                  .$schema
                                                                   .properties
-                                                                  .unsignedByteNumericProperty
+                                                                  .positiveIntegerNumericProperty
                                                                   .identifier,
-                                                                {
-                                                                  unique: true,
-                                                                },
+                                                              value:
+                                                                Maybe.empty(),
+                                                            }),
+                                                      )
+                                                      .chain((values) =>
+                                                        values.head(),
+                                                      )
+                                                      .chain(
+                                                        (
+                                                          positiveIntegerNumericProperty,
+                                                        ) =>
+                                                          Either.of<
+                                                            Error,
+                                                            Resource.Values<Resource.TermValue>
+                                                          >(
+                                                            $parameters.resource.values(
+                                                              $schema.properties
+                                                                .shortNumericProperty
+                                                                .identifier,
+                                                              {
+                                                                unique: true,
+                                                              },
+                                                            ),
+                                                          )
+                                                            .chain((values) =>
+                                                              values.chainMap(
+                                                                (value) =>
+                                                                  value.toNumber(),
                                                               ),
                                                             )
-                                                              .chain((values) =>
-                                                                values.chainMap(
-                                                                  (value) =>
-                                                                    value.toNumber(),
-                                                                ),
-                                                              )
-                                                              .map((values) =>
-                                                                values.length >
-                                                                0
-                                                                  ? values.map(
-                                                                      (value) =>
-                                                                        Maybe.of(
-                                                                          value,
-                                                                        ),
-                                                                    )
-                                                                  : Resource.Values.fromValue<
-                                                                      Maybe<number>
-                                                                    >({
-                                                                      focusResource:
-                                                                        $parameters.resource,
-                                                                      predicate:
-                                                                        NumericPropertiesClass
-                                                                          .$schema
-                                                                          .properties
-                                                                          .unsignedByteNumericProperty
-                                                                          .identifier,
-                                                                      value:
-                                                                        Maybe.empty(),
-                                                                    }),
-                                                              )
-                                                              .chain((values) =>
-                                                                values.head(),
-                                                              )
-                                                              .chain(
-                                                                (
-                                                                  unsignedByteNumericProperty,
-                                                                ) =>
-                                                                  Either.of<
-                                                                    Error,
-                                                                    Resource.Values<Resource.TermValue>
-                                                                  >(
-                                                                    $parameters.resource.values(
-                                                                      $schema
-                                                                        .properties
-                                                                        .unsignedIntNumericProperty
-                                                                        .identifier,
-                                                                      {
-                                                                        unique: true,
-                                                                      },
-                                                                    ),
+                                                            .map((values) =>
+                                                              values.length > 0
+                                                                ? values.map(
+                                                                    (value) =>
+                                                                      Maybe.of(
+                                                                        value,
+                                                                      ),
                                                                   )
-                                                                    .chain(
-                                                                      (
-                                                                        values,
-                                                                      ) =>
-                                                                        values.chainMap(
-                                                                          (
-                                                                            value,
-                                                                          ) =>
-                                                                            value.toNumber(),
+                                                                : Resource.Values.fromValue<
+                                                                    Maybe<number>
+                                                                  >({
+                                                                    focusResource:
+                                                                      $parameters.resource,
+                                                                    predicate:
+                                                                      NumericPropertiesClass
+                                                                        .$schema
+                                                                        .properties
+                                                                        .shortNumericProperty
+                                                                        .identifier,
+                                                                    value:
+                                                                      Maybe.empty(),
+                                                                  }),
+                                                            )
+                                                            .chain((values) =>
+                                                              values.head(),
+                                                            )
+                                                            .chain(
+                                                              (
+                                                                shortNumericProperty,
+                                                              ) =>
+                                                                Either.of<
+                                                                  Error,
+                                                                  Resource.Values<Resource.TermValue>
+                                                                >(
+                                                                  $parameters.resource.values(
+                                                                    $schema
+                                                                      .properties
+                                                                      .unsignedByteNumericProperty
+                                                                      .identifier,
+                                                                    {
+                                                                      unique: true,
+                                                                    },
+                                                                  ),
+                                                                )
+                                                                  .chain(
+                                                                    (values) =>
+                                                                      values.chainMap(
+                                                                        (
+                                                                          value,
+                                                                        ) =>
+                                                                          value.toNumber(),
+                                                                      ),
+                                                                  )
+                                                                  .map(
+                                                                    (values) =>
+                                                                      values.length >
+                                                                      0
+                                                                        ? values.map(
+                                                                            (
+                                                                              value,
+                                                                            ) =>
+                                                                              Maybe.of(
+                                                                                value,
+                                                                              ),
+                                                                          )
+                                                                        : Resource.Values.fromValue<
+                                                                            Maybe<number>
+                                                                          >({
+                                                                            focusResource:
+                                                                              $parameters.resource,
+                                                                            predicate:
+                                                                              NumericPropertiesClass
+                                                                                .$schema
+                                                                                .properties
+                                                                                .unsignedByteNumericProperty
+                                                                                .identifier,
+                                                                            value:
+                                                                              Maybe.empty(),
+                                                                          }),
+                                                                  )
+                                                                  .chain(
+                                                                    (values) =>
+                                                                      values.head(),
+                                                                  )
+                                                                  .chain(
+                                                                    (
+                                                                      unsignedByteNumericProperty,
+                                                                    ) =>
+                                                                      Either.of<
+                                                                        Error,
+                                                                        Resource.Values<Resource.TermValue>
+                                                                      >(
+                                                                        $parameters.resource.values(
+                                                                          $schema
+                                                                            .properties
+                                                                            .unsignedIntNumericProperty
+                                                                            .identifier,
+                                                                          {
+                                                                            unique: true,
+                                                                          },
                                                                         ),
-                                                                    )
-                                                                    .map(
-                                                                      (
-                                                                        values,
-                                                                      ) =>
-                                                                        values.length >
-                                                                        0
-                                                                          ? values.map(
+                                                                      )
+                                                                        .chain(
+                                                                          (
+                                                                            values,
+                                                                          ) =>
+                                                                            values.chainMap(
                                                                               (
                                                                                 value,
                                                                               ) =>
-                                                                                Maybe.of(
-                                                                                  value,
-                                                                                ),
-                                                                            )
-                                                                          : Resource.Values.fromValue<
-                                                                              Maybe<number>
-                                                                            >({
-                                                                              focusResource:
-                                                                                $parameters.resource,
-                                                                              predicate:
-                                                                                NumericPropertiesClass
-                                                                                  .$schema
-                                                                                  .properties
-                                                                                  .unsignedIntNumericProperty
-                                                                                  .identifier,
-                                                                              value:
-                                                                                Maybe.empty(),
-                                                                            }),
-                                                                    )
-                                                                    .chain(
-                                                                      (
-                                                                        values,
-                                                                      ) =>
-                                                                        values.head(),
-                                                                    )
-                                                                    .chain(
-                                                                      (
-                                                                        unsignedIntNumericProperty,
-                                                                      ) =>
-                                                                        Either.of<
-                                                                          Error,
-                                                                          Resource.Values<Resource.TermValue>
-                                                                        >(
-                                                                          $parameters.resource.values(
-                                                                            $schema
-                                                                              .properties
-                                                                              .unsignedLongNumericProperty
-                                                                              .identifier,
-                                                                            {
-                                                                              unique: true,
-                                                                            },
-                                                                          ),
+                                                                                value.toNumber(),
+                                                                            ),
                                                                         )
-                                                                          .chain(
-                                                                            (
-                                                                              values,
-                                                                            ) =>
-                                                                              values.chainMap(
-                                                                                (
-                                                                                  value,
-                                                                                ) =>
-                                                                                  value.toBigInt(),
+                                                                        .map(
+                                                                          (
+                                                                            values,
+                                                                          ) =>
+                                                                            values.length >
+                                                                            0
+                                                                              ? values.map(
+                                                                                  (
+                                                                                    value,
+                                                                                  ) =>
+                                                                                    Maybe.of(
+                                                                                      value,
+                                                                                    ),
+                                                                                )
+                                                                              : Resource.Values.fromValue<
+                                                                                  Maybe<number>
+                                                                                >(
+                                                                                  {
+                                                                                    focusResource:
+                                                                                      $parameters.resource,
+                                                                                    predicate:
+                                                                                      NumericPropertiesClass
+                                                                                        .$schema
+                                                                                        .properties
+                                                                                        .unsignedIntNumericProperty
+                                                                                        .identifier,
+                                                                                    value:
+                                                                                      Maybe.empty(),
+                                                                                  },
+                                                                                ),
+                                                                        )
+                                                                        .chain(
+                                                                          (
+                                                                            values,
+                                                                          ) =>
+                                                                            values.head(),
+                                                                        )
+                                                                        .chain(
+                                                                          (
+                                                                            unsignedIntNumericProperty,
+                                                                          ) =>
+                                                                            Either.of<
+                                                                              Error,
+                                                                              Resource.Values<Resource.TermValue>
+                                                                            >(
+                                                                              $parameters.resource.values(
+                                                                                $schema
+                                                                                  .properties
+                                                                                  .unsignedLongNumericProperty
+                                                                                  .identifier,
+                                                                                {
+                                                                                  unique: true,
+                                                                                },
                                                                               ),
-                                                                          )
-                                                                          .map(
-                                                                            (
-                                                                              values,
-                                                                            ) =>
-                                                                              values.length >
-                                                                              0
-                                                                                ? values.map(
+                                                                            )
+                                                                              .chain(
+                                                                                (
+                                                                                  values,
+                                                                                ) =>
+                                                                                  values.chainMap(
                                                                                     (
                                                                                       value,
                                                                                     ) =>
-                                                                                      Maybe.of(
-                                                                                        value,
-                                                                                      ),
-                                                                                  )
-                                                                                : Resource.Values.fromValue<
-                                                                                    Maybe<bigint>
-                                                                                  >(
-                                                                                    {
-                                                                                      focusResource:
-                                                                                        $parameters.resource,
-                                                                                      predicate:
-                                                                                        NumericPropertiesClass
-                                                                                          .$schema
-                                                                                          .properties
-                                                                                          .unsignedLongNumericProperty
-                                                                                          .identifier,
-                                                                                      value:
-                                                                                        Maybe.empty(),
-                                                                                    },
+                                                                                      value.toBigInt(),
                                                                                   ),
-                                                                          )
-                                                                          .chain(
-                                                                            (
-                                                                              values,
-                                                                            ) =>
-                                                                              values.head(),
-                                                                          )
-                                                                          .chain(
-                                                                            (
-                                                                              unsignedLongNumericProperty,
-                                                                            ) =>
-                                                                              Either.of<
-                                                                                Error,
-                                                                                Resource.Values<Resource.TermValue>
-                                                                              >(
-                                                                                $parameters.resource.values(
-                                                                                  $schema
-                                                                                    .properties
-                                                                                    .unsignedShortNumericProperty
-                                                                                    .identifier,
-                                                                                  {
-                                                                                    unique: true,
-                                                                                  },
-                                                                                ),
                                                                               )
-                                                                                .chain(
-                                                                                  (
-                                                                                    values,
-                                                                                  ) =>
-                                                                                    values.chainMap(
-                                                                                      (
-                                                                                        value,
-                                                                                      ) =>
-                                                                                        value.toNumber(),
+                                                                              .map(
+                                                                                (
+                                                                                  values,
+                                                                                ) =>
+                                                                                  values.length >
+                                                                                  0
+                                                                                    ? values.map(
+                                                                                        (
+                                                                                          value,
+                                                                                        ) =>
+                                                                                          Maybe.of(
+                                                                                            value,
+                                                                                          ),
+                                                                                      )
+                                                                                    : Resource.Values.fromValue<
+                                                                                        Maybe<bigint>
+                                                                                      >(
+                                                                                        {
+                                                                                          focusResource:
+                                                                                            $parameters.resource,
+                                                                                          predicate:
+                                                                                            NumericPropertiesClass
+                                                                                              .$schema
+                                                                                              .properties
+                                                                                              .unsignedLongNumericProperty
+                                                                                              .identifier,
+                                                                                          value:
+                                                                                            Maybe.empty(),
+                                                                                        },
+                                                                                      ),
+                                                                              )
+                                                                              .chain(
+                                                                                (
+                                                                                  values,
+                                                                                ) =>
+                                                                                  values.head(),
+                                                                              )
+                                                                              .chain(
+                                                                                (
+                                                                                  unsignedLongNumericProperty,
+                                                                                ) =>
+                                                                                  Either.of<
+                                                                                    Error,
+                                                                                    Resource.Values<Resource.TermValue>
+                                                                                  >(
+                                                                                    $parameters.resource.values(
+                                                                                      $schema
+                                                                                        .properties
+                                                                                        .unsignedShortNumericProperty
+                                                                                        .identifier,
+                                                                                      {
+                                                                                        unique: true,
+                                                                                      },
                                                                                     ),
-                                                                                )
-                                                                                .map(
-                                                                                  (
-                                                                                    values,
-                                                                                  ) =>
-                                                                                    values.length >
-                                                                                    0
-                                                                                      ? values.map(
+                                                                                  )
+                                                                                    .chain(
+                                                                                      (
+                                                                                        values,
+                                                                                      ) =>
+                                                                                        values.chainMap(
                                                                                           (
                                                                                             value,
                                                                                           ) =>
-                                                                                            Maybe.of(
-                                                                                              value,
-                                                                                            ),
-                                                                                        )
-                                                                                      : Resource.Values.fromValue<
-                                                                                          Maybe<number>
-                                                                                        >(
-                                                                                          {
-                                                                                            focusResource:
-                                                                                              $parameters.resource,
-                                                                                            predicate:
-                                                                                              NumericPropertiesClass
-                                                                                                .$schema
-                                                                                                .properties
-                                                                                                .unsignedShortNumericProperty
-                                                                                                .identifier,
-                                                                                            value:
-                                                                                              Maybe.empty(),
-                                                                                          },
+                                                                                            value.toNumber(),
                                                                                         ),
-                                                                                )
-                                                                                .chain(
-                                                                                  (
-                                                                                    values,
-                                                                                  ) =>
-                                                                                    values.head(),
-                                                                                )
-                                                                                .map(
-                                                                                  (
-                                                                                    unsignedShortNumericProperty,
-                                                                                  ) => ({
-                                                                                    $identifier,
-                                                                                    byteNumericProperty,
-                                                                                    doubleNumericProperty,
-                                                                                    floatNumericProperty,
-                                                                                    integerNumericProperty,
-                                                                                    intNumericProperty,
-                                                                                    longNumericProperty,
-                                                                                    negativeIntegerNumericProperty,
-                                                                                    nonNegativeIntegerNumericProperty,
-                                                                                    nonPositiveIntegerNumericProperty,
-                                                                                    positiveIntegerNumericProperty,
-                                                                                    shortNumericProperty,
-                                                                                    unsignedByteNumericProperty,
-                                                                                    unsignedIntNumericProperty,
-                                                                                    unsignedLongNumericProperty,
-                                                                                    unsignedShortNumericProperty,
-                                                                                  }),
-                                                                                ),
-                                                                          ),
-                                                                    ),
-                                                              ),
-                                                        ),
-                                                  ),
-                                            ),
+                                                                                    )
+                                                                                    .map(
+                                                                                      (
+                                                                                        values,
+                                                                                      ) =>
+                                                                                        values.length >
+                                                                                        0
+                                                                                          ? values.map(
+                                                                                              (
+                                                                                                value,
+                                                                                              ) =>
+                                                                                                Maybe.of(
+                                                                                                  value,
+                                                                                                ),
+                                                                                            )
+                                                                                          : Resource.Values.fromValue<
+                                                                                              Maybe<number>
+                                                                                            >(
+                                                                                              {
+                                                                                                focusResource:
+                                                                                                  $parameters.resource,
+                                                                                                predicate:
+                                                                                                  NumericPropertiesClass
+                                                                                                    .$schema
+                                                                                                    .properties
+                                                                                                    .unsignedShortNumericProperty
+                                                                                                    .identifier,
+                                                                                                value:
+                                                                                                  Maybe.empty(),
+                                                                                              },
+                                                                                            ),
+                                                                                    )
+                                                                                    .chain(
+                                                                                      (
+                                                                                        values,
+                                                                                      ) =>
+                                                                                        values.head(),
+                                                                                    )
+                                                                                    .map(
+                                                                                      (
+                                                                                        unsignedShortNumericProperty,
+                                                                                      ) => ({
+                                                                                        $identifier,
+                                                                                        byteNumericProperty,
+                                                                                        decimalNumericProperty,
+                                                                                        doubleNumericProperty,
+                                                                                        floatNumericProperty,
+                                                                                        integerNumericProperty,
+                                                                                        intNumericProperty,
+                                                                                        longNumericProperty,
+                                                                                        negativeIntegerNumericProperty,
+                                                                                        nonNegativeIntegerNumericProperty,
+                                                                                        nonPositiveIntegerNumericProperty,
+                                                                                        positiveIntegerNumericProperty,
+                                                                                        shortNumericProperty,
+                                                                                        unsignedByteNumericProperty,
+                                                                                        unsignedIntNumericProperty,
+                                                                                        unsignedLongNumericProperty,
+                                                                                        unsignedShortNumericProperty,
+                                                                                      }),
+                                                                                    ),
+                                                                              ),
+                                                                        ),
+                                                                  ),
+                                                            ),
+                                                      ),
+                                                ),
+                                          ),
                                       ),
                                   ),
                               ),
@@ -18678,6 +18926,16 @@ export namespace NumericPropertiesClass {
         }),
         identifier: dataFactory.namedNode(
           "http://example.com/byteNumericProperty",
+        ),
+      },
+      decimalNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigDecimal" as const }),
+        }),
+        identifier: dataFactory.namedNode(
+          "http://example.com/decimalNumericProperty",
         ),
       },
       doubleNumericProperty: {
@@ -18933,6 +19191,22 @@ export namespace NumericPropertiesClass {
         ),
         predicate:
           NumericPropertiesClass.$schema.properties.byteNumericProperty
+            .identifier,
+        subject: subject,
+      },
+    ]);
+    triples = triples.concat([
+      {
+        object: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }DecimalNumericProperty`,
+        ),
+        predicate:
+          NumericPropertiesClass.$schema.properties.decimalNumericProperty
             .identifier,
         subject: subject,
       },
@@ -19285,6 +19559,52 @@ export namespace NumericPropertiesClass {
             ? subject.value
             : "numericPropertiesClass")
         }ByteNumericProperty`,
+      }),
+    );
+    patterns = patterns.concat(
+      $maybeSparqlWherePatterns<
+        $NumericFilter<BigDecimal>,
+        $NumericSchema<BigDecimal>
+      >($bigDecimalSparqlWherePatterns)({
+        filter: parameters?.filter?.decimalNumericProperty,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${
+                    parameters?.variablePrefix ??
+                    (subject.termType === "Variable"
+                      ? subject.value
+                      : "numericPropertiesClass")
+                  }DecimalNumericProperty`,
+                ),
+                predicate:
+                  NumericPropertiesClass.$schema.properties
+                    .decimalNumericProperty.identifier,
+                subject: subject,
+              },
+            ],
+            type: "bgp",
+          } satisfies sparqljs.BgpPattern,
+        ],
+        schema:
+          NumericPropertiesClass.$schema.properties.decimalNumericProperty.type(),
+        valueVariable: dataFactory.variable!(
+          `${
+            parameters?.variablePrefix ??
+            (subject.termType === "Variable"
+              ? subject.value
+              : "numericPropertiesClass")
+          }DecimalNumericProperty`,
+        ),
+        variablePrefix: `${
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass")
+        }DecimalNumericProperty`,
       }),
     );
     patterns = patterns.concat(
@@ -20037,13 +20357,13 @@ export class NonClass {
 export namespace NonClass {
   export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.nonClassProperty !== "undefined" &&
+      filter.nonClassProperty !== undefined &&
       !$filterString(filter.nonClassProperty, value.nonClassProperty)
     ) {
       return false;
@@ -20477,13 +20797,13 @@ export namespace NoRdfTypeClassUnionMember2 {
     value: NoRdfTypeClassUnionMember2,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.noRdfTypeClassUnionMember2Property !== "undefined" &&
+      filter.noRdfTypeClassUnionMember2Property !== undefined &&
       !$filterString(
         filter.noRdfTypeClassUnionMember2Property,
         value.noRdfTypeClassUnionMember2Property,
@@ -20954,13 +21274,13 @@ export namespace NoRdfTypeClassUnionMember1 {
     value: NoRdfTypeClassUnionMember1,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.noRdfTypeClassUnionMember1Property !== "undefined" &&
+      filter.noRdfTypeClassUnionMember1Property !== undefined &&
       !$filterString(
         filter.noRdfTypeClassUnionMember1Property,
         value.noRdfTypeClassUnionMember1Property,
@@ -21391,7 +21711,7 @@ export class MutablePropertiesClass {
   }
 
   protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -21606,13 +21926,13 @@ export namespace MutablePropertiesClass {
     value: MutablePropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.mutableListProperty !== "undefined" &&
+      filter.mutableListProperty !== undefined &&
       !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
         $filterArray<string, $StringFilter>($filterString),
       )(filter.mutableListProperty, value.mutableListProperty)
@@ -21620,7 +21940,7 @@ export namespace MutablePropertiesClass {
       return false;
     }
     if (
-      typeof filter.mutableSetProperty !== "undefined" &&
+      filter.mutableSetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.mutableSetProperty,
         value.mutableSetProperty,
@@ -21629,7 +21949,7 @@ export namespace MutablePropertiesClass {
       return false;
     }
     if (
-      typeof filter.mutableStringProperty !== "undefined" &&
+      filter.mutableStringProperty !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.mutableStringProperty,
         value.mutableStringProperty,
@@ -22857,13 +23177,13 @@ export namespace ListPropertiesClass {
     value: ListPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.iriListProperty !== "undefined" &&
+      filter.iriListProperty !== undefined &&
       !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
         $filterArray<NamedNode, $IriFilter>($filterIri),
       )(filter.iriListProperty, value.iriListProperty)
@@ -22871,7 +23191,7 @@ export namespace ListPropertiesClass {
       return false;
     }
     if (
-      typeof filter.objectListProperty !== "undefined" &&
+      filter.objectListProperty !== undefined &&
       !$filterMaybe<readonly NonClass[], $CollectionFilter<NonClass.$Filter>>(
         $filterArray<NonClass, NonClass.$Filter>(NonClass.$filter),
       )(filter.objectListProperty, value.objectListProperty)
@@ -22879,7 +23199,7 @@ export namespace ListPropertiesClass {
       return false;
     }
     if (
-      typeof filter.stringListProperty !== "undefined" &&
+      filter.stringListProperty !== undefined &&
       !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
         $filterArray<string, $StringFilter>($filterString),
       )(filter.stringListProperty, value.stringListProperty)
@@ -24039,13 +24359,13 @@ export namespace PartialInterface {
     value: PartialInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -25453,13 +25773,13 @@ export namespace LazyPropertiesInterface {
     value: LazyPropertiesInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.optionalLazyToResolvedInterfaceProperty !== "undefined" &&
+      filter.optionalLazyToResolvedInterfaceProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectOption<
@@ -25478,8 +25798,7 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.optionalLazyToResolvedInterfaceUnionProperty !==
-        "undefined" &&
+      filter.optionalLazyToResolvedInterfaceUnionProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectOption<
@@ -25498,8 +25817,8 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
-        "undefined" &&
+      filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
+        undefined &&
       !((
         filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
         value: $LazyObjectOption<
@@ -25518,8 +25837,8 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
-        "undefined" &&
+      filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
+        undefined &&
       !((
         filter: $MaybeFilter<PartialInterface.$Filter>,
         value: $LazyObjectOption<
@@ -25538,8 +25857,8 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
-        "undefined" &&
+      filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
+        undefined &&
       !((
         filter: $MaybeFilter<PartialInterface.$Filter>,
         value: $LazyObjectOption<
@@ -25558,8 +25877,8 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
-        "undefined" &&
+      filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
+        undefined &&
       !((
         filter: $MaybeFilter<PartialInterfaceUnion.$Filter>,
         value: $LazyObjectOption<
@@ -25578,7 +25897,7 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.requiredLazyToResolvedInterfaceProperty !== "undefined" &&
+      filter.requiredLazyToResolvedInterfaceProperty !== undefined &&
       !((
         filter: $DefaultPartial.$Filter,
         value: $LazyObject<
@@ -25594,8 +25913,8 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
-        "undefined" &&
+      filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
+        undefined &&
       !((
         filter: PartialInterface.$Filter,
         value: $LazyObject<
@@ -25611,7 +25930,7 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.setLazyToResolvedInterfaceProperty !== "undefined" &&
+      filter.setLazyToResolvedInterfaceProperty !== undefined &&
       !((
         filter: $CollectionFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectSet<
@@ -25630,8 +25949,7 @@ export namespace LazyPropertiesInterface {
       return false;
     }
     if (
-      typeof filter.setPartialInterfaceToResolvedInterfaceProperty !==
-        "undefined" &&
+      filter.setPartialInterfaceToResolvedInterfaceProperty !== undefined &&
       !((
         filter: $CollectionFilter<PartialInterface.$Filter>,
         value: $LazyObjectSet<
@@ -28287,13 +28605,13 @@ export namespace PartialClass {
     value: PartialClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -29717,13 +30035,13 @@ export namespace LazyPropertiesClass {
     value: LazyPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.optionalLazyToResolvedClassProperty !== "undefined" &&
+      filter.optionalLazyToResolvedClassProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectOption<
@@ -29742,7 +30060,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.optionalLazyToResolvedClassUnionProperty !== "undefined" &&
+      filter.optionalLazyToResolvedClassUnionProperty !== undefined &&
       !((
         filter: $MaybeFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectOption<
@@ -29761,8 +30079,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.optionalLazyToResolvedIriIdentifierClassProperty !==
-        "undefined" &&
+      filter.optionalLazyToResolvedIriIdentifierClassProperty !== undefined &&
       !((
         filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
         value: $LazyObjectOption<
@@ -29781,8 +30098,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.optionalPartialClassToResolvedClassProperty !==
-        "undefined" &&
+      filter.optionalPartialClassToResolvedClassProperty !== undefined &&
       !((
         filter: $MaybeFilter<PartialClass.$Filter>,
         value: $LazyObjectOption<
@@ -29802,8 +30118,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.optionalPartialClassToResolvedClassUnionProperty !==
-        "undefined" &&
+      filter.optionalPartialClassToResolvedClassUnionProperty !== undefined &&
       !((
         filter: $MaybeFilter<PartialClass.$Filter>,
         value: $LazyObjectOption<
@@ -29823,8 +30138,8 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
-        "undefined" &&
+      filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
+        undefined &&
       !((
         filter: $MaybeFilter<PartialClassUnion.$Filter>,
         value: $LazyObjectOption<
@@ -29843,7 +30158,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.requiredLazyToResolvedClassProperty !== "undefined" &&
+      filter.requiredLazyToResolvedClassProperty !== undefined &&
       !((
         filter: $DefaultPartial.$Filter,
         value: $LazyObject<
@@ -29859,8 +30174,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.requiredPartialClassToResolvedClassProperty !==
-        "undefined" &&
+      filter.requiredPartialClassToResolvedClassProperty !== undefined &&
       !((
         filter: PartialClass.$Filter,
         value: $LazyObject<
@@ -29876,7 +30190,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.setLazyToResolvedClassProperty !== "undefined" &&
+      filter.setLazyToResolvedClassProperty !== undefined &&
       !((
         filter: $CollectionFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectSet<
@@ -29895,7 +30209,7 @@ export namespace LazyPropertiesClass {
       return false;
     }
     if (
-      typeof filter.setPartialClassToResolvedClassProperty !== "undefined" &&
+      filter.setPartialClassToResolvedClassProperty !== undefined &&
       !((
         filter: $CollectionFilter<PartialClass.$Filter>,
         value: $LazyObjectSet<
@@ -32263,13 +32577,13 @@ export namespace LazilyResolvedIriIdentifierInterface {
     value: LazilyResolvedIriIdentifierInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -32795,13 +33109,13 @@ export namespace LazilyResolvedIriIdentifierClass {
     value: LazilyResolvedIriIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -33255,13 +33569,13 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     value: LazilyResolvedInterfaceUnionMember2,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -33887,13 +34201,13 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     value: LazilyResolvedInterfaceUnionMember1,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -34556,13 +34870,13 @@ export namespace LazilyResolvedClassUnionMember2 {
     value: LazilyResolvedClassUnionMember2,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -35160,13 +35474,13 @@ export namespace LazilyResolvedClassUnionMember1 {
     value: LazilyResolvedClassUnionMember1,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -35732,13 +36046,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -36410,13 +36724,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     value: LazilyResolvedBlankNodeOrIriIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.lazilyResolvedStringProperty !== "undefined" &&
+      filter.lazilyResolvedStringProperty !== undefined &&
       !$filterString(
         filter.lazilyResolvedStringProperty,
         value.lazilyResolvedStringProperty,
@@ -37033,13 +37347,13 @@ export namespace LanguageInPropertiesClass {
     value: LanguageInPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.languageInLiteralProperty !== "undefined" &&
+      filter.languageInLiteralProperty !== undefined &&
       !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
         filter.languageInLiteralProperty,
         value.languageInLiteralProperty,
@@ -37084,9 +37398,9 @@ export namespace LanguageInPropertiesClass {
       .map((item) =>
         dataFactory.literal(
           item["@value"],
-          typeof item["@language"] !== "undefined"
+          item["@language"] !== undefined
             ? item["@language"]
-            : typeof item["@type"] !== "undefined"
+            : item["@type"] !== undefined
               ? dataFactory.namedNode(item["@type"])
               : undefined,
         ),
@@ -37676,13 +37990,13 @@ export namespace JsPrimitiveUnionPropertyClass {
     value: JsPrimitiveUnionPropertyClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.jsPrimitiveUnionProperty !== "undefined" &&
+      filter.jsPrimitiveUnionProperty !== undefined &&
       !$filterArray<
         boolean | number | string,
         {
@@ -37703,7 +38017,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           },
           value: boolean | number | string,
         ) => {
-          if (typeof filter.on?.["boolean"] !== "undefined") {
+          if (filter.on?.["boolean"] !== undefined) {
             switch (typeof value) {
               case "boolean":
                 if (!$filterBoolean(filter.on["boolean"], value)) {
@@ -37712,7 +38026,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 break;
             }
           }
-          if (typeof filter.on?.["number"] !== "undefined") {
+          if (filter.on?.["number"] !== undefined) {
             switch (typeof value) {
               case "number":
                 if (!$filterNumeric<number>(filter.on["number"], value)) {
@@ -37721,7 +38035,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 break;
             }
           }
-          if (typeof filter.on?.["string"] !== "undefined") {
+          if (filter.on?.["string"] !== undefined) {
             switch (typeof value) {
               case "string":
                 if (!$filterString(filter.on["string"], value)) {
@@ -38396,7 +38710,7 @@ export namespace IriIdentifierInterface {
     value: IriIdentifierInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -38905,7 +39219,7 @@ export namespace IriIdentifierClass {
     value: IriIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -39363,13 +39677,13 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     value: InterfaceUnionMemberCommonParent,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.interfaceUnionMemberCommonParentProperty !== "undefined" &&
+      filter.interfaceUnionMemberCommonParentProperty !== undefined &&
       !$filterString(
         filter.interfaceUnionMemberCommonParentProperty,
         value.interfaceUnionMemberCommonParentProperty,
@@ -39818,7 +40132,7 @@ export namespace InterfaceUnionMember2 {
       return false;
     }
     if (
-      typeof filter.interfaceUnionMember2Property !== "undefined" &&
+      filter.interfaceUnionMember2Property !== undefined &&
       !$filterString(
         filter.interfaceUnionMember2Property,
         value.interfaceUnionMember2Property,
@@ -40432,7 +40746,7 @@ export namespace InterfaceUnionMember1 {
       return false;
     }
     if (
-      typeof filter.interfaceUnionMember1Property !== "undefined" &&
+      filter.interfaceUnionMember1Property !== undefined &&
       !$filterString(
         filter.interfaceUnionMember1Property,
         value.interfaceUnionMember1Property,
@@ -41049,13 +41363,13 @@ export namespace Interface {
     value: Interface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.interfaceProperty !== "undefined" &&
+      filter.interfaceProperty !== undefined &&
       !$filterString(filter.interfaceProperty, value.interfaceProperty)
     ) {
       return false;
@@ -41567,13 +41881,13 @@ export namespace IndirectRecursiveHelperClass {
     value: IndirectRecursiveHelperClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.indirectRecursiveProperty !== "undefined" &&
+      filter.indirectRecursiveProperty !== undefined &&
       !$filterMaybe<IndirectRecursiveClass, IndirectRecursiveClass.$Filter>(
         IndirectRecursiveClass.$filter,
       )(filter.indirectRecursiveProperty, value.indirectRecursiveProperty)
@@ -42160,13 +42474,13 @@ export namespace IndirectRecursiveClass {
     value: IndirectRecursiveClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.indirectRecursiveHelperProperty !== "undefined" &&
+      filter.indirectRecursiveHelperProperty !== undefined &&
       !$filterMaybe<
         IndirectRecursiveHelperClass,
         IndirectRecursiveHelperClass.$Filter
@@ -42958,13 +43272,13 @@ export namespace InPropertiesClass {
     value: InPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.inBooleansProperty !== "undefined" &&
+      filter.inBooleansProperty !== undefined &&
       !$filterMaybe<true, $BooleanFilter>($filterBoolean)(
         filter.inBooleansProperty,
         value.inBooleansProperty,
@@ -42973,7 +43287,7 @@ export namespace InPropertiesClass {
       return false;
     }
     if (
-      typeof filter.inDateTimesProperty !== "undefined" &&
+      filter.inDateTimesProperty !== undefined &&
       !$filterMaybe<Date, $DateFilter>($filterDate)(
         filter.inDateTimesProperty,
         value.inDateTimesProperty,
@@ -42982,7 +43296,7 @@ export namespace InPropertiesClass {
       return false;
     }
     if (
-      typeof filter.inDoublesProperty !== "undefined" &&
+      filter.inDoublesProperty !== undefined &&
       !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
         filter.inDoublesProperty,
         value.inDoublesProperty,
@@ -42991,7 +43305,7 @@ export namespace InPropertiesClass {
       return false;
     }
     if (
-      typeof filter.inIntegersProperty !== "undefined" &&
+      filter.inIntegersProperty !== undefined &&
       !$filterMaybe<1n | 2n, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.inIntegersProperty,
         value.inIntegersProperty,
@@ -43000,7 +43314,7 @@ export namespace InPropertiesClass {
       return false;
     }
     if (
-      typeof filter.inIrisProperty !== "undefined" &&
+      filter.inIrisProperty !== undefined &&
       !$filterMaybe<
         NamedNode<
           | "http://example.com/InPropertiesIri1"
@@ -43012,7 +43326,7 @@ export namespace InPropertiesClass {
       return false;
     }
     if (
-      typeof filter.inStringsProperty !== "undefined" &&
+      filter.inStringsProperty !== undefined &&
       !$filterMaybe<"text" | "html", $StringFilter>($filterString)(
         filter.inStringsProperty,
         value.inStringsProperty,
@@ -44340,13 +44654,13 @@ export namespace InIdentifierClass {
     value: InIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.inIdentifierProperty !== "undefined" &&
+      filter.inIdentifierProperty !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.inIdentifierProperty,
         value.inIdentifierProperty,
@@ -45022,13 +45336,13 @@ export namespace IdentifierOverride1ClassStatic {
     value: IdentifierOverride1Class,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.identifierOverrideProperty !== "undefined" &&
+      filter.identifierOverrideProperty !== undefined &&
       !$filterString(
         filter.identifierOverrideProperty,
         value.identifierOverrideProperty,
@@ -46117,7 +46431,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
   }
 
   protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -46582,7 +46896,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
   }
 
   protected override get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -47143,19 +47457,19 @@ export namespace HasValuePropertiesClass {
     value: HasValuePropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.hasIriValueProperty !== "undefined" &&
+      filter.hasIriValueProperty !== undefined &&
       !$filterIri(filter.hasIriValueProperty, value.hasIriValueProperty)
     ) {
       return false;
     }
     if (
-      typeof filter.hasLiteralValueProperty !== "undefined" &&
+      filter.hasLiteralValueProperty !== undefined &&
       !$filterString(
         filter.hasLiteralValueProperty,
         value.hasLiteralValueProperty,
@@ -47739,13 +48053,13 @@ export namespace FlattenClassUnionMember3 {
     value: FlattenClassUnionMember3,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.flattenClassUnionMember3Property !== "undefined" &&
+      filter.flattenClassUnionMember3Property !== undefined &&
       !$filterString(
         filter.flattenClassUnionMember3Property,
         value.flattenClassUnionMember3Property,
@@ -48369,13 +48683,13 @@ export namespace ExternClassPropertyClass {
     value: ExternClassPropertyClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.externClassProperty !== "undefined" &&
+      filter.externClassProperty !== undefined &&
       !$filterMaybe<ExternClass, ExternClass.$Filter>(ExternClass.$filter)(
         filter.externClassProperty,
         value.externClassProperty,
@@ -49018,13 +49332,13 @@ export namespace AbstractBaseClassForExternClassStatic {
     value: AbstractBaseClassForExternClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.abstractBaseClassForExternClassProperty !== "undefined" &&
+      filter.abstractBaseClassForExternClassProperty !== undefined &&
       !$filterString(
         filter.abstractBaseClassForExternClassProperty,
         value.abstractBaseClassForExternClassProperty,
@@ -49479,13 +49793,13 @@ export namespace ExplicitRdfTypeClass {
     value: ExplicitRdfTypeClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.explicitRdfTypeProperty !== "undefined" &&
+      filter.explicitRdfTypeProperty !== undefined &&
       !$filterString(
         filter.explicitRdfTypeProperty,
         value.explicitRdfTypeProperty,
@@ -50088,13 +50402,13 @@ export namespace ExplicitFromToRdfTypesClass {
     value: ExplicitFromToRdfTypesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.explicitFromToRdfTypesProperty !== "undefined" &&
+      filter.explicitFromToRdfTypesProperty !== undefined &&
       !$filterString(
         filter.explicitFromToRdfTypesProperty,
         value.explicitFromToRdfTypesProperty,
@@ -50719,13 +51033,13 @@ export namespace DirectRecursiveClass {
     value: DirectRecursiveClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.directRecursiveProperty !== "undefined" &&
+      filter.directRecursiveProperty !== undefined &&
       !$filterMaybe<DirectRecursiveClass, DirectRecursiveClass.$Filter>(
         DirectRecursiveClass.$filter,
       )(filter.directRecursiveProperty, value.directRecursiveProperty)
@@ -51265,7 +51579,7 @@ export class DefaultValuePropertiesClass {
   }
 
   protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -51524,13 +51838,13 @@ export namespace DefaultValuePropertiesClass {
     value: DefaultValuePropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.dateDefaultValueProperty !== "undefined" &&
+      filter.dateDefaultValueProperty !== undefined &&
       !$filterDate(
         filter.dateDefaultValueProperty,
         value.dateDefaultValueProperty,
@@ -51539,7 +51853,7 @@ export namespace DefaultValuePropertiesClass {
       return false;
     }
     if (
-      typeof filter.dateTimeDefaultValueProperty !== "undefined" &&
+      filter.dateTimeDefaultValueProperty !== undefined &&
       !$filterDate(
         filter.dateTimeDefaultValueProperty,
         value.dateTimeDefaultValueProperty,
@@ -51548,7 +51862,7 @@ export namespace DefaultValuePropertiesClass {
       return false;
     }
     if (
-      typeof filter.falseBooleanDefaultValueProperty !== "undefined" &&
+      filter.falseBooleanDefaultValueProperty !== undefined &&
       !$filterBoolean(
         filter.falseBooleanDefaultValueProperty,
         value.falseBooleanDefaultValueProperty,
@@ -51557,7 +51871,7 @@ export namespace DefaultValuePropertiesClass {
       return false;
     }
     if (
-      typeof filter.numberDefaultValueProperty !== "undefined" &&
+      filter.numberDefaultValueProperty !== undefined &&
       !$filterNumeric<number>(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
@@ -51566,7 +51880,7 @@ export namespace DefaultValuePropertiesClass {
       return false;
     }
     if (
-      typeof filter.stringDefaultValueProperty !== "undefined" &&
+      filter.stringDefaultValueProperty !== undefined &&
       !$filterString(
         filter.stringDefaultValueProperty,
         value.stringDefaultValueProperty,
@@ -51575,7 +51889,7 @@ export namespace DefaultValuePropertiesClass {
       return false;
     }
     if (
-      typeof filter.trueBooleanDefaultValueProperty !== "undefined" &&
+      filter.trueBooleanDefaultValueProperty !== undefined &&
       !$filterBoolean(
         filter.trueBooleanDefaultValueProperty,
         value.trueBooleanDefaultValueProperty,
@@ -53240,13 +53554,13 @@ export namespace DateUnionPropertiesClass {
     value: DateUnionPropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.dateOrDateTimeProperty !== "undefined" &&
+      filter.dateOrDateTimeProperty !== undefined &&
       !$filterMaybe<
         { type: "date"; value: Date } | { type: "dateTime"; value: Date },
         {
@@ -53267,7 +53581,7 @@ export namespace DateUnionPropertiesClass {
             | { type: "date"; value: Date }
             | { type: "dateTime"; value: Date },
         ) => {
-          if (typeof filter.on?.["date"] !== "undefined") {
+          if (filter.on?.["date"] !== undefined) {
             switch (value.type) {
               case "date":
                 if (!$filterDate(filter.on["date"], value.value)) {
@@ -53276,7 +53590,7 @@ export namespace DateUnionPropertiesClass {
                 break;
             }
           }
-          if (typeof filter.on?.["dateTime"] !== "undefined") {
+          if (filter.on?.["dateTime"] !== undefined) {
             switch (value.type) {
               case "dateTime":
                 if (!$filterDate(filter.on["dateTime"], value.value)) {
@@ -53293,7 +53607,7 @@ export namespace DateUnionPropertiesClass {
       return false;
     }
     if (
-      typeof filter.dateOrStringProperty !== "undefined" &&
+      filter.dateOrStringProperty !== undefined &&
       !$filterMaybe<
         { type: "date"; value: Date } | { type: "string"; value: string },
         {
@@ -53314,7 +53628,7 @@ export namespace DateUnionPropertiesClass {
             | { type: "date"; value: Date }
             | { type: "string"; value: string },
         ) => {
-          if (typeof filter.on?.["date"] !== "undefined") {
+          if (filter.on?.["date"] !== undefined) {
             switch (value.type) {
               case "date":
                 if (!$filterDate(filter.on["date"], value.value)) {
@@ -53323,7 +53637,7 @@ export namespace DateUnionPropertiesClass {
                 break;
             }
           }
-          if (typeof filter.on?.["string"] !== "undefined") {
+          if (filter.on?.["string"] !== undefined) {
             switch (value.type) {
               case "string":
                 if (!$filterString(filter.on["string"], value.value)) {
@@ -53340,7 +53654,7 @@ export namespace DateUnionPropertiesClass {
       return false;
     }
     if (
-      typeof filter.dateTimeOrDateProperty !== "undefined" &&
+      filter.dateTimeOrDateProperty !== undefined &&
       !$filterMaybe<
         { type: "dateTime"; value: Date } | { type: "date"; value: Date },
         {
@@ -53361,7 +53675,7 @@ export namespace DateUnionPropertiesClass {
             | { type: "dateTime"; value: Date }
             | { type: "date"; value: Date },
         ) => {
-          if (typeof filter.on?.["dateTime"] !== "undefined") {
+          if (filter.on?.["dateTime"] !== undefined) {
             switch (value.type) {
               case "dateTime":
                 if (!$filterDate(filter.on["dateTime"], value.value)) {
@@ -53370,7 +53684,7 @@ export namespace DateUnionPropertiesClass {
                 break;
             }
           }
-          if (typeof filter.on?.["date"] !== "undefined") {
+          if (filter.on?.["date"] !== undefined) {
             switch (value.type) {
               case "date":
                 if (!$filterDate(filter.on["date"], value.value)) {
@@ -53387,7 +53701,7 @@ export namespace DateUnionPropertiesClass {
       return false;
     }
     if (
-      typeof filter.stringOrDateProperty !== "undefined" &&
+      filter.stringOrDateProperty !== undefined &&
       !$filterMaybe<
         { type: "string"; value: string } | { type: "date"; value: Date },
         {
@@ -53408,7 +53722,7 @@ export namespace DateUnionPropertiesClass {
             | { type: "string"; value: string }
             | { type: "date"; value: Date },
         ) => {
-          if (typeof filter.on?.["string"] !== "undefined") {
+          if (filter.on?.["string"] !== undefined) {
             switch (value.type) {
               case "string":
                 if (!$filterString(filter.on["string"], value.value)) {
@@ -53417,7 +53731,7 @@ export namespace DateUnionPropertiesClass {
                 break;
             }
           }
-          if (typeof filter.on?.["date"] !== "undefined") {
+          if (filter.on?.["date"] !== undefined) {
             switch (value.type) {
               case "date":
                 if (!$filterDate(filter.on["date"], value.value)) {
@@ -55599,13 +55913,13 @@ export namespace ConvertibleTypePropertiesClass {
     value: ConvertibleTypePropertiesClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.convertibleIriNonEmptySetProperty !== "undefined" &&
+      filter.convertibleIriNonEmptySetProperty !== undefined &&
       !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriNonEmptySetProperty,
         value.convertibleIriNonEmptySetProperty,
@@ -55614,7 +55928,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleIriOptionProperty !== "undefined" &&
+      filter.convertibleIriOptionProperty !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriOptionProperty,
         value.convertibleIriOptionProperty,
@@ -55623,13 +55937,13 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleIriProperty !== "undefined" &&
+      filter.convertibleIriProperty !== undefined &&
       !$filterIri(filter.convertibleIriProperty, value.convertibleIriProperty)
     ) {
       return false;
     }
     if (
-      typeof filter.convertibleIriSetProperty !== "undefined" &&
+      filter.convertibleIriSetProperty !== undefined &&
       !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.convertibleIriSetProperty,
         value.convertibleIriSetProperty,
@@ -55638,7 +55952,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleLiteralNonEmptySetProperty !== "undefined" &&
+      filter.convertibleLiteralNonEmptySetProperty !== undefined &&
       !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralNonEmptySetProperty,
         value.convertibleLiteralNonEmptySetProperty,
@@ -55647,7 +55961,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleLiteralOptionProperty !== "undefined" &&
+      filter.convertibleLiteralOptionProperty !== undefined &&
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralOptionProperty,
         value.convertibleLiteralOptionProperty,
@@ -55656,7 +55970,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleLiteralProperty !== "undefined" &&
+      filter.convertibleLiteralProperty !== undefined &&
       !$filterLiteral(
         filter.convertibleLiteralProperty,
         value.convertibleLiteralProperty,
@@ -55665,7 +55979,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleLiteralSetProperty !== "undefined" &&
+      filter.convertibleLiteralSetProperty !== undefined &&
       !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
         filter.convertibleLiteralSetProperty,
         value.convertibleLiteralSetProperty,
@@ -55674,7 +55988,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleTermNonEmptySetProperty !== "undefined" &&
+      filter.convertibleTermNonEmptySetProperty !== undefined &&
       !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermNonEmptySetProperty,
         value.convertibleTermNonEmptySetProperty,
@@ -55683,7 +55997,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleTermOptionProperty !== "undefined" &&
+      filter.convertibleTermOptionProperty !== undefined &&
       !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermOptionProperty,
         value.convertibleTermOptionProperty,
@@ -55692,7 +56006,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleTermProperty !== "undefined" &&
+      filter.convertibleTermProperty !== undefined &&
       !$filterTerm(
         filter.convertibleTermProperty,
         value.convertibleTermProperty,
@@ -55701,7 +56015,7 @@ export namespace ConvertibleTypePropertiesClass {
       return false;
     }
     if (
-      typeof filter.convertibleTermSetProperty !== "undefined" &&
+      filter.convertibleTermSetProperty !== undefined &&
       !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.convertibleTermSetProperty,
         value.convertibleTermSetProperty,
@@ -55788,9 +56102,9 @@ export namespace ConvertibleTypePropertiesClass {
       .map((item) =>
         dataFactory.literal(
           item["@value"],
-          typeof item["@language"] !== "undefined"
+          item["@language"] !== undefined
             ? item["@language"]
-            : typeof item["@type"] !== "undefined"
+            : item["@type"] !== undefined
               ? dataFactory.namedNode(item["@type"])
               : undefined,
         ),
@@ -55800,20 +56114,18 @@ export namespace ConvertibleTypePropertiesClass {
     ).map((item) =>
       dataFactory.literal(
         item["@value"],
-        typeof item["@language"] !== "undefined"
+        item["@language"] !== undefined
           ? item["@language"]
-          : typeof item["@type"] !== "undefined"
+          : item["@type"] !== undefined
             ? dataFactory.namedNode(item["@type"])
             : undefined,
       ),
     );
     const convertibleLiteralProperty = dataFactory.literal(
       $jsonObject["convertibleLiteralProperty"]["@value"],
-      typeof $jsonObject["convertibleLiteralProperty"]["@language"] !==
-        "undefined"
+      $jsonObject["convertibleLiteralProperty"]["@language"] !== undefined
         ? $jsonObject["convertibleLiteralProperty"]["@language"]
-        : typeof $jsonObject["convertibleLiteralProperty"]["@type"] !==
-            "undefined"
+        : $jsonObject["convertibleLiteralProperty"]["@type"] !== undefined
           ? dataFactory.namedNode(
               $jsonObject["convertibleLiteralProperty"]["@type"],
             )
@@ -55824,9 +56136,9 @@ export namespace ConvertibleTypePropertiesClass {
     ].map((item) =>
       dataFactory.literal(
         item["@value"],
-        typeof item["@language"] !== "undefined"
+        item["@language"] !== undefined
           ? item["@language"]
-          : typeof item["@type"] !== "undefined"
+          : item["@type"] !== undefined
             ? dataFactory.namedNode(item["@type"])
             : undefined,
       ),
@@ -55839,9 +56151,9 @@ export namespace ConvertibleTypePropertiesClass {
         item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
-              typeof item["@language"] !== "undefined"
+              item["@language"] !== undefined
                 ? item["@language"]
-                : typeof item["@type"] !== "undefined"
+                : item["@type"] !== undefined
                   ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
@@ -55855,9 +56167,9 @@ export namespace ConvertibleTypePropertiesClass {
       item.termType === "Literal"
         ? dataFactory.literal(
             item["@value"],
-            typeof item["@language"] !== "undefined"
+            item["@language"] !== undefined
               ? item["@language"]
-              : typeof item["@type"] !== "undefined"
+              : item["@type"] !== undefined
                 ? dataFactory.namedNode(item["@type"])
                 : undefined,
           )
@@ -55869,11 +56181,9 @@ export namespace ConvertibleTypePropertiesClass {
       $jsonObject["convertibleTermProperty"].termType === "Literal"
         ? dataFactory.literal(
             $jsonObject["convertibleTermProperty"]["@value"],
-            typeof $jsonObject["convertibleTermProperty"]["@language"] !==
-              "undefined"
+            $jsonObject["convertibleTermProperty"]["@language"] !== undefined
               ? $jsonObject["convertibleTermProperty"]["@language"]
-              : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
-                  "undefined"
+              : $jsonObject["convertibleTermProperty"]["@type"] !== undefined
                 ? dataFactory.namedNode(
                     $jsonObject["convertibleTermProperty"]["@type"],
                   )
@@ -55890,9 +56200,9 @@ export namespace ConvertibleTypePropertiesClass {
       item.termType === "Literal"
         ? dataFactory.literal(
             item["@value"],
-            typeof item["@language"] !== "undefined"
+            item["@language"] !== undefined
               ? item["@language"]
-              : typeof item["@type"] !== "undefined"
+              : item["@type"] !== undefined
                 ? dataFactory.namedNode(item["@type"])
                 : undefined,
           )
@@ -57866,13 +58176,13 @@ export namespace BaseInterfaceWithPropertiesStatic {
     value: BaseInterfaceWithProperties,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.baseInterfaceWithPropertiesProperty !== "undefined" &&
+      filter.baseInterfaceWithPropertiesProperty !== undefined &&
       !$filterString(
         filter.baseInterfaceWithPropertiesProperty,
         value.baseInterfaceWithPropertiesProperty,
@@ -59066,7 +59376,7 @@ export namespace ConcreteParentInterfaceStatic {
       return false;
     }
     if (
-      typeof filter.concreteParentInterfaceProperty !== "undefined" &&
+      filter.concreteParentInterfaceProperty !== undefined &&
       !$filterString(
         filter.concreteParentInterfaceProperty,
         value.concreteParentInterfaceProperty,
@@ -59710,7 +60020,7 @@ export namespace ConcreteChildInterface {
       return false;
     }
     if (
-      typeof filter.concreteChildInterfaceProperty !== "undefined" &&
+      filter.concreteChildInterfaceProperty !== undefined &&
       !$filterString(
         filter.concreteChildInterfaceProperty,
         value.concreteChildInterfaceProperty,
@@ -60280,7 +60590,7 @@ export abstract class AbstractBaseClassWithProperties {
   }
 
   protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -60387,13 +60697,13 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     value: AbstractBaseClassWithProperties,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.abstractBaseClassWithPropertiesProperty !== "undefined" &&
+      filter.abstractBaseClassWithPropertiesProperty !== undefined &&
       !$filterString(
         filter.abstractBaseClassWithPropertiesProperty,
         value.abstractBaseClassWithPropertiesProperty,
@@ -60747,7 +61057,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
   }
 
   protected override get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -61020,7 +61330,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   protected override get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -61105,7 +61415,7 @@ export namespace ConcreteParentClassStatic {
       return false;
     }
     if (
-      typeof filter.concreteParentClassProperty !== "undefined" &&
+      filter.concreteParentClassProperty !== undefined &&
       !$filterString(
         filter.concreteParentClassProperty,
         value.concreteParentClassProperty,
@@ -61634,7 +61944,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   protected override get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
+    return this._$identifierPrefix !== undefined
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
@@ -61719,7 +62029,7 @@ export namespace ConcreteChildClass {
       return false;
     }
     if (
-      typeof filter.concreteChildClassProperty !== "undefined" &&
+      filter.concreteChildClassProperty !== undefined &&
       !$filterString(
         filter.concreteChildClassProperty,
         value.concreteChildClassProperty,
@@ -62301,13 +62611,13 @@ export namespace ClassUnionMemberCommonParentStatic {
     value: ClassUnionMemberCommonParent,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.classUnionMemberCommonParentProperty !== "undefined" &&
+      filter.classUnionMemberCommonParentProperty !== undefined &&
       !$filterString(
         filter.classUnionMemberCommonParentProperty,
         value.classUnionMemberCommonParentProperty,
@@ -62731,7 +63041,7 @@ export namespace ClassUnionMember2 {
       return false;
     }
     if (
-      typeof filter.classUnionMember2Property !== "undefined" &&
+      filter.classUnionMember2Property !== undefined &&
       !$filterString(
         filter.classUnionMember2Property,
         value.classUnionMember2Property,
@@ -63292,7 +63602,7 @@ export namespace ClassUnionMember1 {
       return false;
     }
     if (
-      typeof filter.classUnionMember1Property !== "undefined" &&
+      filter.classUnionMember1Property !== undefined &&
       !$filterString(
         filter.classUnionMember1Property,
         value.classUnionMember1Property,
@@ -63828,7 +64138,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
     value: BlankNodeOrIriIdentifierInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -64350,7 +64660,7 @@ export namespace BlankNodeOrIriIdentifierClass {
     value: BlankNodeOrIriIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -64784,7 +65094,7 @@ export namespace BlankNodeIdentifierInterface {
     value: BlankNodeIdentifierInterface,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterBlankNode(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -65301,7 +65611,7 @@ export namespace BlankNodeIdentifierClass {
     value: BlankNodeIdentifierClass,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterBlankNode(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -65689,7 +65999,7 @@ export namespace ClassUnion {
     value: ClassUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -65997,7 +66307,7 @@ export namespace FlattenClassUnion {
     value: FlattenClassUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -66381,7 +66691,7 @@ export namespace InterfaceUnion {
     value: InterfaceUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -66701,7 +67011,7 @@ export namespace LazilyResolvedClassUnion {
     value: LazilyResolvedClassUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -67078,7 +67388,7 @@ export namespace LazilyResolvedInterfaceUnion {
     value: LazilyResolvedInterfaceUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -67460,7 +67770,7 @@ export namespace PartialClassUnion {
     value: PartialClassUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -67802,7 +68112,7 @@ export namespace PartialInterfaceUnion {
     value: PartialInterfaceUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -68169,7 +68479,7 @@ export namespace NoRdfTypeClassUnion {
     value: NoRdfTypeClassUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -68511,7 +68821,7 @@ export namespace RecursiveClassUnion {
     value: RecursiveClassUnion,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -69221,7 +69531,7 @@ export namespace $Object {
 
   export function $filter(filter: $Object.$Filter, value: $Object): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -87147,10 +87457,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     const identifiers: NamedNode[] = [];
     for (const bindings_ of bindings) {
       const identifier = bindings_[variable];
-      if (
-        typeof identifier !== "undefined" &&
-        identifier.termType === "NamedNode"
-      ) {
+      if (identifier !== undefined && identifier.termType === "NamedNode") {
         identifiers.push(identifier);
       }
     }

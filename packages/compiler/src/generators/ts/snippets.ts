@@ -4,6 +4,8 @@ import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.j
 import { snippets_BlankNodeSchema } from "./_snippets/snippets_BlankNodeSchema.js";
 import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
 import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
+import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
+import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
 import { snippets_blankNodeFromString } from "./_snippets/snippets_blankNodeFromString.js";
 import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blankNodeSparqlWherePatterns.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
@@ -15,11 +17,13 @@ import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
 import { snippets_dateEquals } from "./_snippets/snippets_dateEquals.js";
 import { snippets_dateSparqlWherePatterns } from "./_snippets/snippets_dateSparqlWherePatterns.js";
+import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBigDecimalLiteral.js";
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
 import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfTypeOptions.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
+import { snippets_filterBigDecimal } from "./_snippets/snippets_filterBigDecimal.js";
 import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.js";
 import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
@@ -88,6 +92,8 @@ import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 export const snippets = {
   arrayIntersection: snippets_arrayIntersection,
   arrayEquals: snippets_arrayEquals,
+  bigDecimalLiteral: snippets_bigDecimalLiteral,
+  bigDecimalSparqlWherePatterns: snippets_bigDecimalSparqlWherePatterns,
   BlankNodeFilter: snippets_BlankNodeFilter,
   BlankNodeSchema: snippets_BlankNodeSchema,
   blankNodeFromString: snippets_blankNodeFromString,
@@ -102,11 +108,13 @@ export const snippets = {
   DateFilter: snippets_DateFilter,
   DateSchema: snippets_DateSchema,
   dateSparqlWherePatterns: snippets_dateSparqlWherePatterns,
+  decodeBigDecimalLiteral: snippets_decodeBigDecimalLiteral,
   deduplicateSparqlPatterns: snippets_deduplicateSparqlPatterns,
   defaultValueSparqlWherePatterns: snippets_defaultValueSparqlWherePatterns,
   DefaultValueSchema: snippets_DefaultValueSchema,
   EqualsResult: snippets_EqualsResult,
   filterArray: snippets_filterArray,
+  filterBigDecimal: snippets_filterBigDecimal,
   filterBlankNode: snippets_filterBlankNode,
   filterBoolean: snippets_filterBoolean,
   filterDate: snippets_filterDate,

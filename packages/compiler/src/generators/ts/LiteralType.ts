@@ -1,4 +1,5 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
@@ -20,7 +21,13 @@ export class LiteralType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${imports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+    return code`${imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+  }
+
+  override graphqlResolveExpression(
+    _parameters: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0],
+  ): Code {
+    throw new Error("not implemented");
   }
 
   override hashStatements({

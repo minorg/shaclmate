@@ -144,15 +144,9 @@ export abstract class AbstractTermType<
         chain.languageIn,
         chain.preferredLanguages,
         chain.valueTo,
-      ].filter((_) => typeof _ !== "undefined"),
+      ].filter((_) => _ !== undefined),
       { on: "." },
     );
-  }
-
-  override graphqlResolveExpression(
-    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
-  ): Code {
-    throw new Error("not implemented");
   }
 
   override hashStatements({

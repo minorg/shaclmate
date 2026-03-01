@@ -4,7 +4,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_NumericFilter = conditionalOutput(
   `${syntheticNamePrefix}NumericFilter`,
   code`\
-interface ${syntheticNamePrefix}NumericFilter<T extends bigint | number> {
+interface ${syntheticNamePrefix}NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;

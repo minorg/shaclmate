@@ -16,7 +16,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (
-    typeof filter.datatypeIn !== "undefined" &&
+    filter.datatypeIn !== undefined &&
     filter.datatypeIn.length > 0
   ) {
     filterPatterns.push({
@@ -33,12 +33,12 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
     });
   }
 
-  if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+  if (filter.in !== undefined && filter.in.length > 0) {
     filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
   }
 
   if (
-    typeof filter.languageIn !== "undefined" &&
+    filter.languageIn !== undefined &&
     filter.languageIn.length > 0
   ) {
     filterPatterns.push({
@@ -52,7 +52,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
     });
   }
 
-  if (typeof filter.typeIn !== "undefined") {
+  if (filter.typeIn !== undefined) {
     const typeInExpressions = filter.typeIn
       .map((inType) => {
         switch (inType) {

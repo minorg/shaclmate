@@ -1,6 +1,7 @@
 import { imp } from "./ts-poet-wrapper.js";
 
 export const imports = {
+  BigDecimal: imp("Decimal:BigDecimal@decimal.js"),
   BlankNode: imp("BlankNode@@rdfjs/types"),
   dataFactory: imp("dataFactory=@rdfjs/data-model"),
   DatasetCore: imp("DatasetCore@@rdfjs/types"),

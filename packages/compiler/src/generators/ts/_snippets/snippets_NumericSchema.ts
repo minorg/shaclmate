@@ -4,8 +4,8 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_NumericSchema = conditionalOutput(
   `${syntheticNamePrefix}NumericSchema`,
   code`\
-interface ${syntheticNamePrefix}NumericSchema<T extends bigint | number> {
+interface ${syntheticNamePrefix}NumericSchema<T> {
   readonly in?: readonly T[];
-  readonly kind: "BigInt" | "Float" | "Int";
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }`,
 );

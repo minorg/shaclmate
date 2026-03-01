@@ -15,7 +15,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets_SparqlWherePa
     const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
     if (filter) {
-      if (typeof filter.value !== "undefined") {
+      if (filter.value !== undefined) {
         filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
       }
     }

@@ -1,6 +1,7 @@
 import dataFactory from "@rdfjs/data-model";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Decimal } from "decimal.js";
 import { NonEmptyList } from "purify-ts";
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
@@ -547,6 +548,7 @@ export const harnesses = {
     new kitchenSink.NumericPropertiesClass({
       $identifier,
       byteNumericProperty: -1,
+      decimalNumericProperty: new Decimal(1.0),
       doubleNumericProperty: 1.1,
       floatNumericProperty: 1.1,
       intNumericProperty: -1,

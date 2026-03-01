@@ -7,11 +7,11 @@ export const snippets_filterIdentifier = conditionalOutput(
   `${syntheticNamePrefix}filterIdentifier`,
   code`\
 function ${syntheticNamePrefix}filterIdentifier(filter: ${snippets_IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
+  if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
 
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (filter.type !== undefined && value.termType !== filter.type) {
     return false;
   }
 

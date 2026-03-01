@@ -14,14 +14,14 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets_SparqlWher
     const patterns: ${snippets_SparqlPattern}[] = propertyPatterns.concat();
 
     if (filter) {
-      if (typeof filter.in !== "undefined") {
+      if (filter.in !== undefined) {
         const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
         if (valueIn.length > 0) {
           patterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
         }
       }
 
-      if (typeof filter.type !== "undefined") {
+      if (filter.type !== undefined) {
         patterns.push({
           expression: {
             type: "operation",
