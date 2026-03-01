@@ -18,10 +18,53 @@ export class BigDecimalType extends AbstractLiteralType {
   override readonly sparqlWherePatternsFunction =
     code`${snippets.bigDecimalSparqlWherePatterns}`;
 
+  @Memoize()
+  override get conversions(): readonly AbstractLiteralType.Conversion[] {
+    return [
+      // {
+      //   conversionExpression: (value) =>
+      //     code`new ${imports.BigDecimal}(${value}.toString())`,
+      //   sourceTypeCheckExpression: (value) =>
+      //     code`typeof ${value} === "bigint"`,
+      //   sourceTypeName: code`bigint`,
+      //   sourceTypeof: "bigint",
+      // },
+      {
+        conversionExpression: (value) => value,
+        sourceTypeCheckExpression: (value) =>
+          code`typeof ${value} === "object"`,
+        sourceTypeName: code`${imports.BigDecimal}`,
+        sourceTypeof: "object",
+      },
+      // {
+      //   conversionExpression: (value) =>
+      //     code`new ${imports.BigDecimal}(${value})`,
+      //   sourceTypeCheckExpression: (value) =>
+      //     code`typeof ${value} === "number"`,
+      //   sourceTypeName: code`number`,
+      //   sourceTypeof: "number",
+      // },
+      // {
+      //   conversionExpression: (value) =>
+      //     code`new ${imports.BigDecimal}(${value})`,
+      //   sourceTypeCheckExpression: (value) =>
+      //     code`typeof ${value} === "string"`,
+      //   sourceTypeName: code`string`,
+      //   sourceTypeof: "string",
+      // },
+    ];
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
     return code`new ${imports.BigDecimal}(${variables.value})`;
+  }
+
+  override hashStatements({
+    variables,
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value}.toFixed());`];
   }
 
   @Memoize()
@@ -47,7 +90,7 @@ export class BigDecimalType extends AbstractLiteralType {
   > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => ${snippets.decodeBigDecimalLiteral}(value)))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${snippets.decodeBigDecimalLiteral})))`,
     };
   }
 

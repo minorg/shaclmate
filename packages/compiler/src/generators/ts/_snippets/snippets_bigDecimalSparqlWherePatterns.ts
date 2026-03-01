@@ -7,12 +7,11 @@ import { snippets_NumericSchema } from "./snippets_NumericSchema.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 import { snippets_SparqlWherePatternsFunctionParameters } from "./snippets_SparqlWherePatternsFunctionParameters.js";
-import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
 
 export const snippets_bigDecimalSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}bigDecimalSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, valueVariable, ...otherParameters }: ${snippets_SparqlWherePatternsFunctionParameters}<${snippets_NumericFilter}<${imports.BigDecimal}>, ${snippets_NumericSchema}<${imports.BigDecimal}>>): readonly ${snippets_SparqlPattern}[] {
+function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyPatterns, schema, valueVariable }: ${snippets_SparqlWherePatternsFunctionParameters}<${snippets_NumericFilter}<${imports.BigDecimal}>, ${snippets_NumericSchema}<${imports.BigDecimal}>>): readonly ${snippets_SparqlPattern}[] {
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (filter) {
@@ -77,6 +76,19 @@ function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, valueVari
     }
   }
 
-  return ${snippets_termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
+  const schemaPatterns: ${snippets_SparqlPattern}[] = [];
+  if (schema.in && schema.in.length > 0) {
+    schemaPatterns.push({
+      expression: {
+        args: [valueVariable, schema.in.map(${snippets_bigDecimalLiteral})],
+        operator: "in",
+        type: "operation",
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  return (propertyPatterns as readonly ${snippets_SparqlPattern}[]).concat(schemaPatterns).concat(filterPatterns);
 }`,
 );
