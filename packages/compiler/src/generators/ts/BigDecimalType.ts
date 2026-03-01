@@ -61,6 +61,12 @@ export class BigDecimalType extends AbstractLiteralType {
     return code`new ${imports.BigDecimal}(${variables.value})`;
   }
 
+  override graphqlResolveExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
+    return code`${variables.value}.toFixed()`;
+  }
+
   override hashStatements({
     variables,
   }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {

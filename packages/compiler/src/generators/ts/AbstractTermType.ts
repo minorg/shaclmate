@@ -149,12 +149,6 @@ export abstract class AbstractTermType<
     );
   }
 
-  override graphqlResolveExpression(
-    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
-  ): Code {
-    throw new Error("not implemented");
-  }
-
   override hashStatements({
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
