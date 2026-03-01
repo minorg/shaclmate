@@ -1,7 +1,6 @@
 import { type Code, code } from "ts-poet";
-
+import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
 
@@ -19,29 +18,42 @@ export class BigDecimalType extends AbstractLiteralType {
   override readonly sparqlWherePatternsFunction =
     code`${snippets.bigDecimalSparqlWherePatterns}`;
 
-  override fromJsonExpression(parameters: {
-    variables: { value: Code };
-  }): Code {
-    throw new Error("Method not implemented.");
+  override fromJsonExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
+    return code`new ${imports.BigDecimal}(${variables.value})`;
   }
 
-  override jsonType(
-    parameters?: { includeDiscriminantProperty?: boolean } | undefined,
-  ): AbstractType.JsonType {
-    throw new Error("Method not implemented.");
+  @Memoize()
+  override jsonType(): AbstractLiteralType.JsonType {
+    return new AbstractLiteralType.JsonType("string");
   }
 
-  override jsonZodSchema(parameters: {
-    includeDiscriminantProperty?: boolean;
-    context: "property" | "type";
-  }): Code {
-    throw new Error("Method not implemented.");
+  @Memoize()
+  override jsonZodSchema(): Code {
+    return code`${imports.z}.string()`;
   }
 
-  override toJsonExpression(parameters: {
-    includeDiscriminantProperty?: boolean;
-    variables: { value: Code };
-  }): Code {
-    throw new Error("Method not implemented.");
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
+    return code`${variables.value}.toFixed()`;
+  }
+
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<AbstractLiteralType["fromRdfExpressionChain"]>[0]): ReturnType<
+    AbstractLiteralType["fromRdfExpressionChain"]
+  > {
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      valueTo: code`chain(values => values.chainMap(value => ${snippets.decodeBigDecimalLiteral}(value)))`,
+    };
+  }
+
+  override toRdfExpression({
+    variables,
+  }: Parameters<AbstractLiteralType["toRdfExpression"]>[0]): Code {
+    return code`[${snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 }

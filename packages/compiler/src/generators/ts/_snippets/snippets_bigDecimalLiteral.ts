@@ -10,6 +10,6 @@ export const snippets_bigDecimalLiteral = conditionalOutput(
  * Create a Literal from a BigDecimal.
  */  
 function ${syntheticNamePrefix}bigDecimalLiteral(value: ${imports.BigDecimal}): ${imports.Literal} {
-  return ${imports.dataFactory}.literal(value.toString(), ${snippets_RdfVocabularies}.xsd.decimal);
+  return ${imports.dataFactory}.literal(value.toFixed(), ${snippets_RdfVocabularies}.xsd.decimal);
 }`,
 );
