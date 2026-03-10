@@ -66,6 +66,17 @@ ${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${im
   return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier] }).map(objects => objects[0]);
 }`,
 
+            // objectCount
+            code`\
+async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
+  return this.${methodSignatures.objectCount.name}Sync(query);
+}`,
+            // objectCountSync
+            code`\
+${methodSignatures.objectCount.name}Sync(${methodSignatures.objectCount.parameters}): ${imports.Either}<Error, number> {
+  return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
+}`,
+
             // objectIdentifiers
             code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
@@ -83,17 +94,6 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
   return this.${methodSignatures.objects.name}Sync(query);
 }`,
             // objectsSync has per-object type logic, not just forwarding
-
-            // objectsCount
-            code`\
-async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.parameters}): ${methodSignatures.objectsCount.returnType} {
-  return this.${methodSignatures.objectsCount.name}Sync(query);
-}`,
-            // objectsCountSync
-            code`\
-${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parameters}): ${imports.Either}<Error, number> {
-  return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
-}`,
           ];
 
           const runtimeObjectType = (

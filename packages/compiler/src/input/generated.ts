@@ -33,17 +33,11 @@ function $filterArray<ItemT, ItemFilterT>(
       }
     }
 
-    if (
-      typeof filter.$maxCount !== "undefined" &&
-      values.length > filter.$maxCount
-    ) {
+    if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
       return false;
     }
 
-    if (
-      typeof filter.$minCount !== "undefined" &&
-      values.length < filter.$minCount
-    ) {
+    if (filter.$minCount !== undefined && values.length < filter.$minCount) {
       return false;
     }
 
@@ -52,7 +46,7 @@ function $filterArray<ItemT, ItemFilterT>(
 }
 
 function $filterBoolean(filter: $BooleanFilter, value: boolean) {
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
+  if (filter.value !== undefined && value !== filter.value) {
     return false;
   }
 
@@ -64,13 +58,13 @@ function $filterIdentifier(
   value: BlankNode | NamedNode,
 ) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
   }
 
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (filter.type !== undefined && value.termType !== filter.type) {
     return false;
   }
 
@@ -79,7 +73,7 @@ function $filterIdentifier(
 
 function $filterIri(filter: $IriFilter, value: NamedNode) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
@@ -119,37 +113,25 @@ function $filterNumeric<T extends bigint | number>(
   value: T,
 ) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
   ) {
     return false;
   }
 
-  if (
-    typeof filter.maxExclusive !== "undefined" &&
-    value >= filter.maxExclusive
-  ) {
+  if (filter.maxExclusive !== undefined && value >= filter.maxExclusive) {
     return false;
   }
 
-  if (
-    typeof filter.maxInclusive !== "undefined" &&
-    value > filter.maxInclusive
-  ) {
+  if (filter.maxInclusive !== undefined && value > filter.maxInclusive) {
     return false;
   }
 
-  if (
-    typeof filter.minExclusive !== "undefined" &&
-    value <= filter.minExclusive
-  ) {
+  if (filter.minExclusive !== undefined && value <= filter.minExclusive) {
     return false;
   }
 
-  if (
-    typeof filter.minInclusive !== "undefined" &&
-    value < filter.minInclusive
-  ) {
+  if (filter.minInclusive !== undefined && value < filter.minInclusive) {
     return false;
   }
 
@@ -158,23 +140,17 @@ function $filterNumeric<T extends bigint | number>(
 
 function $filterString(filter: $StringFilter, value: string) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
   ) {
     return false;
   }
 
-  if (
-    typeof filter.maxLength !== "undefined" &&
-    value.length > filter.maxLength
-  ) {
+  if (filter.maxLength !== undefined && value.length > filter.maxLength) {
     return false;
   }
 
-  if (
-    typeof filter.minLength !== "undefined" &&
-    value.length < filter.minLength
-  ) {
+  if (filter.minLength !== undefined && value.length < filter.minLength) {
     return false;
   }
 
@@ -186,7 +162,7 @@ function $filterTerm(
   value: BlankNode | Literal | NamedNode,
 ): boolean {
   if (
-    typeof filter.datatypeIn !== "undefined" &&
+    filter.datatypeIn !== undefined &&
     (value.termType !== "Literal" ||
       !filter.datatypeIn.some((inDatatype) =>
         inDatatype.equals(value.datatype),
@@ -196,14 +172,14 @@ function $filterTerm(
   }
 
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inTerm) => inTerm.equals(value))
   ) {
     return false;
   }
 
   if (
-    typeof filter.languageIn !== "undefined" &&
+    filter.languageIn !== undefined &&
     (value.termType !== "Literal" ||
       !filter.languageIn.some((inLanguage) => inLanguage === value.language))
   ) {
@@ -211,7 +187,7 @@ function $filterTerm(
   }
 
   if (
-    typeof filter.typeIn !== "undefined" &&
+    filter.typeIn !== undefined &&
     !filter.typeIn.some((inType) => inType === value.termType)
   ) {
     return false;
@@ -323,7 +299,7 @@ interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
-interface $NumericFilter<T extends bigint | number> {
+interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;
@@ -491,13 +467,13 @@ export namespace BaseShaclCoreShapeStatic {
     value: BaseShaclCoreShape,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.and !== "undefined" &&
+      filter.and !== undefined &&
       !$filterArray<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
@@ -510,7 +486,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.classes !== "undefined" &&
+      filter.classes !== undefined &&
       !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.classes,
         value.classes,
@@ -519,7 +495,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.comments !== "undefined" &&
+      filter.comments !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.comments,
         value.comments,
@@ -528,7 +504,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.datatype !== "undefined" &&
+      filter.datatype !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.datatype,
         value.datatype,
@@ -537,7 +513,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.deactivated !== "undefined" &&
+      filter.deactivated !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.deactivated,
         value.deactivated,
@@ -546,7 +522,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.flags !== "undefined" &&
+      filter.flags !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.flags,
         value.flags,
@@ -555,7 +531,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.hasValues !== "undefined" &&
+      filter.hasValues !== undefined &&
       !$filterArray<NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.hasValues,
         value.hasValues,
@@ -564,7 +540,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.in_ !== "undefined" &&
+      filter.in_ !== undefined &&
       !$filterMaybe<
         readonly (NamedNode | Literal)[],
         $CollectionFilter<$TermFilter>
@@ -576,7 +552,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.isDefinedBy !== "undefined" &&
+      filter.isDefinedBy !== undefined &&
       !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
       )(filter.isDefinedBy, value.isDefinedBy)
@@ -584,7 +560,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.labels !== "undefined" &&
+      filter.labels !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.labels,
         value.labels,
@@ -593,7 +569,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.languageIn !== "undefined" &&
+      filter.languageIn !== undefined &&
       !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
         $filterArray<string, $StringFilter>($filterString),
       )(filter.languageIn, value.languageIn)
@@ -601,7 +577,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.maxCount !== "undefined" &&
+      filter.maxCount !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.maxCount,
         value.maxCount,
@@ -610,7 +586,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.maxExclusive !== "undefined" &&
+      filter.maxExclusive !== undefined &&
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.maxExclusive,
         value.maxExclusive,
@@ -619,7 +595,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.maxInclusive !== "undefined" &&
+      filter.maxInclusive !== undefined &&
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.maxInclusive,
         value.maxInclusive,
@@ -628,7 +604,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.maxLength !== "undefined" &&
+      filter.maxLength !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.maxLength,
         value.maxLength,
@@ -637,7 +613,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.minCount !== "undefined" &&
+      filter.minCount !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.minCount,
         value.minCount,
@@ -646,7 +622,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.minExclusive !== "undefined" &&
+      filter.minExclusive !== undefined &&
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.minExclusive,
         value.minExclusive,
@@ -655,7 +631,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.minInclusive !== "undefined" &&
+      filter.minInclusive !== undefined &&
       !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
         filter.minInclusive,
         value.minInclusive,
@@ -664,7 +640,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.minLength !== "undefined" &&
+      filter.minLength !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.minLength,
         value.minLength,
@@ -673,7 +649,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.nodeKind !== "undefined" &&
+      filter.nodeKind !== undefined &&
       !$filterMaybe<
         NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
@@ -689,7 +665,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.nodes !== "undefined" &&
+      filter.nodes !== undefined &&
       !$filterArray<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
       )(filter.nodes, value.nodes)
@@ -697,7 +673,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.not !== "undefined" &&
+      filter.not !== undefined &&
       !$filterArray<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
       )(filter.not, value.not)
@@ -705,7 +681,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.or !== "undefined" &&
+      filter.or !== undefined &&
       !$filterArray<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
@@ -718,7 +694,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.patterns !== "undefined" &&
+      filter.patterns !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.patterns,
         value.patterns,
@@ -727,7 +703,7 @@ export namespace BaseShaclCoreShapeStatic {
       return false;
     }
     if (
-      typeof filter.xone !== "undefined" &&
+      filter.xone !== undefined &&
       !$filterArray<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
@@ -3213,7 +3189,7 @@ export namespace ShaclCorePropertyShapeStatic {
       return false;
     }
     if (
-      typeof filter.defaultValue !== "undefined" &&
+      filter.defaultValue !== undefined &&
       !$filterMaybe<NamedNode | Literal, $TermFilter>($filterTerm)(
         filter.defaultValue,
         value.defaultValue,
@@ -3222,7 +3198,7 @@ export namespace ShaclCorePropertyShapeStatic {
       return false;
     }
     if (
-      typeof filter.descriptions !== "undefined" &&
+      filter.descriptions !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.descriptions,
         value.descriptions,
@@ -3231,7 +3207,7 @@ export namespace ShaclCorePropertyShapeStatic {
       return false;
     }
     if (
-      typeof filter.groups !== "undefined" &&
+      filter.groups !== undefined &&
       !$filterArray<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
       )(filter.groups, value.groups)
@@ -3239,7 +3215,7 @@ export namespace ShaclCorePropertyShapeStatic {
       return false;
     }
     if (
-      typeof filter.names !== "undefined" &&
+      filter.names !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.names,
         value.names,
@@ -3248,7 +3224,7 @@ export namespace ShaclCorePropertyShapeStatic {
       return false;
     }
     if (
-      typeof filter.order !== "undefined" &&
+      filter.order !== undefined &&
       !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
         filter.order,
         value.order,
@@ -3257,13 +3233,13 @@ export namespace ShaclCorePropertyShapeStatic {
       return false;
     }
     if (
-      typeof filter.path !== "undefined" &&
+      filter.path !== undefined &&
       !PropertyPath.$filter(filter.path, value.path)
     ) {
       return false;
     }
     if (
-      typeof filter.uniqueLang !== "undefined" &&
+      filter.uniqueLang !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.uniqueLang,
         value.uniqueLang,
@@ -3788,7 +3764,7 @@ export namespace ShaclmatePropertyShape {
       return false;
     }
     if (
-      typeof filter.lazy !== "undefined" &&
+      filter.lazy !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.lazy,
         value.lazy,
@@ -3797,7 +3773,7 @@ export namespace ShaclmatePropertyShape {
       return false;
     }
     if (
-      typeof filter.mutable !== "undefined" &&
+      filter.mutable !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.mutable,
         value.mutable,
@@ -3806,7 +3782,7 @@ export namespace ShaclmatePropertyShape {
       return false;
     }
     if (
-      typeof filter.name !== "undefined" &&
+      filter.name !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.name,
         value.name,
@@ -3815,7 +3791,7 @@ export namespace ShaclmatePropertyShape {
       return false;
     }
     if (
-      typeof filter.partial !== "undefined" &&
+      filter.partial !== undefined &&
       !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
       )(filter.partial, value.partial)
@@ -3823,7 +3799,7 @@ export namespace ShaclmatePropertyShape {
       return false;
     }
     if (
-      typeof filter.visibility !== "undefined" &&
+      filter.visibility !== undefined &&
       !$filterMaybe<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_Visibility_Private"
@@ -4305,13 +4281,13 @@ export namespace OwlOntologyStatic {
     value: OwlOntology,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.labels !== "undefined" &&
+      filter.labels !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.labels,
         value.labels,
@@ -4545,7 +4521,7 @@ export namespace ShaclmateOntology {
       return false;
     }
     if (
-      typeof filter.tsFeatureExcludes !== "undefined" &&
+      filter.tsFeatureExcludes !== undefined &&
       !$filterArray<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -4565,7 +4541,7 @@ export namespace ShaclmateOntology {
       return false;
     }
     if (
-      typeof filter.tsFeatureIncludes !== "undefined" &&
+      filter.tsFeatureIncludes !== undefined &&
       !$filterArray<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -4585,7 +4561,7 @@ export namespace ShaclmateOntology {
       return false;
     }
     if (
-      typeof filter.tsImports !== "undefined" &&
+      filter.tsImports !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.tsImports,
         value.tsImports,
@@ -4594,7 +4570,7 @@ export namespace ShaclmateOntology {
       return false;
     }
     if (
-      typeof filter.tsObjectDeclarationType !== "undefined" &&
+      filter.tsObjectDeclarationType !== undefined &&
       !$filterMaybe<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
@@ -5519,7 +5495,7 @@ export namespace ShaclCoreNodeShapeStatic {
       return false;
     }
     if (
-      typeof filter.closed !== "undefined" &&
+      filter.closed !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.closed,
         value.closed,
@@ -5528,7 +5504,7 @@ export namespace ShaclCoreNodeShapeStatic {
       return false;
     }
     if (
-      typeof filter.ignoredProperties !== "undefined" &&
+      filter.ignoredProperties !== undefined &&
       !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
         $filterArray<NamedNode, $IriFilter>($filterIri),
       )(filter.ignoredProperties, value.ignoredProperties)
@@ -5536,7 +5512,7 @@ export namespace ShaclCoreNodeShapeStatic {
       return false;
     }
     if (
-      typeof filter.properties !== "undefined" &&
+      filter.properties !== undefined &&
       !$filterArray<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
       )(filter.properties, value.properties)
@@ -5936,7 +5912,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.abstract !== "undefined" &&
+      filter.abstract !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.abstract,
         value.abstract,
@@ -5945,7 +5921,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.discriminantValue !== "undefined" &&
+      filter.discriminantValue !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.discriminantValue,
         value.discriminantValue,
@@ -5954,7 +5930,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.export_ !== "undefined" &&
+      filter.export_ !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.export_,
         value.export_,
@@ -5963,7 +5939,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.extern !== "undefined" &&
+      filter.extern !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.extern,
         value.extern,
@@ -5972,7 +5948,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.fromRdfType !== "undefined" &&
+      filter.fromRdfType !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.fromRdfType,
         value.fromRdfType,
@@ -5981,7 +5957,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.identifierMintingStrategy !== "undefined" &&
+      filter.identifierMintingStrategy !== undefined &&
       !$filterMaybe<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
@@ -5997,7 +5973,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.mutable !== "undefined" &&
+      filter.mutable !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.mutable,
         value.mutable,
@@ -6006,7 +5982,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.name !== "undefined" &&
+      filter.name !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.name,
         value.name,
@@ -6015,7 +5991,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.rdfType !== "undefined" &&
+      filter.rdfType !== undefined &&
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.rdfType,
         value.rdfType,
@@ -6024,7 +6000,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.toRdfTypes !== "undefined" &&
+      filter.toRdfTypes !== undefined &&
       !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.toRdfTypes,
         value.toRdfTypes,
@@ -6033,7 +6009,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.tsFeatureExcludes !== "undefined" &&
+      filter.tsFeatureExcludes !== undefined &&
       !$filterArray<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -6053,7 +6029,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.tsFeatureIncludes !== "undefined" &&
+      filter.tsFeatureIncludes !== undefined &&
       !$filterArray<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -6073,7 +6049,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.tsImports !== "undefined" &&
+      filter.tsImports !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.tsImports,
         value.tsImports,
@@ -6082,7 +6058,7 @@ export namespace ShaclmateNodeShape {
       return false;
     }
     if (
-      typeof filter.tsObjectDeclarationType !== "undefined" &&
+      filter.tsObjectDeclarationType !== undefined &&
       !$filterMaybe<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
@@ -7766,13 +7742,13 @@ export namespace ShaclCorePropertyGroup {
     value: ShaclCorePropertyGroup,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.comments !== "undefined" &&
+      filter.comments !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.comments,
         value.comments,
@@ -7781,7 +7757,7 @@ export namespace ShaclCorePropertyGroup {
       return false;
     }
     if (
-      typeof filter.labels !== "undefined" &&
+      filter.labels !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.labels,
         value.labels,
@@ -8032,7 +8008,7 @@ export namespace ShaclCoreShape {
     value: ShaclCoreShape,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -8398,7 +8374,7 @@ export namespace ShaclmateShape {
     value: ShaclmateShape,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -8769,7 +8745,7 @@ export type $Object =
 export namespace $Object {
   export function $filter(filter: $Object.$Filter, value: $Object): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -9001,6 +8977,16 @@ export interface $ObjectSet {
     identifier: OwlOntologyStatic.$Identifier,
   ): Promise<Either<Error, OwlOntology>>;
 
+  owlOntologyCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        OwlOntologyStatic.$Filter,
+        OwlOntologyStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
   owlOntologyIdentifiers(
     query?: $ObjectSet.Query<
       OwlOntologyStatic.$Filter,
@@ -9015,19 +9001,19 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly OwlOntology[]>>;
 
-  owlOntologiesCount(
+  shaclCoreNodeShape(
+    identifier: ShaclCoreNodeShapeStatic.$Identifier,
+  ): Promise<Either<Error, ShaclCoreNodeShape>>;
+
+  shaclCoreNodeShapeCount(
     query?: Pick<
       $ObjectSet.Query<
-        OwlOntologyStatic.$Filter,
-        OwlOntologyStatic.$Identifier
+        ShaclCoreNodeShapeStatic.$Filter,
+        ShaclCoreNodeShapeStatic.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  shaclCoreNodeShape(
-    identifier: ShaclCoreNodeShapeStatic.$Identifier,
-  ): Promise<Either<Error, ShaclCoreNodeShape>>;
 
   shaclCoreNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -9043,19 +9029,19 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCoreNodeShape[]>>;
 
-  shaclCoreNodeShapesCount(
+  shaclCorePropertyGroup(
+    identifier: ShaclCorePropertyGroup.$Identifier,
+  ): Promise<Either<Error, ShaclCorePropertyGroup>>;
+
+  shaclCorePropertyGroupCount(
     query?: Pick<
       $ObjectSet.Query<
-        ShaclCoreNodeShapeStatic.$Filter,
-        ShaclCoreNodeShapeStatic.$Identifier
+        ShaclCorePropertyGroup.$Filter,
+        ShaclCorePropertyGroup.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  shaclCorePropertyGroup(
-    identifier: ShaclCorePropertyGroup.$Identifier,
-  ): Promise<Either<Error, ShaclCorePropertyGroup>>;
 
   shaclCorePropertyGroupIdentifiers(
     query?: $ObjectSet.Query<
@@ -9071,19 +9057,19 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCorePropertyGroup[]>>;
 
-  shaclCorePropertyGroupsCount(
+  shaclCorePropertyShape(
+    identifier: ShaclCorePropertyShapeStatic.$Identifier,
+  ): Promise<Either<Error, ShaclCorePropertyShape>>;
+
+  shaclCorePropertyShapeCount(
     query?: Pick<
       $ObjectSet.Query<
-        ShaclCorePropertyGroup.$Filter,
-        ShaclCorePropertyGroup.$Identifier
+        ShaclCorePropertyShapeStatic.$Filter,
+        ShaclCorePropertyShapeStatic.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  shaclCorePropertyShape(
-    identifier: ShaclCorePropertyShapeStatic.$Identifier,
-  ): Promise<Either<Error, ShaclCorePropertyShape>>;
 
   shaclCorePropertyShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -9101,19 +9087,19 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCorePropertyShape[]>>;
 
-  shaclCorePropertyShapesCount(
+  shaclmateNodeShape(
+    identifier: ShaclmateNodeShape.$Identifier,
+  ): Promise<Either<Error, ShaclmateNodeShape>>;
+
+  shaclmateNodeShapeCount(
     query?: Pick<
       $ObjectSet.Query<
-        ShaclCorePropertyShapeStatic.$Filter,
-        ShaclCorePropertyShapeStatic.$Identifier
+        ShaclmateNodeShape.$Filter,
+        ShaclmateNodeShape.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  shaclmateNodeShape(
-    identifier: ShaclmateNodeShape.$Identifier,
-  ): Promise<Either<Error, ShaclmateNodeShape>>;
 
   shaclmateNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -9129,19 +9115,19 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmateNodeShape[]>>;
 
-  shaclmateNodeShapesCount(
+  shaclmateOntology(
+    identifier: ShaclmateOntology.$Identifier,
+  ): Promise<Either<Error, ShaclmateOntology>>;
+
+  shaclmateOntologyCount(
     query?: Pick<
       $ObjectSet.Query<
-        ShaclmateNodeShape.$Filter,
-        ShaclmateNodeShape.$Identifier
+        ShaclmateOntology.$Filter,
+        ShaclmateOntology.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  shaclmateOntology(
-    identifier: ShaclmateOntology.$Identifier,
-  ): Promise<Either<Error, ShaclmateOntology>>;
 
   shaclmateOntologyIdentifiers(
     query?: $ObjectSet.Query<
@@ -9157,19 +9143,19 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmateOntology[]>>;
 
-  shaclmateOntologiesCount(
+  shaclmatePropertyShape(
+    identifier: ShaclmatePropertyShape.$Identifier,
+  ): Promise<Either<Error, ShaclmatePropertyShape>>;
+
+  shaclmatePropertyShapeCount(
     query?: Pick<
       $ObjectSet.Query<
-        ShaclmateOntology.$Filter,
-        ShaclmateOntology.$Identifier
+        ShaclmatePropertyShape.$Filter,
+        ShaclmatePropertyShape.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  shaclmatePropertyShape(
-    identifier: ShaclmatePropertyShape.$Identifier,
-  ): Promise<Either<Error, ShaclmatePropertyShape>>;
 
   shaclmatePropertyShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -9185,19 +9171,16 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmatePropertyShape[]>>;
 
-  shaclmatePropertyShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmatePropertyShape.$Filter,
-        ShaclmatePropertyShape.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
   shaclCoreShape(
     identifier: ShaclCoreShape.$Identifier,
   ): Promise<Either<Error, ShaclCoreShape>>;
+
+  shaclCoreShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<ShaclCoreShape.$Filter, ShaclCoreShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
 
   shaclCoreShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -9213,16 +9196,16 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCoreShape[]>>;
 
-  shaclCoreShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<ShaclCoreShape.$Filter, ShaclCoreShape.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
   shaclmateShape(
     identifier: ShaclmateShape.$Identifier,
   ): Promise<Either<Error, ShaclmateShape>>;
+
+  shaclmateShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<ShaclmateShape.$Filter, ShaclmateShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
 
   shaclmateShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -9238,14 +9221,14 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmateShape[]>>;
 
-  shaclmateShapesCount(
+  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+
+  objectCount(
     query?: Pick<
-      $ObjectSet.Query<ShaclmateShape.$Filter, ShaclmateShape.$Identifier>,
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
 
   objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
@@ -9254,13 +9237,6 @@ export interface $ObjectSet {
   objects(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>>;
-
-  objectsCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
 }
 
 export namespace $ObjectSet {
@@ -9295,6 +9271,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async owlOntologyCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        OwlOntologyStatic.$Filter,
+        OwlOntologyStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.owlOntologyCountSync(query);
+  }
+
+  owlOntologyCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        OwlOntologyStatic.$Filter,
+        OwlOntologyStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.owlOntologiesSync(query).map((objects) => objects.length);
+  }
+
   async owlOntologyIdentifiers(
     query?: $ObjectSet.Query<
       OwlOntologyStatic.$Filter,
@@ -9322,30 +9322,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly OwlOntology[]>> {
     return this.owlOntologiesSync(query);
-  }
-
-  async owlOntologiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        OwlOntologyStatic.$Filter,
-        OwlOntologyStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.owlOntologiesCountSync(query);
-  }
-
-  owlOntologiesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        OwlOntologyStatic.$Filter,
-        OwlOntologyStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.owlOntologiesSync(query).map((objects) => objects.length);
   }
 
   owlOntologiesSync(
@@ -9385,6 +9361,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclCoreNodeShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclCoreNodeShapeStatic.$Filter,
+        ShaclCoreNodeShapeStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclCoreNodeShapeCountSync(query);
+  }
+
+  shaclCoreNodeShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclCoreNodeShapeStatic.$Filter,
+        ShaclCoreNodeShapeStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclCoreNodeShapesSync(query).map((objects) => objects.length);
+  }
+
   async shaclCoreNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
       ShaclCoreNodeShapeStatic.$Filter,
@@ -9412,30 +9412,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCoreNodeShape[]>> {
     return this.shaclCoreNodeShapesSync(query);
-  }
-
-  async shaclCoreNodeShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclCoreNodeShapeStatic.$Filter,
-        ShaclCoreNodeShapeStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclCoreNodeShapesCountSync(query);
-  }
-
-  shaclCoreNodeShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclCoreNodeShapeStatic.$Filter,
-        ShaclCoreNodeShapeStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclCoreNodeShapesSync(query).map((objects) => objects.length);
   }
 
   shaclCoreNodeShapesSync(
@@ -9475,6 +9451,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclCorePropertyGroupCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclCorePropertyGroup.$Filter,
+        ShaclCorePropertyGroup.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclCorePropertyGroupCountSync(query);
+  }
+
+  shaclCorePropertyGroupCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclCorePropertyGroup.$Filter,
+        ShaclCorePropertyGroup.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclCorePropertyGroupsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
   async shaclCorePropertyGroupIdentifiers(
     query?: $ObjectSet.Query<
       ShaclCorePropertyGroup.$Filter,
@@ -9502,32 +9504,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCorePropertyGroup[]>> {
     return this.shaclCorePropertyGroupsSync(query);
-  }
-
-  async shaclCorePropertyGroupsCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclCorePropertyGroup.$Filter,
-        ShaclCorePropertyGroup.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclCorePropertyGroupsCountSync(query);
-  }
-
-  shaclCorePropertyGroupsCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclCorePropertyGroup.$Filter,
-        ShaclCorePropertyGroup.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclCorePropertyGroupsSync(query).map(
-      (objects) => objects.length,
-    );
   }
 
   shaclCorePropertyGroupsSync(
@@ -9564,6 +9540,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclCorePropertyShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclCorePropertyShapeStatic.$Filter,
+        ShaclCorePropertyShapeStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclCorePropertyShapeCountSync(query);
+  }
+
+  shaclCorePropertyShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclCorePropertyShapeStatic.$Filter,
+        ShaclCorePropertyShapeStatic.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclCorePropertyShapesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
   async shaclCorePropertyShapeIdentifiers(
     query?: $ObjectSet.Query<
       ShaclCorePropertyShapeStatic.$Filter,
@@ -9593,32 +9595,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCorePropertyShape[]>> {
     return this.shaclCorePropertyShapesSync(query);
-  }
-
-  async shaclCorePropertyShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclCorePropertyShapeStatic.$Filter,
-        ShaclCorePropertyShapeStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclCorePropertyShapesCountSync(query);
-  }
-
-  shaclCorePropertyShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclCorePropertyShapeStatic.$Filter,
-        ShaclCorePropertyShapeStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclCorePropertyShapesSync(query).map(
-      (objects) => objects.length,
-    );
   }
 
   shaclCorePropertyShapesSync(
@@ -9658,6 +9634,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclmateNodeShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclmateNodeShape.$Filter,
+        ShaclmateNodeShape.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclmateNodeShapeCountSync(query);
+  }
+
+  shaclmateNodeShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclmateNodeShape.$Filter,
+        ShaclmateNodeShape.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclmateNodeShapesSync(query).map((objects) => objects.length);
+  }
+
   async shaclmateNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
       ShaclmateNodeShape.$Filter,
@@ -9685,30 +9685,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmateNodeShape[]>> {
     return this.shaclmateNodeShapesSync(query);
-  }
-
-  async shaclmateNodeShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmateNodeShape.$Filter,
-        ShaclmateNodeShape.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclmateNodeShapesCountSync(query);
-  }
-
-  shaclmateNodeShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmateNodeShape.$Filter,
-        ShaclmateNodeShape.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclmateNodeShapesSync(query).map((objects) => objects.length);
   }
 
   shaclmateNodeShapesSync(
@@ -9745,6 +9721,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclmateOntologyCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclmateOntology.$Filter,
+        ShaclmateOntology.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclmateOntologyCountSync(query);
+  }
+
+  shaclmateOntologyCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclmateOntology.$Filter,
+        ShaclmateOntology.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclmateOntologiesSync(query).map((objects) => objects.length);
+  }
+
   async shaclmateOntologyIdentifiers(
     query?: $ObjectSet.Query<
       ShaclmateOntology.$Filter,
@@ -9772,30 +9772,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmateOntology[]>> {
     return this.shaclmateOntologiesSync(query);
-  }
-
-  async shaclmateOntologiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmateOntology.$Filter,
-        ShaclmateOntology.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclmateOntologiesCountSync(query);
-  }
-
-  shaclmateOntologiesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmateOntology.$Filter,
-        ShaclmateOntology.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclmateOntologiesSync(query).map((objects) => objects.length);
   }
 
   shaclmateOntologiesSync(
@@ -9832,6 +9808,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclmatePropertyShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclmatePropertyShape.$Filter,
+        ShaclmatePropertyShape.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclmatePropertyShapeCountSync(query);
+  }
+
+  shaclmatePropertyShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ShaclmatePropertyShape.$Filter,
+        ShaclmatePropertyShape.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclmatePropertyShapesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
   async shaclmatePropertyShapeIdentifiers(
     query?: $ObjectSet.Query<
       ShaclmatePropertyShape.$Filter,
@@ -9859,32 +9861,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmatePropertyShape[]>> {
     return this.shaclmatePropertyShapesSync(query);
-  }
-
-  async shaclmatePropertyShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmatePropertyShape.$Filter,
-        ShaclmatePropertyShape.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclmatePropertyShapesCountSync(query);
-  }
-
-  shaclmatePropertyShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        ShaclmatePropertyShape.$Filter,
-        ShaclmatePropertyShape.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclmatePropertyShapesSync(query).map(
-      (objects) => objects.length,
-    );
   }
 
   shaclmatePropertyShapesSync(
@@ -9921,6 +9897,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclCoreShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<ShaclCoreShape.$Filter, ShaclCoreShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclCoreShapeCountSync(query);
+  }
+
+  shaclCoreShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<ShaclCoreShape.$Filter, ShaclCoreShape.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclCoreShapesSync(query).map((objects) => objects.length);
+  }
+
   async shaclCoreShapeIdentifiers(
     query?: $ObjectSet.Query<
       ShaclCoreShape.$Filter,
@@ -9948,24 +9942,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclCoreShape[]>> {
     return this.shaclCoreShapesSync(query);
-  }
-
-  async shaclCoreShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<ShaclCoreShape.$Filter, ShaclCoreShape.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclCoreShapesCountSync(query);
-  }
-
-  shaclCoreShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ShaclCoreShape.$Filter, ShaclCoreShape.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclCoreShapesSync(query).map((objects) => objects.length);
   }
 
   shaclCoreShapesSync(
@@ -10015,6 +9991,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async shaclmateShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<ShaclmateShape.$Filter, ShaclmateShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.shaclmateShapeCountSync(query);
+  }
+
+  shaclmateShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<ShaclmateShape.$Filter, ShaclmateShape.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.shaclmateShapesSync(query).map((objects) => objects.length);
+  }
+
   async shaclmateShapeIdentifiers(
     query?: $ObjectSet.Query<
       ShaclmateShape.$Filter,
@@ -10042,24 +10036,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly ShaclmateShape[]>> {
     return this.shaclmateShapesSync(query);
-  }
-
-  async shaclmateShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<ShaclmateShape.$Filter, ShaclmateShape.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.shaclmateShapesCountSync(query);
-  }
-
-  shaclmateShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ShaclmateShape.$Filter, ShaclmateShape.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.shaclmateShapesSync(query).map((objects) => objects.length);
   }
 
   shaclmateShapesSync(
@@ -10104,6 +10080,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async objectCount(
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.objectCountSync(query);
+  }
+
+  objectCountSync(
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.objectsSync(query).map((objects) => objects.length);
+  }
+
   async objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
@@ -10122,24 +10116,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>> {
     return this.objectsSync(query);
-  }
-
-  async objectsCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.objectsCountSync(query);
-  }
-
-  objectsCountSync(
-    query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.objectsSync(query).map((objects) => objects.length);
   }
 
   objectsSync(

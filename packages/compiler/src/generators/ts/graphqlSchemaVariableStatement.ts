@@ -74,9 +74,9 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
         type: code`new ${imports.GraphQLNonNull}(new ${imports.GraphQLList}(${objectType.graphqlType.name}))`,
       };
 
-      fields[objectType.objectSetMethodNames.objectsCount] = {
+      fields[objectType.objectSetMethodNames.objectCount] = {
         resolve: code`\
-async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${objectType.objectSetMethodNames.objectsCount}()).unsafeCoerce()`,
+async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${objectType.objectSetMethodNames.objectCount}()).unsafeCoerce()`,
         type: code`new ${imports.GraphQLNonNull}(${imports.GraphQLInt})`,
       };
 

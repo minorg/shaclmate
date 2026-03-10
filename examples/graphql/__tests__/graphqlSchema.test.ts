@@ -167,11 +167,11 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("objectsCount", async ({ expect }) => {
-    const result = await execute("query { childrenCount }");
+  it("objectCount", async ({ expect }) => {
+    const result = await execute("query { childCount }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      childrenCount: 4,
+      childCount: 4,
     });
   });
 
@@ -238,11 +238,11 @@ query {
     });
   });
 
-  it("union objectsCount", async ({ expect }) => {
-    const result = await execute("query { unionsCount }");
+  it("union objectCount", async ({ expect }) => {
+    const result = await execute("query { unionCount }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      unionsCount: 4,
+      unionCount: 4,
     });
   });
 });

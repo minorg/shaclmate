@@ -497,7 +497,7 @@ export namespace ObjectType {
   export type IdentifierProperty = _IdentifierProperty;
   export type ObjectSetMethodNames = {
     readonly object: string;
-    readonly objectsCount: string;
+    readonly objectCount: string;
     readonly objectIdentifiers: string;
     readonly objects: string;
   };

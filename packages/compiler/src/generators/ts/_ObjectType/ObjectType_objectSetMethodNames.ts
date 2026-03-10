@@ -16,8 +16,8 @@ export function ObjectType_objectSetMethodNames(this: {
 
   return {
     object: prefixSingular,
+    objectCount: `${prefixSingular}Count`,
     objectIdentifiers: `${prefixSingular}Identifiers`,
     objects: prefixPlural,
-    objectsCount: `${prefixPlural}Count`,
   };
 }

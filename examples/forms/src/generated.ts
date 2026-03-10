@@ -150,17 +150,11 @@ function $filterArray<ItemT, ItemFilterT>(
       }
     }
 
-    if (
-      typeof filter.$maxCount !== "undefined" &&
-      values.length > filter.$maxCount
-    ) {
+    if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
       return false;
     }
 
-    if (
-      typeof filter.$minCount !== "undefined" &&
-      values.length < filter.$minCount
-    ) {
+    if (filter.$minCount !== undefined && values.length < filter.$minCount) {
       return false;
     }
 
@@ -173,13 +167,13 @@ function $filterIdentifier(
   value: BlankNode | NamedNode,
 ) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
   }
 
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (filter.type !== undefined && value.termType !== filter.type) {
     return false;
   }
 
@@ -213,37 +207,25 @@ function $filterNumeric<T extends bigint | number>(
   value: T,
 ) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
   ) {
     return false;
   }
 
-  if (
-    typeof filter.maxExclusive !== "undefined" &&
-    value >= filter.maxExclusive
-  ) {
+  if (filter.maxExclusive !== undefined && value >= filter.maxExclusive) {
     return false;
   }
 
-  if (
-    typeof filter.maxInclusive !== "undefined" &&
-    value > filter.maxInclusive
-  ) {
+  if (filter.maxInclusive !== undefined && value > filter.maxInclusive) {
     return false;
   }
 
-  if (
-    typeof filter.minExclusive !== "undefined" &&
-    value <= filter.minExclusive
-  ) {
+  if (filter.minExclusive !== undefined && value <= filter.minExclusive) {
     return false;
   }
 
-  if (
-    typeof filter.minInclusive !== "undefined" &&
-    value < filter.minInclusive
-  ) {
+  if (filter.minInclusive !== undefined && value < filter.minInclusive) {
     return false;
   }
 
@@ -252,23 +234,17 @@ function $filterNumeric<T extends bigint | number>(
 
 function $filterString(filter: $StringFilter, value: string) {
   if (
-    typeof filter.in !== "undefined" &&
+    filter.in !== undefined &&
     !filter.in.some((inValue) => inValue === value)
   ) {
     return false;
   }
 
-  if (
-    typeof filter.maxLength !== "undefined" &&
-    value.length > filter.maxLength
-  ) {
+  if (filter.maxLength !== undefined && value.length > filter.maxLength) {
     return false;
   }
 
-  if (
-    typeof filter.minLength !== "undefined" &&
-    value.length < filter.minLength
-  ) {
+  if (filter.minLength !== undefined && value.length < filter.minLength) {
     return false;
   }
 
@@ -397,7 +373,7 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
-interface $NumericFilter<T extends bigint | number> {
+interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;
@@ -606,13 +582,13 @@ export namespace NestedNodeShape {
     value: NestedNodeShape,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.requiredStringProperty !== "undefined" &&
+      filter.requiredStringProperty !== undefined &&
       !$filterString(
         filter.requiredStringProperty,
         value.requiredStringProperty,
@@ -1064,13 +1040,13 @@ export namespace FormNodeShape {
     value: FormNodeShape,
   ): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
     }
     if (
-      typeof filter.emptyStringSetProperty !== "undefined" &&
+      filter.emptyStringSetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.emptyStringSetProperty,
         value.emptyStringSetProperty,
@@ -1079,7 +1055,7 @@ export namespace FormNodeShape {
       return false;
     }
     if (
-      typeof filter.nestedObjectProperty !== "undefined" &&
+      filter.nestedObjectProperty !== undefined &&
       !NestedNodeShape.$filter(
         filter.nestedObjectProperty,
         value.nestedObjectProperty,
@@ -1088,7 +1064,7 @@ export namespace FormNodeShape {
       return false;
     }
     if (
-      typeof filter.nonEmptyStringSetProperty !== "undefined" &&
+      filter.nonEmptyStringSetProperty !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.nonEmptyStringSetProperty,
         value.nonEmptyStringSetProperty,
@@ -1097,7 +1073,7 @@ export namespace FormNodeShape {
       return false;
     }
     if (
-      typeof filter.optionalStringProperty !== "undefined" &&
+      filter.optionalStringProperty !== undefined &&
       !$filterMaybe<string, $StringFilter>($filterString)(
         filter.optionalStringProperty,
         value.optionalStringProperty,
@@ -1106,7 +1082,7 @@ export namespace FormNodeShape {
       return false;
     }
     if (
-      typeof filter.requiredIntegerProperty !== "undefined" &&
+      filter.requiredIntegerProperty !== undefined &&
       !$filterNumeric<number>(
         filter.requiredIntegerProperty,
         value.requiredIntegerProperty,
@@ -1115,7 +1091,7 @@ export namespace FormNodeShape {
       return false;
     }
     if (
-      typeof filter.requiredStringProperty !== "undefined" &&
+      filter.requiredStringProperty !== undefined &&
       !$filterString(
         filter.requiredStringProperty,
         value.requiredStringProperty,
@@ -1682,7 +1658,7 @@ export namespace $Object {
 
   export function $filter(filter: $Object.$Filter, value: $Object): boolean {
     if (
-      typeof filter.$identifier !== "undefined" &&
+      filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
     ) {
       return false;
@@ -1815,6 +1791,13 @@ export interface $ObjectSet {
     identifier: FormNodeShape.$Identifier,
   ): Promise<Either<Error, FormNodeShape>>;
 
+  formNodeShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
   formNodeShapeIdentifiers(
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape.$Identifier[]>>;
@@ -1823,16 +1806,16 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape[]>>;
 
-  formNodeShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
   nestedNodeShape(
     identifier: NestedNodeShape.$Identifier,
   ): Promise<Either<Error, NestedNodeShape>>;
+
+  nestedNodeShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
 
   nestedNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
@@ -1848,14 +1831,14 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>>;
 
-  nestedNodeShapesCount(
+  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+
+  objectCount(
     query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
-
-  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
 
   objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
@@ -1864,13 +1847,6 @@ export interface $ObjectSet {
   objects(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>>;
-
-  objectsCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
 }
 
 export namespace $ObjectSet {
@@ -1905,6 +1881,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async formNodeShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.formNodeShapeCountSync(query);
+  }
+
+  formNodeShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.formNodeShapesSync(query).map((objects) => objects.length);
+  }
+
   async formNodeShapeIdentifiers(
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape.$Identifier[]>> {
@@ -1923,24 +1917,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape[]>> {
     return this.formNodeShapesSync(query);
-  }
-
-  async formNodeShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.formNodeShapesCountSync(query);
-  }
-
-  formNodeShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.formNodeShapesSync(query).map((objects) => objects.length);
   }
 
   formNodeShapesSync(
@@ -1974,6 +1950,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async nestedNodeShapeCount(
+    query?: Pick<
+      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.nestedNodeShapeCountSync(query);
+  }
+
+  nestedNodeShapeCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.nestedNodeShapesSync(query).map((objects) => objects.length);
+  }
+
   async nestedNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
       NestedNodeShape.$Filter,
@@ -2001,24 +1995,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>> {
     return this.nestedNodeShapesSync(query);
-  }
-
-  async nestedNodeShapesCount(
-    query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.nestedNodeShapesCountSync(query);
-  }
-
-  nestedNodeShapesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.nestedNodeShapesSync(query).map((objects) => objects.length);
   }
 
   nestedNodeShapesSync(
@@ -2053,6 +2029,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async objectCount(
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.objectCountSync(query);
+  }
+
+  objectCountSync(
+    query?: Pick<
+      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.objectsSync(query).map((objects) => objects.length);
+  }
+
   async objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
@@ -2071,24 +2065,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>> {
     return this.objectsSync(query);
-  }
-
-  async objectsCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.objectsCountSync(query);
-  }
-
-  objectsCountSync(
-    query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.objectsSync(query).map((objects) => objects.length);
   }
 
   objectsSync(

@@ -34,12 +34,12 @@ export function unsupportedObjectSetMethodDeclarations({
   });
   return {
     object: unsupportedObjectSetMethodDeclaration(methodSignatures.object),
+    objectCount: unsupportedObjectSetMethodDeclaration(
+      methodSignatures.objectCount,
+    ),
     objectIdentifiers: unsupportedObjectSetMethodDeclaration(
       methodSignatures.objectIdentifiers,
     ),
     objects: unsupportedObjectSetMethodDeclaration(methodSignatures.objects),
-    objectsCount: unsupportedObjectSetMethodDeclaration(
-      methodSignatures.objectsCount,
-    ),
   };
 }
