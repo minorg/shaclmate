@@ -33,6 +33,11 @@ export function objectSetMethodSignatures(parameters: {
       parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}`,
       returnType: code`Promise<${imports.Either}<Error, ${objectType.name}>>`,
     },
+    objectCount: {
+      name: methodNames.objectCount,
+      parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>, "filter">`,
+      returnType: code`Promise<${imports.Either}<Error, number>>`,
+    },
     objectIdentifiers: {
       name: methodNames.objectIdentifiers,
       parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
@@ -42,11 +47,6 @@ export function objectSetMethodSignatures(parameters: {
       name: methodNames.objects,
       parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
       returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.name}[]>>`,
-    },
-    objectsCount: {
-      name: methodNames.objectsCount,
-      parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>, "filter">`,
-      returnType: code`Promise<${imports.Either}<Error, number>>`,
     },
   };
 }

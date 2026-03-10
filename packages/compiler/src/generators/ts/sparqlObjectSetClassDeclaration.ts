@@ -65,16 +65,16 @@ async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${
   return (await this.${methodSignatures.objects.name}({ identifiers: [identifier] })).map(objects => objects[0]);
 }`,
         code`\
+async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
+  return this.${syntheticNamePrefix}objectCount<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
+}`,
+        code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
   return this.${syntheticNamePrefix}objectIdentifiers<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
         code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
   return this.${syntheticNamePrefix}objects<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
-}`,
-        code`\
-async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.parameters}): ${methodSignatures.objectsCount.returnType} {
-  return this.${syntheticNamePrefix}objectsCount<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
       ];
     },
@@ -188,7 +188,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
     });
   }
 
-  protected async ${syntheticNamePrefix}objectsCount<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, number>> {
+  protected async ${syntheticNamePrefix}objectCount<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, number>> {
     const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
     if (wherePatterns.length === 0) {
       return ${imports.Left}(new Error("no SPARQL WHERE patterns for count"));
