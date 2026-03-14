@@ -34,9 +34,11 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
   return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
+  protected readonly graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
   protected readonly resourceSet: ${imports.ResourceSet};
 
-  constructor(dataset: ${imports.DatasetCore}) {
+  constructor(dataset: ${imports.DatasetCore}, options?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}> }) {
+    this.graph = options?.graph;
     this.resourceSet = new ${imports.ResourceSet}(dataset, { dataFactory: ${imports.dataFactory} });
   }
 
@@ -142,6 +144,8 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
+  const graph = query?.graph ?? this.graph;
+
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
 
@@ -158,7 +162,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     resources = [];
     sortResources = true;
     for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+      for (const resource of this.resourceSet.instancesOf(fromRdfType, { graph })) {
         if (!identifierSet.has(resource.identifier)) {
           identifierSet.add(resource.identifier);
           resources.push({ resource });
@@ -170,6 +174,10 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     resources = [];
     sortResources = true;
     for (const quad of this.resourceSet.dataset) {
+      if (graph && !quad.graph.equals(graph)) {
+        continue;
+      }
+
       switch (quad.subject.termType) {
         case "BlankNode":
         case "NamedNode":
@@ -184,7 +192,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
       identifierSet.add(quad.subject);
       const resource = this.resourceSet.resource(quad.subject);
       // Eagerly eliminate the majority of resources that won't match the object type
-      objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
+      objectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this }).ifRight(object => {
         resources.push({ object, resource });
       });
     }
@@ -199,7 +207,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   const objects: ObjectT[] = [];
   for (let { object, resource } of resources) {
     if (!object) {
-      const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+      const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this });
       if (objectEither.isLeft()) {
         return objectEither;
       }
@@ -226,6 +234,8 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
         ? [
             code`\
 protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
+  const graph = query?.graph ?? this.graph;
+
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
 
@@ -243,7 +253,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     sortResources = true;
     for (const objectType of objectTypes) {
       for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType, { graph })) {
           if (!identifierSet.has(resource.identifier)) {
             identifierSet.add(resource.identifier);
             resources.push({ objectType, resource });
@@ -256,6 +266,10 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     resources = [];
     sortResources = true;
     for (const quad of this.resourceSet.dataset) {
+      if (graph && !quad.graph.equals(graph)) {
+        continue;
+      }
+    
       switch (quad.subject.termType) {
         case "BlankNode":
         case "NamedNode":
@@ -271,7 +285,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
       // Eagerly eliminate the majority of resources that won't match the object types
       const resource = this.resourceSet.resource(quad.subject);
       for (const objectType of objectTypes) {
-        if (objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
+        if (objectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this }).ifRight(object => {
           resources.push({ object, objectType, resource });
         }).isRight()) {
           break;
@@ -291,11 +305,11 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     if (!object) {
       let objectEither: ${imports.Either}<Error, ObjectT>;
       if (objectType) {
-        objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+        objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this });
       } else {
         objectEither = ${imports.Left}(new Error("no object types"));
         for (const tryObjectType of objectTypes) {
-          objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+          objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this });
           if (objectEither.isRight()) {
             objectType = tryObjectType;
             break;

@@ -76170,15 +76170,21 @@ export namespace $ObjectSet {
     ObjectIdentifierT extends BlankNode | NamedNode,
   > {
     readonly filter?: ObjectFilterT;
+    readonly graph?: Exclude<Quad_Graph, Variable>;
     readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;
   }
 }
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
+  protected readonly graph?: Exclude<Quad_Graph, Variable>;
   protected readonly resourceSet: ResourceSet;
 
-  constructor(dataset: DatasetCore) {
+  constructor(
+    dataset: DatasetCore,
+    options?: { graph?: Exclude<Quad_Graph, Variable> },
+  ) {
+    this.graph = options?.graph;
     this.resourceSet = new ResourceSet(dataset, { dataFactory: dataFactory });
   }
 
@@ -83450,6 +83456,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
+    const graph = query?.graph ?? this.graph;
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return Either.of([]);
@@ -83472,7 +83480,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const fromRdfType of objectType.$fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+          graph,
+        })) {
           if (!identifierSet.has(resource.identifier)) {
             identifierSet.add(resource.identifier);
             resources.push({ resource });
@@ -83484,6 +83494,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const quad of this.resourceSet.dataset) {
+        if (graph && !quad.graph.equals(graph)) {
+          continue;
+        }
+
         switch (quad.subject.termType) {
           case "BlankNode":
           case "NamedNode":
@@ -83498,9 +83512,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         const resource = this.resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
-        objectType.$fromRdf(resource, { objectSet: this }).ifRight((object) => {
-          resources.push({ object, resource });
-        });
+        objectType
+          .$fromRdf(resource, { graph, objectSet: this })
+          .ifRight((object) => {
+            resources.push({ object, resource });
+          });
       }
     }
 
@@ -83517,7 +83533,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = objectType.$fromRdf(resource, { objectSet: this });
+        const objectEither = objectType.$fromRdf(resource, {
+          graph,
+          objectSet: this,
+        });
         if (objectEither.isLeft()) {
           return objectEither;
         }
@@ -83553,6 +83572,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
+    const graph = query?.graph ?? this.graph;
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return Either.of([]);
@@ -83589,7 +83610,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       sortResources = true;
       for (const objectType of objectTypes) {
         for (const fromRdfType of objectType.$fromRdfTypes) {
-          for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+            graph,
+          })) {
             if (!identifierSet.has(resource.identifier)) {
               identifierSet.add(resource.identifier);
               resources.push({ objectType, resource });
@@ -83602,6 +83625,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const quad of this.resourceSet.dataset) {
+        if (graph && !quad.graph.equals(graph)) {
+          continue;
+        }
+
         switch (quad.subject.termType) {
           case "BlankNode":
           case "NamedNode":
@@ -83619,7 +83646,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         for (const objectType of objectTypes) {
           if (
             objectType
-              .$fromRdf(resource, { objectSet: this })
+              .$fromRdf(resource, { graph, objectSet: this })
               .ifRight((object) => {
                 resources.push({ object, objectType, resource });
               })
@@ -83646,11 +83673,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
         if (objectType) {
-          objectEither = objectType.$fromRdf(resource, { objectSet: this });
+          objectEither = objectType.$fromRdf(resource, {
+            graph,
+            objectSet: this,
+          });
         } else {
           objectEither = Left(new Error("no object types"));
           for (const tryObjectType of objectTypes) {
             objectEither = tryObjectType.$fromRdf(resource, {
+              graph,
               objectSet: this,
             });
             if (objectEither.isRight()) {
@@ -83684,6 +83715,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 }
 export class $SparqlObjectSet implements $ObjectSet {
   protected readonly $countVariable = dataFactory.variable!("count");
+  protected readonly graph?: Exclude<Quad_Graph, Variable>;
   protected readonly $objectVariable = dataFactory.variable!("object");
   protected readonly $sparqlGenerator = new sparqljs.Generator();
 
@@ -83694,7 +83726,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       ) => Promise<readonly Record<string, BlankNode | Literal | NamedNode>[]>;
       queryQuads: (query: string) => Promise<readonly Quad[]>;
     },
-  ) {}
+    options?: { graph?: Exclude<Quad_Graph, Variable> },
+  ) {
+    this.graph = options?.graph;
+  }
 
   async baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
@@ -87641,20 +87676,40 @@ export class $SparqlObjectSet implements $ObjectSet {
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): readonly sparqljs.Pattern[] {
     // Patterns should be most to least specific.
-    const patterns: sparqljs.Pattern[] = [];
+    let patterns: sparqljs.Pattern[] = [];
 
     if (query?.where) {
-      patterns.push(...query.where(this.$objectVariable));
+      patterns = patterns.concat(query.where(this.$objectVariable));
     }
 
-    patterns.push(
-      ...objectType.$sparqlWherePatterns({
+    patterns = patterns.concat(
+      objectType.$sparqlWherePatterns({
         filter: query?.filter,
         subject: this.$objectVariable,
       }),
     );
 
-    return $normalizeSparqlWherePatterns(patterns);
+    patterns = $normalizeSparqlWherePatterns(patterns);
+
+    const graph = query?.graph ?? this.graph;
+    if (graph) {
+      switch (graph.termType) {
+        case "DefaultGraph":
+          return patterns; // Patterns without a GRAPH pattern around them query the default graph
+        case "NamedNode":
+          return [{ name: graph, patterns, type: "graph" }];
+      }
+    }
+    // Union of all graphs: { ... patterns covering default graph ... } UNION { GRAPH ?g { ... patterns covering named graphs ... } }
+    return [
+      {
+        patterns: [
+          patterns,
+          { name: dataFactory.variable!("g"), patterns, type: "graph" },
+        ],
+        type: "union",
+      },
+    ];
   }
 }
 
