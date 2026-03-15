@@ -1,4 +1,5 @@
 import dataFactory from "@rdfjs/data-model";
+import type { NamedNode } from "@rdfjs/types";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
 import type { ObjectSetFactory } from "./ObjectSetFactory.js";
