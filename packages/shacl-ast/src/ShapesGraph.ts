@@ -204,13 +204,13 @@ export namespace ShapesGraph {
       });
 
       return Either.encase(() => {
-        function readGraph(): BlankNode | DefaultGraph | NamedNode | null {
+        function readGraph(): BlankNode | DefaultGraph | NamedNode | undefined {
           const graphs = new TermSet();
           for (const quad of dataset) {
             graphs.add(quad.graph);
           }
           if (graphs.size !== 1) {
-            return null;
+            return undefined;
           }
           const graph = [...graphs.values()][0];
           switch (graph.termType) {

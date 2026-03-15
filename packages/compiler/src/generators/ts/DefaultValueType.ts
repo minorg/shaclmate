@@ -166,7 +166,7 @@ export class DefaultValueType<
     return this.itemType.fromRdfExpression({
       variables: {
         ...variables,
-        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.TermValue(${{ focusResource: variables.resource, predicate: variables.predicate, term: this.defaultValueTermExpression }}).toValues())`,
+        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.TermValue(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, predicate: variables.predicate, term: this.defaultValueTermExpression }}).toValues())`,
       },
     });
   }

@@ -5,12 +5,10 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
 import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
+import type { ObjectSetFactory } from "./ObjectSetFactory.js";
+import { objectDataset } from "./objectDataset.js";
 
-export function testObjectFilters(
-  createObjectSet: (
-    ...instances: kitchenSink.$Object[]
-  ) => kitchenSink.$ObjectSet,
-) {
+export function testObjectFilters(createObjectSet: ObjectSetFactory) {
   describe("object filters", () => {
     const identifiers = [...new Array(10)].map((_, i) =>
       dataFactory.namedNode(`http://example.com/${i}`),
@@ -18,13 +16,15 @@ export function testObjectFilters(
 
     describe("blank node", () => {
       const objectSet = createObjectSet(
-        new kitchenSink.TermPropertiesClass({
-          blankNodeTermProperty: dataFactory.blankNode(),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[1],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          new kitchenSink.TermPropertiesClass({
+            blankNodeTermProperty: dataFactory.blankNode(),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[1],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
@@ -53,17 +53,19 @@ export function testObjectFilters(
 
     describe("BigDecimal", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.NumericPropertiesClass({
-              $identifier: identifiers[i],
-              decimalNumericProperty: new Decimal(i),
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.NumericPropertiesClass({
+                $identifier: identifiers[i],
+                decimalNumericProperty: new Decimal(i),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -107,17 +109,19 @@ export function testObjectFilters(
 
     describe("bigint", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.NumericPropertiesClass({
-              $identifier: identifiers[i],
-              integerNumericProperty: BigInt(i),
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.NumericPropertiesClass({
+                $identifier: identifiers[i],
+                integerNumericProperty: BigInt(i),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -158,17 +162,19 @@ export function testObjectFilters(
 
     describe("boolean", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.TermPropertiesClass({
-              $identifier: identifiers[i],
-              booleanTermProperty: i === 0,
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                booleanTermProperty: i === 0,
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -199,17 +205,19 @@ export function testObjectFilters(
       const baseValue = new Date(1523268000000);
 
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.TermPropertiesClass({
-              $identifier: identifiers[i],
-              dateTimeTermProperty: new Date(baseValue.getTime() + i * 1000),
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                dateTimeTermProperty: new Date(baseValue.getTime() + i * 1000),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -257,14 +265,16 @@ export function testObjectFilters(
       const namedNodeIdentifier = dataFactory.namedNode("http://example.com");
 
       const objectSet = createObjectSet(
-        new kitchenSink.TermPropertiesClass({
-          $identifier: blankNodeIdentifier,
-          stringTermProperty: "ignored",
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: namedNodeIdentifier,
-          stringTermProperty: "ignored",
-        }),
+        objectDataset([
+          new kitchenSink.TermPropertiesClass({
+            $identifier: blankNodeIdentifier,
+            stringTermProperty: "ignored",
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: namedNodeIdentifier,
+            stringTermProperty: "ignored",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -311,18 +321,20 @@ export function testObjectFilters(
 
     describe("literal", () => {
       const objectSet = createObjectSet(
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[0],
-          literalTermProperty: dataFactory.literal("test"),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[1],
-          literalTermProperty: dataFactory.literal("test", "en"),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          literalTermProperty: dataFactory.literal("1", xsd.integer),
-        }),
+        objectDataset([
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[0],
+            literalTermProperty: dataFactory.literal("test"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[1],
+            literalTermProperty: dataFactory.literal("test", "en"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            literalTermProperty: dataFactory.literal("1", xsd.integer),
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -358,19 +370,21 @@ export function testObjectFilters(
 
     describe("named node", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.TermPropertiesClass({
-              $identifier: identifiers[i],
-              iriTermProperty: dataFactory.namedNode(
-                `http://example.com/prop${i}`,
-              ),
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                iriTermProperty: dataFactory.namedNode(
+                  `http://example.com/prop${i}`,
+                ),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -402,17 +416,19 @@ export function testObjectFilters(
 
     describe("number", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.TermPropertiesClass({
-              $identifier: identifiers[i],
-              numberTermProperty: i,
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                numberTermProperty: i,
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -453,19 +469,21 @@ export function testObjectFilters(
 
     describe("object", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.ConcreteChildClass({
-              abstractBaseClassWithPropertiesProperty: `test${i}`,
-              $identifier: identifiers[i],
-              concreteChildClassProperty: `test${i}`,
-              concreteParentClassProperty: `test${i}`,
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          numberTermProperty: 0,
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.ConcreteChildClass({
+                abstractBaseClassWithPropertiesProperty: `test${i}`,
+                $identifier: identifiers[i],
+                concreteChildClassProperty: `test${i}`,
+                concreteParentClassProperty: `test${i}`,
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            numberTermProperty: 0,
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -501,23 +519,25 @@ export function testObjectFilters(
 
     describe("object union", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map((_, i) =>
-          i === 0
-            ? new kitchenSink.ClassUnionMember1({
-                $identifier: identifiers[i],
-                classUnionMember1Property: `test${i}`,
-                classUnionMemberCommonParentProperty: `test${i}`,
-              })
-            : new kitchenSink.ClassUnionMember2({
-                $identifier: identifiers[i],
-                classUnionMember2Property: `test${i}`,
-                classUnionMemberCommonParentProperty: `test${i}`,
-              }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          numberTermProperty: 0,
-        }),
+        objectDataset([
+          ...[...new Array(2)].map((_, i) =>
+            i === 0
+              ? new kitchenSink.ClassUnionMember1({
+                  $identifier: identifiers[i],
+                  classUnionMember1Property: `test${i}`,
+                  classUnionMemberCommonParentProperty: `test${i}`,
+                })
+              : new kitchenSink.ClassUnionMember2({
+                  $identifier: identifiers[i],
+                  classUnionMember2Property: `test${i}`,
+                  classUnionMemberCommonParentProperty: `test${i}`,
+                }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            numberTermProperty: 0,
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -602,7 +622,7 @@ export function testObjectFilters(
         booleanTermProperty: true,
         $identifier: identifiers[0],
       });
-      const objectSet = createObjectSet(instance);
+      const objectSet = createObjectSet(objectDataset([instance]));
 
       for (const [id, [filter, expected]] of Object.entries({
         null1: [{ booleanTermProperty: null }, []],
@@ -630,12 +650,14 @@ export function testObjectFilters(
     describe("set", () => {
       const value = "test";
       const objectSet = createObjectSet(
-        new kitchenSink.PropertyCardinalitiesClass({
-          $identifier: identifiers[0],
-          emptyStringSetProperty: [value],
-          nonEmptyStringSetProperty: NonEmptyList([value]),
-          requiredStringProperty: value,
-        }),
+        objectDataset([
+          new kitchenSink.PropertyCardinalitiesClass({
+            $identifier: identifiers[0],
+            emptyStringSetProperty: [value],
+            nonEmptyStringSetProperty: NonEmptyList([value]),
+            requiredStringProperty: value,
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -673,17 +695,19 @@ export function testObjectFilters(
 
     describe("string", () => {
       const objectSet = createObjectSet(
-        ...[...new Array(2)].map(
-          (_, i) =>
-            new kitchenSink.TermPropertiesClass({
-              $identifier: identifiers[i],
-              stringTermProperty: "x".repeat(i + 1),
-            }),
-        ),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          numberTermProperty: 0,
-        }),
+        objectDataset([
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                stringTermProperty: "x".repeat(i + 1),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            numberTermProperty: 0,
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -710,26 +734,28 @@ export function testObjectFilters(
 
     describe("term", () => {
       const objectSet = createObjectSet(
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[0],
-          termProperty: dataFactory.literal("test"),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[1],
-          termProperty: dataFactory.literal("test", "en"),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[2],
-          termProperty: dataFactory.literal("1", xsd.integer),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[3],
-          termProperty: dataFactory.namedNode("http://example.com"),
-        }),
-        new kitchenSink.TermPropertiesClass({
-          $identifier: identifiers[4],
-          stringTermProperty: "test",
-        }),
+        objectDataset([
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[0],
+            termProperty: dataFactory.literal("test"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[1],
+            termProperty: dataFactory.literal("test", "en"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            termProperty: dataFactory.literal("1", xsd.integer),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[3],
+            termProperty: dataFactory.namedNode("http://example.com"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[4],
+            stringTermProperty: "test",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({
@@ -766,36 +792,39 @@ export function testObjectFilters(
 
     describe("union", () => {
       const objectSet = createObjectSet(
-        new kitchenSink.UnionDiscriminantsClass({
-          $identifier: identifiers[0],
-          requiredClassOrClassOrStringProperty: {
-            type: "0-ClassUnionMember1",
-            value: new kitchenSink.ClassUnionMember1({
-              $identifier: dataFactory.namedNode(
-                "http://example.com/classUnionMember1",
-              ),
-              classUnionMember1Property: "http://example.com/test0",
-              classUnionMemberCommonParentProperty: "http://example.com/test0",
-            }),
-          },
-          requiredIriOrLiteralProperty: dataFactory.namedNode(
-            "http://example.com/test0",
-          ),
-          requiredIriOrStringProperty: dataFactory.namedNode(
-            "http://example.com/test0",
-          ),
-        }),
-        new kitchenSink.UnionDiscriminantsClass({
-          $identifier: identifiers[1],
-          requiredClassOrClassOrStringProperty: {
-            type: "2-string",
-            value: "http://example.com/test1",
-          },
-          requiredIriOrLiteralProperty: dataFactory.literal(
-            "http://example.com/test1",
-          ),
-          requiredIriOrStringProperty: "http://example.com/test1",
-        }),
+        objectDataset([
+          new kitchenSink.UnionDiscriminantsClass({
+            $identifier: identifiers[0],
+            requiredClassOrClassOrStringProperty: {
+              type: "0-ClassUnionMember1",
+              value: new kitchenSink.ClassUnionMember1({
+                $identifier: dataFactory.namedNode(
+                  "http://example.com/classUnionMember1",
+                ),
+                classUnionMember1Property: "http://example.com/test0",
+                classUnionMemberCommonParentProperty:
+                  "http://example.com/test0",
+              }),
+            },
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
+              "http://example.com/test0",
+            ),
+            requiredIriOrStringProperty: dataFactory.namedNode(
+              "http://example.com/test0",
+            ),
+          }),
+          new kitchenSink.UnionDiscriminantsClass({
+            $identifier: identifiers[1],
+            requiredClassOrClassOrStringProperty: {
+              type: "2-string",
+              value: "http://example.com/test1",
+            },
+            requiredIriOrLiteralProperty: dataFactory.literal(
+              "http://example.com/test1",
+            ),
+            requiredIriOrStringProperty: "http://example.com/test1",
+          }),
+        ]),
       );
 
       for (const [id, [filter, expected]] of Object.entries({

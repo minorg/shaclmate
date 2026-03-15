@@ -198,6 +198,7 @@ function $filterTerm(
 
 type $FromRdfOptions = {
   context?: any;
+  graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
   preferredLanguages?: readonly string[];
@@ -241,6 +242,7 @@ function $fromRdfPreferredLanguages({
       return filteredLiteralValues!.map(
         (literalValue) =>
           new Resource.TermValue({
+            dataFactory: dataFactory,
             focusResource,
             predicate,
             term: literalValue,
@@ -309,6 +311,7 @@ interface $NumericFilter<T> {
 
 type $PropertiesFromRdfParameters = {
   context?: any;
+  graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
   preferredLanguages?: readonly string[];
@@ -809,10 +812,13 @@ export namespace BaseShaclCoreShapeStatic {
     ).chain(($identifier) =>
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values($schema.properties.and.identifier, {
+          graph: undefined,
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toList()))
+        .chain((values) =>
+          values.chainMap((value) => value.toList({ graph: undefined })),
+        )
         .chain((valueLists) =>
           valueLists.chainMap((valueList) =>
             Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -841,6 +847,7 @@ export namespace BaseShaclCoreShapeStatic {
         .chain((and) =>
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values($schema.properties.classes.identifier, {
+              graph: undefined,
               unique: true,
             }),
           )
@@ -860,7 +867,7 @@ export namespace BaseShaclCoreShapeStatic {
               Either.of<Error, Resource.Values<Resource.TermValue>>(
                 $parameters.resource.values(
                   $schema.properties.comments.identifier,
-                  { unique: true },
+                  { graph: undefined, unique: true },
                 ),
               )
                 .chain((values) =>
@@ -889,7 +896,10 @@ export namespace BaseShaclCoreShapeStatic {
                   Either.of<Error, Resource.Values<Resource.TermValue>>(
                     $parameters.resource.values(
                       $schema.properties.datatype.identifier,
-                      { unique: true },
+                      {
+                        graph: undefined,
+                        unique: true,
+                      },
                     ),
                   )
                     .chain((values) =>
@@ -911,7 +921,10 @@ export namespace BaseShaclCoreShapeStatic {
                       Either.of<Error, Resource.Values<Resource.TermValue>>(
                         $parameters.resource.values(
                           $schema.properties.deactivated.identifier,
-                          { unique: true },
+                          {
+                            graph: undefined,
+                            unique: true,
+                          },
                         ),
                       )
                         .chain((values) =>
@@ -933,7 +946,10 @@ export namespace BaseShaclCoreShapeStatic {
                           Either.of<Error, Resource.Values<Resource.TermValue>>(
                             $parameters.resource.values(
                               $schema.properties.flags.identifier,
-                              { unique: true },
+                              {
+                                graph: undefined,
+                                unique: true,
+                              },
                             ),
                           )
                             .chain((values) =>
@@ -968,7 +984,10 @@ export namespace BaseShaclCoreShapeStatic {
                               >(
                                 $parameters.resource.values(
                                   $schema.properties.hasValues.identifier,
-                                  { unique: true },
+                                  {
+                                    graph: undefined,
+                                    unique: true,
+                                  },
                                 ),
                               )
                                 .chain((values) =>
@@ -1025,12 +1044,15 @@ export namespace BaseShaclCoreShapeStatic {
                                   >(
                                     $parameters.resource.values(
                                       $schema.properties.in_.identifier,
-                                      { unique: true },
+                                      {
+                                        graph: undefined,
+                                        unique: true,
+                                      },
                                     ),
                                   )
                                     .chain((values) =>
                                       values.chainMap((value) =>
-                                        value.toList(),
+                                        value.toList({ graph: undefined }),
                                       ),
                                     )
                                     .chain((valueLists) =>
@@ -1113,7 +1135,10 @@ export namespace BaseShaclCoreShapeStatic {
                                         $parameters.resource.values(
                                           $schema.properties.isDefinedBy
                                             .identifier,
-                                          { unique: true },
+                                          {
+                                            graph: undefined,
+                                            unique: true,
+                                          },
                                         ),
                                       )
                                         .chain((values) =>
@@ -1147,7 +1172,10 @@ export namespace BaseShaclCoreShapeStatic {
                                             $parameters.resource.values(
                                               $schema.properties.labels
                                                 .identifier,
-                                              { unique: true },
+                                              {
+                                                graph: undefined,
+                                                unique: true,
+                                              },
                                             ),
                                           )
                                             .chain((values) =>
@@ -1189,12 +1217,17 @@ export namespace BaseShaclCoreShapeStatic {
                                                 $parameters.resource.values(
                                                   $schema.properties.languageIn
                                                     .identifier,
-                                                  { unique: true },
+                                                  {
+                                                    graph: undefined,
+                                                    unique: true,
+                                                  },
                                                 ),
                                               )
                                                 .chain((values) =>
                                                   values.chainMap((value) =>
-                                                    value.toList(),
+                                                    value.toList({
+                                                      graph: undefined,
+                                                    }),
                                                   ),
                                                 )
                                                 .chain((valueLists) =>
@@ -1277,7 +1310,10 @@ export namespace BaseShaclCoreShapeStatic {
                                                     $parameters.resource.values(
                                                       $schema.properties
                                                         .maxCount.identifier,
-                                                      { unique: true },
+                                                      {
+                                                        graph: undefined,
+                                                        unique: true,
+                                                      },
                                                     ),
                                                   )
                                                     .chain((values) =>
@@ -1318,6 +1354,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                             .maxExclusive
                                                             .identifier,
                                                           {
+                                                            graph: undefined,
                                                             unique: true,
                                                           },
                                                         ),
@@ -1381,6 +1418,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                 .maxInclusive
                                                                 .identifier,
                                                               {
+                                                                graph:
+                                                                  undefined,
                                                                 unique: true,
                                                               },
                                                             ),
@@ -1446,6 +1485,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                       .maxLength
                                                                       .identifier,
                                                                     {
+                                                                      graph:
+                                                                        undefined,
                                                                       unique: true,
                                                                     },
                                                                   ),
@@ -1504,6 +1545,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                             .minCount
                                                                             .identifier,
                                                                           {
+                                                                            graph:
+                                                                              undefined,
                                                                             unique: true,
                                                                           },
                                                                         ),
@@ -1570,6 +1613,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                   .minExclusive
                                                                                   .identifier,
                                                                                 {
+                                                                                  graph:
+                                                                                    undefined,
                                                                                   unique: true,
                                                                                 },
                                                                               ),
@@ -1656,6 +1701,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                         .minInclusive
                                                                                         .identifier,
                                                                                       {
+                                                                                        graph:
+                                                                                          undefined,
                                                                                         unique: true,
                                                                                       },
                                                                                     ),
@@ -1742,6 +1789,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                               .minLength
                                                                                               .identifier,
                                                                                             {
+                                                                                              graph:
+                                                                                                undefined,
                                                                                               unique: true,
                                                                                             },
                                                                                           ),
@@ -1808,6 +1857,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                     .nodeKind
                                                                                                     .identifier,
                                                                                                   {
+                                                                                                    graph:
+                                                                                                      undefined,
                                                                                                     unique: true,
                                                                                                   },
                                                                                                 ),
@@ -2007,6 +2058,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                           .nodes
                                                                                                           .identifier,
                                                                                                         {
+                                                                                                          graph:
+                                                                                                            undefined,
                                                                                                           unique: true,
                                                                                                         },
                                                                                                       ),
@@ -2067,6 +2120,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                                 .not
                                                                                                                 .identifier,
                                                                                                               {
+                                                                                                                graph:
+                                                                                                                  undefined,
                                                                                                                 unique: true,
                                                                                                               },
                                                                                                             ),
@@ -2127,6 +2182,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                                       .or
                                                                                                                       .identifier,
                                                                                                                     {
+                                                                                                                      graph:
+                                                                                                                        undefined,
                                                                                                                       unique: true,
                                                                                                                     },
                                                                                                                   ),
@@ -2139,7 +2196,12 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                                         (
                                                                                                                           value,
                                                                                                                         ) =>
-                                                                                                                          value.toList(),
+                                                                                                                          value.toList(
+                                                                                                                            {
+                                                                                                                              graph:
+                                                                                                                                undefined,
+                                                                                                                            },
+                                                                                                                          ),
                                                                                                                       ),
                                                                                                                   )
                                                                                                                   .chain(
@@ -2237,6 +2299,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                                             .patterns
                                                                                                                             .identifier,
                                                                                                                           {
+                                                                                                                            graph:
+                                                                                                                              undefined,
                                                                                                                             unique: true,
                                                                                                                           },
                                                                                                                         ),
@@ -2317,6 +2381,8 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                                                   .xone
                                                                                                                                   .identifier,
                                                                                                                                 {
+                                                                                                                                  graph:
+                                                                                                                                    undefined,
                                                                                                                                   unique: true,
                                                                                                                                 },
                                                                                                                               ),
@@ -2329,7 +2395,12 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                                                                     (
                                                                                                                                       value,
                                                                                                                                     ) =>
-                                                                                                                                      value.toList(),
+                                                                                                                                      value.toList(
+                                                                                                                                        {
+                                                                                                                                          graph:
+                                                                                                                                            undefined,
+                                                                                                                                        },
+                                                                                                                                      ),
                                                                                                                                   ),
                                                                                                                               )
                                                                                                                               .chain(
@@ -3316,7 +3387,7 @@ export namespace ShaclCorePropertyShape {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -3329,6 +3400,7 @@ export namespace ShaclCorePropertyShape {
               if (
                 $parameters.resource.isInstanceOf(
                   ShaclCorePropertyShape.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -3353,7 +3425,10 @@ export namespace ShaclCorePropertyShape {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.defaultValue.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) =>
@@ -3396,7 +3471,10 @@ export namespace ShaclCorePropertyShape {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.descriptions.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) =>
@@ -3427,7 +3505,10 @@ export namespace ShaclCorePropertyShape {
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
                         $schema.properties.groups.identifier,
-                        { unique: true },
+                        {
+                          graph: undefined,
+                          unique: true,
+                        },
                       ),
                     )
                       .chain((values) =>
@@ -3448,7 +3529,10 @@ export namespace ShaclCorePropertyShape {
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
                             $schema.properties.names.identifier,
-                            { unique: true },
+                            {
+                              graph: undefined,
+                              unique: true,
+                            },
                           ),
                         )
                           .chain((values) =>
@@ -3483,7 +3567,10 @@ export namespace ShaclCorePropertyShape {
                             >(
                               $parameters.resource.values(
                                 $schema.properties.order.identifier,
-                                { unique: true },
+                                {
+                                  graph: undefined,
+                                  unique: true,
+                                },
                               ),
                             )
                               .chain((values) =>
@@ -3508,7 +3595,10 @@ export namespace ShaclCorePropertyShape {
                                 >(
                                   $parameters.resource.values(
                                     $schema.properties.path.identifier,
-                                    { unique: true },
+                                    {
+                                      graph: undefined,
+                                      unique: true,
+                                    },
                                   ),
                                 )
                                   .chain((values) =>
@@ -3533,7 +3623,10 @@ export namespace ShaclCorePropertyShape {
                                       $parameters.resource.values(
                                         $schema.properties.uniqueLang
                                           .identifier,
-                                        { unique: true },
+                                        {
+                                          graph: undefined,
+                                          unique: true,
+                                        },
                                       ),
                                     )
                                       .chain((values) =>
@@ -3831,7 +3924,7 @@ export namespace ShaclCorePropertyGroup {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -3844,6 +3937,7 @@ export namespace ShaclCorePropertyGroup {
               if (
                 $parameters.resource.isInstanceOf(
                   ShaclCorePropertyGroup.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -3868,7 +3962,10 @@ export namespace ShaclCorePropertyGroup {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.comments.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -3895,7 +3992,10 @@ export namespace ShaclCorePropertyGroup {
               Either.of<Error, Resource.Values<Resource.TermValue>>(
                 $parameters.resource.values(
                   $schema.properties.labels.identifier,
-                  { unique: true },
+                  {
+                    graph: undefined,
+                    unique: true,
+                  },
                 ),
               )
                 .chain((values) =>
@@ -4112,7 +4212,7 @@ export namespace ShaclCoreNodeShape {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -4125,6 +4225,7 @@ export namespace ShaclCoreNodeShape {
               if (
                 $parameters.resource.isInstanceOf(
                   ShaclCoreNodeShape.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -4149,7 +4250,10 @@ export namespace ShaclCoreNodeShape {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.closed.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) => values.chainMap((value) => value.toBoolean()))
@@ -4168,10 +4272,17 @@ export namespace ShaclCoreNodeShape {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.ignoredProperties.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
-                  .chain((values) => values.chainMap((value) => value.toList()))
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toList({ graph: undefined }),
+                    ),
+                  )
                   .chain((valueLists) =>
                     valueLists.chainMap((valueList) =>
                       Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -4206,7 +4317,10 @@ export namespace ShaclCoreNodeShape {
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
                         $schema.properties.properties.identifier,
-                        { unique: true },
+                        {
+                          graph: undefined,
+                          unique: true,
+                        },
                       ),
                     )
                       .chain((values) =>
@@ -4458,7 +4572,7 @@ export namespace OwlOntology {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -4468,7 +4582,11 @@ export namespace OwlOntology {
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
-              if ($parameters.resource.isInstanceOf(OwlOntology.$fromRdfType)) {
+              if (
+                $parameters.resource.isInstanceOf(OwlOntology.$fromRdfType, {
+                  graph: $parameters.graph,
+                })
+              ) {
                 return Either.of<Error, true>(true);
               }
 
@@ -4488,6 +4606,7 @@ export namespace OwlOntology {
         Either.of<Error, "OwlOntology">("OwlOntology" as const).chain(($type) =>
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values($schema.properties.labels.identifier, {
+              graph: undefined,
               unique: true,
             }),
           )
@@ -5250,15 +5369,21 @@ export namespace $ObjectSet {
     ObjectIdentifierT extends BlankNode | NamedNode,
   > {
     readonly filter?: ObjectFilterT;
+    readonly graph?: Exclude<Quad_Graph, Variable>;
     readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;
   }
 }
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
+  protected readonly graph?: Exclude<Quad_Graph, Variable>;
   protected readonly resourceSet: ResourceSet;
 
-  constructor(dataset: DatasetCore) {
+  constructor(
+    dataset: DatasetCore,
+    options?: { graph?: Exclude<Quad_Graph, Variable> },
+  ) {
+    this.graph = options?.graph;
     this.resourceSet = new ResourceSet(dataset, { dataFactory: dataFactory });
   }
 
@@ -5777,12 +5902,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: Resource,
-        options: { objectSet: $ObjectSet },
+        options: {
+          graph?: Exclude<Quad_Graph, Variable>;
+          objectSet: $ObjectSet;
+        },
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
+    const graph = query?.graph ?? this.graph;
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return Either.of([]);
@@ -5805,7 +5935,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const fromRdfType of objectType.$fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+          graph,
+        })) {
           if (!identifierSet.has(resource.identifier)) {
             identifierSet.add(resource.identifier);
             resources.push({ resource });
@@ -5817,6 +5949,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const quad of this.resourceSet.dataset) {
+        if (graph && !quad.graph.equals(graph)) {
+          continue;
+        }
+
         switch (quad.subject.termType) {
           case "BlankNode":
           case "NamedNode":
@@ -5831,9 +5967,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         const resource = this.resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
-        objectType.$fromRdf(resource, { objectSet: this }).ifRight((object) => {
-          resources.push({ object, resource });
-        });
+        objectType
+          .$fromRdf(resource, { graph, objectSet: this })
+          .ifRight((object) => {
+            resources.push({ object, resource });
+          });
       }
     }
 
@@ -5850,7 +5988,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = objectType.$fromRdf(resource, { objectSet: this });
+        const objectEither = objectType.$fromRdf(resource, {
+          graph,
+          objectSet: this,
+        });
         if (objectEither.isLeft()) {
           return objectEither;
         }
@@ -5880,12 +6021,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: Resource,
-        options: { objectSet: $ObjectSet },
+        options: {
+          graph?: Exclude<Quad_Graph, Variable>;
+          objectSet: $ObjectSet;
+        },
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
+    const graph = query?.graph ?? this.graph;
+
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return Either.of([]);
@@ -5902,7 +6048,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
         $fromRdf: (
           resource: Resource,
-          options: { objectSet: $ObjectSet },
+          options: {
+            graph?: Exclude<Quad_Graph, Variable>;
+            objectSet: $ObjectSet;
+          },
         ) => Either<Error, ObjectT>;
         $fromRdfTypes: readonly NamedNode[];
       };
@@ -5922,7 +6071,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       sortResources = true;
       for (const objectType of objectTypes) {
         for (const fromRdfType of objectType.$fromRdfTypes) {
-          for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+            graph,
+          })) {
             if (!identifierSet.has(resource.identifier)) {
               identifierSet.add(resource.identifier);
               resources.push({ objectType, resource });
@@ -5935,6 +6086,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const quad of this.resourceSet.dataset) {
+        if (graph && !quad.graph.equals(graph)) {
+          continue;
+        }
+
         switch (quad.subject.termType) {
           case "BlankNode":
           case "NamedNode":
@@ -5952,7 +6107,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         for (const objectType of objectTypes) {
           if (
             objectType
-              .$fromRdf(resource, { objectSet: this })
+              .$fromRdf(resource, { graph, objectSet: this })
               .ifRight((object) => {
                 resources.push({ object, objectType, resource });
               })
@@ -5979,11 +6134,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
         if (objectType) {
-          objectEither = objectType.$fromRdf(resource, { objectSet: this });
+          objectEither = objectType.$fromRdf(resource, {
+            graph,
+            objectSet: this,
+          });
         } else {
           objectEither = Left(new Error("no object types"));
           for (const tryObjectType of objectTypes) {
             objectEither = tryObjectType.$fromRdf(resource, {
+              graph,
               objectSet: this,
             });
             if (objectEither.isRight()) {

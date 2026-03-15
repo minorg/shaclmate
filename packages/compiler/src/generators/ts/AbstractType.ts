@@ -159,6 +159,7 @@ export abstract class AbstractType {
   abstract fromRdfExpression(parameters: {
     variables: {
       context: Code;
+      graph: Code;
       ignoreRdfType?: boolean;
       objectSet: Code;
       preferredLanguages: Code;

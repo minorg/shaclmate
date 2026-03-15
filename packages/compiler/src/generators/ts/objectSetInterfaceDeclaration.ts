@@ -37,6 +37,7 @@ export interface ${syntheticNamePrefix}ObjectSet {
 export namespace ${syntheticNamePrefix}ObjectSet {
   export interface Query<ObjectFilterT, ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}> {
     readonly filter?: ObjectFilterT;
+    readonly graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
     readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;

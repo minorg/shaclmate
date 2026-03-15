@@ -28,7 +28,7 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
       }
     }
 
-    return filteredLiteralValues!.map(literalValue => new ${imports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
+    return filteredLiteralValues!.map(literalValue => new ${imports.Resource}.TermValue({ dataFactory: ${imports.dataFactory}, focusResource, predicate, term: literalValue }));
   });
 }`,
 );

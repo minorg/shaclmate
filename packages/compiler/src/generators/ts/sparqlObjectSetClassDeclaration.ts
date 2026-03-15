@@ -18,7 +18,7 @@ export function sparqlObjectSetClassDeclaration({
 
   const parameters = {
     constructObjectType: code`objectType: {\
-  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${imports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>; objectSet: ${syntheticNamePrefix}ObjectSet }) => ${imports.Either}<Error, ObjectT>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
@@ -35,10 +35,12 @@ export function sparqlObjectSetClassDeclaration({
   return code`\
 export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePrefix}ObjectSet {
   protected readonly ${syntheticNamePrefix}countVariable = ${imports.dataFactory}.variable!("count");;
+  protected readonly graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
   protected readonly ${syntheticNamePrefix}objectVariable = ${imports.dataFactory}.variable!("object");
   protected readonly ${syntheticNamePrefix}sparqlGenerator = new ${imports.sparqljs}.Generator();
 
-  constructor(protected readonly ${syntheticNamePrefix}sparqlClient: { queryBindings: (query: string) => Promise<readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${imports.Quad}[]>; }) {
+  constructor(protected readonly ${syntheticNamePrefix}sparqlClient: { queryBindings: (query: string) => Promise<readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${imports.Quad}[]>; }, options?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}> }) {
+    this.graph = options?.graph;
   }
 
 ${joinCode(
@@ -225,15 +227,27 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 
   protected ${syntheticNamePrefix}wherePatterns<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): readonly ${imports.sparqljs}.Pattern[] {
     // Patterns should be most to least specific.
-    const patterns: ${imports.sparqljs}.Pattern[] = [];
+    let patterns: ${imports.sparqljs}.Pattern[] = [];
 
     if (query?.where) {
-      patterns.push(...query.where(this.${syntheticNamePrefix}objectVariable));
+      patterns = patterns.concat(query.where(this.${syntheticNamePrefix}objectVariable));
     }
 
-    patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
+    patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
 
-    return ${snippets.normalizeSparqlWherePatterns}(patterns);
+    patterns = ${snippets.normalizeSparqlWherePatterns}(patterns).concat();
+
+    const graph = query?.graph ?? this.graph;
+    if (graph) {
+      switch (graph.termType) {
+        case "DefaultGraph":
+          return patterns; // Patterns without a GRAPH pattern around them query the default graph
+        case "NamedNode":
+          return [{ name: graph, patterns, type: "graph" }];
+      }
+    }
+    // Union of all graphs: { ... patterns covering default graph ... } UNION { GRAPH ?g { ... patterns covering named graphs ... } }
+    return [{ patterns: [{ patterns, type: "group" }, { name: ${imports.dataFactory}.variable!("g"), patterns, type: "graph" }], type: "union" }];
   }
 }
   
