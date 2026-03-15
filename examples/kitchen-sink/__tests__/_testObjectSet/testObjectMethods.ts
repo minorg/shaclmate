@@ -2,15 +2,15 @@ import dataFactory from "@rdfjs/data-model";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
+import type { ObjectSetFactory } from "./ObjectSetFactory.js";
+import { objectDataset } from "./objectDataset.js";
 
-export function testObjectMethods(
-  createObjectSet: (
-    ...instances: kitchenSink.$Object[]
-  ) => kitchenSink.$ObjectSet,
-) {
+export function testObjectMethods(createObjectSet: ObjectSetFactory) {
   describe("object methods", () => {
     it("concrete child class", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       expect(
         (
           await objectSet.concreteChildClass(
@@ -24,7 +24,9 @@ export function testObjectMethods(
     });
 
     it("concrete parent class", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       const expectedObject = data.concreteChildClasses[0];
       const actualObject = (
         await objectSet.concreteParentClass(expectedObject.$identifier)
@@ -40,7 +42,9 @@ export function testObjectMethods(
     });
 
     it("missing", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       expect(
         (
           await objectSet.concreteChildClass(
@@ -52,7 +56,7 @@ export function testObjectMethods(
 
     describe("union", () => {
       it("class with fromRdfType", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.classUnions);
+        const objectSet = createObjectSet(objectDataset(data.classUnions));
         for (const expectedClassUnion of data.classUnions) {
           expect(
             (await objectSet.classUnion(expectedClassUnion.$identifier))
@@ -64,7 +68,9 @@ export function testObjectMethods(
       });
 
       it("class without fromRdfType", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.noRdfTypeClassUnions);
+        const objectSet = createObjectSet(
+          objectDataset(data.noRdfTypeClassUnions),
+        );
         for (const expectedClassUnion of data.noRdfTypeClassUnions) {
           const actualClassUnion = (
             await objectSet.noRdfTypeClassUnion(expectedClassUnion.$identifier)
@@ -78,7 +84,7 @@ export function testObjectMethods(
       });
 
       it("interface", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.interfaceUnions);
+        const objectSet = createObjectSet(objectDataset(data.interfaceUnions));
         for (const expectedInterfaceUnion of data.interfaceUnions) {
           const actualClassUnion = (
             await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier)

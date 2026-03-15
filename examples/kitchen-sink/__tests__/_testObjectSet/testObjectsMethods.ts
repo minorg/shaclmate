@@ -1,16 +1,15 @@
 import dataFactory from "@rdfjs/data-model";
-import type * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
+import type { ObjectSetFactory } from "./ObjectSetFactory.js";
+import { objectDataset } from "./objectDataset.js";
 
-export function testObjectsMethods(
-  createObjectSet: (
-    ...instances: kitchenSink.$Object[]
-  ) => kitchenSink.$ObjectSet,
-) {
+export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
   describe("objects methods", () => {
     it("known subclasses", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       const parentClasses = (
         await objectSet.concreteParentClasses()
       ).unsafeCoerce();
@@ -26,7 +25,9 @@ export function testObjectsMethods(
     });
 
     describe("identifiers", () => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
 
       it("empty", async ({ expect }) => {
         const actual = (

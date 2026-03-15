@@ -1,15 +1,16 @@
-import type * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
 import { data } from "./data.js";
+import type { ObjectSetFactory } from "./ObjectSetFactory.js";
+import { objectDataset } from "./objectDataset.js";
 
 export function testObjectIdentifiersMethods(
-  createObjectSet: (
-    ...instances: kitchenSink.$Object[]
-  ) => kitchenSink.$ObjectSet,
+  createObjectSet: ObjectSetFactory,
 ) {
   describe("object identifiers methods", () => {
     it("no options", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       expect(
         (await objectSet.concreteChildClassIdentifiers())
           .unsafeCoerce()
@@ -20,7 +21,9 @@ export function testObjectIdentifiersMethods(
     });
 
     it("limit 1", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       expect(
         (await objectSet.concreteChildClassIdentifiers({ limit: 1 }))
           .unsafeCoerce()
@@ -29,7 +32,9 @@ export function testObjectIdentifiersMethods(
     });
 
     it("offset 1", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       expect(
         (
           await objectSet.concreteChildClassIdentifiers({
@@ -46,7 +51,9 @@ export function testObjectIdentifiersMethods(
     });
 
     it("limit 2 offset 1", async ({ expect }) => {
-      const objectSet = createObjectSet(...data.concreteChildClasses);
+      const objectSet = createObjectSet(
+        objectDataset(data.concreteChildClasses),
+      );
       expect(
         (
           await objectSet.concreteChildClassIdentifiers({
@@ -65,7 +72,7 @@ export function testObjectIdentifiersMethods(
 
     describe("union", () => {
       it("class union", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.classUnions);
+        const objectSet = createObjectSet(objectDataset(data.classUnions));
         expect(
           new Set(
             (await objectSet.classUnionIdentifiers())
@@ -78,7 +85,7 @@ export function testObjectIdentifiersMethods(
       });
 
       it("class union limit 1", async ({ expect }) => {
-        const objectSet = createObjectSet(...data.classUnions);
+        const objectSet = createObjectSet(objectDataset(data.classUnions));
         expect(
           (await objectSet.classUnionIdentifiers({ limit: 1 }))
             .unsafeCoerce()
