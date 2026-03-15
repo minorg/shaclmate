@@ -235,7 +235,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           ...variables,
           ignoreRdfType: true,
           predicate: this.predicate,
-          resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
+          resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, ${{ graph: variables.graph, unique: true }}))`,
         },
       })}.chain(values => values.head())`,
     );

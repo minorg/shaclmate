@@ -160,6 +160,7 @@ export abstract class AbstractProperty<
   abstract fromRdfExpression(parameters: {
     variables: {
       context: Code;
+      graph: Code;
       objectSet: Code;
       preferredLanguages: Code;
       resource: Code;

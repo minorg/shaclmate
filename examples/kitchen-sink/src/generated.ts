@@ -791,6 +791,7 @@ function $filterTerm(
 type $FromRdfOptions = {
   context?: any;
   ignoreRdfType?: boolean;
+  graph?: Exclude<Quad_Graph, Variable>;
   objectSet?: $ObjectSet;
   preferredLanguages?: readonly string[];
 };
@@ -3015,7 +3016,10 @@ export namespace UuidV4IriIdentifierInterface {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.uuidV4IriProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -3548,7 +3552,10 @@ export namespace UuidV4IriIdentifierClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.uuidV4IriProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -5976,6 +5983,7 @@ export namespace UnionDiscriminantsClass {
         $parameters.resource.values(
           $schema.properties.optionalClassOrClassOrStringProperty.identifier,
           {
+            graph: undefined,
             unique: true,
           },
         ),
@@ -6147,7 +6155,10 @@ export namespace UnionDiscriminantsClass {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.optionalIriOrLiteralProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -6197,7 +6208,10 @@ export namespace UnionDiscriminantsClass {
               Either.of<Error, Resource.Values<Resource.TermValue>>(
                 $parameters.resource.values(
                   $schema.properties.optionalIriOrStringProperty.identifier,
-                  { unique: true },
+                  {
+                    graph: undefined,
+                    unique: true,
+                  },
                 ),
               )
                 .chain((values) =>
@@ -6250,6 +6264,7 @@ export namespace UnionDiscriminantsClass {
                       $schema.properties.requiredClassOrClassOrStringProperty
                         .identifier,
                       {
+                        graph: undefined,
                         unique: true,
                       },
                     ),
@@ -6410,6 +6425,7 @@ export namespace UnionDiscriminantsClass {
                           $schema.properties.requiredIriOrLiteralProperty
                             .identifier,
                           {
+                            graph: undefined,
                             unique: true,
                           },
                         ),
@@ -6460,6 +6476,7 @@ export namespace UnionDiscriminantsClass {
                               $schema.properties.requiredIriOrStringProperty
                                 .identifier,
                               {
+                                graph: undefined,
                                 unique: true,
                               },
                             ),
@@ -6515,6 +6532,7 @@ export namespace UnionDiscriminantsClass {
                                   $schema.properties
                                     .setClassOrClassOrStringProperty.identifier,
                                   {
+                                    graph: undefined,
                                     unique: true,
                                   },
                                 ),
@@ -6724,6 +6742,7 @@ export namespace UnionDiscriminantsClass {
                                       $schema.properties.setIriOrLiteralProperty
                                         .identifier,
                                       {
+                                        graph: undefined,
                                         unique: true,
                                       },
                                     ),
@@ -6795,6 +6814,7 @@ export namespace UnionDiscriminantsClass {
                                           $schema.properties
                                             .setIriOrStringProperty.identifier,
                                           {
+                                            graph: undefined,
                                             unique: true,
                                           },
                                         ),
@@ -9194,7 +9214,7 @@ export namespace TermPropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -9207,6 +9227,7 @@ export namespace TermPropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   TermPropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -9228,7 +9249,10 @@ export namespace TermPropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.blankNodeTermProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) => values.chainMap((value) => value.toBlankNode()))
@@ -9248,7 +9272,10 @@ export namespace TermPropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.booleanTermProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) => values.chainMap((value) => value.toBoolean()))
@@ -9268,7 +9295,10 @@ export namespace TermPropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.dateTermProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) => values.chainMap((value) => value.toDate()))
@@ -9288,7 +9318,10 @@ export namespace TermPropertiesClass {
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
                         $schema.properties.dateTimeTermProperty.identifier,
-                        { unique: true },
+                        {
+                          graph: undefined,
+                          unique: true,
+                        },
                       ),
                     )
                       .chain((values) =>
@@ -9310,7 +9343,10 @@ export namespace TermPropertiesClass {
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
                             $schema.properties.iriTermProperty.identifier,
-                            { unique: true },
+                            {
+                              graph: undefined,
+                              unique: true,
+                            },
                           ),
                         )
                           .chain((values) =>
@@ -9336,7 +9372,10 @@ export namespace TermPropertiesClass {
                               $parameters.resource.values(
                                 $schema.properties.literalTermProperty
                                   .identifier,
-                                { unique: true },
+                                {
+                                  graph: undefined,
+                                  unique: true,
+                                },
                               ),
                             )
                               .chain((values) =>
@@ -9373,7 +9412,10 @@ export namespace TermPropertiesClass {
                                   $parameters.resource.values(
                                     $schema.properties.numberTermProperty
                                       .identifier,
-                                    { unique: true },
+                                    {
+                                      graph: undefined,
+                                      unique: true,
+                                    },
                                   ),
                                 )
                                   .chain((values) =>
@@ -9405,6 +9447,7 @@ export namespace TermPropertiesClass {
                                         $schema.properties.stringTermProperty
                                           .identifier,
                                         {
+                                          graph: undefined,
                                           unique: true,
                                         },
                                       ),
@@ -9452,7 +9495,10 @@ export namespace TermPropertiesClass {
                                           $parameters.resource.values(
                                             $schema.properties.termProperty
                                               .identifier,
-                                            { unique: true },
+                                            {
+                                              graph: undefined,
+                                              unique: true,
+                                            },
                                           ),
                                         )
                                           .chain((values) =>
@@ -10631,7 +10677,10 @@ export namespace Sha256IriIdentifierClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.sha256IriProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -11150,7 +11199,7 @@ export namespace RecursiveClassUnionMember2 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -11163,6 +11212,7 @@ export namespace RecursiveClassUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   RecursiveClassUnionMember2.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -11186,6 +11236,7 @@ export namespace RecursiveClassUnionMember2 {
           $parameters.resource.values(
             $schema.properties.recursiveClassUnionMember2Property.identifier,
             {
+              graph: undefined,
               unique: true,
             },
           ),
@@ -11751,7 +11802,7 @@ export namespace RecursiveClassUnionMember1 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -11764,6 +11815,7 @@ export namespace RecursiveClassUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   RecursiveClassUnionMember1.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -11787,6 +11839,7 @@ export namespace RecursiveClassUnionMember1 {
           $parameters.resource.values(
             $schema.properties.recursiveClassUnionMember1Property.identifier,
             {
+              graph: undefined,
               unique: true,
             },
           ),
@@ -12365,7 +12418,10 @@ export namespace PropertyVisibilitiesClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.privateProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -12384,7 +12440,10 @@ export namespace PropertyVisibilitiesClass {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.protectedProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -12403,7 +12462,10 @@ export namespace PropertyVisibilitiesClass {
               Either.of<Error, Resource.Values<Resource.TermValue>>(
                 $parameters.resource.values(
                   $schema.properties.publicProperty.identifier,
-                  { unique: true },
+                  {
+                    graph: undefined,
+                    unique: true,
+                  },
                 ),
               )
                 .chain((values) =>
@@ -13207,7 +13269,10 @@ export namespace PropertyCardinalitiesClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.emptyStringSetProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -13236,7 +13301,10 @@ export namespace PropertyCardinalitiesClass {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.nonEmptyStringSetProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -13271,7 +13339,10 @@ export namespace PropertyCardinalitiesClass {
               Either.of<Error, Resource.Values<Resource.TermValue>>(
                 $parameters.resource.values(
                   $schema.properties.optionalStringProperty.identifier,
-                  { unique: true },
+                  {
+                    graph: undefined,
+                    unique: true,
+                  },
                 ),
               )
                 .chain((values) =>
@@ -13301,7 +13372,10 @@ export namespace PropertyCardinalitiesClass {
                   Either.of<Error, Resource.Values<Resource.TermValue>>(
                     $parameters.resource.values(
                       $schema.properties.requiredStringProperty.identifier,
-                      { unique: true },
+                      {
+                        graph: undefined,
+                        unique: true,
+                      },
                     ),
                   )
                     .chain((values) =>
@@ -13986,7 +14060,7 @@ export namespace PartialInterfaceUnionMember2 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -13999,6 +14073,7 @@ export namespace PartialInterfaceUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   PartialInterfaceUnionMember2.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -14024,7 +14099,10 @@ export namespace PartialInterfaceUnionMember2 {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -14613,7 +14691,7 @@ export namespace PartialInterfaceUnionMember1 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -14626,6 +14704,7 @@ export namespace PartialInterfaceUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   PartialInterfaceUnionMember1.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -14651,7 +14730,10 @@ export namespace PartialInterfaceUnionMember1 {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -15256,7 +15338,7 @@ export namespace PartialClassUnionMember2 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -15269,6 +15351,7 @@ export namespace PartialClassUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   PartialClassUnionMember2.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -15290,7 +15373,10 @@ export namespace PartialClassUnionMember2 {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -15855,7 +15941,7 @@ export namespace PartialClassUnionMember1 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -15868,6 +15954,7 @@ export namespace PartialClassUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   PartialClassUnionMember1.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -15889,7 +15976,10 @@ export namespace PartialClassUnionMember1 {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -16527,7 +16617,10 @@ export namespace OrderedPropertiesClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.orderedPropertyC.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -16546,7 +16639,10 @@ export namespace OrderedPropertiesClass {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.orderedPropertyB.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -16565,7 +16661,10 @@ export namespace OrderedPropertiesClass {
               Either.of<Error, Resource.Values<Resource.TermValue>>(
                 $parameters.resource.values(
                   $schema.properties.orderedPropertyA.identifier,
-                  { unique: true },
+                  {
+                    graph: undefined,
+                    unique: true,
+                  },
                 ),
               )
                 .chain((values) =>
@@ -18187,7 +18286,7 @@ export namespace NumericPropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -18200,6 +18299,7 @@ export namespace NumericPropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   NumericPropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -18221,7 +18321,10 @@ export namespace NumericPropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.byteNumericProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) => values.chainMap((value) => value.toNumber()))
@@ -18241,7 +18344,10 @@ export namespace NumericPropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.decimalNumericProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) =>
@@ -18275,7 +18381,10 @@ export namespace NumericPropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.doubleNumericProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) =>
@@ -18297,7 +18406,10 @@ export namespace NumericPropertiesClass {
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
                         $schema.properties.floatNumericProperty.identifier,
-                        { unique: true },
+                        {
+                          graph: undefined,
+                          unique: true,
+                        },
                       ),
                     )
                       .chain((values) =>
@@ -18320,7 +18432,10 @@ export namespace NumericPropertiesClass {
                           $parameters.resource.values(
                             $schema.properties.integerNumericProperty
                               .identifier,
-                            { unique: true },
+                            {
+                              graph: undefined,
+                              unique: true,
+                            },
                           ),
                         )
                           .chain((values) =>
@@ -18346,7 +18461,10 @@ export namespace NumericPropertiesClass {
                               $parameters.resource.values(
                                 $schema.properties.intNumericProperty
                                   .identifier,
-                                { unique: true },
+                                {
+                                  graph: undefined,
+                                  unique: true,
+                                },
                               ),
                             )
                               .chain((values) =>
@@ -18374,6 +18492,7 @@ export namespace NumericPropertiesClass {
                                     $schema.properties.longNumericProperty
                                       .identifier,
                                     {
+                                      graph: undefined,
                                       unique: true,
                                     },
                                   ),
@@ -18408,6 +18527,7 @@ export namespace NumericPropertiesClass {
                                           .negativeIntegerNumericProperty
                                           .identifier,
                                         {
+                                          graph: undefined,
                                           unique: true,
                                         },
                                       ),
@@ -18445,7 +18565,7 @@ export namespace NumericPropertiesClass {
                                             $schema.properties
                                               .nonNegativeIntegerNumericProperty
                                               .identifier,
-                                            { unique: true },
+                                            { graph: undefined, unique: true },
                                           ),
                                         )
                                           .chain((values) =>
@@ -18484,7 +18604,10 @@ export namespace NumericPropertiesClass {
                                                   $schema.properties
                                                     .nonPositiveIntegerNumericProperty
                                                     .identifier,
-                                                  { unique: true },
+                                                  {
+                                                    graph: undefined,
+                                                    unique: true,
+                                                  },
                                                 ),
                                               )
                                                 .chain((values) =>
@@ -18525,7 +18648,10 @@ export namespace NumericPropertiesClass {
                                                         $schema.properties
                                                           .positiveIntegerNumericProperty
                                                           .identifier,
-                                                        { unique: true },
+                                                        {
+                                                          graph: undefined,
+                                                          unique: true,
+                                                        },
                                                       ),
                                                     )
                                                       .chain((values) =>
@@ -18571,6 +18697,8 @@ export namespace NumericPropertiesClass {
                                                                 .shortNumericProperty
                                                                 .identifier,
                                                               {
+                                                                graph:
+                                                                  undefined,
                                                                 unique: true,
                                                               },
                                                             ),
@@ -18621,6 +18749,8 @@ export namespace NumericPropertiesClass {
                                                                       .unsignedByteNumericProperty
                                                                       .identifier,
                                                                     {
+                                                                      graph:
+                                                                        undefined,
                                                                       unique: true,
                                                                     },
                                                                   ),
@@ -18679,6 +18809,8 @@ export namespace NumericPropertiesClass {
                                                                             .unsignedIntNumericProperty
                                                                             .identifier,
                                                                           {
+                                                                            graph:
+                                                                              undefined,
                                                                             unique: true,
                                                                           },
                                                                         ),
@@ -18745,6 +18877,8 @@ export namespace NumericPropertiesClass {
                                                                                   .unsignedLongNumericProperty
                                                                                   .identifier,
                                                                                 {
+                                                                                  graph:
+                                                                                    undefined,
                                                                                   unique: true,
                                                                                 },
                                                                               ),
@@ -18811,6 +18945,8 @@ export namespace NumericPropertiesClass {
                                                                                         .unsignedShortNumericProperty
                                                                                         .identifier,
                                                                                       {
+                                                                                        graph:
+                                                                                          undefined,
                                                                                         unique: true,
                                                                                       },
                                                                                     ),
@@ -20498,7 +20634,10 @@ export namespace NonClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.nonClassProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -20950,7 +21089,10 @@ export namespace NoRdfTypeClassUnionMember2 {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.noRdfTypeClassUnionMember2Property.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -21427,7 +21569,10 @@ export namespace NoRdfTypeClassUnionMember1 {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.noRdfTypeClassUnionMember1Property.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -22143,7 +22288,7 @@ export namespace MutablePropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -22156,6 +22301,7 @@ export namespace MutablePropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   MutablePropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -22177,10 +22323,15 @@ export namespace MutablePropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.mutableListProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
-          .chain((values) => values.chainMap((value) => value.toList()))
+          .chain((values) =>
+            values.chainMap((value) => value.toList({ graph: undefined })),
+          )
           .chain((valueLists) =>
             valueLists.chainMap((valueList) =>
               Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -22226,7 +22377,10 @@ export namespace MutablePropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.mutableSetProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) =>
@@ -22255,7 +22409,10 @@ export namespace MutablePropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.mutableStringProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) =>
@@ -23389,7 +23546,7 @@ export namespace ListPropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -23402,6 +23559,7 @@ export namespace ListPropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   ListPropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -23423,10 +23581,15 @@ export namespace ListPropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.iriListProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
-          .chain((values) => values.chainMap((value) => value.toList()))
+          .chain((values) =>
+            values.chainMap((value) => value.toList({ graph: undefined })),
+          )
           .chain((valueLists) =>
             valueLists.chainMap((valueList) =>
               Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -23459,10 +23622,15 @@ export namespace ListPropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.objectListProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
-              .chain((values) => values.chainMap((value) => value.toList()))
+              .chain((values) =>
+                values.chainMap((value) => value.toList({ graph: undefined })),
+              )
               .chain((valueLists) =>
                 valueLists.chainMap((valueList) =>
                   Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -23506,10 +23674,17 @@ export namespace ListPropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.stringListProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
-                  .chain((values) => values.chainMap((value) => value.toList()))
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toList({ graph: undefined }),
+                    ),
+                  )
                   .chain((valueLists) =>
                     valueLists.chainMap((valueList) =>
                       Either.of<Error, Resource.Values<Resource.TermValue>>(
@@ -24531,7 +24706,10 @@ export namespace PartialInterface {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -26520,6 +26698,7 @@ export namespace LazyPropertiesInterface {
             $schema.properties.optionalLazyToResolvedInterfaceProperty
               .identifier,
             {
+              graph: undefined,
               unique: true,
             },
           ),
@@ -26570,6 +26749,7 @@ export namespace LazyPropertiesInterface {
                 $schema.properties.optionalLazyToResolvedInterfaceUnionProperty
                   .identifier,
                 {
+                  graph: undefined,
                   unique: true,
                 },
               ),
@@ -26621,7 +26801,7 @@ export namespace LazyPropertiesInterface {
                     $schema.properties
                       .optionalLazyToResolvedIriIdentifierInterfaceProperty
                       .identifier,
-                    { unique: true },
+                    { graph: undefined, unique: true },
                   ),
                 )
                   .chain((values) =>
@@ -26672,7 +26852,7 @@ export namespace LazyPropertiesInterface {
                           $schema.properties
                             .optionalPartialInterfaceToResolvedInterfaceProperty
                             .identifier,
-                          { unique: true },
+                          { graph: undefined, unique: true },
                         ),
                       )
                         .chain((values) =>
@@ -26731,7 +26911,7 @@ export namespace LazyPropertiesInterface {
                                 $schema.properties
                                   .optionalPartialInterfaceToResolvedInterfaceUnionProperty
                                   .identifier,
-                                { unique: true },
+                                { graph: undefined, unique: true },
                               ),
                             )
                               .chain((values) =>
@@ -26791,7 +26971,7 @@ export namespace LazyPropertiesInterface {
                                       $schema.properties
                                         .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
                                         .identifier,
-                                      { unique: true },
+                                      { graph: undefined, unique: true },
                                     ),
                                   )
                                     .chain((values) =>
@@ -26854,7 +27034,7 @@ export namespace LazyPropertiesInterface {
                                             $schema.properties
                                               .requiredLazyToResolvedInterfaceProperty
                                               .identifier,
-                                            { unique: true },
+                                            { graph: undefined, unique: true },
                                           ),
                                         )
                                           .chain((values) =>
@@ -26906,7 +27086,10 @@ export namespace LazyPropertiesInterface {
                                                   $schema.properties
                                                     .requiredPartialInterfaceToResolvedInterfaceProperty
                                                     .identifier,
-                                                  { unique: true },
+                                                  {
+                                                    graph: undefined,
+                                                    unique: true,
+                                                  },
                                                 ),
                                               )
                                                 .chain((values) =>
@@ -26962,7 +27145,10 @@ export namespace LazyPropertiesInterface {
                                                         $schema.properties
                                                           .setLazyToResolvedInterfaceProperty
                                                           .identifier,
-                                                        { unique: true },
+                                                        {
+                                                          graph: undefined,
+                                                          unique: true,
+                                                        },
                                                       ),
                                                     )
                                                       .chain((values) =>
@@ -27040,7 +27226,11 @@ export namespace LazyPropertiesInterface {
                                                               $schema.properties
                                                                 .setPartialInterfaceToResolvedInterfaceProperty
                                                                 .identifier,
-                                                              { unique: true },
+                                                              {
+                                                                graph:
+                                                                  undefined,
+                                                                unique: true,
+                                                              },
                                                             ),
                                                           )
                                                             .chain((values) =>
@@ -28750,7 +28940,10 @@ export namespace PartialClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.lazilyResolvedStringProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -30716,6 +30909,7 @@ export namespace LazyPropertiesClass {
         $parameters.resource.values(
           $schema.properties.optionalLazyToResolvedClassProperty.identifier,
           {
+            graph: undefined,
             unique: true,
           },
         ),
@@ -30766,6 +30960,7 @@ export namespace LazyPropertiesClass {
               $schema.properties.optionalLazyToResolvedClassUnionProperty
                 .identifier,
               {
+                graph: undefined,
                 unique: true,
               },
             ),
@@ -30816,7 +31011,7 @@ export namespace LazyPropertiesClass {
                   $schema.properties
                     .optionalLazyToResolvedIriIdentifierClassProperty
                     .identifier,
-                  { unique: true },
+                  { graph: undefined, unique: true },
                 ),
               )
                 .chain((values) =>
@@ -30866,6 +31061,7 @@ export namespace LazyPropertiesClass {
                       $schema.properties
                         .optionalPartialClassToResolvedClassProperty.identifier,
                       {
+                        graph: undefined,
                         unique: true,
                       },
                     ),
@@ -30917,7 +31113,7 @@ export namespace LazyPropertiesClass {
                           $schema.properties
                             .optionalPartialClassToResolvedClassUnionProperty
                             .identifier,
-                          { unique: true },
+                          { graph: undefined, unique: true },
                         ),
                       )
                         .chain((values) =>
@@ -30972,7 +31168,7 @@ export namespace LazyPropertiesClass {
                                 $schema.properties
                                   .optionalPartialClassUnionToResolvedClassUnionProperty
                                   .identifier,
-                                { unique: true },
+                                { graph: undefined, unique: true },
                               ),
                             )
                               .chain((values) =>
@@ -31032,6 +31228,7 @@ export namespace LazyPropertiesClass {
                                         .requiredLazyToResolvedClassProperty
                                         .identifier,
                                       {
+                                        graph: undefined,
                                         unique: true,
                                       },
                                     ),
@@ -31076,7 +31273,7 @@ export namespace LazyPropertiesClass {
                                             $schema.properties
                                               .requiredPartialClassToResolvedClassProperty
                                               .identifier,
-                                            { unique: true },
+                                            { graph: undefined, unique: true },
                                           ),
                                         )
                                           .chain((values) =>
@@ -31129,6 +31326,7 @@ export namespace LazyPropertiesClass {
                                                     .setLazyToResolvedClassProperty
                                                     .identifier,
                                                   {
+                                                    graph: undefined,
                                                     unique: true,
                                                   },
                                                 ),
@@ -31201,7 +31399,10 @@ export namespace LazyPropertiesClass {
                                                         $schema.properties
                                                           .setPartialClassToResolvedClassProperty
                                                           .identifier,
-                                                        { unique: true },
+                                                        {
+                                                          graph: undefined,
+                                                          unique: true,
+                                                        },
                                                       ),
                                                     )
                                                       .chain((values) =>
@@ -32766,7 +32967,10 @@ export namespace LazilyResolvedIriIdentifierInterface {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -33275,7 +33479,10 @@ export namespace LazilyResolvedIriIdentifierClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.lazilyResolvedStringProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -33741,7 +33948,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -33754,6 +33961,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   LazilyResolvedInterfaceUnionMember2.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -33780,6 +33990,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
+                graph: undefined,
                 unique: true,
               },
             ),
@@ -34373,7 +34584,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -34386,6 +34597,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   LazilyResolvedInterfaceUnionMember1.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -34412,6 +34626,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
+                graph: undefined,
                 unique: true,
               },
             ),
@@ -35020,7 +35235,7 @@ export namespace LazilyResolvedClassUnionMember2 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -35033,6 +35248,9 @@ export namespace LazilyResolvedClassUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   LazilyResolvedClassUnionMember2.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -35055,7 +35273,10 @@ export namespace LazilyResolvedClassUnionMember2 {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -35624,7 +35845,7 @@ export namespace LazilyResolvedClassUnionMember1 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -35637,6 +35858,9 @@ export namespace LazilyResolvedClassUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   LazilyResolvedClassUnionMember1.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -35659,7 +35883,10 @@ export namespace LazilyResolvedClassUnionMember1 {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -36222,7 +36449,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -36235,6 +36462,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
               if (
                 $parameters.resource.isInstanceOf(
                   LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -36263,7 +36493,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -36880,7 +37113,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -36893,6 +37126,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
               if (
                 $parameters.resource.isInstanceOf(
                   LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -36915,7 +37151,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -37525,7 +37764,10 @@ export namespace LanguageInPropertiesClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.languageInLiteralProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -38199,7 +38441,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -38212,6 +38454,7 @@ export namespace JsPrimitiveUnionPropertyClass {
               if (
                 $parameters.resource.isInstanceOf(
                   JsPrimitiveUnionPropertyClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -38234,7 +38477,10 @@ export namespace JsPrimitiveUnionPropertyClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.jsPrimitiveUnionProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -38856,7 +39102,7 @@ export namespace IriIdentifierInterface {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -38869,6 +39115,7 @@ export namespace IriIdentifierInterface {
               if (
                 $parameters.resource.isInstanceOf(
                   IriIdentifierInterface.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -39349,7 +39596,7 @@ export namespace IriIdentifierClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -39362,6 +39609,7 @@ export namespace IriIdentifierClass {
               if (
                 $parameters.resource.isInstanceOf(
                   IriIdentifierClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -39820,6 +40068,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           $schema.properties.interfaceUnionMemberCommonParentProperty
             .identifier,
           {
+            graph: undefined,
             unique: true,
           },
         ),
@@ -40298,7 +40547,7 @@ export namespace InterfaceUnionMember2 {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -40311,6 +40560,7 @@ export namespace InterfaceUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   InterfaceUnionMember2.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -40336,6 +40586,7 @@ export namespace InterfaceUnionMember2 {
               $parameters.resource.values(
                 $schema.properties.interfaceUnionMember2Property.identifier,
                 {
+                  graph: undefined,
                   unique: true,
                 },
               ),
@@ -40912,7 +41163,7 @@ export namespace InterfaceUnionMember1 {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -40925,6 +41176,7 @@ export namespace InterfaceUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   InterfaceUnionMember1.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -40950,6 +41202,7 @@ export namespace InterfaceUnionMember1 {
               $parameters.resource.values(
                 $schema.properties.interfaceUnionMember1Property.identifier,
                 {
+                  graph: undefined,
                   unique: true,
                 },
               ),
@@ -41523,7 +41776,10 @@ export namespace Interface {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.interfaceProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -42039,7 +42295,7 @@ export namespace IndirectRecursiveHelperClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -42052,6 +42308,7 @@ export namespace IndirectRecursiveHelperClass {
               if (
                 $parameters.resource.isInstanceOf(
                   IndirectRecursiveHelperClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -42074,7 +42331,10 @@ export namespace IndirectRecursiveHelperClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.indirectRecursiveProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -42638,7 +42898,7 @@ export namespace IndirectRecursiveClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -42651,6 +42911,7 @@ export namespace IndirectRecursiveClass {
               if (
                 $parameters.resource.isInstanceOf(
                   IndirectRecursiveClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -42673,6 +42934,7 @@ export namespace IndirectRecursiveClass {
           $parameters.resource.values(
             $schema.properties.indirectRecursiveHelperProperty.identifier,
             {
+              graph: undefined,
               unique: true,
             },
           ),
@@ -43561,7 +43823,7 @@ export namespace InPropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -43574,6 +43836,7 @@ export namespace InPropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   InPropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -43595,7 +43858,10 @@ export namespace InPropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.inBooleansProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -43632,7 +43898,10 @@ export namespace InPropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.inDateTimesProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) =>
@@ -43670,7 +43939,10 @@ export namespace InPropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.inDoublesProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) =>
@@ -43711,7 +43983,10 @@ export namespace InPropertiesClass {
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
                         $schema.properties.inIntegersProperty.identifier,
-                        { unique: true },
+                        {
+                          graph: undefined,
+                          unique: true,
+                        },
                       ),
                     )
                       .chain((values) =>
@@ -43754,7 +44029,10 @@ export namespace InPropertiesClass {
                         Either.of<Error, Resource.Values<Resource.TermValue>>(
                           $parameters.resource.values(
                             $schema.properties.inIrisProperty.identifier,
-                            { unique: true },
+                            {
+                              graph: undefined,
+                              unique: true,
+                            },
                           ),
                         )
                           .chain((values) =>
@@ -43829,7 +44107,10 @@ export namespace InPropertiesClass {
                             >(
                               $parameters.resource.values(
                                 $schema.properties.inStringsProperty.identifier,
-                                { unique: true },
+                                {
+                                  graph: undefined,
+                                  unique: true,
+                                },
                               ),
                             )
                               .chain((values) =>
@@ -44860,7 +45141,7 @@ export namespace InIdentifierClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -44873,6 +45154,7 @@ export namespace InIdentifierClass {
               if (
                 $parameters.resource.isInstanceOf(
                   InIdentifierClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -44908,7 +45190,10 @@ export namespace InIdentifierClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.inIdentifierProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -45465,7 +45750,10 @@ export namespace IdentifierOverride1ClassStatic {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.identifierOverrideProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -46130,7 +46418,7 @@ export namespace IdentifierOverride3ClassStatic {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -46145,6 +46433,9 @@ export namespace IdentifierOverride3ClassStatic {
               if (
                 $parameters.resource.isInstanceOf(
                   IdentifierOverride3ClassStatic.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -46600,7 +46891,7 @@ export namespace IdentifierOverride4ClassStatic {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -46614,6 +46905,9 @@ export namespace IdentifierOverride4ClassStatic {
               if (
                 $parameters.resource.isInstanceOf(
                   IdentifierOverride4ClassStatic.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -47064,7 +47358,7 @@ export namespace IdentifierOverride5Class {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -47077,6 +47371,7 @@ export namespace IdentifierOverride5Class {
               if (
                 $parameters.resource.isInstanceOf(
                   IdentifierOverride5Class.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -47631,7 +47926,10 @@ export namespace HasValuePropertiesClass {
       Either.of<Error, Resource.Values<Resource.TermValue>>(
         $parameters.resource.values(
           $schema.properties.hasIriValueProperty.identifier,
-          { unique: true },
+          {
+            graph: undefined,
+            unique: true,
+          },
         ),
       )
         .chain((values) =>
@@ -47651,7 +47949,10 @@ export namespace HasValuePropertiesClass {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.hasLiteralValueProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -48207,7 +48508,7 @@ export namespace FlattenClassUnionMember3 {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -48220,6 +48521,7 @@ export namespace FlattenClassUnionMember3 {
               if (
                 $parameters.resource.isInstanceOf(
                   FlattenClassUnionMember3.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -48242,6 +48544,7 @@ export namespace FlattenClassUnionMember3 {
           $parameters.resource.values(
             $schema.properties.flattenClassUnionMember3Property.identifier,
             {
+              graph: undefined,
               unique: true,
             },
           ),
@@ -48837,7 +49140,7 @@ export namespace ExternClassPropertyClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -48850,6 +49153,7 @@ export namespace ExternClassPropertyClass {
               if (
                 $parameters.resource.isInstanceOf(
                   ExternClassPropertyClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -48871,7 +49175,10 @@ export namespace ExternClassPropertyClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.externClassProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -49457,6 +49764,7 @@ export namespace AbstractBaseClassForExternClassStatic {
         $parameters.resource.values(
           $schema.properties.abstractBaseClassForExternClassProperty.identifier,
           {
+            graph: undefined,
             unique: true,
           },
         ),
@@ -49942,7 +50250,7 @@ export namespace ExplicitRdfTypeClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -49955,6 +50263,7 @@ export namespace ExplicitRdfTypeClass {
               if (
                 $parameters.resource.isInstanceOf(
                   ExplicitRdfTypeClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -49976,7 +50285,10 @@ export namespace ExplicitRdfTypeClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.explicitRdfTypeProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -50556,7 +50868,7 @@ export namespace ExplicitFromToRdfTypesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -50569,6 +50881,7 @@ export namespace ExplicitFromToRdfTypesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   ExplicitFromToRdfTypesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -50591,7 +50904,10 @@ export namespace ExplicitFromToRdfTypesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.explicitFromToRdfTypesProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -51191,7 +51507,7 @@ export namespace DirectRecursiveClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -51204,6 +51520,7 @@ export namespace DirectRecursiveClass {
               if (
                 $parameters.resource.isInstanceOf(
                   DirectRecursiveClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -51225,7 +51542,10 @@ export namespace DirectRecursiveClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.directRecursiveProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -52102,7 +52422,7 @@ export namespace DefaultValuePropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -52115,6 +52435,7 @@ export namespace DefaultValuePropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   DefaultValuePropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -52137,7 +52458,10 @@ export namespace DefaultValuePropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.dateDefaultValueProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .map((values) =>
@@ -52161,6 +52485,7 @@ export namespace DefaultValuePropertiesClass {
               $parameters.resource.values(
                 $schema.properties.dateTimeDefaultValueProperty.identifier,
                 {
+                  graph: undefined,
                   unique: true,
                 },
               ),
@@ -52187,6 +52512,7 @@ export namespace DefaultValuePropertiesClass {
                     $schema.properties.falseBooleanDefaultValueProperty
                       .identifier,
                     {
+                      graph: undefined,
                       unique: true,
                     },
                   ),
@@ -52215,6 +52541,7 @@ export namespace DefaultValuePropertiesClass {
                         $schema.properties.numberDefaultValueProperty
                           .identifier,
                         {
+                          graph: undefined,
                           unique: true,
                         },
                       ),
@@ -52243,6 +52570,7 @@ export namespace DefaultValuePropertiesClass {
                             $schema.properties.stringDefaultValueProperty
                               .identifier,
                             {
+                              graph: undefined,
                               unique: true,
                             },
                           ),
@@ -52283,6 +52611,7 @@ export namespace DefaultValuePropertiesClass {
                                 $schema.properties
                                   .trueBooleanDefaultValueProperty.identifier,
                                 {
+                                  graph: undefined,
                                   unique: true,
                                 },
                               ),
@@ -54010,7 +54339,7 @@ export namespace DateUnionPropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -54023,6 +54352,7 @@ export namespace DateUnionPropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   DateUnionPropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -54044,7 +54374,10 @@ export namespace DateUnionPropertiesClass {
         Either.of<Error, Resource.Values<Resource.TermValue>>(
           $parameters.resource.values(
             $schema.properties.dateOrDateTimeProperty.identifier,
-            { unique: true },
+            {
+              graph: undefined,
+              unique: true,
+            },
           ),
         )
           .chain((values) =>
@@ -54119,7 +54452,10 @@ export namespace DateUnionPropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.dateOrStringProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) =>
@@ -54207,7 +54543,10 @@ export namespace DateUnionPropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.dateTimeOrDateProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) =>
@@ -54284,7 +54623,10 @@ export namespace DateUnionPropertiesClass {
                     Either.of<Error, Resource.Values<Resource.TermValue>>(
                       $parameters.resource.values(
                         $schema.properties.stringOrDateProperty.identifier,
-                        { unique: true },
+                        {
+                          graph: undefined,
+                          unique: true,
+                        },
                       ),
                     )
                       .chain((values) =>
@@ -56558,7 +56900,7 @@ export namespace ConvertibleTypePropertiesClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -56571,6 +56913,7 @@ export namespace ConvertibleTypePropertiesClass {
               if (
                 $parameters.resource.isInstanceOf(
                   ConvertibleTypePropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -56594,6 +56937,7 @@ export namespace ConvertibleTypePropertiesClass {
           $parameters.resource.values(
             $schema.properties.convertibleIriNonEmptySetProperty.identifier,
             {
+              graph: undefined,
               unique: true,
             },
           ),
@@ -56620,7 +56964,10 @@ export namespace ConvertibleTypePropertiesClass {
             Either.of<Error, Resource.Values<Resource.TermValue>>(
               $parameters.resource.values(
                 $schema.properties.convertibleIriOptionProperty.identifier,
-                { unique: true },
+                {
+                  graph: undefined,
+                  unique: true,
+                },
               ),
             )
               .chain((values) => values.chainMap((value) => value.toIri()))
@@ -56640,7 +56987,10 @@ export namespace ConvertibleTypePropertiesClass {
                 Either.of<Error, Resource.Values<Resource.TermValue>>(
                   $parameters.resource.values(
                     $schema.properties.convertibleIriProperty.identifier,
-                    { unique: true },
+                    {
+                      graph: undefined,
+                      unique: true,
+                    },
                   ),
                 )
                   .chain((values) => values.chainMap((value) => value.toIri()))
@@ -56650,6 +57000,7 @@ export namespace ConvertibleTypePropertiesClass {
                       $parameters.resource.values(
                         $schema.properties.convertibleIriSetProperty.identifier,
                         {
+                          graph: undefined,
                           unique: true,
                         },
                       ),
@@ -56674,6 +57025,7 @@ export namespace ConvertibleTypePropertiesClass {
                             $schema.properties
                               .convertibleLiteralNonEmptySetProperty.identifier,
                             {
+                              graph: undefined,
                               unique: true,
                             },
                           ),
@@ -56722,6 +57074,7 @@ export namespace ConvertibleTypePropertiesClass {
                                 $schema.properties
                                   .convertibleLiteralOptionProperty.identifier,
                                 {
+                                  graph: undefined,
                                   unique: true,
                                 },
                               ),
@@ -56765,6 +57118,7 @@ export namespace ConvertibleTypePropertiesClass {
                                     $schema.properties
                                       .convertibleLiteralProperty.identifier,
                                     {
+                                      graph: undefined,
                                       unique: true,
                                     },
                                   ),
@@ -56797,6 +57151,7 @@ export namespace ConvertibleTypePropertiesClass {
                                           .convertibleLiteralSetProperty
                                           .identifier,
                                         {
+                                          graph: undefined,
                                           unique: true,
                                         },
                                       ),
@@ -56841,7 +57196,7 @@ export namespace ConvertibleTypePropertiesClass {
                                             $schema.properties
                                               .convertibleTermNonEmptySetProperty
                                               .identifier,
-                                            { unique: true },
+                                            { graph: undefined, unique: true },
                                           ),
                                         )
                                           .chain((values) =>
@@ -56886,7 +57241,10 @@ export namespace ConvertibleTypePropertiesClass {
                                                   $schema.properties
                                                     .convertibleTermOptionProperty
                                                     .identifier,
-                                                  { unique: true },
+                                                  {
+                                                    graph: undefined,
+                                                    unique: true,
+                                                  },
                                                 ),
                                               )
                                                 .chain((values) =>
@@ -56937,6 +57295,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                           .convertibleTermProperty
                                                           .identifier,
                                                         {
+                                                          graph: undefined,
                                                           unique: true,
                                                         },
                                                       ),
@@ -56967,7 +57326,11 @@ export namespace ConvertibleTypePropertiesClass {
                                                               $schema.properties
                                                                 .convertibleTermSetProperty
                                                                 .identifier,
-                                                              { unique: true },
+                                                              {
+                                                                graph:
+                                                                  undefined,
+                                                                unique: true,
+                                                              },
                                                             ),
                                                           )
                                                             .chain((values) =>
@@ -58371,7 +58734,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -58387,6 +58750,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
               if (
                 $parameters.resource.isInstanceOf(
                   BaseInterfaceWithPropertiesStatic.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -58413,6 +58779,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
             $parameters.resource.values(
               $schema.properties.baseInterfaceWithPropertiesProperty.identifier,
               {
+                graph: undefined,
                 unique: true,
               },
             ),
@@ -58995,7 +59362,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -59010,6 +59377,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
               if (
                 $parameters.resource.isInstanceOf(
                   BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -59541,7 +59911,7 @@ export namespace ConcreteParentInterfaceStatic {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -59555,6 +59925,9 @@ export namespace ConcreteParentInterfaceStatic {
               if (
                 $parameters.resource.isInstanceOf(
                   ConcreteParentInterfaceStatic.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -59581,6 +59954,7 @@ export namespace ConcreteParentInterfaceStatic {
               $parameters.resource.values(
                 $schema.properties.concreteParentInterfaceProperty.identifier,
                 {
+                  graph: undefined,
                   unique: true,
                 },
               ),
@@ -60180,7 +60554,7 @@ export namespace ConcreteChildInterface {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -60193,6 +60567,7 @@ export namespace ConcreteChildInterface {
               if (
                 $parameters.resource.isInstanceOf(
                   ConcreteChildInterface.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -60218,6 +60593,7 @@ export namespace ConcreteChildInterface {
               $parameters.resource.values(
                 $schema.properties.concreteChildInterfaceProperty.identifier,
                 {
+                  graph: undefined,
                   unique: true,
                 },
               ),
@@ -60823,6 +61199,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         $parameters.resource.values(
           $schema.properties.abstractBaseClassWithPropertiesProperty.identifier,
           {
+            graph: undefined,
             unique: true,
           },
         ),
@@ -61566,7 +61943,7 @@ export namespace ConcreteParentClassStatic {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -61580,6 +61957,7 @@ export namespace ConcreteParentClassStatic {
               if (
                 $parameters.resource.isInstanceOf(
                   ConcreteParentClassStatic.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -61603,6 +61981,7 @@ export namespace ConcreteParentClassStatic {
             $parameters.resource.values(
               $schema.properties.concreteParentClassProperty.identifier,
               {
+                graph: undefined,
                 unique: true,
               },
             ),
@@ -62175,7 +62554,7 @@ export namespace ConcreteChildClass {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -62188,6 +62567,7 @@ export namespace ConcreteChildClass {
               if (
                 $parameters.resource.isInstanceOf(
                   ConcreteChildClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -62209,7 +62589,10 @@ export namespace ConcreteChildClass {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.concreteChildClassProperty.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -62737,6 +63120,7 @@ export namespace ClassUnionMemberCommonParentStatic {
         $parameters.resource.values(
           $schema.properties.classUnionMemberCommonParentProperty.identifier,
           {
+            graph: undefined,
             unique: true,
           },
         ),
@@ -63186,7 +63570,7 @@ export namespace ClassUnionMember2 {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -63199,6 +63583,7 @@ export namespace ClassUnionMember2 {
               if (
                 $parameters.resource.isInstanceOf(
                   ClassUnionMember2.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -63220,7 +63605,10 @@ export namespace ClassUnionMember2 {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.classUnionMember2Property.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -63747,7 +64135,7 @@ export namespace ClassUnionMember1 {
     }).chain(($super0) =>
       (!$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -63760,6 +64148,7 @@ export namespace ClassUnionMember1 {
               if (
                 $parameters.resource.isInstanceOf(
                   ClassUnionMember1.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -63781,7 +64170,10 @@ export namespace ClassUnionMember1 {
           Either.of<Error, Resource.Values<Resource.TermValue>>(
             $parameters.resource.values(
               $schema.properties.classUnionMember1Property.identifier,
-              { unique: true },
+              {
+                graph: undefined,
+                unique: true,
+              },
             ),
           )
             .chain((values) =>
@@ -64286,7 +64678,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -64299,6 +64691,9 @@ export namespace BlankNodeOrIriIdentifierInterface {
               if (
                 $parameters.resource.isInstanceOf(
                   BlankNodeOrIriIdentifierInterface.$fromRdfType,
+                  {
+                    graph: $parameters.graph,
+                  },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -64784,7 +65179,7 @@ export namespace BlankNodeOrIriIdentifierClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -64797,6 +65192,7 @@ export namespace BlankNodeOrIriIdentifierClass {
               if (
                 $parameters.resource.isInstanceOf(
                   BlankNodeOrIriIdentifierClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -65232,7 +65628,7 @@ export namespace BlankNodeIdentifierInterface {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -65245,6 +65641,7 @@ export namespace BlankNodeIdentifierInterface {
               if (
                 $parameters.resource.isInstanceOf(
                   BlankNodeIdentifierInterface.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);
@@ -65733,7 +66130,7 @@ export namespace BlankNodeIdentifierClass {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
-            .value($RdfVocabularies.rdf.type)
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -65746,6 +66143,7 @@ export namespace BlankNodeIdentifierClass {
               if (
                 $parameters.resource.isInstanceOf(
                   BlankNodeIdentifierClass.$fromRdfType,
+                  { graph: $parameters.graph },
                 )
               ) {
                 return Either.of<Error, true>(true);

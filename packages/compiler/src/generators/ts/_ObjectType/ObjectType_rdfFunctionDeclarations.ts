@@ -40,6 +40,7 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
 
   const variables = {
     context: code`${syntheticNamePrefix}parameters.context`,
+    graph: code`${syntheticNamePrefix}parameters.graph`,
     ignoreRdfType: code`${syntheticNamePrefix}parameters.ignoreRdfType`,
     objectSet: code`${syntheticNamePrefix}parameters.objectSet`,
     preferredLanguages: code`${syntheticNamePrefix}parameters.preferredLanguages`,
@@ -67,7 +68,7 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
       cases.add(descendantFromRdfType.value);
     }
     chains.push({
-      expression: code`!${variables.ignoreRdfType} ? ${variables.resource}.value(${predicate})
+      expression: code`!${variables.ignoreRdfType} ? ${variables.resource}.value(${predicate}, ${{ graph: variables.graph }})
     .chain(actualRdfType => actualRdfType.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -77,7 +78,7 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
       }
 
       // Check arbitrary rdfs:subClassOf's of the expected type
-      if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable})) {
+      if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable}, ${{ graph: variables.graph }})) {
         return ${imports.Either}.of<Error, true>(true);
       }
 

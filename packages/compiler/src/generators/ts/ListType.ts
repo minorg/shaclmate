@@ -68,7 +68,7 @@ export class ListType<
     return joinCode(
       [
         variables.resourceValues,
-        code`chain(values => values.chainMap(value => value.toList()))`, // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
+        code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
         code`chain(valueLists =>
         valueLists.chainMap(
           valueList => ${this.itemType.fromRdfExpression({
