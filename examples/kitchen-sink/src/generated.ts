@@ -790,8 +790,8 @@ function $filterTerm(
 
 type $FromRdfOptions = {
   context?: any;
-  ignoreRdfType?: boolean;
   graph?: Exclude<Quad_Graph, Variable>;
+  ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
   preferredLanguages?: readonly string[];
 };
@@ -834,6 +834,7 @@ function $fromRdfPreferredLanguages({
       return filteredLiteralValues!.map(
         (literalValue) =>
           new Resource.TermValue({
+            dataFactory: dataFactory,
             focusResource,
             predicate,
             term: literalValue,
@@ -1596,6 +1597,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
 
 type $PropertiesFromRdfParameters = {
   context?: any;
+  graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
   preferredLanguages?: readonly string[];
@@ -52468,6 +52470,7 @@ export namespace DefaultValuePropertiesClass {
             values.length > 0
               ? values
               : new Resource.TermValue({
+                  dataFactory: dataFactory,
                   focusResource: $parameters.resource,
                   predicate:
                     DefaultValuePropertiesClass.$schema.properties
@@ -52494,6 +52497,7 @@ export namespace DefaultValuePropertiesClass {
                 values.length > 0
                   ? values
                   : new Resource.TermValue({
+                      dataFactory: dataFactory,
                       focusResource: $parameters.resource,
                       predicate:
                         DefaultValuePropertiesClass.$schema.properties
@@ -52521,6 +52525,7 @@ export namespace DefaultValuePropertiesClass {
                     values.length > 0
                       ? values
                       : new Resource.TermValue({
+                          dataFactory: dataFactory,
                           focusResource: $parameters.resource,
                           predicate:
                             DefaultValuePropertiesClass.$schema.properties
@@ -52550,6 +52555,7 @@ export namespace DefaultValuePropertiesClass {
                         values.length > 0
                           ? values
                           : new Resource.TermValue({
+                              dataFactory: dataFactory,
                               focusResource: $parameters.resource,
                               predicate:
                                 DefaultValuePropertiesClass.$schema.properties
@@ -52579,6 +52585,7 @@ export namespace DefaultValuePropertiesClass {
                             values.length > 0
                               ? values
                               : new Resource.TermValue({
+                                  dataFactory: dataFactory,
                                   focusResource: $parameters.resource,
                                   predicate:
                                     DefaultValuePropertiesClass.$schema
@@ -52620,6 +52627,7 @@ export namespace DefaultValuePropertiesClass {
                                 values.length > 0
                                   ? values
                                   : new Resource.TermValue({
+                                      dataFactory: dataFactory,
                                       focusResource: $parameters.resource,
                                       predicate:
                                         DefaultValuePropertiesClass.$schema
@@ -83848,7 +83856,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: Resource,
-        options: { objectSet: $ObjectSet },
+        options: {
+          graph?: Exclude<Quad_Graph, Variable>;
+          objectSet: $ObjectSet;
+        },
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     },
@@ -83964,7 +83975,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: Resource,
-        options: { objectSet: $ObjectSet },
+        options: {
+          graph?: Exclude<Quad_Graph, Variable>;
+          objectSet: $ObjectSet;
+        },
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     }[],
@@ -83988,7 +84002,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
         $fromRdf: (
           resource: Resource,
-          options: { objectSet: $ObjectSet },
+          options: {
+            graph?: Exclude<Quad_Graph, Variable>;
+            objectSet: $ObjectSet;
+          },
         ) => Either<Error, ObjectT>;
         $fromRdfTypes: readonly NamedNode[];
       };
@@ -87957,7 +87974,10 @@ export class $SparqlObjectSet implements $ObjectSet {
     objectType: {
       $fromRdf: (
         resource: Resource,
-        options: { objectSet: $ObjectSet },
+        options: {
+          graph?: Exclude<Quad_Graph, Variable>;
+          objectSet: $ObjectSet;
+        },
       ) => Either<Error, ObjectT>;
       $sparqlConstructQueryString: (
         parameters?: {
