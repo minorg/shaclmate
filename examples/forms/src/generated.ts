@@ -757,7 +757,7 @@ export namespace NestedNodeShape {
             $parameters.resource.values(
               $schema.properties.requiredStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -1341,7 +1341,7 @@ export namespace FormNodeShape {
             $parameters.resource.values(
               $schema.properties.emptyStringSetProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -1373,7 +1373,7 @@ export namespace FormNodeShape {
                 $parameters.resource.values(
                   $schema.properties.nestedObjectProperty.identifier,
                   {
-                    graph: undefined,
+                    graph: $parameters.graph,
                     unique: true,
                   },
                 ),
@@ -1396,7 +1396,7 @@ export namespace FormNodeShape {
                     $parameters.resource.values(
                       $schema.properties.nonEmptyStringSetProperty.identifier,
                       {
-                        graph: undefined,
+                        graph: $parameters.graph,
                         unique: true,
                       },
                     ),
@@ -1436,7 +1436,7 @@ export namespace FormNodeShape {
                         $parameters.resource.values(
                           $schema.properties.optionalStringProperty.identifier,
                           {
-                            graph: undefined,
+                            graph: $parameters.graph,
                             unique: true,
                           },
                         ),
@@ -1472,7 +1472,7 @@ export namespace FormNodeShape {
                               $schema.properties.requiredIntegerProperty
                                 .identifier,
                               {
-                                graph: undefined,
+                                graph: $parameters.graph,
                                 unique: true,
                               },
                             ),
@@ -1490,7 +1490,7 @@ export namespace FormNodeShape {
                                   $schema.properties.requiredStringProperty
                                     .identifier,
                                   {
-                                    graph: undefined,
+                                    graph: $parameters.graph,
                                     unique: true,
                                   },
                                 ),

@@ -786,7 +786,7 @@ export namespace UnionMember2 {
           $parameters.resource.values(
             $schema.properties.optionalStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -1066,7 +1066,7 @@ export namespace UnionMember1 {
           $parameters.resource.values(
             $schema.properties.optionalNumberProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -1402,7 +1402,7 @@ export namespace Nested {
           $parameters.resource.values(
             $schema.properties.optionalNumberProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -1425,7 +1425,7 @@ export namespace Nested {
               $parameters.resource.values(
                 $schema.properties.optionalStringProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -1458,7 +1458,7 @@ export namespace Nested {
                   $parameters.resource.values(
                     $schema.properties.requiredStringProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -1755,7 +1755,7 @@ export namespace ParentStatic {
           $parameters.resource.values(
             $schema.properties.parentStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -2339,7 +2339,7 @@ export namespace Child {
             $parameters.resource.values(
               $schema.properties.childStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -2370,7 +2370,7 @@ export namespace Child {
                 $parameters.resource.values(
                   $schema.properties.lazyObjectSetProperty.identifier,
                   {
-                    graph: undefined,
+                    graph: $parameters.graph,
                     unique: true,
                   },
                 ),
@@ -2416,7 +2416,7 @@ export namespace Child {
                     $parameters.resource.values(
                       $schema.properties.optionalLazyObjectProperty.identifier,
                       {
-                        graph: undefined,
+                        graph: $parameters.graph,
                         unique: true,
                       },
                     ),
@@ -2464,7 +2464,7 @@ export namespace Child {
                         $parameters.resource.values(
                           $schema.properties.optionalObjectProperty.identifier,
                           {
-                            graph: undefined,
+                            graph: $parameters.graph,
                             unique: true,
                           },
                         ),
@@ -2500,7 +2500,7 @@ export namespace Child {
                               $schema.properties.optionalStringProperty
                                 .identifier,
                               {
-                                graph: undefined,
+                                graph: $parameters.graph,
                                 unique: true,
                               },
                             ),
@@ -2540,7 +2540,7 @@ export namespace Child {
                                   $schema.properties.requiredStringProperty
                                     .identifier,
                                   {
-                                    graph: undefined,
+                                    graph: $parameters.graph,
                                     unique: true,
                                   },
                                 ),

@@ -3019,7 +3019,7 @@ export namespace UuidV4IriIdentifierInterface {
           $parameters.resource.values(
             $schema.properties.uuidV4IriProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -3555,7 +3555,7 @@ export namespace UuidV4IriIdentifierClass {
         $parameters.resource.values(
           $schema.properties.uuidV4IriProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -5985,7 +5985,7 @@ export namespace UnionDiscriminantsClass {
         $parameters.resource.values(
           $schema.properties.optionalClassOrClassOrStringProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -6158,7 +6158,7 @@ export namespace UnionDiscriminantsClass {
             $parameters.resource.values(
               $schema.properties.optionalIriOrLiteralProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -6211,7 +6211,7 @@ export namespace UnionDiscriminantsClass {
                 $parameters.resource.values(
                   $schema.properties.optionalIriOrStringProperty.identifier,
                   {
-                    graph: undefined,
+                    graph: $parameters.graph,
                     unique: true,
                   },
                 ),
@@ -6266,7 +6266,7 @@ export namespace UnionDiscriminantsClass {
                       $schema.properties.requiredClassOrClassOrStringProperty
                         .identifier,
                       {
-                        graph: undefined,
+                        graph: $parameters.graph,
                         unique: true,
                       },
                     ),
@@ -6427,7 +6427,7 @@ export namespace UnionDiscriminantsClass {
                           $schema.properties.requiredIriOrLiteralProperty
                             .identifier,
                           {
-                            graph: undefined,
+                            graph: $parameters.graph,
                             unique: true,
                           },
                         ),
@@ -6478,7 +6478,7 @@ export namespace UnionDiscriminantsClass {
                               $schema.properties.requiredIriOrStringProperty
                                 .identifier,
                               {
-                                graph: undefined,
+                                graph: $parameters.graph,
                                 unique: true,
                               },
                             ),
@@ -6534,7 +6534,7 @@ export namespace UnionDiscriminantsClass {
                                   $schema.properties
                                     .setClassOrClassOrStringProperty.identifier,
                                   {
-                                    graph: undefined,
+                                    graph: $parameters.graph,
                                     unique: true,
                                   },
                                 ),
@@ -6744,7 +6744,7 @@ export namespace UnionDiscriminantsClass {
                                       $schema.properties.setIriOrLiteralProperty
                                         .identifier,
                                       {
-                                        graph: undefined,
+                                        graph: $parameters.graph,
                                         unique: true,
                                       },
                                     ),
@@ -6816,7 +6816,7 @@ export namespace UnionDiscriminantsClass {
                                           $schema.properties
                                             .setIriOrStringProperty.identifier,
                                           {
-                                            graph: undefined,
+                                            graph: $parameters.graph,
                                             unique: true,
                                           },
                                         ),
@@ -9252,7 +9252,7 @@ export namespace TermPropertiesClass {
           $parameters.resource.values(
             $schema.properties.blankNodeTermProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -9275,7 +9275,7 @@ export namespace TermPropertiesClass {
               $parameters.resource.values(
                 $schema.properties.booleanTermProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -9298,7 +9298,7 @@ export namespace TermPropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.dateTermProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -9321,7 +9321,7 @@ export namespace TermPropertiesClass {
                       $parameters.resource.values(
                         $schema.properties.dateTimeTermProperty.identifier,
                         {
-                          graph: undefined,
+                          graph: $parameters.graph,
                           unique: true,
                         },
                       ),
@@ -9346,7 +9346,7 @@ export namespace TermPropertiesClass {
                           $parameters.resource.values(
                             $schema.properties.iriTermProperty.identifier,
                             {
-                              graph: undefined,
+                              graph: $parameters.graph,
                               unique: true,
                             },
                           ),
@@ -9375,7 +9375,7 @@ export namespace TermPropertiesClass {
                                 $schema.properties.literalTermProperty
                                   .identifier,
                                 {
-                                  graph: undefined,
+                                  graph: $parameters.graph,
                                   unique: true,
                                 },
                               ),
@@ -9415,7 +9415,7 @@ export namespace TermPropertiesClass {
                                     $schema.properties.numberTermProperty
                                       .identifier,
                                     {
-                                      graph: undefined,
+                                      graph: $parameters.graph,
                                       unique: true,
                                     },
                                   ),
@@ -9449,7 +9449,7 @@ export namespace TermPropertiesClass {
                                         $schema.properties.stringTermProperty
                                           .identifier,
                                         {
-                                          graph: undefined,
+                                          graph: $parameters.graph,
                                           unique: true,
                                         },
                                       ),
@@ -9498,7 +9498,7 @@ export namespace TermPropertiesClass {
                                             $schema.properties.termProperty
                                               .identifier,
                                             {
-                                              graph: undefined,
+                                              graph: $parameters.graph,
                                               unique: true,
                                             },
                                           ),
@@ -10680,7 +10680,7 @@ export namespace Sha256IriIdentifierClass {
         $parameters.resource.values(
           $schema.properties.sha256IriProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -11238,7 +11238,7 @@ export namespace RecursiveClassUnionMember2 {
           $parameters.resource.values(
             $schema.properties.recursiveClassUnionMember2Property.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -11841,7 +11841,7 @@ export namespace RecursiveClassUnionMember1 {
           $parameters.resource.values(
             $schema.properties.recursiveClassUnionMember1Property.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -12421,7 +12421,7 @@ export namespace PropertyVisibilitiesClass {
         $parameters.resource.values(
           $schema.properties.privateProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -12443,7 +12443,7 @@ export namespace PropertyVisibilitiesClass {
             $parameters.resource.values(
               $schema.properties.protectedProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -12465,7 +12465,7 @@ export namespace PropertyVisibilitiesClass {
                 $parameters.resource.values(
                   $schema.properties.publicProperty.identifier,
                   {
-                    graph: undefined,
+                    graph: $parameters.graph,
                     unique: true,
                   },
                 ),
@@ -13272,7 +13272,7 @@ export namespace PropertyCardinalitiesClass {
         $parameters.resource.values(
           $schema.properties.emptyStringSetProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -13304,7 +13304,7 @@ export namespace PropertyCardinalitiesClass {
             $parameters.resource.values(
               $schema.properties.nonEmptyStringSetProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -13342,7 +13342,7 @@ export namespace PropertyCardinalitiesClass {
                 $parameters.resource.values(
                   $schema.properties.optionalStringProperty.identifier,
                   {
-                    graph: undefined,
+                    graph: $parameters.graph,
                     unique: true,
                   },
                 ),
@@ -13375,7 +13375,7 @@ export namespace PropertyCardinalitiesClass {
                     $parameters.resource.values(
                       $schema.properties.requiredStringProperty.identifier,
                       {
-                        graph: undefined,
+                        graph: $parameters.graph,
                         unique: true,
                       },
                     ),
@@ -14102,7 +14102,7 @@ export namespace PartialInterfaceUnionMember2 {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -14733,7 +14733,7 @@ export namespace PartialInterfaceUnionMember1 {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -15376,7 +15376,7 @@ export namespace PartialClassUnionMember2 {
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -15979,7 +15979,7 @@ export namespace PartialClassUnionMember1 {
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -16620,7 +16620,7 @@ export namespace OrderedPropertiesClass {
         $parameters.resource.values(
           $schema.properties.orderedPropertyC.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -16642,7 +16642,7 @@ export namespace OrderedPropertiesClass {
             $parameters.resource.values(
               $schema.properties.orderedPropertyB.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -16664,7 +16664,7 @@ export namespace OrderedPropertiesClass {
                 $parameters.resource.values(
                   $schema.properties.orderedPropertyA.identifier,
                   {
-                    graph: undefined,
+                    graph: $parameters.graph,
                     unique: true,
                   },
                 ),
@@ -18324,7 +18324,7 @@ export namespace NumericPropertiesClass {
           $parameters.resource.values(
             $schema.properties.byteNumericProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -18347,7 +18347,7 @@ export namespace NumericPropertiesClass {
               $parameters.resource.values(
                 $schema.properties.decimalNumericProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -18384,7 +18384,7 @@ export namespace NumericPropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.doubleNumericProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -18409,7 +18409,7 @@ export namespace NumericPropertiesClass {
                       $parameters.resource.values(
                         $schema.properties.floatNumericProperty.identifier,
                         {
-                          graph: undefined,
+                          graph: $parameters.graph,
                           unique: true,
                         },
                       ),
@@ -18435,7 +18435,7 @@ export namespace NumericPropertiesClass {
                             $schema.properties.integerNumericProperty
                               .identifier,
                             {
-                              graph: undefined,
+                              graph: $parameters.graph,
                               unique: true,
                             },
                           ),
@@ -18464,7 +18464,7 @@ export namespace NumericPropertiesClass {
                                 $schema.properties.intNumericProperty
                                   .identifier,
                                 {
-                                  graph: undefined,
+                                  graph: $parameters.graph,
                                   unique: true,
                                 },
                               ),
@@ -18494,7 +18494,7 @@ export namespace NumericPropertiesClass {
                                     $schema.properties.longNumericProperty
                                       .identifier,
                                     {
-                                      graph: undefined,
+                                      graph: $parameters.graph,
                                       unique: true,
                                     },
                                   ),
@@ -18529,7 +18529,7 @@ export namespace NumericPropertiesClass {
                                           .negativeIntegerNumericProperty
                                           .identifier,
                                         {
-                                          graph: undefined,
+                                          graph: $parameters.graph,
                                           unique: true,
                                         },
                                       ),
@@ -18567,7 +18567,10 @@ export namespace NumericPropertiesClass {
                                             $schema.properties
                                               .nonNegativeIntegerNumericProperty
                                               .identifier,
-                                            { graph: undefined, unique: true },
+                                            {
+                                              graph: $parameters.graph,
+                                              unique: true,
+                                            },
                                           ),
                                         )
                                           .chain((values) =>
@@ -18607,7 +18610,7 @@ export namespace NumericPropertiesClass {
                                                     .nonPositiveIntegerNumericProperty
                                                     .identifier,
                                                   {
-                                                    graph: undefined,
+                                                    graph: $parameters.graph,
                                                     unique: true,
                                                   },
                                                 ),
@@ -18651,7 +18654,8 @@ export namespace NumericPropertiesClass {
                                                           .positiveIntegerNumericProperty
                                                           .identifier,
                                                         {
-                                                          graph: undefined,
+                                                          graph:
+                                                            $parameters.graph,
                                                           unique: true,
                                                         },
                                                       ),
@@ -18700,7 +18704,7 @@ export namespace NumericPropertiesClass {
                                                                 .identifier,
                                                               {
                                                                 graph:
-                                                                  undefined,
+                                                                  $parameters.graph,
                                                                 unique: true,
                                                               },
                                                             ),
@@ -18752,7 +18756,7 @@ export namespace NumericPropertiesClass {
                                                                       .identifier,
                                                                     {
                                                                       graph:
-                                                                        undefined,
+                                                                        $parameters.graph,
                                                                       unique: true,
                                                                     },
                                                                   ),
@@ -18812,7 +18816,7 @@ export namespace NumericPropertiesClass {
                                                                             .identifier,
                                                                           {
                                                                             graph:
-                                                                              undefined,
+                                                                              $parameters.graph,
                                                                             unique: true,
                                                                           },
                                                                         ),
@@ -18880,7 +18884,7 @@ export namespace NumericPropertiesClass {
                                                                                   .identifier,
                                                                                 {
                                                                                   graph:
-                                                                                    undefined,
+                                                                                    $parameters.graph,
                                                                                   unique: true,
                                                                                 },
                                                                               ),
@@ -18948,7 +18952,7 @@ export namespace NumericPropertiesClass {
                                                                                         .identifier,
                                                                                       {
                                                                                         graph:
-                                                                                          undefined,
+                                                                                          $parameters.graph,
                                                                                         unique: true,
                                                                                       },
                                                                                     ),
@@ -20637,7 +20641,7 @@ export namespace NonClass {
         $parameters.resource.values(
           $schema.properties.nonClassProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -21092,7 +21096,7 @@ export namespace NoRdfTypeClassUnionMember2 {
         $parameters.resource.values(
           $schema.properties.noRdfTypeClassUnionMember2Property.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -21572,7 +21576,7 @@ export namespace NoRdfTypeClassUnionMember1 {
         $parameters.resource.values(
           $schema.properties.noRdfTypeClassUnionMember1Property.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -22326,13 +22330,15 @@ export namespace MutablePropertiesClass {
           $parameters.resource.values(
             $schema.properties.mutableListProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
         )
           .chain((values) =>
-            values.chainMap((value) => value.toList({ graph: undefined })),
+            values.chainMap((value) =>
+              value.toList({ graph: $parameters.graph }),
+            ),
           )
           .chain((valueLists) =>
             valueLists.chainMap((valueList) =>
@@ -22380,7 +22386,7 @@ export namespace MutablePropertiesClass {
               $parameters.resource.values(
                 $schema.properties.mutableSetProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -22412,7 +22418,7 @@ export namespace MutablePropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.mutableStringProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -23584,13 +23590,15 @@ export namespace ListPropertiesClass {
           $parameters.resource.values(
             $schema.properties.iriListProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
         )
           .chain((values) =>
-            values.chainMap((value) => value.toList({ graph: undefined })),
+            values.chainMap((value) =>
+              value.toList({ graph: $parameters.graph }),
+            ),
           )
           .chain((valueLists) =>
             valueLists.chainMap((valueList) =>
@@ -23625,13 +23633,15 @@ export namespace ListPropertiesClass {
               $parameters.resource.values(
                 $schema.properties.objectListProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
             )
               .chain((values) =>
-                values.chainMap((value) => value.toList({ graph: undefined })),
+                values.chainMap((value) =>
+                  value.toList({ graph: $parameters.graph }),
+                ),
               )
               .chain((valueLists) =>
                 valueLists.chainMap((valueList) =>
@@ -23677,14 +23687,14 @@ export namespace ListPropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.stringListProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
                 )
                   .chain((values) =>
                     values.chainMap((value) =>
-                      value.toList({ graph: undefined }),
+                      value.toList({ graph: $parameters.graph }),
                     ),
                   )
                   .chain((valueLists) =>
@@ -24709,7 +24719,7 @@ export namespace PartialInterface {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -26700,7 +26710,7 @@ export namespace LazyPropertiesInterface {
             $schema.properties.optionalLazyToResolvedInterfaceProperty
               .identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -26751,7 +26761,7 @@ export namespace LazyPropertiesInterface {
                 $schema.properties.optionalLazyToResolvedInterfaceUnionProperty
                   .identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -26803,7 +26813,7 @@ export namespace LazyPropertiesInterface {
                     $schema.properties
                       .optionalLazyToResolvedIriIdentifierInterfaceProperty
                       .identifier,
-                    { graph: undefined, unique: true },
+                    { graph: $parameters.graph, unique: true },
                   ),
                 )
                   .chain((values) =>
@@ -26854,7 +26864,7 @@ export namespace LazyPropertiesInterface {
                           $schema.properties
                             .optionalPartialInterfaceToResolvedInterfaceProperty
                             .identifier,
-                          { graph: undefined, unique: true },
+                          { graph: $parameters.graph, unique: true },
                         ),
                       )
                         .chain((values) =>
@@ -26913,7 +26923,7 @@ export namespace LazyPropertiesInterface {
                                 $schema.properties
                                   .optionalPartialInterfaceToResolvedInterfaceUnionProperty
                                   .identifier,
-                                { graph: undefined, unique: true },
+                                { graph: $parameters.graph, unique: true },
                               ),
                             )
                               .chain((values) =>
@@ -26973,7 +26983,10 @@ export namespace LazyPropertiesInterface {
                                       $schema.properties
                                         .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
                                         .identifier,
-                                      { graph: undefined, unique: true },
+                                      {
+                                        graph: $parameters.graph,
+                                        unique: true,
+                                      },
                                     ),
                                   )
                                     .chain((values) =>
@@ -27036,7 +27049,10 @@ export namespace LazyPropertiesInterface {
                                             $schema.properties
                                               .requiredLazyToResolvedInterfaceProperty
                                               .identifier,
-                                            { graph: undefined, unique: true },
+                                            {
+                                              graph: $parameters.graph,
+                                              unique: true,
+                                            },
                                           ),
                                         )
                                           .chain((values) =>
@@ -27089,7 +27105,7 @@ export namespace LazyPropertiesInterface {
                                                     .requiredPartialInterfaceToResolvedInterfaceProperty
                                                     .identifier,
                                                   {
-                                                    graph: undefined,
+                                                    graph: $parameters.graph,
                                                     unique: true,
                                                   },
                                                 ),
@@ -27148,7 +27164,8 @@ export namespace LazyPropertiesInterface {
                                                           .setLazyToResolvedInterfaceProperty
                                                           .identifier,
                                                         {
-                                                          graph: undefined,
+                                                          graph:
+                                                            $parameters.graph,
                                                           unique: true,
                                                         },
                                                       ),
@@ -27230,7 +27247,7 @@ export namespace LazyPropertiesInterface {
                                                                 .identifier,
                                                               {
                                                                 graph:
-                                                                  undefined,
+                                                                  $parameters.graph,
                                                                 unique: true,
                                                               },
                                                             ),
@@ -28943,7 +28960,7 @@ export namespace PartialClass {
         $parameters.resource.values(
           $schema.properties.lazilyResolvedStringProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -30911,7 +30928,7 @@ export namespace LazyPropertiesClass {
         $parameters.resource.values(
           $schema.properties.optionalLazyToResolvedClassProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -30962,7 +30979,7 @@ export namespace LazyPropertiesClass {
               $schema.properties.optionalLazyToResolvedClassUnionProperty
                 .identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -31013,7 +31030,7 @@ export namespace LazyPropertiesClass {
                   $schema.properties
                     .optionalLazyToResolvedIriIdentifierClassProperty
                     .identifier,
-                  { graph: undefined, unique: true },
+                  { graph: $parameters.graph, unique: true },
                 ),
               )
                 .chain((values) =>
@@ -31063,7 +31080,7 @@ export namespace LazyPropertiesClass {
                       $schema.properties
                         .optionalPartialClassToResolvedClassProperty.identifier,
                       {
-                        graph: undefined,
+                        graph: $parameters.graph,
                         unique: true,
                       },
                     ),
@@ -31115,7 +31132,7 @@ export namespace LazyPropertiesClass {
                           $schema.properties
                             .optionalPartialClassToResolvedClassUnionProperty
                             .identifier,
-                          { graph: undefined, unique: true },
+                          { graph: $parameters.graph, unique: true },
                         ),
                       )
                         .chain((values) =>
@@ -31170,7 +31187,7 @@ export namespace LazyPropertiesClass {
                                 $schema.properties
                                   .optionalPartialClassUnionToResolvedClassUnionProperty
                                   .identifier,
-                                { graph: undefined, unique: true },
+                                { graph: $parameters.graph, unique: true },
                               ),
                             )
                               .chain((values) =>
@@ -31230,7 +31247,7 @@ export namespace LazyPropertiesClass {
                                         .requiredLazyToResolvedClassProperty
                                         .identifier,
                                       {
-                                        graph: undefined,
+                                        graph: $parameters.graph,
                                         unique: true,
                                       },
                                     ),
@@ -31275,7 +31292,10 @@ export namespace LazyPropertiesClass {
                                             $schema.properties
                                               .requiredPartialClassToResolvedClassProperty
                                               .identifier,
-                                            { graph: undefined, unique: true },
+                                            {
+                                              graph: $parameters.graph,
+                                              unique: true,
+                                            },
                                           ),
                                         )
                                           .chain((values) =>
@@ -31328,7 +31348,7 @@ export namespace LazyPropertiesClass {
                                                     .setLazyToResolvedClassProperty
                                                     .identifier,
                                                   {
-                                                    graph: undefined,
+                                                    graph: $parameters.graph,
                                                     unique: true,
                                                   },
                                                 ),
@@ -31402,7 +31422,8 @@ export namespace LazyPropertiesClass {
                                                           .setPartialClassToResolvedClassProperty
                                                           .identifier,
                                                         {
-                                                          graph: undefined,
+                                                          graph:
+                                                            $parameters.graph,
                                                           unique: true,
                                                         },
                                                       ),
@@ -32970,7 +32991,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -33482,7 +33503,7 @@ export namespace LazilyResolvedIriIdentifierClass {
         $parameters.resource.values(
           $schema.properties.lazilyResolvedStringProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -33992,7 +34013,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -34628,7 +34649,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -35276,7 +35297,7 @@ export namespace LazilyResolvedClassUnionMember2 {
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -35886,7 +35907,7 @@ export namespace LazilyResolvedClassUnionMember1 {
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -36496,7 +36517,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
             $parameters.resource.values(
               $schema.properties.lazilyResolvedStringProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -37154,7 +37175,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           $parameters.resource.values(
             $schema.properties.lazilyResolvedStringProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -37767,7 +37788,7 @@ export namespace LanguageInPropertiesClass {
         $parameters.resource.values(
           $schema.properties.languageInLiteralProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -38480,7 +38501,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           $parameters.resource.values(
             $schema.properties.jsPrimitiveUnionProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -40070,7 +40091,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           $schema.properties.interfaceUnionMemberCommonParentProperty
             .identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -40588,7 +40609,7 @@ export namespace InterfaceUnionMember2 {
               $parameters.resource.values(
                 $schema.properties.interfaceUnionMember2Property.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -41204,7 +41225,7 @@ export namespace InterfaceUnionMember1 {
               $parameters.resource.values(
                 $schema.properties.interfaceUnionMember1Property.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -41779,7 +41800,7 @@ export namespace Interface {
           $parameters.resource.values(
             $schema.properties.interfaceProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -42334,7 +42355,7 @@ export namespace IndirectRecursiveHelperClass {
           $parameters.resource.values(
             $schema.properties.indirectRecursiveProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -42936,7 +42957,7 @@ export namespace IndirectRecursiveClass {
           $parameters.resource.values(
             $schema.properties.indirectRecursiveHelperProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -43861,7 +43882,7 @@ export namespace InPropertiesClass {
           $parameters.resource.values(
             $schema.properties.inBooleansProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -43901,7 +43922,7 @@ export namespace InPropertiesClass {
               $parameters.resource.values(
                 $schema.properties.inDateTimesProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -43942,7 +43963,7 @@ export namespace InPropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.inDoublesProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -43986,7 +44007,7 @@ export namespace InPropertiesClass {
                       $parameters.resource.values(
                         $schema.properties.inIntegersProperty.identifier,
                         {
-                          graph: undefined,
+                          graph: $parameters.graph,
                           unique: true,
                         },
                       ),
@@ -44032,7 +44053,7 @@ export namespace InPropertiesClass {
                           $parameters.resource.values(
                             $schema.properties.inIrisProperty.identifier,
                             {
-                              graph: undefined,
+                              graph: $parameters.graph,
                               unique: true,
                             },
                           ),
@@ -44110,7 +44131,7 @@ export namespace InPropertiesClass {
                               $parameters.resource.values(
                                 $schema.properties.inStringsProperty.identifier,
                                 {
-                                  graph: undefined,
+                                  graph: $parameters.graph,
                                   unique: true,
                                 },
                               ),
@@ -45193,7 +45214,7 @@ export namespace InIdentifierClass {
           $parameters.resource.values(
             $schema.properties.inIdentifierProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -45753,7 +45774,7 @@ export namespace IdentifierOverride1ClassStatic {
         $parameters.resource.values(
           $schema.properties.identifierOverrideProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -47929,7 +47950,7 @@ export namespace HasValuePropertiesClass {
         $parameters.resource.values(
           $schema.properties.hasIriValueProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -47952,7 +47973,7 @@ export namespace HasValuePropertiesClass {
             $parameters.resource.values(
               $schema.properties.hasLiteralValueProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -48546,7 +48567,7 @@ export namespace FlattenClassUnionMember3 {
           $parameters.resource.values(
             $schema.properties.flattenClassUnionMember3Property.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -49178,7 +49199,7 @@ export namespace ExternClassPropertyClass {
           $parameters.resource.values(
             $schema.properties.externClassProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -49766,7 +49787,7 @@ export namespace AbstractBaseClassForExternClassStatic {
         $parameters.resource.values(
           $schema.properties.abstractBaseClassForExternClassProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -50288,7 +50309,7 @@ export namespace ExplicitRdfTypeClass {
           $parameters.resource.values(
             $schema.properties.explicitRdfTypeProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -50907,7 +50928,7 @@ export namespace ExplicitFromToRdfTypesClass {
           $parameters.resource.values(
             $schema.properties.explicitFromToRdfTypesProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -51545,7 +51566,7 @@ export namespace DirectRecursiveClass {
           $parameters.resource.values(
             $schema.properties.directRecursiveProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -52461,7 +52482,7 @@ export namespace DefaultValuePropertiesClass {
           $parameters.resource.values(
             $schema.properties.dateDefaultValueProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -52488,7 +52509,7 @@ export namespace DefaultValuePropertiesClass {
               $parameters.resource.values(
                 $schema.properties.dateTimeDefaultValueProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -52516,7 +52537,7 @@ export namespace DefaultValuePropertiesClass {
                     $schema.properties.falseBooleanDefaultValueProperty
                       .identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -52546,7 +52567,7 @@ export namespace DefaultValuePropertiesClass {
                         $schema.properties.numberDefaultValueProperty
                           .identifier,
                         {
-                          graph: undefined,
+                          graph: $parameters.graph,
                           unique: true,
                         },
                       ),
@@ -52576,7 +52597,7 @@ export namespace DefaultValuePropertiesClass {
                             $schema.properties.stringDefaultValueProperty
                               .identifier,
                             {
-                              graph: undefined,
+                              graph: $parameters.graph,
                               unique: true,
                             },
                           ),
@@ -52618,7 +52639,7 @@ export namespace DefaultValuePropertiesClass {
                                 $schema.properties
                                   .trueBooleanDefaultValueProperty.identifier,
                                 {
-                                  graph: undefined,
+                                  graph: $parameters.graph,
                                   unique: true,
                                 },
                               ),
@@ -54383,7 +54404,7 @@ export namespace DateUnionPropertiesClass {
           $parameters.resource.values(
             $schema.properties.dateOrDateTimeProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -54461,7 +54482,7 @@ export namespace DateUnionPropertiesClass {
               $parameters.resource.values(
                 $schema.properties.dateOrStringProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -54552,7 +54573,7 @@ export namespace DateUnionPropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.dateTimeOrDateProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -54632,7 +54653,7 @@ export namespace DateUnionPropertiesClass {
                       $parameters.resource.values(
                         $schema.properties.stringOrDateProperty.identifier,
                         {
-                          graph: undefined,
+                          graph: $parameters.graph,
                           unique: true,
                         },
                       ),
@@ -56945,7 +56966,7 @@ export namespace ConvertibleTypePropertiesClass {
           $parameters.resource.values(
             $schema.properties.convertibleIriNonEmptySetProperty.identifier,
             {
-              graph: undefined,
+              graph: $parameters.graph,
               unique: true,
             },
           ),
@@ -56973,7 +56994,7 @@ export namespace ConvertibleTypePropertiesClass {
               $parameters.resource.values(
                 $schema.properties.convertibleIriOptionProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -56996,7 +57017,7 @@ export namespace ConvertibleTypePropertiesClass {
                   $parameters.resource.values(
                     $schema.properties.convertibleIriProperty.identifier,
                     {
-                      graph: undefined,
+                      graph: $parameters.graph,
                       unique: true,
                     },
                   ),
@@ -57008,7 +57029,7 @@ export namespace ConvertibleTypePropertiesClass {
                       $parameters.resource.values(
                         $schema.properties.convertibleIriSetProperty.identifier,
                         {
-                          graph: undefined,
+                          graph: $parameters.graph,
                           unique: true,
                         },
                       ),
@@ -57033,7 +57054,7 @@ export namespace ConvertibleTypePropertiesClass {
                             $schema.properties
                               .convertibleLiteralNonEmptySetProperty.identifier,
                             {
-                              graph: undefined,
+                              graph: $parameters.graph,
                               unique: true,
                             },
                           ),
@@ -57082,7 +57103,7 @@ export namespace ConvertibleTypePropertiesClass {
                                 $schema.properties
                                   .convertibleLiteralOptionProperty.identifier,
                                 {
-                                  graph: undefined,
+                                  graph: $parameters.graph,
                                   unique: true,
                                 },
                               ),
@@ -57126,7 +57147,7 @@ export namespace ConvertibleTypePropertiesClass {
                                     $schema.properties
                                       .convertibleLiteralProperty.identifier,
                                     {
-                                      graph: undefined,
+                                      graph: $parameters.graph,
                                       unique: true,
                                     },
                                   ),
@@ -57159,7 +57180,7 @@ export namespace ConvertibleTypePropertiesClass {
                                           .convertibleLiteralSetProperty
                                           .identifier,
                                         {
-                                          graph: undefined,
+                                          graph: $parameters.graph,
                                           unique: true,
                                         },
                                       ),
@@ -57204,7 +57225,10 @@ export namespace ConvertibleTypePropertiesClass {
                                             $schema.properties
                                               .convertibleTermNonEmptySetProperty
                                               .identifier,
-                                            { graph: undefined, unique: true },
+                                            {
+                                              graph: $parameters.graph,
+                                              unique: true,
+                                            },
                                           ),
                                         )
                                           .chain((values) =>
@@ -57250,7 +57274,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                     .convertibleTermOptionProperty
                                                     .identifier,
                                                   {
-                                                    graph: undefined,
+                                                    graph: $parameters.graph,
                                                     unique: true,
                                                   },
                                                 ),
@@ -57303,7 +57327,8 @@ export namespace ConvertibleTypePropertiesClass {
                                                           .convertibleTermProperty
                                                           .identifier,
                                                         {
-                                                          graph: undefined,
+                                                          graph:
+                                                            $parameters.graph,
                                                           unique: true,
                                                         },
                                                       ),
@@ -57336,7 +57361,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                                 .identifier,
                                                               {
                                                                 graph:
-                                                                  undefined,
+                                                                  $parameters.graph,
                                                                 unique: true,
                                                               },
                                                             ),
@@ -58787,7 +58812,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
             $parameters.resource.values(
               $schema.properties.baseInterfaceWithPropertiesProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -59962,7 +59987,7 @@ export namespace ConcreteParentInterfaceStatic {
               $parameters.resource.values(
                 $schema.properties.concreteParentInterfaceProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -60601,7 +60626,7 @@ export namespace ConcreteChildInterface {
               $parameters.resource.values(
                 $schema.properties.concreteChildInterfaceProperty.identifier,
                 {
-                  graph: undefined,
+                  graph: $parameters.graph,
                   unique: true,
                 },
               ),
@@ -61207,7 +61232,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         $parameters.resource.values(
           $schema.properties.abstractBaseClassWithPropertiesProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -61989,7 +62014,7 @@ export namespace ConcreteParentClassStatic {
             $parameters.resource.values(
               $schema.properties.concreteParentClassProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -62598,7 +62623,7 @@ export namespace ConcreteChildClass {
             $parameters.resource.values(
               $schema.properties.concreteChildClassProperty.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -63128,7 +63153,7 @@ export namespace ClassUnionMemberCommonParentStatic {
         $parameters.resource.values(
           $schema.properties.classUnionMemberCommonParentProperty.identifier,
           {
-            graph: undefined,
+            graph: $parameters.graph,
             unique: true,
           },
         ),
@@ -63614,7 +63639,7 @@ export namespace ClassUnionMember2 {
             $parameters.resource.values(
               $schema.properties.classUnionMember2Property.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -64179,7 +64204,7 @@ export namespace ClassUnionMember1 {
             $parameters.resource.values(
               $schema.properties.classUnionMember1Property.identifier,
               {
-                graph: undefined,
+                graph: $parameters.graph,
                 unique: true,
               },
             ),
@@ -88107,7 +88132,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       }),
     );
 
-    patterns = $normalizeSparqlWherePatterns(patterns);
+    patterns = $normalizeSparqlWherePatterns(patterns).concat();
 
     const graph = query?.graph ?? this.graph;
     if (graph) {
@@ -88122,7 +88147,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     return [
       {
         patterns: [
-          patterns,
+          { patterns, type: "group" },
           { name: dataFactory.variable!("g"), patterns, type: "graph" },
         ],
         type: "union",

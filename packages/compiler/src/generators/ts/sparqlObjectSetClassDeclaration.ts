@@ -235,7 +235,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 
     patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
 
-    patterns = ${snippets.normalizeSparqlWherePatterns}(patterns);
+    patterns = ${snippets.normalizeSparqlWherePatterns}(patterns).concat();
 
     const graph = query?.graph ?? this.graph;
     if (graph) {
@@ -247,7 +247,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       }
     }
     // Union of all graphs: { ... patterns covering default graph ... } UNION { GRAPH ?g { ... patterns covering named graphs ... } }
-    return [{ patterns: [patterns, { name: ${imports.dataFactory}.variable!("g"), patterns, type: "graph" }], type: "union" }];
+    return [{ patterns: [{ patterns, type: "group" }, { name: ${imports.dataFactory}.variable!("g"), patterns, type: "graph" }], type: "union" }];
   }
 }
   

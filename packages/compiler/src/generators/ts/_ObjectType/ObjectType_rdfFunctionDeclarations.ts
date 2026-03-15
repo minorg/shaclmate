@@ -90,6 +90,7 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
 
   const propertyFromRdfVariables = {
     context: variables.context,
+    graph: variables.graph,
     preferredLanguages: variables.preferredLanguages,
     objectSet: variables.objectSet,
     resource: variables.resource,
