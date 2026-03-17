@@ -34,23 +34,23 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
   return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
-  protected readonly graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
+  protected readonly ${syntheticNamePrefix}graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
   readonly #dataset: ${imports.DatasetCore} | (() => ${imports.DatasetCore});
 
   constructor(dataset: ${imports.DatasetCore} | (() => ${imports.DatasetCore}), options?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}> }) {
     this.#dataset = dataset;
-    this.graph = options?.graph;
+    this.${syntheticNamePrefix}graph = options?.graph;
   }
 
-  protected dataset(): DatasetCore {
+  protected ${syntheticNamePrefix}dataset(): DatasetCore {
     if (typeof this.#dataset === "object") {
       return this.#dataset;
     }
     return this.#dataset();
   }
 
-  protected resourceSet(): ${imports.ResourceSet} {
-    return new ${imports.ResourceSet}(this.dataset(), { dataFactory: ${imports.dataFactory} });
+  protected ${syntheticNamePrefix}resourceSet(): ${imports.ResourceSet} {
+    return new ${imports.ResourceSet}(this.${syntheticNamePrefix}dataset(), { dataFactory: ${imports.dataFactory} });
   }
 
   ${joinCode(
@@ -155,7 +155,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.graph;
+  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
@@ -164,7 +164,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   if (offset < 0) { offset = 0; }
 
   let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
-  const resourceSet = this.resourceSet(); // Access once, in case it's instantiated lazily
+  const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
   let sortResources: boolean;
   if (query?.identifiers) {
     resources = query.identifiers.map(identifier => ({ resource: resourceSet.resource(identifier) }));
@@ -246,7 +246,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
         ? [
             code`\
 protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.graph;
+  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
@@ -255,7 +255,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   if (offset < 0) { offset = 0; }
 
   let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
-  const resourceSet = this.resourceSet(); // Access once, in case it's instantiated lazily
+  const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
   let sortResources: boolean;
   if (query?.identifiers) {
     resources = query.identifiers.map(identifier => ({ resource: resourceSet.resource(identifier) }));

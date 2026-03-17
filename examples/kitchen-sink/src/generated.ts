@@ -76608,7 +76608,7 @@ export namespace $ObjectSet {
   }
 }
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
-  protected readonly graph?: Exclude<Quad_Graph, Variable>;
+  protected readonly $graph?: Exclude<Quad_Graph, Variable>;
   readonly #dataset: DatasetCore | (() => DatasetCore);
 
   constructor(
@@ -76616,18 +76616,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     options?: { graph?: Exclude<Quad_Graph, Variable> },
   ) {
     this.#dataset = dataset;
-    this.graph = options?.graph;
+    this.$graph = options?.graph;
   }
 
-  protected dataset(): DatasetCore {
+  protected $dataset(): DatasetCore {
     if (typeof this.#dataset === "object") {
       return this.#dataset;
     }
     return this.#dataset();
   }
 
-  protected resourceSet(): ResourceSet {
-    return new ResourceSet(this.dataset(), { dataFactory: dataFactory });
+  protected $resourceSet(): ResourceSet {
+    return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
   }
 
   async baseInterfaceWithoutProperties(
@@ -83901,7 +83901,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
-    const graph = query?.graph ?? this.graph;
+    const graph = query?.graph ?? this.$graph;
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -83914,7 +83914,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let resources: { object?: ObjectT; resource: Resource }[];
-    const resourceSet = this.resourceSet(); // Access once, in case it's instantiated lazily
+    const resourceSet = this.$resourceSet(); // Access once, in case it's instantiated lazily
     let sortResources: boolean;
     if (query?.identifiers) {
       resources = query.identifiers.map((identifier) => ({
@@ -84021,7 +84021,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
-    const graph = query?.graph ?? this.graph;
+    const graph = query?.graph ?? this.$graph;
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -84048,7 +84048,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       };
       resource: Resource;
     }[];
-    const resourceSet = this.resourceSet(); // Access once, in case it's instantiated lazily
+    const resourceSet = this.$resourceSet(); // Access once, in case it's instantiated lazily
     let sortResources: boolean;
     if (query?.identifiers) {
       resources = query.identifiers.map((identifier) => ({
