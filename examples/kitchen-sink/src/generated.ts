@@ -76609,14 +76609,25 @@ export namespace $ObjectSet {
 }
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   protected readonly graph?: Exclude<Quad_Graph, Variable>;
-  protected readonly resourceSet: ResourceSet;
+  readonly #dataset: DatasetCore | (() => DatasetCore);
 
   constructor(
-    dataset: DatasetCore,
+    dataset: DatasetCore | (() => DatasetCore),
     options?: { graph?: Exclude<Quad_Graph, Variable> },
   ) {
+    this.#dataset = dataset;
     this.graph = options?.graph;
-    this.resourceSet = new ResourceSet(dataset, { dataFactory: dataFactory });
+  }
+
+  protected dataset(): DatasetCore {
+    if (typeof this.#dataset === "object") {
+      return this.#dataset;
+    }
+    return this.#dataset();
+  }
+
+  protected resourceSet(): ResourceSet {
+    return new ResourceSet(this.dataset(), { dataFactory: dataFactory });
   }
 
   async baseInterfaceWithoutProperties(
@@ -83903,10 +83914,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let resources: { object?: ObjectT; resource: Resource }[];
+    const resourceSet = this.resourceSet(); // Access once, in case it's instantiated lazily
     let sortResources: boolean;
     if (query?.identifiers) {
       resources = query.identifiers.map((identifier) => ({
-        resource: this.resourceSet.resource(identifier),
+        resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
     } else if (objectType.$fromRdfTypes.length > 0) {
@@ -83914,7 +83926,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const fromRdfType of objectType.$fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+        for (const resource of resourceSet.instancesOf(fromRdfType, {
           graph,
         })) {
           if (!identifierSet.has(resource.identifier)) {
@@ -83927,7 +83939,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const quad of this.resourceSet.dataset) {
+      for (const quad of resourceSet.dataset) {
         if (graph && !quad.graph.equals(graph)) {
           continue;
         }
@@ -83944,7 +83956,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           continue;
         }
         identifierSet.add(quad.subject);
-        const resource = this.resourceSet.resource(quad.subject);
+        const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
         objectType
           .$fromRdf(resource, { graph, objectSet: this })
@@ -84036,10 +84048,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       };
       resource: Resource;
     }[];
+    const resourceSet = this.resourceSet(); // Access once, in case it's instantiated lazily
     let sortResources: boolean;
     if (query?.identifiers) {
       resources = query.identifiers.map((identifier) => ({
-        resource: this.resourceSet.resource(identifier),
+        resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
     } else if (
@@ -84050,7 +84063,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       sortResources = true;
       for (const objectType of objectTypes) {
         for (const fromRdfType of objectType.$fromRdfTypes) {
-          for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+          for (const resource of resourceSet.instancesOf(fromRdfType, {
             graph,
           })) {
             if (!identifierSet.has(resource.identifier)) {
@@ -84064,7 +84077,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const quad of this.resourceSet.dataset) {
+      for (const quad of resourceSet.dataset) {
         if (graph && !quad.graph.equals(graph)) {
           continue;
         }
@@ -84082,7 +84095,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         identifierSet.add(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object types
-        const resource = this.resourceSet.resource(quad.subject);
+        const resource = resourceSet.resource(quad.subject);
         for (const objectType of objectTypes) {
           if (
             objectType
