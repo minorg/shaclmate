@@ -34,12 +34,23 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
   return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
-  protected readonly graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
-  protected readonly resourceSet: ${imports.ResourceSet};
+  protected readonly ${syntheticNamePrefix}graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
+  readonly #dataset: ${imports.DatasetCore} | (() => ${imports.DatasetCore});
 
-  constructor(dataset: ${imports.DatasetCore}, options?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}> }) {
-    this.graph = options?.graph;
-    this.resourceSet = new ${imports.ResourceSet}(dataset, { dataFactory: ${imports.dataFactory} });
+  constructor(dataset: ${imports.DatasetCore} | (() => ${imports.DatasetCore}), options?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}> }) {
+    this.#dataset = dataset;
+    this.${syntheticNamePrefix}graph = options?.graph;
+  }
+
+  protected ${syntheticNamePrefix}dataset(): DatasetCore {
+    if (typeof this.#dataset === "object") {
+      return this.#dataset;
+    }
+    return this.#dataset();
+  }
+
+  protected ${syntheticNamePrefix}resourceSet(): ${imports.ResourceSet} {
+    return new ${imports.ResourceSet}(this.${syntheticNamePrefix}dataset(), { dataFactory: ${imports.dataFactory} });
   }
 
   ${joinCode(
@@ -144,7 +155,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.graph;
+  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
@@ -153,16 +164,17 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   if (offset < 0) { offset = 0; }
 
   let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
+  const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
   let sortResources: boolean;
   if (query?.identifiers) {
-    resources = query.identifiers.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+    resources = query.identifiers.map(identifier => ({ resource: resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
     const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
     for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-      for (const resource of this.resourceSet.instancesOf(fromRdfType, { graph })) {
+      for (const resource of resourceSet.instancesOf(fromRdfType, { graph })) {
         if (!identifierSet.has(resource.identifier)) {
           identifierSet.add(resource.identifier);
           resources.push({ resource });
@@ -173,7 +185,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
-    for (const quad of this.resourceSet.dataset) {
+    for (const quad of resourceSet.dataset) {
       if (graph && !quad.graph.equals(graph)) {
         continue;
       }
@@ -190,7 +202,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
         continue;
       }
       identifierSet.add(quad.subject);
-      const resource = this.resourceSet.resource(quad.subject);
+      const resource = resourceSet.resource(quad.subject);
       // Eagerly eliminate the majority of resources that won't match the object type
       objectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this }).ifRight(object => {
         resources.push({ object, resource });
@@ -234,7 +246,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
         ? [
             code`\
 protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.graph;
+  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
@@ -243,9 +255,10 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   if (offset < 0) { offset = 0; }
 
   let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
+  const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
   let sortResources: boolean;
   if (query?.identifiers) {
-    resources = query.identifiers.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+    resources = query.identifiers.map(identifier => ({ resource: resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
     const identifierSet = new ${snippets.IdentifierSet}();
@@ -253,7 +266,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     sortResources = true;
     for (const objectType of objectTypes) {
       for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType, { graph })) {
+        for (const resource of resourceSet.instancesOf(fromRdfType, { graph })) {
           if (!identifierSet.has(resource.identifier)) {
             identifierSet.add(resource.identifier);
             resources.push({ objectType, resource });
@@ -265,7 +278,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
-    for (const quad of this.resourceSet.dataset) {
+    for (const quad of resourceSet.dataset) {
       if (graph && !quad.graph.equals(graph)) {
         continue;
       }
@@ -283,7 +296,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
       }
       identifierSet.add(quad.subject);
       // Eagerly eliminate the majority of resources that won't match the object types
-      const resource = this.resourceSet.resource(quad.subject);
+      const resource = resourceSet.resource(quad.subject);
       for (const objectType of objectTypes) {
         if (objectType.${syntheticNamePrefix}fromRdf(resource, { graph, objectSet: this }).ifRight(object => {
           resources.push({ object, objectType, resource });
