@@ -42,7 +42,10 @@ See [`examples/kitchen-sink/package.json`](examples/kitchen-sink/package.json) a
 * Deep equals function/method generation
 * Deep hash function/method generation
 * Instance identifier minting by deep hashing or UUID generation
+* Recognition of RDF list-modeling shapes
 * Surrogate objects with lazy, asynchronous resolution
+* Runtime filtering of node properties (in memory and SPARQL)
+* Numeric types in generated code: floating point, fixed-width integers, arbitrary-precision decimals and integers
 * [Zod schema](https://zod.dev/) generation. Zod schemas can be converted to [JSON schemas](https://json-schema.org/) using [zod-to-json-schema](https://github.com/StefanTerdell/zod-to-json-schema).
 * [JSON Forms](https://jsonforms.io/) schema generation
 * GraphQL schema+resolver generation (for [GraphQL.js](https://www.graphql-js.org)-compatible servers)
