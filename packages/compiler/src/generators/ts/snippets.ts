@@ -69,6 +69,7 @@ import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_norm
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
 import { snippets_PropertiesFromRdfParameters } from "./_snippets/snippets_PropertiesFromRdfParameters.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
+import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
 import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippets_SparqlPattern_isSolutionGenerating.js";
@@ -161,6 +162,7 @@ export const snippets = {
   numericSparqlWherePatterns: snippets_numericSparqlWherePatterns,
   PropertiesFromRdfParameters: snippets_PropertiesFromRdfParameters,
   RdfVocabularies: snippets_RdfVocabularies,
+  ShaclPropertySchema: snippets_ShaclPropertySchema,
   setSparqlWherePatterns: snippets_setSparqlWherePatterns,
   sortSparqlPatterns: snippets_sortSparqlPatterns,
   SparqlFilterPattern: snippets_SparqlFilterPattern,
