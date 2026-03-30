@@ -6,6 +6,7 @@ import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
 import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
@@ -230,14 +231,19 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     // subject of any statements.
 
     return Maybe.of(
-      code`${this.type.fromRdfExpression({
-        variables: {
-          ...variables,
-          ignoreRdfType: true,
-          predicate: this.predicate,
-          resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, ${{ graph: variables.graph, unique: true }}))`,
-        },
-      })}.chain(values => values.head())`,
+      code`${snippets.shaclPropertyFromRdf}(${{
+        graph: variables.graph,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        resource: variables.resource,
+        typeFromRdf: code`((resourceValues) => ${this.type.fromRdfExpression({
+          variables: {
+            ...variables,
+            ignoreRdfType: true,
+            predicate: this.predicate,
+            resourceValues: code`resourceValues`,
+          },
+        })})`,
+      }})`,
     );
   }
 
