@@ -21,7 +21,7 @@ import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBig
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
-import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfTypeOptions.js";
+import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfOptions.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
 import { snippets_filterBigDecimal } from "./_snippets/snippets_filterBigDecimal.js";
 import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.js";
