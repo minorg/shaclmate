@@ -89,6 +89,18 @@ export abstract class AbstractType {
   abstract readonly schemaType: Code;
 
   /**
+   * A SparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property of this type.
+   *
+   * The function takes a parameters object (type: SparqlConstructTriplesFunctionParameters) with the following parameters:
+   * - filter?: an instance of filterType
+   * - ignoreRdfType?: boolean
+   * - schema: instance of this.schemaType
+   * - valueVariable: rdfjs.Variable of the value of this type
+   * - variablePrefix: prefix to use for new variables
+   */
+  abstract readonly sparqlConstructTriplesFunction: Code;
+
+  /**
    * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
    *
    * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
@@ -217,25 +229,6 @@ export abstract class AbstractType {
     includeDiscriminantProperty?: boolean;
     context: "property" | "type";
   }): Code;
-
-  /**
-   * SPARQL.js CONSTRUCT template triples for a value of this type as a (runtime) array of sparqljs.Triple.
-   *
-   * Parameters:
-   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *   variables: runtime variables
-   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
-   *     - variablePrefix: prefix to use for variables
-   *
-   * Returns a (runtime) array of sparqljs.Triple.
-   */
-  abstract sparqlConstructTriples(parameters: {
-    allowIgnoreRdfType: boolean;
-    variables: {
-      valueVariable: Code;
-      variablePrefix: Code;
-    };
-  }): Maybe<Code>;
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence

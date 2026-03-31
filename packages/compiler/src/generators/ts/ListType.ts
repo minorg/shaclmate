@@ -2,7 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -56,6 +56,11 @@ export class ListType<
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`${snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
@@ -89,91 +94,6 @@ export class ListType<
     return new AbstractCollectionType.JsonType(
       code`readonly (${this.itemType.jsonType().name})[]`,
     );
-  }
-
-  override sparqlConstructTriples({
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
-  >[0]): Maybe<Code> {
-    const triples: Code[] = [];
-    const listVariable = variables.valueVariable;
-    const variable = (suffix: string) =>
-      code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
-    const variablePrefix = (suffix: string) =>
-      code`\`\${${variables.variablePrefix}}${suffix}\``;
-
-    {
-      // ?list rdf:first ?item0
-      const item0Variable = variable("Item0");
-      triples.push(
-        code`${{
-          subject: listVariable,
-          predicate: rdfjsTermExpression(rdf.first),
-          object: item0Variable,
-        }}`,
-      );
-      this.itemType
-        .sparqlConstructTriples({
-          allowIgnoreRdfType: true,
-          variables: {
-            valueVariable: item0Variable,
-            variablePrefix: variablePrefix("Item0"),
-          },
-        })
-        .ifJust((code_) => {
-          triples.push(code`...${code_}`);
-        });
-    }
-
-    {
-      // ?list rdf:rest ?rest0
-      const rest0Variable = variable("Rest0");
-      triples.push(
-        code`${{
-          subject: listVariable,
-          predicate: rdfjsTermExpression(rdf.rest),
-          object: rest0Variable,
-        }}`,
-      );
-    }
-
-    // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
-    const restNVariable = variable("RestN");
-
-    {
-      // ?rest rdf:first ?itemN
-      const itemNVariable = variable("ItemN");
-      triples.push(
-        code`${{
-          subject: restNVariable,
-          predicate: rdfjsTermExpression(rdf.first),
-          object: itemNVariable,
-        }}`,
-      );
-      this.itemType
-        .sparqlConstructTriples({
-          allowIgnoreRdfType: true,
-          variables: {
-            valueVariable: itemNVariable,
-            variablePrefix: variablePrefix("ItemN"),
-          },
-        })
-        .ifJust((code_) => {
-          triples.push(code`...${code_}`);
-        });
-    }
-
-    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    triples.push(
-      code`${{
-        subject: restNVariable,
-        predicate: rdfjsTermExpression(rdf.rest),
-        object: variable("RestNBasic"),
-      }}`,
-    );
-
-    return Maybe.of(code`[${joinCode(triples, { on: "," })}]`);
   }
 
   override toRdfExpression({

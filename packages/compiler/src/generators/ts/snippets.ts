@@ -55,6 +55,7 @@ import { snippets_LazyObjectSet } from "./_snippets/snippets_LazyObjectSet.js";
 import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
 import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
+import { snippets_listSparqlConstructTriples } from "./_snippets/snippets_listSparqlConstructTriples.js";
 import { snippets_listSparqlWherePatterns } from "./_snippets/snippets_listSparqlWherePatterns.js";
 import { snippets_literalFactory } from "./_snippets/snippets_literalFactory.js";
 import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_literalSchemaSparqlPatterns.js";
@@ -137,6 +138,9 @@ export const snippets = {
   IdentifierSchema: snippets_IdentifierSchema,
   IdentifierSet: snippets_IdentifierSet,
   identifierSparqlWherePatterns: snippets_identifierSparqlWherePatterns,
+  IriFilter: snippets_IriFilter,
+  IriSchema: snippets_IriSchema,
+  iriSparqlWherePatterns: snippets_iriSparqlWherePatterns,
   isReadonlyBigIntArray: snippets_isReadonlyBigIntArray,
   isReadonlyBooleanArray: snippets_isReadonlyBooleanArray,
   isReadonlyNumberArray: snippets_isReadonlyNumberArray,
@@ -146,6 +150,7 @@ export const snippets = {
   LazyObjectOption: snippets_LazyObjectOption,
   LazyObjectSet: snippets_LazyObjectSet,
   liftSparqlPatterns: snippets_liftSparqlPatterns,
+  listSparqlConstructTriples: snippets_listSparqlConstructTriples,
   listSparqlWherePatterns: snippets_listSparqlWherePatterns,
   literalFactory: snippets_literalFactory,
   LiteralFilter: snippets_LiteralFilter,
@@ -156,9 +161,6 @@ export const snippets = {
   MaybeFilter: snippets_MaybeFilter,
   MaybeSchema: snippets_MaybeSchema,
   maybeSparqlWherePatterns: snippets_maybeSparqlWherePatterns,
-  IriFilter: snippets_IriFilter,
-  IriSchema: snippets_IriSchema,
-  iriSparqlWherePatterns: snippets_iriSparqlWherePatterns,
   normalizeSparqlWherePatterns: snippets_normalizeSparqlWherePatterns,
   NumericFilter: snippets_NumericFilter,
   NumericSchema: snippets_NumericSchema,

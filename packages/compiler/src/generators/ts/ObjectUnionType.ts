@@ -165,6 +165,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
   }
@@ -269,19 +274,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       }
     }
     return expression;
-  }
-
-  override sparqlConstructTriples({
-    variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlConstructTriples"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
-        subject: variables.valueVariable,
-        variablePrefix: variables.variablePrefix,
-      }})`,
-    );
   }
 
   override toJsonExpression({

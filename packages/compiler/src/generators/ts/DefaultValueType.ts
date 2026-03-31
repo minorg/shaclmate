@@ -76,6 +76,11 @@ export class DefaultValueType<
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return this.itemType.sparqlConstructTriplesFunction;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
@@ -207,12 +212,6 @@ export class DefaultValueType<
     >[0],
   ): Code {
     return this.itemType.jsonZodSchema(parameters);
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Maybe<Code> {
-    return this.itemType.sparqlConstructTriples(parameters);
   }
 
   override toJsonExpression(

@@ -1,6 +1,7 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
@@ -102,6 +103,10 @@ class MemberType {
     return this.delegate.schemaType;
   }
 
+  get sparqlConstructTriplesFunction() {
+    return this.delegate.sparqlConstructTriplesFunction;
+  }
+
   get sparqlWherePatternsFunction() {
     return this.delegate.sparqlWherePatternsFunction;
   }
@@ -142,12 +147,6 @@ class MemberType {
       case "typeof":
         return instance;
     }
-  }
-
-  sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ) {
-    return this.delegate.sparqlConstructTriples(parameters);
   }
 
   toJsonExpression(
@@ -413,6 +412,23 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`\
+(({ filter, schema, ...otherParameters }) => {
+  let triples: ${imports.sparqljs}.Triple[] = [];
+
+  ${joinCode(
+    this.memberTypes.map(
+      (memberType) => code`\
+triples = triples.concat(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));`,
+    ),
+  )}
+  
+  return triples;
+})`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`\
 (({ filter, schema, ...otherParameters }) => {
@@ -586,30 +602,6 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filte
       default:
         throw this.discriminant satisfies never;
     }
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Maybe<Code> {
-    const memberTypeSparqlConstructTriples = this.memberTypes.flatMap(
-      (memberType) =>
-        memberType
-          .sparqlConstructTriples({
-            ...parameters,
-            allowIgnoreRdfType: false,
-          })
-          .toList(),
-    );
-    if (memberTypeSparqlConstructTriples.length === 0) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of(
-      code`[${joinCode(
-        memberTypeSparqlConstructTriples.map((code_) => code`...${code_}`),
-        { on: "," },
-      )}]`,
-    );
   }
 
   override toJsonExpression({

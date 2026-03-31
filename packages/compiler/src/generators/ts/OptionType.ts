@@ -100,6 +100,11 @@ export class OptionType<
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return this.itemType.sparqlConstructTriplesFunction;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`${snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
@@ -189,14 +194,6 @@ export class OptionType<
     >[0],
   ): Code {
     return code`${this.itemType.jsonZodSchema(parameters)}.optional()`;
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["sparqlConstructTriples"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.sparqlConstructTriples(parameters);
   }
 
   override toJsonExpression({

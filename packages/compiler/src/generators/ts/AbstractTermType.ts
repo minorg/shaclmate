@@ -1,7 +1,9 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
+
 import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -50,11 +52,6 @@ export abstract class AbstractTermType<
 
   get constrained(): boolean {
     return this.hasValues.length > 0 || this.in_.length > 0;
-  }
-
-  @Memoize()
-  override get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
   }
 
   @Memoize()
@@ -126,6 +123,16 @@ export abstract class AbstractTermType<
     });
   }
 
+  @Memoize()
+  override get schema(): Code {
+    return code`${removeUndefined(this.schemaObject)}`;
+  }
+
+  @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`(() => [])`;
+  }
+
   override fromRdfExpression(
     parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): Code {
@@ -159,10 +166,6 @@ export abstract class AbstractTermType<
   }
 
   override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
-  override sparqlConstructTriples(): Maybe<Code> {
     return Maybe.empty();
   }
 
