@@ -16,19 +16,19 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     return ${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(values);
   }
 
-  return values.chainMap(value => value.toLiteral()).map(literalValues => {
-    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-    // Within a preferredLanguage the literals may be in any order.
-    let filteredLiteralValues: ${imports.Resource}.Values<${imports.Literal}> | undefined;
-    for (const preferredLanguage of preferredLanguages) {
-      if (!filteredLiteralValues) {
-        filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
-      } else {
-        filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === preferredLanguage).toArray());
-      }
+  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+  // Within a preferredLanguage the literals may be in any order.
+  let filteredValues: ${imports.Resource}.Values<${imports.Resource}.TermValue> = [];
+  for (const preferredLanguage of preferredLanguages) {
+    for (const value of values) {
+      value.toLiteral().ifLeft(literal => {
+        if (literal.language === preferredLanguage) {
+          filteredValues.push(value);
+        }
+      });
     }
+  }
 
-    return filteredLiteralValues!.map(literalValue => new ${imports.Resource}.TermValue({ dataFactory: ${imports.dataFactory}, focusResource, predicate, term: literalValue }));
-  });
+  return ${imports.Resource}.Values.fromArray({ focusResource, predicate, values: filteredValues });
 }`,
 );
