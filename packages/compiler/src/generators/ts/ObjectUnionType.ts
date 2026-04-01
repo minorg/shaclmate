@@ -166,12 +166,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
+    return code`(({ ignoreRdfType, schema, ...otherParameters }) => ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(otherParameters))`;
   }
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ...otherParameters })))`;
+    return code`(({ ignoreRdfType, propertyPatterns, schema, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ...otherParameters })))`;
   }
 
   get staticModuleName(): string {

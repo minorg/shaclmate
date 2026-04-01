@@ -28,7 +28,7 @@ export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { filt
   )}];
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(parameters: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
 ${joinCode([
   code`let patterns: ${snippets.SparqlPattern}[] = [];`,
   code`\

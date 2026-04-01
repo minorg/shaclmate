@@ -414,13 +414,13 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
     return code`\
-(({ filter, schema, ...otherParameters }) => {
+(({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], ...otherParameters }));`,
+triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], ignoreRdfType: false, schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));`,
     ),
   )}
   
@@ -431,13 +431,13 @@ triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ filter: 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`\
-(({ filter, schema, ...otherParameters }) => {
+(({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });`,
+unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], ignoreRdfType: false, schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });`,
     ),
   )}
   

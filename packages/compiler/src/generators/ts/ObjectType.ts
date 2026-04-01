@@ -336,12 +336,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
+    return code`(({ ignoreRdfType, schema, ...otherParameters }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))`;
   }
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))`;
+    return code`(({ ignoreRdfType, propertyPatterns, schema, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))`;
   }
 
   @Memoize()
