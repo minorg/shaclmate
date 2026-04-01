@@ -16,13 +16,11 @@ export function ObjectType_sparqlFunctionDeclarations(
     return [];
   }
 
-  const subjectDefault = literalOf(camelCase(this.name));
-
   const variables = {
     filter: code`parameters?.filter`,
     preferredLanguages: code`parameters?.preferredLanguages`,
-    focusIdentifier: code`subject`,
-    variablePrefix: code`(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : ${subjectDefault}))`,
+    focusIdentifier: code`focusIdentifier`,
+    variablePrefix: code`(parameters?.variablePrefix ?? (focusIdentifier.termType === "Variable" ? focusIdentifier.value : ${literalOf(camelCase(this.name))}))`,
   };
   const rdfClassVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
@@ -34,11 +32,11 @@ export function ObjectType_sparqlFunctionDeclarations(
 
   for (const parentObjectType of this.parentObjectTypes) {
     sparqlConstructTriplesStatements.push(
-      code`triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix }}));`,
+      code`triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{ focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
     );
     triplesVariableDeclarationKeyword = "let";
     sparqlWherePatternsStatements.push(code`\
-patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${{ filter: variables.filter, ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix }}));`);
+patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`);
     patternsVariableDeclarationKeyword = "let";
   }
 
@@ -50,7 +48,7 @@ patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNameP
     sparqlConstructTriplesStatements.push(code`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
-    { subject, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
+    { subject: focusIdentifier, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
     { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
   );
 }`);
@@ -142,11 +140,11 @@ if (!parameters?.ignoreRdfType) {
     ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
     ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean;  variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
 ${
   sparqlConstructTriplesStatements.length > 0
     ? joinCode([
-        code`const subject = parameters?.subject ?? ${imports.dataFactory}.variable!(${subjectDefault});`,
+        code`const focusIdentifier = parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!(${literalOf(camelCase(this.name))});`,
         code`${triplesVariableDeclarationKeyword} triples: ${imports.sparqljs}.Triple[] = [];`,
         ...sparqlConstructTriplesStatements,
         code`return triples;`,
@@ -155,12 +153,12 @@ ${
 }
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
 ${
   sparqlWherePatternsStatements.length > 0
     ? joinCode([
         code`${patternsVariableDeclarationKeyword} patterns: ${snippets.SparqlPattern}[] = [];`,
-        code`const subject = parameters?.subject ?? ${imports.dataFactory}.variable!(${subjectDefault});`,
+        code`const focusIdentifier = parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!(${literalOf(camelCase(this.name))});`,
         ...sparqlWherePatternsStatements,
         code`return patterns;`,
       ])

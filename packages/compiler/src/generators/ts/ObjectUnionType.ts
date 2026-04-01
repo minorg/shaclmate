@@ -171,7 +171,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
+    return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ...otherParameters })))`;
   }
 
   get staticModuleName(): string {

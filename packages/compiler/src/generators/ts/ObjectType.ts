@@ -341,7 +341,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, subject: valueVariable, ...otherParameters })))`;
+    return code`(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))`;
   }
 
   @Memoize()

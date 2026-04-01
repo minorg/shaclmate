@@ -280,7 +280,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           .extract(),
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
-        name: this.name,
+        propertyName: this.name,
         propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
         typeSparqlConstructTriples: this.type.sparqlConstructTriplesFunction,
         variablePrefix: variables.variablePrefix,

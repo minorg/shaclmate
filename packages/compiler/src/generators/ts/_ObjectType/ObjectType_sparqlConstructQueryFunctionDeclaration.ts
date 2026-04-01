@@ -8,8 +8,8 @@ export function ObjectType_sparqlConstructQueryFunctionDeclaration(this: {
   readonly staticModuleName: string;
 }): Code {
   return code`\
-export function ${syntheticNamePrefix}sparqlConstructQuery(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"]; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${imports.sparqljs}.ConstructQuery {
+export function ${syntheticNamePrefix}sparqlConstructQuery(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: ${imports.NamedNode} | ${imports.Variable} } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${imports.sparqljs}.ConstructQuery {
   const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {};
-  return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter, ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${snippets.normalizeSparqlWherePatterns}(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter, ignoreRdfType, preferredLanguages, subject }))) };
+  return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter, focusIdentifier: subject, ignoreRdfType })), type: "query", where: (queryParameters.where ?? []).concat(${snippets.normalizeSparqlWherePatterns}(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter, focusIdentifier: subject, ignoreRdfType, preferredLanguages }))) };
 }`;
 }

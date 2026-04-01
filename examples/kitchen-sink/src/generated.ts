@@ -1837,7 +1837,7 @@ function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
   variablePrefix,
 }: {
   filter?: FilterT;
-  focusIdentifier: Resource.Identifier;
+  focusIdentifier: NamedNode | Variable;
   ignoreRdfType?: boolean;
   propertySchema: $ShaclPropertySchema<TypeSchemaT>;
   propertyName: string;
@@ -2495,7 +2495,7 @@ export namespace $NamedDefaultPartial {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -2512,8 +2512,8 @@ export namespace $NamedDefaultPartial {
       template: (queryParameters.template ?? []).concat(
         $NamedDefaultPartial.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -2521,9 +2521,9 @@ export namespace $NamedDefaultPartial {
         $normalizeSparqlWherePatterns(
           $NamedDefaultPartial.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -2535,7 +2535,7 @@ export namespace $NamedDefaultPartial {
       filter?: $NamedDefaultPartial.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -2547,8 +2547,8 @@ export namespace $NamedDefaultPartial {
 
   export function $sparqlConstructTriples(_parameters?: {
     filter?: $NamedDefaultPartial.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [];
@@ -2556,26 +2556,27 @@ export namespace $NamedDefaultPartial {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: $NamedDefaultPartial.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("namedDefaultPartial");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("namedDefaultPartial");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: $NamedDefaultPartial.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "namedDefaultPartial"),
         }),
       );
@@ -2816,7 +2817,7 @@ export namespace $DefaultPartial {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -2833,8 +2834,8 @@ export namespace $DefaultPartial {
       template: (queryParameters.template ?? []).concat(
         $DefaultPartial.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -2842,9 +2843,9 @@ export namespace $DefaultPartial {
         $normalizeSparqlWherePatterns(
           $DefaultPartial.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -2856,7 +2857,7 @@ export namespace $DefaultPartial {
       filter?: $DefaultPartial.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -2868,8 +2869,8 @@ export namespace $DefaultPartial {
 
   export function $sparqlConstructTriples(_parameters?: {
     filter?: $DefaultPartial.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [];
@@ -2877,26 +2878,26 @@ export namespace $DefaultPartial {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: $DefaultPartial.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("defaultPartial");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("defaultPartial");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: $DefaultPartial.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultPartial"),
         }),
       );
@@ -3259,7 +3260,7 @@ export namespace UuidV4IriIdentifierInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -3276,8 +3277,8 @@ export namespace UuidV4IriIdentifierInterface {
       template: (queryParameters.template ?? []).concat(
         UuidV4IriIdentifierInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -3285,9 +3286,9 @@ export namespace UuidV4IriIdentifierInterface {
         $normalizeSparqlWherePatterns(
           UuidV4IriIdentifierInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -3299,7 +3300,7 @@ export namespace UuidV4IriIdentifierInterface {
       filter?: UuidV4IriIdentifierInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -3311,26 +3312,26 @@ export namespace UuidV4IriIdentifierInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: UuidV4IriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("uuidV4IriIdentifierInterface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.uuidV4IriProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "uuidV4IriProperty",
+        propertyName: "uuidV4IriProperty",
         propertySchema: $schema.properties.uuidV4IriProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "uuidV4IriIdentifierInterface"),
       }),
     );
@@ -3339,16 +3340,16 @@ export namespace UuidV4IriIdentifierInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: UuidV4IriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("uuidV4IriIdentifierInterface");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -3356,11 +3357,11 @@ export namespace UuidV4IriIdentifierInterface {
           propertyPatterns: [],
           schema:
             UuidV4IriIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "uuidV4IriIdentifierInterface"),
         }),
       );
@@ -3376,15 +3377,15 @@ export namespace UuidV4IriIdentifierInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "uuidV4IriIdentifierInterface")
                   }UuidV4IriProperty`,
                 ),
                 predicate:
                   UuidV4IriIdentifierInterface.$schema.properties
                     .uuidV4IriProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -3395,15 +3396,15 @@ export namespace UuidV4IriIdentifierInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "uuidV4IriIdentifierInterface")
           }UuidV4IriProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "uuidV4IriIdentifierInterface")
         }UuidV4IriProperty`,
       }),
@@ -3764,7 +3765,7 @@ export namespace UuidV4IriIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -3781,8 +3782,8 @@ export namespace UuidV4IriIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         UuidV4IriIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -3790,9 +3791,9 @@ export namespace UuidV4IriIdentifierClass {
         $normalizeSparqlWherePatterns(
           UuidV4IriIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -3804,7 +3805,7 @@ export namespace UuidV4IriIdentifierClass {
       filter?: UuidV4IriIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -3816,25 +3817,26 @@ export namespace UuidV4IriIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: UuidV4IriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("uuidV4IriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.uuidV4IriProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "uuidV4IriProperty",
+        propertyName: "uuidV4IriProperty",
         propertySchema: $schema.properties.uuidV4IriProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "uuidV4IriIdentifierClass"),
       }),
     );
@@ -3843,15 +3845,16 @@ export namespace UuidV4IriIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: UuidV4IriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("uuidV4IriIdentifierClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -3859,11 +3862,11 @@ export namespace UuidV4IriIdentifierClass {
           propertyPatterns: [],
           schema:
             UuidV4IriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "uuidV4IriIdentifierClass"),
         }),
       );
@@ -3879,15 +3882,15 @@ export namespace UuidV4IriIdentifierClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "uuidV4IriIdentifierClass")
                   }UuidV4IriProperty`,
                 ),
                 predicate:
                   UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -3898,15 +3901,15 @@ export namespace UuidV4IriIdentifierClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "uuidV4IriIdentifierClass")
           }UuidV4IriProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "uuidV4IriIdentifierClass")
         }UuidV4IriProperty`,
       }),
@@ -7187,7 +7190,7 @@ export namespace UnionDiscriminantsClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -7204,8 +7207,8 @@ export namespace UnionDiscriminantsClass {
       template: (queryParameters.template ?? []).concat(
         UnionDiscriminantsClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -7213,9 +7216,9 @@ export namespace UnionDiscriminantsClass {
         $normalizeSparqlWherePatterns(
           UnionDiscriminantsClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -7227,7 +7230,7 @@ export namespace UnionDiscriminantsClass {
       filter?: UnionDiscriminantsClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -7239,19 +7242,20 @@ export namespace UnionDiscriminantsClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: UnionDiscriminantsClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("unionDiscriminantsClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalClassOrClassOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalClassOrClassOrStringProperty",
+        propertyName: "optionalClassOrClassOrStringProperty",
         propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7286,17 +7290,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalIriOrLiteralProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalIriOrLiteralProperty",
+        propertyName: "optionalIriOrLiteralProperty",
         propertySchema: $schema.properties.optionalIriOrLiteralProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7324,17 +7328,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalIriOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalIriOrStringProperty",
+        propertyName: "optionalIriOrStringProperty",
         propertySchema: $schema.properties.optionalIriOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7362,17 +7366,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredClassOrClassOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredClassOrClassOrStringProperty",
+        propertyName: "requiredClassOrClassOrStringProperty",
         propertySchema: $schema.properties.requiredClassOrClassOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7407,17 +7411,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredIriOrLiteralProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredIriOrLiteralProperty",
+        propertyName: "requiredIriOrLiteralProperty",
         propertySchema: $schema.properties.requiredIriOrLiteralProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7445,17 +7449,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredIriOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredIriOrStringProperty",
+        propertyName: "requiredIriOrStringProperty",
         propertySchema: $schema.properties.requiredIriOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7483,17 +7487,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.setClassOrClassOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setClassOrClassOrStringProperty",
+        propertyName: "setClassOrClassOrStringProperty",
         propertySchema: $schema.properties.setClassOrClassOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7528,17 +7532,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.setIriOrLiteralProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setIriOrLiteralProperty",
+        propertyName: "setIriOrLiteralProperty",
         propertySchema: $schema.properties.setIriOrLiteralProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7566,17 +7570,17 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.setIriOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setIriOrStringProperty",
+        propertyName: "setIriOrStringProperty",
         propertySchema: $schema.properties.setIriOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -7604,8 +7608,8 @@ export namespace UnionDiscriminantsClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass"),
       }),
     );
@@ -7614,26 +7618,27 @@ export namespace UnionDiscriminantsClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: UnionDiscriminantsClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("unionDiscriminantsClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: UnionDiscriminantsClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass"),
         }),
       );
@@ -7679,8 +7684,8 @@ export namespace UnionDiscriminantsClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ClassUnionMember1.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ))({
@@ -7702,8 +7707,8 @@ export namespace UnionDiscriminantsClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ClassUnionMember2.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ))({
@@ -7733,15 +7738,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }OptionalClassOrClassOrStringProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .optionalClassOrClassOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -7752,15 +7757,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }OptionalClassOrClassOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }OptionalClassOrClassOrStringProperty`,
       }),
@@ -7817,15 +7822,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }OptionalIriOrLiteralProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .optionalIriOrLiteralProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -7836,15 +7841,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }OptionalIriOrLiteralProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }OptionalIriOrLiteralProperty`,
       }),
@@ -7901,15 +7906,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }OptionalIriOrStringProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .optionalIriOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -7920,15 +7925,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }OptionalIriOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }OptionalIriOrStringProperty`,
       }),
@@ -7949,8 +7954,8 @@ export namespace UnionDiscriminantsClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ClassUnionMember1.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ))({
@@ -7972,8 +7977,8 @@ export namespace UnionDiscriminantsClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ClassUnionMember2.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ))({
@@ -8003,15 +8008,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }RequiredClassOrClassOrStringProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .requiredClassOrClassOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -8022,15 +8027,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }RequiredClassOrClassOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }RequiredClassOrClassOrStringProperty`,
       }),
@@ -8067,15 +8072,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }RequiredIriOrLiteralProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .requiredIriOrLiteralProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -8086,15 +8091,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }RequiredIriOrLiteralProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }RequiredIriOrLiteralProperty`,
       }),
@@ -8131,15 +8136,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }RequiredIriOrStringProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .requiredIriOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -8150,15 +8155,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }RequiredIriOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }RequiredIriOrStringProperty`,
       }),
@@ -8204,8 +8209,8 @@ export namespace UnionDiscriminantsClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ClassUnionMember1.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ))({
@@ -8227,8 +8232,8 @@ export namespace UnionDiscriminantsClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ClassUnionMember2.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ))({
@@ -8258,15 +8263,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }SetClassOrClassOrStringProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .setClassOrClassOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -8277,15 +8282,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }SetClassOrClassOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }SetClassOrClassOrStringProperty`,
       }),
@@ -8342,15 +8347,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }SetIriOrLiteralProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .setIriOrLiteralProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -8361,15 +8366,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }SetIriOrLiteralProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }SetIriOrLiteralProperty`,
       }),
@@ -8426,15 +8431,15 @@ export namespace UnionDiscriminantsClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "unionDiscriminantsClass")
                   }SetIriOrStringProperty`,
                 ),
                 predicate:
                   UnionDiscriminantsClass.$schema.properties
                     .setIriOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -8445,15 +8450,15 @@ export namespace UnionDiscriminantsClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "unionDiscriminantsClass")
           }SetIriOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "unionDiscriminantsClass")
         }SetIriOrStringProperty`,
       }),
@@ -9763,7 +9768,7 @@ export namespace TermPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -9780,8 +9785,8 @@ export namespace TermPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         TermPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -9789,9 +9794,9 @@ export namespace TermPropertiesClass {
         $normalizeSparqlWherePatterns(
           TermPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -9803,7 +9808,7 @@ export namespace TermPropertiesClass {
       filter?: TermPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -9815,23 +9820,24 @@ export namespace TermPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: TermPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("termPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "termPropertiesClass")
             }RdfType`,
           ),
@@ -9840,8 +9846,8 @@ export namespace TermPropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "termPropertiesClass")
             }RdfType`,
           ),
@@ -9849,8 +9855,8 @@ export namespace TermPropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "termPropertiesClass")
             }RdfClass`,
           ),
@@ -9860,135 +9866,135 @@ export namespace TermPropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.blankNodeTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "blankNodeTermProperty",
+        propertyName: "blankNodeTermProperty",
         propertySchema: $schema.properties.blankNodeTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.booleanTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "booleanTermProperty",
+        propertyName: "booleanTermProperty",
         propertySchema: $schema.properties.booleanTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateTermProperty",
+        propertyName: "dateTermProperty",
         propertySchema: $schema.properties.dateTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateTimeTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateTimeTermProperty",
+        propertyName: "dateTimeTermProperty",
         propertySchema: $schema.properties.dateTimeTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.iriTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "iriTermProperty",
+        propertyName: "iriTermProperty",
         propertySchema: $schema.properties.iriTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.literalTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "literalTermProperty",
+        propertyName: "literalTermProperty",
         propertySchema: $schema.properties.literalTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.numberTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "numberTermProperty",
+        propertyName: "numberTermProperty",
         propertySchema: $schema.properties.numberTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.stringTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "stringTermProperty",
+        propertyName: "stringTermProperty",
         propertySchema: $schema.properties.stringTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.termProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "termProperty",
+        propertyName: "termProperty",
         propertySchema: $schema.properties.termProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass"),
       }),
     );
@@ -9997,19 +10003,20 @@ export namespace TermPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: TermPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("termPropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "termPropertiesClass")
       }RdfType`,
     );
@@ -10043,8 +10050,8 @@ export namespace TermPropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "termPropertiesClass")
                     }RdfClass`,
                   ),
@@ -10057,18 +10064,18 @@ export namespace TermPropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: TermPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass"),
         }),
       );
@@ -10086,15 +10093,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }BlankNodeTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.blankNodeTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10105,15 +10112,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }BlankNodeTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }BlankNodeTermProperty`,
       }),
@@ -10131,15 +10138,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }BooleanTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.booleanTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10150,15 +10157,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }BooleanTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }BooleanTermProperty`,
       }),
@@ -10176,15 +10183,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }DateTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.dateTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10194,15 +10201,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }DateTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }DateTermProperty`,
       }),
@@ -10220,15 +10227,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }DateTimeTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.dateTimeTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10239,15 +10246,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }DateTimeTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }DateTimeTermProperty`,
       }),
@@ -10265,15 +10272,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }IriTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.iriTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10283,15 +10290,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }IriTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }IriTermProperty`,
       }),
@@ -10309,15 +10316,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }LiteralTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.literalTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10328,15 +10335,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }LiteralTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }LiteralTermProperty`,
       }),
@@ -10354,15 +10361,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }NumberTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.numberTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10373,15 +10380,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }NumberTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }NumberTermProperty`,
       }),
@@ -10399,15 +10406,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }StringTermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.stringTermProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10418,15 +10425,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }StringTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }StringTermProperty`,
       }),
@@ -10444,15 +10451,15 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "termPropertiesClass")
                   }TermProperty`,
                 ),
                 predicate:
                   TermPropertiesClass.$schema.properties.termProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10462,15 +10469,15 @@ export namespace TermPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "termPropertiesClass")
           }TermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "termPropertiesClass")
         }TermProperty`,
       }),
@@ -10831,7 +10838,7 @@ export namespace Sha256IriIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -10848,8 +10855,8 @@ export namespace Sha256IriIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         Sha256IriIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -10857,9 +10864,9 @@ export namespace Sha256IriIdentifierClass {
         $normalizeSparqlWherePatterns(
           Sha256IriIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -10871,7 +10878,7 @@ export namespace Sha256IriIdentifierClass {
       filter?: Sha256IriIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -10883,25 +10890,26 @@ export namespace Sha256IriIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: Sha256IriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("sha256IriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.sha256IriProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "sha256IriProperty",
+        propertyName: "sha256IriProperty",
         propertySchema: $schema.properties.sha256IriProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "sha256IriIdentifierClass"),
       }),
     );
@@ -10910,15 +10918,16 @@ export namespace Sha256IriIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: Sha256IriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("sha256IriIdentifierClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -10926,11 +10935,11 @@ export namespace Sha256IriIdentifierClass {
           propertyPatterns: [],
           schema:
             Sha256IriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "sha256IriIdentifierClass"),
         }),
       );
@@ -10946,15 +10955,15 @@ export namespace Sha256IriIdentifierClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "sha256IriIdentifierClass")
                   }Sha256IriProperty`,
                 ),
                 predicate:
                   Sha256IriIdentifierClass.$schema.properties.sha256IriProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -10965,15 +10974,15 @@ export namespace Sha256IriIdentifierClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "sha256IriIdentifierClass")
           }Sha256IriProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "sha256IriIdentifierClass")
         }Sha256IriProperty`,
       }),
@@ -11401,7 +11410,7 @@ export namespace RecursiveClassUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -11418,8 +11427,8 @@ export namespace RecursiveClassUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         RecursiveClassUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -11427,9 +11436,9 @@ export namespace RecursiveClassUnionMember2 {
         $normalizeSparqlWherePatterns(
           RecursiveClassUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -11441,7 +11450,7 @@ export namespace RecursiveClassUnionMember2 {
       filter?: RecursiveClassUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -11453,24 +11462,24 @@ export namespace RecursiveClassUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: RecursiveClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("recursiveClassUnionMember2");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "recursiveClassUnionMember2")
             }RdfType`,
           ),
@@ -11479,8 +11488,8 @@ export namespace RecursiveClassUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "recursiveClassUnionMember2")
             }RdfType`,
           ),
@@ -11488,8 +11497,8 @@ export namespace RecursiveClassUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "recursiveClassUnionMember2")
             }RdfClass`,
           ),
@@ -11501,20 +11510,20 @@ export namespace RecursiveClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: RecursiveClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("recursiveClassUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "recursiveClassUnionMember2")
       }RdfType`,
     );
@@ -11548,8 +11557,8 @@ export namespace RecursiveClassUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "recursiveClassUnionMember2")
                     }RdfClass`,
                   ),
@@ -11562,7 +11571,7 @@ export namespace RecursiveClassUnionMember2 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -11570,11 +11579,11 @@ export namespace RecursiveClassUnionMember2 {
           propertyPatterns: [],
           schema:
             RecursiveClassUnionMember2.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "recursiveClassUnionMember2"),
         }),
       );
@@ -12002,7 +12011,7 @@ export namespace RecursiveClassUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -12019,8 +12028,8 @@ export namespace RecursiveClassUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         RecursiveClassUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -12028,9 +12037,9 @@ export namespace RecursiveClassUnionMember1 {
         $normalizeSparqlWherePatterns(
           RecursiveClassUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -12042,7 +12051,7 @@ export namespace RecursiveClassUnionMember1 {
       filter?: RecursiveClassUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -12054,24 +12063,24 @@ export namespace RecursiveClassUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: RecursiveClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("recursiveClassUnionMember1");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "recursiveClassUnionMember1")
             }RdfType`,
           ),
@@ -12080,8 +12089,8 @@ export namespace RecursiveClassUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "recursiveClassUnionMember1")
             }RdfType`,
           ),
@@ -12089,8 +12098,8 @@ export namespace RecursiveClassUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "recursiveClassUnionMember1")
             }RdfClass`,
           ),
@@ -12102,20 +12111,20 @@ export namespace RecursiveClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: RecursiveClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("recursiveClassUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "recursiveClassUnionMember1")
       }RdfType`,
     );
@@ -12149,8 +12158,8 @@ export namespace RecursiveClassUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "recursiveClassUnionMember1")
                     }RdfClass`,
                   ),
@@ -12163,7 +12172,7 @@ export namespace RecursiveClassUnionMember1 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -12171,11 +12180,11 @@ export namespace RecursiveClassUnionMember1 {
           propertyPatterns: [],
           schema:
             RecursiveClassUnionMember1.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "recursiveClassUnionMember1"),
         }),
       );
@@ -12616,7 +12625,7 @@ export namespace PropertyVisibilitiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -12633,8 +12642,8 @@ export namespace PropertyVisibilitiesClass {
       template: (queryParameters.template ?? []).concat(
         PropertyVisibilitiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -12642,9 +12651,9 @@ export namespace PropertyVisibilitiesClass {
         $normalizeSparqlWherePatterns(
           PropertyVisibilitiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -12656,7 +12665,7 @@ export namespace PropertyVisibilitiesClass {
       filter?: PropertyVisibilitiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -12668,55 +12677,56 @@ export namespace PropertyVisibilitiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PropertyVisibilitiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("propertyVisibilitiesClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: undefined,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "privateProperty",
+        propertyName: "privateProperty",
         propertySchema: $schema.properties.privateProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyVisibilitiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: undefined,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "protectedProperty",
+        propertyName: "protectedProperty",
         propertySchema: $schema.properties.protectedProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyVisibilitiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.publicProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "publicProperty",
+        propertyName: "publicProperty",
         propertySchema: $schema.properties.publicProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyVisibilitiesClass"),
       }),
     );
@@ -12725,15 +12735,16 @@ export namespace PropertyVisibilitiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PropertyVisibilitiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("propertyVisibilitiesClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -12741,11 +12752,11 @@ export namespace PropertyVisibilitiesClass {
           propertyPatterns: [],
           schema:
             PropertyVisibilitiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyVisibilitiesClass"),
         }),
       );
@@ -12761,15 +12772,15 @@ export namespace PropertyVisibilitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyVisibilitiesClass")
                   }PrivateProperty`,
                 ),
                 predicate:
                   PropertyVisibilitiesClass.$schema.properties.privateProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -12780,15 +12791,15 @@ export namespace PropertyVisibilitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyVisibilitiesClass")
           }PrivateProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyVisibilitiesClass")
         }PrivateProperty`,
       }),
@@ -12804,15 +12815,15 @@ export namespace PropertyVisibilitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyVisibilitiesClass")
                   }ProtectedProperty`,
                 ),
                 predicate:
                   PropertyVisibilitiesClass.$schema.properties.protectedProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -12823,15 +12834,15 @@ export namespace PropertyVisibilitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyVisibilitiesClass")
           }ProtectedProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyVisibilitiesClass")
         }ProtectedProperty`,
       }),
@@ -12847,15 +12858,15 @@ export namespace PropertyVisibilitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyVisibilitiesClass")
                   }PublicProperty`,
                 ),
                 predicate:
                   PropertyVisibilitiesClass.$schema.properties.publicProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -12866,15 +12877,15 @@ export namespace PropertyVisibilitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyVisibilitiesClass")
           }PublicProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyVisibilitiesClass")
         }PublicProperty`,
       }),
@@ -13534,7 +13545,7 @@ export namespace PropertyCardinalitiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -13551,8 +13562,8 @@ export namespace PropertyCardinalitiesClass {
       template: (queryParameters.template ?? []).concat(
         PropertyCardinalitiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -13560,9 +13571,9 @@ export namespace PropertyCardinalitiesClass {
         $normalizeSparqlWherePatterns(
           PropertyCardinalitiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -13574,7 +13585,7 @@ export namespace PropertyCardinalitiesClass {
       filter?: PropertyCardinalitiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -13586,71 +13597,71 @@ export namespace PropertyCardinalitiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PropertyCardinalitiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("propertyCardinalitiesClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.emptyStringSetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "emptyStringSetProperty",
+        propertyName: "emptyStringSetProperty",
         propertySchema: $schema.properties.emptyStringSetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.nonEmptyStringSetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "nonEmptyStringSetProperty",
+        propertyName: "nonEmptyStringSetProperty",
         propertySchema: $schema.properties.nonEmptyStringSetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalStringProperty",
+        propertyName: "optionalStringProperty",
         propertySchema: $schema.properties.optionalStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredStringProperty",
+        propertyName: "requiredStringProperty",
         propertySchema: $schema.properties.requiredStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass"),
       }),
     );
@@ -13659,16 +13670,16 @@ export namespace PropertyCardinalitiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PropertyCardinalitiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("propertyCardinalitiesClass");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -13676,11 +13687,11 @@ export namespace PropertyCardinalitiesClass {
           propertyPatterns: [],
           schema:
             PropertyCardinalitiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyCardinalitiesClass"),
         }),
       );
@@ -13698,15 +13709,15 @@ export namespace PropertyCardinalitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyCardinalitiesClass")
                   }EmptyStringSetProperty`,
                 ),
                 predicate:
                   PropertyCardinalitiesClass.$schema.properties
                     .emptyStringSetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -13717,15 +13728,15 @@ export namespace PropertyCardinalitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyCardinalitiesClass")
           }EmptyStringSetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass")
         }EmptyStringSetProperty`,
       }),
@@ -13743,15 +13754,15 @@ export namespace PropertyCardinalitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyCardinalitiesClass")
                   }NonEmptyStringSetProperty`,
                 ),
                 predicate:
                   PropertyCardinalitiesClass.$schema.properties
                     .nonEmptyStringSetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -13762,15 +13773,15 @@ export namespace PropertyCardinalitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyCardinalitiesClass")
           }NonEmptyStringSetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass")
         }NonEmptyStringSetProperty`,
       }),
@@ -13788,15 +13799,15 @@ export namespace PropertyCardinalitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyCardinalitiesClass")
                   }OptionalStringProperty`,
                 ),
                 predicate:
                   PropertyCardinalitiesClass.$schema.properties
                     .optionalStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -13807,15 +13818,15 @@ export namespace PropertyCardinalitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyCardinalitiesClass")
           }OptionalStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass")
         }OptionalStringProperty`,
       }),
@@ -13831,15 +13842,15 @@ export namespace PropertyCardinalitiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "propertyCardinalitiesClass")
                   }RequiredStringProperty`,
                 ),
                 predicate:
                   PropertyCardinalitiesClass.$schema.properties
                     .requiredStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -13850,15 +13861,15 @@ export namespace PropertyCardinalitiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "propertyCardinalitiesClass")
           }RequiredStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "propertyCardinalitiesClass")
         }RequiredStringProperty`,
       }),
@@ -14257,7 +14268,7 @@ export namespace PartialInterfaceUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -14274,8 +14285,8 @@ export namespace PartialInterfaceUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         PartialInterfaceUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -14283,9 +14294,9 @@ export namespace PartialInterfaceUnionMember2 {
         $normalizeSparqlWherePatterns(
           PartialInterfaceUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -14297,7 +14308,7 @@ export namespace PartialInterfaceUnionMember2 {
       filter?: PartialInterfaceUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -14309,24 +14320,24 @@ export namespace PartialInterfaceUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialInterfaceUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("partialInterfaceUnionMember2");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialInterfaceUnionMember2")
             }RdfType`,
           ),
@@ -14335,8 +14346,8 @@ export namespace PartialInterfaceUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialInterfaceUnionMember2")
             }RdfType`,
           ),
@@ -14344,8 +14355,8 @@ export namespace PartialInterfaceUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialInterfaceUnionMember2")
             }RdfClass`,
           ),
@@ -14355,15 +14366,15 @@ export namespace PartialInterfaceUnionMember2 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialInterfaceUnionMember2"),
       }),
     );
@@ -14372,20 +14383,20 @@ export namespace PartialInterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PartialInterfaceUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("partialInterfaceUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "partialInterfaceUnionMember2")
       }RdfType`,
     );
@@ -14419,8 +14430,8 @@ export namespace PartialInterfaceUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "partialInterfaceUnionMember2")
                     }RdfClass`,
                   ),
@@ -14433,7 +14444,7 @@ export namespace PartialInterfaceUnionMember2 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -14441,11 +14452,11 @@ export namespace PartialInterfaceUnionMember2 {
           propertyPatterns: [],
           schema:
             PartialInterfaceUnionMember2.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterfaceUnionMember2"),
         }),
       );
@@ -14461,15 +14472,15 @@ export namespace PartialInterfaceUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "partialInterfaceUnionMember2")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   PartialInterfaceUnionMember2.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -14480,15 +14491,15 @@ export namespace PartialInterfaceUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterfaceUnionMember2")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialInterfaceUnionMember2")
         }LazilyResolvedStringProperty`,
       }),
@@ -14887,7 +14898,7 @@ export namespace PartialInterfaceUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -14904,8 +14915,8 @@ export namespace PartialInterfaceUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         PartialInterfaceUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -14913,9 +14924,9 @@ export namespace PartialInterfaceUnionMember1 {
         $normalizeSparqlWherePatterns(
           PartialInterfaceUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -14927,7 +14938,7 @@ export namespace PartialInterfaceUnionMember1 {
       filter?: PartialInterfaceUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -14939,24 +14950,24 @@ export namespace PartialInterfaceUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialInterfaceUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("partialInterfaceUnionMember1");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialInterfaceUnionMember1")
             }RdfType`,
           ),
@@ -14965,8 +14976,8 @@ export namespace PartialInterfaceUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialInterfaceUnionMember1")
             }RdfType`,
           ),
@@ -14974,8 +14985,8 @@ export namespace PartialInterfaceUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialInterfaceUnionMember1")
             }RdfClass`,
           ),
@@ -14985,15 +14996,15 @@ export namespace PartialInterfaceUnionMember1 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialInterfaceUnionMember1"),
       }),
     );
@@ -15002,20 +15013,20 @@ export namespace PartialInterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PartialInterfaceUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("partialInterfaceUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "partialInterfaceUnionMember1")
       }RdfType`,
     );
@@ -15049,8 +15060,8 @@ export namespace PartialInterfaceUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "partialInterfaceUnionMember1")
                     }RdfClass`,
                   ),
@@ -15063,7 +15074,7 @@ export namespace PartialInterfaceUnionMember1 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -15071,11 +15082,11 @@ export namespace PartialInterfaceUnionMember1 {
           propertyPatterns: [],
           schema:
             PartialInterfaceUnionMember1.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterfaceUnionMember1"),
         }),
       );
@@ -15091,15 +15102,15 @@ export namespace PartialInterfaceUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "partialInterfaceUnionMember1")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   PartialInterfaceUnionMember1.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -15110,15 +15121,15 @@ export namespace PartialInterfaceUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterfaceUnionMember1")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialInterfaceUnionMember1")
         }LazilyResolvedStringProperty`,
       }),
@@ -15489,7 +15500,7 @@ export namespace PartialClassUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -15506,8 +15517,8 @@ export namespace PartialClassUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         PartialClassUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -15515,9 +15526,9 @@ export namespace PartialClassUnionMember2 {
         $normalizeSparqlWherePatterns(
           PartialClassUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -15529,7 +15540,7 @@ export namespace PartialClassUnionMember2 {
       filter?: PartialClassUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -15541,23 +15552,24 @@ export namespace PartialClassUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClassUnionMember2");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("partialClassUnionMember2");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialClassUnionMember2")
             }RdfType`,
           ),
@@ -15566,8 +15578,8 @@ export namespace PartialClassUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialClassUnionMember2")
             }RdfType`,
           ),
@@ -15575,8 +15587,8 @@ export namespace PartialClassUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialClassUnionMember2")
             }RdfClass`,
           ),
@@ -15586,15 +15598,15 @@ export namespace PartialClassUnionMember2 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialClassUnionMember2"),
       }),
     );
@@ -15603,19 +15615,20 @@ export namespace PartialClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PartialClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClassUnionMember2");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("partialClassUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "partialClassUnionMember2")
       }RdfType`,
     );
@@ -15649,8 +15662,8 @@ export namespace PartialClassUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "partialClassUnionMember2")
                     }RdfClass`,
                   ),
@@ -15663,7 +15676,7 @@ export namespace PartialClassUnionMember2 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -15671,11 +15684,11 @@ export namespace PartialClassUnionMember2 {
           propertyPatterns: [],
           schema:
             PartialClassUnionMember2.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialClassUnionMember2"),
         }),
       );
@@ -15691,15 +15704,15 @@ export namespace PartialClassUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "partialClassUnionMember2")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   PartialClassUnionMember2.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -15710,15 +15723,15 @@ export namespace PartialClassUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialClassUnionMember2")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialClassUnionMember2")
         }LazilyResolvedStringProperty`,
       }),
@@ -16089,7 +16102,7 @@ export namespace PartialClassUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -16106,8 +16119,8 @@ export namespace PartialClassUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         PartialClassUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -16115,9 +16128,9 @@ export namespace PartialClassUnionMember1 {
         $normalizeSparqlWherePatterns(
           PartialClassUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -16129,7 +16142,7 @@ export namespace PartialClassUnionMember1 {
       filter?: PartialClassUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -16141,23 +16154,24 @@ export namespace PartialClassUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClassUnionMember1");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("partialClassUnionMember1");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialClassUnionMember1")
             }RdfType`,
           ),
@@ -16166,8 +16180,8 @@ export namespace PartialClassUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialClassUnionMember1")
             }RdfType`,
           ),
@@ -16175,8 +16189,8 @@ export namespace PartialClassUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "partialClassUnionMember1")
             }RdfClass`,
           ),
@@ -16186,15 +16200,15 @@ export namespace PartialClassUnionMember1 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialClassUnionMember1"),
       }),
     );
@@ -16203,19 +16217,20 @@ export namespace PartialClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PartialClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClassUnionMember1");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("partialClassUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "partialClassUnionMember1")
       }RdfType`,
     );
@@ -16249,8 +16264,8 @@ export namespace PartialClassUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "partialClassUnionMember1")
                     }RdfClass`,
                   ),
@@ -16263,7 +16278,7 @@ export namespace PartialClassUnionMember1 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -16271,11 +16286,11 @@ export namespace PartialClassUnionMember1 {
           propertyPatterns: [],
           schema:
             PartialClassUnionMember1.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialClassUnionMember1"),
         }),
       );
@@ -16291,15 +16306,15 @@ export namespace PartialClassUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "partialClassUnionMember1")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   PartialClassUnionMember1.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -16310,15 +16325,15 @@ export namespace PartialClassUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialClassUnionMember1")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialClassUnionMember1")
         }LazilyResolvedStringProperty`,
       }),
@@ -16782,7 +16797,7 @@ export namespace OrderedPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -16799,8 +16814,8 @@ export namespace OrderedPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         OrderedPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -16808,9 +16823,9 @@ export namespace OrderedPropertiesClass {
         $normalizeSparqlWherePatterns(
           OrderedPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -16822,7 +16837,7 @@ export namespace OrderedPropertiesClass {
       filter?: OrderedPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -16834,55 +16849,56 @@ export namespace OrderedPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: OrderedPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("orderedPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("orderedPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.orderedPropertyC,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "orderedPropertyC",
+        propertyName: "orderedPropertyC",
         propertySchema: $schema.properties.orderedPropertyC,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "orderedPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.orderedPropertyB,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "orderedPropertyB",
+        propertyName: "orderedPropertyB",
         propertySchema: $schema.properties.orderedPropertyB,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "orderedPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.orderedPropertyA,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "orderedPropertyA",
+        propertyName: "orderedPropertyA",
         propertySchema: $schema.properties.orderedPropertyA,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "orderedPropertiesClass"),
       }),
     );
@@ -16891,26 +16907,27 @@ export namespace OrderedPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: OrderedPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("orderedPropertiesClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("orderedPropertiesClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: OrderedPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "orderedPropertiesClass"),
         }),
       );
@@ -16926,15 +16943,15 @@ export namespace OrderedPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "orderedPropertiesClass")
                   }OrderedPropertyC`,
                 ),
                 predicate:
                   OrderedPropertiesClass.$schema.properties.orderedPropertyC
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -16945,15 +16962,15 @@ export namespace OrderedPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "orderedPropertiesClass")
           }OrderedPropertyC`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "orderedPropertiesClass")
         }OrderedPropertyC`,
       }),
@@ -16969,15 +16986,15 @@ export namespace OrderedPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "orderedPropertiesClass")
                   }OrderedPropertyB`,
                 ),
                 predicate:
                   OrderedPropertiesClass.$schema.properties.orderedPropertyB
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -16988,15 +17005,15 @@ export namespace OrderedPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "orderedPropertiesClass")
           }OrderedPropertyB`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "orderedPropertiesClass")
         }OrderedPropertyB`,
       }),
@@ -17012,15 +17029,15 @@ export namespace OrderedPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "orderedPropertiesClass")
                   }OrderedPropertyA`,
                 ),
                 predicate:
                   OrderedPropertiesClass.$schema.properties.orderedPropertyA
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -17031,15 +17048,15 @@ export namespace OrderedPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "orderedPropertiesClass")
           }OrderedPropertyA`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "orderedPropertiesClass")
         }OrderedPropertyA`,
       }),
@@ -19004,7 +19021,7 @@ export namespace NumericPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -19021,8 +19038,8 @@ export namespace NumericPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         NumericPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -19030,9 +19047,9 @@ export namespace NumericPropertiesClass {
         $normalizeSparqlWherePatterns(
           NumericPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -19044,7 +19061,7 @@ export namespace NumericPropertiesClass {
       filter?: NumericPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -19056,23 +19073,24 @@ export namespace NumericPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: NumericPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("numericPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("numericPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "numericPropertiesClass")
             }RdfType`,
           ),
@@ -19081,8 +19099,8 @@ export namespace NumericPropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "numericPropertiesClass")
             }RdfType`,
           ),
@@ -19090,8 +19108,8 @@ export namespace NumericPropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "numericPropertiesClass")
             }RdfClass`,
           ),
@@ -19101,240 +19119,240 @@ export namespace NumericPropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.byteNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "byteNumericProperty",
+        propertyName: "byteNumericProperty",
         propertySchema: $schema.properties.byteNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.decimalNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "decimalNumericProperty",
+        propertyName: "decimalNumericProperty",
         propertySchema: $schema.properties.decimalNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.doubleNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "doubleNumericProperty",
+        propertyName: "doubleNumericProperty",
         propertySchema: $schema.properties.doubleNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.floatNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "floatNumericProperty",
+        propertyName: "floatNumericProperty",
         propertySchema: $schema.properties.floatNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.integerNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "integerNumericProperty",
+        propertyName: "integerNumericProperty",
         propertySchema: $schema.properties.integerNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.intNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "intNumericProperty",
+        propertyName: "intNumericProperty",
         propertySchema: $schema.properties.intNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.longNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "longNumericProperty",
+        propertyName: "longNumericProperty",
         propertySchema: $schema.properties.longNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.negativeIntegerNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "negativeIntegerNumericProperty",
+        propertyName: "negativeIntegerNumericProperty",
         propertySchema: $schema.properties.negativeIntegerNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.nonNegativeIntegerNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "nonNegativeIntegerNumericProperty",
+        propertyName: "nonNegativeIntegerNumericProperty",
         propertySchema: $schema.properties.nonNegativeIntegerNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.nonPositiveIntegerNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "nonPositiveIntegerNumericProperty",
+        propertyName: "nonPositiveIntegerNumericProperty",
         propertySchema: $schema.properties.nonPositiveIntegerNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.positiveIntegerNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "positiveIntegerNumericProperty",
+        propertyName: "positiveIntegerNumericProperty",
         propertySchema: $schema.properties.positiveIntegerNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.shortNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "shortNumericProperty",
+        propertyName: "shortNumericProperty",
         propertySchema: $schema.properties.shortNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.unsignedByteNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "unsignedByteNumericProperty",
+        propertyName: "unsignedByteNumericProperty",
         propertySchema: $schema.properties.unsignedByteNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.unsignedIntNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "unsignedIntNumericProperty",
+        propertyName: "unsignedIntNumericProperty",
         propertySchema: $schema.properties.unsignedIntNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.unsignedLongNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "unsignedLongNumericProperty",
+        propertyName: "unsignedLongNumericProperty",
         propertySchema: $schema.properties.unsignedLongNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.unsignedShortNumericProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "unsignedShortNumericProperty",
+        propertyName: "unsignedShortNumericProperty",
         propertySchema: $schema.properties.unsignedShortNumericProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass"),
       }),
     );
@@ -19343,19 +19361,20 @@ export namespace NumericPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: NumericPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("numericPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("numericPropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "numericPropertiesClass")
       }RdfType`,
     );
@@ -19389,8 +19408,8 @@ export namespace NumericPropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "numericPropertiesClass")
                     }RdfClass`,
                   ),
@@ -19403,18 +19422,18 @@ export namespace NumericPropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: NumericPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass"),
         }),
       );
@@ -19432,15 +19451,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }ByteNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties.byteNumericProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19451,15 +19470,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }ByteNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }ByteNumericProperty`,
       }),
@@ -19478,15 +19497,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }DecimalNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .decimalNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19497,15 +19516,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }DecimalNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }DecimalNumericProperty`,
       }),
@@ -19523,15 +19542,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }DoubleNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .doubleNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19542,15 +19561,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }DoubleNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }DoubleNumericProperty`,
       }),
@@ -19568,15 +19587,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }FloatNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties.floatNumericProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19587,15 +19606,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }FloatNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }FloatNumericProperty`,
       }),
@@ -19613,15 +19632,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }IntegerNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .integerNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19632,15 +19651,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }IntegerNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }IntegerNumericProperty`,
       }),
@@ -19658,15 +19677,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }IntNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties.intNumericProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19677,15 +19696,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }IntNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }IntNumericProperty`,
       }),
@@ -19703,15 +19722,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }LongNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties.longNumericProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19722,15 +19741,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }LongNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }LongNumericProperty`,
       }),
@@ -19748,15 +19767,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }NegativeIntegerNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .negativeIntegerNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19767,15 +19786,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }NegativeIntegerNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }NegativeIntegerNumericProperty`,
       }),
@@ -19793,15 +19812,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }NonNegativeIntegerNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .nonNegativeIntegerNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19812,15 +19831,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }NonNegativeIntegerNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }NonNegativeIntegerNumericProperty`,
       }),
@@ -19838,15 +19857,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }NonPositiveIntegerNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .nonPositiveIntegerNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19857,15 +19876,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }NonPositiveIntegerNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }NonPositiveIntegerNumericProperty`,
       }),
@@ -19883,15 +19902,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }PositiveIntegerNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .positiveIntegerNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19902,15 +19921,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }PositiveIntegerNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }PositiveIntegerNumericProperty`,
       }),
@@ -19928,15 +19947,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }ShortNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties.shortNumericProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19947,15 +19966,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }ShortNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }ShortNumericProperty`,
       }),
@@ -19973,15 +19992,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }UnsignedByteNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .unsignedByteNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -19992,15 +20011,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }UnsignedByteNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }UnsignedByteNumericProperty`,
       }),
@@ -20018,15 +20037,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }UnsignedIntNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .unsignedIntNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -20037,15 +20056,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }UnsignedIntNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }UnsignedIntNumericProperty`,
       }),
@@ -20063,15 +20082,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }UnsignedLongNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .unsignedLongNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -20082,15 +20101,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }UnsignedLongNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }UnsignedLongNumericProperty`,
       }),
@@ -20108,15 +20127,15 @@ export namespace NumericPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "numericPropertiesClass")
                   }UnsignedShortNumericProperty`,
                 ),
                 predicate:
                   NumericPropertiesClass.$schema.properties
                     .unsignedShortNumericProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -20127,15 +20146,15 @@ export namespace NumericPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "numericPropertiesClass")
           }UnsignedShortNumericProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "numericPropertiesClass")
         }UnsignedShortNumericProperty`,
       }),
@@ -20447,7 +20466,7 @@ export namespace NonClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -20462,16 +20481,20 @@ export namespace NonClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NonClass.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
+        NonClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
           NonClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -20483,7 +20506,7 @@ export namespace NonClass {
       filter?: NonClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -20495,23 +20518,26 @@ export namespace NonClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: NonClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("nonClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.nonClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "nonClassProperty",
+        propertyName: "nonClassProperty",
         propertySchema: $schema.properties.nonClassProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "nonClass"),
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nonClass"),
       }),
     );
     return triples;
@@ -20519,24 +20545,27 @@ export namespace NonClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: NonClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("nonClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: NonClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "nonClass"),
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "nonClass"),
         }),
       );
     }
@@ -20551,14 +20580,14 @@ export namespace NonClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "nonClass")
                   }NonClassProperty`,
                 ),
                 predicate:
                   NonClass.$schema.properties.nonClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -20568,12 +20597,16 @@ export namespace NonClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "nonClass")
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "nonClass")
           }NonClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "nonClass")
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nonClass")
         }NonClassProperty`,
       }),
     );
@@ -20905,7 +20938,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -20922,8 +20955,8 @@ export namespace NoRdfTypeClassUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -20931,9 +20964,9 @@ export namespace NoRdfTypeClassUnionMember2 {
         $normalizeSparqlWherePatterns(
           NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -20945,7 +20978,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       filter?: NoRdfTypeClassUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -20957,26 +20990,26 @@ export namespace NoRdfTypeClassUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: NoRdfTypeClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("noRdfTypeClassUnionMember2");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.noRdfTypeClassUnionMember2Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "noRdfTypeClassUnionMember2Property",
+        propertyName: "noRdfTypeClassUnionMember2Property",
         propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "noRdfTypeClassUnionMember2"),
       }),
     );
@@ -20985,16 +21018,16 @@ export namespace NoRdfTypeClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: NoRdfTypeClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("noRdfTypeClassUnionMember2");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -21002,11 +21035,11 @@ export namespace NoRdfTypeClassUnionMember2 {
           propertyPatterns: [],
           schema:
             NoRdfTypeClassUnionMember2.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "noRdfTypeClassUnionMember2"),
         }),
       );
@@ -21022,15 +21055,15 @@ export namespace NoRdfTypeClassUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "noRdfTypeClassUnionMember2")
                   }NoRdfTypeClassUnionMember2Property`,
                 ),
                 predicate:
                   NoRdfTypeClassUnionMember2.$schema.properties
                     .noRdfTypeClassUnionMember2Property.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -21041,15 +21074,15 @@ export namespace NoRdfTypeClassUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "noRdfTypeClassUnionMember2")
           }NoRdfTypeClassUnionMember2Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "noRdfTypeClassUnionMember2")
         }NoRdfTypeClassUnionMember2Property`,
       }),
@@ -21382,7 +21415,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -21399,8 +21432,8 @@ export namespace NoRdfTypeClassUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -21408,9 +21441,9 @@ export namespace NoRdfTypeClassUnionMember1 {
         $normalizeSparqlWherePatterns(
           NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -21422,7 +21455,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       filter?: NoRdfTypeClassUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -21434,26 +21467,26 @@ export namespace NoRdfTypeClassUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: NoRdfTypeClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("noRdfTypeClassUnionMember1");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.noRdfTypeClassUnionMember1Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "noRdfTypeClassUnionMember1Property",
+        propertyName: "noRdfTypeClassUnionMember1Property",
         propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "noRdfTypeClassUnionMember1"),
       }),
     );
@@ -21462,16 +21495,16 @@ export namespace NoRdfTypeClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: NoRdfTypeClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("noRdfTypeClassUnionMember1");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -21479,11 +21512,11 @@ export namespace NoRdfTypeClassUnionMember1 {
           propertyPatterns: [],
           schema:
             NoRdfTypeClassUnionMember1.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "noRdfTypeClassUnionMember1"),
         }),
       );
@@ -21499,15 +21532,15 @@ export namespace NoRdfTypeClassUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "noRdfTypeClassUnionMember1")
                   }NoRdfTypeClassUnionMember1Property`,
                 ),
                 predicate:
                   NoRdfTypeClassUnionMember1.$schema.properties
                     .noRdfTypeClassUnionMember1Property.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -21518,15 +21551,15 @@ export namespace NoRdfTypeClassUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "noRdfTypeClassUnionMember1")
           }NoRdfTypeClassUnionMember1Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "noRdfTypeClassUnionMember1")
         }NoRdfTypeClassUnionMember1Property`,
       }),
@@ -22261,7 +22294,7 @@ export namespace MutablePropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -22278,8 +22311,8 @@ export namespace MutablePropertiesClass {
       template: (queryParameters.template ?? []).concat(
         MutablePropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -22287,9 +22320,9 @@ export namespace MutablePropertiesClass {
         $normalizeSparqlWherePatterns(
           MutablePropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -22301,7 +22334,7 @@ export namespace MutablePropertiesClass {
       filter?: MutablePropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -22313,23 +22346,24 @@ export namespace MutablePropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: MutablePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("mutablePropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "mutablePropertiesClass")
             }RdfType`,
           ),
@@ -22338,8 +22372,8 @@ export namespace MutablePropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "mutablePropertiesClass")
             }RdfType`,
           ),
@@ -22347,8 +22381,8 @@ export namespace MutablePropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "mutablePropertiesClass")
             }RdfClass`,
           ),
@@ -22358,9 +22392,9 @@ export namespace MutablePropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.mutableListProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "mutableListProperty",
+        propertyName: "mutableListProperty",
         propertySchema: $schema.properties.mutableListProperty,
         typeSparqlConstructTriples: $listSparqlConstructTriples<
           $StringFilter,
@@ -22368,38 +22402,38 @@ export namespace MutablePropertiesClass {
         >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "mutablePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.mutableSetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "mutableSetProperty",
+        propertyName: "mutableSetProperty",
         propertySchema: $schema.properties.mutableSetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "mutablePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.mutableStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "mutableStringProperty",
+        propertyName: "mutableStringProperty",
         propertySchema: $schema.properties.mutableStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "mutablePropertiesClass"),
       }),
     );
@@ -22408,19 +22442,20 @@ export namespace MutablePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: MutablePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("mutablePropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "mutablePropertiesClass")
       }RdfType`,
     );
@@ -22454,8 +22489,8 @@ export namespace MutablePropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "mutablePropertiesClass")
                     }RdfClass`,
                   ),
@@ -22468,18 +22503,18 @@ export namespace MutablePropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: MutablePropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "mutablePropertiesClass"),
         }),
       );
@@ -22502,15 +22537,15 @@ export namespace MutablePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "mutablePropertiesClass")
                   }MutableListProperty`,
                 ),
                 predicate:
                   MutablePropertiesClass.$schema.properties.mutableListProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -22521,15 +22556,15 @@ export namespace MutablePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "mutablePropertiesClass")
           }MutableListProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "mutablePropertiesClass")
         }MutableListProperty`,
       }),
@@ -22547,15 +22582,15 @@ export namespace MutablePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "mutablePropertiesClass")
                   }MutableSetProperty`,
                 ),
                 predicate:
                   MutablePropertiesClass.$schema.properties.mutableSetProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -22566,15 +22601,15 @@ export namespace MutablePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "mutablePropertiesClass")
           }MutableSetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "mutablePropertiesClass")
         }MutableSetProperty`,
       }),
@@ -22592,15 +22627,15 @@ export namespace MutablePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "mutablePropertiesClass")
                   }MutableStringProperty`,
                 ),
                 predicate:
                   MutablePropertiesClass.$schema.properties
                     .mutableStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -22611,15 +22646,15 @@ export namespace MutablePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "mutablePropertiesClass")
           }MutableStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "mutablePropertiesClass")
         }MutableStringProperty`,
       }),
@@ -23462,7 +23497,7 @@ export namespace ListPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -23479,8 +23514,8 @@ export namespace ListPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         ListPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -23488,9 +23523,9 @@ export namespace ListPropertiesClass {
         $normalizeSparqlWherePatterns(
           ListPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -23502,7 +23537,7 @@ export namespace ListPropertiesClass {
       filter?: ListPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -23514,23 +23549,24 @@ export namespace ListPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ListPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("listPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "listPropertiesClass")
             }RdfType`,
           ),
@@ -23539,8 +23575,8 @@ export namespace ListPropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "listPropertiesClass")
             }RdfType`,
           ),
@@ -23548,8 +23584,8 @@ export namespace ListPropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "listPropertiesClass")
             }RdfClass`,
           ),
@@ -23559,9 +23595,9 @@ export namespace ListPropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.iriListProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "iriListProperty",
+        propertyName: "iriListProperty",
         propertySchema: $schema.properties.iriListProperty,
         typeSparqlConstructTriples: $listSparqlConstructTriples<
           $IriFilter,
@@ -23569,17 +23605,17 @@ export namespace ListPropertiesClass {
         >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "listPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.objectListProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "objectListProperty",
+        propertyName: "objectListProperty",
         propertySchema: $schema.properties.objectListProperty,
         typeSparqlConstructTriples: $listSparqlConstructTriples<
           NonClass.$Filter,
@@ -23587,17 +23623,17 @@ export namespace ListPropertiesClass {
         >(NonClass.$sparqlConstructTriples),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "listPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.stringListProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "stringListProperty",
+        propertyName: "stringListProperty",
         propertySchema: $schema.properties.stringListProperty,
         typeSparqlConstructTriples: $listSparqlConstructTriples<
           $StringFilter,
@@ -23605,8 +23641,8 @@ export namespace ListPropertiesClass {
         >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "listPropertiesClass"),
       }),
     );
@@ -23615,19 +23651,20 @@ export namespace ListPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ListPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("listPropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "listPropertiesClass")
       }RdfType`,
     );
@@ -23661,8 +23698,8 @@ export namespace ListPropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "listPropertiesClass")
                     }RdfClass`,
                   ),
@@ -23675,18 +23712,18 @@ export namespace ListPropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: ListPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "listPropertiesClass"),
         }),
       );
@@ -23709,15 +23746,15 @@ export namespace ListPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "listPropertiesClass")
                   }IriListProperty`,
                 ),
                 predicate:
                   ListPropertiesClass.$schema.properties.iriListProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -23727,15 +23764,15 @@ export namespace ListPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "listPropertiesClass")
           }IriListProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "listPropertiesClass")
         }IriListProperty`,
       }),
@@ -23757,8 +23794,8 @@ export namespace ListPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               NonClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23773,15 +23810,15 @@ export namespace ListPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "listPropertiesClass")
                   }ObjectListProperty`,
                 ),
                 predicate:
                   ListPropertiesClass.$schema.properties.objectListProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -23792,15 +23829,15 @@ export namespace ListPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "listPropertiesClass")
           }ObjectListProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "listPropertiesClass")
         }ObjectListProperty`,
       }),
@@ -23823,15 +23860,15 @@ export namespace ListPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "listPropertiesClass")
                   }StringListProperty`,
                 ),
                 predicate:
                   ListPropertiesClass.$schema.properties.stringListProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -23842,15 +23879,15 @@ export namespace ListPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "listPropertiesClass")
           }StringListProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "listPropertiesClass")
         }StringListProperty`,
       }),
@@ -24195,7 +24232,7 @@ export namespace PartialInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -24212,8 +24249,8 @@ export namespace PartialInterface {
       template: (queryParameters.template ?? []).concat(
         PartialInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -24221,9 +24258,9 @@ export namespace PartialInterface {
         $normalizeSparqlWherePatterns(
           PartialInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -24235,7 +24272,7 @@ export namespace PartialInterface {
       filter?: PartialInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -24247,25 +24284,25 @@ export namespace PartialInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialInterface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "partialInterface"),
       }),
     );
@@ -24274,26 +24311,26 @@ export namespace PartialInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PartialInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialInterface");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialInterface");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: PartialInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterface"),
         }),
       );
@@ -24309,15 +24346,15 @@ export namespace PartialInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "partialInterface")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   PartialInterface.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -24328,14 +24365,16 @@ export namespace PartialInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterface")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "partialInterface")
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "partialInterface")
         }LazilyResolvedStringProperty`,
       }),
     );
@@ -26911,7 +26950,7 @@ export namespace LazyPropertiesInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -26928,8 +26967,8 @@ export namespace LazyPropertiesInterface {
       template: (queryParameters.template ?? []).concat(
         LazyPropertiesInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -26937,9 +26976,9 @@ export namespace LazyPropertiesInterface {
         $normalizeSparqlWherePatterns(
           LazyPropertiesInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -26951,7 +26990,7 @@ export namespace LazyPropertiesInterface {
       filter?: LazyPropertiesInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -26963,19 +27002,20 @@ export namespace LazyPropertiesInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazyPropertiesInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("lazyPropertiesInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("lazyPropertiesInterface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalLazyToResolvedInterfaceProperty",
+        propertyName: "optionalLazyToResolvedInterfaceProperty",
         propertySchema:
           $schema.properties.optionalLazyToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -26985,8 +27025,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -26994,9 +27034,9 @@ export namespace LazyPropertiesInterface {
       $shaclPropertySparqlConstructTriples({
         filter:
           parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalLazyToResolvedInterfaceUnionProperty",
+        propertyName: "optionalLazyToResolvedInterfaceUnionProperty",
         propertySchema:
           $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -27006,8 +27046,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27016,9 +27056,9 @@ export namespace LazyPropertiesInterface {
         filter:
           parameters?.filter
             ?.optionalLazyToResolvedIriIdentifierInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
+        propertyName: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
         propertySchema:
           $schema.properties
             .optionalLazyToResolvedIriIdentifierInterfaceProperty,
@@ -27029,8 +27069,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27039,9 +27079,9 @@ export namespace LazyPropertiesInterface {
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceToResolvedInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalPartialInterfaceToResolvedInterfaceProperty",
+        propertyName: "optionalPartialInterfaceToResolvedInterfaceProperty",
         propertySchema:
           $schema.properties
             .optionalPartialInterfaceToResolvedInterfaceProperty,
@@ -27052,8 +27092,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27062,9 +27102,10 @@ export namespace LazyPropertiesInterface {
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+        propertyName:
+          "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         propertySchema:
           $schema.properties
             .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
@@ -27075,8 +27116,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27085,9 +27126,10 @@ export namespace LazyPropertiesInterface {
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+        propertyName:
+          "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         propertySchema:
           $schema.properties
             .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -27098,17 +27140,17 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredLazyToResolvedInterfaceProperty",
+        propertyName: "requiredLazyToResolvedInterfaceProperty",
         propertySchema:
           $schema.properties.requiredLazyToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -27118,8 +27160,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27128,9 +27170,9 @@ export namespace LazyPropertiesInterface {
         filter:
           parameters?.filter
             ?.requiredPartialInterfaceToResolvedInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredPartialInterfaceToResolvedInterfaceProperty",
+        propertyName: "requiredPartialInterfaceToResolvedInterfaceProperty",
         propertySchema:
           $schema.properties
             .requiredPartialInterfaceToResolvedInterfaceProperty,
@@ -27141,17 +27183,17 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.setLazyToResolvedInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setLazyToResolvedInterfaceProperty",
+        propertyName: "setLazyToResolvedInterfaceProperty",
         propertySchema: $schema.properties.setLazyToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.$sparqlConstructTriples({
@@ -27160,8 +27202,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27169,9 +27211,9 @@ export namespace LazyPropertiesInterface {
       $shaclPropertySparqlConstructTriples({
         filter:
           parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setPartialInterfaceToResolvedInterfaceProperty",
+        propertyName: "setPartialInterfaceToResolvedInterfaceProperty",
         propertySchema:
           $schema.properties.setPartialInterfaceToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -27181,8 +27223,8 @@ export namespace LazyPropertiesInterface {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface"),
       }),
     );
@@ -27191,26 +27233,27 @@ export namespace LazyPropertiesInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazyPropertiesInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("lazyPropertiesInterface");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("lazyPropertiesInterface");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: LazyPropertiesInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface"),
         }),
       );
@@ -27232,8 +27275,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27247,15 +27290,15 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }OptionalLazyToResolvedInterfaceProperty`,
                 ),
                 predicate:
                   LazyPropertiesInterface.$schema.properties
                     .optionalLazyToResolvedInterfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27266,15 +27309,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }OptionalLazyToResolvedInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }OptionalLazyToResolvedInterfaceProperty`,
       }),
@@ -27296,8 +27339,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27312,15 +27355,15 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }OptionalLazyToResolvedInterfaceUnionProperty`,
                 ),
                 predicate:
                   LazyPropertiesInterface.$schema.properties
                     .optionalLazyToResolvedInterfaceUnionProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27331,15 +27374,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }OptionalLazyToResolvedInterfaceUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }OptionalLazyToResolvedInterfaceUnionProperty`,
       }),
@@ -27361,8 +27404,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $NamedDefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27378,8 +27421,8 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
                 ),
@@ -27387,7 +27430,7 @@ export namespace LazyPropertiesInterface {
                   LazyPropertiesInterface.$schema.properties
                     .optionalLazyToResolvedIriIdentifierInterfaceProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27398,15 +27441,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
       }),
@@ -27428,8 +27471,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27445,8 +27488,8 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }OptionalPartialInterfaceToResolvedInterfaceProperty`,
                 ),
@@ -27454,7 +27497,7 @@ export namespace LazyPropertiesInterface {
                   LazyPropertiesInterface.$schema.properties
                     .optionalPartialInterfaceToResolvedInterfaceProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27465,15 +27508,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }OptionalPartialInterfaceToResolvedInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }OptionalPartialInterfaceToResolvedInterfaceProperty`,
       }),
@@ -27495,8 +27538,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27512,8 +27555,8 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
                 ),
@@ -27521,7 +27564,7 @@ export namespace LazyPropertiesInterface {
                   LazyPropertiesInterface.$schema.properties
                     .optionalPartialInterfaceToResolvedInterfaceUnionProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27532,15 +27575,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
       }),
@@ -27553,7 +27596,7 @@ export namespace LazyPropertiesInterface {
         >(({ propertyPatterns, valueVariable, ...otherParameters }) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             PartialInterfaceUnion.$sparqlWherePatterns({
-              subject: valueVariable,
+              focusIdentifier: valueVariable,
               ...otherParameters,
             }),
           ),
@@ -27569,8 +27612,8 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
                 ),
@@ -27578,7 +27621,7 @@ export namespace LazyPropertiesInterface {
                   LazyPropertiesInterface.$schema.properties
                     .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27589,15 +27632,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
       }),
@@ -27615,8 +27658,8 @@ export namespace LazyPropertiesInterface {
         >) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             $DefaultPartial.$sparqlWherePatterns({
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partial(), ...otherParameters }))({
@@ -27629,15 +27672,15 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }RequiredLazyToResolvedInterfaceProperty`,
                 ),
                 predicate:
                   LazyPropertiesInterface.$schema.properties
                     .requiredLazyToResolvedInterfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27648,15 +27691,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }RequiredLazyToResolvedInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }RequiredLazyToResolvedInterfaceProperty`,
       }),
@@ -27674,8 +27717,8 @@ export namespace LazyPropertiesInterface {
         >) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             PartialInterface.$sparqlWherePatterns({
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partial(), ...otherParameters }))({
@@ -27690,8 +27733,8 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }RequiredPartialInterfaceToResolvedInterfaceProperty`,
                 ),
@@ -27699,7 +27742,7 @@ export namespace LazyPropertiesInterface {
                   LazyPropertiesInterface.$schema.properties
                     .requiredPartialInterfaceToResolvedInterfaceProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27710,15 +27753,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }RequiredPartialInterfaceToResolvedInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }RequiredPartialInterfaceToResolvedInterfaceProperty`,
       }),
@@ -27740,8 +27783,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27755,15 +27798,15 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }SetLazyToResolvedInterfaceProperty`,
                 ),
                 predicate:
                   LazyPropertiesInterface.$schema.properties
                     .setLazyToResolvedInterfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27774,15 +27817,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }SetLazyToResolvedInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }SetLazyToResolvedInterfaceProperty`,
       }),
@@ -27804,8 +27847,8 @@ export namespace LazyPropertiesInterface {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27820,15 +27863,15 @@ export namespace LazyPropertiesInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesInterface")
                   }SetPartialInterfaceToResolvedInterfaceProperty`,
                 ),
                 predicate:
                   LazyPropertiesInterface.$schema.properties
                     .setPartialInterfaceToResolvedInterfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -27839,15 +27882,15 @@ export namespace LazyPropertiesInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesInterface")
           }SetPartialInterfaceToResolvedInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesInterface")
         }SetPartialInterfaceToResolvedInterfaceProperty`,
       }),
@@ -28171,7 +28214,7 @@ export namespace PartialClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -28188,8 +28231,8 @@ export namespace PartialClass {
       template: (queryParameters.template ?? []).concat(
         PartialClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -28197,9 +28240,9 @@ export namespace PartialClass {
         $normalizeSparqlWherePatterns(
           PartialClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -28211,7 +28254,7 @@ export namespace PartialClass {
       filter?: PartialClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -28223,24 +28266,26 @@ export namespace PartialClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "partialClass"),
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "partialClass"),
       }),
     );
     return triples;
@@ -28248,25 +28293,27 @@ export namespace PartialClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: PartialClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: PartialClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "partialClass"),
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "partialClass"),
         }),
       );
     }
@@ -28281,15 +28328,15 @@ export namespace PartialClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "partialClass")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   PartialClass.$schema.properties.lazilyResolvedStringProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -28300,12 +28347,16 @@ export namespace PartialClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "partialClass")
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "partialClass")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "partialClass")
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "partialClass")
         }LazilyResolvedStringProperty`,
       }),
     );
@@ -30722,7 +30773,7 @@ export namespace LazyPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -30739,8 +30790,8 @@ export namespace LazyPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         LazyPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -30748,9 +30799,9 @@ export namespace LazyPropertiesClass {
         $normalizeSparqlWherePatterns(
           LazyPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -30762,7 +30813,7 @@ export namespace LazyPropertiesClass {
       filter?: LazyPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -30774,19 +30825,20 @@ export namespace LazyPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazyPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("lazyPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("lazyPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalLazyToResolvedClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalLazyToResolvedClassProperty",
+        propertyName: "optionalLazyToResolvedClassProperty",
         propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.$sparqlConstructTriples({
@@ -30795,17 +30847,17 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalLazyToResolvedClassUnionProperty",
+        propertyName: "optionalLazyToResolvedClassUnionProperty",
         propertySchema:
           $schema.properties.optionalLazyToResolvedClassUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -30815,8 +30867,8 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
@@ -30824,9 +30876,9 @@ export namespace LazyPropertiesClass {
       $shaclPropertySparqlConstructTriples({
         filter:
           parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalLazyToResolvedIriIdentifierClassProperty",
+        propertyName: "optionalLazyToResolvedIriIdentifierClassProperty",
         propertySchema:
           $schema.properties.optionalLazyToResolvedIriIdentifierClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -30836,17 +30888,17 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.optionalPartialClassToResolvedClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalPartialClassToResolvedClassProperty",
+        propertyName: "optionalPartialClassToResolvedClassProperty",
         propertySchema:
           $schema.properties.optionalPartialClassToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -30856,8 +30908,8 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
@@ -30865,9 +30917,9 @@ export namespace LazyPropertiesClass {
       $shaclPropertySparqlConstructTriples({
         filter:
           parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalPartialClassToResolvedClassUnionProperty",
+        propertyName: "optionalPartialClassToResolvedClassUnionProperty",
         propertySchema:
           $schema.properties.optionalPartialClassToResolvedClassUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -30877,8 +30929,8 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
@@ -30887,9 +30939,9 @@ export namespace LazyPropertiesClass {
         filter:
           parameters?.filter
             ?.optionalPartialClassUnionToResolvedClassUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "optionalPartialClassUnionToResolvedClassUnionProperty",
+        propertyName: "optionalPartialClassUnionToResolvedClassUnionProperty",
         propertySchema:
           $schema.properties
             .optionalPartialClassUnionToResolvedClassUnionProperty,
@@ -30900,17 +30952,17 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredLazyToResolvedClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredLazyToResolvedClassProperty",
+        propertyName: "requiredLazyToResolvedClassProperty",
         propertySchema: $schema.properties.requiredLazyToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.$sparqlConstructTriples({
@@ -30919,17 +30971,17 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "requiredPartialClassToResolvedClassProperty",
+        propertyName: "requiredPartialClassToResolvedClassProperty",
         propertySchema:
           $schema.properties.requiredPartialClassToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -30939,17 +30991,17 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.setLazyToResolvedClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setLazyToResolvedClassProperty",
+        propertyName: "setLazyToResolvedClassProperty",
         propertySchema: $schema.properties.setLazyToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.$sparqlConstructTriples({
@@ -30958,17 +31010,17 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.setPartialClassToResolvedClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "setPartialClassToResolvedClassProperty",
+        propertyName: "setPartialClassToResolvedClassProperty",
         propertySchema:
           $schema.properties.setPartialClassToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
@@ -30978,8 +31030,8 @@ export namespace LazyPropertiesClass {
           }),
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass"),
       }),
     );
@@ -30988,26 +31040,27 @@ export namespace LazyPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazyPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("lazyPropertiesClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("lazyPropertiesClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: LazyPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass"),
         }),
       );
@@ -31029,8 +31082,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31044,15 +31097,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }OptionalLazyToResolvedClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .optionalLazyToResolvedClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31063,15 +31116,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }OptionalLazyToResolvedClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }OptionalLazyToResolvedClassProperty`,
       }),
@@ -31093,8 +31146,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31108,15 +31161,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }OptionalLazyToResolvedClassUnionProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .optionalLazyToResolvedClassUnionProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31127,15 +31180,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }OptionalLazyToResolvedClassUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }OptionalLazyToResolvedClassUnionProperty`,
       }),
@@ -31157,8 +31210,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $NamedDefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31173,8 +31226,8 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }OptionalLazyToResolvedIriIdentifierClassProperty`,
                 ),
@@ -31182,7 +31235,7 @@ export namespace LazyPropertiesClass {
                   LazyPropertiesClass.$schema.properties
                     .optionalLazyToResolvedIriIdentifierClassProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31193,15 +31246,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }OptionalLazyToResolvedIriIdentifierClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }OptionalLazyToResolvedIriIdentifierClassProperty`,
       }),
@@ -31223,8 +31276,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31238,15 +31291,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }OptionalPartialClassToResolvedClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .optionalPartialClassToResolvedClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31257,15 +31310,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }OptionalPartialClassToResolvedClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }OptionalPartialClassToResolvedClassProperty`,
       }),
@@ -31287,8 +31340,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31303,8 +31356,8 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }OptionalPartialClassToResolvedClassUnionProperty`,
                 ),
@@ -31312,7 +31365,7 @@ export namespace LazyPropertiesClass {
                   LazyPropertiesClass.$schema.properties
                     .optionalPartialClassToResolvedClassUnionProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31323,15 +31376,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }OptionalPartialClassToResolvedClassUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }OptionalPartialClassToResolvedClassUnionProperty`,
       }),
@@ -31344,7 +31397,7 @@ export namespace LazyPropertiesClass {
         >(({ propertyPatterns, valueVariable, ...otherParameters }) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             PartialClassUnion.$sparqlWherePatterns({
-              subject: valueVariable,
+              focusIdentifier: valueVariable,
               ...otherParameters,
             }),
           ),
@@ -31360,8 +31413,8 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }OptionalPartialClassUnionToResolvedClassUnionProperty`,
                 ),
@@ -31369,7 +31422,7 @@ export namespace LazyPropertiesClass {
                   LazyPropertiesClass.$schema.properties
                     .optionalPartialClassUnionToResolvedClassUnionProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31380,15 +31433,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }OptionalPartialClassUnionToResolvedClassUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }OptionalPartialClassUnionToResolvedClassUnionProperty`,
       }),
@@ -31406,8 +31459,8 @@ export namespace LazyPropertiesClass {
         >) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             $DefaultPartial.$sparqlWherePatterns({
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partial(), ...otherParameters }))({
@@ -31420,15 +31473,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }RequiredLazyToResolvedClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .requiredLazyToResolvedClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31439,15 +31492,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }RequiredLazyToResolvedClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }RequiredLazyToResolvedClassProperty`,
       }),
@@ -31465,8 +31518,8 @@ export namespace LazyPropertiesClass {
         >) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             PartialClass.$sparqlWherePatterns({
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partial(), ...otherParameters }))({
@@ -31479,15 +31532,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }RequiredPartialClassToResolvedClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .requiredPartialClassToResolvedClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31498,15 +31551,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }RequiredPartialClassToResolvedClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }RequiredPartialClassToResolvedClassProperty`,
       }),
@@ -31528,8 +31581,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31543,15 +31596,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }SetLazyToResolvedClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .setLazyToResolvedClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31562,15 +31615,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }SetLazyToResolvedClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }SetLazyToResolvedClassProperty`,
       }),
@@ -31592,8 +31645,8 @@ export namespace LazyPropertiesClass {
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -31607,15 +31660,15 @@ export namespace LazyPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazyPropertiesClass")
                   }SetPartialClassToResolvedClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$schema.properties
                     .setPartialClassToResolvedClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -31626,15 +31679,15 @@ export namespace LazyPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazyPropertiesClass")
           }SetPartialClassToResolvedClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazyPropertiesClass")
         }SetPartialClassToResolvedClassProperty`,
       }),
@@ -32003,7 +32056,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -32020,8 +32073,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedIriIdentifierInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -32029,9 +32082,9 @@ export namespace LazilyResolvedIriIdentifierInterface {
         $normalizeSparqlWherePatterns(
           LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -32043,7 +32096,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       filter?: LazilyResolvedIriIdentifierInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -32055,26 +32108,26 @@ export namespace LazilyResolvedIriIdentifierInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedIriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedIriIdentifierInterface"),
       }),
     );
@@ -32083,16 +32136,16 @@ export namespace LazilyResolvedIriIdentifierInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedIriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -32100,11 +32153,11 @@ export namespace LazilyResolvedIriIdentifierInterface {
           propertyPatterns: [],
           schema:
             LazilyResolvedIriIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedIriIdentifierInterface"),
         }),
       );
@@ -32120,15 +32173,15 @@ export namespace LazilyResolvedIriIdentifierInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedIriIdentifierInterface")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedIriIdentifierInterface.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -32139,15 +32192,15 @@ export namespace LazilyResolvedIriIdentifierInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedIriIdentifierInterface")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedIriIdentifierInterface")
         }LazilyResolvedStringProperty`,
       }),
@@ -32483,7 +32536,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -32500,8 +32553,8 @@ export namespace LazilyResolvedIriIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedIriIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -32509,9 +32562,9 @@ export namespace LazilyResolvedIriIdentifierClass {
         $normalizeSparqlWherePatterns(
           LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -32523,7 +32576,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       filter?: LazilyResolvedIriIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -32535,26 +32588,26 @@ export namespace LazilyResolvedIriIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedIriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedIriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedIriIdentifierClass"),
       }),
     );
@@ -32563,16 +32616,16 @@ export namespace LazilyResolvedIriIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedIriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedIriIdentifierClass");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -32580,11 +32633,11 @@ export namespace LazilyResolvedIriIdentifierClass {
           propertyPatterns: [],
           schema:
             LazilyResolvedIriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedIriIdentifierClass"),
         }),
       );
@@ -32600,15 +32653,15 @@ export namespace LazilyResolvedIriIdentifierClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedIriIdentifierClass")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedIriIdentifierClass.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -32619,15 +32672,15 @@ export namespace LazilyResolvedIriIdentifierClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedIriIdentifierClass")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedIriIdentifierClass")
         }LazilyResolvedStringProperty`,
       }),
@@ -33031,7 +33084,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -33048,8 +33101,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -33057,9 +33110,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         $normalizeSparqlWherePatterns(
           LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -33071,7 +33124,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       filter?: LazilyResolvedInterfaceUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -33083,24 +33136,24 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedInterfaceUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedInterfaceUnionMember2");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedInterfaceUnionMember2")
             }RdfType`,
           ),
@@ -33109,8 +33162,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedInterfaceUnionMember2")
             }RdfType`,
           ),
@@ -33118,8 +33171,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedInterfaceUnionMember2")
             }RdfClass`,
           ),
@@ -33129,15 +33182,15 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedInterfaceUnionMember2"),
       }),
     );
@@ -33146,20 +33199,20 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedInterfaceUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedInterfaceUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "lazilyResolvedInterfaceUnionMember2")
       }RdfType`,
     );
@@ -33193,8 +33246,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "lazilyResolvedInterfaceUnionMember2")
                     }RdfClass`,
                   ),
@@ -33207,7 +33260,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -33215,11 +33268,11 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           propertyPatterns: [],
           schema:
             LazilyResolvedInterfaceUnionMember2.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedInterfaceUnionMember2"),
         }),
       );
@@ -33235,15 +33288,15 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedInterfaceUnionMember2")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedInterfaceUnionMember2.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -33254,15 +33307,15 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedInterfaceUnionMember2")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedInterfaceUnionMember2")
         }LazilyResolvedStringProperty`,
       }),
@@ -33666,7 +33719,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -33683,8 +33736,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -33692,9 +33745,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         $normalizeSparqlWherePatterns(
           LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -33706,7 +33759,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       filter?: LazilyResolvedInterfaceUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -33718,24 +33771,24 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedInterfaceUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedInterfaceUnionMember1");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedInterfaceUnionMember1")
             }RdfType`,
           ),
@@ -33744,8 +33797,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedInterfaceUnionMember1")
             }RdfType`,
           ),
@@ -33753,8 +33806,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedInterfaceUnionMember1")
             }RdfClass`,
           ),
@@ -33764,15 +33817,15 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedInterfaceUnionMember1"),
       }),
     );
@@ -33781,20 +33834,20 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedInterfaceUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedInterfaceUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "lazilyResolvedInterfaceUnionMember1")
       }RdfType`,
     );
@@ -33828,8 +33881,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "lazilyResolvedInterfaceUnionMember1")
                     }RdfClass`,
                   ),
@@ -33842,7 +33895,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -33850,11 +33903,11 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           propertyPatterns: [],
           schema:
             LazilyResolvedInterfaceUnionMember1.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedInterfaceUnionMember1"),
         }),
       );
@@ -33870,15 +33923,15 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedInterfaceUnionMember1")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedInterfaceUnionMember1.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -33889,15 +33942,15 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedInterfaceUnionMember1")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedInterfaceUnionMember1")
         }LazilyResolvedStringProperty`,
       }),
@@ -34273,7 +34326,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -34290,8 +34343,8 @@ export namespace LazilyResolvedClassUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -34299,9 +34352,9 @@ export namespace LazilyResolvedClassUnionMember2 {
         $normalizeSparqlWherePatterns(
           LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -34313,7 +34366,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       filter?: LazilyResolvedClassUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -34325,24 +34378,24 @@ export namespace LazilyResolvedClassUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedClassUnionMember2");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedClassUnionMember2")
             }RdfType`,
           ),
@@ -34351,8 +34404,8 @@ export namespace LazilyResolvedClassUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedClassUnionMember2")
             }RdfType`,
           ),
@@ -34360,8 +34413,8 @@ export namespace LazilyResolvedClassUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedClassUnionMember2")
             }RdfClass`,
           ),
@@ -34371,15 +34424,15 @@ export namespace LazilyResolvedClassUnionMember2 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedClassUnionMember2"),
       }),
     );
@@ -34388,20 +34441,20 @@ export namespace LazilyResolvedClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedClassUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "lazilyResolvedClassUnionMember2")
       }RdfType`,
     );
@@ -34435,8 +34488,8 @@ export namespace LazilyResolvedClassUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "lazilyResolvedClassUnionMember2")
                     }RdfClass`,
                   ),
@@ -34449,7 +34502,7 @@ export namespace LazilyResolvedClassUnionMember2 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -34457,11 +34510,11 @@ export namespace LazilyResolvedClassUnionMember2 {
           propertyPatterns: [],
           schema:
             LazilyResolvedClassUnionMember2.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedClassUnionMember2"),
         }),
       );
@@ -34477,15 +34530,15 @@ export namespace LazilyResolvedClassUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedClassUnionMember2")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedClassUnionMember2.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -34496,15 +34549,15 @@ export namespace LazilyResolvedClassUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedClassUnionMember2")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedClassUnionMember2")
         }LazilyResolvedStringProperty`,
       }),
@@ -34880,7 +34933,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -34897,8 +34950,8 @@ export namespace LazilyResolvedClassUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -34906,9 +34959,9 @@ export namespace LazilyResolvedClassUnionMember1 {
         $normalizeSparqlWherePatterns(
           LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -34920,7 +34973,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       filter?: LazilyResolvedClassUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -34932,24 +34985,24 @@ export namespace LazilyResolvedClassUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedClassUnionMember1");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedClassUnionMember1")
             }RdfType`,
           ),
@@ -34958,8 +35011,8 @@ export namespace LazilyResolvedClassUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedClassUnionMember1")
             }RdfType`,
           ),
@@ -34967,8 +35020,8 @@ export namespace LazilyResolvedClassUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedClassUnionMember1")
             }RdfClass`,
           ),
@@ -34978,15 +35031,15 @@ export namespace LazilyResolvedClassUnionMember1 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedClassUnionMember1"),
       }),
     );
@@ -34995,20 +35048,20 @@ export namespace LazilyResolvedClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedClassUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "lazilyResolvedClassUnionMember1")
       }RdfType`,
     );
@@ -35042,8 +35095,8 @@ export namespace LazilyResolvedClassUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "lazilyResolvedClassUnionMember1")
                     }RdfClass`,
                   ),
@@ -35056,7 +35109,7 @@ export namespace LazilyResolvedClassUnionMember1 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -35064,11 +35117,11 @@ export namespace LazilyResolvedClassUnionMember1 {
           propertyPatterns: [],
           schema:
             LazilyResolvedClassUnionMember1.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedClassUnionMember1"),
         }),
       );
@@ -35084,15 +35137,15 @@ export namespace LazilyResolvedClassUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedClassUnionMember1")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedClassUnionMember1.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -35103,15 +35156,15 @@ export namespace LazilyResolvedClassUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedClassUnionMember1")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedClassUnionMember1")
         }LazilyResolvedStringProperty`,
       }),
@@ -35527,7 +35580,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -35543,7 +35596,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTriples(
-          { filter, ignoreRdfType, subject },
+          {
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+          },
         ),
       ),
       type: "query",
@@ -35551,9 +35608,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         $normalizeSparqlWherePatterns(
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -35565,7 +35622,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       filter?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -35579,24 +35636,24 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
             }RdfType`,
           ),
@@ -35605,8 +35662,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
             }RdfType`,
           ),
@@ -35614,8 +35671,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
             }RdfClass`,
           ),
@@ -35625,15 +35682,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedBlankNodeOrIriIdentifierInterface"),
       }),
     );
@@ -35642,20 +35699,20 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
       }RdfType`,
     );
@@ -35689,8 +35746,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
                     }RdfClass`,
                   ),
@@ -35703,7 +35760,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -35711,11 +35768,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           propertyPatterns: [],
           schema:
             LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedBlankNodeOrIriIdentifierInterface"),
         }),
       );
@@ -35731,15 +35788,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
                     .properties.lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -35750,15 +35807,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
         }LazilyResolvedStringProperty`,
       }),
@@ -36143,7 +36200,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -36160,8 +36217,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -36169,9 +36226,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         $normalizeSparqlWherePatterns(
           LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -36183,7 +36240,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       filter?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -36197,24 +36254,24 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedBlankNodeOrIriIdentifierClass")
             }RdfType`,
           ),
@@ -36223,8 +36280,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedBlankNodeOrIriIdentifierClass")
             }RdfType`,
           ),
@@ -36232,8 +36289,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "lazilyResolvedBlankNodeOrIriIdentifierClass")
             }RdfClass`,
           ),
@@ -36243,15 +36300,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "lazilyResolvedStringProperty",
+        propertyName: "lazilyResolvedStringProperty",
         propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedBlankNodeOrIriIdentifierClass"),
       }),
     );
@@ -36260,20 +36317,20 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "lazilyResolvedBlankNodeOrIriIdentifierClass")
       }RdfType`,
     );
@@ -36307,8 +36364,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "lazilyResolvedBlankNodeOrIriIdentifierClass")
                     }RdfClass`,
                   ),
@@ -36321,7 +36378,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -36329,11 +36386,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           propertyPatterns: [],
           schema:
             LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedBlankNodeOrIriIdentifierClass"),
         }),
       );
@@ -36349,15 +36406,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "lazilyResolvedBlankNodeOrIriIdentifierClass")
                   }LazilyResolvedStringProperty`,
                 ),
                 predicate:
                   LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
                     .lazilyResolvedStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -36368,15 +36425,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedBlankNodeOrIriIdentifierClass")
           }LazilyResolvedStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "lazilyResolvedBlankNodeOrIriIdentifierClass")
         }LazilyResolvedStringProperty`,
       }),
@@ -36794,7 +36851,7 @@ export namespace LanguageInPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -36811,8 +36868,8 @@ export namespace LanguageInPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         LanguageInPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -36820,9 +36877,9 @@ export namespace LanguageInPropertiesClass {
         $normalizeSparqlWherePatterns(
           LanguageInPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -36834,7 +36891,7 @@ export namespace LanguageInPropertiesClass {
       filter?: LanguageInPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -36846,25 +36903,26 @@ export namespace LanguageInPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LanguageInPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("languageInPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("languageInPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.languageInLiteralProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "languageInLiteralProperty",
+        propertyName: "languageInLiteralProperty",
         propertySchema: $schema.properties.languageInLiteralProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "languageInPropertiesClass"),
       }),
     );
@@ -36873,15 +36931,16 @@ export namespace LanguageInPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: LanguageInPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("languageInPropertiesClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("languageInPropertiesClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -36889,11 +36948,11 @@ export namespace LanguageInPropertiesClass {
           propertyPatterns: [],
           schema:
             LanguageInPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "languageInPropertiesClass"),
         }),
       );
@@ -36911,15 +36970,15 @@ export namespace LanguageInPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "languageInPropertiesClass")
                   }LanguageInLiteralProperty`,
                 ),
                 predicate:
                   LanguageInPropertiesClass.$schema.properties
                     .languageInLiteralProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -36930,15 +36989,15 @@ export namespace LanguageInPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "languageInPropertiesClass")
           }LanguageInLiteralProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "languageInPropertiesClass")
         }LanguageInLiteralProperty`,
       }),
@@ -37525,7 +37584,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -37542,8 +37601,8 @@ export namespace JsPrimitiveUnionPropertyClass {
       template: (queryParameters.template ?? []).concat(
         JsPrimitiveUnionPropertyClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -37551,9 +37610,9 @@ export namespace JsPrimitiveUnionPropertyClass {
         $normalizeSparqlWherePatterns(
           JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -37565,7 +37624,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       filter?: JsPrimitiveUnionPropertyClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -37577,24 +37636,24 @@ export namespace JsPrimitiveUnionPropertyClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: JsPrimitiveUnionPropertyClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("jsPrimitiveUnionPropertyClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "jsPrimitiveUnionPropertyClass")
             }RdfType`,
           ),
@@ -37603,8 +37662,8 @@ export namespace JsPrimitiveUnionPropertyClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "jsPrimitiveUnionPropertyClass")
             }RdfType`,
           ),
@@ -37612,8 +37671,8 @@ export namespace JsPrimitiveUnionPropertyClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "jsPrimitiveUnionPropertyClass")
             }RdfClass`,
           ),
@@ -37623,9 +37682,9 @@ export namespace JsPrimitiveUnionPropertyClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.jsPrimitiveUnionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "jsPrimitiveUnionProperty",
+        propertyName: "jsPrimitiveUnionProperty",
         propertySchema: $schema.properties.jsPrimitiveUnionProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -37660,8 +37719,8 @@ export namespace JsPrimitiveUnionPropertyClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "jsPrimitiveUnionPropertyClass"),
       }),
     );
@@ -37670,20 +37729,20 @@ export namespace JsPrimitiveUnionPropertyClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: JsPrimitiveUnionPropertyClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("jsPrimitiveUnionPropertyClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "jsPrimitiveUnionPropertyClass")
       }RdfType`,
     );
@@ -37717,8 +37776,8 @@ export namespace JsPrimitiveUnionPropertyClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "jsPrimitiveUnionPropertyClass")
                     }RdfClass`,
                   ),
@@ -37731,7 +37790,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -37739,11 +37798,11 @@ export namespace JsPrimitiveUnionPropertyClass {
           propertyPatterns: [],
           schema:
             JsPrimitiveUnionPropertyClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "jsPrimitiveUnionPropertyClass"),
         }),
       );
@@ -37813,15 +37872,15 @@ export namespace JsPrimitiveUnionPropertyClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "jsPrimitiveUnionPropertyClass")
                   }JsPrimitiveUnionProperty`,
                 ),
                 predicate:
                   JsPrimitiveUnionPropertyClass.$schema.properties
                     .jsPrimitiveUnionProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -37832,15 +37891,15 @@ export namespace JsPrimitiveUnionPropertyClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "jsPrimitiveUnionPropertyClass")
           }JsPrimitiveUnionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "jsPrimitiveUnionPropertyClass")
         }JsPrimitiveUnionProperty`,
       }),
@@ -38164,7 +38223,7 @@ export namespace IriIdentifierInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -38181,8 +38240,8 @@ export namespace IriIdentifierInterface {
       template: (queryParameters.template ?? []).concat(
         IriIdentifierInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -38190,9 +38249,9 @@ export namespace IriIdentifierInterface {
         $normalizeSparqlWherePatterns(
           IriIdentifierInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -38204,7 +38263,7 @@ export namespace IriIdentifierInterface {
       filter?: IriIdentifierInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -38216,23 +38275,24 @@ export namespace IriIdentifierInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("iriIdentifierInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("iriIdentifierInterface");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "iriIdentifierInterface")
             }RdfType`,
           ),
@@ -38241,8 +38301,8 @@ export namespace IriIdentifierInterface {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "iriIdentifierInterface")
             }RdfType`,
           ),
@@ -38250,8 +38310,8 @@ export namespace IriIdentifierInterface {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "iriIdentifierInterface")
             }RdfClass`,
           ),
@@ -38263,19 +38323,20 @@ export namespace IriIdentifierInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("iriIdentifierInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("iriIdentifierInterface");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "iriIdentifierInterface")
       }RdfType`,
     );
@@ -38309,8 +38370,8 @@ export namespace IriIdentifierInterface {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "iriIdentifierInterface")
                     }RdfClass`,
                   ),
@@ -38323,18 +38384,18 @@ export namespace IriIdentifierInterface {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: IriIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "iriIdentifierInterface"),
         }),
       );
@@ -38631,7 +38692,7 @@ export namespace IriIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -38648,8 +38709,8 @@ export namespace IriIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         IriIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -38657,9 +38718,9 @@ export namespace IriIdentifierClass {
         $normalizeSparqlWherePatterns(
           IriIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -38671,7 +38732,7 @@ export namespace IriIdentifierClass {
       filter?: IriIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -38683,23 +38744,24 @@ export namespace IriIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("iriIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("iriIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "iriIdentifierClass")
             }RdfType`,
           ),
@@ -38708,8 +38770,8 @@ export namespace IriIdentifierClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "iriIdentifierClass")
             }RdfType`,
           ),
@@ -38717,8 +38779,8 @@ export namespace IriIdentifierClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "iriIdentifierClass")
             }RdfClass`,
           ),
@@ -38730,18 +38792,21 @@ export namespace IriIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("iriIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("iriIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable" ? subject.value : "iriIdentifierClass")
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "iriIdentifierClass")
       }RdfType`,
     );
     if (!parameters?.ignoreRdfType) {
@@ -38774,8 +38839,8 @@ export namespace IriIdentifierClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "iriIdentifierClass")
                     }RdfClass`,
                   ),
@@ -38788,18 +38853,18 @@ export namespace IriIdentifierClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: IriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "iriIdentifierClass"),
         }),
       );
@@ -39117,7 +39182,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -39134,8 +39199,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       template: (queryParameters.template ?? []).concat(
         InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -39143,9 +39208,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         $normalizeSparqlWherePatterns(
           InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -39157,7 +39222,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       filter?: InterfaceUnionMemberCommonParentStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -39169,27 +39234,27 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: InterfaceUnionMemberCommonParentStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("interfaceUnionMemberCommonParent");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.interfaceUnionMemberCommonParentProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "interfaceUnionMemberCommonParentProperty",
+        propertyName: "interfaceUnionMemberCommonParentProperty",
         propertySchema:
           $schema.properties.interfaceUnionMemberCommonParentProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMemberCommonParent"),
       }),
     );
@@ -39198,16 +39263,16 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: InterfaceUnionMemberCommonParentStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("interfaceUnionMemberCommonParent");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -39215,11 +39280,11 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           propertyPatterns: [],
           schema:
             InterfaceUnionMemberCommonParentStatic.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "interfaceUnionMemberCommonParent"),
         }),
       );
@@ -39235,15 +39300,15 @@ export namespace InterfaceUnionMemberCommonParentStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "interfaceUnionMemberCommonParent")
                   }InterfaceUnionMemberCommonParentProperty`,
                 ),
                 predicate:
                   InterfaceUnionMemberCommonParentStatic.$schema.properties
                     .interfaceUnionMemberCommonParentProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -39254,15 +39319,15 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "interfaceUnionMemberCommonParent")
           }InterfaceUnionMemberCommonParentProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMemberCommonParent")
         }InterfaceUnionMemberCommonParentProperty`,
       }),
@@ -39642,7 +39707,7 @@ export namespace InterfaceUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -39659,8 +39724,8 @@ export namespace InterfaceUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         InterfaceUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -39668,9 +39733,9 @@ export namespace InterfaceUnionMember2 {
         $normalizeSparqlWherePatterns(
           InterfaceUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -39682,7 +39747,7 @@ export namespace InterfaceUnionMember2 {
       filter?: InterfaceUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -39694,34 +39759,35 @@ export namespace InterfaceUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: InterfaceUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("interfaceUnionMember2");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember2"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "interfaceUnionMember2")
             }RdfType`,
           ),
@@ -39730,8 +39796,8 @@ export namespace InterfaceUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "interfaceUnionMember2")
             }RdfType`,
           ),
@@ -39739,8 +39805,8 @@ export namespace InterfaceUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "interfaceUnionMember2")
             }RdfClass`,
           ),
@@ -39750,15 +39816,15 @@ export namespace InterfaceUnionMember2 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.interfaceUnionMember2Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "interfaceUnionMember2Property",
+        propertyName: "interfaceUnionMember2Property",
         propertySchema: $schema.properties.interfaceUnionMember2Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember2"),
       }),
     );
@@ -39767,31 +39833,32 @@ export namespace InterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: InterfaceUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("interfaceUnionMember2");
     patterns = patterns.concat(
       InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember2"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "interfaceUnionMember2")
       }RdfType`,
     );
@@ -39825,8 +39892,8 @@ export namespace InterfaceUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "interfaceUnionMember2")
                     }RdfClass`,
                   ),
@@ -39850,15 +39917,15 @@ export namespace InterfaceUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "interfaceUnionMember2")
                   }InterfaceUnionMember2Property`,
                 ),
                 predicate:
                   InterfaceUnionMember2.$schema.properties
                     .interfaceUnionMember2Property.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -39869,15 +39936,15 @@ export namespace InterfaceUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "interfaceUnionMember2")
           }InterfaceUnionMember2Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember2")
         }InterfaceUnionMember2Property`,
       }),
@@ -40257,7 +40324,7 @@ export namespace InterfaceUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -40274,8 +40341,8 @@ export namespace InterfaceUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         InterfaceUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -40283,9 +40350,9 @@ export namespace InterfaceUnionMember1 {
         $normalizeSparqlWherePatterns(
           InterfaceUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -40297,7 +40364,7 @@ export namespace InterfaceUnionMember1 {
       filter?: InterfaceUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -40309,34 +40376,35 @@ export namespace InterfaceUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: InterfaceUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember1");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("interfaceUnionMember1");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember1"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "interfaceUnionMember1")
             }RdfType`,
           ),
@@ -40345,8 +40413,8 @@ export namespace InterfaceUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "interfaceUnionMember1")
             }RdfType`,
           ),
@@ -40354,8 +40422,8 @@ export namespace InterfaceUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "interfaceUnionMember1")
             }RdfClass`,
           ),
@@ -40365,15 +40433,15 @@ export namespace InterfaceUnionMember1 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.interfaceUnionMember1Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "interfaceUnionMember1Property",
+        propertyName: "interfaceUnionMember1Property",
         propertySchema: $schema.properties.interfaceUnionMember1Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember1"),
       }),
     );
@@ -40382,31 +40450,32 @@ export namespace InterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: InterfaceUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember1");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("interfaceUnionMember1");
     patterns = patterns.concat(
       InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember1"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "interfaceUnionMember1")
       }RdfType`,
     );
@@ -40440,8 +40509,8 @@ export namespace InterfaceUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "interfaceUnionMember1")
                     }RdfClass`,
                   ),
@@ -40465,15 +40534,15 @@ export namespace InterfaceUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "interfaceUnionMember1")
                   }InterfaceUnionMember1Property`,
                 ),
                 predicate:
                   InterfaceUnionMember1.$schema.properties
                     .interfaceUnionMember1Property.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -40484,15 +40553,15 @@ export namespace InterfaceUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "interfaceUnionMember1")
           }InterfaceUnionMember1Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "interfaceUnionMember1")
         }InterfaceUnionMember1Property`,
       }),
@@ -40816,7 +40885,7 @@ export namespace Interface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -40831,16 +40900,20 @@ export namespace Interface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Interface.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
+        Interface.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
           Interface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -40852,7 +40925,7 @@ export namespace Interface {
       filter?: Interface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -40864,23 +40937,26 @@ export namespace Interface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: Interface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("interface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("interface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.interfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "interfaceProperty",
+        propertyName: "interfaceProperty",
         propertySchema: $schema.properties.interfaceProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "interface"),
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "interface"),
       }),
     );
     return triples;
@@ -40888,24 +40964,27 @@ export namespace Interface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: Interface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("interface");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("interface");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: Interface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "interface"),
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "interface"),
         }),
       );
     }
@@ -40920,14 +40999,14 @@ export namespace Interface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "interface")
                   }InterfaceProperty`,
                 ),
                 predicate:
                   Interface.$schema.properties.interfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -40937,12 +41016,16 @@ export namespace Interface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "interface")
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "interface")
           }InterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable" ? subject.value : "interface")
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "interface")
         }InterfaceProperty`,
       }),
     );
@@ -41364,7 +41447,7 @@ export namespace IndirectRecursiveHelperClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -41381,8 +41464,8 @@ export namespace IndirectRecursiveHelperClass {
       template: (queryParameters.template ?? []).concat(
         IndirectRecursiveHelperClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -41390,9 +41473,9 @@ export namespace IndirectRecursiveHelperClass {
         $normalizeSparqlWherePatterns(
           IndirectRecursiveHelperClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -41404,7 +41487,7 @@ export namespace IndirectRecursiveHelperClass {
       filter?: IndirectRecursiveHelperClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -41416,24 +41499,24 @@ export namespace IndirectRecursiveHelperClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IndirectRecursiveHelperClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("indirectRecursiveHelperClass");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "indirectRecursiveHelperClass")
             }RdfType`,
           ),
@@ -41442,8 +41525,8 @@ export namespace IndirectRecursiveHelperClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "indirectRecursiveHelperClass")
             }RdfType`,
           ),
@@ -41451,8 +41534,8 @@ export namespace IndirectRecursiveHelperClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "indirectRecursiveHelperClass")
             }RdfClass`,
           ),
@@ -41464,20 +41547,20 @@ export namespace IndirectRecursiveHelperClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IndirectRecursiveHelperClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("indirectRecursiveHelperClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "indirectRecursiveHelperClass")
       }RdfType`,
     );
@@ -41511,8 +41594,8 @@ export namespace IndirectRecursiveHelperClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "indirectRecursiveHelperClass")
                     }RdfClass`,
                   ),
@@ -41525,7 +41608,7 @@ export namespace IndirectRecursiveHelperClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -41533,11 +41616,11 @@ export namespace IndirectRecursiveHelperClass {
           propertyPatterns: [],
           schema:
             IndirectRecursiveHelperClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "indirectRecursiveHelperClass"),
         }),
       );
@@ -41966,7 +42049,7 @@ export namespace IndirectRecursiveClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -41983,8 +42066,8 @@ export namespace IndirectRecursiveClass {
       template: (queryParameters.template ?? []).concat(
         IndirectRecursiveClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -41992,9 +42075,9 @@ export namespace IndirectRecursiveClass {
         $normalizeSparqlWherePatterns(
           IndirectRecursiveClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -42006,7 +42089,7 @@ export namespace IndirectRecursiveClass {
       filter?: IndirectRecursiveClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -42018,23 +42101,24 @@ export namespace IndirectRecursiveClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IndirectRecursiveClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("indirectRecursiveClass");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "indirectRecursiveClass")
             }RdfType`,
           ),
@@ -42043,8 +42127,8 @@ export namespace IndirectRecursiveClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "indirectRecursiveClass")
             }RdfType`,
           ),
@@ -42052,8 +42136,8 @@ export namespace IndirectRecursiveClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "indirectRecursiveClass")
             }RdfClass`,
           ),
@@ -42065,19 +42149,20 @@ export namespace IndirectRecursiveClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IndirectRecursiveClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("indirectRecursiveClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "indirectRecursiveClass")
       }RdfType`,
     );
@@ -42111,8 +42196,8 @@ export namespace IndirectRecursiveClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "indirectRecursiveClass")
                     }RdfClass`,
                   ),
@@ -42125,18 +42210,18 @@ export namespace IndirectRecursiveClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: IndirectRecursiveClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "indirectRecursiveClass"),
         }),
       );
@@ -43204,7 +43289,7 @@ export namespace InPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -43221,8 +43306,8 @@ export namespace InPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         InPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -43230,9 +43315,9 @@ export namespace InPropertiesClass {
         $normalizeSparqlWherePatterns(
           InPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -43244,7 +43329,7 @@ export namespace InPropertiesClass {
       filter?: InPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -43256,23 +43341,23 @@ export namespace InPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: InPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("inPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "inPropertiesClass")
             }RdfType`,
           ),
@@ -43281,8 +43366,8 @@ export namespace InPropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "inPropertiesClass")
             }RdfType`,
           ),
@@ -43290,8 +43375,8 @@ export namespace InPropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "inPropertiesClass")
             }RdfClass`,
           ),
@@ -43301,90 +43386,90 @@ export namespace InPropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inBooleansProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inBooleansProperty",
+        propertyName: "inBooleansProperty",
         propertySchema: $schema.properties.inBooleansProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inDateTimesProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inDateTimesProperty",
+        propertyName: "inDateTimesProperty",
         propertySchema: $schema.properties.inDateTimesProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inDoublesProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inDoublesProperty",
+        propertyName: "inDoublesProperty",
         propertySchema: $schema.properties.inDoublesProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inIntegersProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inIntegersProperty",
+        propertyName: "inIntegersProperty",
         propertySchema: $schema.properties.inIntegersProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inIrisProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inIrisProperty",
+        propertyName: "inIrisProperty",
         propertySchema: $schema.properties.inIrisProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inStringsProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inStringsProperty",
+        propertyName: "inStringsProperty",
         propertySchema: $schema.properties.inStringsProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass"),
       }),
     );
@@ -43393,18 +43478,20 @@ export namespace InPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: InPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("inPropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable" ? subject.value : "inPropertiesClass")
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "inPropertiesClass")
       }RdfType`,
     );
     if (!parameters?.ignoreRdfType) {
@@ -43437,8 +43524,8 @@ export namespace InPropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "inPropertiesClass")
                     }RdfClass`,
                   ),
@@ -43451,18 +43538,18 @@ export namespace InPropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: InPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass"),
         }),
       );
@@ -43480,15 +43567,15 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inPropertiesClass")
                   }InBooleansProperty`,
                 ),
                 predicate:
                   InPropertiesClass.$schema.properties.inBooleansProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -43498,15 +43585,15 @@ export namespace InPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass")
           }InBooleansProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass")
         }InBooleansProperty`,
       }),
@@ -43524,15 +43611,15 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inPropertiesClass")
                   }InDateTimesProperty`,
                 ),
                 predicate:
                   InPropertiesClass.$schema.properties.inDateTimesProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -43542,15 +43629,15 @@ export namespace InPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass")
           }InDateTimesProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass")
         }InDateTimesProperty`,
       }),
@@ -43568,15 +43655,15 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inPropertiesClass")
                   }InDoublesProperty`,
                 ),
                 predicate:
                   InPropertiesClass.$schema.properties.inDoublesProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -43586,15 +43673,15 @@ export namespace InPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass")
           }InDoublesProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass")
         }InDoublesProperty`,
       }),
@@ -43612,15 +43699,15 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inPropertiesClass")
                   }InIntegersProperty`,
                 ),
                 predicate:
                   InPropertiesClass.$schema.properties.inIntegersProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -43630,15 +43717,15 @@ export namespace InPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass")
           }InIntegersProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass")
         }InIntegersProperty`,
       }),
@@ -43656,15 +43743,15 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inPropertiesClass")
                   }InIrisProperty`,
                 ),
                 predicate:
                   InPropertiesClass.$schema.properties.inIrisProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -43674,15 +43761,15 @@ export namespace InPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass")
           }InIrisProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass")
         }InIrisProperty`,
       }),
@@ -43700,15 +43787,15 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inPropertiesClass")
                   }InStringsProperty`,
                 ),
                 predicate:
                   InPropertiesClass.$schema.properties.inStringsProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -43718,15 +43805,15 @@ export namespace InPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inPropertiesClass")
           }InStringsProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inPropertiesClass")
         }InStringsProperty`,
       }),
@@ -44198,7 +44285,7 @@ export namespace InIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -44215,8 +44302,8 @@ export namespace InIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         InIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -44224,9 +44311,9 @@ export namespace InIdentifierClass {
         $normalizeSparqlWherePatterns(
           InIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -44238,7 +44325,7 @@ export namespace InIdentifierClass {
       filter?: InIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -44250,23 +44337,23 @@ export namespace InIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: InIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("inIdentifierClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "inIdentifierClass")
             }RdfType`,
           ),
@@ -44275,8 +44362,8 @@ export namespace InIdentifierClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "inIdentifierClass")
             }RdfType`,
           ),
@@ -44284,8 +44371,8 @@ export namespace InIdentifierClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "inIdentifierClass")
             }RdfClass`,
           ),
@@ -44295,15 +44382,15 @@ export namespace InIdentifierClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.inIdentifierProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "inIdentifierProperty",
+        propertyName: "inIdentifierProperty",
         propertySchema: $schema.properties.inIdentifierProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inIdentifierClass"),
       }),
     );
@@ -44312,18 +44399,20 @@ export namespace InIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: InIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("inIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable" ? subject.value : "inIdentifierClass")
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "inIdentifierClass")
       }RdfType`,
     );
     if (!parameters?.ignoreRdfType) {
@@ -44356,8 +44445,8 @@ export namespace InIdentifierClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "inIdentifierClass")
                     }RdfClass`,
                   ),
@@ -44370,18 +44459,18 @@ export namespace InIdentifierClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $iriSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: InIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inIdentifierClass"),
         }),
       );
@@ -44399,15 +44488,15 @@ export namespace InIdentifierClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "inIdentifierClass")
                   }InIdentifierProperty`,
                 ),
                 predicate:
                   InIdentifierClass.$schema.properties.inIdentifierProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -44418,15 +44507,15 @@ export namespace InIdentifierClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "inIdentifierClass")
           }InIdentifierProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "inIdentifierClass")
         }InIdentifierProperty`,
       }),
@@ -44742,7 +44831,7 @@ export namespace IdentifierOverride1ClassStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -44759,8 +44848,8 @@ export namespace IdentifierOverride1ClassStatic {
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride1ClassStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -44768,9 +44857,9 @@ export namespace IdentifierOverride1ClassStatic {
         $normalizeSparqlWherePatterns(
           IdentifierOverride1ClassStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -44782,7 +44871,7 @@ export namespace IdentifierOverride1ClassStatic {
       filter?: IdentifierOverride1ClassStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -44794,25 +44883,26 @@ export namespace IdentifierOverride1ClassStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IdentifierOverride1ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride1Class");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.identifierOverrideProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "identifierOverrideProperty",
+        propertyName: "identifierOverrideProperty",
         propertySchema: $schema.properties.identifierOverrideProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride1Class"),
       }),
     );
@@ -44821,15 +44911,16 @@ export namespace IdentifierOverride1ClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IdentifierOverride1ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride1Class");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -44837,11 +44928,11 @@ export namespace IdentifierOverride1ClassStatic {
           propertyPatterns: [],
           schema:
             IdentifierOverride1ClassStatic.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "identifierOverride1Class"),
         }),
       );
@@ -44857,15 +44948,15 @@ export namespace IdentifierOverride1ClassStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "identifierOverride1Class")
                   }IdentifierOverrideProperty`,
                 ),
                 predicate:
                   IdentifierOverride1ClassStatic.$schema.properties
                     .identifierOverrideProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -44876,15 +44967,15 @@ export namespace IdentifierOverride1ClassStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "identifierOverride1Class")
           }IdentifierOverrideProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride1Class")
         }IdentifierOverrideProperty`,
       }),
@@ -45070,7 +45161,7 @@ export namespace IdentifierOverride2ClassStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -45087,8 +45178,8 @@ export namespace IdentifierOverride2ClassStatic {
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride2ClassStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -45096,9 +45187,9 @@ export namespace IdentifierOverride2ClassStatic {
         $normalizeSparqlWherePatterns(
           IdentifierOverride2ClassStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -45110,7 +45201,7 @@ export namespace IdentifierOverride2ClassStatic {
       filter?: IdentifierOverride2ClassStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -45122,21 +45213,22 @@ export namespace IdentifierOverride2ClassStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IdentifierOverride2ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride2Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride2Class");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       IdentifierOverride1ClassStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride2Class"),
       }),
     );
@@ -45145,23 +45237,24 @@ export namespace IdentifierOverride2ClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IdentifierOverride2ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride2Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride2Class");
     patterns = patterns.concat(
       IdentifierOverride1ClassStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride2Class"),
       }),
     );
@@ -45415,7 +45508,7 @@ export namespace IdentifierOverride3ClassStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -45432,8 +45525,8 @@ export namespace IdentifierOverride3ClassStatic {
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride3ClassStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -45441,9 +45534,9 @@ export namespace IdentifierOverride3ClassStatic {
         $normalizeSparqlWherePatterns(
           IdentifierOverride3ClassStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -45455,7 +45548,7 @@ export namespace IdentifierOverride3ClassStatic {
       filter?: IdentifierOverride3ClassStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -45467,34 +45560,35 @@ export namespace IdentifierOverride3ClassStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IdentifierOverride3ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride3Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride3Class");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       IdentifierOverride2ClassStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride3Class"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride3Class")
             }RdfType`,
           ),
@@ -45503,8 +45597,8 @@ export namespace IdentifierOverride3ClassStatic {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride3Class")
             }RdfType`,
           ),
@@ -45512,8 +45606,8 @@ export namespace IdentifierOverride3ClassStatic {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride3Class")
             }RdfClass`,
           ),
@@ -45525,31 +45619,32 @@ export namespace IdentifierOverride3ClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IdentifierOverride3ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride3Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride3Class");
     patterns = patterns.concat(
       IdentifierOverride2ClassStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride3Class"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "identifierOverride3Class")
       }RdfType`,
     );
@@ -45566,8 +45661,8 @@ export namespace IdentifierOverride3ClassStatic {
             valuePatternRow[
               `?${
                 parameters?.variablePrefix ??
-                (subject.termType === "Variable"
-                  ? subject.value
+                (focusIdentifier.termType === "Variable"
+                  ? focusIdentifier.value
                   : "identifierOverride3Class")
               }FromRdfType`
             ] = identifier as NamedNode;
@@ -45578,8 +45673,8 @@ export namespace IdentifierOverride3ClassStatic {
           rdfType: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride3Class")
             }FromRdfType`,
           ),
@@ -45609,8 +45704,8 @@ export namespace IdentifierOverride3ClassStatic {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "identifierOverride3Class")
                     }RdfClass`,
                   ),
@@ -45889,7 +45984,7 @@ export namespace IdentifierOverride4ClassStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -45906,8 +46001,8 @@ export namespace IdentifierOverride4ClassStatic {
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride4ClassStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -45915,9 +46010,9 @@ export namespace IdentifierOverride4ClassStatic {
         $normalizeSparqlWherePatterns(
           IdentifierOverride4ClassStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -45929,7 +46024,7 @@ export namespace IdentifierOverride4ClassStatic {
       filter?: IdentifierOverride4ClassStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -45941,34 +46036,35 @@ export namespace IdentifierOverride4ClassStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IdentifierOverride4ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride4Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride4Class");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       IdentifierOverride3ClassStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride4Class"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride4Class")
             }RdfType`,
           ),
@@ -45977,8 +46073,8 @@ export namespace IdentifierOverride4ClassStatic {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride4Class")
             }RdfType`,
           ),
@@ -45986,8 +46082,8 @@ export namespace IdentifierOverride4ClassStatic {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride4Class")
             }RdfClass`,
           ),
@@ -45999,31 +46095,32 @@ export namespace IdentifierOverride4ClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IdentifierOverride4ClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride4Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride4Class");
     patterns = patterns.concat(
       IdentifierOverride3ClassStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride4Class"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "identifierOverride4Class")
       }RdfType`,
     );
@@ -46039,8 +46136,8 @@ export namespace IdentifierOverride4ClassStatic {
             valuePatternRow[
               `?${
                 parameters?.variablePrefix ??
-                (subject.termType === "Variable"
-                  ? subject.value
+                (focusIdentifier.termType === "Variable"
+                  ? focusIdentifier.value
                   : "identifierOverride4Class")
               }FromRdfType`
             ] = identifier as NamedNode;
@@ -46051,8 +46148,8 @@ export namespace IdentifierOverride4ClassStatic {
           rdfType: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride4Class")
             }FromRdfType`,
           ),
@@ -46082,8 +46179,8 @@ export namespace IdentifierOverride4ClassStatic {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "identifierOverride4Class")
                     }RdfClass`,
                   ),
@@ -46355,7 +46452,7 @@ export namespace IdentifierOverride5Class {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -46372,8 +46469,8 @@ export namespace IdentifierOverride5Class {
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride5Class.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -46381,9 +46478,9 @@ export namespace IdentifierOverride5Class {
         $normalizeSparqlWherePatterns(
           IdentifierOverride5Class.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -46395,7 +46492,7 @@ export namespace IdentifierOverride5Class {
       filter?: IdentifierOverride5Class.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -46407,34 +46504,35 @@ export namespace IdentifierOverride5Class {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: IdentifierOverride5Class.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride5Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride5Class");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       IdentifierOverride4ClassStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride5Class"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride5Class")
             }RdfType`,
           ),
@@ -46443,8 +46541,8 @@ export namespace IdentifierOverride5Class {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride5Class")
             }RdfType`,
           ),
@@ -46452,8 +46550,8 @@ export namespace IdentifierOverride5Class {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "identifierOverride5Class")
             }RdfClass`,
           ),
@@ -46465,31 +46563,32 @@ export namespace IdentifierOverride5Class {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: IdentifierOverride5Class.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("identifierOverride5Class");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("identifierOverride5Class");
     patterns = patterns.concat(
       IdentifierOverride4ClassStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "identifierOverride5Class"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "identifierOverride5Class")
       }RdfType`,
     );
@@ -46523,8 +46622,8 @@ export namespace IdentifierOverride5Class {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "identifierOverride5Class")
                     }RdfClass`,
                   ),
@@ -46954,7 +47053,7 @@ export namespace HasValuePropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -46971,8 +47070,8 @@ export namespace HasValuePropertiesClass {
       template: (queryParameters.template ?? []).concat(
         HasValuePropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -46980,9 +47079,9 @@ export namespace HasValuePropertiesClass {
         $normalizeSparqlWherePatterns(
           HasValuePropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -46994,7 +47093,7 @@ export namespace HasValuePropertiesClass {
       filter?: HasValuePropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -47006,40 +47105,41 @@ export namespace HasValuePropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: HasValuePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("hasValuePropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("hasValuePropertiesClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.hasIriValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "hasIriValueProperty",
+        propertyName: "hasIriValueProperty",
         propertySchema: $schema.properties.hasIriValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "hasValuePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.hasLiteralValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "hasLiteralValueProperty",
+        propertyName: "hasLiteralValueProperty",
         propertySchema: $schema.properties.hasLiteralValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "hasValuePropertiesClass"),
       }),
     );
@@ -47048,26 +47148,27 @@ export namespace HasValuePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: HasValuePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("hasValuePropertiesClass");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("hasValuePropertiesClass");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: HasValuePropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "hasValuePropertiesClass"),
         }),
       );
@@ -47083,15 +47184,15 @@ export namespace HasValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "hasValuePropertiesClass")
                   }HasIriValueProperty`,
                 ),
                 predicate:
                   HasValuePropertiesClass.$schema.properties.hasIriValueProperty
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -47102,15 +47203,15 @@ export namespace HasValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "hasValuePropertiesClass")
           }HasIriValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "hasValuePropertiesClass")
         }HasIriValueProperty`,
       }),
@@ -47126,15 +47227,15 @@ export namespace HasValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "hasValuePropertiesClass")
                   }HasLiteralValueProperty`,
                 ),
                 predicate:
                   HasValuePropertiesClass.$schema.properties
                     .hasLiteralValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -47145,15 +47246,15 @@ export namespace HasValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "hasValuePropertiesClass")
           }HasLiteralValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "hasValuePropertiesClass")
         }HasLiteralValueProperty`,
       }),
@@ -47529,7 +47630,7 @@ export namespace FlattenClassUnionMember3 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -47546,8 +47647,8 @@ export namespace FlattenClassUnionMember3 {
       template: (queryParameters.template ?? []).concat(
         FlattenClassUnionMember3.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -47555,9 +47656,9 @@ export namespace FlattenClassUnionMember3 {
         $normalizeSparqlWherePatterns(
           FlattenClassUnionMember3.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -47569,7 +47670,7 @@ export namespace FlattenClassUnionMember3 {
       filter?: FlattenClassUnionMember3.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -47581,23 +47682,24 @@ export namespace FlattenClassUnionMember3 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: FlattenClassUnionMember3.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("flattenClassUnionMember3");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "flattenClassUnionMember3")
             }RdfType`,
           ),
@@ -47606,8 +47708,8 @@ export namespace FlattenClassUnionMember3 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "flattenClassUnionMember3")
             }RdfType`,
           ),
@@ -47615,8 +47717,8 @@ export namespace FlattenClassUnionMember3 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "flattenClassUnionMember3")
             }RdfClass`,
           ),
@@ -47626,15 +47728,15 @@ export namespace FlattenClassUnionMember3 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.flattenClassUnionMember3Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "flattenClassUnionMember3Property",
+        propertyName: "flattenClassUnionMember3Property",
         propertySchema: $schema.properties.flattenClassUnionMember3Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "flattenClassUnionMember3"),
       }),
     );
@@ -47643,19 +47745,20 @@ export namespace FlattenClassUnionMember3 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: FlattenClassUnionMember3.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("flattenClassUnionMember3");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "flattenClassUnionMember3")
       }RdfType`,
     );
@@ -47689,8 +47792,8 @@ export namespace FlattenClassUnionMember3 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "flattenClassUnionMember3")
                     }RdfClass`,
                   ),
@@ -47703,7 +47806,7 @@ export namespace FlattenClassUnionMember3 {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -47711,11 +47814,11 @@ export namespace FlattenClassUnionMember3 {
           propertyPatterns: [],
           schema:
             FlattenClassUnionMember3.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "flattenClassUnionMember3"),
         }),
       );
@@ -47731,15 +47834,15 @@ export namespace FlattenClassUnionMember3 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "flattenClassUnionMember3")
                   }FlattenClassUnionMember3Property`,
                 ),
                 predicate:
                   FlattenClassUnionMember3.$schema.properties
                     .flattenClassUnionMember3Property.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -47750,15 +47853,15 @@ export namespace FlattenClassUnionMember3 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "flattenClassUnionMember3")
           }FlattenClassUnionMember3Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "flattenClassUnionMember3")
         }FlattenClassUnionMember3Property`,
       }),
@@ -48170,7 +48273,7 @@ export namespace ExternClassPropertyClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -48187,8 +48290,8 @@ export namespace ExternClassPropertyClass {
       template: (queryParameters.template ?? []).concat(
         ExternClassPropertyClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -48196,9 +48299,9 @@ export namespace ExternClassPropertyClass {
         $normalizeSparqlWherePatterns(
           ExternClassPropertyClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -48210,7 +48313,7 @@ export namespace ExternClassPropertyClass {
       filter?: ExternClassPropertyClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -48222,23 +48325,24 @@ export namespace ExternClassPropertyClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ExternClassPropertyClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("externClassPropertyClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "externClassPropertyClass")
             }RdfType`,
           ),
@@ -48247,8 +48351,8 @@ export namespace ExternClassPropertyClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "externClassPropertyClass")
             }RdfType`,
           ),
@@ -48256,8 +48360,8 @@ export namespace ExternClassPropertyClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "externClassPropertyClass")
             }RdfClass`,
           ),
@@ -48267,15 +48371,15 @@ export namespace ExternClassPropertyClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.externClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "externClassProperty",
+        propertyName: "externClassProperty",
         propertySchema: $schema.properties.externClassProperty,
         typeSparqlConstructTriples: ExternClass.$sparqlConstructTriples,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "externClassPropertyClass"),
       }),
     );
@@ -48284,19 +48388,20 @@ export namespace ExternClassPropertyClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ExternClassPropertyClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("externClassPropertyClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "externClassPropertyClass")
       }RdfType`,
     );
@@ -48330,8 +48435,8 @@ export namespace ExternClassPropertyClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "externClassPropertyClass")
                     }RdfClass`,
                   ),
@@ -48344,7 +48449,7 @@ export namespace ExternClassPropertyClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -48352,11 +48457,11 @@ export namespace ExternClassPropertyClass {
           propertyPatterns: [],
           schema:
             ExternClassPropertyClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "externClassPropertyClass"),
         }),
       );
@@ -48377,8 +48482,8 @@ export namespace ExternClassPropertyClass {
         >) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             ExternClass.$sparqlWherePatterns({
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              subject: valueVariable,
               ...otherParameters,
             }),
           ),
@@ -48392,15 +48497,15 @@ export namespace ExternClassPropertyClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "externClassPropertyClass")
                   }ExternClassProperty`,
                 ),
                 predicate:
                   ExternClassPropertyClass.$schema.properties
                     .externClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -48411,15 +48516,15 @@ export namespace ExternClassPropertyClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "externClassPropertyClass")
           }ExternClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "externClassPropertyClass")
         }ExternClassProperty`,
       }),
@@ -48726,7 +48831,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -48743,8 +48848,8 @@ export namespace AbstractBaseClassForExternClassStatic {
       template: (queryParameters.template ?? []).concat(
         AbstractBaseClassForExternClassStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -48752,9 +48857,9 @@ export namespace AbstractBaseClassForExternClassStatic {
         $normalizeSparqlWherePatterns(
           AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -48766,7 +48871,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       filter?: AbstractBaseClassForExternClassStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -48778,27 +48883,27 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: AbstractBaseClassForExternClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("abstractBaseClassForExternClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.abstractBaseClassForExternClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "abstractBaseClassForExternClassProperty",
+        propertyName: "abstractBaseClassForExternClassProperty",
         propertySchema:
           $schema.properties.abstractBaseClassForExternClassProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "abstractBaseClassForExternClass"),
       }),
     );
@@ -48807,16 +48912,16 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: AbstractBaseClassForExternClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("abstractBaseClassForExternClass");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -48824,11 +48929,11 @@ export namespace AbstractBaseClassForExternClassStatic {
           propertyPatterns: [],
           schema:
             AbstractBaseClassForExternClassStatic.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "abstractBaseClassForExternClass"),
         }),
       );
@@ -48844,15 +48949,15 @@ export namespace AbstractBaseClassForExternClassStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "abstractBaseClassForExternClass")
                   }AbstractBaseClassForExternClassProperty`,
                 ),
                 predicate:
                   AbstractBaseClassForExternClassStatic.$schema.properties
                     .abstractBaseClassForExternClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -48863,15 +48968,15 @@ export namespace AbstractBaseClassForExternClassStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "abstractBaseClassForExternClass")
           }AbstractBaseClassForExternClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "abstractBaseClassForExternClass")
         }AbstractBaseClassForExternClassProperty`,
       }),
@@ -49247,7 +49352,7 @@ export namespace ExplicitRdfTypeClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -49264,8 +49369,8 @@ export namespace ExplicitRdfTypeClass {
       template: (queryParameters.template ?? []).concat(
         ExplicitRdfTypeClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -49273,9 +49378,9 @@ export namespace ExplicitRdfTypeClass {
         $normalizeSparqlWherePatterns(
           ExplicitRdfTypeClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -49287,7 +49392,7 @@ export namespace ExplicitRdfTypeClass {
       filter?: ExplicitRdfTypeClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -49299,23 +49404,24 @@ export namespace ExplicitRdfTypeClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ExplicitRdfTypeClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("explicitRdfTypeClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("explicitRdfTypeClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "explicitRdfTypeClass")
             }RdfType`,
           ),
@@ -49324,8 +49430,8 @@ export namespace ExplicitRdfTypeClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "explicitRdfTypeClass")
             }RdfType`,
           ),
@@ -49333,8 +49439,8 @@ export namespace ExplicitRdfTypeClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "explicitRdfTypeClass")
             }RdfClass`,
           ),
@@ -49344,15 +49450,15 @@ export namespace ExplicitRdfTypeClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.explicitRdfTypeProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "explicitRdfTypeProperty",
+        propertyName: "explicitRdfTypeProperty",
         propertySchema: $schema.properties.explicitRdfTypeProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "explicitRdfTypeClass"),
       }),
     );
@@ -49361,19 +49467,20 @@ export namespace ExplicitRdfTypeClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ExplicitRdfTypeClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("explicitRdfTypeClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("explicitRdfTypeClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "explicitRdfTypeClass")
       }RdfType`,
     );
@@ -49407,8 +49514,8 @@ export namespace ExplicitRdfTypeClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "explicitRdfTypeClass")
                     }RdfClass`,
                   ),
@@ -49421,18 +49528,18 @@ export namespace ExplicitRdfTypeClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: ExplicitRdfTypeClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "explicitRdfTypeClass"),
         }),
       );
@@ -49448,15 +49555,15 @@ export namespace ExplicitRdfTypeClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "explicitRdfTypeClass")
                   }ExplicitRdfTypeProperty`,
                 ),
                 predicate:
                   ExplicitRdfTypeClass.$schema.properties
                     .explicitRdfTypeProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -49467,15 +49574,15 @@ export namespace ExplicitRdfTypeClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "explicitRdfTypeClass")
           }ExplicitRdfTypeProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "explicitRdfTypeClass")
         }ExplicitRdfTypeProperty`,
       }),
@@ -49863,7 +49970,7 @@ export namespace ExplicitFromToRdfTypesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -49880,8 +49987,8 @@ export namespace ExplicitFromToRdfTypesClass {
       template: (queryParameters.template ?? []).concat(
         ExplicitFromToRdfTypesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -49889,9 +49996,9 @@ export namespace ExplicitFromToRdfTypesClass {
         $normalizeSparqlWherePatterns(
           ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -49903,7 +50010,7 @@ export namespace ExplicitFromToRdfTypesClass {
       filter?: ExplicitFromToRdfTypesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -49915,24 +50022,24 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ExplicitFromToRdfTypesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("explicitFromToRdfTypesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "explicitFromToRdfTypesClass")
             }RdfType`,
           ),
@@ -49941,8 +50048,8 @@ export namespace ExplicitFromToRdfTypesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "explicitFromToRdfTypesClass")
             }RdfType`,
           ),
@@ -49950,8 +50057,8 @@ export namespace ExplicitFromToRdfTypesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "explicitFromToRdfTypesClass")
             }RdfClass`,
           ),
@@ -49961,15 +50068,15 @@ export namespace ExplicitFromToRdfTypesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.explicitFromToRdfTypesProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "explicitFromToRdfTypesProperty",
+        propertyName: "explicitFromToRdfTypesProperty",
         propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "explicitFromToRdfTypesClass"),
       }),
     );
@@ -49978,20 +50085,20 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ExplicitFromToRdfTypesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("explicitFromToRdfTypesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "explicitFromToRdfTypesClass")
       }RdfType`,
     );
@@ -50025,8 +50132,8 @@ export namespace ExplicitFromToRdfTypesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "explicitFromToRdfTypesClass")
                     }RdfClass`,
                   ),
@@ -50039,7 +50146,7 @@ export namespace ExplicitFromToRdfTypesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -50047,11 +50154,11 @@ export namespace ExplicitFromToRdfTypesClass {
           propertyPatterns: [],
           schema:
             ExplicitFromToRdfTypesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "explicitFromToRdfTypesClass"),
         }),
       );
@@ -50067,15 +50174,15 @@ export namespace ExplicitFromToRdfTypesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "explicitFromToRdfTypesClass")
                   }ExplicitFromToRdfTypesProperty`,
                 ),
                 predicate:
                   ExplicitFromToRdfTypesClass.$schema.properties
                     .explicitFromToRdfTypesProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -50086,15 +50193,15 @@ export namespace ExplicitFromToRdfTypesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "explicitFromToRdfTypesClass")
           }ExplicitFromToRdfTypesProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "explicitFromToRdfTypesClass")
         }ExplicitFromToRdfTypesProperty`,
       }),
@@ -50513,7 +50620,7 @@ export namespace DirectRecursiveClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -50530,8 +50637,8 @@ export namespace DirectRecursiveClass {
       template: (queryParameters.template ?? []).concat(
         DirectRecursiveClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -50539,9 +50646,9 @@ export namespace DirectRecursiveClass {
         $normalizeSparqlWherePatterns(
           DirectRecursiveClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -50553,7 +50660,7 @@ export namespace DirectRecursiveClass {
       filter?: DirectRecursiveClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -50565,23 +50672,24 @@ export namespace DirectRecursiveClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: DirectRecursiveClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("directRecursiveClass");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "directRecursiveClass")
             }RdfType`,
           ),
@@ -50590,8 +50698,8 @@ export namespace DirectRecursiveClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "directRecursiveClass")
             }RdfType`,
           ),
@@ -50599,8 +50707,8 @@ export namespace DirectRecursiveClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "directRecursiveClass")
             }RdfClass`,
           ),
@@ -50612,19 +50720,20 @@ export namespace DirectRecursiveClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: DirectRecursiveClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("directRecursiveClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "directRecursiveClass")
       }RdfType`,
     );
@@ -50658,8 +50767,8 @@ export namespace DirectRecursiveClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "directRecursiveClass")
                     }RdfClass`,
                   ),
@@ -50672,18 +50781,18 @@ export namespace DirectRecursiveClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: DirectRecursiveClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "directRecursiveClass"),
         }),
       );
@@ -51639,7 +51748,7 @@ export namespace DefaultValuePropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -51656,8 +51765,8 @@ export namespace DefaultValuePropertiesClass {
       template: (queryParameters.template ?? []).concat(
         DefaultValuePropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -51665,9 +51774,9 @@ export namespace DefaultValuePropertiesClass {
         $normalizeSparqlWherePatterns(
           DefaultValuePropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -51679,7 +51788,7 @@ export namespace DefaultValuePropertiesClass {
       filter?: DefaultValuePropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -51691,24 +51800,24 @@ export namespace DefaultValuePropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: DefaultValuePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("defaultValuePropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "defaultValuePropertiesClass")
             }RdfType`,
           ),
@@ -51717,8 +51826,8 @@ export namespace DefaultValuePropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "defaultValuePropertiesClass")
             }RdfType`,
           ),
@@ -51726,8 +51835,8 @@ export namespace DefaultValuePropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "defaultValuePropertiesClass")
             }RdfClass`,
           ),
@@ -51737,90 +51846,90 @@ export namespace DefaultValuePropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateDefaultValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateDefaultValueProperty",
+        propertyName: "dateDefaultValueProperty",
         propertySchema: $schema.properties.dateDefaultValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateTimeDefaultValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateTimeDefaultValueProperty",
+        propertyName: "dateTimeDefaultValueProperty",
         propertySchema: $schema.properties.dateTimeDefaultValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.falseBooleanDefaultValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "falseBooleanDefaultValueProperty",
+        propertyName: "falseBooleanDefaultValueProperty",
         propertySchema: $schema.properties.falseBooleanDefaultValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.numberDefaultValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "numberDefaultValueProperty",
+        propertyName: "numberDefaultValueProperty",
         propertySchema: $schema.properties.numberDefaultValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.stringDefaultValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "stringDefaultValueProperty",
+        propertyName: "stringDefaultValueProperty",
         propertySchema: $schema.properties.stringDefaultValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.trueBooleanDefaultValueProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "trueBooleanDefaultValueProperty",
+        propertyName: "trueBooleanDefaultValueProperty",
         propertySchema: $schema.properties.trueBooleanDefaultValueProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass"),
       }),
     );
@@ -51829,20 +51938,20 @@ export namespace DefaultValuePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: DefaultValuePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("defaultValuePropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "defaultValuePropertiesClass")
       }RdfType`,
     );
@@ -51876,8 +51985,8 @@ export namespace DefaultValuePropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "defaultValuePropertiesClass")
                     }RdfClass`,
                   ),
@@ -51890,7 +51999,7 @@ export namespace DefaultValuePropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -51898,11 +52007,11 @@ export namespace DefaultValuePropertiesClass {
           propertyPatterns: [],
           schema:
             DefaultValuePropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass"),
         }),
       );
@@ -51920,15 +52029,15 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "defaultValuePropertiesClass")
                   }DateDefaultValueProperty`,
                 ),
                 predicate:
                   DefaultValuePropertiesClass.$schema.properties
                     .dateDefaultValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -51939,15 +52048,15 @@ export namespace DefaultValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass")
           }DateDefaultValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass")
         }DateDefaultValueProperty`,
       }),
@@ -51965,15 +52074,15 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "defaultValuePropertiesClass")
                   }DateTimeDefaultValueProperty`,
                 ),
                 predicate:
                   DefaultValuePropertiesClass.$schema.properties
                     .dateTimeDefaultValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -51984,15 +52093,15 @@ export namespace DefaultValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass")
           }DateTimeDefaultValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass")
         }DateTimeDefaultValueProperty`,
       }),
@@ -52010,15 +52119,15 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "defaultValuePropertiesClass")
                   }FalseBooleanDefaultValueProperty`,
                 ),
                 predicate:
                   DefaultValuePropertiesClass.$schema.properties
                     .falseBooleanDefaultValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -52029,15 +52138,15 @@ export namespace DefaultValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass")
           }FalseBooleanDefaultValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass")
         }FalseBooleanDefaultValueProperty`,
       }),
@@ -52056,15 +52165,15 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "defaultValuePropertiesClass")
                   }NumberDefaultValueProperty`,
                 ),
                 predicate:
                   DefaultValuePropertiesClass.$schema.properties
                     .numberDefaultValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -52075,15 +52184,15 @@ export namespace DefaultValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass")
           }NumberDefaultValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass")
         }NumberDefaultValueProperty`,
       }),
@@ -52101,15 +52210,15 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "defaultValuePropertiesClass")
                   }StringDefaultValueProperty`,
                 ),
                 predicate:
                   DefaultValuePropertiesClass.$schema.properties
                     .stringDefaultValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -52120,15 +52229,15 @@ export namespace DefaultValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass")
           }StringDefaultValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass")
         }StringDefaultValueProperty`,
       }),
@@ -52146,15 +52255,15 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "defaultValuePropertiesClass")
                   }TrueBooleanDefaultValueProperty`,
                 ),
                 predicate:
                   DefaultValuePropertiesClass.$schema.properties
                     .trueBooleanDefaultValueProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -52165,15 +52274,15 @@ export namespace DefaultValuePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "defaultValuePropertiesClass")
           }TrueBooleanDefaultValueProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "defaultValuePropertiesClass")
         }TrueBooleanDefaultValueProperty`,
       }),
@@ -53694,7 +53803,7 @@ export namespace DateUnionPropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -53711,8 +53820,8 @@ export namespace DateUnionPropertiesClass {
       template: (queryParameters.template ?? []).concat(
         DateUnionPropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -53720,9 +53829,9 @@ export namespace DateUnionPropertiesClass {
         $normalizeSparqlWherePatterns(
           DateUnionPropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -53734,7 +53843,7 @@ export namespace DateUnionPropertiesClass {
       filter?: DateUnionPropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -53746,23 +53855,24 @@ export namespace DateUnionPropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: DateUnionPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("dateUnionPropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "dateUnionPropertiesClass")
             }RdfType`,
           ),
@@ -53771,8 +53881,8 @@ export namespace DateUnionPropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "dateUnionPropertiesClass")
             }RdfType`,
           ),
@@ -53780,8 +53890,8 @@ export namespace DateUnionPropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "dateUnionPropertiesClass")
             }RdfClass`,
           ),
@@ -53791,9 +53901,9 @@ export namespace DateUnionPropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateOrDateTimeProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateOrDateTimeProperty",
+        propertyName: "dateOrDateTimeProperty",
         propertySchema: $schema.properties.dateOrDateTimeProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -53821,17 +53931,17 @@ export namespace DateUnionPropertiesClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateOrStringProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateOrStringProperty",
+        propertyName: "dateOrStringProperty",
         propertySchema: $schema.properties.dateOrStringProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -53859,17 +53969,17 @@ export namespace DateUnionPropertiesClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.dateTimeOrDateProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "dateTimeOrDateProperty",
+        propertyName: "dateTimeOrDateProperty",
         propertySchema: $schema.properties.dateTimeOrDateProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -53897,17 +54007,17 @@ export namespace DateUnionPropertiesClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.stringOrDateProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "stringOrDateProperty",
+        propertyName: "stringOrDateProperty",
         propertySchema: $schema.properties.stringOrDateProperty,
         typeSparqlConstructTriples: ({
           filter,
@@ -53935,8 +54045,8 @@ export namespace DateUnionPropertiesClass {
         },
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass"),
       }),
     );
@@ -53945,19 +54055,20 @@ export namespace DateUnionPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: DateUnionPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("dateUnionPropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "dateUnionPropertiesClass")
       }RdfType`,
     );
@@ -53991,8 +54102,8 @@ export namespace DateUnionPropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "dateUnionPropertiesClass")
                     }RdfClass`,
                   ),
@@ -54005,7 +54116,7 @@ export namespace DateUnionPropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -54013,11 +54124,11 @@ export namespace DateUnionPropertiesClass {
           propertyPatterns: [],
           schema:
             DateUnionPropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "dateUnionPropertiesClass"),
         }),
       );
@@ -54074,15 +54185,15 @@ export namespace DateUnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "dateUnionPropertiesClass")
                   }DateOrDateTimeProperty`,
                 ),
                 predicate:
                   DateUnionPropertiesClass.$schema.properties
                     .dateOrDateTimeProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -54093,15 +54204,15 @@ export namespace DateUnionPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "dateUnionPropertiesClass")
           }DateOrDateTimeProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass")
         }DateOrDateTimeProperty`,
       }),
@@ -54158,15 +54269,15 @@ export namespace DateUnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "dateUnionPropertiesClass")
                   }DateOrStringProperty`,
                 ),
                 predicate:
                   DateUnionPropertiesClass.$schema.properties
                     .dateOrStringProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -54177,15 +54288,15 @@ export namespace DateUnionPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "dateUnionPropertiesClass")
           }DateOrStringProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass")
         }DateOrStringProperty`,
       }),
@@ -54242,15 +54353,15 @@ export namespace DateUnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "dateUnionPropertiesClass")
                   }DateTimeOrDateProperty`,
                 ),
                 predicate:
                   DateUnionPropertiesClass.$schema.properties
                     .dateTimeOrDateProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -54261,15 +54372,15 @@ export namespace DateUnionPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "dateUnionPropertiesClass")
           }DateTimeOrDateProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass")
         }DateTimeOrDateProperty`,
       }),
@@ -54326,15 +54437,15 @@ export namespace DateUnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "dateUnionPropertiesClass")
                   }StringOrDateProperty`,
                 ),
                 predicate:
                   DateUnionPropertiesClass.$schema.properties
                     .stringOrDateProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -54345,15 +54456,15 @@ export namespace DateUnionPropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "dateUnionPropertiesClass")
           }StringOrDateProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "dateUnionPropertiesClass")
         }StringOrDateProperty`,
       }),
@@ -56358,7 +56469,7 @@ export namespace ConvertibleTypePropertiesClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -56375,8 +56486,8 @@ export namespace ConvertibleTypePropertiesClass {
       template: (queryParameters.template ?? []).concat(
         ConvertibleTypePropertiesClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -56384,9 +56495,9 @@ export namespace ConvertibleTypePropertiesClass {
         $normalizeSparqlWherePatterns(
           ConvertibleTypePropertiesClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -56398,7 +56509,7 @@ export namespace ConvertibleTypePropertiesClass {
       filter?: ConvertibleTypePropertiesClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -56410,24 +56521,24 @@ export namespace ConvertibleTypePropertiesClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ConvertibleTypePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("convertibleTypePropertiesClass");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "convertibleTypePropertiesClass")
             }RdfType`,
           ),
@@ -56436,8 +56547,8 @@ export namespace ConvertibleTypePropertiesClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "convertibleTypePropertiesClass")
             }RdfType`,
           ),
@@ -56445,8 +56556,8 @@ export namespace ConvertibleTypePropertiesClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "convertibleTypePropertiesClass")
             }RdfClass`,
           ),
@@ -56456,181 +56567,181 @@ export namespace ConvertibleTypePropertiesClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleIriNonEmptySetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleIriNonEmptySetProperty",
+        propertyName: "convertibleIriNonEmptySetProperty",
         propertySchema: $schema.properties.convertibleIriNonEmptySetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleIriOptionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleIriOptionProperty",
+        propertyName: "convertibleIriOptionProperty",
         propertySchema: $schema.properties.convertibleIriOptionProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleIriProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleIriProperty",
+        propertyName: "convertibleIriProperty",
         propertySchema: $schema.properties.convertibleIriProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleIriSetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleIriSetProperty",
+        propertyName: "convertibleIriSetProperty",
         propertySchema: $schema.properties.convertibleIriSetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleLiteralNonEmptySetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleLiteralNonEmptySetProperty",
+        propertyName: "convertibleLiteralNonEmptySetProperty",
         propertySchema:
           $schema.properties.convertibleLiteralNonEmptySetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleLiteralOptionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleLiteralOptionProperty",
+        propertyName: "convertibleLiteralOptionProperty",
         propertySchema: $schema.properties.convertibleLiteralOptionProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleLiteralProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleLiteralProperty",
+        propertyName: "convertibleLiteralProperty",
         propertySchema: $schema.properties.convertibleLiteralProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleLiteralSetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleLiteralSetProperty",
+        propertyName: "convertibleLiteralSetProperty",
         propertySchema: $schema.properties.convertibleLiteralSetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleTermNonEmptySetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleTermNonEmptySetProperty",
+        propertyName: "convertibleTermNonEmptySetProperty",
         propertySchema: $schema.properties.convertibleTermNonEmptySetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleTermOptionProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleTermOptionProperty",
+        propertyName: "convertibleTermOptionProperty",
         propertySchema: $schema.properties.convertibleTermOptionProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleTermProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleTermProperty",
+        propertyName: "convertibleTermProperty",
         propertySchema: $schema.properties.convertibleTermProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.convertibleTermSetProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "convertibleTermSetProperty",
+        propertyName: "convertibleTermSetProperty",
         propertySchema: $schema.properties.convertibleTermSetProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass"),
       }),
     );
@@ -56639,20 +56750,20 @@ export namespace ConvertibleTypePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ConvertibleTypePropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("convertibleTypePropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "convertibleTypePropertiesClass")
       }RdfType`,
     );
@@ -56686,8 +56797,8 @@ export namespace ConvertibleTypePropertiesClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "convertibleTypePropertiesClass")
                     }RdfClass`,
                   ),
@@ -56700,7 +56811,7 @@ export namespace ConvertibleTypePropertiesClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -56708,11 +56819,11 @@ export namespace ConvertibleTypePropertiesClass {
           propertyPatterns: [],
           schema:
             ConvertibleTypePropertiesClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass"),
         }),
       );
@@ -56728,15 +56839,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleIriNonEmptySetProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleIriNonEmptySetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -56747,15 +56858,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleIriNonEmptySetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleIriNonEmptySetProperty`,
       }),
@@ -56773,15 +56884,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleIriOptionProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleIriOptionProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -56792,15 +56903,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleIriOptionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleIriOptionProperty`,
       }),
@@ -56816,15 +56927,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleIriProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleIriProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -56835,15 +56946,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleIriProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleIriProperty`,
       }),
@@ -56859,15 +56970,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleIriSetProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleIriSetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -56878,15 +56989,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleIriSetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleIriSetProperty`,
       }),
@@ -56904,15 +57015,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleLiteralNonEmptySetProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleLiteralNonEmptySetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -56923,15 +57034,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleLiteralNonEmptySetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleLiteralNonEmptySetProperty`,
       }),
@@ -56949,15 +57060,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleLiteralOptionProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleLiteralOptionProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -56968,15 +57079,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleLiteralOptionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleLiteralOptionProperty`,
       }),
@@ -56992,15 +57103,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleLiteralProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleLiteralProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57011,15 +57122,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleLiteralProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleLiteralProperty`,
       }),
@@ -57037,15 +57148,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleLiteralSetProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleLiteralSetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57056,15 +57167,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleLiteralSetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleLiteralSetProperty`,
       }),
@@ -57082,15 +57193,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleTermNonEmptySetProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleTermNonEmptySetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57101,15 +57212,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleTermNonEmptySetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleTermNonEmptySetProperty`,
       }),
@@ -57127,15 +57238,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleTermOptionProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleTermOptionProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57146,15 +57257,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleTermOptionProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleTermOptionProperty`,
       }),
@@ -57170,15 +57281,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleTermProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleTermProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57189,15 +57300,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleTermProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleTermProperty`,
       }),
@@ -57215,15 +57326,15 @@ export namespace ConvertibleTypePropertiesClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "convertibleTypePropertiesClass")
                   }ConvertibleTermSetProperty`,
                 ),
                 predicate:
                   ConvertibleTypePropertiesClass.$schema.properties
                     .convertibleTermSetProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57234,15 +57345,15 @@ export namespace ConvertibleTypePropertiesClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "convertibleTypePropertiesClass")
           }ConvertibleTermSetProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "convertibleTypePropertiesClass")
         }ConvertibleTermSetProperty`,
       }),
@@ -57683,7 +57794,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -57700,8 +57811,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
       template: (queryParameters.template ?? []).concat(
         BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -57709,9 +57820,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
         $normalizeSparqlWherePatterns(
           BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -57723,7 +57834,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       filter?: BaseInterfaceWithPropertiesStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -57735,24 +57846,24 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: BaseInterfaceWithPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("baseInterfaceWithProperties");
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithProperties")
             }RdfType`,
           ),
@@ -57761,8 +57872,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithProperties")
             }RdfType`,
           ),
@@ -57770,8 +57881,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithProperties")
             }RdfClass`,
           ),
@@ -57781,15 +57892,15 @@ export namespace BaseInterfaceWithPropertiesStatic {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.baseInterfaceWithPropertiesProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "baseInterfaceWithPropertiesProperty",
+        propertyName: "baseInterfaceWithPropertiesProperty",
         propertySchema: $schema.properties.baseInterfaceWithPropertiesProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "baseInterfaceWithProperties"),
       }),
     );
@@ -57798,20 +57909,20 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: BaseInterfaceWithPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("baseInterfaceWithProperties");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "baseInterfaceWithProperties")
       }RdfType`,
     );
@@ -57829,8 +57940,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
             valuePatternRow[
               `?${
                 parameters?.variablePrefix ??
-                (subject.termType === "Variable"
-                  ? subject.value
+                (focusIdentifier.termType === "Variable"
+                  ? focusIdentifier.value
                   : "baseInterfaceWithProperties")
               }FromRdfType`
             ] = identifier as NamedNode;
@@ -57841,8 +57952,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
           rdfType: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithProperties")
             }FromRdfType`,
           ),
@@ -57872,8 +57983,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "baseInterfaceWithProperties")
                     }RdfClass`,
                   ),
@@ -57886,7 +57997,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -57894,11 +58005,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
           propertyPatterns: [],
           schema:
             BaseInterfaceWithPropertiesStatic.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "baseInterfaceWithProperties"),
         }),
       );
@@ -57914,15 +58025,15 @@ export namespace BaseInterfaceWithPropertiesStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "baseInterfaceWithProperties")
                   }BaseInterfaceWithPropertiesProperty`,
                 ),
                 predicate:
                   BaseInterfaceWithPropertiesStatic.$schema.properties
                     .baseInterfaceWithPropertiesProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -57933,15 +58044,15 @@ export namespace BaseInterfaceWithPropertiesStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "baseInterfaceWithProperties")
           }BaseInterfaceWithPropertiesProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "baseInterfaceWithProperties")
         }BaseInterfaceWithPropertiesProperty`,
       }),
@@ -58258,7 +58369,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -58275,8 +58386,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       template: (queryParameters.template ?? []).concat(
         BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -58284,9 +58395,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         $normalizeSparqlWherePatterns(
           BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -58298,7 +58409,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       filter?: BaseInterfaceWithoutPropertiesStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -58310,35 +58421,35 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: BaseInterfaceWithoutPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("baseInterfaceWithoutProperties");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "baseInterfaceWithoutProperties"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithoutProperties")
             }RdfType`,
           ),
@@ -58347,8 +58458,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithoutProperties")
             }RdfType`,
           ),
@@ -58356,8 +58467,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithoutProperties")
             }RdfClass`,
           ),
@@ -58369,32 +58480,32 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: BaseInterfaceWithoutPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("baseInterfaceWithoutProperties");
     patterns = patterns.concat(
       BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "baseInterfaceWithoutProperties"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "baseInterfaceWithoutProperties")
       }RdfType`,
     );
@@ -58411,8 +58522,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
             valuePatternRow[
               `?${
                 parameters?.variablePrefix ??
-                (subject.termType === "Variable"
-                  ? subject.value
+                (focusIdentifier.termType === "Variable"
+                  ? focusIdentifier.value
                   : "baseInterfaceWithoutProperties")
               }FromRdfType`
             ] = identifier as NamedNode;
@@ -58423,8 +58534,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           rdfType: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "baseInterfaceWithoutProperties")
             }FromRdfType`,
           ),
@@ -58454,8 +58565,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "baseInterfaceWithoutProperties")
                     }RdfClass`,
                   ),
@@ -58852,7 +58963,7 @@ export namespace ConcreteParentInterfaceStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -58869,8 +58980,8 @@ export namespace ConcreteParentInterfaceStatic {
       template: (queryParameters.template ?? []).concat(
         ConcreteParentInterfaceStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -58878,9 +58989,9 @@ export namespace ConcreteParentInterfaceStatic {
         $normalizeSparqlWherePatterns(
           ConcreteParentInterfaceStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -58892,7 +59003,7 @@ export namespace ConcreteParentInterfaceStatic {
       filter?: ConcreteParentInterfaceStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -58904,34 +59015,35 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ConcreteParentInterfaceStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteParentInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteParentInterface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentInterface"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentInterface")
             }RdfType`,
           ),
@@ -58940,8 +59052,8 @@ export namespace ConcreteParentInterfaceStatic {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentInterface")
             }RdfType`,
           ),
@@ -58949,8 +59061,8 @@ export namespace ConcreteParentInterfaceStatic {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentInterface")
             }RdfClass`,
           ),
@@ -58960,15 +59072,15 @@ export namespace ConcreteParentInterfaceStatic {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.concreteParentInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "concreteParentInterfaceProperty",
+        propertyName: "concreteParentInterfaceProperty",
         propertySchema: $schema.properties.concreteParentInterfaceProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentInterface"),
       }),
     );
@@ -58977,31 +59089,32 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ConcreteParentInterfaceStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteParentInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteParentInterface");
     patterns = patterns.concat(
       BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentInterface"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "concreteParentInterface")
       }RdfType`,
     );
@@ -59017,8 +59130,8 @@ export namespace ConcreteParentInterfaceStatic {
             valuePatternRow[
               `?${
                 parameters?.variablePrefix ??
-                (subject.termType === "Variable"
-                  ? subject.value
+                (focusIdentifier.termType === "Variable"
+                  ? focusIdentifier.value
                   : "concreteParentInterface")
               }FromRdfType`
             ] = identifier as NamedNode;
@@ -59029,8 +59142,8 @@ export namespace ConcreteParentInterfaceStatic {
           rdfType: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentInterface")
             }FromRdfType`,
           ),
@@ -59060,8 +59173,8 @@ export namespace ConcreteParentInterfaceStatic {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "concreteParentInterface")
                     }RdfClass`,
                   ),
@@ -59085,15 +59198,15 @@ export namespace ConcreteParentInterfaceStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "concreteParentInterface")
                   }ConcreteParentInterfaceProperty`,
                 ),
                 predicate:
                   ConcreteParentInterfaceStatic.$schema.properties
                     .concreteParentInterfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -59104,15 +59217,15 @@ export namespace ConcreteParentInterfaceStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "concreteParentInterface")
           }ConcreteParentInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentInterface")
         }ConcreteParentInterfaceProperty`,
       }),
@@ -59490,7 +59603,7 @@ export namespace ConcreteChildInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -59507,8 +59620,8 @@ export namespace ConcreteChildInterface {
       template: (queryParameters.template ?? []).concat(
         ConcreteChildInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -59516,9 +59629,9 @@ export namespace ConcreteChildInterface {
         $normalizeSparqlWherePatterns(
           ConcreteChildInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -59530,7 +59643,7 @@ export namespace ConcreteChildInterface {
       filter?: ConcreteChildInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -59542,34 +59655,35 @@ export namespace ConcreteChildInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ConcreteChildInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteChildInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteChildInterface");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       ConcreteParentInterfaceStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildInterface"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteChildInterface")
             }RdfType`,
           ),
@@ -59578,8 +59692,8 @@ export namespace ConcreteChildInterface {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteChildInterface")
             }RdfType`,
           ),
@@ -59587,8 +59701,8 @@ export namespace ConcreteChildInterface {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteChildInterface")
             }RdfClass`,
           ),
@@ -59598,15 +59712,15 @@ export namespace ConcreteChildInterface {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.concreteChildInterfaceProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "concreteChildInterfaceProperty",
+        propertyName: "concreteChildInterfaceProperty",
         propertySchema: $schema.properties.concreteChildInterfaceProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildInterface"),
       }),
     );
@@ -59615,31 +59729,32 @@ export namespace ConcreteChildInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ConcreteChildInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteChildInterface");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteChildInterface");
     patterns = patterns.concat(
       ConcreteParentInterfaceStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildInterface"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "concreteChildInterface")
       }RdfType`,
     );
@@ -59673,8 +59788,8 @@ export namespace ConcreteChildInterface {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "concreteChildInterface")
                     }RdfClass`,
                   ),
@@ -59698,15 +59813,15 @@ export namespace ConcreteChildInterface {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "concreteChildInterface")
                   }ConcreteChildInterfaceProperty`,
                 ),
                 predicate:
                   ConcreteChildInterface.$schema.properties
                     .concreteChildInterfaceProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -59717,15 +59832,15 @@ export namespace ConcreteChildInterface {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "concreteChildInterface")
           }ConcreteChildInterfaceProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildInterface")
         }ConcreteChildInterfaceProperty`,
       }),
@@ -60064,7 +60179,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -60081,8 +60196,8 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       template: (queryParameters.template ?? []).concat(
         AbstractBaseClassWithPropertiesStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -60090,9 +60205,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         $normalizeSparqlWherePatterns(
           AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -60104,7 +60219,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       filter?: AbstractBaseClassWithPropertiesStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -60116,27 +60231,27 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: AbstractBaseClassWithPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("abstractBaseClassWithProperties");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.abstractBaseClassWithPropertiesProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "abstractBaseClassWithPropertiesProperty",
+        propertyName: "abstractBaseClassWithPropertiesProperty",
         propertySchema:
           $schema.properties.abstractBaseClassWithPropertiesProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "abstractBaseClassWithProperties"),
       }),
     );
@@ -60145,16 +60260,16 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: AbstractBaseClassWithPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("abstractBaseClassWithProperties");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -60162,11 +60277,11 @@ export namespace AbstractBaseClassWithPropertiesStatic {
           propertyPatterns: [],
           schema:
             AbstractBaseClassWithPropertiesStatic.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "abstractBaseClassWithProperties"),
         }),
       );
@@ -60182,15 +60297,15 @@ export namespace AbstractBaseClassWithPropertiesStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "abstractBaseClassWithProperties")
                   }AbstractBaseClassWithPropertiesProperty`,
                 ),
                 predicate:
                   AbstractBaseClassWithPropertiesStatic.$schema.properties
                     .abstractBaseClassWithPropertiesProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -60201,15 +60316,15 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "abstractBaseClassWithProperties")
           }AbstractBaseClassWithPropertiesProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "abstractBaseClassWithProperties")
         }AbstractBaseClassWithPropertiesProperty`,
       }),
@@ -60387,7 +60502,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -60404,8 +60519,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       template: (queryParameters.template ?? []).concat(
         AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -60413,9 +60528,9 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         $normalizeSparqlWherePatterns(
           AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -60427,7 +60542,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       filter?: AbstractBaseClassWithoutPropertiesStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -60441,22 +60556,22 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: AbstractBaseClassWithoutPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("abstractBaseClassWithoutProperties");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       AbstractBaseClassWithPropertiesStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "abstractBaseClassWithoutProperties"),
       }),
     );
@@ -60465,24 +60580,24 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: AbstractBaseClassWithoutPropertiesStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("abstractBaseClassWithoutProperties");
     patterns = patterns.concat(
       AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "abstractBaseClassWithoutProperties"),
       }),
     );
@@ -60837,7 +60952,7 @@ export namespace ConcreteParentClassStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -60854,8 +60969,8 @@ export namespace ConcreteParentClassStatic {
       template: (queryParameters.template ?? []).concat(
         ConcreteParentClassStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -60863,9 +60978,9 @@ export namespace ConcreteParentClassStatic {
         $normalizeSparqlWherePatterns(
           ConcreteParentClassStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -60877,7 +60992,7 @@ export namespace ConcreteParentClassStatic {
       filter?: ConcreteParentClassStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -60889,34 +61004,35 @@ export namespace ConcreteParentClassStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ConcreteParentClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteParentClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteParentClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentClass"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentClass")
             }RdfType`,
           ),
@@ -60925,8 +61041,8 @@ export namespace ConcreteParentClassStatic {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentClass")
             }RdfType`,
           ),
@@ -60934,8 +61050,8 @@ export namespace ConcreteParentClassStatic {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentClass")
             }RdfClass`,
           ),
@@ -60945,15 +61061,15 @@ export namespace ConcreteParentClassStatic {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.concreteParentClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "concreteParentClassProperty",
+        propertyName: "concreteParentClassProperty",
         propertySchema: $schema.properties.concreteParentClassProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentClass"),
       }),
     );
@@ -60962,31 +61078,32 @@ export namespace ConcreteParentClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ConcreteParentClassStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteParentClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteParentClass");
     patterns = patterns.concat(
       AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentClass"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "concreteParentClass")
       }RdfType`,
     );
@@ -61002,8 +61119,8 @@ export namespace ConcreteParentClassStatic {
             valuePatternRow[
               `?${
                 parameters?.variablePrefix ??
-                (subject.termType === "Variable"
-                  ? subject.value
+                (focusIdentifier.termType === "Variable"
+                  ? focusIdentifier.value
                   : "concreteParentClass")
               }FromRdfType`
             ] = identifier as NamedNode;
@@ -61014,8 +61131,8 @@ export namespace ConcreteParentClassStatic {
           rdfType: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteParentClass")
             }FromRdfType`,
           ),
@@ -61045,8 +61162,8 @@ export namespace ConcreteParentClassStatic {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "concreteParentClass")
                     }RdfClass`,
                   ),
@@ -61070,15 +61187,15 @@ export namespace ConcreteParentClassStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "concreteParentClass")
                   }ConcreteParentClassProperty`,
                 ),
                 predicate:
                   ConcreteParentClassStatic.$schema.properties
                     .concreteParentClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -61089,15 +61206,15 @@ export namespace ConcreteParentClassStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "concreteParentClass")
           }ConcreteParentClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteParentClass")
         }ConcreteParentClassProperty`,
       }),
@@ -61445,7 +61562,7 @@ export namespace ConcreteChildClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -61462,8 +61579,8 @@ export namespace ConcreteChildClass {
       template: (queryParameters.template ?? []).concat(
         ConcreteChildClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -61471,9 +61588,9 @@ export namespace ConcreteChildClass {
         $normalizeSparqlWherePatterns(
           ConcreteChildClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -61485,7 +61602,7 @@ export namespace ConcreteChildClass {
       filter?: ConcreteChildClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -61497,34 +61614,35 @@ export namespace ConcreteChildClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ConcreteChildClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteChildClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteChildClass");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       ConcreteParentClassStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildClass"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteChildClass")
             }RdfType`,
           ),
@@ -61533,8 +61651,8 @@ export namespace ConcreteChildClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteChildClass")
             }RdfType`,
           ),
@@ -61542,8 +61660,8 @@ export namespace ConcreteChildClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "concreteChildClass")
             }RdfClass`,
           ),
@@ -61553,15 +61671,15 @@ export namespace ConcreteChildClass {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.concreteChildClassProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "concreteChildClassProperty",
+        propertyName: "concreteChildClassProperty",
         propertySchema: $schema.properties.concreteChildClassProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildClass"),
       }),
     );
@@ -61570,30 +61688,33 @@ export namespace ConcreteChildClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ConcreteChildClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("concreteChildClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("concreteChildClass");
     patterns = patterns.concat(
       ConcreteParentClassStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildClass"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable" ? subject.value : "concreteChildClass")
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "concreteChildClass")
       }RdfType`,
     );
     if (!parameters?.ignoreRdfType) {
@@ -61626,8 +61747,8 @@ export namespace ConcreteChildClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "concreteChildClass")
                     }RdfClass`,
                   ),
@@ -61651,15 +61772,15 @@ export namespace ConcreteChildClass {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "concreteChildClass")
                   }ConcreteChildClassProperty`,
                 ),
                 predicate:
                   ConcreteChildClass.$schema.properties
                     .concreteChildClassProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -61670,15 +61791,15 @@ export namespace ConcreteChildClass {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "concreteChildClass")
           }ConcreteChildClassProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "concreteChildClass")
         }ConcreteChildClassProperty`,
       }),
@@ -61982,7 +62103,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -61999,8 +62120,8 @@ export namespace ClassUnionMemberCommonParentStatic {
       template: (queryParameters.template ?? []).concat(
         ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -62008,9 +62129,9 @@ export namespace ClassUnionMemberCommonParentStatic {
         $normalizeSparqlWherePatterns(
           ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -62022,7 +62143,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       filter?: ClassUnionMemberCommonParentStatic.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -62034,26 +62155,26 @@ export namespace ClassUnionMemberCommonParentStatic {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ClassUnionMemberCommonParentStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("classUnionMemberCommonParent");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.classUnionMemberCommonParentProperty,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "classUnionMemberCommonParentProperty",
+        propertyName: "classUnionMemberCommonParentProperty",
         propertySchema: $schema.properties.classUnionMemberCommonParentProperty,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMemberCommonParent"),
       }),
     );
@@ -62062,16 +62183,16 @@ export namespace ClassUnionMemberCommonParentStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ClassUnionMemberCommonParentStatic.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("classUnionMemberCommonParent");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -62079,11 +62200,11 @@ export namespace ClassUnionMemberCommonParentStatic {
           propertyPatterns: [],
           schema:
             ClassUnionMemberCommonParentStatic.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "classUnionMemberCommonParent"),
         }),
       );
@@ -62099,15 +62220,15 @@ export namespace ClassUnionMemberCommonParentStatic {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "classUnionMemberCommonParent")
                   }ClassUnionMemberCommonParentProperty`,
                 ),
                 predicate:
                   ClassUnionMemberCommonParentStatic.$schema.properties
                     .classUnionMemberCommonParentProperty.identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -62118,15 +62239,15 @@ export namespace ClassUnionMemberCommonParentStatic {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "classUnionMemberCommonParent")
           }ClassUnionMemberCommonParentProperty`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMemberCommonParent")
         }ClassUnionMemberCommonParentProperty`,
       }),
@@ -62460,7 +62581,7 @@ export namespace ClassUnionMember2 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -62477,8 +62598,8 @@ export namespace ClassUnionMember2 {
       template: (queryParameters.template ?? []).concat(
         ClassUnionMember2.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -62486,9 +62607,9 @@ export namespace ClassUnionMember2 {
         $normalizeSparqlWherePatterns(
           ClassUnionMember2.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -62500,7 +62621,7 @@ export namespace ClassUnionMember2 {
       filter?: ClassUnionMember2.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -62512,34 +62633,34 @@ export namespace ClassUnionMember2 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("classUnionMember2");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("classUnionMember2");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember2"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "classUnionMember2")
             }RdfType`,
           ),
@@ -62548,8 +62669,8 @@ export namespace ClassUnionMember2 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "classUnionMember2")
             }RdfType`,
           ),
@@ -62557,8 +62678,8 @@ export namespace ClassUnionMember2 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "classUnionMember2")
             }RdfClass`,
           ),
@@ -62568,15 +62689,15 @@ export namespace ClassUnionMember2 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.classUnionMember2Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "classUnionMember2Property",
+        propertyName: "classUnionMember2Property",
         propertySchema: $schema.properties.classUnionMember2Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember2"),
       }),
     );
@@ -62585,30 +62706,32 @@ export namespace ClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ClassUnionMember2.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("classUnionMember2");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("classUnionMember2");
     patterns = patterns.concat(
       ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember2"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable" ? subject.value : "classUnionMember2")
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "classUnionMember2")
       }RdfType`,
     );
     if (!parameters?.ignoreRdfType) {
@@ -62641,8 +62764,8 @@ export namespace ClassUnionMember2 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "classUnionMember2")
                     }RdfClass`,
                   ),
@@ -62666,15 +62789,15 @@ export namespace ClassUnionMember2 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "classUnionMember2")
                   }ClassUnionMember2Property`,
                 ),
                 predicate:
                   ClassUnionMember2.$schema.properties.classUnionMember2Property
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -62685,15 +62808,15 @@ export namespace ClassUnionMember2 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "classUnionMember2")
           }ClassUnionMember2Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember2")
         }ClassUnionMember2Property`,
       }),
@@ -63027,7 +63150,7 @@ export namespace ClassUnionMember1 {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -63044,8 +63167,8 @@ export namespace ClassUnionMember1 {
       template: (queryParameters.template ?? []).concat(
         ClassUnionMember1.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -63053,9 +63176,9 @@ export namespace ClassUnionMember1 {
         $normalizeSparqlWherePatterns(
           ClassUnionMember1.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -63067,7 +63190,7 @@ export namespace ClassUnionMember1 {
       filter?: ClassUnionMember1.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -63079,34 +63202,34 @@ export namespace ClassUnionMember1 {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("classUnionMember1");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("classUnionMember1");
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
       ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember1"),
       }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "classUnionMember1")
             }RdfType`,
           ),
@@ -63115,8 +63238,8 @@ export namespace ClassUnionMember1 {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "classUnionMember1")
             }RdfType`,
           ),
@@ -63124,8 +63247,8 @@ export namespace ClassUnionMember1 {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "classUnionMember1")
             }RdfClass`,
           ),
@@ -63135,15 +63258,15 @@ export namespace ClassUnionMember1 {
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters?.filter?.classUnionMember1Property,
-        focusIdentifier: subject,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        name: "classUnionMember1Property",
+        propertyName: "classUnionMember1Property",
         propertySchema: $schema.properties.classUnionMember1Property,
         typeSparqlConstructTriples: (_: object) => [],
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember1"),
       }),
     );
@@ -63152,30 +63275,32 @@ export namespace ClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: ClassUnionMember1.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("classUnionMember1");
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("classUnionMember1");
     patterns = patterns.concat(
       ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
+        focusIdentifier: focusIdentifier,
         ignoreRdfType: true,
-        subject: subject,
         variablePrefix:
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember1"),
       }),
     );
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable" ? subject.value : "classUnionMember1")
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "classUnionMember1")
       }RdfType`,
     );
     if (!parameters?.ignoreRdfType) {
@@ -63208,8 +63333,8 @@ export namespace ClassUnionMember1 {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "classUnionMember1")
                     }RdfClass`,
                   ),
@@ -63233,15 +63358,15 @@ export namespace ClassUnionMember1 {
                 object: dataFactory.variable!(
                   `${
                     parameters?.variablePrefix ??
-                    (subject.termType === "Variable"
-                      ? subject.value
+                    (focusIdentifier.termType === "Variable"
+                      ? focusIdentifier.value
                       : "classUnionMember1")
                   }ClassUnionMember1Property`,
                 ),
                 predicate:
                   ClassUnionMember1.$schema.properties.classUnionMember1Property
                     .identifier,
-                subject: subject,
+                subject: focusIdentifier,
               },
             ],
             type: "bgp",
@@ -63252,15 +63377,15 @@ export namespace ClassUnionMember1 {
         valueVariable: dataFactory.variable!(
           `${
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "classUnionMember1")
           }ClassUnionMember1Property`,
         ),
         variablePrefix: `${
           parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
             : "classUnionMember1")
         }ClassUnionMember1Property`,
       }),
@@ -63582,7 +63707,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -63599,8 +63724,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
       template: (queryParameters.template ?? []).concat(
         BlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -63608,9 +63733,9 @@ export namespace BlankNodeOrIriIdentifierInterface {
         $normalizeSparqlWherePatterns(
           BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -63622,7 +63747,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       filter?: BlankNodeOrIriIdentifierInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -63634,24 +63759,24 @@ export namespace BlankNodeOrIriIdentifierInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: BlankNodeOrIriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("blankNodeOrIriIdentifierInterface");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeOrIriIdentifierInterface")
             }RdfType`,
           ),
@@ -63660,8 +63785,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeOrIriIdentifierInterface")
             }RdfType`,
           ),
@@ -63669,8 +63794,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeOrIriIdentifierInterface")
             }RdfClass`,
           ),
@@ -63682,20 +63807,20 @@ export namespace BlankNodeOrIriIdentifierInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: BlankNodeOrIriIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("blankNodeOrIriIdentifierInterface");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "blankNodeOrIriIdentifierInterface")
       }RdfType`,
     );
@@ -63729,8 +63854,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "blankNodeOrIriIdentifierInterface")
                     }RdfClass`,
                   ),
@@ -63743,7 +63868,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -63751,11 +63876,11 @@ export namespace BlankNodeOrIriIdentifierInterface {
           propertyPatterns: [],
           schema:
             BlankNodeOrIriIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "blankNodeOrIriIdentifierInterface"),
         }),
       );
@@ -64053,7 +64178,7 @@ export namespace BlankNodeOrIriIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -64070,8 +64195,8 @@ export namespace BlankNodeOrIriIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         BlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -64079,9 +64204,9 @@ export namespace BlankNodeOrIriIdentifierClass {
         $normalizeSparqlWherePatterns(
           BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -64093,7 +64218,7 @@ export namespace BlankNodeOrIriIdentifierClass {
       filter?: BlankNodeOrIriIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -64105,24 +64230,24 @@ export namespace BlankNodeOrIriIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: BlankNodeOrIriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("blankNodeOrIriIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeOrIriIdentifierClass")
             }RdfType`,
           ),
@@ -64131,8 +64256,8 @@ export namespace BlankNodeOrIriIdentifierClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeOrIriIdentifierClass")
             }RdfType`,
           ),
@@ -64140,8 +64265,8 @@ export namespace BlankNodeOrIriIdentifierClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeOrIriIdentifierClass")
             }RdfClass`,
           ),
@@ -64153,20 +64278,20 @@ export namespace BlankNodeOrIriIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: BlankNodeOrIriIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("blankNodeOrIriIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "blankNodeOrIriIdentifierClass")
       }RdfType`,
     );
@@ -64200,8 +64325,8 @@ export namespace BlankNodeOrIriIdentifierClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "blankNodeOrIriIdentifierClass")
                     }RdfClass`,
                   ),
@@ -64214,7 +64339,7 @@ export namespace BlankNodeOrIriIdentifierClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -64222,11 +64347,11 @@ export namespace BlankNodeOrIriIdentifierClass {
           propertyPatterns: [],
           schema:
             BlankNodeOrIriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "blankNodeOrIriIdentifierClass"),
         }),
       );
@@ -64543,7 +64668,7 @@ export namespace BlankNodeIdentifierInterface {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -64560,8 +64685,8 @@ export namespace BlankNodeIdentifierInterface {
       template: (queryParameters.template ?? []).concat(
         BlankNodeIdentifierInterface.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -64569,9 +64694,9 @@ export namespace BlankNodeIdentifierInterface {
         $normalizeSparqlWherePatterns(
           BlankNodeIdentifierInterface.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -64583,7 +64708,7 @@ export namespace BlankNodeIdentifierInterface {
       filter?: BlankNodeIdentifierInterface.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -64595,24 +64720,24 @@ export namespace BlankNodeIdentifierInterface {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: BlankNodeIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("blankNodeIdentifierInterface");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeIdentifierInterface")
             }RdfType`,
           ),
@@ -64621,8 +64746,8 @@ export namespace BlankNodeIdentifierInterface {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeIdentifierInterface")
             }RdfType`,
           ),
@@ -64630,8 +64755,8 @@ export namespace BlankNodeIdentifierInterface {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeIdentifierInterface")
             }RdfClass`,
           ),
@@ -64643,20 +64768,20 @@ export namespace BlankNodeIdentifierInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: BlankNodeIdentifierInterface.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("blankNodeIdentifierInterface");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "blankNodeIdentifierInterface")
       }RdfType`,
     );
@@ -64690,8 +64815,8 @@ export namespace BlankNodeIdentifierInterface {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "blankNodeIdentifierInterface")
                     }RdfClass`,
                   ),
@@ -64704,7 +64829,7 @@ export namespace BlankNodeIdentifierInterface {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $blankNodeSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -64712,11 +64837,11 @@ export namespace BlankNodeIdentifierInterface {
           propertyPatterns: [],
           schema:
             BlankNodeIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "blankNodeIdentifierInterface"),
         }),
       );
@@ -65017,7 +65142,7 @@ export namespace BlankNodeIdentifierClass {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -65034,8 +65159,8 @@ export namespace BlankNodeIdentifierClass {
       template: (queryParameters.template ?? []).concat(
         BlankNodeIdentifierClass.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -65043,9 +65168,9 @@ export namespace BlankNodeIdentifierClass {
         $normalizeSparqlWherePatterns(
           BlankNodeIdentifierClass.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -65057,7 +65182,7 @@ export namespace BlankNodeIdentifierClass {
       filter?: BlankNodeIdentifierClass.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -65069,23 +65194,24 @@ export namespace BlankNodeIdentifierClass {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: BlankNodeIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("blankNodeIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
-          subject,
+          subject: focusIdentifier,
           predicate: $RdfVocabularies.rdf.type,
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeIdentifierClass")
             }RdfType`,
           ),
@@ -65094,8 +65220,8 @@ export namespace BlankNodeIdentifierClass {
           subject: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeIdentifierClass")
             }RdfType`,
           ),
@@ -65103,8 +65229,8 @@ export namespace BlankNodeIdentifierClass {
           object: dataFactory.variable!(
             `${
               parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
                 : "blankNodeIdentifierClass")
             }RdfClass`,
           ),
@@ -65116,19 +65242,20 @@ export namespace BlankNodeIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     filter?: BlankNodeIdentifierClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("blankNodeIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(
       `${
         parameters?.variablePrefix ??
-        (subject.termType === "Variable"
-          ? subject.value
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
           : "blankNodeIdentifierClass")
       }RdfType`,
     );
@@ -65162,8 +65289,8 @@ export namespace BlankNodeIdentifierClass {
                   object: dataFactory.variable!(
                     `${
                       parameters?.variablePrefix ??
-                      (subject.termType === "Variable"
-                        ? subject.value
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
                         : "blankNodeIdentifierClass")
                     }RdfClass`,
                   ),
@@ -65176,7 +65303,7 @@ export namespace BlankNodeIdentifierClass {
         },
       );
     }
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $blankNodeSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -65184,11 +65311,11 @@ export namespace BlankNodeIdentifierClass {
           propertyPatterns: [],
           schema:
             BlankNodeIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
             parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "blankNodeIdentifierClass"),
         }),
       );
@@ -65369,7 +65496,7 @@ export namespace ClassUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -65384,16 +65511,20 @@ export namespace ClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnion.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
+        ClassUnion.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
           ClassUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -65405,7 +65536,7 @@ export namespace ClassUnion {
       filter?: ClassUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -65417,15 +65548,15 @@ export namespace ClassUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: ClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...ClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("classUnionClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ClassUnionMember1`
@@ -65433,8 +65564,8 @@ export namespace ClassUnion {
       }).concat(),
       ...ClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("classUnionClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ClassUnionMember2`
@@ -65443,16 +65574,17 @@ export namespace ClassUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: ClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("classUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("classUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -65460,9 +65592,11 @@ export namespace ClassUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable" ? subject.value : "classUnion",
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "classUnion",
         }),
       );
     }
@@ -65471,8 +65605,8 @@ export namespace ClassUnion {
         {
           patterns: ClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("classUnionClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ClassUnionMember1`
@@ -65483,8 +65617,8 @@ export namespace ClassUnion {
         {
           patterns: ClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("classUnionClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ClassUnionMember2`
@@ -65731,7 +65865,7 @@ export namespace FlattenClassUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -65748,8 +65882,8 @@ export namespace FlattenClassUnion {
       template: (queryParameters.template ?? []).concat(
         FlattenClassUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -65757,9 +65891,9 @@ export namespace FlattenClassUnion {
         $normalizeSparqlWherePatterns(
           FlattenClassUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -65771,7 +65905,7 @@ export namespace FlattenClassUnion {
       filter?: FlattenClassUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -65783,15 +65917,15 @@ export namespace FlattenClassUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: FlattenClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...ClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("flattenClassUnionClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ClassUnionMember1`
@@ -65799,8 +65933,8 @@ export namespace FlattenClassUnion {
       }).concat(),
       ...ClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("flattenClassUnionClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ClassUnionMember2`
@@ -65808,8 +65942,8 @@ export namespace FlattenClassUnion {
       }).concat(),
       ...FlattenClassUnionMember3.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.FlattenClassUnionMember3,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("flattenClassUnionFlattenClassUnionMember3"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}FlattenClassUnionMember3`
@@ -65818,17 +65952,17 @@ export namespace FlattenClassUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: FlattenClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("flattenClassUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("flattenClassUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -65836,10 +65970,10 @@ export namespace FlattenClassUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "flattenClassUnion",
         }),
       );
@@ -65849,8 +65983,8 @@ export namespace FlattenClassUnion {
         {
           patterns: ClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("flattenClassUnionClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ClassUnionMember1`
@@ -65861,8 +65995,8 @@ export namespace FlattenClassUnion {
         {
           patterns: ClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("flattenClassUnionClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ClassUnionMember2`
@@ -65873,8 +66007,8 @@ export namespace FlattenClassUnion {
         {
           patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.FlattenClassUnionMember3,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "flattenClassUnionFlattenClassUnionMember3",
               ),
@@ -66079,7 +66213,7 @@ export namespace InterfaceUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -66096,8 +66230,8 @@ export namespace InterfaceUnion {
       template: (queryParameters.template ?? []).concat(
         InterfaceUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -66105,9 +66239,9 @@ export namespace InterfaceUnion {
         $normalizeSparqlWherePatterns(
           InterfaceUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -66119,7 +66253,7 @@ export namespace InterfaceUnion {
       filter?: InterfaceUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -66131,15 +66265,15 @@ export namespace InterfaceUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: InterfaceUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...InterfaceUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.InterfaceUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("interfaceUnionInterfaceUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InterfaceUnionMember1`
@@ -66147,8 +66281,8 @@ export namespace InterfaceUnion {
       }).concat(),
       ...InterfaceUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.InterfaceUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InterfaceUnionMember2`
@@ -66157,17 +66291,17 @@ export namespace InterfaceUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: InterfaceUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("interfaceUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -66175,9 +66309,11 @@ export namespace InterfaceUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable" ? subject.value : "interfaceUnion",
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "interfaceUnion",
         }),
       );
     }
@@ -66186,8 +66322,8 @@ export namespace InterfaceUnion {
         {
           patterns: InterfaceUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.InterfaceUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("interfaceUnionInterfaceUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}InterfaceUnionMember1`
@@ -66198,8 +66334,8 @@ export namespace InterfaceUnion {
         {
           patterns: InterfaceUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.InterfaceUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}InterfaceUnionMember2`
@@ -66444,7 +66580,7 @@ export namespace LazilyResolvedClassUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -66461,8 +66597,8 @@ export namespace LazilyResolvedClassUnion {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedClassUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -66470,9 +66606,9 @@ export namespace LazilyResolvedClassUnion {
         $normalizeSparqlWherePatterns(
           LazilyResolvedClassUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -66484,7 +66620,7 @@ export namespace LazilyResolvedClassUnion {
       filter?: LazilyResolvedClassUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -66496,15 +66632,15 @@ export namespace LazilyResolvedClassUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
           ),
@@ -66514,8 +66650,8 @@ export namespace LazilyResolvedClassUnion {
       }).concat(),
       ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2",
           ),
@@ -66526,17 +66662,18 @@ export namespace LazilyResolvedClassUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: LazilyResolvedClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("lazilyResolvedClassUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -66544,10 +66681,10 @@ export namespace LazilyResolvedClassUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedClassUnion",
         }),
       );
@@ -66557,8 +66694,8 @@ export namespace LazilyResolvedClassUnion {
         {
           patterns: LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
               ),
@@ -66571,8 +66708,8 @@ export namespace LazilyResolvedClassUnion {
         {
           patterns: LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2",
               ),
@@ -66843,7 +66980,7 @@ export namespace LazilyResolvedInterfaceUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -66860,8 +66997,8 @@ export namespace LazilyResolvedInterfaceUnion {
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedInterfaceUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -66869,9 +67006,9 @@ export namespace LazilyResolvedInterfaceUnion {
         $normalizeSparqlWherePatterns(
           LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -66883,7 +67020,7 @@ export namespace LazilyResolvedInterfaceUnion {
       filter?: LazilyResolvedInterfaceUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -66895,15 +67032,15 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: LazilyResolvedInterfaceUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
           ),
@@ -66913,8 +67050,8 @@ export namespace LazilyResolvedInterfaceUnion {
       }).concat(),
       ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2",
           ),
@@ -66925,18 +67062,18 @@ export namespace LazilyResolvedInterfaceUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: LazilyResolvedInterfaceUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ??
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
       dataFactory.variable!("lazilyResolvedInterfaceUnion");
-    if (subject.termType === "Variable") {
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -66944,10 +67081,10 @@ export namespace LazilyResolvedInterfaceUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "lazilyResolvedInterfaceUnion",
         }),
       );
@@ -66957,8 +67094,8 @@ export namespace LazilyResolvedInterfaceUnion {
         {
           patterns: LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
               ),
@@ -66971,8 +67108,8 @@ export namespace LazilyResolvedInterfaceUnion {
         {
           patterns: LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2",
               ),
@@ -67191,7 +67328,7 @@ export namespace PartialClassUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -67208,8 +67345,8 @@ export namespace PartialClassUnion {
       template: (queryParameters.template ?? []).concat(
         PartialClassUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -67217,9 +67354,9 @@ export namespace PartialClassUnion {
         $normalizeSparqlWherePatterns(
           PartialClassUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -67231,7 +67368,7 @@ export namespace PartialClassUnion {
       filter?: PartialClassUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -67243,15 +67380,15 @@ export namespace PartialClassUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...PartialClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("partialClassUnionPartialClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialClassUnionMember1`
@@ -67259,8 +67396,8 @@ export namespace PartialClassUnion {
       }).concat(),
       ...PartialClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("partialClassUnionPartialClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialClassUnionMember2`
@@ -67269,17 +67406,17 @@ export namespace PartialClassUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: PartialClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialClassUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialClassUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -67287,10 +67424,10 @@ export namespace PartialClassUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialClassUnion",
         }),
       );
@@ -67300,8 +67437,8 @@ export namespace PartialClassUnion {
         {
           patterns: PartialClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "partialClassUnionPartialClassUnionMember1",
               ),
@@ -67314,8 +67451,8 @@ export namespace PartialClassUnion {
         {
           patterns: PartialClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "partialClassUnionPartialClassUnionMember2",
               ),
@@ -67564,7 +67701,7 @@ export namespace PartialInterfaceUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -67581,8 +67718,8 @@ export namespace PartialInterfaceUnion {
       template: (queryParameters.template ?? []).concat(
         PartialInterfaceUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -67590,9 +67727,9 @@ export namespace PartialInterfaceUnion {
         $normalizeSparqlWherePatterns(
           PartialInterfaceUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -67604,7 +67741,7 @@ export namespace PartialInterfaceUnion {
       filter?: PartialInterfaceUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -67616,15 +67753,15 @@ export namespace PartialInterfaceUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: PartialInterfaceUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...PartialInterfaceUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "partialInterfaceUnionPartialInterfaceUnionMember1",
           ),
@@ -67634,8 +67771,8 @@ export namespace PartialInterfaceUnion {
       }).concat(),
       ...PartialInterfaceUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "partialInterfaceUnionPartialInterfaceUnionMember2",
           ),
@@ -67646,17 +67783,18 @@ export namespace PartialInterfaceUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: PartialInterfaceUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("partialInterfaceUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("partialInterfaceUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -67664,10 +67802,10 @@ export namespace PartialInterfaceUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "partialInterfaceUnion",
         }),
       );
@@ -67677,8 +67815,8 @@ export namespace PartialInterfaceUnion {
         {
           patterns: PartialInterfaceUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "partialInterfaceUnionPartialInterfaceUnionMember1",
               ),
@@ -67691,8 +67829,8 @@ export namespace PartialInterfaceUnion {
         {
           patterns: PartialInterfaceUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "partialInterfaceUnionPartialInterfaceUnionMember2",
               ),
@@ -67913,7 +68051,7 @@ export namespace NoRdfTypeClassUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -67930,8 +68068,8 @@ export namespace NoRdfTypeClassUnion {
       template: (queryParameters.template ?? []).concat(
         NoRdfTypeClassUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -67939,9 +68077,9 @@ export namespace NoRdfTypeClassUnion {
         $normalizeSparqlWherePatterns(
           NoRdfTypeClassUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -67953,7 +68091,7 @@ export namespace NoRdfTypeClassUnion {
       filter?: NoRdfTypeClassUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -67965,15 +68103,15 @@ export namespace NoRdfTypeClassUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: NoRdfTypeClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
           ),
@@ -67983,8 +68121,8 @@ export namespace NoRdfTypeClassUnion {
       }).concat(),
       ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
           ),
@@ -67995,17 +68133,18 @@ export namespace NoRdfTypeClassUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: NoRdfTypeClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("noRdfTypeClassUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -68013,10 +68152,10 @@ export namespace NoRdfTypeClassUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "noRdfTypeClassUnion",
         }),
       );
@@ -68026,8 +68165,8 @@ export namespace NoRdfTypeClassUnion {
         {
           patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
               ),
@@ -68040,8 +68179,8 @@ export namespace NoRdfTypeClassUnion {
         {
           patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
               ),
@@ -68262,7 +68401,7 @@ export namespace RecursiveClassUnion {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -68279,8 +68418,8 @@ export namespace RecursiveClassUnion {
       template: (queryParameters.template ?? []).concat(
         RecursiveClassUnion.$sparqlConstructTriples({
           filter,
+          focusIdentifier: subject,
           ignoreRdfType,
-          subject,
         }),
       ),
       type: "query",
@@ -68288,9 +68427,9 @@ export namespace RecursiveClassUnion {
         $normalizeSparqlWherePatterns(
           RecursiveClassUnion.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -68302,7 +68441,7 @@ export namespace RecursiveClassUnion {
       filter?: RecursiveClassUnion.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -68314,15 +68453,15 @@ export namespace RecursiveClassUnion {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: RecursiveClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...RecursiveClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "recursiveClassUnionRecursiveClassUnionMember1",
           ),
@@ -68332,8 +68471,8 @@ export namespace RecursiveClassUnion {
       }).concat(),
       ...RecursiveClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "recursiveClassUnionRecursiveClassUnionMember2",
           ),
@@ -68344,17 +68483,18 @@ export namespace RecursiveClassUnion {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: RecursiveClassUnion.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("recursiveClassUnion");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("recursiveClassUnion");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -68362,10 +68502,10 @@ export namespace RecursiveClassUnion {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable"
-              ? subject.value
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
               : "recursiveClassUnion",
         }),
       );
@@ -68375,8 +68515,8 @@ export namespace RecursiveClassUnion {
         {
           patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "recursiveClassUnionRecursiveClassUnionMember1",
               ),
@@ -68389,8 +68529,8 @@ export namespace RecursiveClassUnion {
         {
           patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "recursiveClassUnionRecursiveClassUnionMember2",
               ),
@@ -71783,7 +71923,7 @@ export namespace $Object {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
     const {
@@ -71798,16 +71938,20 @@ export namespace $Object {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        $Object.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
+        $Object.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
           $Object.$sparqlWherePatterns({
             filter,
+            focusIdentifier: subject,
             ignoreRdfType,
             preferredLanguages,
-            subject,
           }),
         ),
       ),
@@ -71819,7 +71963,7 @@ export namespace $Object {
       filter?: $Object.$Filter;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
+      subject?: NamedNode | Variable;
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
       sparqljs.GeneratorOptions,
@@ -71831,15 +71975,15 @@ export namespace $Object {
 
   export function $sparqlConstructTriples(parameters?: {
     filter?: $Object.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...BlankNodeIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.BlankNodeIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectBlankNodeIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BlankNodeIdentifierClass`
@@ -71847,8 +71991,8 @@ export namespace $Object {
       }).concat(),
       ...BlankNodeIdentifierInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.BlankNodeIdentifierInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectBlankNodeIdentifierInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BlankNodeIdentifierInterface`
@@ -71856,8 +72000,8 @@ export namespace $Object {
       }).concat(),
       ...BlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectBlankNodeOrIriIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierClass`
@@ -71865,8 +72009,8 @@ export namespace $Object {
       }).concat(),
       ...BlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectBlankNodeOrIriIdentifierInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface`
@@ -71874,8 +72018,8 @@ export namespace $Object {
       }).concat(),
       ...ClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ClassUnionMember1`
@@ -71883,8 +72027,8 @@ export namespace $Object {
       }).concat(),
       ...ClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ClassUnionMember2`
@@ -71892,8 +72036,8 @@ export namespace $Object {
       }).concat(),
       ...ConcreteChildClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ConcreteChildClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectConcreteChildClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ConcreteChildClass`
@@ -71901,8 +72045,8 @@ export namespace $Object {
       }).concat(),
       ...ConcreteParentClassStatic.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ConcreteParentClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectConcreteParentClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ConcreteParentClass`
@@ -71910,8 +72054,8 @@ export namespace $Object {
       }).concat(),
       ...ConcreteChildInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ConcreteChildInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectConcreteChildInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ConcreteChildInterface`
@@ -71919,8 +72063,8 @@ export namespace $Object {
       }).concat(),
       ...ConcreteParentInterfaceStatic.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ConcreteParentInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectConcreteParentInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ConcreteParentInterface`
@@ -71928,8 +72072,8 @@ export namespace $Object {
       }).concat(),
       ...BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.BaseInterfaceWithoutProperties,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectBaseInterfaceWithoutProperties"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BaseInterfaceWithoutProperties`
@@ -71937,8 +72081,8 @@ export namespace $Object {
       }).concat(),
       ...BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.BaseInterfaceWithProperties,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectBaseInterfaceWithProperties"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BaseInterfaceWithProperties`
@@ -71946,8 +72090,8 @@ export namespace $Object {
       }).concat(),
       ...ConvertibleTypePropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ConvertibleTypePropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectConvertibleTypePropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ConvertibleTypePropertiesClass`
@@ -71955,8 +72099,8 @@ export namespace $Object {
       }).concat(),
       ...DateUnionPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.DateUnionPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectDateUnionPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}DateUnionPropertiesClass`
@@ -71964,8 +72108,8 @@ export namespace $Object {
       }).concat(),
       ...DefaultValuePropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.DefaultValuePropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectDefaultValuePropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}DefaultValuePropertiesClass`
@@ -71973,8 +72117,8 @@ export namespace $Object {
       }).concat(),
       ...DirectRecursiveClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.DirectRecursiveClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectDirectRecursiveClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}DirectRecursiveClass`
@@ -71982,8 +72126,8 @@ export namespace $Object {
       }).concat(),
       ...ExplicitFromToRdfTypesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ExplicitFromToRdfTypesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectExplicitFromToRdfTypesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ExplicitFromToRdfTypesClass`
@@ -71991,8 +72135,8 @@ export namespace $Object {
       }).concat(),
       ...ExplicitRdfTypeClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ExplicitRdfTypeClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectExplicitRdfTypeClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ExplicitRdfTypeClass`
@@ -72000,8 +72144,8 @@ export namespace $Object {
       }).concat(),
       ...ExternClassPropertyClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ExternClassPropertyClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectExternClassPropertyClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ExternClassPropertyClass`
@@ -72009,8 +72153,8 @@ export namespace $Object {
       }).concat(),
       ...FlattenClassUnionMember3.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.FlattenClassUnionMember3,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectFlattenClassUnionMember3"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}FlattenClassUnionMember3`
@@ -72018,8 +72162,8 @@ export namespace $Object {
       }).concat(),
       ...HasValuePropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.HasValuePropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectHasValuePropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}HasValuePropertiesClass`
@@ -72027,8 +72171,8 @@ export namespace $Object {
       }).concat(),
       ...IdentifierOverride5Class.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IdentifierOverride5Class,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIdentifierOverride5Class"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IdentifierOverride5Class`
@@ -72036,8 +72180,8 @@ export namespace $Object {
       }).concat(),
       ...IdentifierOverride4ClassStatic.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IdentifierOverride4Class,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIdentifierOverride4Class"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IdentifierOverride4Class`
@@ -72045,8 +72189,8 @@ export namespace $Object {
       }).concat(),
       ...IdentifierOverride3ClassStatic.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IdentifierOverride3Class,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIdentifierOverride3Class"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IdentifierOverride3Class`
@@ -72054,8 +72198,8 @@ export namespace $Object {
       }).concat(),
       ...InIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.InIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectInIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InIdentifierClass`
@@ -72063,8 +72207,8 @@ export namespace $Object {
       }).concat(),
       ...InPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.InPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectInPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InPropertiesClass`
@@ -72072,8 +72216,8 @@ export namespace $Object {
       }).concat(),
       ...IndirectRecursiveClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IndirectRecursiveClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIndirectRecursiveClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IndirectRecursiveClass`
@@ -72081,8 +72225,8 @@ export namespace $Object {
       }).concat(),
       ...IndirectRecursiveHelperClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IndirectRecursiveHelperClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIndirectRecursiveHelperClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IndirectRecursiveHelperClass`
@@ -72090,16 +72234,17 @@ export namespace $Object {
       }).concat(),
       ...Interface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.Interface,
-        subject:
-          parameters?.subject ?? dataFactory.variable!("objectInterface"),
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}Interface`
           : "objectInterface",
       }).concat(),
       ...InterfaceUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.InterfaceUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectInterfaceUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InterfaceUnionMember1`
@@ -72107,8 +72252,8 @@ export namespace $Object {
       }).concat(),
       ...InterfaceUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.InterfaceUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectInterfaceUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InterfaceUnionMember2`
@@ -72116,8 +72261,8 @@ export namespace $Object {
       }).concat(),
       ...IriIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IriIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIriIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IriIdentifierClass`
@@ -72125,8 +72270,8 @@ export namespace $Object {
       }).concat(),
       ...IriIdentifierInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.IriIdentifierInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectIriIdentifierInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}IriIdentifierInterface`
@@ -72134,8 +72279,8 @@ export namespace $Object {
       }).concat(),
       ...JsPrimitiveUnionPropertyClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.JsPrimitiveUnionPropertyClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectJsPrimitiveUnionPropertyClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}JsPrimitiveUnionPropertyClass`
@@ -72143,8 +72288,8 @@ export namespace $Object {
       }).concat(),
       ...LanguageInPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LanguageInPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLanguageInPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LanguageInPropertiesClass`
@@ -72153,8 +72298,8 @@ export namespace $Object {
       ...LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
         filter:
           parameters?.filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!(
             "objectLazilyResolvedBlankNodeOrIriIdentifierClass",
           ),
@@ -72167,8 +72312,8 @@ export namespace $Object {
           filter:
             parameters?.filter?.on
               ?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
-          subject:
-            parameters?.subject ??
+          focusIdentifier:
+            parameters?.focusIdentifier ??
             dataFactory.variable!(
               "objectLazilyResolvedBlankNodeOrIriIdentifierInterface",
             ),
@@ -72179,8 +72324,8 @@ export namespace $Object {
       ).concat(),
       ...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazilyResolvedClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
@@ -72188,8 +72333,8 @@ export namespace $Object {
       }).concat(),
       ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazilyResolvedClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2`
@@ -72197,8 +72342,8 @@ export namespace $Object {
       }).concat(),
       ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazilyResolvedInterfaceUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1`
@@ -72206,8 +72351,8 @@ export namespace $Object {
       }).concat(),
       ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazilyResolvedInterfaceUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2`
@@ -72215,8 +72360,8 @@ export namespace $Object {
       }).concat(),
       ...LazilyResolvedIriIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazilyResolvedIriIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierClass`
@@ -72224,8 +72369,8 @@ export namespace $Object {
       }).concat(),
       ...LazilyResolvedIriIdentifierInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazilyResolvedIriIdentifierInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierInterface`
@@ -72233,8 +72378,8 @@ export namespace $Object {
       }).concat(),
       ...LazyPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazyPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazyPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazyPropertiesClass`
@@ -72242,16 +72387,17 @@ export namespace $Object {
       }).concat(),
       ...PartialClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialClass,
-        subject:
-          parameters?.subject ?? dataFactory.variable!("objectPartialClass"),
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectPartialClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialClass`
           : "objectPartialClass",
       }).concat(),
       ...LazyPropertiesInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazyPropertiesInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectLazyPropertiesInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}LazyPropertiesInterface`
@@ -72259,8 +72405,8 @@ export namespace $Object {
       }).concat(),
       ...PartialInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPartialInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialInterface`
@@ -72268,8 +72414,8 @@ export namespace $Object {
       }).concat(),
       ...ListPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ListPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectListPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ListPropertiesClass`
@@ -72277,8 +72423,8 @@ export namespace $Object {
       }).concat(),
       ...MutablePropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.MutablePropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectMutablePropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}MutablePropertiesClass`
@@ -72286,8 +72432,8 @@ export namespace $Object {
       }).concat(),
       ...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectNoRdfTypeClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
@@ -72295,8 +72441,8 @@ export namespace $Object {
       }).concat(),
       ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectNoRdfTypeClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
@@ -72304,15 +72450,17 @@ export namespace $Object {
       }).concat(),
       ...NonClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NonClass,
-        subject: parameters?.subject ?? dataFactory.variable!("objectNonClass"),
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectNonClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NonClass`
           : "objectNonClass",
       }).concat(),
       ...NumericPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NumericPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectNumericPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NumericPropertiesClass`
@@ -72320,8 +72468,8 @@ export namespace $Object {
       }).concat(),
       ...OrderedPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.OrderedPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectOrderedPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}OrderedPropertiesClass`
@@ -72329,8 +72477,8 @@ export namespace $Object {
       }).concat(),
       ...PartialClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPartialClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialClassUnionMember1`
@@ -72338,8 +72486,8 @@ export namespace $Object {
       }).concat(),
       ...PartialClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPartialClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialClassUnionMember2`
@@ -72347,8 +72495,8 @@ export namespace $Object {
       }).concat(),
       ...PartialInterfaceUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPartialInterfaceUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
@@ -72356,8 +72504,8 @@ export namespace $Object {
       }).concat(),
       ...PartialInterfaceUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPartialInterfaceUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PartialInterfaceUnionMember2`
@@ -72365,8 +72513,8 @@ export namespace $Object {
       }).concat(),
       ...PropertyCardinalitiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PropertyCardinalitiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPropertyCardinalitiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
@@ -72374,8 +72522,8 @@ export namespace $Object {
       }).concat(),
       ...PropertyVisibilitiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PropertyVisibilitiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectPropertyVisibilitiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PropertyVisibilitiesClass`
@@ -72383,8 +72531,8 @@ export namespace $Object {
       }).concat(),
       ...RecursiveClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectRecursiveClassUnionMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
@@ -72392,8 +72540,8 @@ export namespace $Object {
       }).concat(),
       ...RecursiveClassUnionMember2.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectRecursiveClassUnionMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
@@ -72401,8 +72549,8 @@ export namespace $Object {
       }).concat(),
       ...Sha256IriIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.Sha256IriIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectSha256IriIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}Sha256IriIdentifierClass`
@@ -72410,8 +72558,8 @@ export namespace $Object {
       }).concat(),
       ...TermPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.TermPropertiesClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectTermPropertiesClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}TermPropertiesClass`
@@ -72419,8 +72567,8 @@ export namespace $Object {
       }).concat(),
       ...UnionDiscriminantsClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.UnionDiscriminantsClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectUnionDiscriminantsClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}UnionDiscriminantsClass`
@@ -72428,8 +72576,8 @@ export namespace $Object {
       }).concat(),
       ...UuidV4IriIdentifierClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.UuidV4IriIdentifierClass,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectUuidV4IriIdentifierClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}UuidV4IriIdentifierClass`
@@ -72437,8 +72585,8 @@ export namespace $Object {
       }).concat(),
       ...UuidV4IriIdentifierInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.UuidV4IriIdentifierInterface,
-        subject:
-          parameters?.subject ??
+        focusIdentifier:
+          parameters?.focusIdentifier ??
           dataFactory.variable!("objectUuidV4IriIdentifierInterface"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}UuidV4IriIdentifierInterface`
@@ -72447,8 +72595,8 @@ export namespace $Object {
       ...$DefaultPartial
         .$sparqlConstructTriples({
           filter: parameters?.filter?.on?.$DefaultPartial,
-          subject:
-            parameters?.subject ??
+          focusIdentifier:
+            parameters?.focusIdentifier ??
             dataFactory.variable!("objectDefaultPartial"),
           variablePrefix: parameters?.variablePrefix
             ? `${parameters.variablePrefix}DefaultPartial`
@@ -72458,8 +72606,8 @@ export namespace $Object {
       ...$NamedDefaultPartial
         .$sparqlConstructTriples({
           filter: parameters?.filter?.on?.$NamedDefaultPartial,
-          subject:
-            parameters?.subject ??
+          focusIdentifier:
+            parameters?.focusIdentifier ??
             dataFactory.variable!("objectNamedDefaultPartial"),
           variablePrefix: parameters?.variablePrefix
             ? `${parameters.variablePrefix}NamedDefaultPartial`
@@ -72469,16 +72617,17 @@ export namespace $Object {
     ];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(parameters: {
     filter?: $Object.$Filter;
+    focusIdentifier?: NamedNode | Variable;
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly $SparqlPattern[] {
     let patterns: $SparqlPattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("object");
-    if (subject.termType === "Variable") {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("object");
+    if (focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
           filter: parameters?.filter?.$identifier,
@@ -72486,9 +72635,11 @@ export namespace $Object {
           preferredLanguages: parameters?.preferredLanguages,
           propertyPatterns: [],
           schema: { kind: "Identifier" as const },
-          valueVariable: subject,
+          valueVariable: focusIdentifier,
           variablePrefix:
-            subject.termType === "Variable" ? subject.value : "object",
+            focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "object",
         }),
       );
     }
@@ -72497,8 +72648,8 @@ export namespace $Object {
         {
           patterns: BlankNodeIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.BlankNodeIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectBlankNodeIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BlankNodeIdentifierClass`
@@ -72509,8 +72660,8 @@ export namespace $Object {
         {
           patterns: BlankNodeIdentifierInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.BlankNodeIdentifierInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectBlankNodeIdentifierInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BlankNodeIdentifierInterface`
@@ -72521,8 +72672,8 @@ export namespace $Object {
         {
           patterns: BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectBlankNodeOrIriIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierClass`
@@ -72533,8 +72684,8 @@ export namespace $Object {
         {
           patterns: BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectBlankNodeOrIriIdentifierInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface`
@@ -72545,8 +72696,8 @@ export namespace $Object {
         {
           patterns: ClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ClassUnionMember1`
@@ -72557,8 +72708,8 @@ export namespace $Object {
         {
           patterns: ClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ClassUnionMember2`
@@ -72569,8 +72720,8 @@ export namespace $Object {
         {
           patterns: ConcreteChildClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ConcreteChildClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectConcreteChildClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ConcreteChildClass`
@@ -72581,8 +72732,8 @@ export namespace $Object {
         {
           patterns: ConcreteParentClassStatic.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ConcreteParentClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectConcreteParentClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ConcreteParentClass`
@@ -72593,8 +72744,8 @@ export namespace $Object {
         {
           patterns: ConcreteChildInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ConcreteChildInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectConcreteChildInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ConcreteChildInterface`
@@ -72605,8 +72756,8 @@ export namespace $Object {
         {
           patterns: ConcreteParentInterfaceStatic.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ConcreteParentInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectConcreteParentInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ConcreteParentInterface`
@@ -72617,8 +72768,8 @@ export namespace $Object {
         {
           patterns: BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.BaseInterfaceWithoutProperties,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectBaseInterfaceWithoutProperties"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BaseInterfaceWithoutProperties`
@@ -72629,8 +72780,8 @@ export namespace $Object {
         {
           patterns: BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.BaseInterfaceWithProperties,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectBaseInterfaceWithProperties"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BaseInterfaceWithProperties`
@@ -72641,8 +72792,8 @@ export namespace $Object {
         {
           patterns: ConvertibleTypePropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ConvertibleTypePropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectConvertibleTypePropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ConvertibleTypePropertiesClass`
@@ -72653,8 +72804,8 @@ export namespace $Object {
         {
           patterns: DateUnionPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.DateUnionPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectDateUnionPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}DateUnionPropertiesClass`
@@ -72665,8 +72816,8 @@ export namespace $Object {
         {
           patterns: DefaultValuePropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.DefaultValuePropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectDefaultValuePropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}DefaultValuePropertiesClass`
@@ -72677,8 +72828,8 @@ export namespace $Object {
         {
           patterns: DirectRecursiveClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.DirectRecursiveClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectDirectRecursiveClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}DirectRecursiveClass`
@@ -72689,8 +72840,8 @@ export namespace $Object {
         {
           patterns: ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ExplicitFromToRdfTypesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectExplicitFromToRdfTypesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ExplicitFromToRdfTypesClass`
@@ -72701,8 +72852,8 @@ export namespace $Object {
         {
           patterns: ExplicitRdfTypeClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ExplicitRdfTypeClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectExplicitRdfTypeClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ExplicitRdfTypeClass`
@@ -72713,8 +72864,8 @@ export namespace $Object {
         {
           patterns: ExternClassPropertyClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ExternClassPropertyClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectExternClassPropertyClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ExternClassPropertyClass`
@@ -72725,8 +72876,8 @@ export namespace $Object {
         {
           patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.FlattenClassUnionMember3,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectFlattenClassUnionMember3"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}FlattenClassUnionMember3`
@@ -72737,8 +72888,8 @@ export namespace $Object {
         {
           patterns: HasValuePropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.HasValuePropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectHasValuePropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}HasValuePropertiesClass`
@@ -72749,8 +72900,8 @@ export namespace $Object {
         {
           patterns: IdentifierOverride5Class.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IdentifierOverride5Class,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIdentifierOverride5Class"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IdentifierOverride5Class`
@@ -72761,8 +72912,8 @@ export namespace $Object {
         {
           patterns: IdentifierOverride4ClassStatic.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IdentifierOverride4Class,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIdentifierOverride4Class"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IdentifierOverride4Class`
@@ -72773,8 +72924,8 @@ export namespace $Object {
         {
           patterns: IdentifierOverride3ClassStatic.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IdentifierOverride3Class,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIdentifierOverride3Class"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IdentifierOverride3Class`
@@ -72785,8 +72936,8 @@ export namespace $Object {
         {
           patterns: InIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.InIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectInIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}InIdentifierClass`
@@ -72797,8 +72948,8 @@ export namespace $Object {
         {
           patterns: InPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.InPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectInPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}InPropertiesClass`
@@ -72809,8 +72960,8 @@ export namespace $Object {
         {
           patterns: IndirectRecursiveClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IndirectRecursiveClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIndirectRecursiveClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IndirectRecursiveClass`
@@ -72821,8 +72972,8 @@ export namespace $Object {
         {
           patterns: IndirectRecursiveHelperClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IndirectRecursiveHelperClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIndirectRecursiveHelperClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IndirectRecursiveHelperClass`
@@ -72833,8 +72984,9 @@ export namespace $Object {
         {
           patterns: Interface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.Interface,
-            subject:
-              parameters?.subject ?? dataFactory.variable!("objectInterface"),
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}Interface`
               : "objectInterface",
@@ -72844,8 +72996,8 @@ export namespace $Object {
         {
           patterns: InterfaceUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.InterfaceUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectInterfaceUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}InterfaceUnionMember1`
@@ -72856,8 +73008,8 @@ export namespace $Object {
         {
           patterns: InterfaceUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.InterfaceUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectInterfaceUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}InterfaceUnionMember2`
@@ -72868,8 +73020,8 @@ export namespace $Object {
         {
           patterns: IriIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IriIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIriIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IriIdentifierClass`
@@ -72880,8 +73032,8 @@ export namespace $Object {
         {
           patterns: IriIdentifierInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.IriIdentifierInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectIriIdentifierInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}IriIdentifierInterface`
@@ -72892,8 +73044,8 @@ export namespace $Object {
         {
           patterns: JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.JsPrimitiveUnionPropertyClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectJsPrimitiveUnionPropertyClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}JsPrimitiveUnionPropertyClass`
@@ -72904,8 +73056,8 @@ export namespace $Object {
         {
           patterns: LanguageInPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LanguageInPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectLanguageInPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}LanguageInPropertiesClass`
@@ -72919,8 +73071,8 @@ export namespace $Object {
               filter:
                 parameters?.filter?.on
                   ?.LazilyResolvedBlankNodeOrIriIdentifierClass,
-              subject:
-                parameters?.subject ??
+              focusIdentifier:
+                parameters?.focusIdentifier ??
                 dataFactory.variable!(
                   "objectLazilyResolvedBlankNodeOrIriIdentifierClass",
                 ),
@@ -72937,8 +73089,8 @@ export namespace $Object {
                 filter:
                   parameters?.filter?.on
                     ?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
-                subject:
-                  parameters?.subject ??
+                focusIdentifier:
+                  parameters?.focusIdentifier ??
                   dataFactory.variable!(
                     "objectLazilyResolvedBlankNodeOrIriIdentifierInterface",
                   ),
@@ -72952,8 +73104,8 @@ export namespace $Object {
         {
           patterns: LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectLazilyResolvedClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
@@ -72964,8 +73116,8 @@ export namespace $Object {
         {
           patterns: LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectLazilyResolvedClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2`
@@ -72976,8 +73128,8 @@ export namespace $Object {
         {
           patterns: LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "objectLazilyResolvedInterfaceUnionMember1",
               ),
@@ -72990,8 +73142,8 @@ export namespace $Object {
         {
           patterns: LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "objectLazilyResolvedInterfaceUnionMember2",
               ),
@@ -73004,8 +73156,8 @@ export namespace $Object {
         {
           patterns: LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectLazilyResolvedIriIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierClass`
@@ -73017,8 +73169,8 @@ export namespace $Object {
           patterns: LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
             filter:
               parameters?.filter?.on?.LazilyResolvedIriIdentifierInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!(
                 "objectLazilyResolvedIriIdentifierInterface",
               ),
@@ -73031,8 +73183,8 @@ export namespace $Object {
         {
           patterns: LazyPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazyPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectLazyPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}LazyPropertiesClass`
@@ -73043,8 +73195,8 @@ export namespace $Object {
         {
           patterns: PartialClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPartialClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PartialClass`
@@ -73055,8 +73207,8 @@ export namespace $Object {
         {
           patterns: LazyPropertiesInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazyPropertiesInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectLazyPropertiesInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}LazyPropertiesInterface`
@@ -73067,8 +73219,8 @@ export namespace $Object {
         {
           patterns: PartialInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPartialInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PartialInterface`
@@ -73079,8 +73231,8 @@ export namespace $Object {
         {
           patterns: ListPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.ListPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectListPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ListPropertiesClass`
@@ -73091,8 +73243,8 @@ export namespace $Object {
         {
           patterns: MutablePropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.MutablePropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectMutablePropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}MutablePropertiesClass`
@@ -73103,8 +73255,8 @@ export namespace $Object {
         {
           patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectNoRdfTypeClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
@@ -73115,8 +73267,8 @@ export namespace $Object {
         {
           patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectNoRdfTypeClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
@@ -73127,8 +73279,9 @@ export namespace $Object {
         {
           patterns: NonClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.NonClass,
-            subject:
-              parameters?.subject ?? dataFactory.variable!("objectNonClass"),
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectNonClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NonClass`
               : "objectNonClass",
@@ -73138,8 +73291,8 @@ export namespace $Object {
         {
           patterns: NumericPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.NumericPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectNumericPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NumericPropertiesClass`
@@ -73150,8 +73303,8 @@ export namespace $Object {
         {
           patterns: OrderedPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.OrderedPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectOrderedPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}OrderedPropertiesClass`
@@ -73162,8 +73315,8 @@ export namespace $Object {
         {
           patterns: PartialClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPartialClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PartialClassUnionMember1`
@@ -73174,8 +73327,8 @@ export namespace $Object {
         {
           patterns: PartialClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPartialClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PartialClassUnionMember2`
@@ -73186,8 +73339,8 @@ export namespace $Object {
         {
           patterns: PartialInterfaceUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPartialInterfaceUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
@@ -73198,8 +73351,8 @@ export namespace $Object {
         {
           patterns: PartialInterfaceUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPartialInterfaceUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PartialInterfaceUnionMember2`
@@ -73210,8 +73363,8 @@ export namespace $Object {
         {
           patterns: PropertyCardinalitiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PropertyCardinalitiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPropertyCardinalitiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
@@ -73222,8 +73375,8 @@ export namespace $Object {
         {
           patterns: PropertyVisibilitiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PropertyVisibilitiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectPropertyVisibilitiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PropertyVisibilitiesClass`
@@ -73234,8 +73387,8 @@ export namespace $Object {
         {
           patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectRecursiveClassUnionMember1"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
@@ -73246,8 +73399,8 @@ export namespace $Object {
         {
           patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectRecursiveClassUnionMember2"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
@@ -73258,8 +73411,8 @@ export namespace $Object {
         {
           patterns: Sha256IriIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.Sha256IriIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectSha256IriIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}Sha256IriIdentifierClass`
@@ -73270,8 +73423,8 @@ export namespace $Object {
         {
           patterns: TermPropertiesClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.TermPropertiesClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectTermPropertiesClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}TermPropertiesClass`
@@ -73282,8 +73435,8 @@ export namespace $Object {
         {
           patterns: UnionDiscriminantsClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.UnionDiscriminantsClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectUnionDiscriminantsClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}UnionDiscriminantsClass`
@@ -73294,8 +73447,8 @@ export namespace $Object {
         {
           patterns: UuidV4IriIdentifierClass.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.UuidV4IriIdentifierClass,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectUuidV4IriIdentifierClass"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}UuidV4IriIdentifierClass`
@@ -73306,8 +73459,8 @@ export namespace $Object {
         {
           patterns: UuidV4IriIdentifierInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.UuidV4IriIdentifierInterface,
-            subject:
-              parameters?.subject ??
+            focusIdentifier:
+              parameters?.focusIdentifier ??
               dataFactory.variable!("objectUuidV4IriIdentifierInterface"),
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}UuidV4IriIdentifierInterface`
@@ -73319,8 +73472,8 @@ export namespace $Object {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
               filter: parameters?.filter?.on?.$DefaultPartial,
-              subject:
-                parameters?.subject ??
+              focusIdentifier:
+                parameters?.focusIdentifier ??
                 dataFactory.variable!("objectDefaultPartial"),
               variablePrefix: parameters?.variablePrefix
                 ? `${parameters.variablePrefix}DefaultPartial`
@@ -73333,8 +73486,8 @@ export namespace $Object {
           patterns: $NamedDefaultPartial
             .$sparqlWherePatterns({
               filter: parameters?.filter?.on?.$NamedDefaultPartial,
-              subject:
-                parameters?.subject ??
+              focusIdentifier:
+                parameters?.focusIdentifier ??
                 dataFactory.variable!("objectNamedDefaultPartial"),
               variablePrefix: parameters?.variablePrefix
                 ? `${parameters.variablePrefix}NamedDefaultPartial`
@@ -86870,7 +87023,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     objectType: {
       $sparqlWherePatterns: (parameters?: {
         filter?: ObjectFilterT;
-        subject?: sparqljs.Triple["subject"];
+        focusIdentifier?: NamedNode | Variable;
       }) => readonly sparqljs.Pattern[];
     },
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
@@ -86933,13 +87086,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       $sparqlConstructQueryString: (
         parameters?: {
           filter?: ObjectFilterT;
-          subject?: sparqljs.Triple["subject"];
+          subject: NamedNode | Variable;
         } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
           sparqljs.GeneratorOptions,
       ) => string;
       $sparqlWherePatterns: (parameters?: {
         filter?: ObjectFilterT;
-        subject?: sparqljs.Triple["subject"];
+        focusIdentifier?: NamedNode | Variable;
       }) => readonly sparqljs.Pattern[];
     },
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
@@ -86994,7 +87147,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     objectType: {
       $sparqlWherePatterns: (parameters?: {
         filter?: ObjectFilterT;
-        subject?: sparqljs.Triple["subject"];
+        focusIdentifier?: NamedNode | Variable;
       }) => readonly sparqljs.Pattern[];
     },
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
@@ -87039,7 +87192,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     objectType: {
       $sparqlWherePatterns: (parameters?: {
         filter?: ObjectFilterT;
-        subject?: sparqljs.Triple["subject"];
+        focusIdentifier?: NamedNode | Variable;
       }) => readonly sparqljs.Pattern[];
     },
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
@@ -87054,7 +87207,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     patterns = patterns.concat(
       objectType.$sparqlWherePatterns({
         filter: query?.filter,
-        subject: this.$objectVariable,
+        focusIdentifier: this.$objectVariable,
       }),
     );
 
