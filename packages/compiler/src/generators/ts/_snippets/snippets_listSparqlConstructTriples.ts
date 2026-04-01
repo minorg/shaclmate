@@ -18,8 +18,8 @@ function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchem
     {
       // ?list rdf:first ?item0
       const item0Variable = variable("Item0");
-      triples.push({ subject: listVariable, prediacte: ${snippets_RdfVocabularies}.rdf.first, object: item0Variable });
-      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, schema, valueVariable: item0Variable, variablePrefix: variablePrefix("Item0") }));
+      triples.push({ subject: listVariable, predicate: ${snippets_RdfVocabularies}.rdf.first, object: item0Variable });
+      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, schema: schema.item(), valueVariable: item0Variable, variablePrefix: variablePrefix("Item0") }));
     }
 
     {
@@ -34,7 +34,7 @@ function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchem
       // ?rest rdf:first ?itemN
       const itemNVariable = variable("ItemN");
       triples.push({ subject: restNVariable, predicate: ${snippets_RdfVocabularies}.rdf.first, object: itemNVariable });
-      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, schema, valueVariable: itemNVariable, variablePrefix: variablePrefix("ItemN") }));
+      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, schema: schema.item(), valueVariable: itemNVariable, variablePrefix: variablePrefix("ItemN") }));
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT

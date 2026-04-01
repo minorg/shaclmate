@@ -8,8 +8,8 @@ export const snippets_shaclPropertyFromRdf = conditionalOutput(
   code`\
 function ${syntheticNamePrefix}shaclPropertyFromRdf<T>({ graph, propertySchema, resource, typeFromRdf }: {
   graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
+  propertySchema: ${snippets_ShaclPropertySchema};
   resource: ${imports.Resource};
-  schema: ${snippets_ShaclPropertySchema};
   typeFromRdf: (resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>) => ${imports.Either}<Error, ${imports.Resource}.Values<T>>;
 }): ${imports.Either}<Error, T> {
   return typeFromRdf(${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(resource.values(propertySchema.identifier, { graph, unique: true }))).chain(values => values.head());

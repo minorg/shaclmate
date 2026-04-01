@@ -234,7 +234,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       code`${snippets.shaclPropertyFromRdf}(${{
         graph: variables.graph,
         resource: variables.resource,
-        schema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
         typeFromRdf: code`((resourceValues) => ${this.type.fromRdfExpression({
           variables: {
             ...variables,
@@ -275,11 +275,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${snippets.shaclPropertySparqlConstructTriples}(${{
-        filter: variables.filter,
+        filter: this.filterProperty
+          .map(({ name }) => code`${variables.filter}?.${name}`)
+          .extract(),
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
         name: this.name,
-        schema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
         typeSparqlConstructTriples: this.type.sparqlConstructTriplesFunction,
         variablePrefix: variables.variablePrefix,
       }})`,

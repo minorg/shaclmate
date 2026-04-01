@@ -420,7 +420,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-triples = triples.concat(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));`,
+triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));`,
     ),
   )}
   

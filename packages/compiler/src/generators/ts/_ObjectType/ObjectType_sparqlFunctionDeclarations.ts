@@ -142,7 +142,7 @@ if (!parameters?.ignoreRdfType) {
     ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
     ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { ignoreRdfType?: boolean; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
 ${
   sparqlConstructTriplesStatements.length > 0
     ? joinCode([

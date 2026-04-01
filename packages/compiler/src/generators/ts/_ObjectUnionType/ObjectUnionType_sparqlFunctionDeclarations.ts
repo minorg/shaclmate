@@ -18,11 +18,11 @@ export function ObjectUnionType_sparqlFunctionDeclarations(
     ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
     ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean, subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean, subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.concreteMemberTypes.map(
       (memberType) =>
-        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
     ),
     { on: ", " },
   )}];

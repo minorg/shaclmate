@@ -1109,6 +1109,83 @@ function $liftSparqlPatterns(
   return [unliftedPatterns, liftedPatterns];
 }
 
+function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
+  itemSparqlConstructTriplesFunction: $SparqlConstructTriplesFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $SparqlConstructTriplesFunction<
+  $CollectionFilter<ItemFilterT>,
+  $CollectionSchema<ItemSchemaT>
+> {
+  return ({
+    filter,
+    schema,
+    valueVariable: listVariable,
+    ...otherParameters
+  }) => {
+    let triples: sparqljs.Triple[] = [];
+    const variable = (suffix: string) =>
+      dataFactory.variable!(`${otherParameters.variablePrefix}${suffix}`);
+    const variablePrefix = (suffix: string) =>
+      `${otherParameters.variablePrefix}${suffix}`;
+
+    {
+      // ?list rdf:first ?item0
+      const item0Variable = variable("Item0");
+      triples.push({
+        subject: listVariable,
+        predicate: $RdfVocabularies.rdf.first,
+        object: item0Variable,
+      });
+      triples = triples.concat(
+        itemSparqlConstructTriplesFunction({
+          filter,
+          schema: schema.item(),
+          valueVariable: item0Variable,
+          variablePrefix: variablePrefix("Item0"),
+        }),
+      );
+    }
+    // ?list rdf:rest ?rest0
+    triples.push({
+      subject: listVariable,
+      predicate: $RdfVocabularies.rdf.rest,
+      object: variable("Rest0"),
+    });
+
+    // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
+    const restNVariable = variable("RestN");
+
+    {
+      // ?rest rdf:first ?itemN
+      const itemNVariable = variable("ItemN");
+      triples.push({
+        subject: restNVariable,
+        predicate: $RdfVocabularies.rdf.first,
+        object: itemNVariable,
+      });
+      triples = triples.concat(
+        itemSparqlConstructTriplesFunction({
+          filter,
+          schema: schema.item(),
+          valueVariable: itemNVariable,
+          variablePrefix: variablePrefix("ItemN"),
+        }),
+      );
+    }
+
+    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
+    triples.push({
+      subject: restNVariable,
+      predicate: $RdfVocabularies.rdf.rest,
+      object: variable("RestNBasic"),
+    });
+
+    return triples;
+  };
+}
+
 function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
     ItemFilterT,
@@ -1744,9 +1821,50 @@ function $shaclPropertyFromRdf<T>({
   ).chain((values) => values.head());
 }
 
-export interface $ShaclPropertySchema {
+export interface $ShaclPropertySchema<TypeSchemaT = object> {
   readonly identifier: NamedNode;
   readonly kind: "Shacl";
+  readonly type: () => TypeSchemaT;
+}
+
+function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
+  filter,
+  focusIdentifier,
+  ignoreRdfType,
+  propertyName,
+  propertySchema,
+  typeSparqlConstructTriples,
+  variablePrefix,
+}: {
+  filter?: FilterT;
+  focusIdentifier: Resource.Identifier;
+  ignoreRdfType?: boolean;
+  propertySchema: $ShaclPropertySchema<TypeSchemaT>;
+  propertyName: string;
+  typeSparqlConstructTriples: $SparqlConstructTriplesFunction<
+    FilterT,
+    TypeSchemaT
+  >;
+  variablePrefix: string;
+}): readonly sparqljs.Triple[] {
+  const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
+  const valueVariable = dataFactory.variable!(valueString);
+
+  return [
+    {
+      subject: focusIdentifier,
+      predicate: propertySchema.identifier,
+      object: valueVariable,
+    } as sparqljs.Triple,
+  ].concat(
+    typeSparqlConstructTriples({
+      filter,
+      ignoreRdfType,
+      schema: propertySchema.type(),
+      valueVariable,
+      variablePrefix: valueString,
+    }),
+  );
 }
 
 function $sortSparqlPatterns(
@@ -1772,6 +1890,18 @@ function $sortSparqlPatterns(
 
   return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
 }
+
+type $SparqlConstructTriplesFunction<FilterT, SchemaT> = (
+  parameters: $SparqlConstructTriplesFunctionParameters<FilterT, SchemaT>,
+) => readonly sparqljs.Triple[];
+
+type $SparqlConstructTriplesFunctionParameters<FilterT, SchemaT> = Readonly<{
+  filter?: FilterT;
+  ignoreRdfType?: boolean;
+  schema: SchemaT;
+  valueVariable: Variable;
+  variablePrefix: string;
+}>;
 
 type $SparqlFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
 
@@ -2381,6 +2511,7 @@ export namespace $NamedDefaultPartial {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         $NamedDefaultPartial.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -2415,6 +2546,7 @@ export namespace $NamedDefaultPartial {
   }
 
   export function $sparqlConstructTriples(_parameters?: {
+    filter?: $NamedDefaultPartial.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -2699,7 +2831,11 @@ export namespace $DefaultPartial {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        $DefaultPartial.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        $DefaultPartial.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -2731,6 +2867,7 @@ export namespace $DefaultPartial {
   }
 
   export function $sparqlConstructTriples(_parameters?: {
+    filter?: $DefaultPartial.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3042,8 +3179,8 @@ export namespace UuidV4IriIdentifierInterface {
       ).chain(($type) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.uuidV4IriProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.uuidV4IriProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -3138,6 +3275,7 @@ export namespace UuidV4IriIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         UuidV4IriIdentifierInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -3172,6 +3310,7 @@ export namespace UuidV4IriIdentifierInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: UuidV4IriIdentifierInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3180,22 +3319,21 @@ export namespace UuidV4IriIdentifierInterface {
       parameters?.subject ??
       dataFactory.variable!("uuidV4IriIdentifierInterface");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "uuidV4IriIdentifierInterface")
-          }UuidV4IriProperty`,
-        ),
-        predicate:
-          UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.uuidV4IriProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "uuidV4IriProperty",
+        propertySchema: $schema.properties.uuidV4IriProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "uuidV4IriIdentifierInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -3574,8 +3712,8 @@ export namespace UuidV4IriIdentifierClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.uuidV4IriProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.uuidV4IriProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -3642,6 +3780,7 @@ export namespace UuidV4IriIdentifierClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         UuidV4IriIdentifierClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -3676,6 +3815,7 @@ export namespace UuidV4IriIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: UuidV4IriIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3683,22 +3823,21 @@ export namespace UuidV4IriIdentifierClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "uuidV4IriIdentifierClass")
-          }UuidV4IriProperty`,
-        ),
-        predicate:
-          UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.uuidV4IriProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "uuidV4IriProperty",
+        propertySchema: $schema.properties.uuidV4IriProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "uuidV4IriIdentifierClass"),
+      }),
+    );
     return triples;
   }
 
@@ -6000,8 +6139,8 @@ export namespace UnionDiscriminantsClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -6177,8 +6316,8 @@ export namespace UnionDiscriminantsClass {
       }).chain((optionalClassOrClassOrStringProperty) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.optionalIriOrLiteralProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.optionalIriOrLiteralProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -6227,8 +6366,8 @@ export namespace UnionDiscriminantsClass {
         }).chain((optionalIriOrLiteralProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.optionalIriOrStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.optionalIriOrStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -6277,9 +6416,9 @@ export namespace UnionDiscriminantsClass {
           }).chain((optionalIriOrStringProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
+              resource: $parameters.resource,
               propertySchema:
                 $schema.properties.requiredClassOrClassOrStringProperty,
-              resource: $parameters.resource,
               typeFromRdf: (resourceValues) =>
                 resourceValues.chain((values) =>
                   values.chainMap((value) => {
@@ -6433,8 +6572,8 @@ export namespace UnionDiscriminantsClass {
             }).chain((requiredClassOrClassOrStringProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.requiredIriOrLiteralProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.requiredIriOrLiteralProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues.chain((values) =>
                     values.chainMap((value) => {
@@ -6471,9 +6610,9 @@ export namespace UnionDiscriminantsClass {
               }).chain((requiredIriOrLiteralProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
+                  resource: $parameters.resource,
                   propertySchema:
                     $schema.properties.requiredIriOrStringProperty,
-                  resource: $parameters.resource,
                   typeFromRdf: (resourceValues) =>
                     resourceValues.chain((values) =>
                       values.chainMap((value) => {
@@ -6513,9 +6652,9 @@ export namespace UnionDiscriminantsClass {
                 }).chain((requiredIriOrStringProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
+                    resource: $parameters.resource,
                     propertySchema:
                       $schema.properties.setClassOrClassOrStringProperty,
-                    resource: $parameters.resource,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
@@ -6689,9 +6828,9 @@ export namespace UnionDiscriminantsClass {
                   }).chain((setClassOrClassOrStringProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
+                      resource: $parameters.resource,
                       propertySchema:
                         $schema.properties.setIriOrLiteralProperty,
-                      resource: $parameters.resource,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -6746,9 +6885,9 @@ export namespace UnionDiscriminantsClass {
                     }).chain((setIriOrLiteralProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
+                        resource: $parameters.resource,
                         propertySchema:
                           $schema.properties.setIriOrStringProperty,
-                        resource: $parameters.resource,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -7064,6 +7203,7 @@ export namespace UnionDiscriminantsClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         UnionDiscriminantsClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -7098,6 +7238,7 @@ export namespace UnionDiscriminantsClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: UnionDiscriminantsClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7105,258 +7246,369 @@ export namespace UnionDiscriminantsClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }OptionalClassOrClassOrStringProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties
-            .optionalClassOrClassOrStringProperty.identifier,
-        subject: subject,
-      },
-      ...[
-        ...ClassUnionMember1.$sparqlConstructTriples({
-          ignoreRdfType: undefined,
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "unionDiscriminantsClass")
-            }OptionalClassOrClassOrStringProperty`,
-          ),
-          variablePrefix: `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }OptionalClassOrClassOrStringProperty`,
-        }),
-        ...ClassUnionMember2.$sparqlConstructTriples({
-          ignoreRdfType: undefined,
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "unionDiscriminantsClass")
-            }OptionalClassOrClassOrStringProperty`,
-          ),
-          variablePrefix: `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }OptionalClassOrClassOrStringProperty`,
-        }),
-      ],
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }OptionalIriOrLiteralProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties
-            .optionalIriOrLiteralProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }OptionalIriOrStringProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }RequiredClassOrClassOrStringProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties
-            .requiredClassOrClassOrStringProperty.identifier,
-        subject: subject,
-      },
-      ...[
-        ...ClassUnionMember1.$sparqlConstructTriples({
-          ignoreRdfType: undefined,
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "unionDiscriminantsClass")
-            }RequiredClassOrClassOrStringProperty`,
-          ),
-          variablePrefix: `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }RequiredClassOrClassOrStringProperty`,
-        }),
-        ...ClassUnionMember2.$sparqlConstructTriples({
-          ignoreRdfType: undefined,
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "unionDiscriminantsClass")
-            }RequiredClassOrClassOrStringProperty`,
-          ),
-          variablePrefix: `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }RequiredClassOrClassOrStringProperty`,
-        }),
-      ],
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }RequiredIriOrLiteralProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties
-            .requiredIriOrLiteralProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }RequiredIriOrStringProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }SetClassOrClassOrStringProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties
-            .setClassOrClassOrStringProperty.identifier,
-        subject: subject,
-      },
-      ...[
-        ...ClassUnionMember1.$sparqlConstructTriples({
-          ignoreRdfType: undefined,
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "unionDiscriminantsClass")
-            }SetClassOrClassOrStringProperty`,
-          ),
-          variablePrefix: `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }SetClassOrClassOrStringProperty`,
-        }),
-        ...ClassUnionMember2.$sparqlConstructTriples({
-          ignoreRdfType: undefined,
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "unionDiscriminantsClass")
-            }SetClassOrClassOrStringProperty`,
-          ),
-          variablePrefix: `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }SetClassOrClassOrStringProperty`,
-        }),
-      ],
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }SetIriOrLiteralProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "unionDiscriminantsClass")
-          }SetIriOrStringProperty`,
-        ),
-        predicate:
-          UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalClassOrClassOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "optionalClassOrClassOrStringProperty",
+        propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ClassUnionMember1.$sparqlConstructTriples({
+              filter: filter?.on?.["0-ClassUnionMember1"],
+              schema: schema.members["0-ClassUnionMember1"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ClassUnionMember2.$sparqlConstructTriples({
+              filter: filter?.on?.["1-ClassUnionMember2"],
+              schema: schema.members["1-ClassUnionMember2"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["2-string"],
+              schema: schema.members["2-string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalIriOrLiteralProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "optionalIriOrLiteralProperty",
+        propertySchema: $schema.properties.optionalIriOrLiteralProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["NamedNode"],
+              schema: schema.members["NamedNode"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["Literal"],
+              schema: schema.members["Literal"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalIriOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "optionalIriOrStringProperty",
+        propertySchema: $schema.properties.optionalIriOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["object"],
+              schema: schema.members["object"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["string"],
+              schema: schema.members["string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredClassOrClassOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "requiredClassOrClassOrStringProperty",
+        propertySchema: $schema.properties.requiredClassOrClassOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ClassUnionMember1.$sparqlConstructTriples({
+              filter: filter?.on?.["0-ClassUnionMember1"],
+              schema: schema.members["0-ClassUnionMember1"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ClassUnionMember2.$sparqlConstructTriples({
+              filter: filter?.on?.["1-ClassUnionMember2"],
+              schema: schema.members["1-ClassUnionMember2"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["2-string"],
+              schema: schema.members["2-string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredIriOrLiteralProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "requiredIriOrLiteralProperty",
+        propertySchema: $schema.properties.requiredIriOrLiteralProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["NamedNode"],
+              schema: schema.members["NamedNode"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["Literal"],
+              schema: schema.members["Literal"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredIriOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "requiredIriOrStringProperty",
+        propertySchema: $schema.properties.requiredIriOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["object"],
+              schema: schema.members["object"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["string"],
+              schema: schema.members["string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.setClassOrClassOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "setClassOrClassOrStringProperty",
+        propertySchema: $schema.properties.setClassOrClassOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ClassUnionMember1.$sparqlConstructTriples({
+              filter: filter?.on?.["0-ClassUnionMember1"],
+              schema: schema.members["0-ClassUnionMember1"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ClassUnionMember2.$sparqlConstructTriples({
+              filter: filter?.on?.["1-ClassUnionMember2"],
+              schema: schema.members["1-ClassUnionMember2"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["2-string"],
+              schema: schema.members["2-string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.setIriOrLiteralProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "setIriOrLiteralProperty",
+        propertySchema: $schema.properties.setIriOrLiteralProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["NamedNode"],
+              schema: schema.members["NamedNode"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["Literal"],
+              schema: schema.members["Literal"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.setIriOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "setIriOrStringProperty",
+        propertySchema: $schema.properties.setIriOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["object"],
+              schema: schema.members["object"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["string"],
+              schema: schema.members["string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
     return triples;
   }
 
@@ -9167,8 +9419,8 @@ export namespace TermPropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.blankNodeTermProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.blankNodeTermProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -9188,8 +9440,8 @@ export namespace TermPropertiesClass {
         }).chain((blankNodeTermProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.booleanTermProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.booleanTermProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -9209,8 +9461,8 @@ export namespace TermPropertiesClass {
           }).chain((booleanTermProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.dateTermProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.dateTermProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) => values.chainMap((value) => value.toDate()))
@@ -9228,8 +9480,8 @@ export namespace TermPropertiesClass {
             }).chain((dateTermProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.dateTimeTermProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.dateTimeTermProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -9249,8 +9501,8 @@ export namespace TermPropertiesClass {
               }).chain((dateTimeTermProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
-                  propertySchema: $schema.properties.iriTermProperty,
                   resource: $parameters.resource,
+                  propertySchema: $schema.properties.iriTermProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -9270,8 +9522,8 @@ export namespace TermPropertiesClass {
                 }).chain((iriTermProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
-                    propertySchema: $schema.properties.literalTermProperty,
                     resource: $parameters.resource,
+                    propertySchema: $schema.properties.literalTermProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
@@ -9301,8 +9553,8 @@ export namespace TermPropertiesClass {
                   }).chain((literalTermProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
-                      propertySchema: $schema.properties.numberTermProperty,
                       resource: $parameters.resource,
+                      propertySchema: $schema.properties.numberTermProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -9322,8 +9574,8 @@ export namespace TermPropertiesClass {
                     }).chain((numberTermProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
-                        propertySchema: $schema.properties.stringTermProperty,
                         resource: $parameters.resource,
+                        propertySchema: $schema.properties.stringTermProperty,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -9354,8 +9606,8 @@ export namespace TermPropertiesClass {
                       }).chain((stringTermProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
-                          propertySchema: $schema.properties.termProperty,
                           resource: $parameters.resource,
+                          propertySchema: $schema.properties.termProperty,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -9526,7 +9778,11 @@ export namespace TermPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        TermPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        TermPropertiesClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -9558,6 +9814,7 @@ export namespace TermPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: TermPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9600,143 +9857,141 @@ export namespace TermPropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }BlankNodeTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.blankNodeTermProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }BooleanTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.booleanTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }DateTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.dateTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }DateTimeTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.dateTimeTermProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }IriTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.iriTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }LiteralTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }NumberTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }StringTermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.stringTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "termPropertiesClass")
-          }TermProperty`,
-        ),
-        predicate:
-          TermPropertiesClass.$schema.properties.termProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.blankNodeTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "blankNodeTermProperty",
+        propertySchema: $schema.properties.blankNodeTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.booleanTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "booleanTermProperty",
+        propertySchema: $schema.properties.booleanTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateTermProperty",
+        propertySchema: $schema.properties.dateTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateTimeTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateTimeTermProperty",
+        propertySchema: $schema.properties.dateTimeTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.iriTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "iriTermProperty",
+        propertySchema: $schema.properties.iriTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.literalTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "literalTermProperty",
+        propertySchema: $schema.properties.literalTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.numberTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "numberTermProperty",
+        propertySchema: $schema.properties.numberTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.stringTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "stringTermProperty",
+        propertySchema: $schema.properties.stringTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.termProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "termProperty",
+        propertySchema: $schema.properties.termProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "termPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -10524,8 +10779,8 @@ export namespace Sha256IriIdentifierClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.sha256IriProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.sha256IriProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -10592,6 +10847,7 @@ export namespace Sha256IriIdentifierClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         Sha256IriIdentifierClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -10626,6 +10882,7 @@ export namespace Sha256IriIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: Sha256IriIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10633,22 +10890,21 @@ export namespace Sha256IriIdentifierClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "sha256IriIdentifierClass")
-          }Sha256IriProperty`,
-        ),
-        predicate:
-          Sha256IriIdentifierClass.$schema.properties.sha256IriProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.sha256IriProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "sha256IriProperty",
+        propertySchema: $schema.properties.sha256IriProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "sha256IriIdentifierClass"),
+      }),
+    );
     return triples;
   }
 
@@ -11078,8 +11334,8 @@ export namespace RecursiveClassUnionMember2 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.recursiveClassUnionMember2Property,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.recursiveClassUnionMember2Property,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -11161,6 +11417,7 @@ export namespace RecursiveClassUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         RecursiveClassUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -11195,6 +11452,7 @@ export namespace RecursiveClassUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: RecursiveClassUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11677,8 +11935,8 @@ export namespace RecursiveClassUnionMember1 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.recursiveClassUnionMember1Property,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.recursiveClassUnionMember1Property,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -11760,6 +12018,7 @@ export namespace RecursiveClassUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         RecursiveClassUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -11794,6 +12053,7 @@ export namespace RecursiveClassUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: RecursiveClassUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12253,8 +12513,8 @@ export namespace PropertyVisibilitiesClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.privateProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.privateProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -12271,8 +12531,8 @@ export namespace PropertyVisibilitiesClass {
       }).chain((privateProperty) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.protectedProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.protectedProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -12289,8 +12549,8 @@ export namespace PropertyVisibilitiesClass {
         }).chain((protectedProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.publicProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.publicProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -12372,6 +12632,7 @@ export namespace PropertyVisibilitiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PropertyVisibilitiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -12406,6 +12667,7 @@ export namespace PropertyVisibilitiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PropertyVisibilitiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12413,54 +12675,51 @@ export namespace PropertyVisibilitiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyVisibilitiesClass")
-          }PrivateProperty`,
-        ),
-        predicate:
-          PropertyVisibilitiesClass.$schema.properties.privateProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyVisibilitiesClass")
-          }ProtectedProperty`,
-        ),
-        predicate:
-          PropertyVisibilitiesClass.$schema.properties.protectedProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyVisibilitiesClass")
-          }PublicProperty`,
-        ),
-        predicate:
-          PropertyVisibilitiesClass.$schema.properties.publicProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: undefined,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "privateProperty",
+        propertySchema: $schema.properties.privateProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyVisibilitiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: undefined,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "protectedProperty",
+        propertySchema: $schema.properties.protectedProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyVisibilitiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.publicProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "publicProperty",
+        propertySchema: $schema.properties.publicProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyVisibilitiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -13094,8 +13353,8 @@ export namespace PropertyCardinalitiesClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.emptyStringSetProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.emptyStringSetProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -13122,8 +13381,8 @@ export namespace PropertyCardinalitiesClass {
       }).chain((emptyStringSetProperty) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.nonEmptyStringSetProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.nonEmptyStringSetProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -13156,8 +13415,8 @@ export namespace PropertyCardinalitiesClass {
         }).chain((nonEmptyStringSetProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.optionalStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.optionalStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -13185,8 +13444,8 @@ export namespace PropertyCardinalitiesClass {
           }).chain((optionalStringProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.requiredStringProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.requiredStringProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -13291,6 +13550,7 @@ export namespace PropertyCardinalitiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PropertyCardinalitiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -13325,6 +13585,7 @@ export namespace PropertyCardinalitiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PropertyCardinalitiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13333,70 +13594,66 @@ export namespace PropertyCardinalitiesClass {
       parameters?.subject ??
       dataFactory.variable!("propertyCardinalitiesClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyCardinalitiesClass")
-          }EmptyStringSetProperty`,
-        ),
-        predicate:
-          PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyCardinalitiesClass")
-          }NonEmptyStringSetProperty`,
-        ),
-        predicate:
-          PropertyCardinalitiesClass.$schema.properties
-            .nonEmptyStringSetProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyCardinalitiesClass")
-          }OptionalStringProperty`,
-        ),
-        predicate:
-          PropertyCardinalitiesClass.$schema.properties.optionalStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "propertyCardinalitiesClass")
-          }RequiredStringProperty`,
-        ),
-        predicate:
-          PropertyCardinalitiesClass.$schema.properties.requiredStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.emptyStringSetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "emptyStringSetProperty",
+        propertySchema: $schema.properties.emptyStringSetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyCardinalitiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nonEmptyStringSetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "nonEmptyStringSetProperty",
+        propertySchema: $schema.properties.nonEmptyStringSetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyCardinalitiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "optionalStringProperty",
+        propertySchema: $schema.properties.optionalStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyCardinalitiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "requiredStringProperty",
+        propertySchema: $schema.properties.requiredStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "propertyCardinalitiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -13908,8 +14165,8 @@ export namespace PartialInterfaceUnionMember2 {
         ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -14016,6 +14273,7 @@ export namespace PartialInterfaceUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PartialInterfaceUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -14050,6 +14308,7 @@ export namespace PartialInterfaceUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialInterfaceUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14093,22 +14352,21 @@ export namespace PartialInterfaceUnionMember2 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "partialInterfaceUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          PartialInterfaceUnionMember2.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "partialInterfaceUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -14537,8 +14795,8 @@ export namespace PartialInterfaceUnionMember1 {
         ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -14645,6 +14903,7 @@ export namespace PartialInterfaceUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PartialInterfaceUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -14679,6 +14938,7 @@ export namespace PartialInterfaceUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialInterfaceUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14722,22 +14982,21 @@ export namespace PartialInterfaceUnionMember1 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "partialInterfaceUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          PartialInterfaceUnionMember1.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "partialInterfaceUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -15178,8 +15437,8 @@ export namespace PartialClassUnionMember2 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -15246,6 +15505,7 @@ export namespace PartialClassUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PartialClassUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -15280,6 +15540,7 @@ export namespace PartialClassUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialClassUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15322,22 +15583,21 @@ export namespace PartialClassUnionMember2 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "partialClassUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          PartialClassUnionMember2.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "partialClassUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -15777,8 +16037,8 @@ export namespace PartialClassUnionMember1 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -15845,6 +16105,7 @@ export namespace PartialClassUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PartialClassUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -15879,6 +16140,7 @@ export namespace PartialClassUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialClassUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15921,22 +16183,21 @@ export namespace PartialClassUnionMember1 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "partialClassUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          PartialClassUnionMember1.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "partialClassUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -16414,8 +16675,8 @@ export namespace OrderedPropertiesClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.orderedPropertyC,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.orderedPropertyC,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -16432,8 +16693,8 @@ export namespace OrderedPropertiesClass {
       }).chain((orderedPropertyC) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.orderedPropertyB,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.orderedPropertyB,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -16450,8 +16711,8 @@ export namespace OrderedPropertiesClass {
         }).chain((orderedPropertyB) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.orderedPropertyA,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.orderedPropertyA,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -16537,6 +16798,7 @@ export namespace OrderedPropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         OrderedPropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -16571,6 +16833,7 @@ export namespace OrderedPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: OrderedPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16578,51 +16841,51 @@ export namespace OrderedPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("orderedPropertiesClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "orderedPropertiesClass")
-          }OrderedPropertyC`,
-        ),
-        predicate:
-          OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "orderedPropertiesClass")
-          }OrderedPropertyB`,
-        ),
-        predicate:
-          OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "orderedPropertiesClass")
-          }OrderedPropertyA`,
-        ),
-        predicate:
-          OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.orderedPropertyC,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "orderedPropertyC",
+        propertySchema: $schema.properties.orderedPropertyC,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "orderedPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.orderedPropertyB,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "orderedPropertyB",
+        propertySchema: $schema.properties.orderedPropertyB,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "orderedPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.orderedPropertyA,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "orderedPropertyA",
+        propertySchema: $schema.properties.orderedPropertyA,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "orderedPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -18108,8 +18371,8 @@ export namespace NumericPropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.byteNumericProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.byteNumericProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) => values.chainMap((value) => value.toNumber()))
@@ -18127,8 +18390,8 @@ export namespace NumericPropertiesClass {
         }).chain((byteNumericProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.decimalNumericProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.decimalNumericProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -18160,8 +18423,8 @@ export namespace NumericPropertiesClass {
           }).chain((decimalNumericProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.doubleNumericProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.doubleNumericProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -18181,8 +18444,8 @@ export namespace NumericPropertiesClass {
             }).chain((doubleNumericProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.floatNumericProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.floatNumericProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -18202,8 +18465,8 @@ export namespace NumericPropertiesClass {
               }).chain((floatNumericProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
-                  propertySchema: $schema.properties.integerNumericProperty,
                   resource: $parameters.resource,
+                  propertySchema: $schema.properties.integerNumericProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -18223,8 +18486,8 @@ export namespace NumericPropertiesClass {
                 }).chain((integerNumericProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
-                    propertySchema: $schema.properties.intNumericProperty,
                     resource: $parameters.resource,
+                    propertySchema: $schema.properties.intNumericProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
@@ -18244,8 +18507,8 @@ export namespace NumericPropertiesClass {
                   }).chain((intNumericProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
-                      propertySchema: $schema.properties.longNumericProperty,
                       resource: $parameters.resource,
+                      propertySchema: $schema.properties.longNumericProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -18265,9 +18528,9 @@ export namespace NumericPropertiesClass {
                     }).chain((longNumericProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
+                        resource: $parameters.resource,
                         propertySchema:
                           $schema.properties.negativeIntegerNumericProperty,
-                        resource: $parameters.resource,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -18288,10 +18551,10 @@ export namespace NumericPropertiesClass {
                       }).chain((negativeIntegerNumericProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
+                          resource: $parameters.resource,
                           propertySchema:
                             $schema.properties
                               .nonNegativeIntegerNumericProperty,
-                          resource: $parameters.resource,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -18313,10 +18576,10 @@ export namespace NumericPropertiesClass {
                         }).chain((nonNegativeIntegerNumericProperty) =>
                           $shaclPropertyFromRdf({
                             graph: $parameters.graph,
+                            resource: $parameters.resource,
                             propertySchema:
                               $schema.properties
                                 .nonPositiveIntegerNumericProperty,
-                            resource: $parameters.resource,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
@@ -18338,10 +18601,10 @@ export namespace NumericPropertiesClass {
                           }).chain((nonPositiveIntegerNumericProperty) =>
                             $shaclPropertyFromRdf({
                               graph: $parameters.graph,
+                              resource: $parameters.resource,
                               propertySchema:
                                 $schema.properties
                                   .positiveIntegerNumericProperty,
-                              resource: $parameters.resource,
                               typeFromRdf: (resourceValues) =>
                                 resourceValues
                                   .chain((values) =>
@@ -18367,9 +18630,9 @@ export namespace NumericPropertiesClass {
                             }).chain((positiveIntegerNumericProperty) =>
                               $shaclPropertyFromRdf({
                                 graph: $parameters.graph,
+                                resource: $parameters.resource,
                                 propertySchema:
                                   $schema.properties.shortNumericProperty,
-                                resource: $parameters.resource,
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
                                     .chain((values) =>
@@ -18394,10 +18657,10 @@ export namespace NumericPropertiesClass {
                               }).chain((shortNumericProperty) =>
                                 $shaclPropertyFromRdf({
                                   graph: $parameters.graph,
+                                  resource: $parameters.resource,
                                   propertySchema:
                                     $schema.properties
                                       .unsignedByteNumericProperty,
-                                  resource: $parameters.resource,
                                   typeFromRdf: (resourceValues) =>
                                     resourceValues
                                       .chain((values) =>
@@ -18426,10 +18689,10 @@ export namespace NumericPropertiesClass {
                                 }).chain((unsignedByteNumericProperty) =>
                                   $shaclPropertyFromRdf({
                                     graph: $parameters.graph,
+                                    resource: $parameters.resource,
                                     propertySchema:
                                       $schema.properties
                                         .unsignedIntNumericProperty,
-                                    resource: $parameters.resource,
                                     typeFromRdf: (resourceValues) =>
                                       resourceValues
                                         .chain((values) =>
@@ -18458,10 +18721,10 @@ export namespace NumericPropertiesClass {
                                   }).chain((unsignedIntNumericProperty) =>
                                     $shaclPropertyFromRdf({
                                       graph: $parameters.graph,
+                                      resource: $parameters.resource,
                                       propertySchema:
                                         $schema.properties
                                           .unsignedLongNumericProperty,
-                                      resource: $parameters.resource,
                                       typeFromRdf: (resourceValues) =>
                                         resourceValues
                                           .chain((values) =>
@@ -18490,10 +18753,10 @@ export namespace NumericPropertiesClass {
                                     }).chain((unsignedLongNumericProperty) =>
                                       $shaclPropertyFromRdf({
                                         graph: $parameters.graph,
+                                        resource: $parameters.resource,
                                         propertySchema:
                                           $schema.properties
                                             .unsignedShortNumericProperty,
-                                        resource: $parameters.resource,
                                         typeFromRdf: (resourceValues) =>
                                           resourceValues
                                             .chain((values) =>
@@ -18757,6 +19020,7 @@ export namespace NumericPropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         NumericPropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -18791,6 +19055,7 @@ export namespace NumericPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: NumericPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -18833,262 +19098,246 @@ export namespace NumericPropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }ByteNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.byteNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }DecimalNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.decimalNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }DoubleNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.doubleNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }FloatNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.floatNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }IntegerNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.integerNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }IntNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.intNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }LongNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.longNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }NegativeIntegerNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties
-            .negativeIntegerNumericProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }NonNegativeIntegerNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties
-            .nonNegativeIntegerNumericProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }NonPositiveIntegerNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties
-            .nonPositiveIntegerNumericProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }PositiveIntegerNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties
-            .positiveIntegerNumericProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }ShortNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.shortNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }UnsignedByteNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.unsignedByteNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }UnsignedIntNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.unsignedIntNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }UnsignedLongNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.unsignedLongNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "numericPropertiesClass")
-          }UnsignedShortNumericProperty`,
-        ),
-        predicate:
-          NumericPropertiesClass.$schema.properties.unsignedShortNumericProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.byteNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "byteNumericProperty",
+        propertySchema: $schema.properties.byteNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.decimalNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "decimalNumericProperty",
+        propertySchema: $schema.properties.decimalNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.doubleNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "doubleNumericProperty",
+        propertySchema: $schema.properties.doubleNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.floatNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "floatNumericProperty",
+        propertySchema: $schema.properties.floatNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.integerNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "integerNumericProperty",
+        propertySchema: $schema.properties.integerNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.intNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "intNumericProperty",
+        propertySchema: $schema.properties.intNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.longNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "longNumericProperty",
+        propertySchema: $schema.properties.longNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.negativeIntegerNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "negativeIntegerNumericProperty",
+        propertySchema: $schema.properties.negativeIntegerNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nonNegativeIntegerNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "nonNegativeIntegerNumericProperty",
+        propertySchema: $schema.properties.nonNegativeIntegerNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nonPositiveIntegerNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "nonPositiveIntegerNumericProperty",
+        propertySchema: $schema.properties.nonPositiveIntegerNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.positiveIntegerNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "positiveIntegerNumericProperty",
+        propertySchema: $schema.properties.positiveIntegerNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.shortNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "shortNumericProperty",
+        propertySchema: $schema.properties.shortNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.unsignedByteNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "unsignedByteNumericProperty",
+        propertySchema: $schema.properties.unsignedByteNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.unsignedIntNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "unsignedIntNumericProperty",
+        propertySchema: $schema.properties.unsignedIntNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.unsignedLongNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "unsignedLongNumericProperty",
+        propertySchema: $schema.properties.unsignedLongNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.unsignedShortNumericProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "unsignedShortNumericProperty",
+        propertySchema: $schema.properties.unsignedShortNumericProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "numericPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -20151,8 +20400,8 @@ export namespace NonClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.nonClassProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.nonClassProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -20213,7 +20462,7 @@ export namespace NonClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NonClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        NonClass.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -20245,24 +20494,26 @@ export namespace NonClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: NonClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "nonClass")
-          }NonClassProperty`,
-        ),
-        predicate: NonClass.$schema.properties.nonClassProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nonClassProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "nonClassProperty",
+        propertySchema: $schema.properties.nonClassProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable" ? subject.value : "nonClass"),
+      }),
+    );
     return triples;
   }
 
@@ -20603,8 +20854,8 @@ export namespace NoRdfTypeClassUnionMember2 {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -20670,6 +20921,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -20704,6 +20956,7 @@ export namespace NoRdfTypeClassUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: NoRdfTypeClassUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -20712,22 +20965,21 @@ export namespace NoRdfTypeClassUnionMember2 {
       parameters?.subject ??
       dataFactory.variable!("noRdfTypeClassUnionMember2");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "noRdfTypeClassUnionMember2")
-          }NoRdfTypeClassUnionMember2Property`,
-        ),
-        predicate:
-          NoRdfTypeClassUnionMember2.$schema.properties
-            .noRdfTypeClassUnionMember2Property.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.noRdfTypeClassUnionMember2Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "noRdfTypeClassUnionMember2Property",
+        propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "noRdfTypeClassUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -21079,8 +21331,8 @@ export namespace NoRdfTypeClassUnionMember1 {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -21146,6 +21398,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -21180,6 +21433,7 @@ export namespace NoRdfTypeClassUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: NoRdfTypeClassUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -21188,22 +21442,21 @@ export namespace NoRdfTypeClassUnionMember1 {
       parameters?.subject ??
       dataFactory.variable!("noRdfTypeClassUnionMember1");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "noRdfTypeClassUnionMember1")
-          }NoRdfTypeClassUnionMember1Property`,
-        ),
-        predicate:
-          NoRdfTypeClassUnionMember1.$schema.properties
-            .noRdfTypeClassUnionMember1Property.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.noRdfTypeClassUnionMember1Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "noRdfTypeClassUnionMember1Property",
+        propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "noRdfTypeClassUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -21829,8 +22082,8 @@ export namespace MutablePropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.mutableListProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.mutableListProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -21881,8 +22134,8 @@ export namespace MutablePropertiesClass {
         }).chain((mutableListProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.mutableSetProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.mutableSetProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -21909,8 +22162,8 @@ export namespace MutablePropertiesClass {
           }).chain((mutableSetProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.mutableStringProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.mutableStringProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -22024,6 +22277,7 @@ export namespace MutablePropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         MutablePropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -22058,6 +22312,7 @@ export namespace MutablePropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: MutablePropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -22100,132 +22355,54 @@ export namespace MutablePropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "mutablePropertiesClass")
-          }MutableListProperty`,
-        ),
-        predicate:
-          MutablePropertiesClass.$schema.properties.mutableListProperty
-            .identifier,
-        subject: subject,
-      },
-      ...[
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`}Item0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`}Rest0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`}ItemN`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "mutablePropertiesClass")
-            }MutableListProperty`}RestNBasic`,
-          ),
-        },
-      ],
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "mutablePropertiesClass")
-          }MutableSetProperty`,
-        ),
-        predicate:
-          MutablePropertiesClass.$schema.properties.mutableSetProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "mutablePropertiesClass")
-          }MutableStringProperty`,
-        ),
-        predicate:
-          MutablePropertiesClass.$schema.properties.mutableStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.mutableListProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "mutableListProperty",
+        propertySchema: $schema.properties.mutableListProperty,
+        typeSparqlConstructTriples: $listSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "mutablePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.mutableSetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "mutableSetProperty",
+        propertySchema: $schema.properties.mutableSetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "mutablePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.mutableStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "mutableStringProperty",
+        propertySchema: $schema.properties.mutableStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "mutablePropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -23077,8 +23254,8 @@ export namespace ListPropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.iriListProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.iriListProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -23118,8 +23295,8 @@ export namespace ListPropertiesClass {
         }).chain((iriListProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.objectListProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.objectListProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -23168,8 +23345,8 @@ export namespace ListPropertiesClass {
           }).chain((objectListProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.stringListProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.stringListProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -23300,7 +23477,11 @@ export namespace ListPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ListPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        ListPropertiesClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -23332,6 +23513,7 @@ export namespace ListPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ListPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -23374,319 +23556,60 @@ export namespace ListPropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "listPropertiesClass")
-          }IriListProperty`,
-        ),
-        predicate:
-          ListPropertiesClass.$schema.properties.iriListProperty.identifier,
-        subject: subject,
-      },
-      ...[
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`}Item0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`}Rest0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`}ItemN`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }IriListProperty`}RestNBasic`,
-          ),
-        },
-      ],
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "listPropertiesClass")
-          }ObjectListProperty`,
-        ),
-        predicate:
-          ListPropertiesClass.$schema.properties.objectListProperty.identifier,
-        subject: subject,
-      },
-      ...[
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}Item0`,
-          ),
-        },
-        ...NonClass.$sparqlConstructTriples({
-          ignoreRdfType: true,
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}Item0`,
-          ),
-          variablePrefix: `${`${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "listPropertiesClass")
-          }ObjectListProperty`}Item0`,
-        }),
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}Rest0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}ItemN`,
-          ),
-        },
-        ...NonClass.$sparqlConstructTriples({
-          ignoreRdfType: true,
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}ItemN`,
-          ),
-          variablePrefix: `${`${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "listPropertiesClass")
-          }ObjectListProperty`}ItemN`,
-        }),
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }ObjectListProperty`}RestNBasic`,
-          ),
-        },
-      ],
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "listPropertiesClass")
-          }StringListProperty`,
-        ),
-        predicate:
-          ListPropertiesClass.$schema.properties.stringListProperty.identifier,
-        subject: subject,
-      },
-      ...[
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`}Item0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`}Rest0`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.first,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`}ItemN`,
-          ),
-        },
-        {
-          subject: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`}RestN`,
-          ),
-          predicate: $RdfVocabularies.rdf.rest,
-          object: dataFactory.variable!(
-            `${`${
-              parameters?.variablePrefix ??
-              (subject.termType === "Variable"
-                ? subject.value
-                : "listPropertiesClass")
-            }StringListProperty`}RestNBasic`,
-          ),
-        },
-      ],
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.iriListProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "iriListProperty",
+        propertySchema: $schema.properties.iriListProperty,
+        typeSparqlConstructTriples: $listSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "listPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.objectListProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "objectListProperty",
+        propertySchema: $schema.properties.objectListProperty,
+        typeSparqlConstructTriples: $listSparqlConstructTriples<
+          NonClass.$Filter,
+          typeof NonClass.$schema
+        >(NonClass.$sparqlConstructTriples),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "listPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.stringListProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "stringListProperty",
+        propertySchema: $schema.properties.stringListProperty,
+        typeSparqlConstructTriples: $listSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "listPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -24196,8 +24119,8 @@ export namespace PartialInterface {
         ($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -24287,7 +24210,11 @@ export namespace PartialInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialInterface.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        PartialInterface.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -24319,6 +24246,7 @@ export namespace PartialInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -24326,22 +24254,21 @@ export namespace PartialInterface {
     const subject =
       parameters?.subject ?? dataFactory.variable!("partialInterface");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "partialInterface")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          PartialInterface.$schema.properties.lazilyResolvedStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "partialInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -26184,9 +26111,9 @@ export namespace LazyPropertiesInterface {
       ).chain(($type) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
+          resource: $parameters.resource,
           propertySchema:
             $schema.properties.optionalLazyToResolvedInterfaceProperty,
-          resource: $parameters.resource,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -26231,9 +26158,9 @@ export namespace LazyPropertiesInterface {
         }).chain((optionalLazyToResolvedInterfaceProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
+            resource: $parameters.resource,
             propertySchema:
               $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
-            resource: $parameters.resource,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -26279,10 +26206,10 @@ export namespace LazyPropertiesInterface {
           }).chain((optionalLazyToResolvedInterfaceUnionProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
+              resource: $parameters.resource,
               propertySchema:
                 $schema.properties
                   .optionalLazyToResolvedIriIdentifierInterfaceProperty,
-              resource: $parameters.resource,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -26328,10 +26255,10 @@ export namespace LazyPropertiesInterface {
             }).chain((optionalLazyToResolvedIriIdentifierInterfaceProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
+                resource: $parameters.resource,
                 propertySchema:
                   $schema.properties
                     .optionalPartialInterfaceToResolvedInterfaceProperty,
-                resource: $parameters.resource,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -26377,10 +26304,10 @@ export namespace LazyPropertiesInterface {
               }).chain((optionalPartialInterfaceToResolvedInterfaceProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
+                  resource: $parameters.resource,
                   propertySchema:
                     $schema.properties
                       .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-                  resource: $parameters.resource,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -26428,10 +26355,10 @@ export namespace LazyPropertiesInterface {
                   (optionalPartialInterfaceToResolvedInterfaceUnionProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
+                      resource: $parameters.resource,
                       propertySchema:
                         $schema.properties
                           .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-                      resource: $parameters.resource,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -26483,10 +26410,10 @@ export namespace LazyPropertiesInterface {
                       ) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
+                          resource: $parameters.resource,
                           propertySchema:
                             $schema.properties
                               .requiredLazyToResolvedInterfaceProperty,
-                          resource: $parameters.resource,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -26521,10 +26448,10 @@ export namespace LazyPropertiesInterface {
                         }).chain((requiredLazyToResolvedInterfaceProperty) =>
                           $shaclPropertyFromRdf({
                             graph: $parameters.graph,
+                            resource: $parameters.resource,
                             propertySchema:
                               $schema.properties
                                 .requiredPartialInterfaceToResolvedInterfaceProperty,
-                            resource: $parameters.resource,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
@@ -26562,10 +26489,10 @@ export namespace LazyPropertiesInterface {
                             ) =>
                               $shaclPropertyFromRdf({
                                 graph: $parameters.graph,
+                                resource: $parameters.resource,
                                 propertySchema:
                                   $schema.properties
                                     .setLazyToResolvedInterfaceProperty,
-                                resource: $parameters.resource,
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
                                     .chain((values) =>
@@ -26614,10 +26541,10 @@ export namespace LazyPropertiesInterface {
                               }).chain((setLazyToResolvedInterfaceProperty) =>
                                 $shaclPropertyFromRdf({
                                   graph: $parameters.graph,
+                                  resource: $parameters.resource,
                                   propertySchema:
                                     $schema.properties
                                       .setPartialInterfaceToResolvedInterfaceProperty,
-                                  resource: $parameters.resource,
                                   typeFromRdf: (resourceValues) =>
                                     resourceValues
                                       .chain((values) =>
@@ -27000,6 +26927,7 @@ export namespace LazyPropertiesInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazyPropertiesInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -27034,6 +26962,7 @@ export namespace LazyPropertiesInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazyPropertiesInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -27041,337 +26970,222 @@ export namespace LazyPropertiesInterface {
     const subject =
       parameters?.subject ?? dataFactory.variable!("lazyPropertiesInterface");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .optionalLazyToResolvedInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalLazyToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }OptionalLazyToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedInterfaceUnionProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .optionalLazyToResolvedInterfaceUnionProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedInterfaceUnionProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalLazyToResolvedInterfaceUnionProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }OptionalLazyToResolvedInterfaceUnionProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .optionalLazyToResolvedIriIdentifierInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...$NamedDefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter
+            ?.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
+        propertySchema:
+          $schema.properties
+            .optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $NamedDefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .optionalPartialInterfaceToResolvedInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...PartialInterface.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter
+            ?.optionalPartialInterfaceToResolvedInterfaceProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalPartialInterfaceToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialInterfaceToResolvedInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialInterface.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }OptionalPartialInterfaceToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .optionalPartialInterfaceToResolvedInterfaceUnionProperty
-            .identifier,
-        subject: subject,
-      },
-      ...PartialInterface.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter
+            ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialInterface.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
-            .identifier,
-        subject: subject,
-      },
-      ...PartialInterfaceUnion.$sparqlConstructTriples({
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
-            : "lazyPropertiesInterface")
-        }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-      }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }RequiredLazyToResolvedInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .requiredLazyToResolvedInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter
+            ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }RequiredLazyToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialInterfaceUnion.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }RequiredLazyToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }RequiredPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .requiredPartialInterfaceToResolvedInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...PartialInterface.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }RequiredPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "requiredLazyToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties.requiredLazyToResolvedInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }RequiredPartialInterfaceToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }SetLazyToResolvedInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .setLazyToResolvedInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter
+            ?.requiredPartialInterfaceToResolvedInterfaceProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }SetLazyToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "requiredPartialInterfaceToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties
+            .requiredPartialInterfaceToResolvedInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialInterface.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }SetLazyToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }SetPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        predicate:
-          LazyPropertiesInterface.$schema.properties
-            .setPartialInterfaceToResolvedInterfaceProperty.identifier,
-        subject: subject,
-      },
-      ...PartialInterface.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.setLazyToResolvedInterfaceProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesInterface")
-          }SetPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        name: "setLazyToResolvedInterfaceProperty",
+        propertySchema: $schema.properties.setLazyToResolvedInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesInterface")
-        }SetPartialInterfaceToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
-    ]);
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "setPartialInterfaceToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties.setPartialInterfaceToResolvedInterfaceProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialInterface.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazyPropertiesInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -28306,8 +28120,8 @@ export namespace PartialClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.lazilyResolvedStringProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -28372,7 +28186,11 @@ export namespace PartialClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        PartialClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -28404,6 +28222,7 @@ export namespace PartialClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -28411,20 +28230,19 @@ export namespace PartialClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("partialClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "partialClass")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          PartialClass.$schema.properties.lazilyResolvedStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable" ? subject.value : "partialClass"),
+      }),
+    );
     return triples;
   }
 
@@ -30270,8 +30088,8 @@ export namespace LazyPropertiesClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -30316,9 +30134,9 @@ export namespace LazyPropertiesClass {
       }).chain((optionalLazyToResolvedClassProperty) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
+          resource: $parameters.resource,
           propertySchema:
             $schema.properties.optionalLazyToResolvedClassUnionProperty,
-          resource: $parameters.resource,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -30363,10 +30181,10 @@ export namespace LazyPropertiesClass {
         }).chain((optionalLazyToResolvedClassUnionProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
+            resource: $parameters.resource,
             propertySchema:
               $schema.properties
                 .optionalLazyToResolvedIriIdentifierClassProperty,
-            resource: $parameters.resource,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -30412,9 +30230,9 @@ export namespace LazyPropertiesClass {
           }).chain((optionalLazyToResolvedIriIdentifierClassProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
+              resource: $parameters.resource,
               propertySchema:
                 $schema.properties.optionalPartialClassToResolvedClassProperty,
-              resource: $parameters.resource,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -30460,10 +30278,10 @@ export namespace LazyPropertiesClass {
             }).chain((optionalPartialClassToResolvedClassProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
+                resource: $parameters.resource,
                 propertySchema:
                   $schema.properties
                     .optionalPartialClassToResolvedClassUnionProperty,
-                resource: $parameters.resource,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -30509,10 +30327,10 @@ export namespace LazyPropertiesClass {
               }).chain((optionalPartialClassToResolvedClassUnionProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
+                  resource: $parameters.resource,
                   propertySchema:
                     $schema.properties
                       .optionalPartialClassUnionToResolvedClassUnionProperty,
-                  resource: $parameters.resource,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -30562,9 +30380,9 @@ export namespace LazyPropertiesClass {
                   (optionalPartialClassUnionToResolvedClassUnionProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
+                      resource: $parameters.resource,
                       propertySchema:
                         $schema.properties.requiredLazyToResolvedClassProperty,
-                      resource: $parameters.resource,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -30599,10 +30417,10 @@ export namespace LazyPropertiesClass {
                     }).chain((requiredLazyToResolvedClassProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
+                        resource: $parameters.resource,
                         propertySchema:
                           $schema.properties
                             .requiredPartialClassToResolvedClassProperty,
-                        resource: $parameters.resource,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -30637,9 +30455,9 @@ export namespace LazyPropertiesClass {
                       }).chain((requiredPartialClassToResolvedClassProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
+                          resource: $parameters.resource,
                           propertySchema:
                             $schema.properties.setLazyToResolvedClassProperty,
-                          resource: $parameters.resource,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -30685,10 +30503,10 @@ export namespace LazyPropertiesClass {
                         }).chain((setLazyToResolvedClassProperty) =>
                           $shaclPropertyFromRdf({
                             graph: $parameters.graph,
+                            resource: $parameters.resource,
                             propertySchema:
                               $schema.properties
                                 .setPartialClassToResolvedClassProperty,
-                            resource: $parameters.resource,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
@@ -30919,7 +30737,11 @@ export namespace LazyPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazyPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        LazyPropertiesClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -30951,6 +30773,7 @@ export namespace LazyPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazyPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -30958,335 +30781,208 @@ export namespace LazyPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("lazyPropertiesClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .optionalLazyToResolvedClassProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalLazyToResolvedClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalLazyToResolvedClassProperty",
+        propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }OptionalLazyToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedClassUnionProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .optionalLazyToResolvedClassUnionProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedClassUnionProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalLazyToResolvedClassUnionProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedClassUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }OptionalLazyToResolvedClassUnionProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedIriIdentifierClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .optionalLazyToResolvedIriIdentifierClassProperty.identifier,
-        subject: subject,
-      },
-      ...$NamedDefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedIriIdentifierClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalLazyToResolvedIriIdentifierClassProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedIriIdentifierClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $NamedDefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }OptionalLazyToResolvedIriIdentifierClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassToResolvedClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .optionalPartialClassToResolvedClassProperty.identifier,
-        subject: subject,
-      },
-      ...PartialClass.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.optionalPartialClassToResolvedClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalPartialClassToResolvedClassProperty",
+        propertySchema:
+          $schema.properties.optionalPartialClassToResolvedClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialClass.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }OptionalPartialClassToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassToResolvedClassUnionProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .optionalPartialClassToResolvedClassUnionProperty.identifier,
-        subject: subject,
-      },
-      ...PartialClass.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassToResolvedClassUnionProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalPartialClassToResolvedClassUnionProperty",
+        propertySchema:
+          $schema.properties.optionalPartialClassToResolvedClassUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialClass.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }OptionalPartialClassToResolvedClassUnionProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassUnionToResolvedClassUnionProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .optionalPartialClassUnionToResolvedClassUnionProperty.identifier,
-        subject: subject,
-      },
-      ...PartialClassUnion.$sparqlConstructTriples({
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassUnionToResolvedClassUnionProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (subject.termType === "Variable"
-            ? subject.value
-            : "lazyPropertiesClass")
-        }OptionalPartialClassUnionToResolvedClassUnionProperty`,
-      }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }RequiredLazyToResolvedClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .requiredLazyToResolvedClassProperty.identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters?.filter
+            ?.optionalPartialClassUnionToResolvedClassUnionProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }RequiredLazyToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "optionalPartialClassUnionToResolvedClassUnionProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialClassUnionToResolvedClassUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialClassUnion.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }RequiredLazyToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }RequiredPartialClassToResolvedClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .requiredPartialClassToResolvedClassProperty.identifier,
-        subject: subject,
-      },
-      ...PartialClass.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredLazyToResolvedClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }RequiredPartialClassToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "requiredLazyToResolvedClassProperty",
+        propertySchema: $schema.properties.requiredLazyToResolvedClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }RequiredPartialClassToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }SetLazyToResolvedClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty
-            .identifier,
-        subject: subject,
-      },
-      ...$DefaultPartial.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }SetLazyToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "requiredPartialClassToResolvedClassProperty",
+        propertySchema:
+          $schema.properties.requiredPartialClassToResolvedClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialClass.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }SetLazyToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }SetPartialClassToResolvedClassProperty`,
-        ),
-        predicate:
-          LazyPropertiesClass.$schema.properties
-            .setPartialClassToResolvedClassProperty.identifier,
-        subject: subject,
-      },
-      ...PartialClass.$sparqlConstructTriples({
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.setLazyToResolvedClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazyPropertiesClass")
-          }SetPartialClassToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "setLazyToResolvedClassProperty",
+        propertySchema: $schema.properties.setLazyToResolvedClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "lazyPropertiesClass")
-        }SetPartialClassToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
-    ]);
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.setPartialClassToResolvedClassProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "setPartialClassToResolvedClassProperty",
+        propertySchema:
+          $schema.properties.setPartialClassToResolvedClassProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          PartialClass.$sparqlConstructTriples({
+            schema: schema.partial(),
+            ...otherParameters,
+          }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazyPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -32227,8 +31923,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ).chain(($type) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -32323,6 +32019,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedIriIdentifierInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -32357,6 +32054,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedIriIdentifierInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -32365,22 +32063,21 @@ export namespace LazilyResolvedIriIdentifierInterface {
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedIriIdentifierInterface")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedIriIdentifierInterface.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedIriIdentifierInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -32735,8 +32432,8 @@ export namespace LazilyResolvedIriIdentifierClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.lazilyResolvedStringProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -32802,6 +32499,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedIriIdentifierClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -32836,6 +32534,7 @@ export namespace LazilyResolvedIriIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedIriIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -32844,22 +32543,21 @@ export namespace LazilyResolvedIriIdentifierClass {
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedIriIdentifierClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedIriIdentifierClass")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedIriIdentifierClass.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedIriIdentifierClass"),
+      }),
+    );
     return triples;
   }
 
@@ -33241,8 +32939,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -33349,6 +33047,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -33383,6 +33082,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedInterfaceUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -33426,22 +33126,21 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedInterfaceUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedInterfaceUnionMember2.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedInterfaceUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -33875,8 +33574,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -33983,6 +33682,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -34017,6 +33717,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedInterfaceUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -34060,22 +33761,21 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedInterfaceUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedInterfaceUnionMember1.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedInterfaceUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -34521,8 +34221,8 @@ export namespace LazilyResolvedClassUnionMember2 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -34589,6 +34289,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -34623,6 +34324,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedClassUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -34666,22 +34368,21 @@ export namespace LazilyResolvedClassUnionMember2 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedClassUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedClassUnionMember2.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedClassUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -35127,8 +34828,8 @@ export namespace LazilyResolvedClassUnionMember1 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -35195,6 +34896,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -35229,6 +34931,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedClassUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -35272,22 +34975,21 @@ export namespace LazilyResolvedClassUnionMember1 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedClassUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedClassUnionMember1.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedClassUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -35733,8 +35435,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -35841,7 +35543,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTriples(
-          { ignoreRdfType, subject },
+          { filter, ignoreRdfType, subject },
         ),
       ),
       type: "query",
@@ -35876,6 +35578,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -35919,22 +35622,21 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedBlankNodeOrIriIdentifierInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -36389,8 +36091,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -36457,6 +36159,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -36493,6 +36196,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -36536,22 +36240,21 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "lazilyResolvedBlankNodeOrIriIdentifierClass")
-          }LazilyResolvedStringProperty`,
-        ),
-        predicate:
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
-            .lazilyResolvedStringProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "lazilyResolvedBlankNodeOrIriIdentifierClass"),
+      }),
+    );
     return triples;
   }
 
@@ -36998,8 +36701,8 @@ export namespace LanguageInPropertiesClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.languageInLiteralProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.languageInLiteralProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -37107,6 +36810,7 @@ export namespace LanguageInPropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LanguageInPropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -37141,6 +36845,7 @@ export namespace LanguageInPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LanguageInPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -37148,22 +36853,21 @@ export namespace LanguageInPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("languageInPropertiesClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "languageInPropertiesClass")
-          }LanguageInLiteralProperty`,
-        ),
-        predicate:
-          LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.languageInLiteralProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "languageInLiteralProperty",
+        propertySchema: $schema.properties.languageInLiteralProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "languageInPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -37707,8 +37411,8 @@ export namespace JsPrimitiveUnionPropertyClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.jsPrimitiveUnionProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.jsPrimitiveUnionProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -37837,6 +37541,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         JsPrimitiveUnionPropertyClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -37871,6 +37576,7 @@ export namespace JsPrimitiveUnionPropertyClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: JsPrimitiveUnionPropertyClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -37914,22 +37620,51 @@ export namespace JsPrimitiveUnionPropertyClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "jsPrimitiveUnionPropertyClass")
-          }JsPrimitiveUnionProperty`,
-        ),
-        predicate:
-          JsPrimitiveUnionPropertyClass.$schema.properties
-            .jsPrimitiveUnionProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.jsPrimitiveUnionProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "jsPrimitiveUnionProperty",
+        propertySchema: $schema.properties.jsPrimitiveUnionProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["boolean"],
+              schema: schema.members["boolean"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["number"],
+              schema: schema.members["number"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["string"],
+              schema: schema.members["string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "jsPrimitiveUnionPropertyClass"),
+      }),
+    );
     return triples;
   }
 
@@ -38445,6 +38180,7 @@ export namespace IriIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IriIdentifierInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -38479,6 +38215,7 @@ export namespace IriIdentifierInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IriIdentifierInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -38909,7 +38646,11 @@ export namespace IriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IriIdentifierClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        IriIdentifierClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -38941,6 +38682,7 @@ export namespace IriIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IriIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -39296,9 +39038,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
+        resource: $parameters.resource,
         propertySchema:
           $schema.properties.interfaceUnionMemberCommonParentProperty,
-        resource: $parameters.resource,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -39391,6 +39133,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -39425,6 +39168,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: InterfaceUnionMemberCommonParentStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -39433,22 +39177,22 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       parameters?.subject ??
       dataFactory.variable!("interfaceUnionMemberCommonParent");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "interfaceUnionMemberCommonParent")
-          }InterfaceUnionMemberCommonParentProperty`,
-        ),
-        predicate:
-          InterfaceUnionMemberCommonParentStatic.$schema.properties
-            .interfaceUnionMemberCommonParentProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.interfaceUnionMemberCommonParentProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "interfaceUnionMemberCommonParentProperty",
+        propertySchema:
+          $schema.properties.interfaceUnionMemberCommonParentProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "interfaceUnionMemberCommonParent"),
+      }),
+    );
     return triples;
   }
 
@@ -39811,8 +39555,8 @@ export namespace InterfaceUnionMember2 {
           ).chain(($type) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.interfaceUnionMember2Property,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.interfaceUnionMember2Property,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -39914,6 +39658,7 @@ export namespace InterfaceUnionMember2 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         InterfaceUnionMember2.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -39948,6 +39693,7 @@ export namespace InterfaceUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: InterfaceUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -40001,22 +39747,21 @@ export namespace InterfaceUnionMember2 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "interfaceUnionMember2")
-          }InterfaceUnionMember2Property`,
-        ),
-        predicate:
-          InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.interfaceUnionMember2Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "interfaceUnionMember2Property",
+        propertySchema: $schema.properties.interfaceUnionMember2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "interfaceUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -40425,8 +40170,8 @@ export namespace InterfaceUnionMember1 {
           ).chain(($type) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.interfaceUnionMember1Property,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.interfaceUnionMember1Property,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -40528,6 +40273,7 @@ export namespace InterfaceUnionMember1 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         InterfaceUnionMember1.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -40562,6 +40308,7 @@ export namespace InterfaceUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: InterfaceUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -40615,22 +40362,21 @@ export namespace InterfaceUnionMember1 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "interfaceUnionMember1")
-          }InterfaceUnionMember1Property`,
-        ),
-        predicate:
-          InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.interfaceUnionMember1Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "interfaceUnionMember1Property",
+        propertySchema: $schema.properties.interfaceUnionMember1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "interfaceUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -40998,8 +40744,8 @@ export namespace Interface {
       Either.of<Error, "Interface">("Interface" as const).chain(($type) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.interfaceProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.interfaceProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -41085,7 +40831,7 @@ export namespace Interface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Interface.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        Interface.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -41117,24 +40863,26 @@ export namespace Interface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: Interface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject = parameters?.subject ?? dataFactory.variable!("interface");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable" ? subject.value : "interface")
-          }InterfaceProperty`,
-        ),
-        predicate: Interface.$schema.properties.interfaceProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.interfaceProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "interfaceProperty",
+        propertySchema: $schema.properties.interfaceProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable" ? subject.value : "interface"),
+      }),
+    );
     return triples;
   }
 
@@ -41549,8 +41297,8 @@ export namespace IndirectRecursiveHelperClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.indirectRecursiveProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.indirectRecursiveProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -41632,6 +41380,7 @@ export namespace IndirectRecursiveHelperClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IndirectRecursiveHelperClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -41666,6 +41415,7 @@ export namespace IndirectRecursiveHelperClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IndirectRecursiveHelperClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -42147,8 +41897,8 @@ export namespace IndirectRecursiveClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.indirectRecursiveHelperProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.indirectRecursiveHelperProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -42232,6 +41982,7 @@ export namespace IndirectRecursiveClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IndirectRecursiveClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -42266,6 +42017,7 @@ export namespace IndirectRecursiveClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IndirectRecursiveClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -43070,8 +42822,8 @@ export namespace InPropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.inBooleansProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.inBooleansProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -43106,8 +42858,8 @@ export namespace InPropertiesClass {
         }).chain((inBooleansProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.inDateTimesProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.inDateTimesProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -43143,8 +42895,8 @@ export namespace InPropertiesClass {
           }).chain((inDateTimesProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.inDoublesProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.inDoublesProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -43183,8 +42935,8 @@ export namespace InPropertiesClass {
             }).chain((inDoublesProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.inIntegersProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.inIntegersProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -43223,8 +42975,8 @@ export namespace InPropertiesClass {
               }).chain((inIntegersProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
-                  propertySchema: $schema.properties.inIrisProperty,
                   resource: $parameters.resource,
+                  propertySchema: $schema.properties.inIrisProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -43294,8 +43046,8 @@ export namespace InPropertiesClass {
                 }).chain((inIrisProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
-                    propertySchema: $schema.properties.inStringsProperty,
                     resource: $parameters.resource,
+                    propertySchema: $schema.properties.inStringsProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
@@ -43467,7 +43219,11 @@ export namespace InPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        InPropertiesClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -43499,6 +43255,7 @@ export namespace InPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: InPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -43541,96 +43298,96 @@ export namespace InPropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InBooleansProperty`,
-        ),
-        predicate:
-          InPropertiesClass.$schema.properties.inBooleansProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InDateTimesProperty`,
-        ),
-        predicate:
-          InPropertiesClass.$schema.properties.inDateTimesProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InDoublesProperty`,
-        ),
-        predicate:
-          InPropertiesClass.$schema.properties.inDoublesProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InIntegersProperty`,
-        ),
-        predicate:
-          InPropertiesClass.$schema.properties.inIntegersProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InIrisProperty`,
-        ),
-        predicate:
-          InPropertiesClass.$schema.properties.inIrisProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inPropertiesClass")
-          }InStringsProperty`,
-        ),
-        predicate:
-          InPropertiesClass.$schema.properties.inStringsProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inBooleansProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inBooleansProperty",
+        propertySchema: $schema.properties.inBooleansProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inDateTimesProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inDateTimesProperty",
+        propertySchema: $schema.properties.inDateTimesProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inDoublesProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inDoublesProperty",
+        propertySchema: $schema.properties.inDoublesProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inIntegersProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inIntegersProperty",
+        propertySchema: $schema.properties.inIntegersProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inIrisProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inIrisProperty",
+        propertySchema: $schema.properties.inIrisProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inStringsProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inStringsProperty",
+        propertySchema: $schema.properties.inStringsProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -44369,8 +44126,8 @@ export namespace InIdentifierClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.inIdentifierProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.inIdentifierProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -44456,7 +44213,11 @@ export namespace InIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InIdentifierClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        InIdentifierClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -44488,6 +44249,7 @@ export namespace InIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: InIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -44530,21 +44292,21 @@ export namespace InIdentifierClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "inIdentifierClass")
-          }InIdentifierProperty`,
-        ),
-        predicate:
-          InIdentifierClass.$schema.properties.inIdentifierProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inIdentifierProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "inIdentifierProperty",
+        propertySchema: $schema.properties.inIdentifierProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "inIdentifierClass"),
+      }),
+    );
     return triples;
   }
 
@@ -44925,8 +44687,8 @@ export namespace IdentifierOverride1ClassStatic {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.identifierOverrideProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.identifierOverrideProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -44996,6 +44758,7 @@ export namespace IdentifierOverride1ClassStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride1ClassStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -45030,6 +44793,7 @@ export namespace IdentifierOverride1ClassStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IdentifierOverride1ClassStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -45037,22 +44801,21 @@ export namespace IdentifierOverride1ClassStatic {
     const subject =
       parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "identifierOverride1Class")
-          }IdentifierOverrideProperty`,
-        ),
-        predicate:
-          IdentifierOverride1ClassStatic.$schema.properties
-            .identifierOverrideProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.identifierOverrideProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "identifierOverrideProperty",
+        propertySchema: $schema.properties.identifierOverrideProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "identifierOverride1Class"),
+      }),
+    );
     return triples;
   }
 
@@ -45323,6 +45086,7 @@ export namespace IdentifierOverride2ClassStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride2ClassStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -45357,6 +45121,7 @@ export namespace IdentifierOverride2ClassStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IdentifierOverride2ClassStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -45666,6 +45431,7 @@ export namespace IdentifierOverride3ClassStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride3ClassStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -45700,6 +45466,7 @@ export namespace IdentifierOverride3ClassStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IdentifierOverride3ClassStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -46138,6 +45905,7 @@ export namespace IdentifierOverride4ClassStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride4ClassStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -46172,6 +45940,7 @@ export namespace IdentifierOverride4ClassStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IdentifierOverride4ClassStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -46602,6 +46371,7 @@ export namespace IdentifierOverride5Class {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         IdentifierOverride5Class.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -46636,6 +46406,7 @@ export namespace IdentifierOverride5Class {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: IdentifierOverride5Class.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -47097,8 +46868,8 @@ export namespace HasValuePropertiesClass {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.hasIriValueProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.hasIriValueProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -47116,8 +46887,8 @@ export namespace HasValuePropertiesClass {
       }).chain((hasIriValueProperty) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.hasLiteralValueProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.hasLiteralValueProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -47199,6 +46970,7 @@ export namespace HasValuePropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         HasValuePropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -47233,6 +47005,7 @@ export namespace HasValuePropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: HasValuePropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -47240,38 +47013,36 @@ export namespace HasValuePropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("hasValuePropertiesClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "hasValuePropertiesClass")
-          }HasIriValueProperty`,
-        ),
-        predicate:
-          HasValuePropertiesClass.$schema.properties.hasIriValueProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "hasValuePropertiesClass")
-          }HasLiteralValueProperty`,
-        ),
-        predicate:
-          HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.hasIriValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "hasIriValueProperty",
+        propertySchema: $schema.properties.hasIriValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "hasValuePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.hasLiteralValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "hasLiteralValueProperty",
+        propertySchema: $schema.properties.hasLiteralValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "hasValuePropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -47706,8 +47477,8 @@ export namespace FlattenClassUnionMember3 {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.flattenClassUnionMember3Property,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.flattenClassUnionMember3Property,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -47774,6 +47545,7 @@ export namespace FlattenClassUnionMember3 {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         FlattenClassUnionMember3.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -47808,6 +47580,7 @@ export namespace FlattenClassUnionMember3 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: FlattenClassUnionMember3.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -47850,22 +47623,21 @@ export namespace FlattenClassUnionMember3 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "flattenClassUnionMember3")
-          }FlattenClassUnionMember3Property`,
-        ),
-        predicate:
-          FlattenClassUnionMember3.$schema.properties
-            .flattenClassUnionMember3Property.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.flattenClassUnionMember3Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "flattenClassUnionMember3Property",
+        propertySchema: $schema.properties.flattenClassUnionMember3Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "flattenClassUnionMember3"),
+      }),
+    );
     return triples;
   }
 
@@ -48334,8 +48106,8 @@ export namespace ExternClassPropertyClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.externClassProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.externClassProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -48414,6 +48186,7 @@ export namespace ExternClassPropertyClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ExternClassPropertyClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -48448,6 +48221,7 @@ export namespace ExternClassPropertyClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ExternClassPropertyClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -48490,39 +48264,21 @@ export namespace ExternClassPropertyClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "externClassPropertyClass")
-          }ExternClassProperty`,
-        ),
-        predicate:
-          ExternClassPropertyClass.$schema.properties.externClassProperty
-            .identifier,
-        subject: subject,
-      },
-      ...ExternClass.$sparqlConstructTriples({
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.externClassProperty,
+        focusIdentifier: subject,
         ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "externClassPropertyClass")
-          }ExternClassProperty`,
-        ),
-        variablePrefix: `${
+        name: "externClassProperty",
+        propertySchema: $schema.properties.externClassProperty,
+        typeSparqlConstructTriples: ExternClass.$sparqlConstructTriples,
+        variablePrefix:
           parameters?.variablePrefix ??
           (subject.termType === "Variable"
             ? subject.value
-            : "externClassPropertyClass")
-        }ExternClassProperty`,
+            : "externClassPropertyClass"),
       }),
-    ]);
+    );
     return triples;
   }
 
@@ -48918,9 +48674,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
+        resource: $parameters.resource,
         propertySchema:
           $schema.properties.abstractBaseClassForExternClassProperty,
-        resource: $parameters.resource,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -48986,6 +48742,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         AbstractBaseClassForExternClassStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -49020,6 +48777,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: AbstractBaseClassForExternClassStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -49028,22 +48786,22 @@ export namespace AbstractBaseClassForExternClassStatic {
       parameters?.subject ??
       dataFactory.variable!("abstractBaseClassForExternClass");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "abstractBaseClassForExternClass")
-          }AbstractBaseClassForExternClassProperty`,
-        ),
-        predicate:
-          AbstractBaseClassForExternClassStatic.$schema.properties
-            .abstractBaseClassForExternClassProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.abstractBaseClassForExternClassProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "abstractBaseClassForExternClassProperty",
+        propertySchema:
+          $schema.properties.abstractBaseClassForExternClassProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "abstractBaseClassForExternClass"),
+      }),
+    );
     return triples;
   }
 
@@ -49437,8 +49195,8 @@ export namespace ExplicitRdfTypeClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.explicitRdfTypeProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.explicitRdfTypeProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -49505,6 +49263,7 @@ export namespace ExplicitRdfTypeClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ExplicitRdfTypeClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -49539,6 +49298,7 @@ export namespace ExplicitRdfTypeClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ExplicitRdfTypeClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -49581,22 +49341,21 @@ export namespace ExplicitRdfTypeClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "explicitRdfTypeClass")
-          }ExplicitRdfTypeProperty`,
-        ),
-        predicate:
-          ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.explicitRdfTypeProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "explicitRdfTypeProperty",
+        propertySchema: $schema.properties.explicitRdfTypeProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "explicitRdfTypeClass"),
+      }),
+    );
     return triples;
   }
 
@@ -50052,8 +49811,8 @@ export namespace ExplicitFromToRdfTypesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -50120,6 +49879,7 @@ export namespace ExplicitFromToRdfTypesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ExplicitFromToRdfTypesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -50154,6 +49914,7 @@ export namespace ExplicitFromToRdfTypesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ExplicitFromToRdfTypesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -50197,22 +49958,21 @@ export namespace ExplicitFromToRdfTypesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "explicitFromToRdfTypesClass")
-          }ExplicitFromToRdfTypesProperty`,
-        ),
-        predicate:
-          ExplicitFromToRdfTypesClass.$schema.properties
-            .explicitFromToRdfTypesProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.explicitFromToRdfTypesProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "explicitFromToRdfTypesProperty",
+        propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "explicitFromToRdfTypesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -50686,8 +50446,8 @@ export namespace DirectRecursiveClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.directRecursiveProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.directRecursiveProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -50769,6 +50529,7 @@ export namespace DirectRecursiveClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         DirectRecursiveClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -50803,6 +50564,7 @@ export namespace DirectRecursiveClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: DirectRecursiveClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -51598,8 +51360,8 @@ export namespace DefaultValuePropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.dateDefaultValueProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.dateDefaultValueProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .map((values) =>
@@ -51621,8 +51383,8 @@ export namespace DefaultValuePropertiesClass {
         }).chain((dateDefaultValueProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.dateTimeDefaultValueProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.dateTimeDefaultValueProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .map((values) =>
@@ -51646,9 +51408,9 @@ export namespace DefaultValuePropertiesClass {
           }).chain((dateTimeDefaultValueProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
+              resource: $parameters.resource,
               propertySchema:
                 $schema.properties.falseBooleanDefaultValueProperty,
-              resource: $parameters.resource,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .map((values) =>
@@ -51672,8 +51434,8 @@ export namespace DefaultValuePropertiesClass {
             }).chain((falseBooleanDefaultValueProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.numberDefaultValueProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.numberDefaultValueProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .map((values) =>
@@ -51697,8 +51459,8 @@ export namespace DefaultValuePropertiesClass {
               }).chain((numberDefaultValueProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
-                  propertySchema: $schema.properties.stringDefaultValueProperty,
                   resource: $parameters.resource,
+                  propertySchema: $schema.properties.stringDefaultValueProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .map((values) =>
@@ -51729,9 +51491,9 @@ export namespace DefaultValuePropertiesClass {
                 }).chain((stringDefaultValueProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
+                    resource: $parameters.resource,
                     propertySchema:
                       $schema.properties.trueBooleanDefaultValueProperty,
-                    resource: $parameters.resource,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .map((values) =>
@@ -51893,6 +51655,7 @@ export namespace DefaultValuePropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         DefaultValuePropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -51927,6 +51690,7 @@ export namespace DefaultValuePropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: DefaultValuePropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -51970,102 +51734,96 @@ export namespace DefaultValuePropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "defaultValuePropertiesClass")
-          }DateDefaultValueProperty`,
-        ),
-        predicate:
-          DefaultValuePropertiesClass.$schema.properties
-            .dateDefaultValueProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "defaultValuePropertiesClass")
-          }DateTimeDefaultValueProperty`,
-        ),
-        predicate:
-          DefaultValuePropertiesClass.$schema.properties
-            .dateTimeDefaultValueProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "defaultValuePropertiesClass")
-          }FalseBooleanDefaultValueProperty`,
-        ),
-        predicate:
-          DefaultValuePropertiesClass.$schema.properties
-            .falseBooleanDefaultValueProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "defaultValuePropertiesClass")
-          }NumberDefaultValueProperty`,
-        ),
-        predicate:
-          DefaultValuePropertiesClass.$schema.properties
-            .numberDefaultValueProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "defaultValuePropertiesClass")
-          }StringDefaultValueProperty`,
-        ),
-        predicate:
-          DefaultValuePropertiesClass.$schema.properties
-            .stringDefaultValueProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "defaultValuePropertiesClass")
-          }TrueBooleanDefaultValueProperty`,
-        ),
-        predicate:
-          DefaultValuePropertiesClass.$schema.properties
-            .trueBooleanDefaultValueProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateDefaultValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateDefaultValueProperty",
+        propertySchema: $schema.properties.dateDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "defaultValuePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateTimeDefaultValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateTimeDefaultValueProperty",
+        propertySchema: $schema.properties.dateTimeDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "defaultValuePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.falseBooleanDefaultValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "falseBooleanDefaultValueProperty",
+        propertySchema: $schema.properties.falseBooleanDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "defaultValuePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.numberDefaultValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "numberDefaultValueProperty",
+        propertySchema: $schema.properties.numberDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "defaultValuePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.stringDefaultValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "stringDefaultValueProperty",
+        propertySchema: $schema.properties.stringDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "defaultValuePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.trueBooleanDefaultValueProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "trueBooleanDefaultValueProperty",
+        propertySchema: $schema.properties.trueBooleanDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "defaultValuePropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -53489,8 +53247,8 @@ export namespace DateUnionPropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.dateOrDateTimeProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.dateOrDateTimeProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -53565,8 +53323,8 @@ export namespace DateUnionPropertiesClass {
         }).chain((dateOrDateTimeProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.dateOrStringProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.dateOrStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -53652,8 +53410,8 @@ export namespace DateUnionPropertiesClass {
           }).chain((dateOrStringProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.dateTimeOrDateProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.dateTimeOrDateProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -53728,8 +53486,8 @@ export namespace DateUnionPropertiesClass {
             }).chain((dateTimeOrDateProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.stringOrDateProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.stringOrDateProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -53952,6 +53710,7 @@ export namespace DateUnionPropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         DateUnionPropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -53986,6 +53745,7 @@ export namespace DateUnionPropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: DateUnionPropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -54028,70 +53788,158 @@ export namespace DateUnionPropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "dateUnionPropertiesClass")
-          }DateOrDateTimeProperty`,
-        ),
-        predicate:
-          DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "dateUnionPropertiesClass")
-          }DateOrStringProperty`,
-        ),
-        predicate:
-          DateUnionPropertiesClass.$schema.properties.dateOrStringProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "dateUnionPropertiesClass")
-          }DateTimeOrDateProperty`,
-        ),
-        predicate:
-          DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "dateUnionPropertiesClass")
-          }StringOrDateProperty`,
-        ),
-        predicate:
-          DateUnionPropertiesClass.$schema.properties.stringOrDateProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateOrDateTimeProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateOrDateTimeProperty",
+        propertySchema: $schema.properties.dateOrDateTimeProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["date"],
+              schema: schema.members["date"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["dateTime"],
+              schema: schema.members["dateTime"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "dateUnionPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateOrStringProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateOrStringProperty",
+        propertySchema: $schema.properties.dateOrStringProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["date"],
+              schema: schema.members["date"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["string"],
+              schema: schema.members["string"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "dateUnionPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.dateTimeOrDateProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "dateTimeOrDateProperty",
+        propertySchema: $schema.properties.dateTimeOrDateProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["dateTime"],
+              schema: schema.members["dateTime"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["date"],
+              schema: schema.members["date"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "dateUnionPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.stringOrDateProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "stringOrDateProperty",
+        propertySchema: $schema.properties.stringOrDateProperty,
+        typeSparqlConstructTriples: ({
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["string"],
+              schema: schema.members["string"].type,
+              ...otherParameters,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              filter: filter?.on?.["date"],
+              schema: schema.members["date"].type,
+              ...otherParameters,
+            }),
+          );
+
+          return triples;
+        },
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "dateUnionPropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -56037,8 +55885,8 @@ export namespace ConvertibleTypePropertiesClass {
       ).chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
-          propertySchema: $schema.properties.convertibleIriNonEmptySetProperty,
           resource: $parameters.resource,
+          propertySchema: $schema.properties.convertibleIriNonEmptySetProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) => values.chainMap((value) => value.toIri()))
@@ -56061,8 +55909,8 @@ export namespace ConvertibleTypePropertiesClass {
         }).chain((convertibleIriNonEmptySetProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.convertibleIriOptionProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.convertibleIriOptionProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) => values.chainMap((value) => value.toIri()))
@@ -56080,8 +55928,8 @@ export namespace ConvertibleTypePropertiesClass {
           }).chain((convertibleIriOptionProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.convertibleIriProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.convertibleIriProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues.chain((values) =>
                   values.chainMap((value) => value.toIri()),
@@ -56089,8 +55937,8 @@ export namespace ConvertibleTypePropertiesClass {
             }).chain((convertibleIriProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
-                propertySchema: $schema.properties.convertibleIriSetProperty,
                 resource: $parameters.resource,
+                propertySchema: $schema.properties.convertibleIriSetProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -56109,9 +55957,9 @@ export namespace ConvertibleTypePropertiesClass {
               }).chain((convertibleIriSetProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
+                  resource: $parameters.resource,
                   propertySchema:
                     $schema.properties.convertibleLiteralNonEmptySetProperty,
-                  resource: $parameters.resource,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -56146,9 +55994,9 @@ export namespace ConvertibleTypePropertiesClass {
                 }).chain((convertibleLiteralNonEmptySetProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
+                    resource: $parameters.resource,
                     propertySchema:
                       $schema.properties.convertibleLiteralOptionProperty,
-                    resource: $parameters.resource,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
@@ -56179,9 +56027,9 @@ export namespace ConvertibleTypePropertiesClass {
                   }).chain((convertibleLiteralOptionProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
+                      resource: $parameters.resource,
                       propertySchema:
                         $schema.properties.convertibleLiteralProperty,
-                      resource: $parameters.resource,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -56202,9 +56050,9 @@ export namespace ConvertibleTypePropertiesClass {
                     }).chain((convertibleLiteralProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
+                        resource: $parameters.resource,
                         propertySchema:
                           $schema.properties.convertibleLiteralSetProperty,
-                        resource: $parameters.resource,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -56236,10 +56084,10 @@ export namespace ConvertibleTypePropertiesClass {
                       }).chain((convertibleLiteralSetProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
+                          resource: $parameters.resource,
                           propertySchema:
                             $schema.properties
                               .convertibleTermNonEmptySetProperty,
-                          resource: $parameters.resource,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -56273,9 +56121,9 @@ export namespace ConvertibleTypePropertiesClass {
                         }).chain((convertibleTermNonEmptySetProperty) =>
                           $shaclPropertyFromRdf({
                             graph: $parameters.graph,
+                            resource: $parameters.resource,
                             propertySchema:
                               $schema.properties.convertibleTermOptionProperty,
-                            resource: $parameters.resource,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
@@ -56304,9 +56152,9 @@ export namespace ConvertibleTypePropertiesClass {
                           }).chain((convertibleTermOptionProperty) =>
                             $shaclPropertyFromRdf({
                               graph: $parameters.graph,
+                              resource: $parameters.resource,
                               propertySchema:
                                 $schema.properties.convertibleTermProperty,
-                              resource: $parameters.resource,
                               typeFromRdf: (resourceValues) =>
                                 resourceValues.chain((values) =>
                                   values.chainMap((value) =>
@@ -56319,9 +56167,9 @@ export namespace ConvertibleTypePropertiesClass {
                             }).chain((convertibleTermProperty) =>
                               $shaclPropertyFromRdf({
                                 graph: $parameters.graph,
+                                resource: $parameters.resource,
                                 propertySchema:
                                   $schema.properties.convertibleTermSetProperty,
-                                resource: $parameters.resource,
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
                                     .chain((values) =>
@@ -56526,6 +56374,7 @@ export namespace ConvertibleTypePropertiesClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ConvertibleTypePropertiesClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -56560,6 +56409,7 @@ export namespace ConvertibleTypePropertiesClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ConvertibleTypePropertiesClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -56603,198 +56453,187 @@ export namespace ConvertibleTypePropertiesClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriNonEmptySetProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleIriNonEmptySetProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriOptionProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleIriOptionProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleIriProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriSetProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleIriSetProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralNonEmptySetProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleLiteralNonEmptySetProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralOptionProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleLiteralOptionProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleLiteralProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralSetProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleLiteralSetProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermNonEmptySetProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleTermNonEmptySetProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermOptionProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleTermOptionProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleTermProperty.identifier,
-        subject: subject,
-      },
-    ]);
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermSetProperty`,
-        ),
-        predicate:
-          ConvertibleTypePropertiesClass.$schema.properties
-            .convertibleTermSetProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleIriNonEmptySetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleIriNonEmptySetProperty",
+        propertySchema: $schema.properties.convertibleIriNonEmptySetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleIriOptionProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleIriOptionProperty",
+        propertySchema: $schema.properties.convertibleIriOptionProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleIriProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleIriProperty",
+        propertySchema: $schema.properties.convertibleIriProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleIriSetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleIriSetProperty",
+        propertySchema: $schema.properties.convertibleIriSetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleLiteralNonEmptySetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleLiteralNonEmptySetProperty",
+        propertySchema:
+          $schema.properties.convertibleLiteralNonEmptySetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleLiteralOptionProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleLiteralOptionProperty",
+        propertySchema: $schema.properties.convertibleLiteralOptionProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleLiteralProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleLiteralProperty",
+        propertySchema: $schema.properties.convertibleLiteralProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleLiteralSetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleLiteralSetProperty",
+        propertySchema: $schema.properties.convertibleLiteralSetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleTermNonEmptySetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleTermNonEmptySetProperty",
+        propertySchema: $schema.properties.convertibleTermNonEmptySetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleTermOptionProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleTermOptionProperty",
+        propertySchema: $schema.properties.convertibleTermOptionProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleTermProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleTermProperty",
+        propertySchema: $schema.properties.convertibleTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.convertibleTermSetProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "convertibleTermSetProperty",
+        propertySchema: $schema.properties.convertibleTermSetProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "convertibleTypePropertiesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -57748,9 +57587,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
         ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
+            resource: $parameters.resource,
             propertySchema:
               $schema.properties.baseInterfaceWithPropertiesProperty,
-            resource: $parameters.resource,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -57860,6 +57699,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -57894,6 +57734,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: BaseInterfaceWithPropertiesStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -57937,22 +57778,21 @@ export namespace BaseInterfaceWithPropertiesStatic {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "baseInterfaceWithProperties")
-          }BaseInterfaceWithPropertiesProperty`,
-        ),
-        predicate:
-          BaseInterfaceWithPropertiesStatic.$schema.properties
-            .baseInterfaceWithPropertiesProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.baseInterfaceWithPropertiesProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "baseInterfaceWithPropertiesProperty",
+        propertySchema: $schema.properties.baseInterfaceWithPropertiesProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "baseInterfaceWithProperties"),
+      }),
+    );
     return triples;
   }
 
@@ -58434,6 +58274,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -58468,6 +58309,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: BaseInterfaceWithoutPropertiesStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -58922,9 +58764,9 @@ export namespace ConcreteParentInterfaceStatic {
           ).chain(($type) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
+              resource: $parameters.resource,
               propertySchema:
                 $schema.properties.concreteParentInterfaceProperty,
-              resource: $parameters.resource,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -59026,6 +58868,7 @@ export namespace ConcreteParentInterfaceStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ConcreteParentInterfaceStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -59060,6 +58903,7 @@ export namespace ConcreteParentInterfaceStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ConcreteParentInterfaceStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -59113,22 +58957,21 @@ export namespace ConcreteParentInterfaceStatic {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "concreteParentInterface")
-          }ConcreteParentInterfaceProperty`,
-        ),
-        predicate:
-          ConcreteParentInterfaceStatic.$schema.properties
-            .concreteParentInterfaceProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.concreteParentInterfaceProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "concreteParentInterfaceProperty",
+        propertySchema: $schema.properties.concreteParentInterfaceProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "concreteParentInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -59560,8 +59403,8 @@ export namespace ConcreteChildInterface {
           ).chain(($type) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
-              propertySchema: $schema.properties.concreteChildInterfaceProperty,
               resource: $parameters.resource,
+              propertySchema: $schema.properties.concreteChildInterfaceProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -59663,6 +59506,7 @@ export namespace ConcreteChildInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ConcreteChildInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -59697,6 +59541,7 @@ export namespace ConcreteChildInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ConcreteChildInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -59750,22 +59595,21 @@ export namespace ConcreteChildInterface {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "concreteChildInterface")
-          }ConcreteChildInterfaceProperty`,
-        ),
-        predicate:
-          ConcreteChildInterface.$schema.properties
-            .concreteChildInterfaceProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.concreteChildInterfaceProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "concreteChildInterfaceProperty",
+        propertySchema: $schema.properties.concreteChildInterfaceProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "concreteChildInterface"),
+      }),
+    );
     return triples;
   }
 
@@ -60164,9 +60008,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
+        resource: $parameters.resource,
         propertySchema:
           $schema.properties.abstractBaseClassWithPropertiesProperty,
-        resource: $parameters.resource,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -60236,6 +60080,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         AbstractBaseClassWithPropertiesStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -60270,6 +60115,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: AbstractBaseClassWithPropertiesStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -60278,22 +60124,22 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       parameters?.subject ??
       dataFactory.variable!("abstractBaseClassWithProperties");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "abstractBaseClassWithProperties")
-          }AbstractBaseClassWithPropertiesProperty`,
-        ),
-        predicate:
-          AbstractBaseClassWithPropertiesStatic.$schema.properties
-            .abstractBaseClassWithPropertiesProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.abstractBaseClassWithPropertiesProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "abstractBaseClassWithPropertiesProperty",
+        propertySchema:
+          $schema.properties.abstractBaseClassWithPropertiesProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "abstractBaseClassWithProperties"),
+      }),
+    );
     return triples;
   }
 
@@ -60557,6 +60403,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -60593,6 +60440,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: AbstractBaseClassWithoutPropertiesStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -60943,8 +60791,8 @@ export namespace ConcreteParentClassStatic {
         ).chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.concreteParentClassProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.concreteParentClassProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -61005,6 +60853,7 @@ export namespace ConcreteParentClassStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ConcreteParentClassStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -61039,6 +60888,7 @@ export namespace ConcreteParentClassStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ConcreteParentClassStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -61092,22 +60942,21 @@ export namespace ConcreteParentClassStatic {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "concreteParentClass")
-          }ConcreteParentClassProperty`,
-        ),
-        predicate:
-          ConcreteParentClassStatic.$schema.properties
-            .concreteParentClassProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.concreteParentClassProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "concreteParentClassProperty",
+        propertySchema: $schema.properties.concreteParentClassProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "concreteParentClass"),
+      }),
+    );
     return triples;
   }
 
@@ -61550,8 +61399,8 @@ export namespace ConcreteChildClass {
         ).chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.concreteChildClassProperty,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.concreteChildClassProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -61611,7 +61460,11 @@ export namespace ConcreteChildClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        ConcreteChildClass.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -61643,6 +61496,7 @@ export namespace ConcreteChildClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ConcreteChildClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -61696,22 +61550,21 @@ export namespace ConcreteChildClass {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "concreteChildClass")
-          }ConcreteChildClassProperty`,
-        ),
-        predicate:
-          ConcreteChildClass.$schema.properties.concreteChildClassProperty
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.concreteChildClassProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "concreteChildClassProperty",
+        propertySchema: $schema.properties.concreteChildClassProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "concreteChildClass"),
+      }),
+    );
     return triples;
   }
 
@@ -62078,8 +61931,8 @@ export namespace ClassUnionMemberCommonParentStatic {
     ).chain(($identifier) =>
       $shaclPropertyFromRdf({
         graph: $parameters.graph,
-        propertySchema: $schema.properties.classUnionMemberCommonParentProperty,
         resource: $parameters.resource,
+        propertySchema: $schema.properties.classUnionMemberCommonParentProperty,
         typeFromRdf: (resourceValues) =>
           resourceValues
             .chain((values) =>
@@ -62145,6 +61998,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -62179,6 +62033,7 @@ export namespace ClassUnionMemberCommonParentStatic {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ClassUnionMemberCommonParentStatic.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -62187,22 +62042,21 @@ export namespace ClassUnionMemberCommonParentStatic {
       parameters?.subject ??
       dataFactory.variable!("classUnionMemberCommonParent");
     let triples: sparqljs.Triple[] = [];
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "classUnionMemberCommonParent")
-          }ClassUnionMemberCommonParentProperty`,
-        ),
-        predicate:
-          ClassUnionMemberCommonParentStatic.$schema.properties
-            .classUnionMemberCommonParentProperty.identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.classUnionMemberCommonParentProperty,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "classUnionMemberCommonParentProperty",
+        propertySchema: $schema.properties.classUnionMemberCommonParentProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "classUnionMemberCommonParent"),
+      }),
+    );
     return triples;
   }
 
@@ -62560,8 +62414,8 @@ export namespace ClassUnionMember2 {
         ).chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.classUnionMember2Property,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.classUnionMember2Property,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -62621,7 +62475,11 @@ export namespace ClassUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnionMember2.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        ClassUnionMember2.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -62653,6 +62511,7 @@ export namespace ClassUnionMember2 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ClassUnionMember2.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -62706,22 +62565,21 @@ export namespace ClassUnionMember2 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "classUnionMember2")
-          }ClassUnionMember2Property`,
-        ),
-        predicate:
-          ClassUnionMember2.$schema.properties.classUnionMember2Property
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.classUnionMember2Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "classUnionMember2Property",
+        propertySchema: $schema.properties.classUnionMember2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "classUnionMember2"),
+      }),
+    );
     return triples;
   }
 
@@ -63123,8 +62981,8 @@ export namespace ClassUnionMember1 {
         ).chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
-            propertySchema: $schema.properties.classUnionMember1Property,
             resource: $parameters.resource,
+            propertySchema: $schema.properties.classUnionMember1Property,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -63184,7 +63042,11 @@ export namespace ClassUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnionMember1.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        ClassUnionMember1.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -63216,6 +63078,7 @@ export namespace ClassUnionMember1 {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ClassUnionMember1.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -63269,22 +63132,21 @@ export namespace ClassUnionMember1 {
         },
       );
     }
-    triples = triples.concat([
-      {
-        object: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (subject.termType === "Variable"
-              ? subject.value
-              : "classUnionMember1")
-          }ClassUnionMember1Property`,
-        ),
-        predicate:
-          ClassUnionMember1.$schema.properties.classUnionMember1Property
-            .identifier,
-        subject: subject,
-      },
-    ]);
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.classUnionMember1Property,
+        focusIdentifier: subject,
+        ignoreRdfType: true,
+        name: "classUnionMember1Property",
+        propertySchema: $schema.properties.classUnionMember1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (subject.termType === "Variable"
+            ? subject.value
+            : "classUnionMember1"),
+      }),
+    );
     return triples;
   }
 
@@ -63736,6 +63598,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         BlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -63770,6 +63633,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: BlankNodeOrIriIdentifierInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -64205,6 +64069,7 @@ export namespace BlankNodeOrIriIdentifierClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         BlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -64239,6 +64104,7 @@ export namespace BlankNodeOrIriIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: BlankNodeOrIriIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -64693,6 +64559,7 @@ export namespace BlankNodeIdentifierInterface {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         BlankNodeIdentifierInterface.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -64727,6 +64594,7 @@ export namespace BlankNodeIdentifierInterface {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: BlankNodeIdentifierInterface.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -65165,6 +65033,7 @@ export namespace BlankNodeIdentifierClass {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         BlankNodeIdentifierClass.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -65199,6 +65068,7 @@ export namespace BlankNodeIdentifierClass {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: BlankNodeIdentifierClass.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -65514,7 +65384,7 @@ export namespace ClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        ClassUnion.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -65546,12 +65416,14 @@ export namespace ClassUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: ClassUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...ClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("classUnionClassUnionMember1"),
@@ -65560,6 +65432,7 @@ export namespace ClassUnion {
           : "classUnionClassUnionMember1",
       }).concat(),
       ...ClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("classUnionClassUnionMember2"),
@@ -65873,7 +65746,11 @@ export namespace FlattenClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        FlattenClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        FlattenClassUnion.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -65905,12 +65782,14 @@ export namespace FlattenClassUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: FlattenClassUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...ClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("flattenClassUnionClassUnionMember1"),
@@ -65919,6 +65798,7 @@ export namespace FlattenClassUnion {
           : "flattenClassUnionClassUnionMember1",
       }).concat(),
       ...ClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("flattenClassUnionClassUnionMember2"),
@@ -65927,6 +65807,7 @@ export namespace FlattenClassUnion {
           : "flattenClassUnionClassUnionMember2",
       }).concat(),
       ...FlattenClassUnionMember3.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.FlattenClassUnionMember3,
         subject:
           parameters?.subject ??
           dataFactory.variable!("flattenClassUnionFlattenClassUnionMember3"),
@@ -66213,7 +66094,11 @@ export namespace InterfaceUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        InterfaceUnion.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -66245,12 +66130,14 @@ export namespace InterfaceUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: InterfaceUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...InterfaceUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.InterfaceUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("interfaceUnionInterfaceUnionMember1"),
@@ -66259,6 +66146,7 @@ export namespace InterfaceUnion {
           : "interfaceUnionInterfaceUnionMember1",
       }).concat(),
       ...InterfaceUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.InterfaceUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
@@ -66572,6 +66460,7 @@ export namespace LazilyResolvedClassUnion {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedClassUnion.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -66606,12 +66495,14 @@ export namespace LazilyResolvedClassUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedClassUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -66622,6 +66513,7 @@ export namespace LazilyResolvedClassUnion {
           : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
       }).concat(),
       ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -66967,6 +66859,7 @@ export namespace LazilyResolvedInterfaceUnion {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         LazilyResolvedInterfaceUnion.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -67001,12 +66894,14 @@ export namespace LazilyResolvedInterfaceUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: LazilyResolvedInterfaceUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -67017,6 +66912,7 @@ export namespace LazilyResolvedInterfaceUnion {
           : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
       }).concat(),
       ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -67310,7 +67206,11 @@ export namespace PartialClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        PartialClassUnion.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -67342,12 +67242,14 @@ export namespace PartialClassUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialClassUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...PartialClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("partialClassUnionPartialClassUnionMember1"),
@@ -67356,6 +67258,7 @@ export namespace PartialClassUnion {
           : "partialClassUnionPartialClassUnionMember1",
       }).concat(),
       ...PartialClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("partialClassUnionPartialClassUnionMember2"),
@@ -67677,6 +67580,7 @@ export namespace PartialInterfaceUnion {
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
         PartialInterfaceUnion.$sparqlConstructTriples({
+          filter,
           ignoreRdfType,
           subject,
         }),
@@ -67711,12 +67615,14 @@ export namespace PartialInterfaceUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialInterfaceUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...PartialInterfaceUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -67727,6 +67633,7 @@ export namespace PartialInterfaceUnion {
           : "partialInterfaceUnionPartialInterfaceUnionMember1",
       }).concat(),
       ...PartialInterfaceUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -68021,7 +67928,11 @@ export namespace NoRdfTypeClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NoRdfTypeClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        NoRdfTypeClassUnion.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -68053,12 +67964,14 @@ export namespace NoRdfTypeClassUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: NoRdfTypeClassUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -68069,6 +67982,7 @@ export namespace NoRdfTypeClassUnion {
           : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
       }).concat(),
       ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -68363,7 +68277,11 @@ export namespace RecursiveClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        RecursiveClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        RecursiveClassUnion.$sparqlConstructTriples({
+          filter,
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -68395,12 +68313,14 @@ export namespace RecursiveClassUnion {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: RecursiveClassUnion.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...RecursiveClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -68411,6 +68331,7 @@ export namespace RecursiveClassUnion {
           : "recursiveClassUnionRecursiveClassUnionMember1",
       }).concat(),
       ...RecursiveClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -71877,7 +71798,7 @@ export namespace $Object {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        $Object.$sparqlConstructTriples({ ignoreRdfType, subject }),
+        $Object.$sparqlConstructTriples({ filter, ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -71909,12 +71830,14 @@ export namespace $Object {
   }
 
   export function $sparqlConstructTriples(parameters?: {
+    filter?: $Object.$Filter;
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
       ...BlankNodeIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.BlankNodeIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectBlankNodeIdentifierClass"),
@@ -71923,6 +71846,7 @@ export namespace $Object {
           : "objectBlankNodeIdentifierClass",
       }).concat(),
       ...BlankNodeIdentifierInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.BlankNodeIdentifierInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectBlankNodeIdentifierInterface"),
@@ -71931,6 +71855,7 @@ export namespace $Object {
           : "objectBlankNodeIdentifierInterface",
       }).concat(),
       ...BlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectBlankNodeOrIriIdentifierClass"),
@@ -71939,6 +71864,7 @@ export namespace $Object {
           : "objectBlankNodeOrIriIdentifierClass",
       }).concat(),
       ...BlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectBlankNodeOrIriIdentifierInterface"),
@@ -71947,6 +71873,7 @@ export namespace $Object {
           : "objectBlankNodeOrIriIdentifierInterface",
       }).concat(),
       ...ClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectClassUnionMember1"),
@@ -71955,6 +71882,7 @@ export namespace $Object {
           : "objectClassUnionMember1",
       }).concat(),
       ...ClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectClassUnionMember2"),
@@ -71963,6 +71891,7 @@ export namespace $Object {
           : "objectClassUnionMember2",
       }).concat(),
       ...ConcreteChildClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ConcreteChildClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectConcreteChildClass"),
@@ -71971,6 +71900,7 @@ export namespace $Object {
           : "objectConcreteChildClass",
       }).concat(),
       ...ConcreteParentClassStatic.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ConcreteParentClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectConcreteParentClass"),
@@ -71979,6 +71909,7 @@ export namespace $Object {
           : "objectConcreteParentClass",
       }).concat(),
       ...ConcreteChildInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ConcreteChildInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectConcreteChildInterface"),
@@ -71987,6 +71918,7 @@ export namespace $Object {
           : "objectConcreteChildInterface",
       }).concat(),
       ...ConcreteParentInterfaceStatic.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ConcreteParentInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectConcreteParentInterface"),
@@ -71995,6 +71927,7 @@ export namespace $Object {
           : "objectConcreteParentInterface",
       }).concat(),
       ...BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.BaseInterfaceWithoutProperties,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectBaseInterfaceWithoutProperties"),
@@ -72003,6 +71936,7 @@ export namespace $Object {
           : "objectBaseInterfaceWithoutProperties",
       }).concat(),
       ...BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.BaseInterfaceWithProperties,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectBaseInterfaceWithProperties"),
@@ -72011,6 +71945,7 @@ export namespace $Object {
           : "objectBaseInterfaceWithProperties",
       }).concat(),
       ...ConvertibleTypePropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ConvertibleTypePropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectConvertibleTypePropertiesClass"),
@@ -72019,6 +71954,7 @@ export namespace $Object {
           : "objectConvertibleTypePropertiesClass",
       }).concat(),
       ...DateUnionPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.DateUnionPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectDateUnionPropertiesClass"),
@@ -72027,6 +71963,7 @@ export namespace $Object {
           : "objectDateUnionPropertiesClass",
       }).concat(),
       ...DefaultValuePropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.DefaultValuePropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectDefaultValuePropertiesClass"),
@@ -72035,6 +71972,7 @@ export namespace $Object {
           : "objectDefaultValuePropertiesClass",
       }).concat(),
       ...DirectRecursiveClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.DirectRecursiveClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectDirectRecursiveClass"),
@@ -72043,6 +71981,7 @@ export namespace $Object {
           : "objectDirectRecursiveClass",
       }).concat(),
       ...ExplicitFromToRdfTypesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ExplicitFromToRdfTypesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectExplicitFromToRdfTypesClass"),
@@ -72051,6 +71990,7 @@ export namespace $Object {
           : "objectExplicitFromToRdfTypesClass",
       }).concat(),
       ...ExplicitRdfTypeClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ExplicitRdfTypeClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectExplicitRdfTypeClass"),
@@ -72059,6 +71999,7 @@ export namespace $Object {
           : "objectExplicitRdfTypeClass",
       }).concat(),
       ...ExternClassPropertyClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ExternClassPropertyClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectExternClassPropertyClass"),
@@ -72067,6 +72008,7 @@ export namespace $Object {
           : "objectExternClassPropertyClass",
       }).concat(),
       ...FlattenClassUnionMember3.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.FlattenClassUnionMember3,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectFlattenClassUnionMember3"),
@@ -72075,6 +72017,7 @@ export namespace $Object {
           : "objectFlattenClassUnionMember3",
       }).concat(),
       ...HasValuePropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.HasValuePropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectHasValuePropertiesClass"),
@@ -72083,6 +72026,7 @@ export namespace $Object {
           : "objectHasValuePropertiesClass",
       }).concat(),
       ...IdentifierOverride5Class.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IdentifierOverride5Class,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIdentifierOverride5Class"),
@@ -72091,6 +72035,7 @@ export namespace $Object {
           : "objectIdentifierOverride5Class",
       }).concat(),
       ...IdentifierOverride4ClassStatic.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IdentifierOverride4Class,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIdentifierOverride4Class"),
@@ -72099,6 +72044,7 @@ export namespace $Object {
           : "objectIdentifierOverride4Class",
       }).concat(),
       ...IdentifierOverride3ClassStatic.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IdentifierOverride3Class,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIdentifierOverride3Class"),
@@ -72107,6 +72053,7 @@ export namespace $Object {
           : "objectIdentifierOverride3Class",
       }).concat(),
       ...InIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.InIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectInIdentifierClass"),
@@ -72115,6 +72062,7 @@ export namespace $Object {
           : "objectInIdentifierClass",
       }).concat(),
       ...InPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.InPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectInPropertiesClass"),
@@ -72123,6 +72071,7 @@ export namespace $Object {
           : "objectInPropertiesClass",
       }).concat(),
       ...IndirectRecursiveClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IndirectRecursiveClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIndirectRecursiveClass"),
@@ -72131,6 +72080,7 @@ export namespace $Object {
           : "objectIndirectRecursiveClass",
       }).concat(),
       ...IndirectRecursiveHelperClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IndirectRecursiveHelperClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIndirectRecursiveHelperClass"),
@@ -72139,6 +72089,7 @@ export namespace $Object {
           : "objectIndirectRecursiveHelperClass",
       }).concat(),
       ...Interface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.Interface,
         subject:
           parameters?.subject ?? dataFactory.variable!("objectInterface"),
         variablePrefix: parameters?.variablePrefix
@@ -72146,6 +72097,7 @@ export namespace $Object {
           : "objectInterface",
       }).concat(),
       ...InterfaceUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.InterfaceUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectInterfaceUnionMember1"),
@@ -72154,6 +72106,7 @@ export namespace $Object {
           : "objectInterfaceUnionMember1",
       }).concat(),
       ...InterfaceUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.InterfaceUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectInterfaceUnionMember2"),
@@ -72162,6 +72115,7 @@ export namespace $Object {
           : "objectInterfaceUnionMember2",
       }).concat(),
       ...IriIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IriIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIriIdentifierClass"),
@@ -72170,6 +72124,7 @@ export namespace $Object {
           : "objectIriIdentifierClass",
       }).concat(),
       ...IriIdentifierInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.IriIdentifierInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectIriIdentifierInterface"),
@@ -72178,6 +72133,7 @@ export namespace $Object {
           : "objectIriIdentifierInterface",
       }).concat(),
       ...JsPrimitiveUnionPropertyClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.JsPrimitiveUnionPropertyClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectJsPrimitiveUnionPropertyClass"),
@@ -72186,6 +72142,7 @@ export namespace $Object {
           : "objectJsPrimitiveUnionPropertyClass",
       }).concat(),
       ...LanguageInPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LanguageInPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLanguageInPropertiesClass"),
@@ -72194,6 +72151,8 @@ export namespace $Object {
           : "objectLanguageInPropertiesClass",
       }).concat(),
       ...LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
+        filter:
+          parameters?.filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -72205,6 +72164,9 @@ export namespace $Object {
       }).concat(),
       ...LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTriples(
         {
+          filter:
+            parameters?.filter?.on
+              ?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
           subject:
             parameters?.subject ??
             dataFactory.variable!(
@@ -72216,6 +72178,7 @@ export namespace $Object {
         },
       ).concat(),
       ...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazilyResolvedClassUnionMember1"),
@@ -72224,6 +72187,7 @@ export namespace $Object {
           : "objectLazilyResolvedClassUnionMember1",
       }).concat(),
       ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazilyResolvedClassUnionMember2"),
@@ -72232,6 +72196,7 @@ export namespace $Object {
           : "objectLazilyResolvedClassUnionMember2",
       }).concat(),
       ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazilyResolvedInterfaceUnionMember1"),
@@ -72240,6 +72205,7 @@ export namespace $Object {
           : "objectLazilyResolvedInterfaceUnionMember1",
       }).concat(),
       ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazilyResolvedInterfaceUnionMember2"),
@@ -72248,6 +72214,7 @@ export namespace $Object {
           : "objectLazilyResolvedInterfaceUnionMember2",
       }).concat(),
       ...LazilyResolvedIriIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazilyResolvedIriIdentifierClass"),
@@ -72256,6 +72223,7 @@ export namespace $Object {
           : "objectLazilyResolvedIriIdentifierClass",
       }).concat(),
       ...LazilyResolvedIriIdentifierInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazilyResolvedIriIdentifierInterface"),
@@ -72264,6 +72232,7 @@ export namespace $Object {
           : "objectLazilyResolvedIriIdentifierInterface",
       }).concat(),
       ...LazyPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazyPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazyPropertiesClass"),
@@ -72272,6 +72241,7 @@ export namespace $Object {
           : "objectLazyPropertiesClass",
       }).concat(),
       ...PartialClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialClass,
         subject:
           parameters?.subject ?? dataFactory.variable!("objectPartialClass"),
         variablePrefix: parameters?.variablePrefix
@@ -72279,6 +72249,7 @@ export namespace $Object {
           : "objectPartialClass",
       }).concat(),
       ...LazyPropertiesInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.LazyPropertiesInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectLazyPropertiesInterface"),
@@ -72287,6 +72258,7 @@ export namespace $Object {
           : "objectLazyPropertiesInterface",
       }).concat(),
       ...PartialInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPartialInterface"),
@@ -72295,6 +72267,7 @@ export namespace $Object {
           : "objectPartialInterface",
       }).concat(),
       ...ListPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ListPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectListPropertiesClass"),
@@ -72303,6 +72276,7 @@ export namespace $Object {
           : "objectListPropertiesClass",
       }).concat(),
       ...MutablePropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.MutablePropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectMutablePropertiesClass"),
@@ -72311,6 +72285,7 @@ export namespace $Object {
           : "objectMutablePropertiesClass",
       }).concat(),
       ...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectNoRdfTypeClassUnionMember1"),
@@ -72319,6 +72294,7 @@ export namespace $Object {
           : "objectNoRdfTypeClassUnionMember1",
       }).concat(),
       ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectNoRdfTypeClassUnionMember2"),
@@ -72327,12 +72303,14 @@ export namespace $Object {
           : "objectNoRdfTypeClassUnionMember2",
       }).concat(),
       ...NonClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NonClass,
         subject: parameters?.subject ?? dataFactory.variable!("objectNonClass"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NonClass`
           : "objectNonClass",
       }).concat(),
       ...NumericPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NumericPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectNumericPropertiesClass"),
@@ -72341,6 +72319,7 @@ export namespace $Object {
           : "objectNumericPropertiesClass",
       }).concat(),
       ...OrderedPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.OrderedPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectOrderedPropertiesClass"),
@@ -72349,6 +72328,7 @@ export namespace $Object {
           : "objectOrderedPropertiesClass",
       }).concat(),
       ...PartialClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPartialClassUnionMember1"),
@@ -72357,6 +72337,7 @@ export namespace $Object {
           : "objectPartialClassUnionMember1",
       }).concat(),
       ...PartialClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPartialClassUnionMember2"),
@@ -72365,6 +72346,7 @@ export namespace $Object {
           : "objectPartialClassUnionMember2",
       }).concat(),
       ...PartialInterfaceUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPartialInterfaceUnionMember1"),
@@ -72373,6 +72355,7 @@ export namespace $Object {
           : "objectPartialInterfaceUnionMember1",
       }).concat(),
       ...PartialInterfaceUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPartialInterfaceUnionMember2"),
@@ -72381,6 +72364,7 @@ export namespace $Object {
           : "objectPartialInterfaceUnionMember2",
       }).concat(),
       ...PropertyCardinalitiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PropertyCardinalitiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPropertyCardinalitiesClass"),
@@ -72389,6 +72373,7 @@ export namespace $Object {
           : "objectPropertyCardinalitiesClass",
       }).concat(),
       ...PropertyVisibilitiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PropertyVisibilitiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectPropertyVisibilitiesClass"),
@@ -72397,6 +72382,7 @@ export namespace $Object {
           : "objectPropertyVisibilitiesClass",
       }).concat(),
       ...RecursiveClassUnionMember1.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectRecursiveClassUnionMember1"),
@@ -72405,6 +72391,7 @@ export namespace $Object {
           : "objectRecursiveClassUnionMember1",
       }).concat(),
       ...RecursiveClassUnionMember2.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectRecursiveClassUnionMember2"),
@@ -72413,6 +72400,7 @@ export namespace $Object {
           : "objectRecursiveClassUnionMember2",
       }).concat(),
       ...Sha256IriIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.Sha256IriIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectSha256IriIdentifierClass"),
@@ -72421,6 +72409,7 @@ export namespace $Object {
           : "objectSha256IriIdentifierClass",
       }).concat(),
       ...TermPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.TermPropertiesClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectTermPropertiesClass"),
@@ -72429,6 +72418,7 @@ export namespace $Object {
           : "objectTermPropertiesClass",
       }).concat(),
       ...UnionDiscriminantsClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.UnionDiscriminantsClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectUnionDiscriminantsClass"),
@@ -72437,6 +72427,7 @@ export namespace $Object {
           : "objectUnionDiscriminantsClass",
       }).concat(),
       ...UuidV4IriIdentifierClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.UuidV4IriIdentifierClass,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectUuidV4IriIdentifierClass"),
@@ -72445,6 +72436,7 @@ export namespace $Object {
           : "objectUuidV4IriIdentifierClass",
       }).concat(),
       ...UuidV4IriIdentifierInterface.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.UuidV4IriIdentifierInterface,
         subject:
           parameters?.subject ??
           dataFactory.variable!("objectUuidV4IriIdentifierInterface"),
@@ -72454,6 +72446,7 @@ export namespace $Object {
       }).concat(),
       ...$DefaultPartial
         .$sparqlConstructTriples({
+          filter: parameters?.filter?.on?.$DefaultPartial,
           subject:
             parameters?.subject ??
             dataFactory.variable!("objectDefaultPartial"),
@@ -72464,6 +72457,7 @@ export namespace $Object {
         .concat(),
       ...$NamedDefaultPartial
         .$sparqlConstructTriples({
+          filter: parameters?.filter?.on?.$NamedDefaultPartial,
           subject:
             parameters?.subject ??
             dataFactory.variable!("objectNamedDefaultPartial"),

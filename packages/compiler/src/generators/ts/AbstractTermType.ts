@@ -130,7 +130,7 @@ export abstract class AbstractTermType<
 
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
-    return code`(() => [])`;
+    return code`((_: object) => [])`;
   }
 
   override fromRdfExpression(
