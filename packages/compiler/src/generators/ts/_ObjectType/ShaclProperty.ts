@@ -1,10 +1,8 @@
 import type * as rdfjs from "@rdfjs/types";
 
-import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
-import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -293,29 +291,18 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<AbstractProperty<TypeT>["sparqlWherePatterns"]>[0]): ReturnType<
     AbstractProperty<TypeT>["sparqlWherePatterns"]
   > {
-    const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of({
-      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
+      patterns: code`${snippets.shaclPropertySparqlWherePatterns}(${{
         filter: this.filterProperty
           .map(({ name }) => code`${variables.filter}?.${name}`)
           .extract(),
+        focusIdentifier: variables.focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
-        propertyPatterns: [
-          code`${{
-            triples: [
-              {
-                object: valueVariable,
-                predicate: this.predicate,
-                subject: variables.focusIdentifier,
-              },
-            ],
-            type: literalOf("bgp"),
-          }} satisfies sparqljs.BgpPattern`,
-        ],
-        schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
-        valueVariable,
-        variablePrefix: valueString,
+        propertyName: this.name,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        typeSparqlWherePatterns: this.type.sparqlWherePatternsFunction,
+        variablePrefix: variables.variablePrefix,
       }})`,
     });
   }

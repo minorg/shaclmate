@@ -1901,6 +1901,52 @@ function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
   );
 }
 
+function $shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({
+  filter,
+  focusIdentifier,
+  ignoreRdfType,
+  preferredLanguages,
+  propertyName,
+  propertySchema,
+  typeSparqlWherePatterns,
+  variablePrefix,
+}: {
+  filter?: FilterT;
+  focusIdentifier: NamedNode | Variable;
+  ignoreRdfType?: boolean;
+  preferredLanguages?: readonly string[];
+  propertySchema: $ShaclPropertySchema<TypeSchemaT>;
+  propertyName: string;
+  typeSparqlWherePatterns: $SparqlWherePatternsFunction<FilterT, TypeSchemaT>;
+  variablePrefix: string;
+}): readonly $SparqlPattern[] {
+  const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
+  const valueVariable = dataFactory.variable!(valueString);
+
+  const propertyPatterns: sparqljs.BgpPattern[] = [
+    {
+      triples: [
+        {
+          subject: focusIdentifier,
+          predicate: propertySchema.identifier,
+          object: valueVariable,
+        },
+      ],
+      type: "bgp",
+    },
+  ];
+
+  return typeSparqlWherePatterns({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    schema: propertySchema.type(),
+    valueVariable,
+    variablePrefix: valueString,
+  });
+}
+
 function $sortSparqlPatterns(
   patterns: readonly $SparqlPattern[],
 ): readonly $SparqlPattern[] {
@@ -3401,46 +3447,19 @@ export namespace UuidV4IriIdentifierInterface {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.uuidV4IriProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "uuidV4IriIdentifierInterface")
-                  }UuidV4IriProperty`,
-                ),
-                predicate:
-                  UuidV4IriIdentifierInterface.$schema.properties
-                    .uuidV4IriProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "uuidV4IriIdentifierInterface")
-          }UuidV4IriProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "uuidV4IriProperty",
+        propertySchema: $schema.properties.uuidV4IriProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "uuidV4IriIdentifierInterface")
-        }UuidV4IriProperty`,
+            : "uuidV4IriIdentifierInterface"),
       }),
     );
     return patterns;
@@ -3906,46 +3925,19 @@ export namespace UuidV4IriIdentifierClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.uuidV4IriProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "uuidV4IriIdentifierClass")
-                  }UuidV4IriProperty`,
-                ),
-                predicate:
-                  UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "uuidV4IriIdentifierClass")
-          }UuidV4IriProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "uuidV4IriProperty",
+        propertySchema: $schema.properties.uuidV4IriProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "uuidV4IriIdentifierClass")
-        }UuidV4IriProperty`,
+            : "uuidV4IriIdentifierClass"),
       }),
     );
     return patterns;
@@ -8111,195 +8103,150 @@ export namespace UnionDiscriminantsClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-            readonly "2-string"?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly "0-ClassUnionMember1": {
-              discriminantValues: readonly string[];
-              type: typeof ClassUnionMember1.$schema;
-            };
-            readonly "1-ClassUnionMember2": {
-              discriminantValues: readonly string[];
-              type: typeof ClassUnionMember2.$schema;
-            };
-            readonly "2-string": {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          {
-            readonly on?: {
-              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-              readonly "2-string"?: $StringFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly "0-ClassUnionMember1": {
-                discriminantValues: readonly string[];
-                type: typeof ClassUnionMember1.$schema;
-              };
-              readonly "1-ClassUnionMember2": {
-                discriminantValues: readonly string[];
-                type: typeof ClassUnionMember2.$schema;
-              };
-              readonly "2-string": {
-                discriminantValues: readonly string[];
-                type: $StringSchema;
-              };
-            };
-          }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
-
-          unionPatterns.push({
-            patterns: (({
-              ignoreRdfType,
-              propertyPatterns,
-              schema,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember1.$Filter,
-              typeof ClassUnionMember1.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember1.$sparqlWherePatterns({
-                  focusIdentifier: valueVariable,
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["0-ClassUnionMember1"],
-              ignoreRdfType: false,
-              schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: (({
-              ignoreRdfType,
-              propertyPatterns,
-              schema,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember2.$Filter,
-              typeof ClassUnionMember2.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember2.$sparqlWherePatterns({
-                  focusIdentifier: valueVariable,
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["1-ClassUnionMember2"],
-              ignoreRdfType: false,
-              schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $stringSparqlWherePatterns({
-              filter: filter?.on?.["2-string"],
-              ignoreRdfType: false,
-              schema: schema.members["2-string"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.optionalClassOrClassOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
+        propertyName: "optionalClassOrClassOrStringProperty",
+        propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }OptionalClassOrClassOrStringProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .optionalClassOrClassOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.optionalClassOrClassOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }OptionalClassOrClassOrStringProperty`,
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly "0-ClassUnionMember1": {
+                discriminantValues: readonly string[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly "1-ClassUnionMember2": {
+                discriminantValues: readonly string[];
+                type: typeof ClassUnionMember2.$schema;
+              };
+              readonly "2-string": {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+                readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+                readonly "2-string"?: $StringFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly "0-ClassUnionMember1": {
+                  discriminantValues: readonly string[];
+                  type: typeof ClassUnionMember1.$schema;
+                };
+                readonly "1-ClassUnionMember2": {
+                  discriminantValues: readonly string[];
+                  type: typeof ClassUnionMember2.$schema;
+                };
+                readonly "2-string": {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
+
+            unionPatterns.push({
+              patterns: (({
+                ignoreRdfType,
+                propertyPatterns,
+                schema,
+                valueVariable,
+                ...otherParameters
+              }: $SparqlWherePatternsFunctionParameters<
+                ClassUnionMember1.$Filter,
+                typeof ClassUnionMember1.$schema
+              >) =>
+                (propertyPatterns as readonly $SparqlPattern[]).concat(
+                  ClassUnionMember1.$sparqlWherePatterns({
+                    focusIdentifier: valueVariable,
+                    ignoreRdfType: ignoreRdfType ?? true,
+                    ...otherParameters,
+                  }),
+                ))({
+                filter: filter?.on?.["0-ClassUnionMember1"],
+                ignoreRdfType: false,
+                schema: schema.members["0-ClassUnionMember1"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: (({
+                ignoreRdfType,
+                propertyPatterns,
+                schema,
+                valueVariable,
+                ...otherParameters
+              }: $SparqlWherePatternsFunctionParameters<
+                ClassUnionMember2.$Filter,
+                typeof ClassUnionMember2.$schema
+              >) =>
+                (propertyPatterns as readonly $SparqlPattern[]).concat(
+                  ClassUnionMember2.$sparqlWherePatterns({
+                    focusIdentifier: valueVariable,
+                    ignoreRdfType: ignoreRdfType ?? true,
+                    ...otherParameters,
+                  }),
+                ))({
+                filter: filter?.on?.["1-ClassUnionMember2"],
+                ignoreRdfType: false,
+                schema: schema.members["1-ClassUnionMember2"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["2-string"],
+                ignoreRdfType: false,
+                schema: schema.members["2-string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }OptionalClassOrClassOrStringProperty`,
+            : "unionDiscriminantsClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly NamedNode: {
-              discriminantValues: readonly string[];
-              type: $IriSchema;
-            };
-            readonly Literal: {
-              discriminantValues: readonly string[];
-              type: $LiteralSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.optionalIriOrLiteralProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "optionalIriOrLiteralProperty",
+        propertySchema: $schema.properties.optionalIriOrLiteralProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
               readonly NamedNode?: $IriFilter;
@@ -8319,99 +8266,72 @@ export namespace UnionDiscriminantsClass {
               };
             };
           }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly NamedNode?: $IriFilter;
+                readonly Literal?: $LiteralFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly NamedNode: {
+                  discriminantValues: readonly string[];
+                  type: $IriSchema;
+                };
+                readonly Literal: {
+                  discriminantValues: readonly string[];
+                  type: $LiteralSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
 
-          unionPatterns.push({
-            patterns: $iriSparqlWherePatterns({
-              filter: filter?.on?.["NamedNode"],
-              ignoreRdfType: false,
-              schema: schema.members["NamedNode"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $literalSparqlWherePatterns({
-              filter: filter?.on?.["Literal"],
-              ignoreRdfType: false,
-              schema: schema.members["Literal"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
+            unionPatterns.push({
+              patterns: $iriSparqlWherePatterns({
+                filter: filter?.on?.["NamedNode"],
+                ignoreRdfType: false,
+                schema: schema.members["NamedNode"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $literalSparqlWherePatterns({
+                filter: filter?.on?.["Literal"],
+                ignoreRdfType: false,
+                schema: schema.members["Literal"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
 
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
-        filter: parameters?.filter?.optionalIriOrLiteralProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }OptionalIriOrLiteralProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .optionalIriOrLiteralProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }OptionalIriOrLiteralProperty`,
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }OptionalIriOrLiteralProperty`,
+            : "unionDiscriminantsClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly object: {
-              discriminantValues: readonly string[];
-              type: $IriSchema;
-            };
-            readonly string: {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.optionalIriOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "optionalIriOrStringProperty",
+        propertySchema: $schema.properties.optionalIriOrStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
               readonly object?: $IriFilter;
@@ -8431,416 +8351,72 @@ export namespace UnionDiscriminantsClass {
               };
             };
           }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly object?: $IriFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly object: {
+                  discriminantValues: readonly string[];
+                  type: $IriSchema;
+                };
+                readonly string: {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
 
-          unionPatterns.push({
-            patterns: $iriSparqlWherePatterns({
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              ignoreRdfType: false,
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
+            unionPatterns.push({
+              patterns: $iriSparqlWherePatterns({
+                filter: filter?.on?.["object"],
+                ignoreRdfType: false,
+                schema: schema.members["object"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["string"],
+                ignoreRdfType: false,
+                schema: schema.members["string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
 
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
-        filter: parameters?.filter?.optionalIriOrStringProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }OptionalIriOrStringProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .optionalIriOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }OptionalIriOrStringProperty`,
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }OptionalIriOrStringProperty`,
+            : "unionDiscriminantsClass"),
       }),
     );
     patterns = patterns.concat(
-      (({
-        filter,
-        schema,
-        ...otherParameters
-      }: $SparqlWherePatternsFunctionParameters<
-        {
-          readonly on?: {
-            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-            readonly "2-string"?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly "0-ClassUnionMember1": {
-              discriminantValues: readonly string[];
-              type: typeof ClassUnionMember1.$schema;
-            };
-            readonly "1-ClassUnionMember2": {
-              discriminantValues: readonly string[];
-              type: typeof ClassUnionMember2.$schema;
-            };
-            readonly "2-string": {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >) => {
-        const unionPatterns: sparqljs.GroupPattern[] = [];
-
-        unionPatterns.push({
-          patterns: (({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            ClassUnionMember1.$Filter,
-            typeof ClassUnionMember1.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              ClassUnionMember1.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ))({
-            filter: filter?.on?.["0-ClassUnionMember1"],
-            ignoreRdfType: false,
-            schema: schema.members["0-ClassUnionMember1"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-        unionPatterns.push({
-          patterns: (({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            ClassUnionMember2.$Filter,
-            typeof ClassUnionMember2.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              ClassUnionMember2.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ))({
-            filter: filter?.on?.["1-ClassUnionMember2"],
-            ignoreRdfType: false,
-            schema: schema.members["1-ClassUnionMember2"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-        unionPatterns.push({
-          patterns: $stringSparqlWherePatterns({
-            filter: filter?.on?.["2-string"],
-            ignoreRdfType: false,
-            schema: schema.members["2-string"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-
-        return [{ patterns: unionPatterns, type: "union" }];
-      })({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.requiredClassOrClassOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }RequiredClassOrClassOrStringProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .requiredClassOrClassOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.requiredClassOrClassOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }RequiredClassOrClassOrStringProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }RequiredClassOrClassOrStringProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({
-        filter,
-        schema,
-        ...otherParameters
-      }: $SparqlWherePatternsFunctionParameters<
-        {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly NamedNode: {
-              discriminantValues: readonly string[];
-              type: $IriSchema;
-            };
-            readonly Literal: {
-              discriminantValues: readonly string[];
-              type: $LiteralSchema;
-            };
-          };
-        }
-      >) => {
-        const unionPatterns: sparqljs.GroupPattern[] = [];
-
-        unionPatterns.push({
-          patterns: $iriSparqlWherePatterns({
-            filter: filter?.on?.["NamedNode"],
-            ignoreRdfType: false,
-            schema: schema.members["NamedNode"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-        unionPatterns.push({
-          patterns: $literalSparqlWherePatterns({
-            filter: filter?.on?.["Literal"],
-            ignoreRdfType: false,
-            schema: schema.members["Literal"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-
-        return [{ patterns: unionPatterns, type: "union" }];
-      })({
-        filter: parameters?.filter?.requiredIriOrLiteralProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }RequiredIriOrLiteralProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .requiredIriOrLiteralProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }RequiredIriOrLiteralProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }RequiredIriOrLiteralProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({
-        filter,
-        schema,
-        ...otherParameters
-      }: $SparqlWherePatternsFunctionParameters<
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly object: {
-              discriminantValues: readonly string[];
-              type: $IriSchema;
-            };
-            readonly string: {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >) => {
-        const unionPatterns: sparqljs.GroupPattern[] = [];
-
-        unionPatterns.push({
-          patterns: $iriSparqlWherePatterns({
-            filter: filter?.on?.["object"],
-            ignoreRdfType: false,
-            schema: schema.members["object"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-        unionPatterns.push({
-          patterns: $stringSparqlWherePatterns({
-            filter: filter?.on?.["string"],
-            ignoreRdfType: false,
-            schema: schema.members["string"].type,
-            ...otherParameters,
-          }).concat(),
-          type: "group",
-        });
-
-        return [{ patterns: unionPatterns, type: "union" }];
-      })({
-        filter: parameters?.filter?.requiredIriOrStringProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }RequiredIriOrStringProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .requiredIriOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }RequiredIriOrStringProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }RequiredIriOrStringProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      $setSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-            readonly "2-string"?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly "0-ClassUnionMember1": {
-              discriminantValues: readonly string[];
-              type: typeof ClassUnionMember1.$schema;
-            };
-            readonly "1-ClassUnionMember2": {
-              discriminantValues: readonly string[];
-              type: typeof ClassUnionMember2.$schema;
-            };
-            readonly "2-string": {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >(
-        ({
+        propertyName: "requiredClassOrClassOrStringProperty",
+        propertySchema: $schema.properties.requiredClassOrClassOrStringProperty,
+        typeSparqlWherePatterns: ({
           filter,
           schema,
           ...otherParameters
@@ -8934,71 +8510,22 @@ export namespace UnionDiscriminantsClass {
 
           return [{ patterns: unionPatterns, type: "union" }];
         },
-      )({
-        filter: parameters?.filter?.setClassOrClassOrStringProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }SetClassOrClassOrStringProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .setClassOrClassOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }SetClassOrClassOrStringProperty`,
-        ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }SetClassOrClassOrStringProperty`,
+            : "unionDiscriminantsClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly NamedNode: {
-              discriminantValues: readonly string[];
-              type: $IriSchema;
-            };
-            readonly Literal: {
-              discriminantValues: readonly string[];
-              type: $LiteralSchema;
-            };
-          };
-        }
-      >(
-        ({
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.requiredIriOrLiteralProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "requiredIriOrLiteralProperty",
+        propertySchema: $schema.properties.requiredIriOrLiteralProperty,
+        typeSparqlWherePatterns: ({
           filter,
           schema,
           ...otherParameters
@@ -9046,71 +8573,22 @@ export namespace UnionDiscriminantsClass {
 
           return [{ patterns: unionPatterns, type: "union" }];
         },
-      )({
-        filter: parameters?.filter?.setIriOrLiteralProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }SetIriOrLiteralProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .setIriOrLiteralProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }SetIriOrLiteralProperty`,
-        ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }SetIriOrLiteralProperty`,
+            : "unionDiscriminantsClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly object: {
-              discriminantValues: readonly string[];
-              type: $IriSchema;
-            };
-            readonly string: {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >(
-        ({
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.requiredIriOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "requiredIriOrStringProperty",
+        propertySchema: $schema.properties.requiredIriOrStringProperty,
+        typeSparqlWherePatterns: ({
           filter,
           schema,
           ...otherParameters
@@ -9158,46 +8636,317 @@ export namespace UnionDiscriminantsClass {
 
           return [{ patterns: unionPatterns, type: "union" }];
         },
-      )({
-        filter: parameters?.filter?.setIriOrStringProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "unionDiscriminantsClass")
-                  }SetIriOrStringProperty`,
-                ),
-                predicate:
-                  UnionDiscriminantsClass.$schema.properties
-                    .setIriOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "unionDiscriminantsClass")
-          }SetIriOrStringProperty`,
-        ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "unionDiscriminantsClass")
-        }SetIriOrStringProperty`,
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.setClassOrClassOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setClassOrClassOrStringProperty",
+        propertySchema: $schema.properties.setClassOrClassOrStringProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly "0-ClassUnionMember1": {
+                discriminantValues: readonly string[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly "1-ClassUnionMember2": {
+                discriminantValues: readonly string[];
+                type: typeof ClassUnionMember2.$schema;
+              };
+              readonly "2-string": {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+                readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+                readonly "2-string"?: $StringFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly "0-ClassUnionMember1": {
+                  discriminantValues: readonly string[];
+                  type: typeof ClassUnionMember1.$schema;
+                };
+                readonly "1-ClassUnionMember2": {
+                  discriminantValues: readonly string[];
+                  type: typeof ClassUnionMember2.$schema;
+                };
+                readonly "2-string": {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
+
+            unionPatterns.push({
+              patterns: (({
+                ignoreRdfType,
+                propertyPatterns,
+                schema,
+                valueVariable,
+                ...otherParameters
+              }: $SparqlWherePatternsFunctionParameters<
+                ClassUnionMember1.$Filter,
+                typeof ClassUnionMember1.$schema
+              >) =>
+                (propertyPatterns as readonly $SparqlPattern[]).concat(
+                  ClassUnionMember1.$sparqlWherePatterns({
+                    focusIdentifier: valueVariable,
+                    ignoreRdfType: ignoreRdfType ?? true,
+                    ...otherParameters,
+                  }),
+                ))({
+                filter: filter?.on?.["0-ClassUnionMember1"],
+                ignoreRdfType: false,
+                schema: schema.members["0-ClassUnionMember1"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: (({
+                ignoreRdfType,
+                propertyPatterns,
+                schema,
+                valueVariable,
+                ...otherParameters
+              }: $SparqlWherePatternsFunctionParameters<
+                ClassUnionMember2.$Filter,
+                typeof ClassUnionMember2.$schema
+              >) =>
+                (propertyPatterns as readonly $SparqlPattern[]).concat(
+                  ClassUnionMember2.$sparqlWherePatterns({
+                    focusIdentifier: valueVariable,
+                    ignoreRdfType: ignoreRdfType ?? true,
+                    ...otherParameters,
+                  }),
+                ))({
+                filter: filter?.on?.["1-ClassUnionMember2"],
+                ignoreRdfType: false,
+                schema: schema.members["1-ClassUnionMember2"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["2-string"],
+                ignoreRdfType: false,
+                schema: schema.members["2-string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.setIriOrLiteralProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setIriOrLiteralProperty",
+        propertySchema: $schema.properties.setIriOrLiteralProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly string[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly string[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly NamedNode?: $IriFilter;
+                readonly Literal?: $LiteralFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly NamedNode: {
+                  discriminantValues: readonly string[];
+                  type: $IriSchema;
+                };
+                readonly Literal: {
+                  discriminantValues: readonly string[];
+                  type: $LiteralSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
+
+            unionPatterns.push({
+              patterns: $iriSparqlWherePatterns({
+                filter: filter?.on?.["NamedNode"],
+                ignoreRdfType: false,
+                schema: schema.members["NamedNode"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $literalSparqlWherePatterns({
+                filter: filter?.on?.["Literal"],
+                ignoreRdfType: false,
+                schema: schema.members["Literal"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "unionDiscriminantsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.setIriOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setIriOrStringProperty",
+        propertySchema: $schema.properties.setIriOrStringProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly string[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly object?: $IriFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly object: {
+                  discriminantValues: readonly string[];
+                  type: $IriSchema;
+                };
+                readonly string: {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
+
+            unionPatterns.push({
+              patterns: $iriSparqlWherePatterns({
+                filter: filter?.on?.["object"],
+                ignoreRdfType: false,
+                schema: schema.members["object"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["string"],
+                ignoreRdfType: false,
+                schema: schema.members["string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "unionDiscriminantsClass"),
       }),
     );
     return patterns;
@@ -10845,405 +10594,174 @@ export namespace TermPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$BlankNodeFilter, $BlankNodeSchema>(
-        $blankNodeSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.blankNodeTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }BlankNodeTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.blankNodeTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.blankNodeTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }BlankNodeTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "blankNodeTermProperty",
+        propertySchema: $schema.properties.blankNodeTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $BlankNodeFilter,
+          $BlankNodeSchema
+        >($blankNodeSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }BlankNodeTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
-        $booleanSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.booleanTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }BooleanTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.booleanTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.booleanTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }BooleanTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "booleanTermProperty",
+        propertySchema: $schema.properties.booleanTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }BooleanTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$DateFilter, $DateSchema>(
-        $dateSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.dateTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }DateTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.dateTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: TermPropertiesClass.$schema.properties.dateTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }DateTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "dateTermProperty",
+        propertySchema: $schema.properties.dateTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }DateTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$DateFilter, $DateSchema>(
-        $dateSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.dateTimeTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }DateTimeTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.dateTimeTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.dateTimeTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }DateTimeTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "dateTimeTermProperty",
+        propertySchema: $schema.properties.dateTimeTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }DateTimeTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$IriFilter, $IriSchema>(
-        $iriSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.iriTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }IriTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.iriTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: TermPropertiesClass.$schema.properties.iriTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }IriTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "iriTermProperty",
+        propertySchema: $schema.properties.iriTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }IriTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.literalTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }LiteralTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.literalTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.literalTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }LiteralTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "literalTermProperty",
+        propertySchema: $schema.properties.literalTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }LiteralTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.numberTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }NumberTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.numberTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.numberTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }NumberTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "numberTermProperty",
+        propertySchema: $schema.properties.numberTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }NumberTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.stringTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }StringTermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.stringTermProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          TermPropertiesClass.$schema.properties.stringTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }StringTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "stringTermProperty",
+        propertySchema: $schema.properties.stringTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }StringTermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$TermFilter, $TermSchema>(
-        $termSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.termProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "termPropertiesClass")
-                  }TermProperty`,
-                ),
-                predicate:
-                  TermPropertiesClass.$schema.properties.termProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: TermPropertiesClass.$schema.properties.termProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "termPropertiesClass")
-          }TermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "termProperty",
+        propertySchema: $schema.properties.termProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "termPropertiesClass")
-        }TermProperty`,
+            : "termPropertiesClass"),
       }),
     );
     return patterns;
@@ -11709,46 +11227,19 @@ export namespace Sha256IriIdentifierClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.sha256IriProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "sha256IriIdentifierClass")
-                  }Sha256IriProperty`,
-                ),
-                predicate:
-                  Sha256IriIdentifierClass.$schema.properties.sha256IriProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "sha256IriIdentifierClass")
-          }Sha256IriProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "sha256IriProperty",
+        propertySchema: $schema.properties.sha256IriProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "sha256IriIdentifierClass")
-        }Sha256IriProperty`,
+            : "sha256IriIdentifierClass"),
       }),
     );
     return patterns;
@@ -13526,132 +13017,51 @@ export namespace PropertyVisibilitiesClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: undefined,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyVisibilitiesClass")
-                  }PrivateProperty`,
-                ),
-                predicate:
-                  PropertyVisibilitiesClass.$schema.properties.privateProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyVisibilitiesClass.$schema.properties.privateProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyVisibilitiesClass")
-          }PrivateProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "privateProperty",
+        propertySchema: $schema.properties.privateProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyVisibilitiesClass")
-        }PrivateProperty`,
+            : "propertyVisibilitiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: undefined,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyVisibilitiesClass")
-                  }ProtectedProperty`,
-                ),
-                predicate:
-                  PropertyVisibilitiesClass.$schema.properties.protectedProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyVisibilitiesClass.$schema.properties.protectedProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyVisibilitiesClass")
-          }ProtectedProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "protectedProperty",
+        propertySchema: $schema.properties.protectedProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyVisibilitiesClass")
-        }ProtectedProperty`,
+            : "propertyVisibilitiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.publicProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyVisibilitiesClass")
-                  }PublicProperty`,
-                ),
-                predicate:
-                  PropertyVisibilitiesClass.$schema.properties.publicProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyVisibilitiesClass.$schema.properties.publicProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyVisibilitiesClass")
-          }PublicProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "publicProperty",
+        propertySchema: $schema.properties.publicProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyVisibilitiesClass")
-        }PublicProperty`,
+            : "propertyVisibilitiesClass"),
       }),
     );
     return patterns;
@@ -14470,181 +13880,76 @@ export namespace PropertyCardinalitiesClass {
       );
     }
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.emptyStringSetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyCardinalitiesClass")
-                  }EmptyStringSetProperty`,
-                ),
-                predicate:
-                  PropertyCardinalitiesClass.$schema.properties
-                    .emptyStringSetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyCardinalitiesClass")
-          }EmptyStringSetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "emptyStringSetProperty",
+        propertySchema: $schema.properties.emptyStringSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyCardinalitiesClass")
-        }EmptyStringSetProperty`,
+            : "propertyCardinalitiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.nonEmptyStringSetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyCardinalitiesClass")
-                  }NonEmptyStringSetProperty`,
-                ),
-                predicate:
-                  PropertyCardinalitiesClass.$schema.properties
-                    .nonEmptyStringSetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyCardinalitiesClass")
-          }NonEmptyStringSetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "nonEmptyStringSetProperty",
+        propertySchema: $schema.properties.nonEmptyStringSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyCardinalitiesClass")
-        }NonEmptyStringSetProperty`,
+            : "propertyCardinalitiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.optionalStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyCardinalitiesClass")
-                  }OptionalStringProperty`,
-                ),
-                predicate:
-                  PropertyCardinalitiesClass.$schema.properties
-                    .optionalStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyCardinalitiesClass.$schema.properties.optionalStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyCardinalitiesClass")
-          }OptionalStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalStringProperty",
+        propertySchema: $schema.properties.optionalStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyCardinalitiesClass")
-        }OptionalStringProperty`,
+            : "propertyCardinalitiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.requiredStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "propertyCardinalitiesClass")
-                  }RequiredStringProperty`,
-                ),
-                predicate:
-                  PropertyCardinalitiesClass.$schema.properties
-                    .requiredStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PropertyCardinalitiesClass.$schema.properties.requiredStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "propertyCardinalitiesClass")
-          }RequiredStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "requiredStringProperty",
+        propertySchema: $schema.properties.requiredStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "propertyCardinalitiesClass")
-        }RequiredStringProperty`,
+            : "propertyCardinalitiesClass"),
       }),
     );
     return patterns;
@@ -15235,46 +14540,19 @@ export namespace PartialInterfaceUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "partialInterfaceUnionMember2")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  PartialInterfaceUnionMember2.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PartialInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialInterfaceUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "partialInterfaceUnionMember2")
-        }LazilyResolvedStringProperty`,
+            : "partialInterfaceUnionMember2"),
       }),
     );
     return patterns;
@@ -15865,46 +15143,19 @@ export namespace PartialInterfaceUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "partialInterfaceUnionMember1")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  PartialInterfaceUnionMember1.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PartialInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialInterfaceUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "partialInterfaceUnionMember1")
-        }LazilyResolvedStringProperty`,
+            : "partialInterfaceUnionMember1"),
       }),
     );
     return patterns;
@@ -16467,46 +15718,19 @@ export namespace PartialClassUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "partialClassUnionMember2")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  PartialClassUnionMember2.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialClassUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "partialClassUnionMember2")
-        }LazilyResolvedStringProperty`,
+            : "partialClassUnionMember2"),
       }),
     );
     return patterns;
@@ -17069,46 +16293,19 @@ export namespace PartialClassUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "partialClassUnionMember1")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  PartialClassUnionMember1.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialClassUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "partialClassUnionMember1")
-        }LazilyResolvedStringProperty`,
+            : "partialClassUnionMember1"),
       }),
     );
     return patterns;
@@ -17706,132 +16903,51 @@ export namespace OrderedPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.orderedPropertyC,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "orderedPropertiesClass")
-                  }OrderedPropertyC`,
-                ),
-                predicate:
-                  OrderedPropertiesClass.$schema.properties.orderedPropertyC
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          OrderedPropertiesClass.$schema.properties.orderedPropertyC.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "orderedPropertiesClass")
-          }OrderedPropertyC`,
-        ),
-        variablePrefix: `${
+        propertyName: "orderedPropertyC",
+        propertySchema: $schema.properties.orderedPropertyC,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "orderedPropertiesClass")
-        }OrderedPropertyC`,
+            : "orderedPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.orderedPropertyB,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "orderedPropertiesClass")
-                  }OrderedPropertyB`,
-                ),
-                predicate:
-                  OrderedPropertiesClass.$schema.properties.orderedPropertyB
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          OrderedPropertiesClass.$schema.properties.orderedPropertyB.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "orderedPropertiesClass")
-          }OrderedPropertyB`,
-        ),
-        variablePrefix: `${
+        propertyName: "orderedPropertyB",
+        propertySchema: $schema.properties.orderedPropertyB,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "orderedPropertiesClass")
-        }OrderedPropertyB`,
+            : "orderedPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.orderedPropertyA,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "orderedPropertiesClass")
-                  }OrderedPropertyA`,
-                ),
-                predicate:
-                  OrderedPropertiesClass.$schema.properties.orderedPropertyA
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          OrderedPropertiesClass.$schema.properties.orderedPropertyA.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "orderedPropertiesClass")
-          }OrderedPropertyA`,
-        ),
-        variablePrefix: `${
+        propertyName: "orderedPropertyA",
+        propertySchema: $schema.properties.orderedPropertyA,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "orderedPropertiesClass")
-        }OrderedPropertyA`,
+            : "orderedPropertiesClass"),
       }),
     );
     return patterns;
@@ -20260,724 +19376,307 @@ export namespace NumericPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.byteNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }ByteNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties.byteNumericProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.byteNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }ByteNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "byteNumericProperty",
+        propertySchema: $schema.properties.byteNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }ByteNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        $NumericFilter<BigDecimal>,
-        $NumericSchema<BigDecimal>
-      >($bigDecimalSparqlWherePatterns)({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.decimalNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }DecimalNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .decimalNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.decimalNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }DecimalNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "decimalNumericProperty",
+        propertySchema: $schema.properties.decimalNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<BigDecimal>,
+          $NumericSchema<BigDecimal>
+        >($bigDecimalSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }DecimalNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.doubleNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }DoubleNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .doubleNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.doubleNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }DoubleNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "doubleNumericProperty",
+        propertySchema: $schema.properties.doubleNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }DoubleNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.floatNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }FloatNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties.floatNumericProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.floatNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }FloatNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "floatNumericProperty",
+        propertySchema: $schema.properties.floatNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }FloatNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.integerNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }IntegerNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .integerNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.integerNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }IntegerNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "integerNumericProperty",
+        propertySchema: $schema.properties.integerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }IntegerNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.intNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }IntNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties.intNumericProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.intNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }IntNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "intNumericProperty",
+        propertySchema: $schema.properties.intNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }IntNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.longNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }LongNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties.longNumericProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.longNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }LongNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "longNumericProperty",
+        propertySchema: $schema.properties.longNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }LongNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.negativeIntegerNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }NegativeIntegerNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .negativeIntegerNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.negativeIntegerNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }NegativeIntegerNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "negativeIntegerNumericProperty",
+        propertySchema: $schema.properties.negativeIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }NegativeIntegerNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.nonNegativeIntegerNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }NonNegativeIntegerNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .nonNegativeIntegerNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.nonNegativeIntegerNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }NonNegativeIntegerNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "nonNegativeIntegerNumericProperty",
+        propertySchema: $schema.properties.nonNegativeIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }NonNegativeIntegerNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.nonPositiveIntegerNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }NonPositiveIntegerNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .nonPositiveIntegerNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.nonPositiveIntegerNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }NonPositiveIntegerNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "nonPositiveIntegerNumericProperty",
+        propertySchema: $schema.properties.nonPositiveIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }NonPositiveIntegerNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.positiveIntegerNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }PositiveIntegerNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .positiveIntegerNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.positiveIntegerNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }PositiveIntegerNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "positiveIntegerNumericProperty",
+        propertySchema: $schema.properties.positiveIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }PositiveIntegerNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.shortNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }ShortNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties.shortNumericProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.shortNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }ShortNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "shortNumericProperty",
+        propertySchema: $schema.properties.shortNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }ShortNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.unsignedByteNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }UnsignedByteNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .unsignedByteNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.unsignedByteNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }UnsignedByteNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "unsignedByteNumericProperty",
+        propertySchema: $schema.properties.unsignedByteNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }UnsignedByteNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.unsignedIntNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }UnsignedIntNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .unsignedIntNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.unsignedIntNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }UnsignedIntNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "unsignedIntNumericProperty",
+        propertySchema: $schema.properties.unsignedIntNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }UnsignedIntNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.unsignedLongNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }UnsignedLongNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .unsignedLongNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.unsignedLongNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }UnsignedLongNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "unsignedLongNumericProperty",
+        propertySchema: $schema.properties.unsignedLongNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }UnsignedLongNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.unsignedShortNumericProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "numericPropertiesClass")
-                  }UnsignedShortNumericProperty`,
-                ),
-                predicate:
-                  NumericPropertiesClass.$schema.properties
-                    .unsignedShortNumericProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NumericPropertiesClass.$schema.properties.unsignedShortNumericProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "numericPropertiesClass")
-          }UnsignedShortNumericProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "unsignedShortNumericProperty",
+        propertySchema: $schema.properties.unsignedShortNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "numericPropertiesClass")
-        }UnsignedShortNumericProperty`,
+            : "numericPropertiesClass"),
       }),
     );
     return patterns;
@@ -21391,44 +20090,19 @@ export namespace NonClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.nonClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "nonClass")
-                  }NonClassProperty`,
-                ),
-                predicate:
-                  NonClass.$schema.properties.nonClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: NonClass.$schema.properties.nonClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "nonClass")
-          }NonClassProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "nonClassProperty",
+        propertySchema: $schema.properties.nonClassProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "nonClass")
-        }NonClassProperty`,
+            : "nonClass"),
       }),
     );
     return patterns;
@@ -21866,46 +20540,19 @@ export namespace NoRdfTypeClassUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.noRdfTypeClassUnionMember2Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "noRdfTypeClassUnionMember2")
-                  }NoRdfTypeClassUnionMember2Property`,
-                ),
-                predicate:
-                  NoRdfTypeClassUnionMember2.$schema.properties
-                    .noRdfTypeClassUnionMember2Property.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NoRdfTypeClassUnionMember2.$schema.properties.noRdfTypeClassUnionMember2Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "noRdfTypeClassUnionMember2")
-          }NoRdfTypeClassUnionMember2Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "noRdfTypeClassUnionMember2Property",
+        propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "noRdfTypeClassUnionMember2")
-        }NoRdfTypeClassUnionMember2Property`,
+            : "noRdfTypeClassUnionMember2"),
       }),
     );
     return patterns;
@@ -22343,46 +20990,19 @@ export namespace NoRdfTypeClassUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.noRdfTypeClassUnionMember1Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "noRdfTypeClassUnionMember1")
-                  }NoRdfTypeClassUnionMember1Property`,
-                ),
-                predicate:
-                  NoRdfTypeClassUnionMember1.$schema.properties
-                    .noRdfTypeClassUnionMember1Property.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          NoRdfTypeClassUnionMember1.$schema.properties.noRdfTypeClassUnionMember1Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "noRdfTypeClassUnionMember1")
-          }NoRdfTypeClassUnionMember1Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "noRdfTypeClassUnionMember1Property",
+        propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "noRdfTypeClassUnionMember1")
-        }NoRdfTypeClassUnionMember1Property`,
+            : "noRdfTypeClassUnionMember1"),
       }),
     );
     return patterns;
@@ -23351,143 +21971,64 @@ export namespace MutablePropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        $CollectionFilter<$StringFilter>,
-        $CollectionSchema<$StringSchema>
-      >(
-        $listSparqlWherePatterns<$StringFilter, $StringSchema>(
-          $stringSparqlWherePatterns,
-        ),
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.mutableListProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "mutablePropertiesClass")
-                  }MutableListProperty`,
-                ),
-                predicate:
-                  MutablePropertiesClass.$schema.properties.mutableListProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          MutablePropertiesClass.$schema.properties.mutableListProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "mutablePropertiesClass")
-          }MutableListProperty`,
+        propertyName: "mutableListProperty",
+        propertySchema: $schema.properties.mutableListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema>(
+            $stringSparqlWherePatterns,
+          ),
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "mutablePropertiesClass")
-        }MutableListProperty`,
+            : "mutablePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.mutableSetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "mutablePropertiesClass")
-                  }MutableSetProperty`,
-                ),
-                predicate:
-                  MutablePropertiesClass.$schema.properties.mutableSetProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          MutablePropertiesClass.$schema.properties.mutableSetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "mutablePropertiesClass")
-          }MutableSetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "mutableSetProperty",
+        propertySchema: $schema.properties.mutableSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "mutablePropertiesClass")
-        }MutableSetProperty`,
+            : "mutablePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.mutableStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "mutablePropertiesClass")
-                  }MutableStringProperty`,
-                ),
-                predicate:
-                  MutablePropertiesClass.$schema.properties
-                    .mutableStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          MutablePropertiesClass.$schema.properties.mutableStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "mutablePropertiesClass")
-          }MutableStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "mutableStringProperty",
+        propertySchema: $schema.properties.mutableStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "mutablePropertiesClass")
-        }MutableStringProperty`,
+            : "mutablePropertiesClass"),
       }),
     );
     return patterns;
@@ -24586,168 +23127,88 @@ export namespace ListPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        $CollectionFilter<$IriFilter>,
-        $CollectionSchema<$IriSchema>
-      >(
-        $listSparqlWherePatterns<$IriFilter, $IriSchema>(
-          $iriSparqlWherePatterns,
-        ),
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.iriListProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "listPropertiesClass")
-                  }IriListProperty`,
-                ),
-                predicate:
-                  ListPropertiesClass.$schema.properties.iriListProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: ListPropertiesClass.$schema.properties.iriListProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "listPropertiesClass")
-          }IriListProperty`,
+        propertyName: "iriListProperty",
+        propertySchema: $schema.properties.iriListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$IriFilter>,
+          $CollectionSchema<$IriSchema>
+        >(
+          $listSparqlWherePatterns<$IriFilter, $IriSchema>(
+            $iriSparqlWherePatterns,
+          ),
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "listPropertiesClass")
-        }IriListProperty`,
+            : "listPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        $CollectionFilter<NonClass.$Filter>,
-        $CollectionSchema<typeof NonClass.$schema>
-      >(
-        $listSparqlWherePatterns<NonClass.$Filter, typeof NonClass.$schema>(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            NonClass.$Filter,
-            typeof NonClass.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              NonClass.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        ),
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.objectListProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "listPropertiesClass")
-                  }ObjectListProperty`,
-                ),
-                predicate:
-                  ListPropertiesClass.$schema.properties.objectListProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ListPropertiesClass.$schema.properties.objectListProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "listPropertiesClass")
-          }ObjectListProperty`,
+        propertyName: "objectListProperty",
+        propertySchema: $schema.properties.objectListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<NonClass.$Filter>,
+          $CollectionSchema<typeof NonClass.$schema>
+        >(
+          $listSparqlWherePatterns<NonClass.$Filter, typeof NonClass.$schema>(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              NonClass.$Filter,
+              typeof NonClass.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                NonClass.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          ),
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "listPropertiesClass")
-        }ObjectListProperty`,
+            : "listPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        $CollectionFilter<$StringFilter>,
-        $CollectionSchema<$StringSchema>
-      >(
-        $listSparqlWherePatterns<$StringFilter, $StringSchema>(
-          $stringSparqlWherePatterns,
-        ),
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.stringListProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "listPropertiesClass")
-                  }StringListProperty`,
-                ),
-                predicate:
-                  ListPropertiesClass.$schema.properties.stringListProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ListPropertiesClass.$schema.properties.stringListProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "listPropertiesClass")
-          }StringListProperty`,
+        propertyName: "stringListProperty",
+        propertySchema: $schema.properties.stringListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema>(
+            $stringSparqlWherePatterns,
+          ),
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "listPropertiesClass")
-        }StringListProperty`,
+            : "listPropertiesClass"),
       }),
     );
     return patterns;
@@ -25194,46 +23655,19 @@ export namespace PartialInterface {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "partialInterface")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  PartialInterface.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PartialInterface.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialInterface")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "partialInterface")
-        }LazilyResolvedStringProperty`,
+            : "partialInterface"),
       }),
     );
     return patterns;
@@ -28240,537 +26674,264 @@ export namespace LazyPropertiesInterface {
       );
     }
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "optionalLazyToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
             $DefaultPartial.$Filter,
             typeof $DefaultPartial.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              $DefaultPartial.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
-        filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }OptionalLazyToResolvedInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .optionalLazyToResolvedInterfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $DefaultPartial.$Filter,
+              typeof $DefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $DefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }OptionalLazyToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            $DefaultPartial.$Filter,
-            typeof $DefaultPartial.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              $DefaultPartial.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }OptionalLazyToResolvedInterfaceUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .optionalLazyToResolvedInterfaceUnionProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedInterfaceUnionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalLazyToResolvedInterfaceUnionProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $DefaultPartial.$Filter,
+              typeof $DefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $DefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }OptionalLazyToResolvedInterfaceUnionProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          $NamedDefaultPartial.$Filter,
-          typeof $NamedDefaultPartial.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            $NamedDefaultPartial.$Filter,
-            typeof $NamedDefaultPartial.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              $NamedDefaultPartial.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter
             ?.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .optionalLazyToResolvedIriIdentifierInterfaceProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedIriIdentifierInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
+        propertySchema:
+          $schema.properties
+            .optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $NamedDefaultPartial.$Filter,
+            typeof $NamedDefaultPartial.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $NamedDefaultPartial.$Filter,
+              typeof $NamedDefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $NamedDefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          PartialInterface.$Filter,
-          typeof PartialInterface.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            PartialInterface.$Filter,
-            typeof PartialInterface.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              PartialInterface.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceToResolvedInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }OptionalPartialInterfaceToResolvedInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .optionalPartialInterfaceToResolvedInterfaceProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalPartialInterfaceToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialInterfaceToResolvedInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialInterface.$Filter,
+            typeof PartialInterface.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialInterface.$Filter,
+              typeof PartialInterface.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialInterface.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }OptionalPartialInterfaceToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          PartialInterface.$Filter,
-          typeof PartialInterface.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            PartialInterface.$Filter,
-            typeof PartialInterface.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              PartialInterface.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .optionalPartialInterfaceToResolvedInterfaceUnionProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName:
+          "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialInterface.$Filter,
+            typeof PartialInterface.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialInterface.$Filter,
+              typeof PartialInterface.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialInterface.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          PartialInterfaceUnion.$Filter,
-          typeof PartialInterfaceUnion.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            PartialInterfaceUnion.$Filter,
-            typeof PartialInterfaceUnion.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              PartialInterfaceUnion.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter
             ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName:
+          "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialInterfaceUnion.$Filter,
+            typeof PartialInterfaceUnion.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialInterfaceUnion.$Filter,
+              typeof PartialInterfaceUnion.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialInterfaceUnion.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        (({
-          ignoreRdfType,
-          propertyPatterns,
-          schema,
-          valueVariable,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >) =>
-          (propertyPatterns as readonly $SparqlPattern[]).concat(
-            $DefaultPartial.$sparqlWherePatterns({
-              focusIdentifier: valueVariable,
-              ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }),
-          ))({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }RequiredLazyToResolvedInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .requiredLazyToResolvedInterfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.requiredLazyToResolvedInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }RequiredLazyToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }RequiredLazyToResolvedInterfaceProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        (({
-          ignoreRdfType,
-          propertyPatterns,
-          schema,
-          valueVariable,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          PartialInterface.$Filter,
-          typeof PartialInterface.$schema
-        >) =>
-          (propertyPatterns as readonly $SparqlPattern[]).concat(
-            PartialInterface.$sparqlWherePatterns({
-              focusIdentifier: valueVariable,
-              ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }),
-          ))({ schema: schema.partial(), ...otherParameters }))({
-        filter:
-          parameters?.filter
-            ?.requiredPartialInterfaceToResolvedInterfaceProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }RequiredPartialInterfaceToResolvedInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .requiredPartialInterfaceToResolvedInterfaceProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.requiredPartialInterfaceToResolvedInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }RequiredPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }RequiredPartialInterfaceToResolvedInterfaceProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $setSparqlWherePatterns<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >(
-          ({
+        propertyName: "requiredLazyToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties.requiredLazyToResolvedInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          (({
             ignoreRdfType,
             propertyPatterns,
             schema,
@@ -28786,56 +26947,28 @@ export namespace LazyPropertiesInterface {
                 ignoreRdfType: ignoreRdfType ?? true,
                 ...otherParameters,
               }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
-        filter: parameters?.filter?.setLazyToResolvedInterfaceProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }SetLazyToResolvedInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .setLazyToResolvedInterfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.setLazyToResolvedInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }SetLazyToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+            ))({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }SetLazyToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $setSparqlWherePatterns<
-          PartialInterface.$Filter,
-          typeof PartialInterface.$schema
-        >(
-          ({
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters?.filter
+            ?.requiredPartialInterfaceToResolvedInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "requiredPartialInterfaceToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties
+            .requiredPartialInterfaceToResolvedInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          (({
             ignoreRdfType,
             propertyPatterns,
             schema,
@@ -28851,48 +26984,90 @@ export namespace LazyPropertiesInterface {
                 ignoreRdfType: ignoreRdfType ?? true,
                 ...otherParameters,
               }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
-        filter:
-          parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesInterface")
-                  }SetPartialInterfaceToResolvedInterfaceProperty`,
-                ),
-                predicate:
-                  LazyPropertiesInterface.$schema.properties
-                    .setPartialInterfaceToResolvedInterfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesInterface.$schema.properties.setPartialInterfaceToResolvedInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesInterface")
-          }SetPartialInterfaceToResolvedInterfaceProperty`,
-        ),
-        variablePrefix: `${
+            ))({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesInterface")
-        }SetPartialInterfaceToResolvedInterfaceProperty`,
+            : "lazyPropertiesInterface"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.setLazyToResolvedInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setLazyToResolvedInterfaceProperty",
+        propertySchema: $schema.properties.setLazyToResolvedInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $setSparqlWherePatterns<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $DefaultPartial.$Filter,
+              typeof $DefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $DefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "lazyPropertiesInterface"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setPartialInterfaceToResolvedInterfaceProperty",
+        propertySchema:
+          $schema.properties.setPartialInterfaceToResolvedInterfaceProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $setSparqlWherePatterns<
+            PartialInterface.$Filter,
+            typeof PartialInterface.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialInterface.$Filter,
+              typeof PartialInterface.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialInterface.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "lazyPropertiesInterface"),
       }),
     );
     return patterns;
@@ -29318,46 +27493,19 @@ export namespace PartialClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "partialClass")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  PartialClass.$schema.properties.lazilyResolvedStringProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          PartialClass.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialClass")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "partialClass")
-        }LazilyResolvedStringProperty`,
+            : "partialClass"),
       }),
     );
     return patterns;
@@ -32188,528 +30336,252 @@ export namespace LazyPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            $DefaultPartial.$Filter,
-            typeof $DefaultPartial.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              $DefaultPartial.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.optionalLazyToResolvedClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }OptionalLazyToResolvedClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .optionalLazyToResolvedClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }OptionalLazyToResolvedClassProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
+        propertyName: "optionalLazyToResolvedClassProperty",
+        propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
             $DefaultPartial.$Filter,
             typeof $DefaultPartial.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              $DefaultPartial.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
-        filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }OptionalLazyToResolvedClassUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .optionalLazyToResolvedClassUnionProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedClassUnionProperty`,
-        ),
-        variablePrefix: `${
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $DefaultPartial.$Filter,
+              typeof $DefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $DefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }OptionalLazyToResolvedClassUnionProperty`,
+            : "lazyPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          $NamedDefaultPartial.$Filter,
-          typeof $NamedDefaultPartial.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            $NamedDefaultPartial.$Filter,
-            typeof $NamedDefaultPartial.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              $NamedDefaultPartial.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "optionalLazyToResolvedClassUnionProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedClassUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $DefaultPartial.$Filter,
+              typeof $DefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $DefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "lazyPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }OptionalLazyToResolvedIriIdentifierClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .optionalLazyToResolvedIriIdentifierClassProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.optionalLazyToResolvedIriIdentifierClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }OptionalLazyToResolvedIriIdentifierClassProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalLazyToResolvedIriIdentifierClassProperty",
+        propertySchema:
+          $schema.properties.optionalLazyToResolvedIriIdentifierClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $NamedDefaultPartial.$Filter,
+            typeof $NamedDefaultPartial.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $NamedDefaultPartial.$Filter,
+              typeof $NamedDefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $NamedDefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }OptionalLazyToResolvedIriIdentifierClassProperty`,
+            : "lazyPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          PartialClass.$Filter,
-          typeof PartialClass.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            PartialClass.$Filter,
-            typeof PartialClass.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              PartialClass.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.optionalPartialClassToResolvedClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }OptionalPartialClassToResolvedClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .optionalPartialClassToResolvedClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalPartialClassToResolvedClassProperty",
+        propertySchema:
+          $schema.properties.optionalPartialClassToResolvedClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialClass.$Filter,
+              typeof PartialClass.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialClass.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }OptionalPartialClassToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          PartialClass.$Filter,
-          typeof PartialClass.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            PartialClass.$Filter,
-            typeof PartialClass.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              PartialClass.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }OptionalPartialClassToResolvedClassUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .optionalPartialClassToResolvedClassUnionProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassToResolvedClassUnionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalPartialClassToResolvedClassUnionProperty",
+        propertySchema:
+          $schema.properties.optionalPartialClassToResolvedClassUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialClass.$Filter,
+              typeof PartialClass.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialClass.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }OptionalPartialClassToResolvedClassUnionProperty`,
+            : "lazyPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $maybeSparqlWherePatterns<
-          PartialClassUnion.$Filter,
-          typeof PartialClassUnion.$schema
-        >(
-          ({
-            ignoreRdfType,
-            propertyPatterns,
-            schema,
-            valueVariable,
-            ...otherParameters
-          }: $SparqlWherePatternsFunctionParameters<
-            PartialClassUnion.$Filter,
-            typeof PartialClassUnion.$schema
-          >) =>
-            (propertyPatterns as readonly $SparqlPattern[]).concat(
-              PartialClassUnion.$sparqlWherePatterns({
-                focusIdentifier: valueVariable,
-                ...otherParameters,
-              }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter:
           parameters?.filter
             ?.optionalPartialClassUnionToResolvedClassUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }OptionalPartialClassUnionToResolvedClassUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .optionalPartialClassUnionToResolvedClassUnionProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.optionalPartialClassUnionToResolvedClassUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }OptionalPartialClassUnionToResolvedClassUnionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "optionalPartialClassUnionToResolvedClassUnionProperty",
+        propertySchema:
+          $schema.properties
+            .optionalPartialClassUnionToResolvedClassUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialClassUnion.$Filter,
+            typeof PartialClassUnion.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialClassUnion.$Filter,
+              typeof PartialClassUnion.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialClassUnion.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }OptionalPartialClassUnionToResolvedClassUnionProperty`,
+            : "lazyPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        (({
-          ignoreRdfType,
-          propertyPatterns,
-          schema,
-          valueVariable,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >) =>
-          (propertyPatterns as readonly $SparqlPattern[]).concat(
-            $DefaultPartial.$sparqlWherePatterns({
-              focusIdentifier: valueVariable,
-              ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }),
-          ))({ schema: schema.partial(), ...otherParameters }))({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.requiredLazyToResolvedClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }RequiredLazyToResolvedClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .requiredLazyToResolvedClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }RequiredLazyToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }RequiredLazyToResolvedClassProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        (({
-          ignoreRdfType,
-          propertyPatterns,
-          schema,
-          valueVariable,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          PartialClass.$Filter,
-          typeof PartialClass.$schema
-        >) =>
-          (propertyPatterns as readonly $SparqlPattern[]).concat(
-            PartialClass.$sparqlWherePatterns({
-              focusIdentifier: valueVariable,
-              ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }),
-          ))({ schema: schema.partial(), ...otherParameters }))({
-        filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }RequiredPartialClassToResolvedClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .requiredPartialClassToResolvedClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.requiredPartialClassToResolvedClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }RequiredPartialClassToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }RequiredPartialClassToResolvedClassProperty`,
-      }),
-    );
-    patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $setSparqlWherePatterns<
-          $DefaultPartial.$Filter,
-          typeof $DefaultPartial.$schema
-        >(
-          ({
+        propertyName: "requiredLazyToResolvedClassProperty",
+        propertySchema: $schema.properties.requiredLazyToResolvedClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          (({
             ignoreRdfType,
             propertyPatterns,
             schema,
@@ -32725,56 +30597,25 @@ export namespace LazyPropertiesClass {
                 ignoreRdfType: ignoreRdfType ?? true,
                 ...otherParameters,
               }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
-        filter: parameters?.filter?.setLazyToResolvedClassProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }SetLazyToResolvedClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .setLazyToResolvedClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }SetLazyToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+            ))({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }SetLazyToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      (({ schema, ...otherParameters }) =>
-        $setSparqlWherePatterns<
-          PartialClass.$Filter,
-          typeof PartialClass.$schema
-        >(
-          ({
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "requiredPartialClassToResolvedClassProperty",
+        propertySchema:
+          $schema.properties.requiredPartialClassToResolvedClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          (({
             ignoreRdfType,
             propertyPatterns,
             schema,
@@ -32790,47 +30631,89 @@ export namespace LazyPropertiesClass {
                 ignoreRdfType: ignoreRdfType ?? true,
                 ...otherParameters,
               }),
-            ),
-        )({ schema: schema.partial(), ...otherParameters }))({
-        filter: parameters?.filter?.setPartialClassToResolvedClassProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazyPropertiesClass")
-                  }SetPartialClassToResolvedClassProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$schema.properties
-                    .setPartialClassToResolvedClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazyPropertiesClass.$schema.properties.setPartialClassToResolvedClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazyPropertiesClass")
-          }SetPartialClassToResolvedClassProperty`,
-        ),
-        variablePrefix: `${
+            ))({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazyPropertiesClass")
-        }SetPartialClassToResolvedClassProperty`,
+            : "lazyPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.setLazyToResolvedClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setLazyToResolvedClassProperty",
+        propertySchema: $schema.properties.setLazyToResolvedClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $setSparqlWherePatterns<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              $DefaultPartial.$Filter,
+              typeof $DefaultPartial.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                $DefaultPartial.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "lazyPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.setPartialClassToResolvedClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "setPartialClassToResolvedClassProperty",
+        propertySchema:
+          $schema.properties.setPartialClassToResolvedClassProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $setSparqlWherePatterns<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >(
+            ({
+              ignoreRdfType,
+              propertyPatterns,
+              schema,
+              valueVariable,
+              ...otherParameters
+            }: $SparqlWherePatternsFunctionParameters<
+              PartialClass.$Filter,
+              typeof PartialClass.$schema
+            >) =>
+              (propertyPatterns as readonly $SparqlPattern[]).concat(
+                PartialClass.$sparqlWherePatterns({
+                  focusIdentifier: valueVariable,
+                  ignoreRdfType: ignoreRdfType ?? true,
+                  ...otherParameters,
+                }),
+              ),
+          )({ schema: schema.partial(), ...otherParameters }),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "lazyPropertiesClass"),
       }),
     );
     return patterns;
@@ -33304,46 +31187,19 @@ export namespace LazilyResolvedIriIdentifierInterface {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedIriIdentifierInterface")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedIriIdentifierInterface.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedIriIdentifierInterface")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedIriIdentifierInterface")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedIriIdentifierInterface"),
       }),
     );
     return patterns;
@@ -33784,46 +31640,19 @@ export namespace LazilyResolvedIriIdentifierClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedIriIdentifierClass")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedIriIdentifierClass.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedIriIdentifierClass")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedIriIdentifierClass")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedIriIdentifierClass"),
       }),
     );
     return patterns;
@@ -34419,46 +32248,19 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedInterfaceUnionMember2")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedInterfaceUnionMember2.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedInterfaceUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedInterfaceUnionMember2")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedInterfaceUnionMember2"),
       }),
     );
     return patterns;
@@ -35054,46 +32856,19 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedInterfaceUnionMember1")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedInterfaceUnionMember1.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedInterfaceUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedInterfaceUnionMember1")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedInterfaceUnionMember1"),
       }),
     );
     return patterns;
@@ -35661,46 +33436,19 @@ export namespace LazilyResolvedClassUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedClassUnionMember2")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedClassUnionMember2.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedClassUnionMember2")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedClassUnionMember2")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedClassUnionMember2"),
       }),
     );
     return patterns;
@@ -36268,46 +34016,19 @@ export namespace LazilyResolvedClassUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedClassUnionMember1")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedClassUnionMember1.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedClassUnionMember1")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedClassUnionMember1")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedClassUnionMember1"),
       }),
     );
     return patterns;
@@ -36919,46 +34640,19 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
-                    .properties.lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedBlankNodeOrIriIdentifierInterface")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedBlankNodeOrIriIdentifierInterface"),
       }),
     );
     return patterns;
@@ -37537,46 +35231,19 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "lazilyResolvedBlankNodeOrIriIdentifierClass")
-                  }LazilyResolvedStringProperty`,
-                ),
-                predicate:
-                  LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "lazilyResolvedBlankNodeOrIriIdentifierClass")
-          }LazilyResolvedStringProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "lazilyResolvedBlankNodeOrIriIdentifierClass")
-        }LazilyResolvedStringProperty`,
+            : "lazilyResolvedBlankNodeOrIriIdentifierClass"),
       }),
     );
     return patterns;
@@ -38102,48 +35769,22 @@ export namespace LanguageInPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.languageInLiteralProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "languageInPropertiesClass")
-                  }LanguageInLiteralProperty`,
-                ),
-                predicate:
-                  LanguageInPropertiesClass.$schema.properties
-                    .languageInLiteralProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "languageInPropertiesClass")
-          }LanguageInLiteralProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "languageInLiteralProperty",
+        propertySchema: $schema.properties.languageInLiteralProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "languageInPropertiesClass")
-        }LanguageInLiteralProperty`,
+            : "languageInPropertiesClass"),
       }),
     );
     return patterns;
@@ -39008,37 +36649,14 @@ export namespace JsPrimitiveUnionPropertyClass {
       );
     }
     patterns = patterns.concat(
-      $setSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly boolean?: $BooleanFilter;
-            readonly number?: $NumericFilter<number>;
-            readonly string?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly boolean: {
-              discriminantValues: readonly string[];
-              type: $BooleanSchema;
-            };
-            readonly number: {
-              discriminantValues: readonly string[];
-              type: $NumericSchema<number>;
-            };
-            readonly string: {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.jsPrimitiveUnionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "jsPrimitiveUnionProperty",
+        propertySchema: $schema.properties.jsPrimitiveUnionProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
           {
             readonly on?: {
               readonly boolean?: $BooleanFilter;
@@ -39063,79 +36681,75 @@ export namespace JsPrimitiveUnionPropertyClass {
               };
             };
           }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly boolean?: $BooleanFilter;
+                readonly number?: $NumericFilter<number>;
+                readonly string?: $StringFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly boolean: {
+                  discriminantValues: readonly string[];
+                  type: $BooleanSchema;
+                };
+                readonly number: {
+                  discriminantValues: readonly string[];
+                  type: $NumericSchema<number>;
+                };
+                readonly string: {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
 
-          unionPatterns.push({
-            patterns: $booleanSparqlWherePatterns({
-              filter: filter?.on?.["boolean"],
-              ignoreRdfType: false,
-              schema: schema.members["boolean"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $numericSparqlWherePatterns<number>({
-              filter: filter?.on?.["number"],
-              ignoreRdfType: false,
-              schema: schema.members["number"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              ignoreRdfType: false,
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
+            unionPatterns.push({
+              patterns: $booleanSparqlWherePatterns({
+                filter: filter?.on?.["boolean"],
+                ignoreRdfType: false,
+                schema: schema.members["boolean"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $numericSparqlWherePatterns<number>({
+                filter: filter?.on?.["number"],
+                ignoreRdfType: false,
+                schema: schema.members["number"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["string"],
+                ignoreRdfType: false,
+                schema: schema.members["string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
 
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
-        filter: parameters?.filter?.jsPrimitiveUnionProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "jsPrimitiveUnionPropertyClass")
-                  }JsPrimitiveUnionProperty`,
-                ),
-                predicate:
-                  JsPrimitiveUnionPropertyClass.$schema.properties
-                    .jsPrimitiveUnionProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "jsPrimitiveUnionPropertyClass")
-          }JsPrimitiveUnionProperty`,
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "jsPrimitiveUnionPropertyClass")
-        }JsPrimitiveUnionProperty`,
+            : "jsPrimitiveUnionPropertyClass"),
       }),
     );
     return patterns;
@@ -40524,46 +38138,20 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.interfaceUnionMemberCommonParentProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "interfaceUnionMemberCommonParent")
-                  }InterfaceUnionMemberCommonParentProperty`,
-                ),
-                predicate:
-                  InterfaceUnionMemberCommonParentStatic.$schema.properties
-                    .interfaceUnionMemberCommonParentProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          InterfaceUnionMemberCommonParentStatic.$schema.properties.interfaceUnionMemberCommonParentProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "interfaceUnionMemberCommonParent")
-          }InterfaceUnionMemberCommonParentProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "interfaceUnionMemberCommonParentProperty",
+        propertySchema:
+          $schema.properties.interfaceUnionMemberCommonParentProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "interfaceUnionMemberCommonParent")
-        }InterfaceUnionMemberCommonParentProperty`,
+            : "interfaceUnionMemberCommonParent"),
       }),
     );
     return patterns;
@@ -41141,46 +38729,19 @@ export namespace InterfaceUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.interfaceUnionMember2Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "interfaceUnionMember2")
-                  }InterfaceUnionMember2Property`,
-                ),
-                predicate:
-                  InterfaceUnionMember2.$schema.properties
-                    .interfaceUnionMember2Property.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "interfaceUnionMember2")
-          }InterfaceUnionMember2Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "interfaceUnionMember2Property",
+        propertySchema: $schema.properties.interfaceUnionMember2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "interfaceUnionMember2")
-        }InterfaceUnionMember2Property`,
+            : "interfaceUnionMember2"),
       }),
     );
     return patterns;
@@ -41758,46 +39319,19 @@ export namespace InterfaceUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.interfaceUnionMember1Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "interfaceUnionMember1")
-                  }InterfaceUnionMember1Property`,
-                ),
-                predicate:
-                  InterfaceUnionMember1.$schema.properties
-                    .interfaceUnionMember1Property.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "interfaceUnionMember1")
-          }InterfaceUnionMember1Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "interfaceUnionMember1Property",
+        propertySchema: $schema.properties.interfaceUnionMember1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "interfaceUnionMember1")
-        }InterfaceUnionMember1Property`,
+            : "interfaceUnionMember1"),
       }),
     );
     return patterns;
@@ -42223,44 +39757,19 @@ export namespace Interface {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.interfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "interface")
-                  }InterfaceProperty`,
-                ),
-                predicate:
-                  Interface.$schema.properties.interfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: Interface.$schema.properties.interfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "interface")
-          }InterfaceProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "interfaceProperty",
+        propertySchema: $schema.properties.interfaceProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "interface")
-        }InterfaceProperty`,
+            : "interface"),
       }),
     );
     return patterns;
@@ -44807,267 +42316,117 @@ export namespace InPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
-        $booleanSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inBooleansProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inPropertiesClass")
-                  }InBooleansProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inBooleansProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inBooleansProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inPropertiesClass")
-          }InBooleansProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inBooleansProperty",
+        propertySchema: $schema.properties.inBooleansProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inPropertiesClass")
-        }InBooleansProperty`,
+            : "inPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$DateFilter, $DateSchema>(
-        $dateSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inDateTimesProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inPropertiesClass")
-                  }InDateTimesProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inDateTimesProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inDateTimesProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inPropertiesClass")
-          }InDateTimesProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inDateTimesProperty",
+        propertySchema: $schema.properties.inDateTimesProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inPropertiesClass")
-        }InDateTimesProperty`,
+            : "inPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<number>, $NumericSchema<number>>(
-        $numericSparqlWherePatterns<number>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inDoublesProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inPropertiesClass")
-                  }InDoublesProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inDoublesProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inDoublesProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inPropertiesClass")
-          }InDoublesProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inDoublesProperty",
+        propertySchema: $schema.properties.inDoublesProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inPropertiesClass")
-        }InDoublesProperty`,
+            : "inPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$NumericFilter<bigint>, $NumericSchema<bigint>>(
-        $numericSparqlWherePatterns<bigint>,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inIntegersProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inPropertiesClass")
-                  }InIntegersProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inIntegersProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inIntegersProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inPropertiesClass")
-          }InIntegersProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inIntegersProperty",
+        propertySchema: $schema.properties.inIntegersProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inPropertiesClass")
-        }InIntegersProperty`,
+            : "inPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$IriFilter, $IriSchema>(
-        $iriSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inIrisProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inPropertiesClass")
-                  }InIrisProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inIrisProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inIrisProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inPropertiesClass")
-          }InIrisProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inIrisProperty",
+        propertySchema: $schema.properties.inIrisProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inPropertiesClass")
-        }InIrisProperty`,
+            : "inPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inStringsProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inPropertiesClass")
-                  }InStringsProperty`,
-                ),
-                predicate:
-                  InPropertiesClass.$schema.properties.inStringsProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema: InPropertiesClass.$schema.properties.inStringsProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inPropertiesClass")
-          }InStringsProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inStringsProperty",
+        propertySchema: $schema.properties.inStringsProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inPropertiesClass")
-        }InStringsProperty`,
+            : "inPropertiesClass"),
       }),
     );
     return patterns;
@@ -45731,48 +43090,22 @@ export namespace InIdentifierClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.inIdentifierProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "inIdentifierClass")
-                  }InIdentifierProperty`,
-                ),
-                predicate:
-                  InIdentifierClass.$schema.properties.inIdentifierProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          InIdentifierClass.$schema.properties.inIdentifierProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "inIdentifierClass")
-          }InIdentifierProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "inIdentifierProperty",
+        propertySchema: $schema.properties.inIdentifierProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "inIdentifierClass")
-        }InIdentifierProperty`,
+            : "inIdentifierClass"),
       }),
     );
     return patterns;
@@ -46193,46 +43526,19 @@ export namespace IdentifierOverride1ClassStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.identifierOverrideProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "identifierOverride1Class")
-                  }IdentifierOverrideProperty`,
-                ),
-                predicate:
-                  IdentifierOverride1ClassStatic.$schema.properties
-                    .identifierOverrideProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          IdentifierOverride1ClassStatic.$schema.properties.identifierOverrideProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "identifierOverride1Class")
-          }IdentifierOverrideProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "identifierOverrideProperty",
+        propertySchema: $schema.properties.identifierOverrideProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "identifierOverride1Class")
-        }IdentifierOverrideProperty`,
+            : "identifierOverride1Class"),
       }),
     );
     return patterns;
@@ -48429,89 +45735,35 @@ export namespace HasValuePropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $iriSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.hasIriValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "hasValuePropertiesClass")
-                  }HasIriValueProperty`,
-                ),
-                predicate:
-                  HasValuePropertiesClass.$schema.properties.hasIriValueProperty
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          HasValuePropertiesClass.$schema.properties.hasIriValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "hasValuePropertiesClass")
-          }HasIriValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "hasIriValueProperty",
+        propertySchema: $schema.properties.hasIriValueProperty,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "hasValuePropertiesClass")
-        }HasIriValueProperty`,
+            : "hasValuePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.hasLiteralValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "hasValuePropertiesClass")
-                  }HasLiteralValueProperty`,
-                ),
-                predicate:
-                  HasValuePropertiesClass.$schema.properties
-                    .hasLiteralValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "hasValuePropertiesClass")
-          }HasLiteralValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "hasLiteralValueProperty",
+        propertySchema: $schema.properties.hasLiteralValueProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "hasValuePropertiesClass")
-        }HasLiteralValueProperty`,
+            : "hasValuePropertiesClass"),
       }),
     );
     return patterns;
@@ -49079,46 +46331,19 @@ export namespace FlattenClassUnionMember3 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.flattenClassUnionMember3Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "flattenClassUnionMember3")
-                  }FlattenClassUnionMember3Property`,
-                ),
-                predicate:
-                  FlattenClassUnionMember3.$schema.properties
-                    .flattenClassUnionMember3Property.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          FlattenClassUnionMember3.$schema.properties.flattenClassUnionMember3Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "flattenClassUnionMember3")
-          }FlattenClassUnionMember3Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "flattenClassUnionMember3Property",
+        propertySchema: $schema.properties.flattenClassUnionMember3Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "flattenClassUnionMember3")
-        }FlattenClassUnionMember3Property`,
+            : "flattenClassUnionMember3"),
       }),
     );
     return patterns;
@@ -49738,67 +46963,40 @@ export namespace ExternClassPropertyClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        ExternClass.$Filter,
-        typeof ExternClass.$schema
-      >(
-        ({
-          ignoreRdfType,
-          propertyPatterns,
-          schema,
-          valueVariable,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.externClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "externClassProperty",
+        propertySchema: $schema.properties.externClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           ExternClass.$Filter,
           typeof ExternClass.$schema
-        >) =>
-          (propertyPatterns as readonly $SparqlPattern[]).concat(
-            ExternClass.$sparqlWherePatterns({
-              focusIdentifier: valueVariable,
-              ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }),
-          ),
-      )({
-        filter: parameters?.filter?.externClassProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "externClassPropertyClass")
-                  }ExternClassProperty`,
-                ),
-                predicate:
-                  ExternClassPropertyClass.$schema.properties
-                    .externClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ExternClassPropertyClass.$schema.properties.externClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "externClassPropertyClass")
-          }ExternClassProperty`,
+        >(
+          ({
+            ignoreRdfType,
+            propertyPatterns,
+            schema,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ExternClass.$Filter,
+            typeof ExternClass.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ExternClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
+                ignoreRdfType: ignoreRdfType ?? true,
+                ...otherParameters,
+              }),
+            ),
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "externClassPropertyClass")
-        }ExternClassProperty`,
+            : "externClassPropertyClass"),
       }),
     );
     return patterns;
@@ -50211,46 +47409,20 @@ export namespace AbstractBaseClassForExternClassStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.abstractBaseClassForExternClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "abstractBaseClassForExternClass")
-                  }AbstractBaseClassForExternClassProperty`,
-                ),
-                predicate:
-                  AbstractBaseClassForExternClassStatic.$schema.properties
-                    .abstractBaseClassForExternClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          AbstractBaseClassForExternClassStatic.$schema.properties.abstractBaseClassForExternClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "abstractBaseClassForExternClass")
-          }AbstractBaseClassForExternClassProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "abstractBaseClassForExternClassProperty",
+        propertySchema:
+          $schema.properties.abstractBaseClassForExternClassProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "abstractBaseClassForExternClass")
-        }AbstractBaseClassForExternClassProperty`,
+            : "abstractBaseClassForExternClass"),
       }),
     );
     return patterns;
@@ -50817,46 +47989,19 @@ export namespace ExplicitRdfTypeClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.explicitRdfTypeProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "explicitRdfTypeClass")
-                  }ExplicitRdfTypeProperty`,
-                ),
-                predicate:
-                  ExplicitRdfTypeClass.$schema.properties
-                    .explicitRdfTypeProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "explicitRdfTypeClass")
-          }ExplicitRdfTypeProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "explicitRdfTypeProperty",
+        propertySchema: $schema.properties.explicitRdfTypeProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "explicitRdfTypeClass")
-        }ExplicitRdfTypeProperty`,
+            : "explicitRdfTypeClass"),
       }),
     );
     return patterns;
@@ -51436,46 +48581,19 @@ export namespace ExplicitFromToRdfTypesClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.explicitFromToRdfTypesProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "explicitFromToRdfTypesClass")
-                  }ExplicitFromToRdfTypesProperty`,
-                ),
-                predicate:
-                  ExplicitFromToRdfTypesClass.$schema.properties
-                    .explicitFromToRdfTypesProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ExplicitFromToRdfTypesClass.$schema.properties.explicitFromToRdfTypesProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "explicitFromToRdfTypesClass")
-          }ExplicitFromToRdfTypesProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "explicitFromToRdfTypesProperty",
+        propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "explicitFromToRdfTypesClass")
-        }ExplicitFromToRdfTypesProperty`,
+            : "explicitFromToRdfTypesClass"),
       }),
     );
     return patterns;
@@ -53289,274 +50407,117 @@ export namespace DefaultValuePropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$DateFilter, $DateSchema>(
-        $dateSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.dateDefaultValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "defaultValuePropertiesClass")
-                  }DateDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .dateDefaultValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "defaultValuePropertiesClass")
-          }DateDefaultValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "dateDefaultValueProperty",
+        propertySchema: $schema.properties.dateDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "defaultValuePropertiesClass")
-        }DateDefaultValueProperty`,
+            : "defaultValuePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$DateFilter, $DateSchema>(
-        $dateSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.dateTimeDefaultValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "defaultValuePropertiesClass")
-                  }DateTimeDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .dateTimeDefaultValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "defaultValuePropertiesClass")
-          }DateTimeDefaultValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "dateTimeDefaultValueProperty",
+        propertySchema: $schema.properties.dateTimeDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "defaultValuePropertiesClass")
-        }DateTimeDefaultValueProperty`,
+            : "defaultValuePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
-        $booleanSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.falseBooleanDefaultValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "defaultValuePropertiesClass")
-                  }FalseBooleanDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .falseBooleanDefaultValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "defaultValuePropertiesClass")
-          }FalseBooleanDefaultValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "falseBooleanDefaultValueProperty",
+        propertySchema: $schema.properties.falseBooleanDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "defaultValuePropertiesClass")
-        }FalseBooleanDefaultValueProperty`,
+            : "defaultValuePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<
-        $NumericFilter<number>,
-        $NumericSchema<number>
-      >($numericSparqlWherePatterns<number>)({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.numberDefaultValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "defaultValuePropertiesClass")
-                  }NumberDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .numberDefaultValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "defaultValuePropertiesClass")
-          }NumberDefaultValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "numberDefaultValueProperty",
+        propertySchema: $schema.properties.numberDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "defaultValuePropertiesClass")
-        }NumberDefaultValueProperty`,
+            : "defaultValuePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$StringFilter, $StringSchema>(
-        $stringSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.stringDefaultValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "defaultValuePropertiesClass")
-                  }StringDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .stringDefaultValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "defaultValuePropertiesClass")
-          }StringDefaultValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "stringDefaultValueProperty",
+        propertySchema: $schema.properties.stringDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "defaultValuePropertiesClass")
-        }StringDefaultValueProperty`,
+            : "defaultValuePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
-        $booleanSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.trueBooleanDefaultValueProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "defaultValuePropertiesClass")
-                  }TrueBooleanDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .trueBooleanDefaultValueProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DefaultValuePropertiesClass.$schema.properties.trueBooleanDefaultValueProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "defaultValuePropertiesClass")
-          }TrueBooleanDefaultValueProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "trueBooleanDefaultValueProperty",
+        propertySchema: $schema.properties.trueBooleanDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "defaultValuePropertiesClass")
-        }TrueBooleanDefaultValueProperty`,
+            : "defaultValuePropertiesClass"),
       }),
     );
     return patterns;
@@ -55586,144 +52547,99 @@ export namespace DateUnionPropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly date?: $DateFilter;
-            readonly dateTime?: $DateFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly date: {
-              discriminantValues: readonly string[];
-              type: $DateSchema;
-            };
-            readonly dateTime: {
-              discriminantValues: readonly string[];
-              type: $DateSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly string[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly string[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
-
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              ignoreRdfType: false,
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              filter: filter?.on?.["dateTime"],
-              ignoreRdfType: false,
-              schema: schema.members["dateTime"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.dateOrDateTimeProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
+        propertyName: "dateOrDateTimeProperty",
+        propertySchema: $schema.properties.dateOrDateTimeProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "dateUnionPropertiesClass")
-                  }DateOrDateTimeProperty`,
-                ),
-                predicate:
-                  DateUnionPropertiesClass.$schema.properties
-                    .dateOrDateTimeProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "dateUnionPropertiesClass")
-          }DateOrDateTimeProperty`,
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly date: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+              readonly dateTime: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly date?: $DateFilter;
+                readonly dateTime?: $DateFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly date: {
+                  discriminantValues: readonly string[];
+                  type: $DateSchema;
+                };
+                readonly dateTime: {
+                  discriminantValues: readonly string[];
+                  type: $DateSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
+
+            unionPatterns.push({
+              patterns: $dateSparqlWherePatterns({
+                filter: filter?.on?.["date"],
+                ignoreRdfType: false,
+                schema: schema.members["date"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $dateSparqlWherePatterns({
+                filter: filter?.on?.["dateTime"],
+                ignoreRdfType: false,
+                schema: schema.members["dateTime"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "dateUnionPropertiesClass")
-        }DateOrDateTimeProperty`,
+            : "dateUnionPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly date?: $DateFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly date: {
-              discriminantValues: readonly string[];
-              type: $DateSchema;
-            };
-            readonly string: {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.dateOrStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "dateOrStringProperty",
+        propertySchema: $schema.properties.dateOrStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
               readonly date?: $DateFilter;
@@ -55743,99 +52659,72 @@ export namespace DateUnionPropertiesClass {
               };
             };
           }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly date?: $DateFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly date: {
+                  discriminantValues: readonly string[];
+                  type: $DateSchema;
+                };
+                readonly string: {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
 
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              ignoreRdfType: false,
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              ignoreRdfType: false,
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
+            unionPatterns.push({
+              patterns: $dateSparqlWherePatterns({
+                filter: filter?.on?.["date"],
+                ignoreRdfType: false,
+                schema: schema.members["date"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["string"],
+                ignoreRdfType: false,
+                schema: schema.members["string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
 
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
-        filter: parameters?.filter?.dateOrStringProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "dateUnionPropertiesClass")
-                  }DateOrStringProperty`,
-                ),
-                predicate:
-                  DateUnionPropertiesClass.$schema.properties
-                    .dateOrStringProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DateUnionPropertiesClass.$schema.properties.dateOrStringProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "dateUnionPropertiesClass")
-          }DateOrStringProperty`,
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "dateUnionPropertiesClass")
-        }DateOrStringProperty`,
+            : "dateUnionPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly dateTime?: $DateFilter;
-            readonly date?: $DateFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly dateTime: {
-              discriminantValues: readonly string[];
-              type: $DateSchema;
-            };
-            readonly date: {
-              discriminantValues: readonly string[];
-              type: $DateSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.dateTimeOrDateProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "dateTimeOrDateProperty",
+        propertySchema: $schema.properties.dateTimeOrDateProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
               readonly dateTime?: $DateFilter;
@@ -55855,99 +52744,72 @@ export namespace DateUnionPropertiesClass {
               };
             };
           }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly dateTime?: $DateFilter;
+                readonly date?: $DateFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly dateTime: {
+                  discriminantValues: readonly string[];
+                  type: $DateSchema;
+                };
+                readonly date: {
+                  discriminantValues: readonly string[];
+                  type: $DateSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
 
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              filter: filter?.on?.["dateTime"],
-              ignoreRdfType: false,
-              schema: schema.members["dateTime"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              ignoreRdfType: false,
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
+            unionPatterns.push({
+              patterns: $dateSparqlWherePatterns({
+                filter: filter?.on?.["dateTime"],
+                ignoreRdfType: false,
+                schema: schema.members["dateTime"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $dateSparqlWherePatterns({
+                filter: filter?.on?.["date"],
+                ignoreRdfType: false,
+                schema: schema.members["date"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
 
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
-        filter: parameters?.filter?.dateTimeOrDateProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "dateUnionPropertiesClass")
-                  }DateTimeOrDateProperty`,
-                ),
-                predicate:
-                  DateUnionPropertiesClass.$schema.properties
-                    .dateTimeOrDateProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "dateUnionPropertiesClass")
-          }DateTimeOrDateProperty`,
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "dateUnionPropertiesClass")
-        }DateTimeOrDateProperty`,
+            : "dateUnionPropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<
-        {
-          readonly on?: {
-            readonly string?: $StringFilter;
-            readonly date?: $DateFilter;
-          };
-        },
-        {
-          kind: "Union";
-          members: {
-            readonly string: {
-              discriminantValues: readonly string[];
-              type: $StringSchema;
-            };
-            readonly date: {
-              discriminantValues: readonly string[];
-              type: $DateSchema;
-            };
-          };
-        }
-      >(
-        ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.stringOrDateProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "stringOrDateProperty",
+        propertySchema: $schema.properties.stringOrDateProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           {
             readonly on?: {
               readonly string?: $StringFilter;
@@ -55967,70 +52829,61 @@ export namespace DateUnionPropertiesClass {
               };
             };
           }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
+        >(
+          ({
+            filter,
+            schema,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            {
+              readonly on?: {
+                readonly string?: $StringFilter;
+                readonly date?: $DateFilter;
+              };
+            },
+            {
+              kind: "Union";
+              members: {
+                readonly string: {
+                  discriminantValues: readonly string[];
+                  type: $StringSchema;
+                };
+                readonly date: {
+                  discriminantValues: readonly string[];
+                  type: $DateSchema;
+                };
+              };
+            }
+          >) => {
+            const unionPatterns: sparqljs.GroupPattern[] = [];
 
-          unionPatterns.push({
-            patterns: $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              ignoreRdfType: false,
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              ignoreRdfType: false,
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }).concat(),
-            type: "group",
-          });
+            unionPatterns.push({
+              patterns: $stringSparqlWherePatterns({
+                filter: filter?.on?.["string"],
+                ignoreRdfType: false,
+                schema: schema.members["string"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
+            unionPatterns.push({
+              patterns: $dateSparqlWherePatterns({
+                filter: filter?.on?.["date"],
+                ignoreRdfType: false,
+                schema: schema.members["date"].type,
+                ...otherParameters,
+              }).concat(),
+              type: "group",
+            });
 
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-      )({
-        filter: parameters?.filter?.stringOrDateProperty,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "dateUnionPropertiesClass")
-                  }StringOrDateProperty`,
-                ),
-                predicate:
-                  DateUnionPropertiesClass.$schema.properties
-                    .stringOrDateProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          DateUnionPropertiesClass.$schema.properties.stringOrDateProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "dateUnionPropertiesClass")
-          }StringOrDateProperty`,
+            return [{ patterns: unionPatterns, type: "union" }];
+          },
         ),
-        variablePrefix: `${
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "dateUnionPropertiesClass")
-        }StringOrDateProperty`,
+            : "dateUnionPropertiesClass"),
       }),
     );
     return patterns;
@@ -58420,533 +55273,223 @@ export namespace ConvertibleTypePropertiesClass {
       );
     }
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$IriFilter, $IriSchema>($iriSparqlWherePatterns)({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleIriNonEmptySetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleIriNonEmptySetProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleIriNonEmptySetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleIriNonEmptySetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriNonEmptySetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleIriNonEmptySetProperty",
+        propertySchema: $schema.properties.convertibleIriNonEmptySetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleIriNonEmptySetProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$IriFilter, $IriSchema>(
-        $iriSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleIriOptionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleIriOptionProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleIriOptionProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleIriOptionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriOptionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleIriOptionProperty",
+        propertySchema: $schema.properties.convertibleIriOptionProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleIriOptionProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $iriSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleIriProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleIriProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleIriProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleIriProperty",
+        propertySchema: $schema.properties.convertibleIriProperty,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleIriProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$IriFilter, $IriSchema>($iriSparqlWherePatterns)({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleIriSetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleIriSetProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleIriSetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleIriSetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleIriSetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleIriSetProperty",
+        propertySchema: $schema.properties.convertibleIriSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleIriSetProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleLiteralNonEmptySetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleLiteralNonEmptySetProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleLiteralNonEmptySetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralNonEmptySetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralNonEmptySetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleLiteralNonEmptySetProperty",
+        propertySchema:
+          $schema.properties.convertibleLiteralNonEmptySetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleLiteralNonEmptySetProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleLiteralOptionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleLiteralOptionProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleLiteralOptionProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralOptionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralOptionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleLiteralOptionProperty",
+        propertySchema: $schema.properties.convertibleLiteralOptionProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleLiteralOptionProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $literalSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleLiteralProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleLiteralProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleLiteralProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleLiteralProperty",
+        propertySchema: $schema.properties.convertibleLiteralProperty,
+        typeSparqlWherePatterns: $literalSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleLiteralProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleLiteralSetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleLiteralSetProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleLiteralSetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralSetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleLiteralSetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleLiteralSetProperty",
+        propertySchema: $schema.properties.convertibleLiteralSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleLiteralSetProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$TermFilter, $TermSchema>(
-        $termSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleTermNonEmptySetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleTermNonEmptySetProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleTermNonEmptySetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleTermNonEmptySetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermNonEmptySetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleTermNonEmptySetProperty",
+        propertySchema: $schema.properties.convertibleTermNonEmptySetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleTermNonEmptySetProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $maybeSparqlWherePatterns<$TermFilter, $TermSchema>(
-        $termSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleTermOptionProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleTermOptionProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleTermOptionProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleTermOptionProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermOptionProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleTermOptionProperty",
+        propertySchema: $schema.properties.convertibleTermOptionProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleTermOptionProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $termSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleTermProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleTermProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleTermProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleTermProperty",
+        propertySchema: $schema.properties.convertibleTermProperty,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleTermProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     patterns = patterns.concat(
-      $setSparqlWherePatterns<$TermFilter, $TermSchema>(
-        $termSparqlWherePatterns,
-      )({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.convertibleTermSetProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "convertibleTypePropertiesClass")
-                  }ConvertibleTermSetProperty`,
-                ),
-                predicate:
-                  ConvertibleTypePropertiesClass.$schema.properties
-                    .convertibleTermSetProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConvertibleTypePropertiesClass.$schema.properties.convertibleTermSetProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "convertibleTypePropertiesClass")
-          }ConvertibleTermSetProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "convertibleTermSetProperty",
+        propertySchema: $schema.properties.convertibleTermSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "convertibleTypePropertiesClass")
-        }ConvertibleTermSetProperty`,
+            : "convertibleTypePropertiesClass"),
       }),
     );
     return patterns;
@@ -59606,46 +56149,19 @@ export namespace BaseInterfaceWithPropertiesStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.baseInterfaceWithPropertiesProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "baseInterfaceWithProperties")
-                  }BaseInterfaceWithPropertiesProperty`,
-                ),
-                predicate:
-                  BaseInterfaceWithPropertiesStatic.$schema.properties
-                    .baseInterfaceWithPropertiesProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          BaseInterfaceWithPropertiesStatic.$schema.properties.baseInterfaceWithPropertiesProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "baseInterfaceWithProperties")
-          }BaseInterfaceWithPropertiesProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "baseInterfaceWithPropertiesProperty",
+        propertySchema: $schema.properties.baseInterfaceWithPropertiesProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "baseInterfaceWithProperties")
-        }BaseInterfaceWithPropertiesProperty`,
+            : "baseInterfaceWithProperties"),
       }),
     );
     return patterns;
@@ -60779,46 +57295,19 @@ export namespace ConcreteParentInterfaceStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.concreteParentInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "concreteParentInterface")
-                  }ConcreteParentInterfaceProperty`,
-                ),
-                predicate:
-                  ConcreteParentInterfaceStatic.$schema.properties
-                    .concreteParentInterfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConcreteParentInterfaceStatic.$schema.properties.concreteParentInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "concreteParentInterface")
-          }ConcreteParentInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "concreteParentInterfaceProperty",
+        propertySchema: $schema.properties.concreteParentInterfaceProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "concreteParentInterface")
-        }ConcreteParentInterfaceProperty`,
+            : "concreteParentInterface"),
       }),
     );
     return patterns;
@@ -61394,46 +57883,19 @@ export namespace ConcreteChildInterface {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.concreteChildInterfaceProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "concreteChildInterface")
-                  }ConcreteChildInterfaceProperty`,
-                ),
-                predicate:
-                  ConcreteChildInterface.$schema.properties
-                    .concreteChildInterfaceProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "concreteChildInterface")
-          }ConcreteChildInterfaceProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "concreteChildInterfaceProperty",
+        propertySchema: $schema.properties.concreteChildInterfaceProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "concreteChildInterface")
-        }ConcreteChildInterfaceProperty`,
+            : "concreteChildInterface"),
       }),
     );
     return patterns;
@@ -61878,46 +58340,20 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.abstractBaseClassWithPropertiesProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "abstractBaseClassWithProperties")
-                  }AbstractBaseClassWithPropertiesProperty`,
-                ),
-                predicate:
-                  AbstractBaseClassWithPropertiesStatic.$schema.properties
-                    .abstractBaseClassWithPropertiesProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          AbstractBaseClassWithPropertiesStatic.$schema.properties.abstractBaseClassWithPropertiesProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "abstractBaseClassWithProperties")
-          }AbstractBaseClassWithPropertiesProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "abstractBaseClassWithPropertiesProperty",
+        propertySchema:
+          $schema.properties.abstractBaseClassWithPropertiesProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "abstractBaseClassWithProperties")
-        }AbstractBaseClassWithPropertiesProperty`,
+            : "abstractBaseClassWithProperties"),
       }),
     );
     return patterns;
@@ -62768,46 +59204,19 @@ export namespace ConcreteParentClassStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.concreteParentClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "concreteParentClass")
-                  }ConcreteParentClassProperty`,
-                ),
-                predicate:
-                  ConcreteParentClassStatic.$schema.properties
-                    .concreteParentClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "concreteParentClass")
-          }ConcreteParentClassProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "concreteParentClassProperty",
+        propertySchema: $schema.properties.concreteParentClassProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "concreteParentClass")
-        }ConcreteParentClassProperty`,
+            : "concreteParentClass"),
       }),
     );
     return patterns;
@@ -63353,46 +59762,19 @@ export namespace ConcreteChildClass {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.concreteChildClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "concreteChildClass")
-                  }ConcreteChildClassProperty`,
-                ),
-                predicate:
-                  ConcreteChildClass.$schema.properties
-                    .concreteChildClassProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ConcreteChildClass.$schema.properties.concreteChildClassProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "concreteChildClass")
-          }ConcreteChildClassProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "concreteChildClassProperty",
+        propertySchema: $schema.properties.concreteChildClassProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "concreteChildClass")
-        }ConcreteChildClassProperty`,
+            : "concreteChildClass"),
       }),
     );
     return patterns;
@@ -63801,46 +60183,19 @@ export namespace ClassUnionMemberCommonParentStatic {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.classUnionMemberCommonParentProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "classUnionMemberCommonParent")
-                  }ClassUnionMemberCommonParentProperty`,
-                ),
-                predicate:
-                  ClassUnionMemberCommonParentStatic.$schema.properties
-                    .classUnionMemberCommonParentProperty.identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ClassUnionMemberCommonParentStatic.$schema.properties.classUnionMemberCommonParentProperty.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "classUnionMemberCommonParent")
-          }ClassUnionMemberCommonParentProperty`,
-        ),
-        variablePrefix: `${
+        propertyName: "classUnionMemberCommonParentProperty",
+        propertySchema: $schema.properties.classUnionMemberCommonParentProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "classUnionMemberCommonParent")
-        }ClassUnionMemberCommonParentProperty`,
+            : "classUnionMemberCommonParent"),
       }),
     );
     return patterns;
@@ -64370,46 +60725,19 @@ export namespace ClassUnionMember2 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.classUnionMember2Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "classUnionMember2")
-                  }ClassUnionMember2Property`,
-                ),
-                predicate:
-                  ClassUnionMember2.$schema.properties.classUnionMember2Property
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ClassUnionMember2.$schema.properties.classUnionMember2Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "classUnionMember2")
-          }ClassUnionMember2Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "classUnionMember2Property",
+        propertySchema: $schema.properties.classUnionMember2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "classUnionMember2")
-        }ClassUnionMember2Property`,
+            : "classUnionMember2"),
       }),
     );
     return patterns;
@@ -64939,46 +61267,19 @@ export namespace ClassUnionMember1 {
       );
     }
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $shaclPropertySparqlWherePatterns({
         filter: parameters?.filter?.classUnionMember1Property,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: parameters?.preferredLanguages,
-        propertyPatterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${
-                    parameters?.variablePrefix ??
-                    (focusIdentifier.termType === "Variable"
-                      ? focusIdentifier.value
-                      : "classUnionMember1")
-                  }ClassUnionMember1Property`,
-                ),
-                predicate:
-                  ClassUnionMember1.$schema.properties.classUnionMember1Property
-                    .identifier,
-                subject: focusIdentifier,
-              },
-            ],
-            type: "bgp",
-          } satisfies sparqljs.BgpPattern,
-        ],
-        schema:
-          ClassUnionMember1.$schema.properties.classUnionMember1Property.type(),
-        valueVariable: dataFactory.variable!(
-          `${
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "classUnionMember1")
-          }ClassUnionMember1Property`,
-        ),
-        variablePrefix: `${
+        propertyName: "classUnionMember1Property",
+        propertySchema: $schema.properties.classUnionMember1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
-            : "classUnionMember1")
-        }ClassUnionMember1Property`,
+            : "classUnionMember1"),
       }),
     );
     return patterns;
