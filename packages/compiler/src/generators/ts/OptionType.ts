@@ -101,7 +101,7 @@ export class OptionType<
 
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
-    return this.itemType.sparqlConstructTriplesFunction;
+    return code`${snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
   }
 
   @Memoize()

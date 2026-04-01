@@ -63,6 +63,7 @@ import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_litera
 import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
 import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
+import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybeSparqlConstructTriples.js";
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
@@ -161,6 +162,7 @@ export const snippets = {
   maybeEquals: snippets_maybeEquals,
   MaybeFilter: snippets_MaybeFilter,
   MaybeSchema: snippets_MaybeSchema,
+  maybeSparqlConstructTriples: snippets_maybeSparqlConstructTriples,
   maybeSparqlWherePatterns: snippets_maybeSparqlWherePatterns,
   normalizeSparqlWherePatterns: snippets_normalizeSparqlWherePatterns,
   NumericFilter: snippets_NumericFilter,

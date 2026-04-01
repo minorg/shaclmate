@@ -68,13 +68,13 @@ if (!parameters?.ignoreRdfType) {
         return valuePatternRow;
       }),
     },
-    ${snippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
-        : code`${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
+    ${snippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject: focusIdentifier }),`
+        : code`${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject: focusIdentifier }),`
     }
     {
       triples: [
         {
-          subject,
+          subject: focusIdentifier,
           predicate: ${rdfjsTermExpression(rdf.type)},
           object: rdfTypeVariable
         }

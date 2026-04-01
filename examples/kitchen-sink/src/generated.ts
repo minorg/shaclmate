@@ -1413,6 +1413,23 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Maybe";
 }
 
+function $maybeSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
+  itemSparqlConstructTriplesFunction: $SparqlConstructTriplesFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $SparqlConstructTriplesFunction<
+  $MaybeFilter<ItemFilterT>,
+  $MaybeSchema<ItemSchemaT>
+> {
+  return ({ filter, schema, ...otherParameters }) =>
+    itemSparqlConstructTriplesFunction({
+      filter: filter ?? undefined,
+      schema: schema.item(),
+      ...otherParameters,
+    });
+}
+
 function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
     ItemFilterT,
@@ -7257,37 +7274,55 @@ export namespace UnionDiscriminantsClass {
         ignoreRdfType: true,
         propertyName: "optionalClassOrClassOrStringProperty",
         propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly "0-ClassUnionMember1": {
+                discriminantValues: readonly string[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly "1-ClassUnionMember2": {
+                discriminantValues: readonly string[];
+                type: typeof ClassUnionMember2.$schema;
+              };
+              readonly "2-string": {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ClassUnionMember1.$sparqlConstructTriples({
               filter: filter?.on?.["0-ClassUnionMember1"],
-              schema: schema.members["0-ClassUnionMember1"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ClassUnionMember2.$sparqlConstructTriples({
               filter: filter?.on?.["1-ClassUnionMember2"],
-              schema: schema.members["1-ClassUnionMember2"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["2-string"],
-              schema: schema.members["2-string"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -7302,30 +7337,44 @@ export namespace UnionDiscriminantsClass {
         ignoreRdfType: true,
         propertyName: "optionalIriOrLiteralProperty",
         propertySchema: $schema.properties.optionalIriOrLiteralProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly string[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly string[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["NamedNode"],
-              schema: schema.members["NamedNode"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["Literal"],
-              schema: schema.members["Literal"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -7340,30 +7389,44 @@ export namespace UnionDiscriminantsClass {
         ignoreRdfType: true,
         propertyName: "optionalIriOrStringProperty",
         propertySchema: $schema.properties.optionalIriOrStringProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly object: {
+                discriminantValues: readonly string[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["object"],
-              schema: schema.members["object"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -7388,21 +7451,18 @@ export namespace UnionDiscriminantsClass {
           triples = triples.concat(
             ClassUnionMember1.$sparqlConstructTriples({
               filter: filter?.on?.["0-ClassUnionMember1"],
-              schema: schema.members["0-ClassUnionMember1"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ClassUnionMember2.$sparqlConstructTriples({
               filter: filter?.on?.["1-ClassUnionMember2"],
-              schema: schema.members["1-ClassUnionMember2"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["2-string"],
-              schema: schema.members["2-string"].type,
               ...otherParameters,
             }),
           );
@@ -7433,14 +7493,12 @@ export namespace UnionDiscriminantsClass {
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["NamedNode"],
-              schema: schema.members["NamedNode"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["Literal"],
-              schema: schema.members["Literal"].type,
               ...otherParameters,
             }),
           );
@@ -7471,14 +7529,12 @@ export namespace UnionDiscriminantsClass {
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["object"],
-              schema: schema.members["object"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
               ...otherParameters,
             }),
           );
@@ -7509,21 +7565,18 @@ export namespace UnionDiscriminantsClass {
           triples = triples.concat(
             ClassUnionMember1.$sparqlConstructTriples({
               filter: filter?.on?.["0-ClassUnionMember1"],
-              schema: schema.members["0-ClassUnionMember1"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ClassUnionMember2.$sparqlConstructTriples({
               filter: filter?.on?.["1-ClassUnionMember2"],
-              schema: schema.members["1-ClassUnionMember2"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["2-string"],
-              schema: schema.members["2-string"].type,
               ...otherParameters,
             }),
           );
@@ -7554,14 +7607,12 @@ export namespace UnionDiscriminantsClass {
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["NamedNode"],
-              schema: schema.members["NamedNode"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["Literal"],
-              schema: schema.members["Literal"].type,
               ...otherParameters,
             }),
           );
@@ -7592,14 +7643,12 @@ export namespace UnionDiscriminantsClass {
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["object"],
-              schema: schema.members["object"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
               ...otherParameters,
             }),
           );
@@ -9870,7 +9919,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "blankNodeTermProperty",
         propertySchema: $schema.properties.blankNodeTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $BlankNodeFilter,
+          $BlankNodeSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9885,7 +9937,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "booleanTermProperty",
         propertySchema: $schema.properties.booleanTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $BooleanFilter,
+          $BooleanSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9900,7 +9955,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "dateTermProperty",
         propertySchema: $schema.properties.dateTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9915,7 +9973,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "dateTimeTermProperty",
         propertySchema: $schema.properties.dateTimeTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9930,7 +9991,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "iriTermProperty",
         propertySchema: $schema.properties.iriTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9945,7 +10009,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "literalTermProperty",
         propertySchema: $schema.properties.literalTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9960,7 +10027,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "numberTermProperty",
         propertySchema: $schema.properties.numberTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9975,7 +10045,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "stringTermProperty",
         propertySchema: $schema.properties.stringTermProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -9990,7 +10063,10 @@ export namespace TermPropertiesClass {
         ignoreRdfType: true,
         propertyName: "termProperty",
         propertySchema: $schema.properties.termProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $TermFilter,
+          $TermSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -10024,12 +10100,12 @@ export namespace TermPropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: TermPropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -11531,12 +11607,12 @@ export namespace RecursiveClassUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: RecursiveClassUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -12132,12 +12208,12 @@ export namespace RecursiveClassUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: RecursiveClassUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -13642,7 +13718,10 @@ export namespace PropertyCardinalitiesClass {
         ignoreRdfType: true,
         propertyName: "optionalStringProperty",
         propertySchema: $schema.properties.optionalStringProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -14404,12 +14483,12 @@ export namespace PartialInterfaceUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialInterfaceUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -15034,12 +15113,12 @@ export namespace PartialInterfaceUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialInterfaceUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -15636,12 +15715,12 @@ export namespace PartialClassUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialClassUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -16238,12 +16317,12 @@ export namespace PartialClassUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialClassUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -19123,7 +19202,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "byteNumericProperty",
         propertySchema: $schema.properties.byteNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19138,7 +19220,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "decimalNumericProperty",
         propertySchema: $schema.properties.decimalNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<BigDecimal>,
+          $NumericSchema<BigDecimal>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19153,7 +19238,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "doubleNumericProperty",
         propertySchema: $schema.properties.doubleNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19168,7 +19256,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "floatNumericProperty",
         propertySchema: $schema.properties.floatNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19183,7 +19274,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "integerNumericProperty",
         propertySchema: $schema.properties.integerNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19198,7 +19292,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "intNumericProperty",
         propertySchema: $schema.properties.intNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19213,7 +19310,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "longNumericProperty",
         propertySchema: $schema.properties.longNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19228,7 +19328,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "negativeIntegerNumericProperty",
         propertySchema: $schema.properties.negativeIntegerNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19243,7 +19346,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "nonNegativeIntegerNumericProperty",
         propertySchema: $schema.properties.nonNegativeIntegerNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19258,7 +19364,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "nonPositiveIntegerNumericProperty",
         propertySchema: $schema.properties.nonPositiveIntegerNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19273,7 +19382,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "positiveIntegerNumericProperty",
         propertySchema: $schema.properties.positiveIntegerNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19288,7 +19400,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "shortNumericProperty",
         propertySchema: $schema.properties.shortNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19303,7 +19418,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "unsignedByteNumericProperty",
         propertySchema: $schema.properties.unsignedByteNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19318,7 +19436,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "unsignedIntNumericProperty",
         propertySchema: $schema.properties.unsignedIntNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19333,7 +19454,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "unsignedLongNumericProperty",
         propertySchema: $schema.properties.unsignedLongNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19348,7 +19472,10 @@ export namespace NumericPropertiesClass {
         ignoreRdfType: true,
         propertyName: "unsignedShortNumericProperty",
         propertySchema: $schema.properties.unsignedShortNumericProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -19382,12 +19509,12 @@ export namespace NumericPropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: NumericPropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -22396,10 +22523,14 @@ export namespace MutablePropertiesClass {
         ignoreRdfType: true,
         propertyName: "mutableListProperty",
         propertySchema: $schema.properties.mutableListProperty,
-        typeSparqlConstructTriples: $listSparqlConstructTriples<
-          $StringFilter,
-          $StringSchema
-        >((_: object) => []),
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema>(
+            (_: object) => [],
+          ),
+        ),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -22429,7 +22560,10 @@ export namespace MutablePropertiesClass {
         ignoreRdfType: true,
         propertyName: "mutableStringProperty",
         propertySchema: $schema.properties.mutableStringProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -22463,12 +22597,12 @@ export namespace MutablePropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: MutablePropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -23599,10 +23733,14 @@ export namespace ListPropertiesClass {
         ignoreRdfType: true,
         propertyName: "iriListProperty",
         propertySchema: $schema.properties.iriListProperty,
-        typeSparqlConstructTriples: $listSparqlConstructTriples<
-          $IriFilter,
-          $IriSchema
-        >((_: object) => []),
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$IriFilter>,
+          $CollectionSchema<$IriSchema>
+        >(
+          $listSparqlConstructTriples<$IriFilter, $IriSchema>(
+            (_: object) => [],
+          ),
+        ),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -23617,10 +23755,15 @@ export namespace ListPropertiesClass {
         ignoreRdfType: true,
         propertyName: "objectListProperty",
         propertySchema: $schema.properties.objectListProperty,
-        typeSparqlConstructTriples: $listSparqlConstructTriples<
-          NonClass.$Filter,
-          typeof NonClass.$schema
-        >(NonClass.$sparqlConstructTriples),
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<NonClass.$Filter>,
+          $CollectionSchema<typeof NonClass.$schema>
+        >(
+          $listSparqlConstructTriples<
+            NonClass.$Filter,
+            typeof NonClass.$schema
+          >(NonClass.$sparqlConstructTriples),
+        ),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -23635,10 +23778,14 @@ export namespace ListPropertiesClass {
         ignoreRdfType: true,
         propertyName: "stringListProperty",
         propertySchema: $schema.properties.stringListProperty,
-        typeSparqlConstructTriples: $listSparqlConstructTriples<
-          $StringFilter,
-          $StringSchema
-        >((_: object) => []),
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema>(
+            (_: object) => [],
+          ),
+        ),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -23672,12 +23819,12 @@ export namespace ListPropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ListPropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -27019,7 +27166,10 @@ export namespace LazyPropertiesInterface {
         propertySchema:
           $schema.properties.optionalLazyToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          $DefaultPartial.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >($DefaultPartial.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -27040,7 +27190,10 @@ export namespace LazyPropertiesInterface {
         propertySchema:
           $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          $DefaultPartial.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >($DefaultPartial.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -27063,7 +27216,10 @@ export namespace LazyPropertiesInterface {
           $schema.properties
             .optionalLazyToResolvedIriIdentifierInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          $NamedDefaultPartial.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            $NamedDefaultPartial.$Filter,
+            typeof $NamedDefaultPartial.$schema
+          >($NamedDefaultPartial.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -27086,7 +27242,10 @@ export namespace LazyPropertiesInterface {
           $schema.properties
             .optionalPartialInterfaceToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          PartialInterface.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            PartialInterface.$Filter,
+            typeof PartialInterface.$schema
+          >(PartialInterface.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -27110,7 +27269,10 @@ export namespace LazyPropertiesInterface {
           $schema.properties
             .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          PartialInterface.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            PartialInterface.$Filter,
+            typeof PartialInterface.$schema
+          >(PartialInterface.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -27134,7 +27296,10 @@ export namespace LazyPropertiesInterface {
           $schema.properties
             .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          PartialInterfaceUnion.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            PartialInterfaceUnion.$Filter,
+            typeof PartialInterfaceUnion.$schema
+          >(PartialInterfaceUnion.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -30841,7 +31006,10 @@ export namespace LazyPropertiesClass {
         propertyName: "optionalLazyToResolvedClassProperty",
         propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          $DefaultPartial.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >($DefaultPartial.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -30861,7 +31029,10 @@ export namespace LazyPropertiesClass {
         propertySchema:
           $schema.properties.optionalLazyToResolvedClassUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          $DefaultPartial.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            $DefaultPartial.$Filter,
+            typeof $DefaultPartial.$schema
+          >($DefaultPartial.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -30882,7 +31053,10 @@ export namespace LazyPropertiesClass {
         propertySchema:
           $schema.properties.optionalLazyToResolvedIriIdentifierClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          $NamedDefaultPartial.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            $NamedDefaultPartial.$Filter,
+            typeof $NamedDefaultPartial.$schema
+          >($NamedDefaultPartial.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -30902,7 +31076,10 @@ export namespace LazyPropertiesClass {
         propertySchema:
           $schema.properties.optionalPartialClassToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          PartialClass.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >(PartialClass.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -30923,7 +31100,10 @@ export namespace LazyPropertiesClass {
         propertySchema:
           $schema.properties.optionalPartialClassToResolvedClassUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          PartialClass.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >(PartialClass.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -30946,7 +31126,10 @@ export namespace LazyPropertiesClass {
           $schema.properties
             .optionalPartialClassUnionToResolvedClassUnionProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
-          PartialClassUnion.$sparqlConstructTriples({
+          $maybeSparqlConstructTriples<
+            PartialClassUnion.$Filter,
+            typeof PartialClassUnion.$schema
+          >(PartialClassUnion.$sparqlConstructTriples)({
             schema: schema.partial(),
             ...otherParameters,
           }),
@@ -33220,12 +33403,12 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedInterfaceUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -33855,12 +34038,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedInterfaceUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -34462,12 +34645,12 @@ export namespace LazilyResolvedClassUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedClassUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -35069,12 +35252,12 @@ export namespace LazilyResolvedClassUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedClassUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -35720,12 +35903,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -36338,12 +36521,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -37696,21 +37879,18 @@ export namespace JsPrimitiveUnionPropertyClass {
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["boolean"],
-              schema: schema.members["boolean"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["number"],
-              schema: schema.members["number"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
               ...otherParameters,
             }),
           );
@@ -37750,12 +37930,12 @@ export namespace JsPrimitiveUnionPropertyClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: JsPrimitiveUnionPropertyClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -38344,12 +38524,12 @@ export namespace IriIdentifierInterface {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: IriIdentifierInterface.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -38813,12 +38993,12 @@ export namespace IriIdentifierClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: IriIdentifierClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -39866,12 +40046,12 @@ export namespace InterfaceUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: InterfaceUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -40483,12 +40663,12 @@ export namespace InterfaceUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: InterfaceUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -41568,12 +41748,12 @@ export namespace IndirectRecursiveHelperClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: IndirectRecursiveHelperClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -42170,12 +42350,12 @@ export namespace IndirectRecursiveClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: IndirectRecursiveClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -43390,7 +43570,10 @@ export namespace InPropertiesClass {
         ignoreRdfType: true,
         propertyName: "inBooleansProperty",
         propertySchema: $schema.properties.inBooleansProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $BooleanFilter,
+          $BooleanSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -43405,7 +43588,10 @@ export namespace InPropertiesClass {
         ignoreRdfType: true,
         propertyName: "inDateTimesProperty",
         propertySchema: $schema.properties.inDateTimesProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -43420,7 +43606,10 @@ export namespace InPropertiesClass {
         ignoreRdfType: true,
         propertyName: "inDoublesProperty",
         propertySchema: $schema.properties.inDoublesProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -43435,7 +43624,10 @@ export namespace InPropertiesClass {
         ignoreRdfType: true,
         propertyName: "inIntegersProperty",
         propertySchema: $schema.properties.inIntegersProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -43450,7 +43642,10 @@ export namespace InPropertiesClass {
         ignoreRdfType: true,
         propertyName: "inIrisProperty",
         propertySchema: $schema.properties.inIrisProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -43465,7 +43660,10 @@ export namespace InPropertiesClass {
         ignoreRdfType: true,
         propertyName: "inStringsProperty",
         propertySchema: $schema.properties.inStringsProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -43498,12 +43696,12 @@ export namespace InPropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: InPropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -44386,7 +44584,10 @@ export namespace InIdentifierClass {
         ignoreRdfType: true,
         propertyName: "inIdentifierProperty",
         propertySchema: $schema.properties.inIdentifierProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -44419,12 +44620,12 @@ export namespace InIdentifierClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: InIdentifierClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -45678,12 +45879,12 @@ export namespace IdentifierOverride3ClassStatic {
                 : "identifierOverride3Class")
             }FromRdfType`,
           ),
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -46153,12 +46354,12 @@ export namespace IdentifierOverride4ClassStatic {
                 : "identifierOverride4Class")
             }FromRdfType`,
           ),
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -46596,12 +46797,12 @@ export namespace IdentifierOverride5Class {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: IdentifierOverride5Class.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -47766,12 +47967,12 @@ export namespace FlattenClassUnionMember3 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: FlattenClassUnionMember3.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -48375,7 +48576,10 @@ export namespace ExternClassPropertyClass {
         ignoreRdfType: true,
         propertyName: "externClassProperty",
         propertySchema: $schema.properties.externClassProperty,
-        typeSparqlConstructTriples: ExternClass.$sparqlConstructTriples,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          ExternClass.$Filter,
+          typeof ExternClass.$schema
+        >(ExternClass.$sparqlConstructTriples),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -48409,12 +48613,12 @@ export namespace ExternClassPropertyClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ExternClassPropertyClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -49488,12 +49692,12 @@ export namespace ExplicitRdfTypeClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ExplicitRdfTypeClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -50106,12 +50310,12 @@ export namespace ExplicitFromToRdfTypesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ExplicitFromToRdfTypesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -50741,12 +50945,12 @@ export namespace DirectRecursiveClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: DirectRecursiveClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -51959,12 +52163,12 @@ export namespace DefaultValuePropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: DefaultValuePropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -53905,30 +54109,44 @@ export namespace DateUnionPropertiesClass {
         ignoreRdfType: true,
         propertyName: "dateOrDateTimeProperty",
         propertySchema: $schema.properties.dateOrDateTimeProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly date: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+              readonly dateTime: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["dateTime"],
-              schema: schema.members["dateTime"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -53943,30 +54161,44 @@ export namespace DateUnionPropertiesClass {
         ignoreRdfType: true,
         propertyName: "dateOrStringProperty",
         propertySchema: $schema.properties.dateOrStringProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly date: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -53981,30 +54213,44 @@ export namespace DateUnionPropertiesClass {
         ignoreRdfType: true,
         propertyName: "dateTimeOrDateProperty",
         propertySchema: $schema.properties.dateTimeOrDateProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly dateTime: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["dateTime"],
-              schema: schema.members["dateTime"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -54019,30 +54265,44 @@ export namespace DateUnionPropertiesClass {
         ignoreRdfType: true,
         propertyName: "stringOrDateProperty",
         propertySchema: $schema.properties.stringOrDateProperty,
-        typeSparqlConstructTriples: ({
-          filter,
-          schema,
-          ...otherParameters
-        }) => {
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "Union";
+            members: {
+              readonly string: {
+                discriminantValues: readonly string[];
+                type: $StringSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly string[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >(({ filter, schema, ...otherParameters }) => {
           let triples: sparqljs.Triple[] = [];
 
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
               ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
               filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
               ...otherParameters,
             }),
           );
 
           return triples;
-        },
+        }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -54076,12 +54336,12 @@ export namespace DateUnionPropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: DateUnionPropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -56586,7 +56846,10 @@ export namespace ConvertibleTypePropertiesClass {
         ignoreRdfType: true,
         propertyName: "convertibleIriOptionProperty",
         propertySchema: $schema.properties.convertibleIriOptionProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -56647,7 +56910,10 @@ export namespace ConvertibleTypePropertiesClass {
         ignoreRdfType: true,
         propertyName: "convertibleLiteralOptionProperty",
         propertySchema: $schema.properties.convertibleLiteralOptionProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -56707,7 +56973,10 @@ export namespace ConvertibleTypePropertiesClass {
         ignoreRdfType: true,
         propertyName: "convertibleTermOptionProperty",
         propertySchema: $schema.properties.convertibleTermOptionProperty,
-        typeSparqlConstructTriples: (_: object) => [],
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $TermFilter,
+          $TermSchema
+        >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -56771,12 +57040,12 @@ export namespace ConvertibleTypePropertiesClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ConvertibleTypePropertiesClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -57957,12 +58226,12 @@ export namespace BaseInterfaceWithPropertiesStatic {
                 : "baseInterfaceWithProperties")
             }FromRdfType`,
           ),
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -58539,12 +58808,12 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                 : "baseInterfaceWithoutProperties")
             }FromRdfType`,
           ),
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -59147,12 +59416,12 @@ export namespace ConcreteParentInterfaceStatic {
                 : "concreteParentInterface")
             }FromRdfType`,
           ),
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -59762,12 +60031,12 @@ export namespace ConcreteChildInterface {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ConcreteChildInterface.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -61136,12 +61405,12 @@ export namespace ConcreteParentClassStatic {
                 : "concreteParentClass")
             }FromRdfType`,
           ),
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -61721,12 +61990,12 @@ export namespace ConcreteChildClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ConcreteChildClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -62738,12 +63007,12 @@ export namespace ClassUnionMember2 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ClassUnionMember2.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -63307,12 +63576,12 @@ export namespace ClassUnionMember1 {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ClassUnionMember1.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -63828,12 +64097,12 @@ export namespace BlankNodeOrIriIdentifierInterface {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: BlankNodeOrIriIdentifierInterface.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -64299,12 +64568,12 @@ export namespace BlankNodeOrIriIdentifierClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: BlankNodeOrIriIdentifierClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -64789,12 +65058,12 @@ export namespace BlankNodeIdentifierInterface {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: BlankNodeIdentifierInterface.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
@@ -65263,12 +65532,12 @@ export namespace BlankNodeIdentifierClass {
       patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: BlankNodeIdentifierClass.$fromRdfType,
-          subject,
+          subject: focusIdentifier,
         }),
         {
           triples: [
             {
-              subject,
+              subject: focusIdentifier,
               predicate: $RdfVocabularies.rdf.type,
               object: rdfTypeVariable,
             },
