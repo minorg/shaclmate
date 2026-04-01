@@ -5,8 +5,9 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_ShaclPropertySchema = conditionalOutput(
   `${syntheticNamePrefix}ShaclPropertySchema`,
   code`\
-export interface ${syntheticNamePrefix}ShaclPropertySchema {
+export interface ${syntheticNamePrefix}ShaclPropertySchema<TypeSchemaT = {}> {
   readonly identifier: ${imports.NamedNode};
   readonly kind: "Shacl";
+  readonly type: () => TypeSchemaT;
 }`,
 );

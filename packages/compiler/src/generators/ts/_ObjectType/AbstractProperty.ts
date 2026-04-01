@@ -192,7 +192,7 @@ export abstract class AbstractProperty<
    * Returns a (runtime) array of sparqljs.Triple.
    */
   abstract sparqlConstructTriples(parameters: {
-    variables: { focusIdentifier: Code; variablePrefix: Code };
+    variables: { filter: Code; focusIdentifier: Code; variablePrefix: Code };
   }): Maybe<Code>;
 
   /**

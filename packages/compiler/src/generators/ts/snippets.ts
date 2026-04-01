@@ -82,6 +82,7 @@ import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
 import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
 import { snippets_setSparqlWherePatterns } from "./_snippets/snippets_setSparqlWherePatterns.js";
 import { snippets_shaclPropertyFromRdf } from "./_snippets/snippets_shaclPropertyFromRdf.js";
+import { snippets_shaclPropertySparqlConstructTriples } from "./_snippets/snippets_shaclPropertySparqlConstructTriples.js";
 import { snippets_sortSparqlPatterns } from "./_snippets/snippets_sortSparqlPatterns.js";
 import { snippets_sparqlInstancesOfPattern } from "./_snippets/snippets_sparqlInstancesOfPattern.js";
 import { snippets_sparqlValueInPattern } from "./_snippets/snippets_sparqlValueInPattern.js";
@@ -169,6 +170,8 @@ export const snippets = {
   RdfVocabularies: snippets_RdfVocabularies,
   shaclPropertyFromRdf: snippets_shaclPropertyFromRdf,
   ShaclPropertySchema: snippets_ShaclPropertySchema,
+  shaclPropertySparqlConstructTriples:
+    snippets_shaclPropertySparqlConstructTriples,
   setSparqlWherePatterns: snippets_setSparqlWherePatterns,
   sortSparqlPatterns: snippets_sortSparqlPatterns,
   SparqlConstructTriplesFunction: snippets_SparqlConstructTriplesFunction,

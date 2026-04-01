@@ -233,8 +233,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     return Maybe.of(
       code`${snippets.shaclPropertyFromRdf}(${{
         graph: variables.graph,
-        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
         resource: variables.resource,
+        schema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
         typeFromRdf: code`((resourceValues) => ${this.type.fromRdfExpression({
           variables: {
             ...variables,
@@ -273,23 +273,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["sparqlConstructTriples"]
   >[0]): Maybe<Code> {
-    const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of(
-      code`[${{
-        object: valueVariable,
-        predicate: this.predicate,
-        subject: variables.focusIdentifier,
-      }}${this.type
-        .sparqlConstructTriples({
-          allowIgnoreRdfType: true,
-          variables: {
-            valueVariable,
-            variablePrefix: valueString,
-          },
-        })
-        .map((code_) => code`, ...${code_}`)
-        .orDefault(code``)}]`,
+      code`${snippets.shaclPropertySparqlConstructTriples}(${{
+        filter: variables.filter,
+        focusIdentifier: variables.focusIdentifier,
+        ignoreRdfType: true,
+        name: this.name,
+        schema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        typeSparqlConstructTriples: this.type.sparqlConstructTriplesFunction,
+        variablePrefix: variables.variablePrefix,
+      }})`,
     );
   }
 
