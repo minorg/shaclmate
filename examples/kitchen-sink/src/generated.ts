@@ -28060,8 +28060,16 @@ export namespace LazyPropertiesInterface {
           $maybeSparqlConstructTriples<
             PartialInterfaceUnion.$Filter,
             typeof PartialInterfaceUnion.$schema
-          >(({ ignoreRdfType, schema, ...otherParameters }) =>
-            PartialInterfaceUnion.$sparqlConstructTriples(otherParameters),
+          >(
+            ({
+              ignoreRdfType,
+              schema,
+              ...otherParameters
+            }: $SparqlConstructTriplesFunctionParameters<
+              PartialInterfaceUnion.$Filter,
+              typeof PartialInterfaceUnion.$schema
+            >) =>
+              PartialInterfaceUnion.$sparqlConstructTriples(otherParameters),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
           parameters?.variablePrefix ??
@@ -28578,7 +28586,10 @@ export namespace LazyPropertiesInterface {
             schema,
             valueVariable,
             ...otherParameters
-          }) =>
+          }: $SparqlWherePatternsFunctionParameters<
+            PartialInterfaceUnion.$Filter,
+            typeof PartialInterfaceUnion.$schema
+          >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterfaceUnion.$sparqlWherePatterns({
                 focusIdentifier: valueVariable,
@@ -32003,8 +32014,15 @@ export namespace LazyPropertiesClass {
           $maybeSparqlConstructTriples<
             PartialClassUnion.$Filter,
             typeof PartialClassUnion.$schema
-          >(({ ignoreRdfType, schema, ...otherParameters }) =>
-            PartialClassUnion.$sparqlConstructTriples(otherParameters),
+          >(
+            ({
+              ignoreRdfType,
+              schema,
+              ...otherParameters
+            }: $SparqlConstructTriplesFunctionParameters<
+              PartialClassUnion.$Filter,
+              typeof PartialClassUnion.$schema
+            >) => PartialClassUnion.$sparqlConstructTriples(otherParameters),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
           parameters?.variablePrefix ??
@@ -32510,7 +32528,10 @@ export namespace LazyPropertiesClass {
             schema,
             valueVariable,
             ...otherParameters
-          }) =>
+          }: $SparqlWherePatternsFunctionParameters<
+            PartialClassUnion.$Filter,
+            typeof PartialClassUnion.$schema
+          >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClassUnion.$sparqlWherePatterns({
                 focusIdentifier: valueVariable,
