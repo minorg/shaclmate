@@ -5,6 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
+import { snippets } from "./snippets.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -414,7 +415,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
     return code`\
-(({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+(({ ignoreRdfType, filter, schema, ...otherParameters }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => {
   let triples: ${imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
@@ -431,7 +432,7 @@ triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ filter: 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`\
-(({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+(({ filter, schema, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => {
   const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(

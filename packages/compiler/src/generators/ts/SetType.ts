@@ -14,7 +14,7 @@ export class SetType<
 
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
-    return this.itemType.sparqlConstructTriplesFunction;
+    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
   }
 
   @Memoize()

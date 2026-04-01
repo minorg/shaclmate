@@ -81,6 +81,7 @@ import { snippets_SparqlWherePatternsFunction } from "./_snippets/snippets_Sparq
 import { snippets_SparqlWherePatternsFunctionParameters } from "./_snippets/snippets_SparqlWherePatternsFunctionParameters.js";
 import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
 import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
+import { snippets_setSparqlConstructTriples } from "./_snippets/snippets_setSparqlConstructTriples.js";
 import { snippets_setSparqlWherePatterns } from "./_snippets/snippets_setSparqlWherePatterns.js";
 import { snippets_shaclPropertyFromRdf } from "./_snippets/snippets_shaclPropertyFromRdf.js";
 import { snippets_shaclPropertySparqlConstructTriples } from "./_snippets/snippets_shaclPropertySparqlConstructTriples.js";
@@ -174,6 +175,7 @@ export const snippets = {
   ShaclPropertySchema: snippets_ShaclPropertySchema,
   shaclPropertySparqlConstructTriples:
     snippets_shaclPropertySparqlConstructTriples,
+  setSparqlConstructTriples: snippets_setSparqlConstructTriples,
   setSparqlWherePatterns: snippets_setSparqlWherePatterns,
   sortSparqlPatterns: snippets_sortSparqlPatterns,
   SparqlConstructTriplesFunction: snippets_SparqlConstructTriplesFunction,
