@@ -67,7 +67,7 @@ export namespace PropertyPath {
     // The other property path types are BlankNodes
 
     const getPropertyPathList = (
-      list: Either<Error, readonly Resource.TermValue[]>,
+      list: Either<Error, Resource.Values>,
     ): Either<Error, readonly PropertyPath[]> => {
       return list.chain((values) => {
         const members: PropertyPath[] = [];
