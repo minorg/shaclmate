@@ -1,1 +1,0 @@
-../../../shacl-ast/src/PropertyPath.ts

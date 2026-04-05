@@ -3085,7 +3085,7 @@ export namespace ShaclCorePropertyShape {
   } as const;
 }
 
-import { PropertyPath } from "./PropertyPath.js";
+import { PropertyPath } from "rdfjs-resource";
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
   readonly $type: "ShaclCorePropertyGroup";

@@ -197,7 +197,7 @@ function $filterTerm(
 }
 
 type $FromRdfOptions = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
@@ -293,7 +293,7 @@ interface $NumericFilter<T> {
 }
 
 type $PropertiesFromRdfParameters = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
@@ -6027,7 +6027,7 @@ export namespace ShaclmateNodeShape {
   } as const;
 }
 
-import { PropertyPath } from "./PropertyPath.js";
+import { PropertyPath } from "rdfjs-resource";
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
   readonly $type: "ShaclCorePropertyGroup";
