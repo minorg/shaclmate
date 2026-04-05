@@ -486,7 +486,7 @@ function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
-  export const Equal: $EqualsResult = Either.of<Unequal, true>(true);
+  export const Equal: $EqualsResult = Right(true);
 
   export function fromBooleanEqualsResult(
     left: any,
@@ -815,7 +815,7 @@ function $fromRdfPreferredLanguages({
   values: Resource.Values;
 }): Either<Error, Resource.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return Either.of<Error, Resource.Values>(values);
+    return Right(values);
   }
 
   // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
@@ -1846,9 +1846,7 @@ function $shaclPropertyFromRdf<T>({
   ) => Either<Error, Resource.Values<T>>;
 }): Either<Error, T> {
   return typeFromRdf(
-    Either.of<Error, Resource.Values>(
-      resource.values(propertySchema.identifier, { graph, unique: true }),
-    ),
+    Right(resource.values(propertySchema.identifier, { graph, unique: true })),
   ).chain((values) => values.head());
 }
 
@@ -3254,7 +3252,7 @@ export namespace UuidV4IriIdentifierInterface {
       .chain((values) => values.chainMap((value) => value.toIri()))
       .chain((values) => values.head())
       .chain(($identifier) =>
-        Either.of<Error, "UuidV4IriIdentifierInterface">(
+        Right<"UuidV4IriIdentifierInterface">(
           "UuidV4IriIdentifierInterface" as const,
         ).chain(($type) =>
           $shaclPropertyFromRdf({
@@ -9903,7 +9901,7 @@ export namespace TermPropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/TermPropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -9913,7 +9911,7 @@ export namespace TermPropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -9924,7 +9922,7 @@ export namespace TermPropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -11593,7 +11591,7 @@ export namespace RecursiveClassUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/RecursiveClassUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -11603,7 +11601,7 @@ export namespace RecursiveClassUnionMember2 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -11614,7 +11612,7 @@ export namespace RecursiveClassUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -12202,7 +12200,7 @@ export namespace RecursiveClassUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/RecursiveClassUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -12212,7 +12210,7 @@ export namespace RecursiveClassUnionMember1 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -12223,7 +12221,7 @@ export namespace RecursiveClassUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -14282,7 +14280,7 @@ export namespace PartialInterfaceUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/PartialInterfaceUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -14292,7 +14290,7 @@ export namespace PartialInterfaceUnionMember2 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -14303,7 +14301,7 @@ export namespace PartialInterfaceUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -14316,7 +14314,7 @@ export namespace PartialInterfaceUnionMember2 {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "PartialInterfaceUnionMember2">(
+          Right<"PartialInterfaceUnionMember2">(
             "PartialInterfaceUnionMember2" as const,
           ).chain(($type) =>
             $shaclPropertyFromRdf({
@@ -14892,7 +14890,7 @@ export namespace PartialInterfaceUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/PartialInterfaceUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -14902,7 +14900,7 @@ export namespace PartialInterfaceUnionMember1 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -14913,7 +14911,7 @@ export namespace PartialInterfaceUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -14926,7 +14924,7 @@ export namespace PartialInterfaceUnionMember1 {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "PartialInterfaceUnionMember1">(
+          Right<"PartialInterfaceUnionMember1">(
             "PartialInterfaceUnionMember1" as const,
           ).chain(($type) =>
             $shaclPropertyFromRdf({
@@ -15518,7 +15516,7 @@ export namespace PartialClassUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/PartialClassUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -15528,7 +15526,7 @@ export namespace PartialClassUnionMember2 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -15539,7 +15537,7 @@ export namespace PartialClassUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -16103,7 +16101,7 @@ export namespace PartialClassUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/PartialClassUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -16113,7 +16111,7 @@ export namespace PartialClassUnionMember1 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -16124,7 +16122,7 @@ export namespace PartialClassUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -18353,7 +18351,7 @@ export namespace NumericPropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/NumericPropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -18363,7 +18361,7 @@ export namespace NumericPropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -18374,7 +18372,7 @@ export namespace NumericPropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -21673,7 +21671,7 @@ export namespace MutablePropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/MutablePropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -21683,7 +21681,7 @@ export namespace MutablePropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -21694,7 +21692,7 @@ export namespace MutablePropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -21720,7 +21718,7 @@ export namespace MutablePropertiesClass {
                 )
                 .chain((valueLists) =>
                   valueLists.chainMap((valueList) =>
-                    Either.of<Error, Resource.Values>(
+                    Right(
                       Resource.Values.fromArray({
                         focusResource: $parameters.resource,
                         propertyPath:
@@ -22788,7 +22786,7 @@ export namespace ListPropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ListPropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -22798,7 +22796,7 @@ export namespace ListPropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -22809,7 +22807,7 @@ export namespace ListPropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -22835,7 +22833,7 @@ export namespace ListPropertiesClass {
                 )
                 .chain((valueLists) =>
                   valueLists.chainMap((valueList) =>
-                    Either.of<Error, Resource.Values>(
+                    Right(
                       Resource.Values.fromArray({
                         focusResource: $parameters.resource,
                         propertyPath:
@@ -22876,7 +22874,7 @@ export namespace ListPropertiesClass {
                   )
                   .chain((valueLists) =>
                     valueLists.chainMap((valueList) =>
-                      Either.of<Error, Resource.Values>(
+                      Right(
                         Resource.Values.fromArray({
                           focusResource: $parameters.resource,
                           propertyPath:
@@ -22927,7 +22925,7 @@ export namespace ListPropertiesClass {
                     )
                     .chain((valueLists) =>
                       valueLists.chainMap((valueList) =>
-                        Either.of<Error, Resource.Values>(
+                        Right(
                           Resource.Values.fromArray({
                             focusResource: $parameters.resource,
                             propertyPath:
@@ -23644,32 +23642,31 @@ export namespace PartialInterface {
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .chain((values) => values.head())
       .chain(($identifier) =>
-        Either.of<Error, "PartialInterface">("PartialInterface" as const).chain(
-          ($type) =>
-            $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
-              propertySchema: $schema.properties.lazilyResolvedStringProperty,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        PartialInterface.$schema.properties
-                          .lazilyResolvedStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((lazilyResolvedStringProperty) => ({
-              $identifier,
-              $type,
-              lazilyResolvedStringProperty,
-            })),
+        Right<"PartialInterface">("PartialInterface" as const).chain(($type) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      PartialInterface.$schema.properties
+                        .lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            $type,
+            lazilyResolvedStringProperty,
+          })),
         ),
       );
   }
@@ -25618,7 +25615,7 @@ export namespace LazyPropertiesInterface {
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .chain((values) => values.head())
       .chain(($identifier) =>
-        Either.of<Error, "LazyPropertiesInterface">(
+        Right<"LazyPropertiesInterface">(
           "LazyPropertiesInterface" as const,
         ).chain(($type) =>
           $shaclPropertyFromRdf({
@@ -31227,7 +31224,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       .chain((values) => values.chainMap((value) => value.toIri()))
       .chain((values) => values.head())
       .chain(($identifier) =>
-        Either.of<Error, "LazilyResolvedIriIdentifierInterface">(
+        Right<"LazilyResolvedIriIdentifierInterface">(
           "LazilyResolvedIriIdentifierInterface" as const,
         ).chain(($type) =>
           $shaclPropertyFromRdf({
@@ -32159,7 +32156,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/LazilyResolvedInterfaceUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -32171,7 +32168,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -32182,7 +32179,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -32195,7 +32192,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "LazilyResolvedInterfaceUnionMember2">(
+          Right<"LazilyResolvedInterfaceUnionMember2">(
             "LazilyResolvedInterfaceUnionMember2" as const,
           ).chain(($type) =>
             $shaclPropertyFromRdf({
@@ -32774,7 +32771,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/LazilyResolvedInterfaceUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -32786,7 +32783,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -32797,7 +32794,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -32810,7 +32807,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "LazilyResolvedInterfaceUnionMember1">(
+          Right<"LazilyResolvedInterfaceUnionMember1">(
             "LazilyResolvedInterfaceUnionMember1" as const,
           ).chain(($type) =>
             $shaclPropertyFromRdf({
@@ -33404,7 +33401,7 @@ export namespace LazilyResolvedClassUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/LazilyResolvedClassUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -33416,7 +33413,7 @@ export namespace LazilyResolvedClassUnionMember2 {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -33427,7 +33424,7 @@ export namespace LazilyResolvedClassUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -33993,7 +33990,7 @@ export namespace LazilyResolvedClassUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/LazilyResolvedClassUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -34005,7 +34002,7 @@ export namespace LazilyResolvedClassUnionMember1 {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -34016,7 +34013,7 @@ export namespace LazilyResolvedClassUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -34576,7 +34573,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -34588,7 +34585,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -34599,7 +34596,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -34612,7 +34609,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "LazilyResolvedBlankNodeOrIriIdentifierInterface">(
+          Right<"LazilyResolvedBlankNodeOrIriIdentifierInterface">(
             "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
           ).chain(($type) =>
             $shaclPropertyFromRdf({
@@ -35219,7 +35216,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -35231,7 +35228,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -35242,7 +35239,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -36510,7 +36507,7 @@ export namespace JsPrimitiveUnionPropertyClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/JsPrimitiveUnionPropertyClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -36520,7 +36517,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -36531,7 +36528,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -37273,7 +37270,7 @@ export namespace IriIdentifierInterface {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/IriIdentifierInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -37283,7 +37280,7 @@ export namespace IriIdentifierInterface {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -37294,7 +37291,7 @@ export namespace IriIdentifierInterface {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -37307,7 +37304,7 @@ export namespace IriIdentifierInterface {
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "IriIdentifierInterface">(
+          Right<"IriIdentifierInterface">(
             "IriIdentifierInterface" as const,
           ).map(($type) => ({
             $identifier,
@@ -37769,7 +37766,7 @@ export namespace IriIdentifierClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/IriIdentifierClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -37779,7 +37776,7 @@ export namespace IriIdentifierClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -37790,7 +37787,7 @@ export namespace IriIdentifierClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -38706,7 +38703,7 @@ export namespace InterfaceUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/InterfaceUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -38716,7 +38713,7 @@ export namespace InterfaceUnionMember2 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -38727,7 +38724,7 @@ export namespace InterfaceUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -38740,7 +38737,7 @@ export namespace InterfaceUnionMember2 {
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head())
           .chain(($identifier) =>
-            Either.of<Error, "InterfaceUnionMember2">(
+            Right<"InterfaceUnionMember2">(
               "InterfaceUnionMember2" as const,
             ).chain(($type) =>
               $shaclPropertyFromRdf({
@@ -39305,7 +39302,7 @@ export namespace InterfaceUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/InterfaceUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -39315,7 +39312,7 @@ export namespace InterfaceUnionMember1 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -39326,7 +39323,7 @@ export namespace InterfaceUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -39339,7 +39336,7 @@ export namespace InterfaceUnionMember1 {
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head())
           .chain(($identifier) =>
-            Either.of<Error, "InterfaceUnionMember1">(
+            Right<"InterfaceUnionMember1">(
               "InterfaceUnionMember1" as const,
             ).chain(($type) =>
               $shaclPropertyFromRdf({
@@ -39899,7 +39896,7 @@ export namespace Interface {
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .chain((values) => values.head())
       .chain(($identifier) =>
-        Either.of<Error, "Interface">("Interface" as const).chain(($type) =>
+        Right<"Interface">("Interface" as const).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
@@ -40417,7 +40414,7 @@ export namespace IndirectRecursiveHelperClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/IndirectRecursiveHelperClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -40427,7 +40424,7 @@ export namespace IndirectRecursiveHelperClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -40438,7 +40435,7 @@ export namespace IndirectRecursiveHelperClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -41025,7 +41022,7 @@ export namespace IndirectRecursiveClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/IndirectRecursiveClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -41035,7 +41032,7 @@ export namespace IndirectRecursiveClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -41046,7 +41043,7 @@ export namespace IndirectRecursiveClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -41960,7 +41957,7 @@ export namespace InPropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/InPropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -41970,7 +41967,7 @@ export namespace InPropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -41981,7 +41978,7 @@ export namespace InPropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -43013,7 +43010,7 @@ export namespace InIdentifierClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/InIdentifierClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -43023,7 +43020,7 @@ export namespace InIdentifierClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -43034,7 +43031,7 @@ export namespace InIdentifierClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -44254,7 +44251,7 @@ export namespace IdentifierOverride3ClassStatic {
                 case "http://example.com/IdentifierOverride3Class":
                 case "http://example.com/IdentifierOverride4Class":
                 case "http://example.com/IdentifierOverride5Class":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -44266,7 +44263,7 @@ export namespace IdentifierOverride3ClassStatic {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -44277,7 +44274,7 @@ export namespace IdentifierOverride3ClassStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -44728,7 +44725,7 @@ export namespace IdentifierOverride4ClassStatic {
               switch (actualRdfType.value) {
                 case "http://example.com/IdentifierOverride4Class":
                 case "http://example.com/IdentifierOverride5Class":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -44740,7 +44737,7 @@ export namespace IdentifierOverride4ClassStatic {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -44751,7 +44748,7 @@ export namespace IdentifierOverride4ClassStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -45196,7 +45193,7 @@ export namespace IdentifierOverride5Class {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/IdentifierOverride5Class":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -45206,7 +45203,7 @@ export namespace IdentifierOverride5Class {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -45217,7 +45214,7 @@ export namespace IdentifierOverride5Class {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -46294,7 +46291,7 @@ export namespace FlattenClassUnionMember3 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/FlattenClassUnionMember3":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -46304,7 +46301,7 @@ export namespace FlattenClassUnionMember3 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -46315,7 +46312,7 @@ export namespace FlattenClassUnionMember3 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -46908,7 +46905,7 @@ export namespace ExternClassPropertyClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ExternClassPropertyClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -46918,7 +46915,7 @@ export namespace ExternClassPropertyClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -46929,7 +46926,7 @@ export namespace ExternClassPropertyClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -47981,7 +47978,7 @@ export namespace ExplicitRdfTypeClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/RdfType":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -47991,7 +47988,7 @@ export namespace ExplicitRdfTypeClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -48002,7 +47999,7 @@ export namespace ExplicitRdfTypeClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -48581,7 +48578,7 @@ export namespace ExplicitFromToRdfTypesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/FromRdfType":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -48591,7 +48588,7 @@ export namespace ExplicitFromToRdfTypesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -48602,7 +48599,7 @@ export namespace ExplicitFromToRdfTypesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -49199,7 +49196,7 @@ export namespace DirectRecursiveClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/DirectRecursiveClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -49209,7 +49206,7 @@ export namespace DirectRecursiveClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -49220,7 +49217,7 @@ export namespace DirectRecursiveClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -50122,7 +50119,7 @@ export namespace DefaultValuePropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/DefaultValuePropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -50132,7 +50129,7 @@ export namespace DefaultValuePropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -50143,7 +50140,7 @@ export namespace DefaultValuePropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -51863,7 +51860,7 @@ export namespace DateUnionPropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/DateUnionPropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -51873,7 +51870,7 @@ export namespace DateUnionPropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -51884,7 +51881,7 @@ export namespace DateUnionPropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -54694,7 +54691,7 @@ export namespace ConvertibleTypePropertiesClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ConvertibleTypePropertiesClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -54704,7 +54701,7 @@ export namespace ConvertibleTypePropertiesClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -54715,7 +54712,7 @@ export namespace ConvertibleTypePropertiesClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -56103,7 +56100,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
                 case "http://example.com/BaseInterfaceWithoutProperties":
                 case "http://example.com/ConcreteParentInterface":
                 case "http://example.com/ConcreteChildInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -56115,7 +56112,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -56126,7 +56123,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -56139,7 +56136,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "BaseInterfaceWithProperties">(
+          Right<"BaseInterfaceWithProperties">(
             "BaseInterfaceWithProperties" as const,
           ).chain(($type) =>
             $shaclPropertyFromRdf({
@@ -56710,7 +56707,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                 case "http://example.com/BaseInterfaceWithoutProperties":
                 case "http://example.com/ConcreteParentInterface":
                 case "http://example.com/ConcreteChildInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -56722,7 +56719,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -56733,7 +56730,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -56746,9 +56743,13 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head())
           .chain(($identifier) =>
-            Either.of<Error, "BaseInterfaceWithoutProperties">(
+            Right<"BaseInterfaceWithoutProperties">(
               "BaseInterfaceWithoutProperties" as const,
-            ).map(($type) => ({ ...$super0, $identifier, $type })),
+            ).map(($type) => ({
+              ...$super0,
+              $identifier,
+              $type,
+            })),
           ),
       ),
     );
@@ -57267,7 +57268,7 @@ export namespace ConcreteParentInterfaceStatic {
               switch (actualRdfType.value) {
                 case "http://example.com/ConcreteParentInterface":
                 case "http://example.com/ConcreteChildInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -57279,7 +57280,7 @@ export namespace ConcreteParentInterfaceStatic {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -57290,7 +57291,7 @@ export namespace ConcreteParentInterfaceStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -57303,7 +57304,7 @@ export namespace ConcreteParentInterfaceStatic {
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head())
           .chain(($identifier) =>
-            Either.of<Error, "ConcreteParentInterface">(
+            Right<"ConcreteParentInterface">(
               "ConcreteParentInterface" as const,
             ).chain(($type) =>
               $shaclPropertyFromRdf({
@@ -57891,7 +57892,7 @@ export namespace ConcreteChildInterface {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ConcreteChildInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -57901,7 +57902,7 @@ export namespace ConcreteChildInterface {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -57912,7 +57913,7 @@ export namespace ConcreteChildInterface {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -57925,7 +57926,7 @@ export namespace ConcreteChildInterface {
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head())
           .chain(($identifier) =>
-            Either.of<Error, "ConcreteChildInterface">(
+            Right<"ConcreteChildInterface">(
               "ConcreteChildInterface" as const,
             ).chain(($type) =>
               $shaclPropertyFromRdf({
@@ -59253,7 +59254,7 @@ export namespace ConcreteParentClassStatic {
               switch (actualRdfType.value) {
                 case "http://example.com/ConcreteParentClass":
                 case "http://example.com/ConcreteChildClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -59263,7 +59264,7 @@ export namespace ConcreteParentClassStatic {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -59274,7 +59275,7 @@ export namespace ConcreteParentClassStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -59844,7 +59845,7 @@ export namespace ConcreteChildClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ConcreteChildClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -59854,7 +59855,7 @@ export namespace ConcreteChildClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -59865,7 +59866,7 @@ export namespace ConcreteChildClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -60825,7 +60826,7 @@ export namespace ClassUnionMember2 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ClassUnionMember2":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -60835,7 +60836,7 @@ export namespace ClassUnionMember2 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -60846,7 +60847,7 @@ export namespace ClassUnionMember2 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -61375,7 +61376,7 @@ export namespace ClassUnionMember1 {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/ClassUnionMember1":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -61385,7 +61386,7 @@ export namespace ClassUnionMember1 {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -61396,7 +61397,7 @@ export namespace ClassUnionMember1 {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         Right(
           new Resource.Value({
@@ -61903,7 +61904,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/BlankNodeOrIriIdentifierInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -61915,7 +61916,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
                   },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -61926,7 +61927,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -61939,9 +61940,12 @@ export namespace BlankNodeOrIriIdentifierInterface {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "BlankNodeOrIriIdentifierInterface">(
+          Right<"BlankNodeOrIriIdentifierInterface">(
             "BlankNodeOrIriIdentifierInterface" as const,
-          ).map(($type) => ({ $identifier, $type })),
+          ).map(($type) => ({
+            $identifier,
+            $type,
+          })),
         ),
     );
   }
@@ -62413,7 +62417,7 @@ export namespace BlankNodeOrIriIdentifierClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/BlankNodeOrIriIdentifierClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -62423,7 +62427,7 @@ export namespace BlankNodeOrIriIdentifierClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -62434,7 +62438,7 @@ export namespace BlankNodeOrIriIdentifierClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -62871,7 +62875,7 @@ export namespace BlankNodeIdentifierInterface {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/BlankNodeIdentifierInterface":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -62881,7 +62885,7 @@ export namespace BlankNodeIdentifierInterface {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -62892,7 +62896,7 @@ export namespace BlankNodeIdentifierInterface {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({
@@ -62905,9 +62909,12 @@ export namespace BlankNodeIdentifierInterface {
         .chain((values) => values.chainMap((value) => value.toBlankNode()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Either.of<Error, "BlankNodeIdentifierInterface">(
+          Right<"BlankNodeIdentifierInterface">(
             "BlankNodeIdentifierInterface" as const,
-          ).map(($type) => ({ $identifier, $type })),
+          ).map(($type) => ({
+            $identifier,
+            $type,
+          })),
         ),
     );
   }
@@ -63373,7 +63380,7 @@ export namespace BlankNodeIdentifierClass {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/BlankNodeIdentifierClass":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -63383,7 +63390,7 @@ export namespace BlankNodeIdentifierClass {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -63394,7 +63401,7 @@ export namespace BlankNodeIdentifierClass {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       Right(
         new Resource.Value({

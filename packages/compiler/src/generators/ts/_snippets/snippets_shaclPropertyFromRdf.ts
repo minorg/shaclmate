@@ -12,6 +12,6 @@ function ${syntheticNamePrefix}shaclPropertyFromRdf<T>({ graph, propertySchema, 
   resource: ${imports.Resource};
   typeFromRdf: (resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>) => ${imports.Either}<Error, ${imports.Resource}.Values<T>>;
 }): ${imports.Either}<Error, T> {
-  return typeFromRdf(${imports.Either}.of<Error, ${imports.Resource}.Values>(resource.values(propertySchema.identifier, { graph, unique: true }))).chain(values => values.head());
+  return typeFromRdf(${imports.Right}(resource.values(propertySchema.identifier, { graph, unique: true }))).chain(values => values.head());
 }`,
 );

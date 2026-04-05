@@ -13,7 +13,7 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     values: ${imports.Resource}.Values
   }): ${imports.Either}<Error, ${imports.Resource}.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return ${imports.Either}.of<Error, ${imports.Resource}.Values>(values);
+    return ${imports.Right}(values);
   }
 
   // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.

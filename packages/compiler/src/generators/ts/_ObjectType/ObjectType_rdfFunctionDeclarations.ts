@@ -74,16 +74,16 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
       // Check the expected type and its known subtypes
       switch (actualRdfType.value) {
         ${[...cases].map((fromRdfType) => `case "${fromRdfType}":`).join("\n")}
-          return ${imports.Either}.of<Error, true>(true);
+          return ${imports.Right}(true as const);
       }
 
       // Check arbitrary rdfs:subClassOf's of the expected type
       if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable}, ${{ graph: variables.graph }})) {
-        return ${imports.Either}.of<Error, true>(true);
+        return ${imports.Right}(true as const);
       }
 
       return ${imports.Left}(new Error(\`\${${imports.Resource}.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
-    }) : ${imports.Either}.of<Error, true>(true)`,
+    }) : ${imports.Right}(true as const)`,
       variable: "_rdfTypeCheck",
     });
   });
