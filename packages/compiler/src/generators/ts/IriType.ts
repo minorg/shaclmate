@@ -20,12 +20,12 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   get fromStringFunction(): Code {
     const expressions: Code[] = [
       code`${imports.Either}.encase(() => ${imports.Resource}.Identifier.fromString({ ${imports.dataFactory}, identifier }))`,
-      code`chain((identifier) => (identifier.termType === "NamedNode") ? ${imports.Either}.of(identifier) : ${imports.Left}(new Error("expected identifier to be NamedNode")))`,
+      code`chain((identifier) => (identifier.termType === "NamedNode") ? ${imports.Right}(identifier) : ${imports.Left}(new Error("expected identifier to be NamedNode")))`,
     ];
 
     if (this.in_.length > 0) {
       expressions.push(
-        code`chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${imports.Either}.of(identifier as ${imports.NamedNode}<"${iri.value}">);`))} default: return ${imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
+        code`chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${imports.Right}(identifier as ${imports.NamedNode}<"${iri.value}">);`))} default: return ${imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
       );
     }
 

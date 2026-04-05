@@ -102,7 +102,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
     if (Number.isNaN(parsedCount)) {
       return ${imports.Left}(new Error("'count' variable is NaN"));
     }
-    return ${imports.Either}.of(parsedCount);
+    return ${imports.Right}(parsedCount);
   }
 
   protected ${syntheticNamePrefix}mapBindingsToIdentifiers(bindings: readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[], variable: string): readonly ${imports.NamedNode}[] {
@@ -121,12 +121,12 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 
   protected async ${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, readonly ObjectIdentifierT[]>> {
     if (query?.identifiers) {
-      return ${imports.Either}.of(query.identifiers);
+      return ${imports.Right}(query.identifiers);
     }
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return ${imports.Either}.of([]);
+      return ${imports.Right}([]);
     }
 
     let offset = query?.offset ?? 0;

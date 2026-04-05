@@ -476,7 +476,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filte
     variables,
   }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
     return code`${variables.resourceValues}.chain(values => values.chainMap(value => {
-      const valueAsValues = ${imports.Either}.of(value.toValues());
+      const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.memberTypes.reduce(
         (expression, memberType) => {
           let typeExpression: Code = memberType.fromRdfExpression({

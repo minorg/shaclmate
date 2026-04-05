@@ -220,7 +220,7 @@ export function $blankNodeFromString(
     Resource.Identifier.fromString({ dataFactory, identifier }),
   ).chain((identifier) =>
     identifier.termType === "BlankNode"
-      ? Either.of(identifier)
+      ? Right(identifier)
       : Left(new Error("expected identifier to be BlankNode")),
   ) as Either<Error, BlankNode>;
 }
@@ -831,7 +831,7 @@ function $fromRdfPreferredLanguages({
     }
   }
 
-  return Either.of(
+  return Right(
     Resource.Values.fromArray({
       focusResource,
       propertyPath: predicate,
@@ -1027,7 +1027,7 @@ export class $LazyObjectOption<
 
   async resolve(): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
-      return Either.of(Maybe.empty());
+      return Right(Maybe.empty());
     }
     return (await this.resolver(this.partial.unsafeCoerce().$identifier)).map(
       Maybe.of,
@@ -1070,12 +1070,12 @@ export class $LazyObjectSet<
     offset?: number;
   }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     let offset = options?.offset ?? 0;
@@ -2427,7 +2427,7 @@ export namespace $NamedDefaultPartial {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -2443,7 +2443,7 @@ export namespace $NamedDefaultPartial {
     }
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return Either.of({ $identifier });
+    return Right({ $identifier });
   }
 
   export function $fromJson(
@@ -2773,7 +2773,7 @@ export namespace $DefaultPartial {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    return Either.of({ $identifier });
+    return Right({ $identifier });
   }
 
   export function $fromJson(
@@ -3108,7 +3108,7 @@ export namespace UuidV4IriIdentifierInterface {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -3131,7 +3131,7 @@ export namespace UuidV4IriIdentifierInterface {
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
     const $type = "UuidV4IriIdentifierInterface" as const;
     const uuidV4IriProperty = $jsonObject["uuidV4IriProperty"];
-    return Either.of({ $identifier, $type, uuidV4IriProperty });
+    return Right({ $identifier, $type, uuidV4IriProperty });
   }
 
   export function $fromJson(
@@ -3639,7 +3639,7 @@ export namespace UuidV4IriIdentifierClass {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -3656,7 +3656,7 @@ export namespace UuidV4IriIdentifierClass {
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
     const uuidV4IriProperty = $jsonObject["uuidV4IriProperty"];
-    return Either.of({ $identifier, uuidV4IriProperty });
+    return Right({ $identifier, uuidV4IriProperty });
   }
 
   export function $fromJson(
@@ -5827,7 +5827,7 @@ export namespace UnionDiscriminantsClass {
       (item) =>
         typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
     );
-    return Either.of({
+    return Right({
       $identifier,
       optionalClassOrClassOrStringProperty,
       optionalIriOrLiteralProperty,
@@ -6181,7 +6181,7 @@ export namespace UnionDiscriminantsClass {
             resourceValues
               .chain((values) =>
                 values.chainMap((value) => {
-                  const valueAsValues = Either.of(value.toValues());
+                  const valueAsValues = Right(value.toValues());
                   return (
                     valueAsValues
                       .chain((values) =>
@@ -6360,7 +6360,7 @@ export namespace UnionDiscriminantsClass {
               resourceValues
                 .chain((values) =>
                   values.chainMap((value) => {
-                    const valueAsValues = Either.of(value.toValues());
+                    const valueAsValues = Right(value.toValues());
                     return (
                       valueAsValues.chain((values) =>
                         values.chainMap((value) => value.toIri()),
@@ -6410,7 +6410,7 @@ export namespace UnionDiscriminantsClass {
                 resourceValues
                   .chain((values) =>
                     values.chainMap((value) => {
-                      const valueAsValues = Either.of(value.toValues());
+                      const valueAsValues = Right(value.toValues());
                       return (
                         valueAsValues.chain((values) =>
                           values.chainMap((value) => value.toIri()),
@@ -6460,7 +6460,7 @@ export namespace UnionDiscriminantsClass {
                 typeFromRdf: (resourceValues) =>
                   resourceValues.chain((values) =>
                     values.chainMap((value) => {
-                      const valueAsValues = Either.of(value.toValues());
+                      const valueAsValues = Right(value.toValues());
                       return (
                         valueAsValues
                           .chain((values) =>
@@ -6616,7 +6616,7 @@ export namespace UnionDiscriminantsClass {
                   typeFromRdf: (resourceValues) =>
                     resourceValues.chain((values) =>
                       values.chainMap((value) => {
-                        const valueAsValues = Either.of(value.toValues());
+                        const valueAsValues = Right(value.toValues());
                         return (
                           valueAsValues.chain((values) =>
                             values.chainMap((value) => value.toIri()),
@@ -6659,7 +6659,7 @@ export namespace UnionDiscriminantsClass {
                     typeFromRdf: (resourceValues) =>
                       resourceValues.chain((values) =>
                         values.chainMap((value) => {
-                          const valueAsValues = Either.of(value.toValues());
+                          const valueAsValues = Right(value.toValues());
                           return (
                             valueAsValues.chain((values) =>
                               values.chainMap((value) => value.toIri()),
@@ -6706,7 +6706,7 @@ export namespace UnionDiscriminantsClass {
                         resourceValues
                           .chain((values) =>
                             values.chainMap((value) => {
-                              const valueAsValues = Either.of(value.toValues());
+                              const valueAsValues = Right(value.toValues());
                               return (
                                 valueAsValues
                                   .chain((values) =>
@@ -6886,9 +6886,7 @@ export namespace UnionDiscriminantsClass {
                           resourceValues
                             .chain((values) =>
                               values.chainMap((value) => {
-                                const valueAsValues = Either.of(
-                                  value.toValues(),
-                                );
+                                const valueAsValues = Right(value.toValues());
                                 return (
                                   valueAsValues.chain((values) =>
                                     values.chainMap((value) => value.toIri()),
@@ -6945,9 +6943,7 @@ export namespace UnionDiscriminantsClass {
                             resourceValues
                               .chain((values) =>
                                 values.chainMap((value) => {
-                                  const valueAsValues = Either.of(
-                                    value.toValues(),
-                                  );
+                                  const valueAsValues = Right(value.toValues());
                                   return (
                                     valueAsValues.chain((values) =>
                                       values.chainMap((value) => value.toIri()),
@@ -9702,7 +9698,7 @@ export namespace TermPropertiesClass {
             ? dataFactory.namedNode(item["@id"])
             : dataFactory.blankNode(item["@id"].substring(2)),
     );
-    return Either.of({
+    return Right({
       $identifier,
       blankNodeTermProperty,
       booleanTermProperty,
@@ -10971,7 +10967,7 @@ export namespace Sha256IriIdentifierClass {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -10988,7 +10984,7 @@ export namespace Sha256IriIdentifierClass {
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
     const sha256IriProperty = $jsonObject["sha256IriProperty"];
-    return Either.of({ $identifier, sha256IriProperty });
+    return Right({ $identifier, sha256IriProperty });
   }
 
   export function $fromJson(
@@ -11480,7 +11476,7 @@ export namespace RecursiveClassUnionMember2 {
     const recursiveClassUnionMember2Property = Maybe.fromNullable(
       $jsonObject["recursiveClassUnionMember2Property"],
     ).map((item) => RecursiveClassUnion.$fromJson(item).unsafeCoerce());
-    return Either.of({ $identifier, recursiveClassUnionMember2Property });
+    return Right({ $identifier, recursiveClassUnionMember2Property });
   }
 
   export function $fromJson(
@@ -12089,7 +12085,7 @@ export namespace RecursiveClassUnionMember1 {
     const recursiveClassUnionMember1Property = Maybe.fromNullable(
       $jsonObject["recursiveClassUnionMember1Property"],
     ).map((item) => RecursiveClassUnion.$fromJson(item).unsafeCoerce());
-    return Either.of({ $identifier, recursiveClassUnionMember1Property });
+    return Right({ $identifier, recursiveClassUnionMember1Property });
   }
 
   export function $fromJson(
@@ -12702,7 +12698,7 @@ export namespace PropertyVisibilitiesClass {
     const privateProperty = $jsonObject["privateProperty"];
     const protectedProperty = $jsonObject["protectedProperty"];
     const publicProperty = $jsonObject["publicProperty"];
-    return Either.of({
+    return Right({
       $identifier,
       privateProperty,
       protectedProperty,
@@ -13445,7 +13441,7 @@ export namespace PropertyCardinalitiesClass {
       $jsonObject["optionalStringProperty"],
     );
     const requiredStringProperty = $jsonObject["requiredStringProperty"];
-    return Either.of({
+    return Right({
       $identifier,
       emptyStringSetProperty,
       nonEmptyStringSetProperty,
@@ -14161,7 +14157,7 @@ export namespace PartialInterfaceUnionMember2 {
     const $type = "PartialInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -14771,7 +14767,7 @@ export namespace PartialInterfaceUnionMember1 {
     const $type = "PartialInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -15415,7 +15411,7 @@ export namespace PartialClassUnionMember2 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -16000,7 +15996,7 @@ export namespace PartialClassUnionMember1 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -16633,7 +16629,7 @@ export namespace OrderedPropertiesClass {
     const orderedPropertyC = $jsonObject["orderedPropertyC"];
     const orderedPropertyB = $jsonObject["orderedPropertyB"];
     const orderedPropertyA = $jsonObject["orderedPropertyA"];
-    return Either.of({
+    return Right({
       $identifier,
       orderedPropertyC,
       orderedPropertyB,
@@ -18124,7 +18120,7 @@ export namespace NumericPropertiesClass {
     const unsignedShortNumericProperty = Maybe.fromNullable(
       $jsonObject["unsignedShortNumericProperty"],
     );
-    return Either.of({
+    return Right({
       $identifier,
       byteNumericProperty,
       decimalNumericProperty,
@@ -19965,7 +19961,7 @@ export namespace NonClass {
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const nonClassProperty = $jsonObject["nonClassProperty"];
-    return Either.of({ $identifier, nonClassProperty });
+    return Right({ $identifier, nonClassProperty });
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, NonClass> {
@@ -20409,7 +20405,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const noRdfTypeClassUnionMember2Property =
       $jsonObject["noRdfTypeClassUnionMember2Property"];
-    return Either.of({ $identifier, noRdfTypeClassUnionMember2Property });
+    return Right({ $identifier, noRdfTypeClassUnionMember2Property });
   }
 
   export function $fromJson(
@@ -20867,7 +20863,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const noRdfTypeClassUnionMember1Property =
       $jsonObject["noRdfTypeClassUnionMember1Property"];
-    return Either.of({ $identifier, noRdfTypeClassUnionMember1Property });
+    return Right({ $identifier, noRdfTypeClassUnionMember1Property });
   }
 
   export function $fromJson(
@@ -21532,7 +21528,7 @@ export namespace MutablePropertiesClass {
     const mutableStringProperty = Maybe.fromNullable(
       $jsonObject["mutableStringProperty"],
     );
-    return Either.of({
+    return Right({
       $identifier,
       mutableListProperty,
       mutableSetProperty,
@@ -22656,7 +22652,7 @@ export namespace ListPropertiesClass {
     const stringListProperty = Maybe.fromNullable(
       $jsonObject["stringListProperty"],
     );
-    return Either.of({
+    return Right({
       $identifier,
       iriListProperty,
       objectListProperty,
@@ -23521,7 +23517,7 @@ export namespace PartialInterface {
     const $type = "PartialInterface" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -24023,7 +24019,7 @@ export namespace LazyPropertiesInterface {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             (
               parameters.optionalLazyToResolvedInterfaceProperty as Maybe<LazilyResolvedBlankNodeOrIriIdentifierInterface>
             ).unsafeCoerce(),
@@ -24043,7 +24039,7 @@ export namespace LazyPropertiesInterface {
           ),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.optionalLazyToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
           ),
       });
@@ -24089,7 +24085,7 @@ export namespace LazyPropertiesInterface {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             (
               parameters.optionalLazyToResolvedInterfaceUnionProperty as Maybe<LazilyResolvedInterfaceUnion>
             ).unsafeCoerce(),
@@ -24110,7 +24106,7 @@ export namespace LazyPropertiesInterface {
           ),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.optionalLazyToResolvedInterfaceUnionProperty as LazilyResolvedInterfaceUnion,
           ),
       });
@@ -24160,7 +24156,7 @@ export namespace LazyPropertiesInterface {
               (object) => new $NamedDefaultPartial(object),
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty as Maybe<LazilyResolvedIriIdentifierInterface>
               ).unsafeCoerce(),
@@ -24182,7 +24178,7 @@ export namespace LazyPropertiesInterface {
             ),
           ),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty as LazilyResolvedIriIdentifierInterface,
             ),
         });
@@ -24234,7 +24230,7 @@ export namespace LazyPropertiesInterface {
               (object) => PartialInterface.$create(object),
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalPartialInterfaceToResolvedInterfaceProperty as Maybe<LazilyResolvedBlankNodeOrIriIdentifierInterface>
               ).unsafeCoerce(),
@@ -24256,7 +24252,7 @@ export namespace LazyPropertiesInterface {
             ),
           ),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalPartialInterfaceToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
             ),
         });
@@ -24308,7 +24304,7 @@ export namespace LazyPropertiesInterface {
               (object) => PartialInterface.$create(object),
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalPartialInterfaceToResolvedInterfaceUnionProperty as Maybe<LazilyResolvedInterfaceUnion>
               ).unsafeCoerce(),
@@ -24330,7 +24326,7 @@ export namespace LazyPropertiesInterface {
             ),
           ),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalPartialInterfaceToResolvedInterfaceUnionProperty as LazilyResolvedInterfaceUnion,
             ),
         });
@@ -24392,7 +24388,7 @@ export namespace LazyPropertiesInterface {
               },
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty as Maybe<LazilyResolvedInterfaceUnion>
               ).unsafeCoerce(),
@@ -24422,7 +24418,7 @@ export namespace LazyPropertiesInterface {
             }
           }),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty as LazilyResolvedInterfaceUnion,
             ),
         });
@@ -24468,7 +24464,7 @@ export namespace LazyPropertiesInterface {
           parameters.requiredLazyToResolvedInterfaceProperty,
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.requiredLazyToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
           ),
       });
@@ -24502,7 +24498,7 @@ export namespace LazyPropertiesInterface {
           parameters.requiredPartialInterfaceToResolvedInterfaceProperty,
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.requiredPartialInterfaceToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
           ),
       });
@@ -24533,7 +24529,7 @@ export namespace LazyPropertiesInterface {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.setLazyToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[],
           ),
       });
@@ -24578,7 +24574,7 @@ export namespace LazyPropertiesInterface {
           (object) => PartialInterface.$create(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.setPartialInterfaceToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[],
           ),
       });
@@ -25333,7 +25329,7 @@ export namespace LazyPropertiesInterface {
           ),
         ),
     });
-    return Either.of({
+    return Right({
       $identifier,
       $type,
       optionalLazyToResolvedInterfaceProperty,
@@ -27451,7 +27447,7 @@ export namespace PartialClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, PartialClass> {
@@ -27903,7 +27899,7 @@ export class LazyPropertiesClass {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             (
               parameters.optionalLazyToResolvedClassProperty as Maybe<LazilyResolvedBlankNodeOrIriIdentifierClass>
             ).unsafeCoerce(),
@@ -27921,7 +27917,7 @@ export class LazyPropertiesClass {
           new $DefaultPartial(parameters.optionalLazyToResolvedClassProperty),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.optionalLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
@@ -27959,7 +27955,7 @@ export class LazyPropertiesClass {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             (
               parameters.optionalLazyToResolvedClassUnionProperty as Maybe<LazilyResolvedClassUnion>
             ).unsafeCoerce(),
@@ -27979,7 +27975,7 @@ export class LazyPropertiesClass {
           ),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.optionalLazyToResolvedClassUnionProperty as LazilyResolvedClassUnion,
           ),
       });
@@ -28022,7 +28018,7 @@ export class LazyPropertiesClass {
               (object) => new $NamedDefaultPartial(object),
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalLazyToResolvedIriIdentifierClassProperty as Maybe<LazilyResolvedIriIdentifierClass>
               ).unsafeCoerce(),
@@ -28044,7 +28040,7 @@ export class LazyPropertiesClass {
             ),
           ),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalLazyToResolvedIriIdentifierClassProperty as LazilyResolvedIriIdentifierClass,
             ),
         });
@@ -28086,7 +28082,7 @@ export class LazyPropertiesClass {
           (object) => new PartialClass(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             (
               parameters.optionalPartialClassToResolvedClassProperty as Maybe<LazilyResolvedBlankNodeOrIriIdentifierClass>
             ).unsafeCoerce(),
@@ -28106,7 +28102,7 @@ export class LazyPropertiesClass {
           ),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.optionalPartialClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
@@ -28149,7 +28145,7 @@ export class LazyPropertiesClass {
               (object) => new PartialClass(object),
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalPartialClassToResolvedClassUnionProperty as Maybe<LazilyResolvedClassUnion>
               ).unsafeCoerce(),
@@ -28171,7 +28167,7 @@ export class LazyPropertiesClass {
             ),
           ),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalPartialClassToResolvedClassUnionProperty as LazilyResolvedClassUnion,
             ),
         });
@@ -28227,7 +28223,7 @@ export class LazyPropertiesClass {
               },
             ),
           resolver: async () =>
-            Either.of(
+            Right(
               (
                 parameters.optionalPartialClassUnionToResolvedClassUnionProperty as Maybe<LazilyResolvedClassUnion>
               ).unsafeCoerce(),
@@ -28257,7 +28253,7 @@ export class LazyPropertiesClass {
             }
           }),
           resolver: async () =>
-            Either.of(
+            Right(
               parameters.optionalPartialClassUnionToResolvedClassUnionProperty as LazilyResolvedClassUnion,
             ),
         });
@@ -28298,7 +28294,7 @@ export class LazyPropertiesClass {
           parameters.requiredLazyToResolvedClassProperty,
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.requiredLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
@@ -28326,7 +28322,7 @@ export class LazyPropertiesClass {
           parameters.requiredPartialClassToResolvedClassProperty,
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.requiredPartialClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
@@ -28350,7 +28346,7 @@ export class LazyPropertiesClass {
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.setLazyToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierClass[],
           ),
       });
@@ -28388,7 +28384,7 @@ export class LazyPropertiesClass {
           (object) => new PartialClass(object),
         ),
         resolver: async () =>
-          Either.of(
+          Right(
             parameters.setPartialClassToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierClass[],
           ),
       });
@@ -29278,7 +29274,7 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    return Either.of({
+    return Right({
       $identifier,
       optionalLazyToResolvedClassProperty,
       optionalLazyToResolvedClassUnionProperty,
@@ -31081,7 +31077,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -31105,7 +31101,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -31585,7 +31581,7 @@ export namespace LazilyResolvedIriIdentifierClass {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -31606,7 +31602,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -32037,7 +32033,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -32652,7 +32648,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -33301,7 +33297,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -33890,7 +33886,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -34450,7 +34446,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, $type, lazilyResolvedStringProperty });
+    return Right({ $identifier, $type, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -35110,7 +35106,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
-    return Either.of({ $identifier, lazilyResolvedStringProperty });
+    return Right({ $identifier, lazilyResolvedStringProperty });
   }
 
   export function $fromJson(
@@ -35727,7 +35723,7 @@ export namespace LanguageInPropertiesClass {
               : undefined,
         ),
       );
-    return Either.of({ $identifier, languageInLiteralProperty });
+    return Right({ $identifier, languageInLiteralProperty });
   }
 
   export function $fromJson(
@@ -35864,7 +35860,7 @@ export namespace LanguageInPropertiesClass {
                     switch (literalValue.language) {
                       case "en":
                       case "fr":
-                        return Either.of(value);
+                        return Right(value);
                       default:
                         return Left(
                           new Resource.MistypedTermValueError({
@@ -36401,7 +36397,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const jsPrimitiveUnionProperty = $jsonObject["jsPrimitiveUnionProperty"];
-    return Either.of({ $identifier, jsPrimitiveUnionProperty });
+    return Right({ $identifier, jsPrimitiveUnionProperty });
   }
 
   export function $fromJson(
@@ -36556,7 +36552,7 @@ export namespace JsPrimitiveUnionPropertyClass {
               resourceValues
                 .chain((values) =>
                   values.chainMap((value) => {
-                    const valueAsValues = Either.of(value.toValues());
+                    const valueAsValues = Right(value.toValues());
                     return (
                       valueAsValues.chain((values) =>
                         values.chainMap((value) => value.toBoolean()),
@@ -37147,7 +37143,7 @@ export namespace IriIdentifierInterface {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -37167,7 +37163,7 @@ export namespace IriIdentifierInterface {
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
     const $type = "IriIdentifierInterface" as const;
-    return Either.of({ $identifier, $type });
+    return Right({ $identifier, $type });
   }
 
   export function $fromJson(
@@ -37659,7 +37655,7 @@ export namespace IriIdentifierClass {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -37675,7 +37671,7 @@ export namespace IriIdentifierClass {
     }
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return Either.of({ $identifier });
+    return Right({ $identifier });
   }
 
   export function $fromJson(
@@ -38149,7 +38145,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       : dataFactory.namedNode($jsonObject["@id"]);
     const interfaceUnionMemberCommonParentProperty =
       $jsonObject["interfaceUnionMemberCommonParentProperty"];
-    return Either.of({ $identifier, interfaceUnionMemberCommonParentProperty });
+    return Right({ $identifier, interfaceUnionMemberCommonParentProperty });
   }
 
   export function $jsonSchema() {
@@ -39783,7 +39779,7 @@ export namespace Interface {
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "Interface" as const;
     const interfaceProperty = $jsonObject["interfaceProperty"];
-    return Either.of({ $identifier, $type, interfaceProperty });
+    return Right({ $identifier, $type, interfaceProperty });
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, Interface> {
@@ -40307,7 +40303,7 @@ export namespace IndirectRecursiveHelperClass {
     const indirectRecursiveProperty = Maybe.fromNullable(
       $jsonObject["indirectRecursiveProperty"],
     ).map((item) => IndirectRecursiveClass.$fromJson(item).unsafeCoerce());
-    return Either.of({ $identifier, indirectRecursiveProperty });
+    return Right({ $identifier, indirectRecursiveProperty });
   }
 
   export function $fromJson(
@@ -40915,7 +40911,7 @@ export namespace IndirectRecursiveClass {
     ).map((item) =>
       IndirectRecursiveHelperClass.$fromJson(item).unsafeCoerce(),
     );
-    return Either.of({ $identifier, indirectRecursiveHelperProperty });
+    return Right({ $identifier, indirectRecursiveHelperProperty });
   }
 
   export function $fromJson(
@@ -41798,7 +41794,7 @@ export namespace InPropertiesClass {
     const inStringsProperty = Maybe.fromNullable(
       $jsonObject["inStringsProperty"],
     );
-    return Either.of({
+    return Right({
       $identifier,
       inBooleansProperty,
       inDateTimesProperty,
@@ -42851,17 +42847,17 @@ export namespace InIdentifierClass {
       )
         .chain((identifier) =>
           identifier.termType === "NamedNode"
-            ? Either.of(identifier)
+            ? Right(identifier)
             : Left(new Error("expected identifier to be NamedNode")),
         )
         .chain((identifier) => {
           switch (identifier.value) {
             case "http://example.com/InIdentifierInstance1":
-              return Either.of(
+              return Right(
                 identifier as NamedNode<"http://example.com/InIdentifierInstance1">,
               );
             case "http://example.com/InIdentifierInstance2":
-              return Either.of(
+              return Right(
                 identifier as NamedNode<"http://example.com/InIdentifierInstance2">,
               );
             default:
@@ -42901,7 +42897,7 @@ export namespace InIdentifierClass {
     const inIdentifierProperty = Maybe.fromNullable(
       $jsonObject["inIdentifierProperty"],
     );
-    return Either.of({ $identifier, inIdentifierProperty });
+    return Right({ $identifier, inIdentifierProperty });
   }
 
   export function $fromJson(
@@ -43517,7 +43513,7 @@ export namespace IdentifierOverride1ClassStatic {
       : dataFactory.namedNode($jsonObject["@id"]);
     const identifierOverrideProperty =
       $jsonObject["identifierOverrideProperty"];
-    return Either.of({ $identifier, identifierOverrideProperty });
+    return Right({ $identifier, identifierOverrideProperty });
   }
 
   export function $jsonSchema() {
@@ -43857,7 +43853,7 @@ export namespace IdentifierOverride2ClassStatic {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -44136,7 +44132,7 @@ export namespace IdentifierOverride3ClassStatic {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -44616,7 +44612,7 @@ export namespace IdentifierOverride4ClassStatic {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -45086,7 +45082,7 @@ export namespace IdentifierOverride5Class {
         Resource.Identifier.fromString({ dataFactory, identifier }),
       ).chain((identifier) =>
         identifier.termType === "NamedNode"
-          ? Either.of(identifier)
+          ? Right(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -45646,11 +45642,7 @@ export namespace HasValuePropertiesClass {
       $jsonObject["hasIriValueProperty"]["@id"],
     );
     const hasLiteralValueProperty = $jsonObject["hasLiteralValueProperty"];
-    return Either.of({
-      $identifier,
-      hasIriValueProperty,
-      hasLiteralValueProperty,
-    });
+    return Right({ $identifier, hasIriValueProperty, hasLiteralValueProperty });
   }
 
   export function $fromJson(
@@ -46192,7 +46184,7 @@ export namespace FlattenClassUnionMember3 {
       : dataFactory.namedNode($jsonObject["@id"]);
     const flattenClassUnionMember3Property =
       $jsonObject["flattenClassUnionMember3Property"];
-    return Either.of({ $identifier, flattenClassUnionMember3Property });
+    return Right({ $identifier, flattenClassUnionMember3Property });
   }
 
   export function $fromJson(
@@ -46807,7 +46799,7 @@ export namespace ExternClassPropertyClass {
     const externClassProperty = Maybe.fromNullable(
       $jsonObject["externClassProperty"],
     ).map((item) => ExternClass.$fromJson(item).unsafeCoerce());
-    return Either.of({ $identifier, externClassProperty });
+    return Right({ $identifier, externClassProperty });
   }
 
   export function $fromJson(
@@ -47438,7 +47430,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       : dataFactory.namedNode($jsonObject["@id"]);
     const abstractBaseClassForExternClassProperty =
       $jsonObject["abstractBaseClassForExternClassProperty"];
-    return Either.of({ $identifier, abstractBaseClassForExternClassProperty });
+    return Right({ $identifier, abstractBaseClassForExternClassProperty });
   }
 
   export function $jsonSchema() {
@@ -47882,7 +47874,7 @@ export namespace ExplicitRdfTypeClass {
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const explicitRdfTypeProperty = $jsonObject["explicitRdfTypeProperty"];
-    return Either.of({ $identifier, explicitRdfTypeProperty });
+    return Right({ $identifier, explicitRdfTypeProperty });
   }
 
   export function $fromJson(
@@ -48479,7 +48471,7 @@ export namespace ExplicitFromToRdfTypesClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const explicitFromToRdfTypesProperty =
       $jsonObject["explicitFromToRdfTypesProperty"];
-    return Either.of({ $identifier, explicitFromToRdfTypesProperty });
+    return Right({ $identifier, explicitFromToRdfTypesProperty });
   }
 
   export function $fromJson(
@@ -49093,7 +49085,7 @@ export namespace DirectRecursiveClass {
     const directRecursiveProperty = Maybe.fromNullable(
       $jsonObject["directRecursiveProperty"],
     ).map((item) => DirectRecursiveClass.$fromJson(item).unsafeCoerce());
-    return Either.of({ $identifier, directRecursiveProperty });
+    return Right({ $identifier, directRecursiveProperty });
   }
 
   export function $fromJson(
@@ -49977,7 +49969,7 @@ export namespace DefaultValuePropertiesClass {
       $jsonObject["stringDefaultValueProperty"];
     const trueBooleanDefaultValueProperty =
       $jsonObject["trueBooleanDefaultValueProperty"];
-    return Either.of({
+    return Right({
       $identifier,
       dateDefaultValueProperty,
       dateTimeDefaultValueProperty,
@@ -51698,7 +51690,7 @@ export namespace DateUnionPropertiesClass {
         ? { type: "date" as const, value: new Date(item.value) }
         : { type: "string" as const, value: item.value },
     );
-    return Either.of({
+    return Right({
       $identifier,
       dateOrDateTimeProperty,
       dateOrStringProperty,
@@ -51913,7 +51905,7 @@ export namespace DateUnionPropertiesClass {
               resourceValues
                 .chain((values) =>
                   values.chainMap((value) => {
-                    const valueAsValues = Either.of(value.toValues());
+                    const valueAsValues = Right(value.toValues());
                     return (
                       valueAsValues
                         .chain((values) =>
@@ -51989,7 +51981,7 @@ export namespace DateUnionPropertiesClass {
                 resourceValues
                   .chain((values) =>
                     values.chainMap((value) => {
-                      const valueAsValues = Either.of(value.toValues());
+                      const valueAsValues = Right(value.toValues());
                       return (
                         valueAsValues
                           .chain((values) =>
@@ -52076,7 +52068,7 @@ export namespace DateUnionPropertiesClass {
                   resourceValues
                     .chain((values) =>
                       values.chainMap((value) => {
-                        const valueAsValues = Either.of(value.toValues());
+                        const valueAsValues = Right(value.toValues());
                         return (
                           valueAsValues
                             .chain((values) =>
@@ -52152,7 +52144,7 @@ export namespace DateUnionPropertiesClass {
                     resourceValues
                       .chain((values) =>
                         values.chainMap((value) => {
-                          const valueAsValues = Either.of(value.toValues());
+                          const valueAsValues = Right(value.toValues());
                           return (
                             valueAsValues
                               .chain((values) =>
@@ -54348,7 +54340,7 @@ export namespace ConvertibleTypePropertiesClass {
           ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
-    return Either.of({
+    return Right({
       $identifier,
       convertibleIriNonEmptySetProperty,
       convertibleIriOptionProperty,
@@ -55967,11 +55959,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
       $jsonObject["baseInterfaceWithPropertiesProperty"];
-    return Either.of({
-      $identifier,
-      $type,
-      baseInterfaceWithPropertiesProperty,
-    });
+    return Right({ $identifier, $type, baseInterfaceWithPropertiesProperty });
   }
 
   export function $fromJson(
@@ -58445,7 +58433,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       : dataFactory.namedNode($jsonObject["@id"]);
     const abstractBaseClassWithPropertiesProperty =
       $jsonObject["abstractBaseClassWithPropertiesProperty"];
-    return Either.of({ $identifier, abstractBaseClassWithPropertiesProperty });
+    return Right({ $identifier, abstractBaseClassWithPropertiesProperty });
   }
 
   export function $jsonSchema() {
@@ -60323,7 +60311,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       : dataFactory.namedNode($jsonObject["@id"]);
     const classUnionMemberCommonParentProperty =
       $jsonObject["classUnionMemberCommonParentProperty"];
-    return Either.of({ $identifier, classUnionMemberCommonParentProperty });
+    return Right({ $identifier, classUnionMemberCommonParentProperty });
   }
 
   export function $jsonSchema() {
@@ -61798,7 +61786,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "BlankNodeOrIriIdentifierInterface" as const;
-    return Either.of({ $identifier, $type });
+    return Right({ $identifier, $type });
   }
 
   export function $fromJson(
@@ -62327,7 +62315,7 @@ export namespace BlankNodeOrIriIdentifierClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    return Either.of({ $identifier });
+    return Right({ $identifier });
   }
 
   export function $fromJson(
@@ -62773,7 +62761,7 @@ export namespace BlankNodeIdentifierInterface {
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.blankNode($jsonObject["@id"].substring(2));
     const $type = "BlankNodeIdentifierInterface" as const;
-    return Either.of({ $identifier, $type });
+    return Right({ $identifier, $type });
   }
 
   export function $fromJson(
@@ -63287,7 +63275,7 @@ export namespace BlankNodeIdentifierClass {
     }
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.blankNode($jsonObject["@id"].substring(2));
-    return Either.of({ $identifier });
+    return Right({ $identifier });
   }
 
   export function $fromJson(
@@ -81273,7 +81261,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -81364,11 +81352,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
-          return Either.of(objects);
+          return Right(objects);
         }
       }
     }
-    return Either.of(objects);
+    return Right(objects);
   }
 
   protected $objectUnionsSync<
@@ -81393,7 +81381,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -81527,11 +81515,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
-          return Either.of(objects);
+          return Right(objects);
         }
       }
     }
-    return Either.of(objects);
+    return Right(objects);
   }
 }
 export class $SparqlObjectSet implements $ObjectSet {
@@ -85301,7 +85289,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     if (Number.isNaN(parsedCount)) {
       return Left(new Error("'count' variable is NaN"));
     }
-    return Either.of(parsedCount);
+    return Right(parsedCount);
   }
 
   protected $mapBindingsToIdentifiers(
@@ -85331,12 +85319,12 @@ export class $SparqlObjectSet implements $ObjectSet {
     query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Promise<Either<Error, readonly ObjectIdentifierT[]>> {
     if (query?.identifiers) {
-      return Either.of(query.identifiers);
+      return Right(query.identifiers);
     }
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     let offset = query?.offset ?? 0;

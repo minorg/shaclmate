@@ -29,6 +29,6 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     }
   }
 
-  return ${imports.Either}.of(${imports.Resource}.Values.fromArray({ focusResource, propertyPath: predicate, values: filteredValues }));
+  return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource, propertyPath: predicate, values: filteredValues }));
 }`,
 );

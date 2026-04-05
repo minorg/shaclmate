@@ -113,7 +113,7 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
   const statements: Code[] = [];
   const resultExpression = code`{ ${joinCode(initializers, { on: "," })} }`;
   if (chains.length === 0) {
-    statements.push(code`return ${imports.Either}.of(${resultExpression});`);
+    statements.push(code`return ${imports.Right}(${resultExpression});`);
   } else {
     statements.push(
       code`return ${chains

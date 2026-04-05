@@ -158,7 +158,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-  if (limit <= 0) { return ${imports.Either}.of([]); }
+  if (limit <= 0) { return ${imports.Right}([]); }
 
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
@@ -233,11 +233,11 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     if (objectI++ >= offset) {
       objects.push(object);
       if (objects.length === limit) {
-        return ${imports.Either}.of(objects);
+        return ${imports.Right}(objects);
       }
     }
   }
-  return ${imports.Either}.of(objects);
+  return ${imports.Right}(objects);
   }`,
           ]
         : []),
@@ -249,7 +249,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-  if (limit <= 0) { return ${imports.Either}.of([]); }
+  if (limit <= 0) { return ${imports.Right}([]); }
 
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
@@ -345,11 +345,11 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     if (objectI++ >= offset) {
       objects.push(object);
       if (objects.length === limit) {
-        return ${imports.Either}.of(objects);
+        return ${imports.Right}(objects);
       }
     }
   }
-  return ${imports.Either}.of(objects);
+  return ${imports.Right}(objects);
 }`,
           ]
         : []),
