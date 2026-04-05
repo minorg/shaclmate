@@ -139,12 +139,12 @@ function transformNodeShapeToAstListType(
           let firstPropertyShape: input.PropertyShape | undefined;
           let restPropertyShape: input.PropertyShape | undefined;
           for (const propertyShape of nonEmptyListShapeProperties) {
-            if (propertyShape.path.$type !== "PredicatePath") {
+            if (propertyShape.path.termType !== "NamedNode") {
               continue;
             }
-            if (propertyShape.path.iri.equals(rdf.first)) {
+            if (propertyShape.path.equals(rdf.first)) {
               firstPropertyShape = propertyShape;
-            } else if (propertyShape.path.iri.equals(rdf.rest)) {
+            } else if (propertyShape.path.equals(rdf.rest)) {
               restPropertyShape = propertyShape;
             }
           }

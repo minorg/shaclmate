@@ -197,7 +197,7 @@ function $filterTerm(
 }
 
 type $FromRdfOptions = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
@@ -293,7 +293,7 @@ interface $NumericFilter<T> {
 }
 
 type $PropertiesFromRdfParameters = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;

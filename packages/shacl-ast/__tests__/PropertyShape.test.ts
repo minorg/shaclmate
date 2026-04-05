@@ -1,6 +1,5 @@
 import { fail } from "node:assert";
 import type { NamedNode } from "@rdfjs/types";
-import type { PredicatePath } from "@shaclmate/shacl-ast";
 import { dash, rdf, schema } from "@tpluscode/rdf-ns-builders";
 import { describe, expect, it } from "vitest";
 import { testData } from "./testData.js";
@@ -26,8 +25,8 @@ describe("PropertyShape", () => {
       .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
-          propertyShapePath.$type === "PredicatePath" &&
-          propertyShapePath.iri.equals(path)
+          propertyShapePath.termType === "NamedNode" &&
+          propertyShapePath.equals(path)
         );
       });
     expect(propertyShape).toBeDefined();
@@ -61,9 +60,9 @@ describe("PropertyShape", () => {
       dash.ScriptAPIShape,
       dash.generatePrefixClasses,
     ).path;
-    expect(path.$type).toStrictEqual("PredicatePath");
+    expect(path.termType).toStrictEqual("NamedNode");
     expect(
-      (path as PredicatePath).iri.equals(dash.generatePrefixClasses),
+      (path as NamedNode).equals(dash.generatePrefixClasses),
     ).toStrictEqual(true);
   });
 
@@ -72,12 +71,12 @@ describe("PropertyShape", () => {
       .nodeShapeByIdentifier(schema.Person)
       .unsafeCoerce();
     for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
-      if (propertyShape.path.$type !== "InversePath") {
+      if (propertyShape.path.termType !== "InversePath") {
         continue;
       }
-      expect(propertyShape.path.path.$type).toStrictEqual("PredicatePath");
+      expect(propertyShape.path.path.termType).toStrictEqual("NamedNode");
       expect(
-        (propertyShape.path.path as PredicatePath).iri.equals(schema.parent),
+        (propertyShape.path.path as NamedNode).equals(schema.parent),
       ).toStrictEqual(true);
       return;
     }
@@ -89,12 +88,12 @@ describe("PropertyShape", () => {
       .nodeShapeByIdentifier(dash.ListShape)
       .unsafeCoerce();
     for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
-      if (propertyShape.path.$type !== "ZeroOrMorePath") {
+      if (propertyShape.path.termType !== "ZeroOrMorePath") {
         continue;
       }
-      expect(propertyShape.path.path.$type).toStrictEqual("PredicatePath");
+      expect(propertyShape.path.path.termType).toStrictEqual("NamedNode");
       expect(
-        (propertyShape.path.path as PredicatePath).iri.equals(rdf.rest),
+        (propertyShape.path.path as NamedNode).equals(rdf.rest),
       ).toStrictEqual(true);
       return;
     }

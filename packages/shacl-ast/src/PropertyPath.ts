@@ -1,187 +1,189 @@
-import type { NamedNode } from "@rdfjs/types";
-import { sh } from "@tpluscode/rdf-ns-builders";
+export { PropertyPath } from "rdfjs-resource";
 
-import { Either, Left } from "purify-ts";
-import { Resource } from "rdfjs-resource";
+// import type { NamedNode } from "@rdfjs/types";
+// import { sh } from "@tpluscode/rdf-ns-builders";
 
-export interface AlternativePath {
-  readonly $type: "AlternativePath";
-  readonly members: readonly PropertyPath[];
-}
+// import { Either, Left } from "purify-ts";
+// import { Resource } from "rdfjs-resource";
 
-export interface InversePath {
-  readonly $type: "InversePath";
-  readonly path: PropertyPath;
-}
+// export interface AlternativePath {
+//   readonly $type: "AlternativePath";
+//   readonly members: readonly PropertyPath[];
+// }
 
-export interface OneOrMorePath {
-  readonly $type: "OneOrMorePath";
-  readonly path: PropertyPath;
-}
+// export interface InversePath {
+//   readonly $type: "InversePath";
+//   readonly path: PropertyPath;
+// }
 
-export interface PredicatePath {
-  readonly iri: NamedNode;
-  readonly $type: "PredicatePath";
-}
+// export interface OneOrMorePath {
+//   readonly $type: "OneOrMorePath";
+//   readonly path: PropertyPath;
+// }
 
-export interface SequencePath {
-  readonly $type: "SequencePath";
-  readonly members: readonly PropertyPath[];
-}
+// export interface PredicatePath {
+//   readonly iri: NamedNode;
+//   readonly $type: "PredicatePath";
+// }
 
-export interface ZeroOrMorePath {
-  readonly $type: "ZeroOrMorePath";
-  readonly path: PropertyPath;
-}
+// export interface SequencePath {
+//   readonly $type: "SequencePath";
+//   readonly members: readonly PropertyPath[];
+// }
 
-export interface ZeroOrOnePath {
-  readonly $type: "ZeroOrOnePath";
-  readonly path: PropertyPath;
-}
+// export interface ZeroOrMorePath {
+//   readonly $type: "ZeroOrMorePath";
+//   readonly path: PropertyPath;
+// }
 
-// 2.3.1 SHACL Property Paths
-export type PropertyPath =
-  | AlternativePath
-  | InversePath
-  | OneOrMorePath
-  | PredicatePath
-  | SequencePath
-  | ZeroOrMorePath
-  | ZeroOrOnePath;
+// export interface ZeroOrOnePath {
+//   readonly $type: "ZeroOrOnePath";
+//   readonly path: PropertyPath;
+// }
 
-export namespace PropertyPath {
-  export function $fromRdf(
-    resource: Resource,
-    _?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-    },
-  ): Either<Error, PropertyPath> {
-    // Predicate path
-    // sh:path ex:parent
-    if (resource.identifier.termType === "NamedNode") {
-      return Either.of({ iri: resource.identifier, $type: "PredicatePath" });
-    }
+// // 2.3.1 SHACL Property Paths
+// export type PropertyPath =
+//   | AlternativePath
+//   | InversePath
+//   | OneOrMorePath
+//   | PredicatePath
+//   | SequencePath
+//   | ZeroOrMorePath
+//   | ZeroOrOnePath;
 
-    // The other property path types are BlankNodes
+// export namespace PropertyPath {
+//   export function $fromRdf(
+//     resource: Resource,
+//     _?: {
+//       [_index: string]: any;
+//       ignoreRdfType?: boolean;
+//       preferredLanguages?: readonly string[];
+//     },
+//   ): Either<Error, PropertyPath> {
+//     // Predicate path
+//     // sh:path ex:parent
+//     if (resource.identifier.termType === "NamedNode") {
+//       return Either.of({ iri: resource.identifier, $type: "PredicatePath" });
+//     }
 
-    const getPropertyPathList = (
-      list: Either<Error, Resource.Values>,
-    ): Either<Error, readonly PropertyPath[]> => {
-      return list.chain((values) => {
-        const members: PropertyPath[] = [];
-        for (const value of values) {
-          const memberResource = value.toResource().toMaybe();
-          if (memberResource.isNothing()) {
-            return Left(new Error("non-identifier in property path list"));
-          }
-          const member = PropertyPath.$fromRdf(memberResource.unsafeCoerce());
-          if (member.isLeft()) {
-            return member;
-          }
-          members.push(member.unsafeCoerce());
-        }
-        return Either.of(members);
-      });
-    };
+//     // The other property path types are BlankNodes
 
-    // Sequence path
-    // sh:path ( ex:parent ex:firstName )
-    {
-      const list = resource.toList();
-      if (list.isRight()) {
-        return getPropertyPathList(list).map((members) => ({
-          $type: "SequencePath",
-          members,
-        }));
-      }
-    }
+//     const getPropertyPathList = (
+//       list: Either<Error, Resource.Values>,
+//     ): Either<Error, readonly PropertyPath[]> => {
+//       return list.chain((values) => {
+//         const members: PropertyPath[] = [];
+//         for (const value of values) {
+//           const memberResource = value.toResource().toMaybe();
+//           if (memberResource.isNothing()) {
+//             return Left(new Error("non-identifier in property path list"));
+//           }
+//           const member = PropertyPath.$fromRdf(memberResource.unsafeCoerce());
+//           if (member.isLeft()) {
+//             return member;
+//           }
+//           members.push(member.unsafeCoerce());
+//         }
+//         return Either.of(members);
+//       });
+//     };
 
-    for (const quad of resource.dataset.match(
-      resource.identifier,
-      null,
-      null,
-      null,
-    )) {
-      switch (quad.object.termType) {
-        case "BlankNode":
-        case "NamedNode":
-          break;
-        default:
-          return Left(
-            new Error(
-              `non-BlankNode/NamedNode property path object on path ${Resource.Identifier.toString(resource.identifier)}: ${quad.object.termType} ${quad.object.value}`,
-            ),
-          );
-      }
-      const objectResource = new Resource(resource.dataset, quad.object);
+//     // Sequence path
+//     // sh:path ( ex:parent ex:firstName )
+//     {
+//       const list = resource.toList();
+//       if (list.isRight()) {
+//         return getPropertyPathList(list).map((members) => ({
+//           $type: "SequencePath",
+//           members,
+//         }));
+//       }
+//     }
 
-      // Alternative path
-      // sh:path: [ sh:alternativePath ( ex:father ex:mother  ) ]
-      if (quad.predicate.equals(sh.alternativePath)) {
-        return getPropertyPathList(objectResource.toList()).map((members) => ({
-          $type: "AlternativePath",
-          members,
-        }));
-      }
+//     for (const quad of resource.dataset.match(
+//       resource.identifier,
+//       null,
+//       null,
+//       null,
+//     )) {
+//       switch (quad.object.termType) {
+//         case "BlankNode":
+//         case "NamedNode":
+//           break;
+//         default:
+//           return Left(
+//             new Error(
+//               `non-BlankNode/NamedNode property path object on path ${Resource.Identifier.toString(resource.identifier)}: ${quad.object.termType} ${quad.object.value}`,
+//             ),
+//           );
+//       }
+//       const objectResource = new Resource(resource.dataset, quad.object);
 
-      // Inverse path
-      // sh:path: [ sh:inversePath ex:parent ]
-      if (quad.predicate.equals(sh.inversePath)) {
-        return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          $type: "InversePath",
-          path,
-        }));
-      }
+//       // Alternative path
+//       // sh:path: [ sh:alternativePath ( ex:father ex:mother  ) ]
+//       if (quad.predicate.equals(sh.alternativePath)) {
+//         return getPropertyPathList(objectResource.toList()).map((members) => ({
+//           $type: "AlternativePath",
+//           members,
+//         }));
+//       }
 
-      // One or more path
-      if (quad.predicate.equals(sh.oneOrMorePath)) {
-        return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          $type: "OneOrMorePath",
-          path,
-        }));
-      }
+//       // Inverse path
+//       // sh:path: [ sh:inversePath ex:parent ]
+//       if (quad.predicate.equals(sh.inversePath)) {
+//         return PropertyPath.$fromRdf(objectResource).map((path) => ({
+//           $type: "InversePath",
+//           path,
+//         }));
+//       }
 
-      // Zero or more path
-      if (quad.predicate.equals(sh.zeroOrMorePath)) {
-        return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          $type: "ZeroOrMorePath",
-          path,
-        }));
-      }
+//       // One or more path
+//       if (quad.predicate.equals(sh.oneOrMorePath)) {
+//         return PropertyPath.$fromRdf(objectResource).map((path) => ({
+//           $type: "OneOrMorePath",
+//           path,
+//         }));
+//       }
 
-      if (quad.predicate.equals(sh.zeroOrOnePath)) {
-        return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          $type: "ZeroOrOnePath",
-          path,
-        }));
-      }
-    }
+//       // Zero or more path
+//       if (quad.predicate.equals(sh.zeroOrMorePath)) {
+//         return PropertyPath.$fromRdf(objectResource).map((path) => ({
+//           $type: "ZeroOrMorePath",
+//           path,
+//         }));
+//       }
 
-    return Left(
-      new Error(
-        `unrecognized or ill-formed SHACL property path ${Resource.Identifier.toString(resource.identifier)}`,
-      ),
-    );
-  }
+//       if (quad.predicate.equals(sh.zeroOrOnePath)) {
+//         return PropertyPath.$fromRdf(objectResource).map((path) => ({
+//           $type: "ZeroOrOnePath",
+//           path,
+//         }));
+//       }
+//     }
 
-  export type $Filter = object;
+//     return Left(
+//       new Error(
+//         `unrecognized or ill-formed SHACL property path ${Resource.Identifier.toString(resource.identifier)}`,
+//       ),
+//     );
+//   }
 
-  export function $filter(_filter: $Filter, _value: PropertyPath): boolean {
-    return true;
-  }
+//   export type $Filter = object;
 
-  export function isPropertyPath(): boolean {
-    return false;
-  }
+//   export function $filter(_filter: $Filter, _value: PropertyPath): boolean {
+//     return true;
+//   }
 
-  export function $toRdf(
-    _propertyPath: PropertyPath,
-    _options?: any,
-  ): Resource {
-    throw new Error("not implemented");
-  }
+//   export function isPropertyPath(): boolean {
+//     return false;
+//   }
 
-  export const $schema = {};
-}
+//   export function $toRdf(
+//     _propertyPath: PropertyPath,
+//     _options?: any,
+//   ): Resource {
+//     throw new Error("not implemented");
+//   }
+
+//   export const $schema = {};
+// }

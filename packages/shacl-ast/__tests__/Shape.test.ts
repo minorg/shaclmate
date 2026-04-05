@@ -19,8 +19,8 @@ describe("Shape", () => {
       .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
-          propertyShapePath.$type === "PredicatePath" &&
-          propertyShapePath.iri.equals(path)
+          propertyShapePath.termType === "NamedNode" &&
+          propertyShapePath.equals(path)
         );
       });
     expect(propertyShape).toBeDefined();
