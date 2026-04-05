@@ -58,7 +58,7 @@ const externalDependencyVersions = {
   pino: { pino: "~9.1.0" },
   "purify-ts": { "purify-ts": "~2.1.4" },
   "rdf-validate-shacl": { "rdf-validate-shacl": "0.5.8" },
-  "rdfjs-resource": { "rdfjs-resource": "3.0.1" },
+  "rdfjs-resource": { "rdfjs-resource": "3.0.2" },
   rimraf: { rimraf: "~6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
   "ts-poet": { "ts-poet": "~6.12.0" },
