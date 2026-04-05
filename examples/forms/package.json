@@ -50,8 +50,6 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "link-dependencies": "npm link rdfjs-resource",
-    "unlink": "npm unlink -g @shaclmate/forms",
     "start": "vite dev --port 3000",
     "test": "biome check",
     "test:coverage": "biome check"

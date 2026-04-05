@@ -24,11 +24,8 @@
     "depcheck": "turbo run depcheck",
     "dev": "turbo run --concurrency 11 dev dev:tests",
     "dev:noEmit": "turbo run --concurrency 11 dev:noEmit dev:tests",
-    "link": "npm link --workspaces",
-    "link-dependencies": "turbo run link-dependencies",
     "test": "turbo run test",
-    "test:coverage": "turbo run test:coverage",
-    "unlink": "turbo run unlink"
+    "test:coverage": "turbo run test:coverage"
   },
   "workspaces": [
     "examples/kitchen-sink",

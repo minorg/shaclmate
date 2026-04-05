@@ -21,7 +21,6 @@ interface Package {
     external?: Record<string, string>;
   };
   directory: "apps" | "examples" | "packages";
-  linkableDependencies?: readonly string[];
   name: "cli" | "compiler" | "kitchen-sink" | "graphql" | "forms" | "shacl-ast";
   scripts?: Record<string, string>;
 }
@@ -87,6 +86,7 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["js-sha256"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
+        // "rdfjs-resource": "3.0.0",
         ...externalDependencyVersions["sparqljs"],
         ...externalDependencyVersions["uuid"],
         ...externalDependencyVersions["zod"],
@@ -111,7 +111,6 @@ const packages: readonly Package[] = [
       },
     },
     directory: "examples",
-    linkableDependencies: ["rdfjs-resource"],
     name: "kitchen-sink",
   },
   {
@@ -140,7 +139,6 @@ const packages: readonly Package[] = [
       },
     },
     directory: "packages",
-    linkableDependencies: ["rdfjs-resource"],
     name: "shacl-ast",
   },
   {
@@ -181,7 +179,6 @@ const packages: readonly Package[] = [
       internal: ["kitchen-sink-example"],
     },
     directory: "packages",
-    linkableDependencies: ["@kos-kit/sparql-client", "rdfjs-resource"],
     name: "compiler",
   },
   {
@@ -237,7 +234,6 @@ const packages: readonly Package[] = [
       },
     },
     directory: "examples",
-    linkableDependencies: ["rdfjs-resource"],
     name: "forms",
     scripts: {
       build: "tsc && vite build",
@@ -387,7 +383,6 @@ for (const package_ of packages) {
           depcheck: "depcheck .",
           dev: "tsc -w --preserveWatchOutput",
           "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-          "link-dependencies": "npm link rdfjs-resource",
           ...(testsDirectoryPath !== null
             ? {
                 "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
@@ -396,7 +391,6 @@ for (const package_ of packages) {
                 "test:watch": "biome check && vitest watch",
               }
             : {}),
-          unlink: `npm unlink -g @shaclmate/${package_.name}`,
           ...package_.scripts,
         },
         type: "module",
@@ -501,11 +495,8 @@ fs.writeFileSync(
         depcheck: "turbo run depcheck",
         dev: "turbo run --concurrency 11 dev dev:tests",
         "dev:noEmit": "turbo run --concurrency 11 dev:noEmit dev:tests",
-        link: "npm link --workspaces",
-        "link-dependencies": "turbo run link-dependencies",
         test: "turbo run test",
         "test:coverage": "turbo run test:coverage",
-        unlink: "turbo run unlink",
         // ...packages.reduce(
         //   (watchEntries, package_) => {
         //     watchEntries[`watch:${package_.name}`] =
