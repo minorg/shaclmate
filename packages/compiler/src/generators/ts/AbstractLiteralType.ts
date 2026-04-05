@@ -44,7 +44,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
-          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${imports.Right}(value); default: return ${imports.Left}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`literalValue`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.predicate }})); } })))`
+          ? code`chain(values => ${snippets.fromRdfLanguageIn}({ focusResource: ${variables.resource}, languageIn: ${JSON.stringify(this.languageIn)}, predicate: ${variables.predicate}, values }))`
           : undefined,
       preferredLanguages: code`chain(values => ${snippets.fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
       valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,

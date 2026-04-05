@@ -795,6 +795,33 @@ function $filterTerm(
   return true;
 }
 
+function $fromRdfLanguageIn({
+  focusResource,
+  languageIn,
+  predicate,
+  values,
+}: {
+  focusResource: Resource;
+  languageIn: readonly string[];
+  predicate: NamedNode;
+  values: Resource.Values;
+}): Either<Error, Resource.Values> {
+  return values.chainMap((value) =>
+    value.toLiteral().chain((literal) =>
+      languageIn.includes(literal.language)
+        ? Right(value)
+        : Left(
+            new Resource.MistypedTermValueError({
+              actualValue: literal,
+              expectedValueType: "Literal",
+              focusResource: focusResource,
+              propertyPath: predicate,
+            }),
+          ),
+    ),
+  );
+}
+
 type $FromRdfOptions = {
   context?: any;
   graph?: Exclude<Quad_Graph, Variable>;
@@ -35852,26 +35879,14 @@ export namespace LanguageInPropertiesClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                values.chainMap((value) =>
-                  value.toLiteral().chain((literalValue) => {
-                    switch (literalValue.language) {
-                      case "en":
-                      case "fr":
-                        return Right(value);
-                      default:
-                        return Left(
-                          new Resource.MistypedTermValueError({
-                            actualValue: literalValue,
-                            expectedValueType: "Literal",
-                            focusResource: $parameters.resource,
-                            propertyPath:
-                              LanguageInPropertiesClass.$schema.properties
-                                .languageInLiteralProperty.identifier,
-                          }),
-                        );
-                    }
-                  }),
-                ),
+                $fromRdfLanguageIn({
+                  focusResource: $parameters.resource,
+                  languageIn: ["en", "fr"],
+                  predicate:
+                    LanguageInPropertiesClass.$schema.properties
+                      .languageInLiteralProperty.identifier,
+                  values,
+                }),
               )
               .chain((values) =>
                 $fromRdfPreferredLanguages({
