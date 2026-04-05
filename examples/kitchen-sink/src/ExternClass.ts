@@ -79,15 +79,18 @@ export namespace ExternClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      context?: {
-        extra: number;
-      };
+      context?: unknown;
       ignoreRdfType?: boolean;
       preferredLanguages?: readonly string[];
       objectSet?: $ObjectSet;
     },
   ): Either<Error, ExternClass> {
-    if (options?.context?.extra !== 1) {
+    const context = options?.context as
+      | {
+          extra: number;
+        }
+      | undefined;
+    if (context?.extra !== 1) {
       throw new Error("extra didn't come through");
     }
     return Either.of(new ExternClass(resource.identifier));

@@ -816,7 +816,7 @@ function $fromRdfLanguageIn(
 }
 
 type $FromRdfOptions = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
@@ -1700,7 +1700,7 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
 }
 
 type $PropertiesFromRdfParameters = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
