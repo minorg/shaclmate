@@ -147,7 +147,7 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * An expression that converts a Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to a
+   * An expression that converts a Either<Error, rdfjsResource.Resource.Values> to a
    * Either<Error, rdfjsResource.Resource.Values<this type>>.
    *
    * These expressions are used to deserialize property values in an ObjectType, either directly (a property with this Type) or indirectly (a property with a Type like OptionType
@@ -166,7 +166,7 @@ export abstract class AbstractType {
    *   predicate: the predicate of the object's property
    *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
    *   resource: the rdfjsResource.Resource passed to Object.fromRdf
-   *   resourceValues: the Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to be converted to values of this type.
+   *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type.
    */
   abstract fromRdfExpression(parameters: {
     variables: {
@@ -242,7 +242,7 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * An expression that converts a property value of this type to an array of values that can be .add'd to a rdfjsResource.MutableResource
+   * An expression that converts a property value of this type to an array of values that can be .add'd to a Resource.
    * (BlankNode | Literal | NamedNode | bigint | boolean | number | string)[].
    */
   abstract toRdfExpression(parameters: {

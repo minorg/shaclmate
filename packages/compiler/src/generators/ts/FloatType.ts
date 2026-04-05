@@ -1,7 +1,7 @@
 import { NonEmptyList } from "purify-ts";
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import { imports } from "./imports.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class FloatType extends AbstractNumericType<number> {
   override readonly kind = "FloatType";
@@ -15,7 +15,7 @@ export class FloatType extends AbstractNumericType<number> {
   }: Parameters<
     AbstractNumericType<number>["fromRdfResourceValueExpression"]
   >[0]): Code {
-    return code`${variables.value}.toNumber()`;
+    return code`${variables.value}.toFloat(${this.primitiveIn.length > 0 ? arrayOf(this.primitiveIn) : ""})`;
   }
 
   protected override literalOf(value: number): string {

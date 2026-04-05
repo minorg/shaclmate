@@ -10,18 +10,18 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     focusResource: ${imports.Resource};
     predicate: ${imports.NamedNode};
     preferredLanguages?: readonly string[];
-    values: ${imports.Resource}.Values<${imports.Resource}.TermValue>
-  }): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>> {
+    values: ${imports.Resource}.Values
+  }): ${imports.Either}<Error, ${imports.Resource}.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return ${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(values);
+    return ${imports.Either}.of<Error, ${imports.Resource}.Values>(values);
   }
 
   // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
   // Within a preferredLanguage the literals may be in any order.
-  let filteredValues: ${imports.Resource}.Values<${imports.Resource}.TermValue> = [];
+  let filteredValues: ${imports.Resource}.Value[] = [];
   for (const preferredLanguage of preferredLanguages) {
     for (const value of values) {
-      value.toLiteral().ifLeft(literal => {
+      value.toLiteral().ifRight(literal => {
         if (literal.language === preferredLanguage) {
           filteredValues.push(value);
         }
@@ -29,6 +29,6 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     }
   }
 
-  return ${imports.Resource}.Values.fromArray({ focusResource, predicate, values: filteredValues });
+  return ${imports.Resource}.Values.fromArray({ focusResource, propertyPath: predicate, values: filteredValues });
 }`,
 );

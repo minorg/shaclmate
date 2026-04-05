@@ -69,14 +69,9 @@ export class StringType extends AbstractPrimitiveType<string> {
   }: Parameters<
     AbstractPrimitiveType<string>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
-    const inChain =
-      this.primitiveIn.length > 0
-        ? code`.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return ${imports.Either}.of<Error, ${this.name}>(string_); default: return ${imports.Left}<Error, ${this.name}>(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`
-        : "";
-
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toString()${inChain}))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? arrayOf(this.primitiveIn) : ""})))`,
     };
   }
 }

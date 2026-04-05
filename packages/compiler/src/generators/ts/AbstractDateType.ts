@@ -75,25 +75,15 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   }: Parameters<
     AbstractPrimitiveType<Date>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<Date>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = this.fromRdfResourceValueExpression({
-      variables: { value: code`value` },
-    });
-    if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = code`<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(dateValue => { ${joinCode(
-        this.primitiveIn.map(
-          (value) =>
-            code`if (dateValue.getTime() === ${value.getTime()}) { return ${imports.Either}.of${eitherTypeParameters}(dateValue); }`,
-        ),
-        { on: " " },
-      )} return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); })`;
-    }
-
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn: undefined,
       preferredLanguages: undefined,
-      valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+      valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
+        {
+          variables: { value: code`value` },
+        },
+      )}))`,
     };
   }
 

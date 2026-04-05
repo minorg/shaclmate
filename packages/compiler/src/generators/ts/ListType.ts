@@ -73,16 +73,16 @@ export class ListType<
     return joinCode(
       [
         variables.resourceValues,
-        code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
+        code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>
         code`chain(valueLists =>
         valueLists.chainMap(
           valueList => ${this.itemType.fromRdfExpression({
             variables: {
               ...variables,
-              resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, values: valueList }))`,
+              resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values>(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.predicate}, values: valueList }))`,
             },
           })}
-      ))`, // Resource.Values<Resource.TermValue[]> to Resource.Values<item type arrays>
+      ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
         code`map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
       ],
       { on: "." },

@@ -81,19 +81,15 @@ export abstract class AbstractNumericType<
   }: Parameters<
     AbstractPrimitiveType<ValueT>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<ValueT>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = this.fromRdfResourceValueExpression({
-      variables: { value: code`value` },
-    });
-    if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = code`<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${this.literalOf(value)}:`).join(" ")} return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
-    }
-
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn: undefined,
       preferredLanguages: undefined,
-      valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+      valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
+        {
+          variables: { value: code`value` },
+        },
+      )}))`,
     };
   }
 

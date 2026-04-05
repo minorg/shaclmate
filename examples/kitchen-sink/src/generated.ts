@@ -805,42 +805,30 @@ function $fromRdfPreferredLanguages({
   focusResource: Resource;
   predicate: NamedNode;
   preferredLanguages?: readonly string[];
-  values: Resource.Values<Resource.TermValue>;
-}): Either<Error, Resource.Values<Resource.TermValue>> {
+  values: Resource.Values;
+}): Either<Error, Resource.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return Either.of<Error, Resource.Values<Resource.TermValue>>(values);
+    return Either.of<Error, Resource.Values>(values);
   }
 
-  return values
-    .chainMap((value) => value.toLiteral())
-    .map((literalValues) => {
-      // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-      // Within a preferredLanguage the literals may be in any order.
-      let filteredLiteralValues: Resource.Values<Literal> | undefined;
-      for (const preferredLanguage of preferredLanguages) {
-        if (!filteredLiteralValues) {
-          filteredLiteralValues = literalValues.filter(
-            (value) => value.language === preferredLanguage,
-          );
-        } else {
-          filteredLiteralValues = filteredLiteralValues.concat(
-            ...literalValues
-              .filter((value) => value.language === preferredLanguage)
-              .toArray(),
-          );
+  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+  // Within a preferredLanguage the literals may be in any order.
+  const filteredValues: Resource.Value[] = [];
+  for (const preferredLanguage of preferredLanguages) {
+    for (const value of values) {
+      value.toLiteral().ifRight((literal) => {
+        if (literal.language === preferredLanguage) {
+          filteredValues.push(value);
         }
-      }
+      });
+    }
+  }
 
-      return filteredLiteralValues!.map(
-        (literalValue) =>
-          new Resource.TermValue({
-            dataFactory: dataFactory,
-            focusResource,
-            predicate,
-            term: literalValue,
-          }),
-      );
-    });
+  return Resource.Values.fromArray({
+    focusResource,
+    propertyPath: predicate,
+    values: filteredValues,
+  });
 }
 
 type $Hasher = {
@@ -1845,11 +1833,11 @@ function $shaclPropertyFromRdf<T>({
   propertySchema: $ShaclPropertySchema;
   resource: Resource;
   typeFromRdf: (
-    resourceValues: Either<Error, Resource.Values<Resource.TermValue>>,
+    resourceValues: Either<Error, Resource.Values>,
   ) => Either<Error, Resource.Values<T>>;
 }): Either<Error, T> {
   return typeFromRdf(
-    Either.of<Error, Resource.Values<Resource.TermValue>>(
+    Either.of<Error, Resource.Values>(
       resource.values(propertySchema.identifier, { graph, unique: true }),
     ),
   ).chain((values) => values.head());
@@ -10049,7 +10037,7 @@ export namespace TermPropertiesClass {
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            values.chainMap((value) => value.toNumber()),
+                            values.chainMap((value) => value.toFloat()),
                           )
                           .map((values) =>
                             values.length > 0
@@ -18281,7 +18269,7 @@ export namespace NumericPropertiesClass {
           propertySchema: $schema.properties.byteNumericProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
-              .chain((values) => values.chainMap((value) => value.toNumber()))
+              .chain((values) => values.chainMap((value) => value.toInt()))
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
@@ -18334,7 +18322,7 @@ export namespace NumericPropertiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    values.chainMap((value) => value.toNumber()),
+                    values.chainMap((value) => value.toFloat()),
                   )
                   .map((values) =>
                     values.length > 0
@@ -18355,7 +18343,7 @@ export namespace NumericPropertiesClass {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      values.chainMap((value) => value.toNumber()),
+                      values.chainMap((value) => value.toFloat()),
                     )
                     .map((values) =>
                       values.length > 0
@@ -18397,7 +18385,7 @@ export namespace NumericPropertiesClass {
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          values.chainMap((value) => value.toNumber()),
+                          values.chainMap((value) => value.toInt()),
                         )
                         .map((values) =>
                           values.length > 0
@@ -18542,9 +18530,7 @@ export namespace NumericPropertiesClass {
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
                                     .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toNumber(),
-                                      ),
+                                      values.chainMap((value) => value.toInt()),
                                     )
                                     .map((values) =>
                                       values.length > 0
@@ -18571,7 +18557,7 @@ export namespace NumericPropertiesClass {
                                     resourceValues
                                       .chain((values) =>
                                         values.chainMap((value) =>
-                                          value.toNumber(),
+                                          value.toInt(),
                                         ),
                                       )
                                       .map((values) =>
@@ -18603,7 +18589,7 @@ export namespace NumericPropertiesClass {
                                       resourceValues
                                         .chain((values) =>
                                           values.chainMap((value) =>
-                                            value.toNumber(),
+                                            value.toInt(),
                                           ),
                                         )
                                         .map((values) =>
@@ -18667,7 +18653,7 @@ export namespace NumericPropertiesClass {
                                           resourceValues
                                             .chain((values) =>
                                               values.chainMap((value) =>
-                                                value.toNumber(),
+                                                value.toInt(),
                                               ),
                                             )
                                             .map((values) =>
@@ -21567,10 +21553,10 @@ export namespace MutablePropertiesClass {
               )
               .chain((valueLists) =>
                 valueLists.chainMap((valueList) =>
-                  Either.of<Error, Resource.Values<Resource.TermValue>>(
+                  Either.of<Error, Resource.Values>(
                     Resource.Values.fromArray({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         MutablePropertiesClass.$schema.properties
                           .mutableListProperty.identifier,
                       values: valueList,
@@ -22672,10 +22658,10 @@ export namespace ListPropertiesClass {
               )
               .chain((valueLists) =>
                 valueLists.chainMap((valueList) =>
-                  Either.of<Error, Resource.Values<Resource.TermValue>>(
+                  Either.of<Error, Resource.Values>(
                     Resource.Values.fromArray({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         ListPropertiesClass.$schema.properties.iriListProperty
                           .identifier,
                       values: valueList,
@@ -22713,10 +22699,10 @@ export namespace ListPropertiesClass {
                 )
                 .chain((valueLists) =>
                   valueLists.chainMap((valueList) =>
-                    Either.of<Error, Resource.Values<Resource.TermValue>>(
+                    Either.of<Error, Resource.Values>(
                       Resource.Values.fromArray({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           ListPropertiesClass.$schema.properties
                             .objectListProperty.identifier,
                         values: valueList,
@@ -22763,10 +22749,10 @@ export namespace ListPropertiesClass {
                   )
                   .chain((valueLists) =>
                     valueLists.chainMap((valueList) =>
-                      Either.of<Error, Resource.Values<Resource.TermValue>>(
+                      Either.of<Error, Resource.Values>(
                         Resource.Values.fromArray({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             ListPropertiesClass.$schema.properties
                               .stringListProperty.identifier,
                           values: valueList,
@@ -36273,7 +36259,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                     .altLazy(
                       () =>
                         valueAsValues.chain((values) =>
-                          values.chainMap((value) => value.toNumber()),
+                          values.chainMap((value) => value.toFloat()),
                         ) as Either<
                           Error,
                           Resource.Values<boolean | number | string>
@@ -41655,22 +41641,7 @@ export namespace InPropertiesClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                values.chainMap((value) =>
-                  value.toBoolean().chain((primitiveValue) =>
-                    primitiveValue === true
-                      ? Either.of<Error, true>(primitiveValue)
-                      : Left<Error, true>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: value.toTerm(),
-                            expectedValueType: "true",
-                            focusResource: $parameters.resource,
-                            predicate:
-                              InPropertiesClass.$schema.properties
-                                .inBooleansProperty.identifier,
-                          }),
-                        ),
-                  ),
-                ),
+                values.chainMap((value) => value.toBoolean([[true]])),
               )
               .map((values) =>
                 values.length > 0
@@ -41692,21 +41663,7 @@ export namespace InPropertiesClass {
               resourceValues
                 .chain((values) =>
                   values.chainMap((value) =>
-                    value.toDateTime().chain((dateValue) => {
-                      if (dateValue.getTime() === 1523268000000) {
-                        return Either.of<Error, Date>(dateValue);
-                      }
-                      return Left<Error, Date>(
-                        new Resource.MistypedTermValueError({
-                          actualValue: value.toTerm(),
-                          expectedValueType: "Date",
-                          focusResource: $parameters.resource,
-                          predicate:
-                            InPropertiesClass.$schema.properties
-                              .inDateTimesProperty.identifier,
-                        }),
-                      );
-                    }),
+                    value.toDateTime([new Date(1523268000000)]),
                   ),
                 )
                 .map((values) =>
@@ -41728,26 +41685,7 @@ export namespace InPropertiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    values.chainMap((value) =>
-                      value.toNumber().chain((primitiveValue) => {
-                        switch (primitiveValue) {
-                          case 1:
-                          case 2:
-                            return Either.of<Error, 1 | 2>(primitiveValue);
-                          default:
-                            return Left<Error, 1 | 2>(
-                              new Resource.MistypedTermValueError({
-                                actualValue: value.toTerm(),
-                                expectedValueType: "1 | 2",
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  InPropertiesClass.$schema.properties
-                                    .inDoublesProperty.identifier,
-                              }),
-                            );
-                        }
-                      }),
-                    ),
+                    values.chainMap((value) => value.toFloat([[1, 2]])),
                   )
                   .map((values) =>
                     values.length > 0
@@ -41768,26 +41706,7 @@ export namespace InPropertiesClass {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      values.chainMap((value) =>
-                        value.toBigInt().chain((primitiveValue) => {
-                          switch (primitiveValue) {
-                            case 1n:
-                            case 2n:
-                              return Either.of<Error, 1n | 2n>(primitiveValue);
-                            default:
-                              return Left<Error, 1n | 2n>(
-                                new Resource.MistypedTermValueError({
-                                  actualValue: value.toTerm(),
-                                  expectedValueType: "1n | 2n",
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    InPropertiesClass.$schema.properties
-                                      .inIntegersProperty.identifier,
-                                }),
-                              );
-                          }
-                        }),
-                      ),
+                      values.chainMap((value) => value.toBigInt([1n, 2n])),
                     )
                     .map((values) =>
                       values.length > 0
@@ -41890,26 +41809,7 @@ export namespace InPropertiesClass {
                         )
                         .chain((values) =>
                           values.chainMap((value) =>
-                            value.toString().chain((string_) => {
-                              switch (string_) {
-                                case "text":
-                                case "html":
-                                  return Either.of<Error, "text" | "html">(
-                                    string_,
-                                  );
-                                default:
-                                  return Left<Error, "text" | "html">(
-                                    new Resource.MistypedTermValueError({
-                                      actualValue: value.toTerm(),
-                                      expectedValueType: '"text" | "html"',
-                                      focusResource: $parameters.resource,
-                                      predicate:
-                                        InPropertiesClass.$schema.properties
-                                          .inStringsProperty.identifier,
-                                    }),
-                                  );
-                              }
-                            }),
+                            value.toString([["text", "html"]]),
                           ),
                         )
                         .map((values) =>
@@ -49866,7 +49766,7 @@ export namespace DefaultValuePropertiesClass {
               .map((values) =>
                 values.length > 0
                   ? values
-                  : new Resource.TermValue({
+                  : new Resource.Value({
                       dataFactory: dataFactory,
                       focusResource: $parameters.resource,
                       predicate:
@@ -49889,7 +49789,7 @@ export namespace DefaultValuePropertiesClass {
                 .map((values) =>
                   values.length > 0
                     ? values
-                    : new Resource.TermValue({
+                    : new Resource.Value({
                         dataFactory: dataFactory,
                         focusResource: $parameters.resource,
                         predicate:
@@ -49915,7 +49815,7 @@ export namespace DefaultValuePropertiesClass {
                   .map((values) =>
                     values.length > 0
                       ? values
-                      : new Resource.TermValue({
+                      : new Resource.Value({
                           dataFactory: dataFactory,
                           focusResource: $parameters.resource,
                           predicate:
@@ -49940,7 +49840,7 @@ export namespace DefaultValuePropertiesClass {
                     .map((values) =>
                       values.length > 0
                         ? values
-                        : new Resource.TermValue({
+                        : new Resource.Value({
                             dataFactory: dataFactory,
                             focusResource: $parameters.resource,
                             predicate:
@@ -49953,7 +49853,7 @@ export namespace DefaultValuePropertiesClass {
                           }).toValues(),
                     )
                     .chain((values) =>
-                      values.chainMap((value) => value.toNumber()),
+                      values.chainMap((value) => value.toFloat()),
                     ),
               }).chain((numberDefaultValueProperty) =>
                 $shaclPropertyFromRdf({
@@ -49965,7 +49865,7 @@ export namespace DefaultValuePropertiesClass {
                       .map((values) =>
                         values.length > 0
                           ? values
-                          : new Resource.TermValue({
+                          : new Resource.Value({
                               dataFactory: dataFactory,
                               focusResource: $parameters.resource,
                               predicate:
@@ -49998,7 +49898,7 @@ export namespace DefaultValuePropertiesClass {
                         .map((values) =>
                           values.length > 0
                             ? values
-                            : new Resource.TermValue({
+                            : new Resource.Value({
                                 dataFactory: dataFactory,
                                 focusResource: $parameters.resource,
                                 predicate:
