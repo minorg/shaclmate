@@ -5,7 +5,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_fromRdfNodeKinds = conditionalOutput(
   `${syntheticNamePrefix}fromRdfNodeKinds`,
   code`\
-function ${syntheticNamePrefix}fromRdfNodeKinds(${imports.Resource}.Value, nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode)[]): ${imports.Either}<Error, ${imports.Resource}.Value> {
+function ${syntheticNamePrefix}fromRdfNodeKinds(${imports.Resource}.Value, nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[]): ${imports.Either}<Error, ${imports.Resource}.Value> {
   return values.chainMap(value =>
     nodeKinds.includes(value.term.termType) ?
       ${imports.Right}(value) :
