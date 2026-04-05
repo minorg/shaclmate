@@ -824,11 +824,13 @@ function $fromRdfPreferredLanguages({
     }
   }
 
-  return Resource.Values.fromArray({
-    focusResource,
-    propertyPath: predicate,
-    values: filteredValues,
-  });
+  return Either.of(
+    Resource.Values.fromArray({
+      focusResource,
+      propertyPath: predicate,
+      values: filteredValues,
+    }),
+  );
 }
 
 type $Hasher = {
@@ -2535,7 +2537,7 @@ export namespace $NamedDefaultPartial {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
     ).map(($identifier) => ({ $identifier }));
@@ -3239,7 +3241,7 @@ export namespace UuidV4IriIdentifierInterface {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
     ).chain(($identifier) =>
@@ -3748,7 +3750,7 @@ export namespace UuidV4IriIdentifierClass {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
     ).chain(($identifier) =>
@@ -6324,7 +6326,7 @@ export namespace UnionDiscriminantsClass {
                     >
                   >({
                     focusResource: $parameters.resource,
-                    predicate:
+                    propertyPath:
                       UnionDiscriminantsClass.$schema.properties
                         .optionalClassOrClassOrStringProperty.identifier,
                     value: Maybe.empty(),
@@ -6374,7 +6376,7 @@ export namespace UnionDiscriminantsClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         UnionDiscriminantsClass.$schema.properties
                           .optionalIriOrLiteralProperty.identifier,
                       value: Maybe.empty(),
@@ -6424,7 +6426,7 @@ export namespace UnionDiscriminantsClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<NamedNode | string>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           UnionDiscriminantsClass.$schema.properties
                             .optionalIriOrStringProperty.identifier,
                         value: Maybe.empty(),
@@ -6836,7 +6838,7 @@ export namespace UnionDiscriminantsClass {
                         .map((valuesArray) =>
                           Resource.Values.fromValue({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               UnionDiscriminantsClass.$schema.properties
                                 .setClassOrClassOrStringProperty.identifier,
                             value: valuesArray,
@@ -6893,7 +6895,7 @@ export namespace UnionDiscriminantsClass {
                           .map((valuesArray) =>
                             Resource.Values.fromValue({
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 UnionDiscriminantsClass.$schema.properties
                                   .setIriOrLiteralProperty.identifier,
                               value: valuesArray,
@@ -6952,7 +6954,7 @@ export namespace UnionDiscriminantsClass {
                             .map((valuesArray) =>
                               Resource.Values.fromValue({
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   UnionDiscriminantsClass.$schema.properties
                                     .setIriOrStringProperty.identifier,
                                 value: valuesArray,
@@ -9910,7 +9912,7 @@ export namespace TermPropertiesClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<BlankNode>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         TermPropertiesClass.$schema.properties
                           .blankNodeTermProperty.identifier,
                       value: Maybe.empty(),
@@ -9931,7 +9933,7 @@ export namespace TermPropertiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<boolean>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           TermPropertiesClass.$schema.properties
                             .booleanTermProperty.identifier,
                         value: Maybe.empty(),
@@ -9950,7 +9952,7 @@ export namespace TermPropertiesClass {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<Date>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             TermPropertiesClass.$schema.properties
                               .dateTermProperty.identifier,
                           value: Maybe.empty(),
@@ -9971,7 +9973,7 @@ export namespace TermPropertiesClass {
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<Maybe<Date>>({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               TermPropertiesClass.$schema.properties
                                 .dateTimeTermProperty.identifier,
                             value: Maybe.empty(),
@@ -9992,7 +9994,7 @@ export namespace TermPropertiesClass {
                           ? values.map((value) => Maybe.of(value))
                           : Resource.Values.fromValue<Maybe<NamedNode>>({
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 TermPropertiesClass.$schema.properties
                                   .iriTermProperty.identifier,
                               value: Maybe.empty(),
@@ -10023,7 +10025,7 @@ export namespace TermPropertiesClass {
                             ? values.map((value) => Maybe.of(value))
                             : Resource.Values.fromValue<Maybe<Literal>>({
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   TermPropertiesClass.$schema.properties
                                     .literalTermProperty.identifier,
                                 value: Maybe.empty(),
@@ -10044,7 +10046,7 @@ export namespace TermPropertiesClass {
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<Maybe<number>>({
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     TermPropertiesClass.$schema.properties
                                       .numberTermProperty.identifier,
                                   value: Maybe.empty(),
@@ -10076,7 +10078,7 @@ export namespace TermPropertiesClass {
                                 ? values.map((value) => Maybe.of(value))
                                 : Resource.Values.fromValue<Maybe<string>>({
                                     focusResource: $parameters.resource,
-                                    predicate:
+                                    propertyPath:
                                       TermPropertiesClass.$schema.properties
                                         .stringTermProperty.identifier,
                                     value: Maybe.empty(),
@@ -10090,12 +10092,7 @@ export namespace TermPropertiesClass {
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
-                                values.chainMap((value) =>
-                                  Either.of<
-                                    Error,
-                                    BlankNode | Literal | NamedNode
-                                  >(value.toTerm()),
-                                ),
+                                values.chainMap((value) => value.toTerm()),
                               )
                               .map((values) =>
                                 values.length > 0
@@ -10104,7 +10101,7 @@ export namespace TermPropertiesClass {
                                       Maybe<BlankNode | NamedNode | Literal>
                                     >({
                                       focusResource: $parameters.resource,
-                                      predicate:
+                                      propertyPath:
                                         TermPropertiesClass.$schema.properties
                                           .termProperty.identifier,
                                       value: Maybe.empty(),
@@ -11050,7 +11047,7 @@ export namespace Sha256IriIdentifierClass {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
     ).chain(($identifier) =>
@@ -11607,7 +11604,7 @@ export namespace RecursiveClassUnionMember2 {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<RecursiveClassUnion>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         RecursiveClassUnionMember2.$schema.properties
                           .recursiveClassUnionMember2Property.identifier,
                       value: Maybe.empty(),
@@ -12208,7 +12205,7 @@ export namespace RecursiveClassUnionMember1 {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<RecursiveClassUnion>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         RecursiveClassUnionMember1.$schema.properties
                           .recursiveClassUnionMember1Property.identifier,
                       value: Maybe.empty(),
@@ -13545,7 +13542,7 @@ export namespace PropertyCardinalitiesClass {
             .map((valuesArray) =>
               Resource.Values.fromValue({
                 focusResource: $parameters.resource,
-                predicate:
+                propertyPath:
                   PropertyCardinalitiesClass.$schema.properties
                     .emptyStringSetProperty.identifier,
                 value: valuesArray,
@@ -13579,7 +13576,7 @@ export namespace PropertyCardinalitiesClass {
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $parameters.resource,
-                  predicate:
+                  propertyPath:
                     PropertyCardinalitiesClass.$schema.properties
                       .nonEmptyStringSetProperty.identifier,
                   value: valuesArray,
@@ -13608,7 +13605,7 @@ export namespace PropertyCardinalitiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<string>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           PropertyCardinalitiesClass.$schema.properties
                             .optionalStringProperty.identifier,
                         value: Maybe.empty(),
@@ -18275,7 +18272,7 @@ export namespace NumericPropertiesClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<number>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         NumericPropertiesClass.$schema.properties
                           .byteNumericProperty.identifier,
                       value: Maybe.empty(),
@@ -18308,7 +18305,7 @@ export namespace NumericPropertiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<BigDecimal>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           NumericPropertiesClass.$schema.properties
                             .decimalNumericProperty.identifier,
                         value: Maybe.empty(),
@@ -18329,7 +18326,7 @@ export namespace NumericPropertiesClass {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<number>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             NumericPropertiesClass.$schema.properties
                               .doubleNumericProperty.identifier,
                           value: Maybe.empty(),
@@ -18350,7 +18347,7 @@ export namespace NumericPropertiesClass {
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<Maybe<number>>({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               NumericPropertiesClass.$schema.properties
                                 .floatNumericProperty.identifier,
                             value: Maybe.empty(),
@@ -18371,7 +18368,7 @@ export namespace NumericPropertiesClass {
                           ? values.map((value) => Maybe.of(value))
                           : Resource.Values.fromValue<Maybe<bigint>>({
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 NumericPropertiesClass.$schema.properties
                                   .integerNumericProperty.identifier,
                               value: Maybe.empty(),
@@ -18392,7 +18389,7 @@ export namespace NumericPropertiesClass {
                             ? values.map((value) => Maybe.of(value))
                             : Resource.Values.fromValue<Maybe<number>>({
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   NumericPropertiesClass.$schema.properties
                                     .intNumericProperty.identifier,
                                 value: Maybe.empty(),
@@ -18413,7 +18410,7 @@ export namespace NumericPropertiesClass {
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<Maybe<bigint>>({
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     NumericPropertiesClass.$schema.properties
                                       .longNumericProperty.identifier,
                                   value: Maybe.empty(),
@@ -18435,7 +18432,7 @@ export namespace NumericPropertiesClass {
                                 ? values.map((value) => Maybe.of(value))
                                 : Resource.Values.fromValue<Maybe<bigint>>({
                                     focusResource: $parameters.resource,
-                                    predicate:
+                                    propertyPath:
                                       NumericPropertiesClass.$schema.properties
                                         .negativeIntegerNumericProperty
                                         .identifier,
@@ -18459,7 +18456,7 @@ export namespace NumericPropertiesClass {
                                   ? values.map((value) => Maybe.of(value))
                                   : Resource.Values.fromValue<Maybe<bigint>>({
                                       focusResource: $parameters.resource,
-                                      predicate:
+                                      propertyPath:
                                         NumericPropertiesClass.$schema
                                           .properties
                                           .nonNegativeIntegerNumericProperty
@@ -18484,7 +18481,7 @@ export namespace NumericPropertiesClass {
                                     ? values.map((value) => Maybe.of(value))
                                     : Resource.Values.fromValue<Maybe<bigint>>({
                                         focusResource: $parameters.resource,
-                                        predicate:
+                                        propertyPath:
                                           NumericPropertiesClass.$schema
                                             .properties
                                             .nonPositiveIntegerNumericProperty
@@ -18513,7 +18510,7 @@ export namespace NumericPropertiesClass {
                                           Maybe<bigint>
                                         >({
                                           focusResource: $parameters.resource,
-                                          predicate:
+                                          propertyPath:
                                             NumericPropertiesClass.$schema
                                               .properties
                                               .positiveIntegerNumericProperty
@@ -18539,7 +18536,7 @@ export namespace NumericPropertiesClass {
                                             Maybe<number>
                                           >({
                                             focusResource: $parameters.resource,
-                                            predicate:
+                                            propertyPath:
                                               NumericPropertiesClass.$schema
                                                 .properties.shortNumericProperty
                                                 .identifier,
@@ -18570,7 +18567,7 @@ export namespace NumericPropertiesClass {
                                             >({
                                               focusResource:
                                                 $parameters.resource,
-                                              predicate:
+                                              propertyPath:
                                                 NumericPropertiesClass.$schema
                                                   .properties
                                                   .unsignedByteNumericProperty
@@ -18602,7 +18599,7 @@ export namespace NumericPropertiesClass {
                                               >({
                                                 focusResource:
                                                   $parameters.resource,
-                                                predicate:
+                                                propertyPath:
                                                   NumericPropertiesClass.$schema
                                                     .properties
                                                     .unsignedIntNumericProperty
@@ -18634,7 +18631,7 @@ export namespace NumericPropertiesClass {
                                                 >({
                                                   focusResource:
                                                     $parameters.resource,
-                                                  predicate:
+                                                  propertyPath:
                                                     NumericPropertiesClass
                                                       .$schema.properties
                                                       .unsignedLongNumericProperty
@@ -18666,7 +18663,7 @@ export namespace NumericPropertiesClass {
                                                   >({
                                                     focusResource:
                                                       $parameters.resource,
-                                                    predicate:
+                                                    propertyPath:
                                                       NumericPropertiesClass
                                                         .$schema.properties
                                                         .unsignedShortNumericProperty
@@ -21559,7 +21556,7 @@ export namespace MutablePropertiesClass {
                       propertyPath:
                         MutablePropertiesClass.$schema.properties
                           .mutableListProperty.identifier,
-                      values: valueList,
+                      values: valueList.toArray(),
                     }),
                   )
                     .chain((values) =>
@@ -21585,7 +21582,7 @@ export namespace MutablePropertiesClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<string[]>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         MutablePropertiesClass.$schema.properties
                           .mutableListProperty.identifier,
                       value: Maybe.empty(),
@@ -21613,7 +21610,7 @@ export namespace MutablePropertiesClass {
                 .map((valuesArray) =>
                   Resource.Values.fromValue({
                     focusResource: $parameters.resource,
-                    predicate:
+                    propertyPath:
                       MutablePropertiesClass.$schema.properties
                         .mutableSetProperty.identifier,
                     value: valuesArray,
@@ -21644,7 +21641,7 @@ export namespace MutablePropertiesClass {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<string>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             MutablePropertiesClass.$schema.properties
                               .mutableStringProperty.identifier,
                           value: Maybe.empty(),
@@ -22664,7 +22661,7 @@ export namespace ListPropertiesClass {
                       propertyPath:
                         ListPropertiesClass.$schema.properties.iriListProperty
                           .identifier,
-                      values: valueList,
+                      values: valueList.toArray(),
                     }),
                   ).chain((values) =>
                     values.chainMap((value) => value.toIri()),
@@ -22679,7 +22676,7 @@ export namespace ListPropertiesClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         ListPropertiesClass.$schema.properties.iriListProperty
                           .identifier,
                       value: Maybe.empty(),
@@ -22705,7 +22702,7 @@ export namespace ListPropertiesClass {
                         propertyPath:
                           ListPropertiesClass.$schema.properties
                             .objectListProperty.identifier,
-                        values: valueList,
+                        values: valueList.toArray(),
                       }),
                     ).chain((values) =>
                       values.chainMap((value) =>
@@ -22729,7 +22726,7 @@ export namespace ListPropertiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<readonly NonClass[]>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           ListPropertiesClass.$schema.properties
                             .objectListProperty.identifier,
                         value: Maybe.empty(),
@@ -22755,7 +22752,7 @@ export namespace ListPropertiesClass {
                           propertyPath:
                             ListPropertiesClass.$schema.properties
                               .stringListProperty.identifier,
-                          values: valueList,
+                          values: valueList.toArray(),
                         }),
                       )
                         .chain((values) =>
@@ -22781,7 +22778,7 @@ export namespace ListPropertiesClass {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<readonly string[]>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             ListPropertiesClass.$schema.properties
                               .stringListProperty.identifier,
                           value: Maybe.empty(),
@@ -25450,7 +25447,7 @@ export namespace LazyPropertiesInterface {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         LazyPropertiesInterface.$schema.properties
                           .optionalLazyToResolvedInterfaceProperty.identifier,
                       value: Maybe.empty(),
@@ -25497,7 +25494,7 @@ export namespace LazyPropertiesInterface {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           LazyPropertiesInterface.$schema.properties
                             .optionalLazyToResolvedInterfaceUnionProperty
                             .identifier,
@@ -25546,7 +25543,7 @@ export namespace LazyPropertiesInterface {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<$NamedDefaultPartial>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             LazyPropertiesInterface.$schema.properties
                               .optionalLazyToResolvedIriIdentifierInterfaceProperty
                               .identifier,
@@ -25595,7 +25592,7 @@ export namespace LazyPropertiesInterface {
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<Maybe<PartialInterface>>({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               LazyPropertiesInterface.$schema.properties
                                 .optionalPartialInterfaceToResolvedInterfaceProperty
                                 .identifier,
@@ -25645,7 +25642,7 @@ export namespace LazyPropertiesInterface {
                           ? values.map((value) => Maybe.of(value))
                           : Resource.Values.fromValue<Maybe<PartialInterface>>({
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 LazyPropertiesInterface.$schema.properties
                                   .optionalPartialInterfaceToResolvedInterfaceUnionProperty
                                   .identifier,
@@ -25698,7 +25695,7 @@ export namespace LazyPropertiesInterface {
                                   Maybe<PartialInterfaceUnion>
                                 >({
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     LazyPropertiesInterface.$schema.properties
                                       .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
                                       .identifier,
@@ -25829,7 +25826,7 @@ export namespace LazyPropertiesInterface {
                                     .map((valuesArray) =>
                                       Resource.Values.fromValue({
                                         focusResource: $parameters.resource,
-                                        predicate:
+                                        propertyPath:
                                           LazyPropertiesInterface.$schema
                                             .properties
                                             .setLazyToResolvedInterfaceProperty
@@ -25885,7 +25882,7 @@ export namespace LazyPropertiesInterface {
                                       .map((valuesArray) =>
                                         Resource.Values.fromValue({
                                           focusResource: $parameters.resource,
-                                          predicate:
+                                          propertyPath:
                                             LazyPropertiesInterface.$schema
                                               .properties
                                               .setPartialInterfaceToResolvedInterfaceProperty
@@ -29294,7 +29291,7 @@ export namespace LazyPropertiesClass {
                 ? values.map((value) => Maybe.of(value))
                 : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                     focusResource: $parameters.resource,
-                    predicate:
+                    propertyPath:
                       LazyPropertiesClass.$schema.properties
                         .optionalLazyToResolvedClassProperty.identifier,
                     value: Maybe.empty(),
@@ -29341,7 +29338,7 @@ export namespace LazyPropertiesClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         LazyPropertiesClass.$schema.properties
                           .optionalLazyToResolvedClassUnionProperty.identifier,
                       value: Maybe.empty(),
@@ -29389,7 +29386,7 @@ export namespace LazyPropertiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<$NamedDefaultPartial>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           LazyPropertiesClass.$schema.properties
                             .optionalLazyToResolvedIriIdentifierClassProperty
                             .identifier,
@@ -29437,7 +29434,7 @@ export namespace LazyPropertiesClass {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<PartialClass>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             LazyPropertiesClass.$schema.properties
                               .optionalPartialClassToResolvedClassProperty
                               .identifier,
@@ -29486,7 +29483,7 @@ export namespace LazyPropertiesClass {
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<Maybe<PartialClass>>({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               LazyPropertiesClass.$schema.properties
                                 .optionalPartialClassToResolvedClassUnionProperty
                                 .identifier,
@@ -29537,7 +29534,7 @@ export namespace LazyPropertiesClass {
                           : Resource.Values.fromValue<Maybe<PartialClassUnion>>(
                               {
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   LazyPropertiesClass.$schema.properties
                                     .optionalPartialClassUnionToResolvedClassUnionProperty
                                     .identifier,
@@ -29662,7 +29659,7 @@ export namespace LazyPropertiesClass {
                               .map((valuesArray) =>
                                 Resource.Values.fromValue({
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     LazyPropertiesClass.$schema.properties
                                       .setLazyToResolvedClassProperty
                                       .identifier,
@@ -29711,7 +29708,7 @@ export namespace LazyPropertiesClass {
                                 .map((valuesArray) =>
                                   Resource.Values.fromValue({
                                     focusResource: $parameters.resource,
-                                    predicate:
+                                    propertyPath:
                                       LazyPropertiesClass.$schema.properties
                                         .setPartialClassToResolvedClassProperty
                                         .identifier,
@@ -30977,7 +30974,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
     ).chain(($identifier) =>
@@ -31462,7 +31459,7 @@ export namespace LazilyResolvedIriIdentifierClass {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
     ).chain(($identifier) =>
@@ -35569,7 +35566,7 @@ export namespace LanguageInPropertiesClass {
                           actualValue: literalValue,
                           expectedValueType: "Literal",
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             LanguageInPropertiesClass.$schema.properties
                               .languageInLiteralProperty.identifier,
                         }),
@@ -35599,7 +35596,7 @@ export namespace LanguageInPropertiesClass {
             .map((valuesArray) =>
               Resource.Values.fromValue({
                 focusResource: $parameters.resource,
-                predicate:
+                propertyPath:
                   LanguageInPropertiesClass.$schema.properties
                     .languageInLiteralProperty.identifier,
                 value: valuesArray,
@@ -36293,7 +36290,7 @@ export namespace JsPrimitiveUnionPropertyClass {
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $parameters.resource,
-                  predicate:
+                  propertyPath:
                     JsPrimitiveUnionPropertyClass.$schema.properties
                       .jsPrimitiveUnionProperty.identifier,
                   value: valuesArray,
@@ -36999,7 +36996,7 @@ export namespace IriIdentifierInterface {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
       ).chain(($identifier) =>
@@ -37497,7 +37494,7 @@ export namespace IriIdentifierClass {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
       ).map(($identifier) => ({ $identifier })),
@@ -40130,7 +40127,7 @@ export namespace IndirectRecursiveHelperClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<IndirectRecursiveClass>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         IndirectRecursiveHelperClass.$schema.properties
                           .indirectRecursiveProperty.identifier,
                       value: Maybe.empty(),
@@ -40732,7 +40729,7 @@ export namespace IndirectRecursiveClass {
                       Maybe<IndirectRecursiveHelperClass>
                     >({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         IndirectRecursiveClass.$schema.properties
                           .indirectRecursiveHelperProperty.identifier,
                       value: Maybe.empty(),
@@ -41641,14 +41638,14 @@ export namespace InPropertiesClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                values.chainMap((value) => value.toBoolean([[true]])),
+                values.chainMap((value) => value.toBoolean([true] as const)),
               )
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<true>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         InPropertiesClass.$schema.properties.inBooleansProperty
                           .identifier,
                       value: Maybe.empty(),
@@ -41671,7 +41668,7 @@ export namespace InPropertiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<Date>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           InPropertiesClass.$schema.properties
                             .inDateTimesProperty.identifier,
                         value: Maybe.empty(),
@@ -41685,14 +41682,14 @@ export namespace InPropertiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    values.chainMap((value) => value.toFloat([[1, 2]])),
+                    values.chainMap((value) => value.toFloat([1, 2] as const)),
                   )
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<Maybe<1 | 2>>({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             InPropertiesClass.$schema.properties
                               .inDoublesProperty.identifier,
                           value: Maybe.empty(),
@@ -41706,14 +41703,16 @@ export namespace InPropertiesClass {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      values.chainMap((value) => value.toBigInt([1n, 2n])),
+                      values.chainMap((value) =>
+                        value.toBigInt([1n, 2n] as const),
+                      ),
                     )
                     .map((values) =>
                       values.length > 0
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<Maybe<1n | 2n>>({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               InPropertiesClass.$schema.properties
                                 .inIntegersProperty.identifier,
                             value: Maybe.empty(),
@@ -41728,48 +41727,14 @@ export namespace InPropertiesClass {
                     resourceValues
                       .chain((values) =>
                         values.chainMap((value) =>
-                          value.toIri().chain((iri) => {
-                            switch (iri.value) {
-                              case "http://example.com/InPropertiesIri1":
-                                return Either.of<
-                                  Error,
-                                  NamedNode<
-                                    | "http://example.com/InPropertiesIri1"
-                                    | "http://example.com/InPropertiesIri2"
-                                  >
-                                >(
-                                  iri as NamedNode<"http://example.com/InPropertiesIri1">,
-                                );
-                              case "http://example.com/InPropertiesIri2":
-                                return Either.of<
-                                  Error,
-                                  NamedNode<
-                                    | "http://example.com/InPropertiesIri1"
-                                    | "http://example.com/InPropertiesIri2"
-                                  >
-                                >(
-                                  iri as NamedNode<"http://example.com/InPropertiesIri2">,
-                                );
-                              default:
-                                return Left<
-                                  Error,
-                                  NamedNode<
-                                    | "http://example.com/InPropertiesIri1"
-                                    | "http://example.com/InPropertiesIri2"
-                                  >
-                                >(
-                                  new Resource.MistypedTermValueError({
-                                    actualValue: iri,
-                                    expectedValueType:
-                                      'NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
-                                    focusResource: $parameters.resource,
-                                    predicate:
-                                      InPropertiesClass.$schema.properties
-                                        .inIrisProperty.identifier,
-                                  }),
-                                );
-                            }
-                          }),
+                          value.toIri([
+                            dataFactory.namedNode(
+                              "http://example.com/InPropertiesIri1",
+                            ),
+                            dataFactory.namedNode(
+                              "http://example.com/InPropertiesIri2",
+                            ),
+                          ]),
                         ),
                       )
                       .map((values) =>
@@ -41784,7 +41749,7 @@ export namespace InPropertiesClass {
                               >
                             >({
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 InPropertiesClass.$schema.properties
                                   .inIrisProperty.identifier,
                               value: Maybe.empty(),
@@ -41809,7 +41774,7 @@ export namespace InPropertiesClass {
                         )
                         .chain((values) =>
                           values.chainMap((value) =>
-                            value.toString([["text", "html"]]),
+                            value.toString(["text", "html"] as const),
                           ),
                         )
                         .map((values) =>
@@ -41818,7 +41783,7 @@ export namespace InPropertiesClass {
                             : Resource.Values.fromValue<Maybe<"text" | "html">>(
                                 {
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     InPropertiesClass.$schema.properties
                                       .inStringsProperty.identifier,
                                   value: Maybe.empty(),
@@ -42718,7 +42683,7 @@ export namespace InIdentifierClass {
               expectedValueType:
                 'NamedNode<"http://example.com/InIdentifierInstance1" | "http://example.com/InIdentifierInstance2">',
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
       ).chain(($identifier) =>
@@ -42744,7 +42709,7 @@ export namespace InIdentifierClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<string>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         InIdentifierClass.$schema.properties
                           .inIdentifierProperty.identifier,
                       value: Maybe.empty(),
@@ -43605,7 +43570,7 @@ export namespace IdentifierOverride2ClassStatic {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "NamedNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
       ).map(($identifier) => ({ ...$super0, $identifier })),
@@ -43951,7 +43916,7 @@ export namespace IdentifierOverride3ClassStatic {
                 actualValue: $parameters.resource.identifier,
                 expectedValueType: "NamedNode",
                 focusResource: $parameters.resource,
-                predicate: $RdfVocabularies.rdf.subject,
+                propertyPath: $RdfVocabularies.rdf.subject,
               }),
             )
         ).map(($identifier) => ({ ...$super0, $identifier })),
@@ -44427,7 +44392,7 @@ export namespace IdentifierOverride4ClassStatic {
                 actualValue: $parameters.resource.identifier,
                 expectedValueType: "NamedNode",
                 focusResource: $parameters.resource,
-                predicate: $RdfVocabularies.rdf.subject,
+                propertyPath: $RdfVocabularies.rdf.subject,
               }),
             )
         ).map(($identifier) => ({ ...$super0, $identifier })),
@@ -44895,7 +44860,7 @@ export namespace IdentifierOverride5Class {
                 actualValue: $parameters.resource.identifier,
                 expectedValueType: "NamedNode",
                 focusResource: $parameters.resource,
-                predicate: $RdfVocabularies.rdf.subject,
+                propertyPath: $RdfVocabularies.rdf.subject,
               }),
             )
         ).map(($identifier) => ({ ...$super0, $identifier })),
@@ -45439,7 +45404,7 @@ export namespace HasValuePropertiesClass {
                     "http://example.com/HasValuePropertiesClassIri1",
                   ),
                 ].map((hasValue) =>
-                  values.find((value) => value.toTerm().equals(hasValue)),
+                  values.find((value) => value.term.equals(hasValue)),
                 ),
               ).map(() => values),
             )
@@ -45454,7 +45419,7 @@ export namespace HasValuePropertiesClass {
               .chain((values) =>
                 Either.sequence(
                   [dataFactory.literal("test")].map((hasValue) =>
-                    values.find((value) => value.toTerm().equals(hasValue)),
+                    values.find((value) => value.term.equals(hasValue)),
                   ),
                 ).map(() => values),
               )
@@ -46610,7 +46575,7 @@ export namespace ExternClassPropertyClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<ExternClass>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         ExternClassPropertyClass.$schema.properties
                           .externClassProperty.identifier,
                       value: Maybe.empty(),
@@ -48864,7 +48829,7 @@ export namespace DirectRecursiveClass {
                   ? values.map((value) => Maybe.of(value))
                   : Resource.Values.fromValue<Maybe<DirectRecursiveClass>>({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         DirectRecursiveClass.$schema.properties
                           .directRecursiveProperty.identifier,
                       value: Maybe.empty(),
@@ -49769,7 +49734,7 @@ export namespace DefaultValuePropertiesClass {
                   : new Resource.Value({
                       dataFactory: dataFactory,
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         DefaultValuePropertiesClass.$schema.properties
                           .dateDefaultValueProperty.identifier,
                       term: dataFactory.literal(
@@ -49792,7 +49757,7 @@ export namespace DefaultValuePropertiesClass {
                     : new Resource.Value({
                         dataFactory: dataFactory,
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           DefaultValuePropertiesClass.$schema.properties
                             .dateTimeDefaultValueProperty.identifier,
                         term: dataFactory.literal(
@@ -49818,7 +49783,7 @@ export namespace DefaultValuePropertiesClass {
                       : new Resource.Value({
                           dataFactory: dataFactory,
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             DefaultValuePropertiesClass.$schema.properties
                               .falseBooleanDefaultValueProperty.identifier,
                           term: dataFactory.literal(
@@ -49843,7 +49808,7 @@ export namespace DefaultValuePropertiesClass {
                         : new Resource.Value({
                             dataFactory: dataFactory,
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               DefaultValuePropertiesClass.$schema.properties
                                 .numberDefaultValueProperty.identifier,
                             term: dataFactory.literal(
@@ -49868,7 +49833,7 @@ export namespace DefaultValuePropertiesClass {
                           : new Resource.Value({
                               dataFactory: dataFactory,
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 DefaultValuePropertiesClass.$schema.properties
                                   .stringDefaultValueProperty.identifier,
                               term: dataFactory.literal(""),
@@ -49901,7 +49866,7 @@ export namespace DefaultValuePropertiesClass {
                             : new Resource.Value({
                                 dataFactory: dataFactory,
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   DefaultValuePropertiesClass.$schema.properties
                                     .trueBooleanDefaultValueProperty.identifier,
                                 term: dataFactory.literal(
@@ -51556,7 +51521,7 @@ export namespace DateUnionPropertiesClass {
                       >
                     >({
                       focusResource: $parameters.resource,
-                      predicate:
+                      propertyPath:
                         DateUnionPropertiesClass.$schema.properties
                           .dateOrDateTimeProperty.identifier,
                       value: Maybe.empty(),
@@ -51643,7 +51608,7 @@ export namespace DateUnionPropertiesClass {
                         >
                       >({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           DateUnionPropertiesClass.$schema.properties
                             .dateOrStringProperty.identifier,
                         value: Maybe.empty(),
@@ -51719,7 +51684,7 @@ export namespace DateUnionPropertiesClass {
                           >
                         >({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             DateUnionPropertiesClass.$schema.properties
                               .dateTimeOrDateProperty.identifier,
                           value: Maybe.empty(),
@@ -51806,7 +51771,7 @@ export namespace DateUnionPropertiesClass {
                             >
                           >({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               DateUnionPropertiesClass.$schema.properties
                                 .stringOrDateProperty.identifier,
                             value: Maybe.empty(),
@@ -54328,7 +54293,7 @@ export namespace ConvertibleTypePropertiesClass {
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $parameters.resource,
-                  predicate:
+                  propertyPath:
                     ConvertibleTypePropertiesClass.$schema.properties
                       .convertibleIriNonEmptySetProperty.identifier,
                   value: valuesArray,
@@ -54347,7 +54312,7 @@ export namespace ConvertibleTypePropertiesClass {
                     ? values.map((value) => Maybe.of(value))
                     : Resource.Values.fromValue<Maybe<NamedNode>>({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           ConvertibleTypePropertiesClass.$schema.properties
                             .convertibleIriOptionProperty.identifier,
                         value: Maybe.empty(),
@@ -54376,7 +54341,7 @@ export namespace ConvertibleTypePropertiesClass {
                     .map((valuesArray) =>
                       Resource.Values.fromValue({
                         focusResource: $parameters.resource,
-                        predicate:
+                        propertyPath:
                           ConvertibleTypePropertiesClass.$schema.properties
                             .convertibleIriSetProperty.identifier,
                         value: valuesArray,
@@ -54413,7 +54378,7 @@ export namespace ConvertibleTypePropertiesClass {
                       .map((valuesArray) =>
                         Resource.Values.fromValue({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             ConvertibleTypePropertiesClass.$schema.properties
                               .convertibleLiteralNonEmptySetProperty.identifier,
                           value: valuesArray,
@@ -54445,7 +54410,7 @@ export namespace ConvertibleTypePropertiesClass {
                             ? values.map((value) => Maybe.of(value))
                             : Resource.Values.fromValue<Maybe<Literal>>({
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   ConvertibleTypePropertiesClass.$schema
                                     .properties.convertibleLiteralOptionProperty
                                     .identifier,
@@ -54502,7 +54467,7 @@ export namespace ConvertibleTypePropertiesClass {
                             .map((valuesArray) =>
                               Resource.Values.fromValue({
                                 focusResource: $parameters.resource,
-                                predicate:
+                                propertyPath:
                                   ConvertibleTypePropertiesClass.$schema
                                     .properties.convertibleLiteralSetProperty
                                     .identifier,
@@ -54519,26 +54484,23 @@ export namespace ConvertibleTypePropertiesClass {
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
-                                values.chainMap((value) =>
-                                  Either.of<
-                                    Error,
-                                    BlankNode | Literal | NamedNode
-                                  >(value.toTerm()),
-                                ),
+                                values.chainMap((value) => value.toTerm()),
                               )
                               .chain((values) =>
                                 NonEmptyList.fromArray(
                                   values.toArray(),
                                 ).toEither(
                                   new Error(
-                                    `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
+                                    `${Resource.Identifier.toString(
+                                      $parameters.resource.identifier,
+                                    )} is an empty set`,
                                   ),
                                 ),
                               )
                               .map((valuesArray) =>
                                 Resource.Values.fromValue({
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     ConvertibleTypePropertiesClass.$schema
                                       .properties
                                       .convertibleTermNonEmptySetProperty
@@ -54555,12 +54517,7 @@ export namespace ConvertibleTypePropertiesClass {
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
-                                  values.chainMap((value) =>
-                                    Either.of<
-                                      Error,
-                                      BlankNode | Literal | NamedNode
-                                    >(value.toTerm()),
-                                  ),
+                                  values.chainMap((value) => value.toTerm()),
                                 )
                                 .map((values) =>
                                   values.length > 0
@@ -54569,7 +54526,7 @@ export namespace ConvertibleTypePropertiesClass {
                                         Maybe<BlankNode | NamedNode | Literal>
                                       >({
                                         focusResource: $parameters.resource,
-                                        predicate:
+                                        propertyPath:
                                           ConvertibleTypePropertiesClass.$schema
                                             .properties
                                             .convertibleTermOptionProperty
@@ -54585,12 +54542,7 @@ export namespace ConvertibleTypePropertiesClass {
                                 $schema.properties.convertibleTermProperty,
                               typeFromRdf: (resourceValues) =>
                                 resourceValues.chain((values) =>
-                                  values.chainMap((value) =>
-                                    Either.of<
-                                      Error,
-                                      BlankNode | Literal | NamedNode
-                                    >(value.toTerm()),
-                                  ),
+                                  values.chainMap((value) => value.toTerm()),
                                 ),
                             }).chain((convertibleTermProperty) =>
                               $shaclPropertyFromRdf({
@@ -54602,17 +54554,14 @@ export namespace ConvertibleTypePropertiesClass {
                                   resourceValues
                                     .chain((values) =>
                                       values.chainMap((value) =>
-                                        Either.of<
-                                          Error,
-                                          BlankNode | Literal | NamedNode
-                                        >(value.toTerm()),
+                                        value.toTerm(),
                                       ),
                                     )
                                     .map((values) => values.toArray())
                                     .map((valuesArray) =>
                                       Resource.Values.fromValue({
                                         focusResource: $parameters.resource,
-                                        predicate:
+                                        propertyPath:
                                           ConvertibleTypePropertiesClass.$schema
                                             .properties
                                             .convertibleTermSetProperty
@@ -62401,7 +62350,7 @@ export namespace BlankNodeIdentifierInterface {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "BlankNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
       ).chain(($identifier) =>
@@ -62905,7 +62854,7 @@ export namespace BlankNodeIdentifierClass {
               actualValue: $parameters.resource.identifier,
               expectedValueType: "BlankNode",
               focusResource: $parameters.resource,
-              predicate: $RdfVocabularies.rdf.subject,
+              propertyPath: $RdfVocabularies.rdf.subject,
             }),
           )
       ).map(($identifier) => ({ $identifier })),

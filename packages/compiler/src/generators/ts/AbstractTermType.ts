@@ -192,21 +192,28 @@ export abstract class AbstractTermType<
     preferredLanguages?: Code;
     valueTo: Code;
   } {
-    let valueToExpression = code`${imports.Either}.of<Error, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(value.toTerm())`;
-    if (this.nodeKinds.size < 3) {
+    let valueToExpression: Code;
+    if (this.in_.length > 0) {
+      valueToExpression = code`value.toTerm([${joinCode(
+        this.in_.map((in_) => rdfjsTermExpression(in_)),
+        { on: ", " },
+      )}])`;
+    } else if (this.nodeKinds.size < 3) {
       const eitherTypeParameters = code`<Error, ${this.name}>`;
-      valueToExpression = code`${valueToExpression}.chain(term => {
+      valueToExpression = code`value.toTerm().chain(term => {
   switch (term.termType) {
   ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
-  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, predicate: variables.predicate }}));
+  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.predicate }}));
 }})`;
+    } else {
+      valueToExpression = code`value.toTerm()`;
     }
 
     return {
       hasValues:
         this.hasValues.length > 0
           ? code`\
-chain(values => ${imports.Either}.sequence([${joinCode(this.hasValues.map(rdfjsTermExpression), { on: ", " })}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
+chain(values => ${imports.Either}.sequence([${joinCode(this.hasValues.map(rdfjsTermExpression), { on: ", " })}].map(hasValue => values.find(value => value.term.equals(hasValue)))).map(() => values))`
           : undefined,
       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };

@@ -71,7 +71,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? arrayOf(this.primitiveIn) : ""})))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})))`,
     };
   }
 }

@@ -1,7 +1,7 @@
 import { NonEmptyList } from "purify-ts";
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import { imports } from "./imports.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
   override readonly graphqlType = new AbstractNumericType.GraphqlType(
@@ -15,7 +15,7 @@ export class IntType extends AbstractNumericType<number> {
   }: Parameters<
     AbstractNumericType<number>["fromRdfResourceValueExpression"]
   >[0]): Code {
-    return code`${variables.value}.toInt(${this.primitiveIn.length > 0 ? arrayOf(this.primitiveIn) : ""})`;
+    return code`${variables.value}.toInt(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
   }
 
   protected override literalOf(value: number): string {

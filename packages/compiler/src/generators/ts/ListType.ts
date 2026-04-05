@@ -79,7 +79,7 @@ export class ListType<
           valueList => ${this.itemType.fromRdfExpression({
             variables: {
               ...variables,
-              resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values>(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.predicate}, values: valueList }))`,
+              resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values>(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.predicate}, values: valueList.toArray() }))`,
             },
           })}
       ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>

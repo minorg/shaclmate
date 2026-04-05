@@ -54,7 +54,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
   }: Parameters<
     AbstractNumericType<bigint>["fromRdfResourceValueExpression"]
   >[0]): Code {
-    return code`${variables.value}.toBigInt(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `${_}n`).join(", ")}]` : ""})`;
+    return code`${variables.value}.toBigInt(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `${_}n`).join(", ")}] as const` : ""})`;
   }
 
   protected override literalOf(value: bigint): string {

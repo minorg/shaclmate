@@ -443,13 +443,13 @@ export class IdentifierProperty extends AbstractProperty<
               code`${variables.resource}.identifier.value === "${iri.value}"`,
           ),
           { on: " || " },
-        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, propertyPath: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
     if (this.type.kind === "BlankNodeType" || this.type.kind === "IriType") {
       return Maybe.of(
-        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, propertyPath: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
