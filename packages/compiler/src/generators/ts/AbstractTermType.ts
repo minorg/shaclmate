@@ -184,9 +184,9 @@ export abstract class AbstractTermType<
    *
    * Considering the sub-expressions as a record instead of an array allows them to be selectively overridden by subclasses.
    */
-  protected fromRdfExpressionChain(
-    _parameters: Parameters<Type["fromRdfExpression"]>[0],
-  ): {
+  protected fromRdfExpressionChain({
+    variables,
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
     hasValues?: Code;
     languageIn?: Code;
     preferredLanguages?: Code;
@@ -199,7 +199,12 @@ export abstract class AbstractTermType<
         { on: ", " },
       )}])`;
     } else if (this.nodeKinds.size < 3) {
-      valueToExpression = code`${snippets.fromRdfNodeKinds}(value, ${JSON.stringify([...this.nodeKinds])})`;
+      const eitherTypeParameters = code`<Error, ${this.name}>`;
+      valueToExpression = code`value.toTerm().chain(term => {
+  switch (term.termType) {
+  ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
+  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.predicate }}));
+  }})`;
     } else {
       valueToExpression = code`value.toTerm()`;
     }
