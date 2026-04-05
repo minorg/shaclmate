@@ -43,9 +43,7 @@
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
-    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "link-dependencies": "npm link rdfjs-resource",
-    "unlink": "npm unlink -g @shaclmate/cli"
+    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

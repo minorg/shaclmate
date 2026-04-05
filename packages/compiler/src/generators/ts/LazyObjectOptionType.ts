@@ -54,7 +54,7 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Either}.of((${value} as ${imports.Maybe}<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             code`${imports.Maybe}.isMaybe(${value})`,
           sourceTypeName: code`${imports.Maybe}<${this.resolvedType.itemType.name}>`,
@@ -62,7 +62,7 @@ export class LazyObjectOptionType extends Super {
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => ${imports.Either}.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => ${imports.Right}(${value} as ${this.resolvedType.itemType.name}) })`,
           // Don't check instanceof value since the ObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
@@ -82,7 +82,7 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${imports.Either}.of((${value} as ${imports.Maybe}<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             code`${imports.Maybe}.isMaybe(${value})`,
           sourceTypeName: code`${imports.Maybe}<${this.resolvedType.itemType.name}>`,
@@ -90,7 +90,7 @@ export class LazyObjectOptionType extends Super {
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${imports.Either}.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${imports.Right}(${value} as ${this.resolvedType.itemType.name}) })`,
           // Don't check instanceof value since the ObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>

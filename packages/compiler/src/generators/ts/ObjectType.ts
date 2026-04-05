@@ -4,6 +4,7 @@ import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type {
   IdentifierMintingStrategy,
   TsObjectDeclarationType,
@@ -334,8 +335,13 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`(({ ignoreRdfType, schema, ...otherParameters }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, subject: valueVariable, ...otherParameters })))`;
+    return code`(({ ignoreRdfType, propertyPatterns, schema, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))`;
   }
 
   @Memoize()
@@ -430,21 +436,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       case "interface":
         return code`${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
     }
-  }
-
-  override sparqlConstructTriples({
-    allowIgnoreRdfType,
-    variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlConstructTriples"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
-        ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-        subject: variables.valueVariable,
-        variablePrefix: variables.variablePrefix,
-      }})`,
-    );
   }
 
   override toJsonExpression({

@@ -182,17 +182,18 @@ export abstract class AbstractProperty<
   }): Maybe<Code>;
 
   /**
-   * SPARQL.js CONSTRUCT template triples for a value of this type as a (runtime) array of sparqljs.Triple.
+   * SPARQL.js CONSTRUCT template triples for this property.
    *
    * Parameters:
    *   variables: runtime variables
-   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
-   *     - variablePrefix: prefix to use for variables
+   *     - filter: an instance of the object's filterType or undefined
+   *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
+   *     - variablePrefix: prefix to use for new SPARQL variables
    *
    * Returns a (runtime) array of sparqljs.Triple.
    */
   abstract sparqlConstructTriples(parameters: {
-    variables: { focusIdentifier: Code; variablePrefix: Code };
+    variables: { filter: Code; focusIdentifier: Code; variablePrefix: Code };
   }): Maybe<Code>;
 
   /**
@@ -201,9 +202,9 @@ export abstract class AbstractProperty<
    * Parameters:
    *   variables: (at runtime)
    *     - filter: an instance of the object's filterType or undefined
-   *     - focusIdentifier: identifier (rdfjs.BlankNode or rdfjs.NamedNode) of the object that is the focus of the patterns
+   *     - focusIdentifier: identifier (rdfjs.NamedNode or rdfjs.Variable) of the object that is the focus of the patterns
    *     - preferredLanguages: array of preferred language code (strings)
-   *     - variablePrefix: prefix to use for new variables
+   *     - variablePrefix: prefix to use for new SPARQL variables
    *
    * Returns:
    *   - condition: optional runtime condition to evaluate in an if statement before including the patterns

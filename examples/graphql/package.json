@@ -6,7 +6,7 @@
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "2.0.7"
+    "rdfjs-resource": "3.0.4"
   },
   "devDependencies": {
     "@types/rdfjs__data-model": "~2.0.9",
@@ -44,12 +44,10 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "link-dependencies": "npm link rdfjs-resource",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",
     "test:watch": "biome check && vitest watch",
-    "unlink": "npm unlink -g @shaclmate/graphql",
     "start": "NODE_ENV=development tsx src/server.ts"
   },
   "type": "module",

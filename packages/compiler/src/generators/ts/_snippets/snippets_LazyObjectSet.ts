@@ -26,12 +26,12 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imp
 
   async resolve(options?: { limit?: number; offset?: number }): Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
-      return ${imports.Either}.of([]);
+      return ${imports.Right}([]);
     }
 
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return ${imports.Either}.of([]);
+      return ${imports.Right}([]);
     }
 
     let offset = options?.offset ?? 0;

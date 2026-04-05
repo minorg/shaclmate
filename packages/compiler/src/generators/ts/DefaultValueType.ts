@@ -76,6 +76,11 @@ export class DefaultValueType<
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return this.itemType.sparqlConstructTriplesFunction;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
@@ -166,7 +171,7 @@ export class DefaultValueType<
     return this.itemType.fromRdfExpression({
       variables: {
         ...variables,
-        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.TermValue(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, predicate: variables.predicate, term: this.defaultValueTermExpression }}).toValues())`,
+        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.Value(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, propertyPath: variables.predicate, term: this.defaultValueTermExpression }}).toValues())`,
       },
     });
   }
@@ -207,12 +212,6 @@ export class DefaultValueType<
     >[0],
   ): Code {
     return this.itemType.jsonZodSchema(parameters);
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Maybe<Code> {
-    return this.itemType.sparqlConstructTriples(parameters);
   }
 
   override toJsonExpression(

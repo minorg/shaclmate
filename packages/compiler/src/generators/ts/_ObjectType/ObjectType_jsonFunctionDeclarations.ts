@@ -49,7 +49,7 @@ function ObjectType_fromJsonFunctionDeclarations(
   const resultExpression = `{ ${initializers.join(", ")} }`;
   if (chains.length === 0) {
     propertiesFromJsonStatements.push(
-      code`return ${imports.Either}.of(${resultExpression})`,
+      code`return ${imports.Right}(${resultExpression})`,
     );
   } else {
     propertiesFromJsonStatements.push(

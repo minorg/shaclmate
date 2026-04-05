@@ -14,7 +14,10 @@ export function ancestorClassIris(
     depth: number,
   ): void {
     for (const parentClassValue of classResource.values(rdfs.subClassOf)) {
-      parentClassValue.toNamedResource().ifRight((parentClassResource) => {
+      parentClassValue.toResource().ifRight((parentClassResource) => {
+        if (parentClassResource.identifier.termType !== "NamedNode") {
+          return;
+        }
         if (ancestorClassIris.has(parentClassResource.identifier)) {
           return;
         }

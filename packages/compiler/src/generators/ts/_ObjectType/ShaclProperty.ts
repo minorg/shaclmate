@@ -1,11 +1,10 @@
 import type * as rdfjs from "@rdfjs/types";
 
-import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
-import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
@@ -230,14 +229,19 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     // subject of any statements.
 
     return Maybe.of(
-      code`${this.type.fromRdfExpression({
-        variables: {
-          ...variables,
-          ignoreRdfType: true,
-          predicate: this.predicate,
-          resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, ${{ graph: variables.graph, unique: true }}))`,
-        },
-      })}.chain(values => values.head())`,
+      code`${snippets.shaclPropertyFromRdf}(${{
+        graph: variables.graph,
+        resource: variables.resource,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        typeFromRdf: code`((resourceValues) => ${this.type.fromRdfExpression({
+          variables: {
+            ...variables,
+            ignoreRdfType: true,
+            predicate: this.predicate,
+            resourceValues: code`resourceValues`,
+          },
+        })})`,
+      }})`,
     );
   }
 
@@ -267,23 +271,18 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["sparqlConstructTriples"]
   >[0]): Maybe<Code> {
-    const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of(
-      code`[${{
-        object: valueVariable,
-        predicate: this.predicate,
-        subject: variables.focusIdentifier,
-      }}${this.type
-        .sparqlConstructTriples({
-          allowIgnoreRdfType: true,
-          variables: {
-            valueVariable,
-            variablePrefix: valueString,
-          },
-        })
-        .map((code_) => code`, ...${code_}`)
-        .orDefault(code``)}]`,
+      code`${snippets.shaclPropertySparqlConstructTriples}(${{
+        filter: this.filterProperty
+          .map(({ name }) => code`${variables.filter}?.${name}`)
+          .extract(),
+        focusIdentifier: variables.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: this.name,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        typeSparqlConstructTriples: this.type.sparqlConstructTriplesFunction,
+        variablePrefix: variables.variablePrefix,
+      }})`,
     );
   }
 
@@ -292,29 +291,18 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<AbstractProperty<TypeT>["sparqlWherePatterns"]>[0]): ReturnType<
     AbstractProperty<TypeT>["sparqlWherePatterns"]
   > {
-    const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of({
-      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
+      patterns: code`${snippets.shaclPropertySparqlWherePatterns}(${{
         filter: this.filterProperty
           .map(({ name }) => code`${variables.filter}?.${name}`)
           .extract(),
+        focusIdentifier: variables.focusIdentifier,
+        ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
-        propertyPatterns: [
-          code`${{
-            triples: [
-              {
-                object: valueVariable,
-                predicate: this.predicate,
-                subject: variables.focusIdentifier,
-              },
-            ],
-            type: literalOf("bgp"),
-          }} satisfies sparqljs.BgpPattern`,
-        ],
-        schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
-        valueVariable,
-        variablePrefix: valueString,
+        propertyName: this.name,
+        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        typeSparqlWherePatterns: this.type.sparqlWherePatternsFunction,
+        variablePrefix: variables.variablePrefix,
       }})`,
     });
   }

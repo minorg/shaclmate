@@ -89,6 +89,18 @@ export abstract class AbstractType {
   abstract readonly schemaType: Code;
 
   /**
+   * A SparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property of this type.
+   *
+   * The function takes a parameters object (type: SparqlConstructTriplesFunctionParameters) with the following parameters:
+   * - filter?: an instance of filterType
+   * - ignoreRdfType?: boolean
+   * - schema: instance of this.schemaType
+   * - valueVariable: rdfjs.Variable of the value of this type
+   * - variablePrefix: prefix to use for new variables
+   */
+  abstract readonly sparqlConstructTriplesFunction: Code;
+
+  /**
    * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
    *
    * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
@@ -125,7 +137,7 @@ export abstract class AbstractType {
   }
 
   /**
-   * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
+   * An expression that converts this type's JSON type to a value of this type. It doesn't return a Either because the JSON has
    * already been validated and converted to the expected JSON type with Zod.
    */
   abstract fromJsonExpression(parameters: {
@@ -135,8 +147,8 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to a
-   * purify.Either<Error, rdfjsResource.Resource.Values<this type>>.
+   * An expression that converts a Either<Error, rdfjsResource.Resource.Values> to a
+   * Either<Error, rdfjsResource.Resource.Values<this type>>.
    *
    * These expressions are used to deserialize property values in an ObjectType, either directly (a property with this Type) or indirectly (a property with a Type like OptionType
    * that has a type parameter of this Type).
@@ -154,7 +166,7 @@ export abstract class AbstractType {
    *   predicate: the predicate of the object's property
    *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
    *   resource: the rdfjsResource.Resource passed to Object.fromRdf
-   *   resourceValues: the purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to be converted to values of this type.
+   *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type.
    */
   abstract fromRdfExpression(parameters: {
     variables: {
@@ -219,25 +231,6 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * SPARQL.js CONSTRUCT template triples for a value of this type as a (runtime) array of sparqljs.Triple.
-   *
-   * Parameters:
-   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *   variables: runtime variables
-   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
-   *     - variablePrefix: prefix to use for variables
-   *
-   * Returns a (runtime) array of sparqljs.Triple.
-   */
-  abstract sparqlConstructTriples(parameters: {
-    allowIgnoreRdfType: boolean;
-    variables: {
-      valueVariable: Code;
-      variablePrefix: Code;
-    };
-  }): Maybe<Code>;
-
-  /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
    * of the correct JSON-LD context.
    */
@@ -249,7 +242,7 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * An expression that converts a property value of this type to an array of values that can be .add'd to a rdfjsResource.MutableResource
+   * An expression that converts a property value of this type to an array of values that can be .add'd to a Resource.
    * (BlankNode | Literal | NamedNode | bigint | boolean | number | string)[].
    */
   abstract toRdfExpression(parameters: {

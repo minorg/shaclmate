@@ -1,6 +1,5 @@
 import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
 import { code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -44,9 +43,9 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
-          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${imports.Either}.of(value); default: return ${imports.Left}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`literalValue`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, predicate: variables.predicate }})); } })))`
+          ? code`chain(values => ${snippets.fromRdfLanguageIn}(values, ${JSON.stringify(this.languageIn)}))`
           : undefined,
-      preferredLanguages: code`chain(values => ${snippets.fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
+      preferredLanguages: code`chain(values => ${snippets.fromRdfPreferredLanguages}(values, ${variables.preferredLanguages}))`,
       valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
     };
   }

@@ -13,6 +13,11 @@ export class SetType<
   override readonly kind = "SetType";
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
@@ -34,7 +39,7 @@ export class SetType<
       );
     }
     chain.push(
-      code`map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: valuesArray }))`,
+      code`map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.predicate}, value: valuesArray }))`,
     );
     return joinCode(chain, { on: "." });
   }
@@ -46,14 +51,6 @@ export class SetType<
       return new AbstractCollectionType.JsonType(name, { optional: true });
     }
     return new AbstractCollectionType.JsonType(name);
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<
-      AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.sparqlConstructTriples(parameters);
   }
 
   override toRdfExpression({

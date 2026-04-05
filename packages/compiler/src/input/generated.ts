@@ -8,7 +8,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { Either, Left, Maybe } from "purify-ts";
+import { Either, Left, Maybe, Right } from "purify-ts";
 import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 
 interface $BooleanFilter {
@@ -197,58 +197,41 @@ function $filterTerm(
 }
 
 type $FromRdfOptions = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
   preferredLanguages?: readonly string[];
 };
 
-function $fromRdfPreferredLanguages({
-  focusResource,
-  predicate,
-  preferredLanguages,
-  values,
-}: {
-  focusResource: Resource;
-  predicate: NamedNode;
-  preferredLanguages?: readonly string[];
-  values: Resource.Values<Resource.TermValue>;
-}): Either<Error, Resource.Values<Resource.TermValue>> {
+function $fromRdfPreferredLanguages(
+  values: Resource.Values,
+  preferredLanguages?: readonly string[],
+): Either<Error, Resource.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return Either.of<Error, Resource.Values<Resource.TermValue>>(values);
+    return Right(values);
   }
 
-  return values
-    .chainMap((value) => value.toLiteral())
-    .map((literalValues) => {
-      // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-      // Within a preferredLanguage the literals may be in any order.
-      let filteredLiteralValues: Resource.Values<Literal> | undefined;
-      for (const preferredLanguage of preferredLanguages) {
-        if (!filteredLiteralValues) {
-          filteredLiteralValues = literalValues.filter(
-            (value) => value.language === preferredLanguage,
-          );
-        } else {
-          filteredLiteralValues = filteredLiteralValues.concat(
-            ...literalValues
-              .filter((value) => value.language === preferredLanguage)
-              .toArray(),
-          );
+  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+  // Within a preferredLanguage the literals may be in any order.
+  const filteredValues: Resource.Value[] = [];
+  for (const preferredLanguage of preferredLanguages) {
+    for (const value of values) {
+      value.toLiteral().ifRight((literal) => {
+        if (literal.language === preferredLanguage) {
+          filteredValues.push(value);
         }
-      }
+      });
+    }
+  }
 
-      return filteredLiteralValues!.map(
-        (literalValue) =>
-          new Resource.TermValue({
-            dataFactory: dataFactory,
-            focusResource,
-            predicate,
-            term: literalValue,
-          }),
-      );
-    });
+  return Right(
+    Resource.Values.fromArray({
+      focusResource: values.focusResource,
+      propertyPath: values.propertyPath,
+      values: filteredValues,
+    }),
+  );
 }
 
 interface $IdentifierFilter {
@@ -310,7 +293,7 @@ interface $NumericFilter<T> {
 }
 
 type $PropertiesFromRdfParameters = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
@@ -405,6 +388,30 @@ namespace $RdfVocabularies {
       "http://www.w3.org/2001/XMLSchema#unsignedShort",
     );
   }
+}
+
+function $shaclPropertyFromRdf<T>({
+  graph,
+  propertySchema,
+  resource,
+  typeFromRdf,
+}: {
+  graph?: Exclude<Quad_Graph, Variable>;
+  propertySchema: $ShaclPropertySchema;
+  resource: Resource;
+  typeFromRdf: (
+    resourceValues: Either<Error, Resource.Values>,
+  ) => Either<Error, Resource.Values<T>>;
+}): Either<Error, T> {
+  return typeFromRdf(
+    Right(resource.values(propertySchema.identifier, { graph, unique: true })),
+  ).chain((values) => values.head());
+}
+
+export interface $ShaclPropertySchema<TypeSchemaT = object> {
+  readonly identifier: NamedNode;
+  readonly kind: "Shacl";
+  readonly type: () => TypeSchemaT;
 }
 
 interface $StringFilter {
@@ -813,101 +820,106 @@ export namespace BaseShaclCoreShapeStatic {
       xone: readonly (readonly (BlankNode | NamedNode)[])[];
     }
   > {
-    return Either.of<Error, BaseShaclCoreShapeStatic.$Identifier>(
-      $parameters.resource.identifier as BaseShaclCoreShapeStatic.$Identifier,
-    ).chain(($identifier) =>
-      Either.of<Error, Resource.Values<Resource.TermValue>>(
-        $parameters.resource.values($schema.properties.and.identifier, {
-          graph: undefined,
-          unique: true,
-        }),
-      )
-        .chain((values) =>
-          values.chainMap((value) => value.toList({ graph: undefined })),
-        )
-        .chain((valueLists) =>
-          valueLists.chainMap((valueList) =>
-            Either.of<Error, Resource.Values<Resource.TermValue>>(
-              Resource.Values.fromArray({
-                focusResource: $parameters.resource,
-                predicate:
-                  BaseShaclCoreShapeStatic.$schema.properties.and.identifier,
-                values: valueList,
-              }),
-            ).chain((values) =>
-              values.chainMap((value) => value.toIdentifier()),
-            ),
-          ),
-        )
-        .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-        .map((values) => values.toArray())
-        .map((valuesArray) =>
-          Resource.Values.fromValue({
-            focusResource: $parameters.resource,
-            predicate:
-              BaseShaclCoreShapeStatic.$schema.properties.and.identifier,
-            value: valuesArray,
-          }),
-        )
-        .chain((values) => values.head())
-        .chain((and) =>
-          Either.of<Error, Resource.Values<Resource.TermValue>>(
-            $parameters.resource.values($schema.properties.classes.identifier, {
-              graph: undefined,
-              unique: true,
-            }),
-          )
-            .chain((values) => values.chainMap((value) => value.toIri()))
-            .map((values) => values.toArray())
-            .map((valuesArray) =>
-              Resource.Values.fromValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  BaseShaclCoreShapeStatic.$schema.properties.classes
-                    .identifier,
-                value: valuesArray,
-              }),
-            )
-            .chain((values) => values.head())
-            .chain((classes) =>
-              Either.of<Error, Resource.Values<Resource.TermValue>>(
-                $parameters.resource.values(
-                  $schema.properties.comments.identifier,
-                  { graph: undefined, unique: true },
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.and,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toList({ graph: $parameters.graph }),
                 ),
               )
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      BaseShaclCoreShapeStatic.$schema.properties.comments
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) => values.chainMap((value) => value.toString()))
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  Right(
+                    Resource.Values.fromArray({
+                      focusResource: $parameters.resource,
+                      propertyPath:
+                        BaseShaclCoreShapeStatic.$schema.properties.and
+                          .identifier,
+                      values: valueList.toArray(),
+                    }),
+                  ).chain((values) =>
+                    values.chainMap((value) => value.toIdentifier()),
+                  ),
+                ),
+              )
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $parameters.resource,
+                  propertyPath:
+                    BaseShaclCoreShapeStatic.$schema.properties.and.identifier,
+                  value: valuesArray,
+                }),
+              ),
+        }).chain((and) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.classes,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) => values.chainMap((value) => value.toIri()))
                 .map((values) => values.toArray())
                 .map((valuesArray) =>
                   Resource.Values.fromValue({
                     focusResource: $parameters.resource,
-                    predicate:
-                      BaseShaclCoreShapeStatic.$schema.properties.comments
+                    propertyPath:
+                      BaseShaclCoreShapeStatic.$schema.properties.classes
                         .identifier,
                     value: valuesArray,
                   }),
-                )
-                .chain((values) => values.head())
-                .chain((comments) =>
-                  Either.of<Error, Resource.Values<Resource.TermValue>>(
-                    $parameters.resource.values(
-                      $schema.properties.datatype.identifier,
-                      {
-                        graph: undefined,
-                        unique: true,
-                      },
+                ),
+          }).chain((classes) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.comments,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      $parameters.preferredLanguages,
                     ),
                   )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) => values.toArray())
+                  .map((valuesArray) =>
+                    Resource.Values.fromValue({
+                      focusResource: $parameters.resource,
+                      propertyPath:
+                        BaseShaclCoreShapeStatic.$schema.properties.comments
+                          .identifier,
+                      value: valuesArray,
+                    }),
+                  ),
+            }).chain((comments) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.datatype,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
                     .chain((values) =>
                       values.chainMap((value) => value.toIri()),
                     )
@@ -916,92 +928,127 @@ export namespace BaseShaclCoreShapeStatic {
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<Maybe<NamedNode>>({
                             focusResource: $parameters.resource,
-                            predicate:
+                            propertyPath:
                               BaseShaclCoreShapeStatic.$schema.properties
                                 .datatype.identifier,
                             value: Maybe.empty(),
                           }),
-                    )
-                    .chain((values) => values.head())
-                    .chain((datatype) =>
-                      Either.of<Error, Resource.Values<Resource.TermValue>>(
-                        $parameters.resource.values(
-                          $schema.properties.deactivated.identifier,
-                          {
-                            graph: undefined,
-                            unique: true,
-                          },
-                        ),
+                    ),
+              }).chain((datatype) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.deactivated,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        values.chainMap((value) => value.toBoolean()),
                       )
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<Maybe<boolean>>({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                BaseShaclCoreShapeStatic.$schema.properties
+                                  .deactivated.identifier,
+                              value: Maybe.empty(),
+                            }),
+                      ),
+                }).chain((deactivated) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.flags,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
                         .chain((values) =>
-                          values.chainMap((value) => value.toBoolean()),
+                          $fromRdfPreferredLanguages(
+                            values,
+                            $parameters.preferredLanguages,
+                          ),
                         )
-                        .map((values) =>
-                          values.length > 0
-                            ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<Maybe<boolean>>({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  BaseShaclCoreShapeStatic.$schema.properties
-                                    .deactivated.identifier,
-                                value: Maybe.empty(),
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
+                        )
+                        .map((values) => values.toArray())
+                        .map((valuesArray) =>
+                          Resource.Values.fromValue({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              BaseShaclCoreShapeStatic.$schema.properties.flags
+                                .identifier,
+                            value: valuesArray,
+                          }),
+                        ),
+                  }).chain((flags) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.hasValues,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
+                          .chain((values) =>
+                            values.chainMap((value) =>
+                              value.toTerm().chain((term) => {
+                                switch (term.termType) {
+                                  case "NamedNode":
+                                  case "Literal":
+                                    return Either.of<
+                                      Error,
+                                      NamedNode | Literal
+                                    >(term);
+                                  default:
+                                    return Left<Error, NamedNode | Literal>(
+                                      new Resource.MistypedTermValueError({
+                                        actualValue: term,
+                                        expectedValueType:
+                                          "(NamedNode | Literal)",
+                                        focusResource: $parameters.resource,
+                                        propertyPath:
+                                          BaseShaclCoreShapeStatic.$schema
+                                            .properties.hasValues.identifier,
+                                      }),
+                                    );
+                                }
                               }),
-                        )
-                        .chain((values) => values.head())
-                        .chain((deactivated) =>
-                          Either.of<Error, Resource.Values<Resource.TermValue>>(
-                            $parameters.resource.values(
-                              $schema.properties.flags.identifier,
-                              {
-                                graph: undefined,
-                                unique: true,
-                              },
                             ),
                           )
+                          .map((values) => values.toArray())
+                          .map((valuesArray) =>
+                            Resource.Values.fromValue({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                BaseShaclCoreShapeStatic.$schema.properties
+                                  .hasValues.identifier,
+                              value: valuesArray,
+                            }),
+                          ),
+                    }).chain((hasValues) =>
+                      $shaclPropertyFromRdf({
+                        graph: $parameters.graph,
+                        resource: $parameters.resource,
+                        propertySchema: $schema.properties.in_,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  BaseShaclCoreShapeStatic.$schema.properties
-                                    .flags.identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
+                              values.chainMap((value) =>
+                                value.toList({ graph: $parameters.graph }),
+                              ),
                             )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toString()),
-                            )
-                            .map((values) => values.toArray())
-                            .map((valuesArray) =>
-                              Resource.Values.fromValue({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  BaseShaclCoreShapeStatic.$schema.properties
-                                    .flags.identifier,
-                                value: valuesArray,
-                              }),
-                            )
-                            .chain((values) => values.head())
-                            .chain((flags) =>
-                              Either.of<
-                                Error,
-                                Resource.Values<Resource.TermValue>
-                              >(
-                                $parameters.resource.values(
-                                  $schema.properties.hasValues.identifier,
-                                  {
-                                    graph: undefined,
-                                    unique: true,
-                                  },
-                                ),
-                              )
-                                .chain((values) =>
+                            .chain((valueLists) =>
+                              valueLists.chainMap((valueList) =>
+                                Right(
+                                  Resource.Values.fromArray({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      BaseShaclCoreShapeStatic.$schema
+                                        .properties.in_.identifier,
+                                    values: valueList.toArray(),
+                                  }),
+                                ).chain((values) =>
                                   values.chainMap((value) =>
-                                    Either.of<
-                                      Error,
-                                      BlankNode | Literal | NamedNode
-                                    >(value.toTerm()).chain((term) => {
+                                    value.toTerm().chain((term) => {
                                       switch (term.termType) {
                                         case "NamedNode":
                                         case "Literal":
@@ -1021,135 +1068,220 @@ export namespace BaseShaclCoreShapeStatic {
                                                   "(NamedNode | Literal)",
                                                 focusResource:
                                                   $parameters.resource,
-                                                predicate:
+                                                propertyPath:
                                                   BaseShaclCoreShapeStatic
-                                                    .$schema.properties
-                                                    .hasValues.identifier,
+                                                    .$schema.properties.in_
+                                                    .identifier,
                                               },
                                             ),
                                           );
                                       }
                                     }),
                                   ),
+                                ),
+                              ),
+                            )
+                            .map((valueLists) =>
+                              valueLists.map((valueList) =>
+                                valueList.toArray(),
+                              ),
+                            )
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<
+                                    Maybe<readonly (NamedNode | Literal)[]>
+                                  >({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      BaseShaclCoreShapeStatic.$schema
+                                        .properties.in_.identifier,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).chain((in_) =>
+                        $shaclPropertyFromRdf({
+                          graph: $parameters.graph,
+                          resource: $parameters.resource,
+                          propertySchema: $schema.properties.isDefinedBy,
+                          typeFromRdf: (resourceValues) =>
+                            resourceValues
+                              .chain((values) =>
+                                values.chainMap((value) =>
+                                  value.toIdentifier(),
+                                ),
+                              )
+                              .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) => Maybe.of(value))
+                                  : Resource.Values.fromValue<
+                                      Maybe<BlankNode | NamedNode>
+                                    >({
+                                      focusResource: $parameters.resource,
+                                      propertyPath:
+                                        BaseShaclCoreShapeStatic.$schema
+                                          .properties.isDefinedBy.identifier,
+                                      value: Maybe.empty(),
+                                    }),
+                              ),
+                        }).chain((isDefinedBy) =>
+                          $shaclPropertyFromRdf({
+                            graph: $parameters.graph,
+                            resource: $parameters.resource,
+                            propertySchema: $schema.properties.labels,
+                            typeFromRdf: (resourceValues) =>
+                              resourceValues
+                                .chain((values) =>
+                                  $fromRdfPreferredLanguages(
+                                    values,
+                                    $parameters.preferredLanguages,
+                                  ),
+                                )
+                                .chain((values) =>
+                                  values.chainMap((value) => value.toString()),
                                 )
                                 .map((values) => values.toArray())
                                 .map((valuesArray) =>
                                   Resource.Values.fromValue({
                                     focusResource: $parameters.resource,
-                                    predicate:
+                                    propertyPath:
                                       BaseShaclCoreShapeStatic.$schema
-                                        .properties.hasValues.identifier,
+                                        .properties.labels.identifier,
                                     value: valuesArray,
                                   }),
-                                )
-                                .chain((values) => values.head())
-                                .chain((hasValues) =>
-                                  Either.of<
-                                    Error,
-                                    Resource.Values<Resource.TermValue>
-                                  >(
-                                    $parameters.resource.values(
-                                      $schema.properties.in_.identifier,
-                                      {
-                                        graph: undefined,
-                                        unique: true,
-                                      },
+                                ),
+                          }).chain((labels) =>
+                            $shaclPropertyFromRdf({
+                              graph: $parameters.graph,
+                              resource: $parameters.resource,
+                              propertySchema: $schema.properties.languageIn,
+                              typeFromRdf: (resourceValues) =>
+                                resourceValues
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toList({
+                                        graph: $parameters.graph,
+                                      }),
                                     ),
                                   )
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toList({ graph: undefined }),
-                                      ),
-                                    )
-                                    .chain((valueLists) =>
-                                      valueLists.chainMap((valueList) =>
-                                        Either.of<
-                                          Error,
-                                          Resource.Values<Resource.TermValue>
-                                        >(
-                                          Resource.Values.fromArray({
-                                            focusResource: $parameters.resource,
-                                            predicate:
-                                              BaseShaclCoreShapeStatic.$schema
-                                                .properties.in_.identifier,
-                                            values: valueList,
-                                          }),
-                                        ).chain((values) =>
+                                  .chain((valueLists) =>
+                                    valueLists.chainMap((valueList) =>
+                                      Right(
+                                        Resource.Values.fromArray({
+                                          focusResource: $parameters.resource,
+                                          propertyPath:
+                                            BaseShaclCoreShapeStatic.$schema
+                                              .properties.languageIn.identifier,
+                                          values: valueList.toArray(),
+                                        }),
+                                      )
+                                        .chain((values) =>
+                                          $fromRdfPreferredLanguages(
+                                            values,
+                                            $parameters.preferredLanguages,
+                                          ),
+                                        )
+                                        .chain((values) =>
                                           values.chainMap((value) =>
-                                            Either.of<
-                                              Error,
-                                              BlankNode | Literal | NamedNode
-                                            >(value.toTerm()).chain((term) => {
-                                              switch (term.termType) {
-                                                case "NamedNode":
-                                                case "Literal":
-                                                  return Either.of<
-                                                    Error,
-                                                    NamedNode | Literal
-                                                  >(term);
-                                                default:
-                                                  return Left<
-                                                    Error,
-                                                    NamedNode | Literal
-                                                  >(
-                                                    new Resource.MistypedTermValueError(
-                                                      {
-                                                        actualValue: term,
-                                                        expectedValueType:
-                                                          "(NamedNode | Literal)",
-                                                        focusResource:
-                                                          $parameters.resource,
-                                                        predicate:
-                                                          BaseShaclCoreShapeStatic
-                                                            .$schema.properties
-                                                            .in_.identifier,
-                                                      },
-                                                    ),
-                                                  );
-                                              }
-                                            }),
+                                            value.toString(),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                    .map((valueLists) =>
-                                      valueLists.map((valueList) =>
-                                        valueList.toArray(),
-                                      ),
+                                    ),
+                                  )
+                                  .map((valueLists) =>
+                                    valueLists.map((valueList) =>
+                                      valueList.toArray(),
+                                    ),
+                                  )
+                                  .map((values) =>
+                                    values.length > 0
+                                      ? values.map((value) => Maybe.of(value))
+                                      : Resource.Values.fromValue<
+                                          Maybe<readonly string[]>
+                                        >({
+                                          focusResource: $parameters.resource,
+                                          propertyPath:
+                                            BaseShaclCoreShapeStatic.$schema
+                                              .properties.languageIn.identifier,
+                                          value: Maybe.empty(),
+                                        }),
+                                  ),
+                            }).chain((languageIn) =>
+                              $shaclPropertyFromRdf({
+                                graph: $parameters.graph,
+                                resource: $parameters.resource,
+                                propertySchema: $schema.properties.maxCount,
+                                typeFromRdf: (resourceValues) =>
+                                  resourceValues
+                                    .chain((values) =>
+                                      values.chainMap((value) => value.toInt()),
                                     )
                                     .map((values) =>
                                       values.length > 0
                                         ? values.map((value) => Maybe.of(value))
                                         : Resource.Values.fromValue<
-                                            Maybe<
-                                              readonly (NamedNode | Literal)[]
-                                            >
+                                            Maybe<number>
                                           >({
                                             focusResource: $parameters.resource,
-                                            predicate:
+                                            propertyPath:
                                               BaseShaclCoreShapeStatic.$schema
-                                                .properties.in_.identifier,
+                                                .properties.maxCount.identifier,
                                             value: Maybe.empty(),
                                           }),
-                                    )
-                                    .chain((values) => values.head())
-                                    .chain((in_) =>
-                                      Either.of<
-                                        Error,
-                                        Resource.Values<Resource.TermValue>
-                                      >(
-                                        $parameters.resource.values(
-                                          $schema.properties.isDefinedBy
-                                            .identifier,
-                                          {
-                                            graph: undefined,
-                                            unique: true,
-                                          },
+                                    ),
+                              }).chain((maxCount) =>
+                                $shaclPropertyFromRdf({
+                                  graph: $parameters.graph,
+                                  resource: $parameters.resource,
+                                  propertySchema:
+                                    $schema.properties.maxExclusive,
+                                  typeFromRdf: (resourceValues) =>
+                                    resourceValues
+                                      .chain((values) =>
+                                        $fromRdfPreferredLanguages(
+                                          values,
+                                          $parameters.preferredLanguages,
                                         ),
                                       )
+                                      .chain((values) =>
+                                        values.chainMap((value) =>
+                                          value.toLiteral(),
+                                        ),
+                                      )
+                                      .map((values) =>
+                                        values.length > 0
+                                          ? values.map((value) =>
+                                              Maybe.of(value),
+                                            )
+                                          : Resource.Values.fromValue<
+                                              Maybe<Literal>
+                                            >({
+                                              focusResource:
+                                                $parameters.resource,
+                                              propertyPath:
+                                                BaseShaclCoreShapeStatic.$schema
+                                                  .properties.maxExclusive
+                                                  .identifier,
+                                              value: Maybe.empty(),
+                                            }),
+                                      ),
+                                }).chain((maxExclusive) =>
+                                  $shaclPropertyFromRdf({
+                                    graph: $parameters.graph,
+                                    resource: $parameters.resource,
+                                    propertySchema:
+                                      $schema.properties.maxInclusive,
+                                    typeFromRdf: (resourceValues) =>
+                                      resourceValues
+                                        .chain((values) =>
+                                          $fromRdfPreferredLanguages(
+                                            values,
+                                            $parameters.preferredLanguages,
+                                          ),
+                                        )
                                         .chain((values) =>
                                           values.chainMap((value) =>
-                                            value.toIdentifier(),
+                                            value.toLiteral(),
                                           ),
                                         )
                                         .map((values) =>
@@ -1158,133 +1290,131 @@ export namespace BaseShaclCoreShapeStatic {
                                                 Maybe.of(value),
                                               )
                                             : Resource.Values.fromValue<
-                                                Maybe<BlankNode | NamedNode>
+                                                Maybe<Literal>
                                               >({
                                                 focusResource:
                                                   $parameters.resource,
-                                                predicate:
+                                                propertyPath:
                                                   BaseShaclCoreShapeStatic
                                                     .$schema.properties
-                                                    .isDefinedBy.identifier,
+                                                    .maxInclusive.identifier,
                                                 value: Maybe.empty(),
                                               }),
-                                        )
-                                        .chain((values) => values.head())
-                                        .chain((isDefinedBy) =>
-                                          Either.of<
-                                            Error,
-                                            Resource.Values<Resource.TermValue>
-                                          >(
-                                            $parameters.resource.values(
-                                              $schema.properties.labels
-                                                .identifier,
-                                              {
-                                                graph: undefined,
-                                                unique: true,
-                                              },
+                                        ),
+                                  }).chain((maxInclusive) =>
+                                    $shaclPropertyFromRdf({
+                                      graph: $parameters.graph,
+                                      resource: $parameters.resource,
+                                      propertySchema:
+                                        $schema.properties.maxLength,
+                                      typeFromRdf: (resourceValues) =>
+                                        resourceValues
+                                          .chain((values) =>
+                                            values.chainMap((value) =>
+                                              value.toInt(),
                                             ),
                                           )
-                                            .chain((values) =>
-                                              $fromRdfPreferredLanguages({
-                                                focusResource:
-                                                  $parameters.resource,
-                                                predicate:
-                                                  BaseShaclCoreShapeStatic
-                                                    .$schema.properties.labels
-                                                    .identifier,
-                                                preferredLanguages:
-                                                  $parameters.preferredLanguages,
-                                                values,
-                                              }),
-                                            )
+                                          .map((values) =>
+                                            values.length > 0
+                                              ? values.map((value) =>
+                                                  Maybe.of(value),
+                                                )
+                                              : Resource.Values.fromValue<
+                                                  Maybe<number>
+                                                >({
+                                                  focusResource:
+                                                    $parameters.resource,
+                                                  propertyPath:
+                                                    BaseShaclCoreShapeStatic
+                                                      .$schema.properties
+                                                      .maxLength.identifier,
+                                                  value: Maybe.empty(),
+                                                }),
+                                          ),
+                                    }).chain((maxLength) =>
+                                      $shaclPropertyFromRdf({
+                                        graph: $parameters.graph,
+                                        resource: $parameters.resource,
+                                        propertySchema:
+                                          $schema.properties.minCount,
+                                        typeFromRdf: (resourceValues) =>
+                                          resourceValues
                                             .chain((values) =>
                                               values.chainMap((value) =>
-                                                value.toString(),
+                                                value.toInt(),
                                               ),
                                             )
-                                            .map((values) => values.toArray())
-                                            .map((valuesArray) =>
-                                              Resource.Values.fromValue({
-                                                focusResource:
-                                                  $parameters.resource,
-                                                predicate:
-                                                  BaseShaclCoreShapeStatic
-                                                    .$schema.properties.labels
-                                                    .identifier,
-                                                value: valuesArray,
-                                              }),
-                                            )
-                                            .chain((values) => values.head())
-                                            .chain((labels) =>
-                                              Either.of<
-                                                Error,
-                                                Resource.Values<Resource.TermValue>
-                                              >(
-                                                $parameters.resource.values(
-                                                  $schema.properties.languageIn
-                                                    .identifier,
-                                                  {
-                                                    graph: undefined,
-                                                    unique: true,
-                                                  },
+                                            .map((values) =>
+                                              values.length > 0
+                                                ? values.map((value) =>
+                                                    Maybe.of(value),
+                                                  )
+                                                : Resource.Values.fromValue<
+                                                    Maybe<number>
+                                                  >({
+                                                    focusResource:
+                                                      $parameters.resource,
+                                                    propertyPath:
+                                                      BaseShaclCoreShapeStatic
+                                                        .$schema.properties
+                                                        .minCount.identifier,
+                                                    value: Maybe.empty(),
+                                                  }),
+                                            ),
+                                      }).chain((minCount) =>
+                                        $shaclPropertyFromRdf({
+                                          graph: $parameters.graph,
+                                          resource: $parameters.resource,
+                                          propertySchema:
+                                            $schema.properties.minExclusive,
+                                          typeFromRdf: (resourceValues) =>
+                                            resourceValues
+                                              .chain((values) =>
+                                                $fromRdfPreferredLanguages(
+                                                  values,
+                                                  $parameters.preferredLanguages,
                                                 ),
                                               )
+                                              .chain((values) =>
+                                                values.chainMap((value) =>
+                                                  value.toLiteral(),
+                                                ),
+                                              )
+                                              .map((values) =>
+                                                values.length > 0
+                                                  ? values.map((value) =>
+                                                      Maybe.of(value),
+                                                    )
+                                                  : Resource.Values.fromValue<
+                                                      Maybe<Literal>
+                                                    >({
+                                                      focusResource:
+                                                        $parameters.resource,
+                                                      propertyPath:
+                                                        BaseShaclCoreShapeStatic
+                                                          .$schema.properties
+                                                          .minExclusive
+                                                          .identifier,
+                                                      value: Maybe.empty(),
+                                                    }),
+                                              ),
+                                        }).chain((minExclusive) =>
+                                          $shaclPropertyFromRdf({
+                                            graph: $parameters.graph,
+                                            resource: $parameters.resource,
+                                            propertySchema:
+                                              $schema.properties.minInclusive,
+                                            typeFromRdf: (resourceValues) =>
+                                              resourceValues
+                                                .chain((values) =>
+                                                  $fromRdfPreferredLanguages(
+                                                    values,
+                                                    $parameters.preferredLanguages,
+                                                  ),
+                                                )
                                                 .chain((values) =>
                                                   values.chainMap((value) =>
-                                                    value.toList({
-                                                      graph: undefined,
-                                                    }),
-                                                  ),
-                                                )
-                                                .chain((valueLists) =>
-                                                  valueLists.chainMap(
-                                                    (valueList) =>
-                                                      Either.of<
-                                                        Error,
-                                                        Resource.Values<Resource.TermValue>
-                                                      >(
-                                                        Resource.Values.fromArray(
-                                                          {
-                                                            focusResource:
-                                                              $parameters.resource,
-                                                            predicate:
-                                                              BaseShaclCoreShapeStatic
-                                                                .$schema
-                                                                .properties
-                                                                .languageIn
-                                                                .identifier,
-                                                            values: valueList,
-                                                          },
-                                                        ),
-                                                      )
-                                                        .chain((values) =>
-                                                          $fromRdfPreferredLanguages(
-                                                            {
-                                                              focusResource:
-                                                                $parameters.resource,
-                                                              predicate:
-                                                                BaseShaclCoreShapeStatic
-                                                                  .$schema
-                                                                  .properties
-                                                                  .languageIn
-                                                                  .identifier,
-                                                              preferredLanguages:
-                                                                $parameters.preferredLanguages,
-                                                              values,
-                                                            },
-                                                          ),
-                                                        )
-                                                        .chain((values) =>
-                                                          values.chainMap(
-                                                            (value) =>
-                                                              value.toString(),
-                                                          ),
-                                                        ),
-                                                  ),
-                                                )
-                                                .map((valueLists) =>
-                                                  valueLists.map((valueList) =>
-                                                    valueList.toArray(),
+                                                    value.toLiteral(),
                                                   ),
                                                 )
                                                 .map((values) =>
@@ -1293,38 +1423,80 @@ export namespace BaseShaclCoreShapeStatic {
                                                         Maybe.of(value),
                                                       )
                                                     : Resource.Values.fromValue<
-                                                        Maybe<readonly string[]>
+                                                        Maybe<Literal>
                                                       >({
                                                         focusResource:
                                                           $parameters.resource,
-                                                        predicate:
+                                                        propertyPath:
                                                           BaseShaclCoreShapeStatic
                                                             .$schema.properties
-                                                            .languageIn
+                                                            .minInclusive
                                                             .identifier,
                                                         value: Maybe.empty(),
                                                       }),
-                                                )
-                                                .chain((values) =>
-                                                  values.head(),
-                                                )
-                                                .chain((languageIn) =>
-                                                  Either.of<
-                                                    Error,
-                                                    Resource.Values<Resource.TermValue>
-                                                  >(
-                                                    $parameters.resource.values(
-                                                      $schema.properties
-                                                        .maxCount.identifier,
-                                                      {
-                                                        graph: undefined,
-                                                        unique: true,
-                                                      },
+                                                ),
+                                          }).chain((minInclusive) =>
+                                            $shaclPropertyFromRdf({
+                                              graph: $parameters.graph,
+                                              resource: $parameters.resource,
+                                              propertySchema:
+                                                $schema.properties.minLength,
+                                              typeFromRdf: (resourceValues) =>
+                                                resourceValues
+                                                  .chain((values) =>
+                                                    values.chainMap((value) =>
+                                                      value.toInt(),
                                                     ),
                                                   )
+                                                  .map((values) =>
+                                                    values.length > 0
+                                                      ? values.map((value) =>
+                                                          Maybe.of(value),
+                                                        )
+                                                      : Resource.Values.fromValue<
+                                                          Maybe<number>
+                                                        >({
+                                                          focusResource:
+                                                            $parameters.resource,
+                                                          propertyPath:
+                                                            BaseShaclCoreShapeStatic
+                                                              .$schema
+                                                              .properties
+                                                              .minLength
+                                                              .identifier,
+                                                          value: Maybe.empty(),
+                                                        }),
+                                                  ),
+                                            }).chain((minLength) =>
+                                              $shaclPropertyFromRdf({
+                                                graph: $parameters.graph,
+                                                resource: $parameters.resource,
+                                                propertySchema:
+                                                  $schema.properties.nodeKind,
+                                                typeFromRdf: (resourceValues) =>
+                                                  resourceValues
                                                     .chain((values) =>
                                                       values.chainMap((value) =>
-                                                        value.toNumber(),
+                                                        value.toIri([
+                                                          dataFactory.namedNode(
+                                                            "http://www.w3.org/ns/shacl#BlankNode",
+                                                          ),
+                                                          dataFactory.namedNode(
+                                                            "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
+                                                          ),
+                                                          dataFactory.namedNode(
+                                                            "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
+                                                          ),
+                                                          dataFactory.namedNode(
+                                                            "http://www.w3.org/ns/shacl#IRI",
+                                                          ),
+                                                          dataFactory.namedNode(
+                                                            "http://www.w3.org/ns/shacl#IRIOrLiteral",
+                                                          ),
+                                                          dataFactory.namedNode(
+                                                            "http://www.w3.org/ns/shacl#Literal",
+                                                          ),
+                                                        ]),
                                                       ),
                                                     )
                                                     .map((values) =>
@@ -1333,1220 +1505,357 @@ export namespace BaseShaclCoreShapeStatic {
                                                             Maybe.of(value),
                                                           )
                                                         : Resource.Values.fromValue<
-                                                            Maybe<number>
+                                                            Maybe<
+                                                              NamedNode<
+                                                                | "http://www.w3.org/ns/shacl#BlankNode"
+                                                                | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+                                                                | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+                                                                | "http://www.w3.org/ns/shacl#IRI"
+                                                                | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+                                                                | "http://www.w3.org/ns/shacl#Literal"
+                                                              >
+                                                            >
                                                           >({
                                                             focusResource:
                                                               $parameters.resource,
-                                                            predicate:
+                                                            propertyPath:
                                                               BaseShaclCoreShapeStatic
                                                                 .$schema
                                                                 .properties
-                                                                .maxCount
+                                                                .nodeKind
                                                                 .identifier,
                                                             value:
                                                               Maybe.empty(),
                                                           }),
-                                                    )
-                                                    .chain((values) =>
-                                                      values.head(),
-                                                    )
-                                                    .chain((maxCount) =>
-                                                      Either.of<
-                                                        Error,
-                                                        Resource.Values<Resource.TermValue>
-                                                      >(
-                                                        $parameters.resource.values(
-                                                          $schema.properties
-                                                            .maxExclusive
-                                                            .identifier,
-                                                          {
-                                                            graph: undefined,
-                                                            unique: true,
-                                                          },
+                                                    ),
+                                              }).chain((nodeKind) =>
+                                                $shaclPropertyFromRdf({
+                                                  graph: $parameters.graph,
+                                                  resource:
+                                                    $parameters.resource,
+                                                  propertySchema:
+                                                    $schema.properties.nodes,
+                                                  typeFromRdf: (
+                                                    resourceValues,
+                                                  ) =>
+                                                    resourceValues
+                                                      .chain((values) =>
+                                                        values.chainMap(
+                                                          (value) =>
+                                                            value.toIdentifier(),
                                                         ),
                                                       )
-                                                        .chain((values) =>
-                                                          $fromRdfPreferredLanguages(
-                                                            {
-                                                              focusResource:
-                                                                $parameters.resource,
-                                                              predicate:
-                                                                BaseShaclCoreShapeStatic
-                                                                  .$schema
-                                                                  .properties
-                                                                  .maxExclusive
-                                                                  .identifier,
-                                                              preferredLanguages:
-                                                                $parameters.preferredLanguages,
-                                                              values,
-                                                            },
-                                                          ),
-                                                        )
+                                                      .map((values) =>
+                                                        values.toArray(),
+                                                      )
+                                                      .map((valuesArray) =>
+                                                        Resource.Values.fromValue(
+                                                          {
+                                                            focusResource:
+                                                              $parameters.resource,
+                                                            propertyPath:
+                                                              BaseShaclCoreShapeStatic
+                                                                .$schema
+                                                                .properties
+                                                                .nodes
+                                                                .identifier,
+                                                            value: valuesArray,
+                                                          },
+                                                        ),
+                                                      ),
+                                                }).chain((nodes) =>
+                                                  $shaclPropertyFromRdf({
+                                                    graph: $parameters.graph,
+                                                    resource:
+                                                      $parameters.resource,
+                                                    propertySchema:
+                                                      $schema.properties.not,
+                                                    typeFromRdf: (
+                                                      resourceValues,
+                                                    ) =>
+                                                      resourceValues
                                                         .chain((values) =>
                                                           values.chainMap(
                                                             (value) =>
-                                                              value.toLiteral(),
+                                                              value.toIdentifier(),
                                                           ),
                                                         )
                                                         .map((values) =>
-                                                          values.length > 0
-                                                            ? values.map(
-                                                                (value) =>
-                                                                  Maybe.of(
-                                                                    value,
+                                                          values.toArray(),
+                                                        )
+                                                        .map((valuesArray) =>
+                                                          Resource.Values.fromValue(
+                                                            {
+                                                              focusResource:
+                                                                $parameters.resource,
+                                                              propertyPath:
+                                                                BaseShaclCoreShapeStatic
+                                                                  .$schema
+                                                                  .properties
+                                                                  .not
+                                                                  .identifier,
+                                                              value:
+                                                                valuesArray,
+                                                            },
+                                                          ),
+                                                        ),
+                                                  }).chain((not) =>
+                                                    $shaclPropertyFromRdf({
+                                                      graph: $parameters.graph,
+                                                      resource:
+                                                        $parameters.resource,
+                                                      propertySchema:
+                                                        $schema.properties.or,
+                                                      typeFromRdf: (
+                                                        resourceValues,
+                                                      ) =>
+                                                        resourceValues
+                                                          .chain((values) =>
+                                                            values.chainMap(
+                                                              (value) =>
+                                                                value.toList({
+                                                                  graph:
+                                                                    $parameters.graph,
+                                                                }),
+                                                            ),
+                                                          )
+                                                          .chain((valueLists) =>
+                                                            valueLists.chainMap(
+                                                              (valueList) =>
+                                                                Right(
+                                                                  Resource.Values.fromArray(
+                                                                    {
+                                                                      focusResource:
+                                                                        $parameters.resource,
+                                                                      propertyPath:
+                                                                        BaseShaclCoreShapeStatic
+                                                                          .$schema
+                                                                          .properties
+                                                                          .or
+                                                                          .identifier,
+                                                                      values:
+                                                                        valueList.toArray(),
+                                                                    },
                                                                   ),
-                                                              )
-                                                            : Resource.Values.fromValue<
-                                                                Maybe<Literal>
-                                                              >({
+                                                                ).chain(
+                                                                  (values) =>
+                                                                    values.chainMap(
+                                                                      (value) =>
+                                                                        value.toIdentifier(),
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                          )
+                                                          .map((valueLists) =>
+                                                            valueLists.map(
+                                                              (valueList) =>
+                                                                valueList.toArray(),
+                                                            ),
+                                                          )
+                                                          .map((values) =>
+                                                            values.toArray(),
+                                                          )
+                                                          .map((valuesArray) =>
+                                                            Resource.Values.fromValue(
+                                                              {
                                                                 focusResource:
                                                                   $parameters.resource,
-                                                                predicate:
+                                                                propertyPath:
                                                                   BaseShaclCoreShapeStatic
                                                                     .$schema
                                                                     .properties
-                                                                    .maxExclusive
+                                                                    .or
                                                                     .identifier,
                                                                 value:
-                                                                  Maybe.empty(),
-                                                              }),
-                                                        )
-                                                        .chain((values) =>
-                                                          values.head(),
-                                                        )
-                                                        .chain((maxExclusive) =>
-                                                          Either.of<
-                                                            Error,
-                                                            Resource.Values<Resource.TermValue>
-                                                          >(
-                                                            $parameters.resource.values(
-                                                              $schema.properties
-                                                                .maxInclusive
-                                                                .identifier,
-                                                              {
-                                                                graph:
-                                                                  undefined,
-                                                                unique: true,
+                                                                  valuesArray,
                                                               },
                                                             ),
-                                                          )
+                                                          ),
+                                                    }).chain((or) =>
+                                                      $shaclPropertyFromRdf({
+                                                        graph:
+                                                          $parameters.graph,
+                                                        resource:
+                                                          $parameters.resource,
+                                                        propertySchema:
+                                                          $schema.properties
+                                                            .patterns,
+                                                        typeFromRdf: (
+                                                          resourceValues,
+                                                        ) =>
+                                                          resourceValues
                                                             .chain((values) =>
                                                               $fromRdfPreferredLanguages(
-                                                                {
-                                                                  focusResource:
-                                                                    $parameters.resource,
-                                                                  predicate:
-                                                                    BaseShaclCoreShapeStatic
-                                                                      .$schema
-                                                                      .properties
-                                                                      .maxInclusive
-                                                                      .identifier,
-                                                                  preferredLanguages:
-                                                                    $parameters.preferredLanguages,
-                                                                  values,
-                                                                },
+                                                                values,
+                                                                $parameters.preferredLanguages,
                                                               ),
                                                             )
                                                             .chain((values) =>
                                                               values.chainMap(
                                                                 (value) =>
-                                                                  value.toLiteral(),
+                                                                  value.toString(),
                                                               ),
                                                             )
                                                             .map((values) =>
-                                                              values.length > 0
-                                                                ? values.map(
-                                                                    (value) =>
-                                                                      Maybe.of(
-                                                                        value,
-                                                                      ),
-                                                                  )
-                                                                : Resource.Values.fromValue<
-                                                                    Maybe<Literal>
-                                                                  >({
+                                                              values.toArray(),
+                                                            )
+                                                            .map(
+                                                              (valuesArray) =>
+                                                                Resource.Values.fromValue(
+                                                                  {
                                                                     focusResource:
                                                                       $parameters.resource,
-                                                                    predicate:
+                                                                    propertyPath:
                                                                       BaseShaclCoreShapeStatic
                                                                         .$schema
                                                                         .properties
-                                                                        .maxInclusive
+                                                                        .patterns
                                                                         .identifier,
                                                                     value:
-                                                                      Maybe.empty(),
-                                                                  }),
-                                                            )
-                                                            .chain((values) =>
-                                                              values.head(),
-                                                            )
-                                                            .chain(
-                                                              (maxInclusive) =>
-                                                                Either.of<
-                                                                  Error,
-                                                                  Resource.Values<Resource.TermValue>
-                                                                >(
-                                                                  $parameters.resource.values(
-                                                                    $schema
-                                                                      .properties
-                                                                      .maxLength
-                                                                      .identifier,
-                                                                    {
-                                                                      graph:
-                                                                        undefined,
-                                                                      unique: true,
-                                                                    },
-                                                                  ),
-                                                                )
-                                                                  .chain(
-                                                                    (values) =>
-                                                                      values.chainMap(
-                                                                        (
-                                                                          value,
-                                                                        ) =>
-                                                                          value.toNumber(),
-                                                                      ),
-                                                                  )
-                                                                  .map(
-                                                                    (values) =>
-                                                                      values.length >
-                                                                      0
-                                                                        ? values.map(
-                                                                            (
-                                                                              value,
-                                                                            ) =>
-                                                                              Maybe.of(
-                                                                                value,
-                                                                              ),
-                                                                          )
-                                                                        : Resource.Values.fromValue<
-                                                                            Maybe<number>
-                                                                          >({
+                                                                      valuesArray,
+                                                                  },
+                                                                ),
+                                                            ),
+                                                      }).chain((patterns) =>
+                                                        $shaclPropertyFromRdf({
+                                                          graph:
+                                                            $parameters.graph,
+                                                          resource:
+                                                            $parameters.resource,
+                                                          propertySchema:
+                                                            $schema.properties
+                                                              .xone,
+                                                          typeFromRdf: (
+                                                            resourceValues,
+                                                          ) =>
+                                                            resourceValues
+                                                              .chain((values) =>
+                                                                values.chainMap(
+                                                                  (value) =>
+                                                                    value.toList(
+                                                                      {
+                                                                        graph:
+                                                                          $parameters.graph,
+                                                                      },
+                                                                    ),
+                                                                ),
+                                                              )
+                                                              .chain(
+                                                                (valueLists) =>
+                                                                  valueLists.chainMap(
+                                                                    (
+                                                                      valueList,
+                                                                    ) =>
+                                                                      Right(
+                                                                        Resource.Values.fromArray(
+                                                                          {
                                                                             focusResource:
                                                                               $parameters.resource,
-                                                                            predicate:
+                                                                            propertyPath:
                                                                               BaseShaclCoreShapeStatic
                                                                                 .$schema
                                                                                 .properties
-                                                                                .maxLength
+                                                                                .xone
                                                                                 .identifier,
-                                                                            value:
-                                                                              Maybe.empty(),
-                                                                          }),
-                                                                  )
-                                                                  .chain(
-                                                                    (values) =>
-                                                                      values.head(),
-                                                                  )
-                                                                  .chain(
-                                                                    (
-                                                                      maxLength,
-                                                                    ) =>
-                                                                      Either.of<
-                                                                        Error,
-                                                                        Resource.Values<Resource.TermValue>
-                                                                      >(
-                                                                        $parameters.resource.values(
-                                                                          $schema
-                                                                            .properties
-                                                                            .minCount
-                                                                            .identifier,
-                                                                          {
-                                                                            graph:
-                                                                              undefined,
-                                                                            unique: true,
+                                                                            values:
+                                                                              valueList.toArray(),
                                                                           },
                                                                         ),
-                                                                      )
-                                                                        .chain(
-                                                                          (
-                                                                            values,
-                                                                          ) =>
-                                                                            values.chainMap(
-                                                                              (
-                                                                                value,
-                                                                              ) =>
-                                                                                value.toNumber(),
-                                                                            ),
-                                                                        )
-                                                                        .map(
-                                                                          (
-                                                                            values,
-                                                                          ) =>
-                                                                            values.length >
-                                                                            0
-                                                                              ? values.map(
-                                                                                  (
-                                                                                    value,
-                                                                                  ) =>
-                                                                                    Maybe.of(
-                                                                                      value,
-                                                                                    ),
-                                                                                )
-                                                                              : Resource.Values.fromValue<
-                                                                                  Maybe<number>
-                                                                                >(
-                                                                                  {
-                                                                                    focusResource:
-                                                                                      $parameters.resource,
-                                                                                    predicate:
-                                                                                      BaseShaclCoreShapeStatic
-                                                                                        .$schema
-                                                                                        .properties
-                                                                                        .minCount
-                                                                                        .identifier,
-                                                                                    value:
-                                                                                      Maybe.empty(),
-                                                                                  },
-                                                                                ),
-                                                                        )
-                                                                        .chain(
-                                                                          (
-                                                                            values,
-                                                                          ) =>
-                                                                            values.head(),
-                                                                        )
-                                                                        .chain(
-                                                                          (
-                                                                            minCount,
-                                                                          ) =>
-                                                                            Either.of<
-                                                                              Error,
-                                                                              Resource.Values<Resource.TermValue>
-                                                                            >(
-                                                                              $parameters.resource.values(
-                                                                                $schema
-                                                                                  .properties
-                                                                                  .minExclusive
-                                                                                  .identifier,
-                                                                                {
-                                                                                  graph:
-                                                                                    undefined,
-                                                                                  unique: true,
-                                                                                },
-                                                                              ),
-                                                                            )
-                                                                              .chain(
-                                                                                (
-                                                                                  values,
-                                                                                ) =>
-                                                                                  $fromRdfPreferredLanguages(
-                                                                                    {
-                                                                                      focusResource:
-                                                                                        $parameters.resource,
-                                                                                      predicate:
-                                                                                        BaseShaclCoreShapeStatic
-                                                                                          .$schema
-                                                                                          .properties
-                                                                                          .minExclusive
-                                                                                          .identifier,
-                                                                                      preferredLanguages:
-                                                                                        $parameters.preferredLanguages,
-                                                                                      values,
-                                                                                    },
-                                                                                  ),
-                                                                              )
-                                                                              .chain(
-                                                                                (
-                                                                                  values,
-                                                                                ) =>
-                                                                                  values.chainMap(
-                                                                                    (
-                                                                                      value,
-                                                                                    ) =>
-                                                                                      value.toLiteral(),
-                                                                                  ),
-                                                                              )
-                                                                              .map(
-                                                                                (
-                                                                                  values,
-                                                                                ) =>
-                                                                                  values.length >
-                                                                                  0
-                                                                                    ? values.map(
-                                                                                        (
-                                                                                          value,
-                                                                                        ) =>
-                                                                                          Maybe.of(
-                                                                                            value,
-                                                                                          ),
-                                                                                      )
-                                                                                    : Resource.Values.fromValue<
-                                                                                        Maybe<Literal>
-                                                                                      >(
-                                                                                        {
-                                                                                          focusResource:
-                                                                                            $parameters.resource,
-                                                                                          predicate:
-                                                                                            BaseShaclCoreShapeStatic
-                                                                                              .$schema
-                                                                                              .properties
-                                                                                              .minExclusive
-                                                                                              .identifier,
-                                                                                          value:
-                                                                                            Maybe.empty(),
-                                                                                        },
-                                                                                      ),
-                                                                              )
-                                                                              .chain(
-                                                                                (
-                                                                                  values,
-                                                                                ) =>
-                                                                                  values.head(),
-                                                                              )
-                                                                              .chain(
-                                                                                (
-                                                                                  minExclusive,
-                                                                                ) =>
-                                                                                  Either.of<
-                                                                                    Error,
-                                                                                    Resource.Values<Resource.TermValue>
-                                                                                  >(
-                                                                                    $parameters.resource.values(
-                                                                                      $schema
-                                                                                        .properties
-                                                                                        .minInclusive
-                                                                                        .identifier,
-                                                                                      {
-                                                                                        graph:
-                                                                                          undefined,
-                                                                                        unique: true,
-                                                                                      },
-                                                                                    ),
-                                                                                  )
-                                                                                    .chain(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
-                                                                                        $fromRdfPreferredLanguages(
-                                                                                          {
-                                                                                            focusResource:
-                                                                                              $parameters.resource,
-                                                                                            predicate:
-                                                                                              BaseShaclCoreShapeStatic
-                                                                                                .$schema
-                                                                                                .properties
-                                                                                                .minInclusive
-                                                                                                .identifier,
-                                                                                            preferredLanguages:
-                                                                                              $parameters.preferredLanguages,
-                                                                                            values,
-                                                                                          },
-                                                                                        ),
-                                                                                    )
-                                                                                    .chain(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
-                                                                                        values.chainMap(
-                                                                                          (
-                                                                                            value,
-                                                                                          ) =>
-                                                                                            value.toLiteral(),
-                                                                                        ),
-                                                                                    )
-                                                                                    .map(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
-                                                                                        values.length >
-                                                                                        0
-                                                                                          ? values.map(
-                                                                                              (
-                                                                                                value,
-                                                                                              ) =>
-                                                                                                Maybe.of(
-                                                                                                  value,
-                                                                                                ),
-                                                                                            )
-                                                                                          : Resource.Values.fromValue<
-                                                                                              Maybe<Literal>
-                                                                                            >(
-                                                                                              {
-                                                                                                focusResource:
-                                                                                                  $parameters.resource,
-                                                                                                predicate:
-                                                                                                  BaseShaclCoreShapeStatic
-                                                                                                    .$schema
-                                                                                                    .properties
-                                                                                                    .minInclusive
-                                                                                                    .identifier,
-                                                                                                value:
-                                                                                                  Maybe.empty(),
-                                                                                              },
-                                                                                            ),
-                                                                                    )
-                                                                                    .chain(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
-                                                                                        values.head(),
-                                                                                    )
-                                                                                    .chain(
-                                                                                      (
-                                                                                        minInclusive,
-                                                                                      ) =>
-                                                                                        Either.of<
-                                                                                          Error,
-                                                                                          Resource.Values<Resource.TermValue>
-                                                                                        >(
-                                                                                          $parameters.resource.values(
-                                                                                            $schema
-                                                                                              .properties
-                                                                                              .minLength
-                                                                                              .identifier,
-                                                                                            {
-                                                                                              graph:
-                                                                                                undefined,
-                                                                                              unique: true,
-                                                                                            },
-                                                                                          ),
-                                                                                        )
-                                                                                          .chain(
-                                                                                            (
-                                                                                              values,
-                                                                                            ) =>
-                                                                                              values.chainMap(
-                                                                                                (
-                                                                                                  value,
-                                                                                                ) =>
-                                                                                                  value.toNumber(),
-                                                                                              ),
-                                                                                          )
-                                                                                          .map(
-                                                                                            (
-                                                                                              values,
-                                                                                            ) =>
-                                                                                              values.length >
-                                                                                              0
-                                                                                                ? values.map(
-                                                                                                    (
-                                                                                                      value,
-                                                                                                    ) =>
-                                                                                                      Maybe.of(
-                                                                                                        value,
-                                                                                                      ),
-                                                                                                  )
-                                                                                                : Resource.Values.fromValue<
-                                                                                                    Maybe<number>
-                                                                                                  >(
-                                                                                                    {
-                                                                                                      focusResource:
-                                                                                                        $parameters.resource,
-                                                                                                      predicate:
-                                                                                                        BaseShaclCoreShapeStatic
-                                                                                                          .$schema
-                                                                                                          .properties
-                                                                                                          .minLength
-                                                                                                          .identifier,
-                                                                                                      value:
-                                                                                                        Maybe.empty(),
-                                                                                                    },
-                                                                                                  ),
-                                                                                          )
-                                                                                          .chain(
-                                                                                            (
-                                                                                              values,
-                                                                                            ) =>
-                                                                                              values.head(),
-                                                                                          )
-                                                                                          .chain(
-                                                                                            (
-                                                                                              minLength,
-                                                                                            ) =>
-                                                                                              Either.of<
-                                                                                                Error,
-                                                                                                Resource.Values<Resource.TermValue>
-                                                                                              >(
-                                                                                                $parameters.resource.values(
-                                                                                                  $schema
-                                                                                                    .properties
-                                                                                                    .nodeKind
-                                                                                                    .identifier,
-                                                                                                  {
-                                                                                                    graph:
-                                                                                                      undefined,
-                                                                                                    unique: true,
-                                                                                                  },
-                                                                                                ),
-                                                                                              )
-                                                                                                .chain(
-                                                                                                  (
-                                                                                                    values,
-                                                                                                  ) =>
-                                                                                                    values.chainMap(
-                                                                                                      (
-                                                                                                        value,
-                                                                                                      ) =>
-                                                                                                        value
-                                                                                                          .toIri()
-                                                                                                          .chain(
-                                                                                                            (
-                                                                                                              iri,
-                                                                                                            ) => {
-                                                                                                              switch (
-                                                                                                                iri.value
-                                                                                                              ) {
-                                                                                                                case "http://www.w3.org/ns/shacl#BlankNode":
-                                                                                                                  return Either.of<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    iri as NamedNode<"http://www.w3.org/ns/shacl#BlankNode">,
-                                                                                                                  );
-                                                                                                                case "http://www.w3.org/ns/shacl#BlankNodeOrIRI":
-                                                                                                                  return Either.of<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    iri as NamedNode<"http://www.w3.org/ns/shacl#BlankNodeOrIRI">,
-                                                                                                                  );
-                                                                                                                case "http://www.w3.org/ns/shacl#BlankNodeOrLiteral":
-                                                                                                                  return Either.of<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    iri as NamedNode<"http://www.w3.org/ns/shacl#BlankNodeOrLiteral">,
-                                                                                                                  );
-                                                                                                                case "http://www.w3.org/ns/shacl#IRI":
-                                                                                                                  return Either.of<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    iri as NamedNode<"http://www.w3.org/ns/shacl#IRI">,
-                                                                                                                  );
-                                                                                                                case "http://www.w3.org/ns/shacl#IRIOrLiteral":
-                                                                                                                  return Either.of<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    iri as NamedNode<"http://www.w3.org/ns/shacl#IRIOrLiteral">,
-                                                                                                                  );
-                                                                                                                case "http://www.w3.org/ns/shacl#Literal":
-                                                                                                                  return Either.of<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    iri as NamedNode<"http://www.w3.org/ns/shacl#Literal">,
-                                                                                                                  );
-                                                                                                                default:
-                                                                                                                  return Left<
-                                                                                                                    Error,
-                                                                                                                    NamedNode<
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                                    >
-                                                                                                                  >(
-                                                                                                                    new Resource.MistypedTermValueError(
-                                                                                                                      {
-                                                                                                                        actualValue:
-                                                                                                                          iri,
-                                                                                                                        expectedValueType:
-                                                                                                                          'NamedNode<"http://www.w3.org/ns/shacl#BlankNode" | "http://www.w3.org/ns/shacl#BlankNodeOrIRI" | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral" | "http://www.w3.org/ns/shacl#IRI" | "http://www.w3.org/ns/shacl#IRIOrLiteral" | "http://www.w3.org/ns/shacl#Literal">',
-                                                                                                                        focusResource:
-                                                                                                                          $parameters.resource,
-                                                                                                                        predicate:
-                                                                                                                          BaseShaclCoreShapeStatic
-                                                                                                                            .$schema
-                                                                                                                            .properties
-                                                                                                                            .nodeKind
-                                                                                                                            .identifier,
-                                                                                                                      },
-                                                                                                                    ),
-                                                                                                                  );
-                                                                                                              }
-                                                                                                            },
-                                                                                                          ),
-                                                                                                    ),
-                                                                                                )
-                                                                                                .map(
-                                                                                                  (
-                                                                                                    values,
-                                                                                                  ) =>
-                                                                                                    values.length >
-                                                                                                    0
-                                                                                                      ? values.map(
-                                                                                                          (
-                                                                                                            value,
-                                                                                                          ) =>
-                                                                                                            Maybe.of(
-                                                                                                              value,
-                                                                                                            ),
-                                                                                                        )
-                                                                                                      : Resource.Values.fromValue<
-                                                                                                          Maybe<
-                                                                                                            NamedNode<
-                                                                                                              | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                              | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                              | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                              | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                              | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                              | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                            >
-                                                                                                          >
-                                                                                                        >(
-                                                                                                          {
-                                                                                                            focusResource:
-                                                                                                              $parameters.resource,
-                                                                                                            predicate:
-                                                                                                              BaseShaclCoreShapeStatic
-                                                                                                                .$schema
-                                                                                                                .properties
-                                                                                                                .nodeKind
-                                                                                                                .identifier,
-                                                                                                            value:
-                                                                                                              Maybe.empty(),
-                                                                                                          },
-                                                                                                        ),
-                                                                                                )
-                                                                                                .chain(
-                                                                                                  (
-                                                                                                    values,
-                                                                                                  ) =>
-                                                                                                    values.head(),
-                                                                                                )
-                                                                                                .chain(
-                                                                                                  (
-                                                                                                    nodeKind,
-                                                                                                  ) =>
-                                                                                                    Either.of<
-                                                                                                      Error,
-                                                                                                      Resource.Values<Resource.TermValue>
-                                                                                                    >(
-                                                                                                      $parameters.resource.values(
-                                                                                                        $schema
-                                                                                                          .properties
-                                                                                                          .nodes
-                                                                                                          .identifier,
-                                                                                                        {
-                                                                                                          graph:
-                                                                                                            undefined,
-                                                                                                          unique: true,
-                                                                                                        },
-                                                                                                      ),
-                                                                                                    )
-                                                                                                      .chain(
-                                                                                                        (
-                                                                                                          values,
-                                                                                                        ) =>
-                                                                                                          values.chainMap(
-                                                                                                            (
-                                                                                                              value,
-                                                                                                            ) =>
-                                                                                                              value.toIdentifier(),
-                                                                                                          ),
-                                                                                                      )
-                                                                                                      .map(
-                                                                                                        (
-                                                                                                          values,
-                                                                                                        ) =>
-                                                                                                          values.toArray(),
-                                                                                                      )
-                                                                                                      .map(
-                                                                                                        (
-                                                                                                          valuesArray,
-                                                                                                        ) =>
-                                                                                                          Resource.Values.fromValue(
-                                                                                                            {
-                                                                                                              focusResource:
-                                                                                                                $parameters.resource,
-                                                                                                              predicate:
-                                                                                                                BaseShaclCoreShapeStatic
-                                                                                                                  .$schema
-                                                                                                                  .properties
-                                                                                                                  .nodes
-                                                                                                                  .identifier,
-                                                                                                              value:
-                                                                                                                valuesArray,
-                                                                                                            },
-                                                                                                          ),
-                                                                                                      )
-                                                                                                      .chain(
-                                                                                                        (
-                                                                                                          values,
-                                                                                                        ) =>
-                                                                                                          values.head(),
-                                                                                                      )
-                                                                                                      .chain(
-                                                                                                        (
-                                                                                                          nodes,
-                                                                                                        ) =>
-                                                                                                          Either.of<
-                                                                                                            Error,
-                                                                                                            Resource.Values<Resource.TermValue>
-                                                                                                          >(
-                                                                                                            $parameters.resource.values(
-                                                                                                              $schema
-                                                                                                                .properties
-                                                                                                                .not
-                                                                                                                .identifier,
-                                                                                                              {
-                                                                                                                graph:
-                                                                                                                  undefined,
-                                                                                                                unique: true,
-                                                                                                              },
-                                                                                                            ),
-                                                                                                          )
-                                                                                                            .chain(
-                                                                                                              (
-                                                                                                                values,
-                                                                                                              ) =>
-                                                                                                                values.chainMap(
-                                                                                                                  (
-                                                                                                                    value,
-                                                                                                                  ) =>
-                                                                                                                    value.toIdentifier(),
-                                                                                                                ),
-                                                                                                            )
-                                                                                                            .map(
-                                                                                                              (
-                                                                                                                values,
-                                                                                                              ) =>
-                                                                                                                values.toArray(),
-                                                                                                            )
-                                                                                                            .map(
-                                                                                                              (
-                                                                                                                valuesArray,
-                                                                                                              ) =>
-                                                                                                                Resource.Values.fromValue(
-                                                                                                                  {
-                                                                                                                    focusResource:
-                                                                                                                      $parameters.resource,
-                                                                                                                    predicate:
-                                                                                                                      BaseShaclCoreShapeStatic
-                                                                                                                        .$schema
-                                                                                                                        .properties
-                                                                                                                        .not
-                                                                                                                        .identifier,
-                                                                                                                    value:
-                                                                                                                      valuesArray,
-                                                                                                                  },
-                                                                                                                ),
-                                                                                                            )
-                                                                                                            .chain(
-                                                                                                              (
-                                                                                                                values,
-                                                                                                              ) =>
-                                                                                                                values.head(),
-                                                                                                            )
-                                                                                                            .chain(
-                                                                                                              (
-                                                                                                                not,
-                                                                                                              ) =>
-                                                                                                                Either.of<
-                                                                                                                  Error,
-                                                                                                                  Resource.Values<Resource.TermValue>
-                                                                                                                >(
-                                                                                                                  $parameters.resource.values(
-                                                                                                                    $schema
-                                                                                                                      .properties
-                                                                                                                      .or
-                                                                                                                      .identifier,
-                                                                                                                    {
-                                                                                                                      graph:
-                                                                                                                        undefined,
-                                                                                                                      unique: true,
-                                                                                                                    },
-                                                                                                                  ),
-                                                                                                                )
-                                                                                                                  .chain(
-                                                                                                                    (
-                                                                                                                      values,
-                                                                                                                    ) =>
-                                                                                                                      values.chainMap(
-                                                                                                                        (
-                                                                                                                          value,
-                                                                                                                        ) =>
-                                                                                                                          value.toList(
-                                                                                                                            {
-                                                                                                                              graph:
-                                                                                                                                undefined,
-                                                                                                                            },
-                                                                                                                          ),
-                                                                                                                      ),
-                                                                                                                  )
-                                                                                                                  .chain(
-                                                                                                                    (
-                                                                                                                      valueLists,
-                                                                                                                    ) =>
-                                                                                                                      valueLists.chainMap(
-                                                                                                                        (
-                                                                                                                          valueList,
-                                                                                                                        ) =>
-                                                                                                                          Either.of<
-                                                                                                                            Error,
-                                                                                                                            Resource.Values<Resource.TermValue>
-                                                                                                                          >(
-                                                                                                                            Resource.Values.fromArray(
-                                                                                                                              {
-                                                                                                                                focusResource:
-                                                                                                                                  $parameters.resource,
-                                                                                                                                predicate:
-                                                                                                                                  BaseShaclCoreShapeStatic
-                                                                                                                                    .$schema
-                                                                                                                                    .properties
-                                                                                                                                    .or
-                                                                                                                                    .identifier,
-                                                                                                                                values:
-                                                                                                                                  valueList,
-                                                                                                                              },
-                                                                                                                            ),
-                                                                                                                          ).chain(
-                                                                                                                            (
-                                                                                                                              values,
-                                                                                                                            ) =>
-                                                                                                                              values.chainMap(
-                                                                                                                                (
-                                                                                                                                  value,
-                                                                                                                                ) =>
-                                                                                                                                  value.toIdentifier(),
-                                                                                                                              ),
-                                                                                                                          ),
-                                                                                                                      ),
-                                                                                                                  )
-                                                                                                                  .map(
-                                                                                                                    (
-                                                                                                                      valueLists,
-                                                                                                                    ) =>
-                                                                                                                      valueLists.map(
-                                                                                                                        (
-                                                                                                                          valueList,
-                                                                                                                        ) =>
-                                                                                                                          valueList.toArray(),
-                                                                                                                      ),
-                                                                                                                  )
-                                                                                                                  .map(
-                                                                                                                    (
-                                                                                                                      values,
-                                                                                                                    ) =>
-                                                                                                                      values.toArray(),
-                                                                                                                  )
-                                                                                                                  .map(
-                                                                                                                    (
-                                                                                                                      valuesArray,
-                                                                                                                    ) =>
-                                                                                                                      Resource.Values.fromValue(
-                                                                                                                        {
-                                                                                                                          focusResource:
-                                                                                                                            $parameters.resource,
-                                                                                                                          predicate:
-                                                                                                                            BaseShaclCoreShapeStatic
-                                                                                                                              .$schema
-                                                                                                                              .properties
-                                                                                                                              .or
-                                                                                                                              .identifier,
-                                                                                                                          value:
-                                                                                                                            valuesArray,
-                                                                                                                        },
-                                                                                                                      ),
-                                                                                                                  )
-                                                                                                                  .chain(
-                                                                                                                    (
-                                                                                                                      values,
-                                                                                                                    ) =>
-                                                                                                                      values.head(),
-                                                                                                                  )
-                                                                                                                  .chain(
-                                                                                                                    (
-                                                                                                                      or,
-                                                                                                                    ) =>
-                                                                                                                      Either.of<
-                                                                                                                        Error,
-                                                                                                                        Resource.Values<Resource.TermValue>
-                                                                                                                      >(
-                                                                                                                        $parameters.resource.values(
-                                                                                                                          $schema
-                                                                                                                            .properties
-                                                                                                                            .patterns
-                                                                                                                            .identifier,
-                                                                                                                          {
-                                                                                                                            graph:
-                                                                                                                              undefined,
-                                                                                                                            unique: true,
-                                                                                                                          },
-                                                                                                                        ),
-                                                                                                                      )
-                                                                                                                        .chain(
-                                                                                                                          (
-                                                                                                                            values,
-                                                                                                                          ) =>
-                                                                                                                            $fromRdfPreferredLanguages(
-                                                                                                                              {
-                                                                                                                                focusResource:
-                                                                                                                                  $parameters.resource,
-                                                                                                                                predicate:
-                                                                                                                                  BaseShaclCoreShapeStatic
-                                                                                                                                    .$schema
-                                                                                                                                    .properties
-                                                                                                                                    .patterns
-                                                                                                                                    .identifier,
-                                                                                                                                preferredLanguages:
-                                                                                                                                  $parameters.preferredLanguages,
-                                                                                                                                values,
-                                                                                                                              },
-                                                                                                                            ),
-                                                                                                                        )
-                                                                                                                        .chain(
-                                                                                                                          (
-                                                                                                                            values,
-                                                                                                                          ) =>
-                                                                                                                            values.chainMap(
-                                                                                                                              (
-                                                                                                                                value,
-                                                                                                                              ) =>
-                                                                                                                                value.toString(),
-                                                                                                                            ),
-                                                                                                                        )
-                                                                                                                        .map(
-                                                                                                                          (
-                                                                                                                            values,
-                                                                                                                          ) =>
-                                                                                                                            values.toArray(),
-                                                                                                                        )
-                                                                                                                        .map(
-                                                                                                                          (
-                                                                                                                            valuesArray,
-                                                                                                                          ) =>
-                                                                                                                            Resource.Values.fromValue(
-                                                                                                                              {
-                                                                                                                                focusResource:
-                                                                                                                                  $parameters.resource,
-                                                                                                                                predicate:
-                                                                                                                                  BaseShaclCoreShapeStatic
-                                                                                                                                    .$schema
-                                                                                                                                    .properties
-                                                                                                                                    .patterns
-                                                                                                                                    .identifier,
-                                                                                                                                value:
-                                                                                                                                  valuesArray,
-                                                                                                                              },
-                                                                                                                            ),
-                                                                                                                        )
-                                                                                                                        .chain(
-                                                                                                                          (
-                                                                                                                            values,
-                                                                                                                          ) =>
-                                                                                                                            values.head(),
-                                                                                                                        )
-                                                                                                                        .chain(
-                                                                                                                          (
-                                                                                                                            patterns,
-                                                                                                                          ) =>
-                                                                                                                            Either.of<
-                                                                                                                              Error,
-                                                                                                                              Resource.Values<Resource.TermValue>
-                                                                                                                            >(
-                                                                                                                              $parameters.resource.values(
-                                                                                                                                $schema
-                                                                                                                                  .properties
-                                                                                                                                  .xone
-                                                                                                                                  .identifier,
-                                                                                                                                {
-                                                                                                                                  graph:
-                                                                                                                                    undefined,
-                                                                                                                                  unique: true,
-                                                                                                                                },
-                                                                                                                              ),
-                                                                                                                            )
-                                                                                                                              .chain(
-                                                                                                                                (
-                                                                                                                                  values,
-                                                                                                                                ) =>
-                                                                                                                                  values.chainMap(
-                                                                                                                                    (
-                                                                                                                                      value,
-                                                                                                                                    ) =>
-                                                                                                                                      value.toList(
-                                                                                                                                        {
-                                                                                                                                          graph:
-                                                                                                                                            undefined,
-                                                                                                                                        },
-                                                                                                                                      ),
-                                                                                                                                  ),
-                                                                                                                              )
-                                                                                                                              .chain(
-                                                                                                                                (
-                                                                                                                                  valueLists,
-                                                                                                                                ) =>
-                                                                                                                                  valueLists.chainMap(
-                                                                                                                                    (
-                                                                                                                                      valueList,
-                                                                                                                                    ) =>
-                                                                                                                                      Either.of<
-                                                                                                                                        Error,
-                                                                                                                                        Resource.Values<Resource.TermValue>
-                                                                                                                                      >(
-                                                                                                                                        Resource.Values.fromArray(
-                                                                                                                                          {
-                                                                                                                                            focusResource:
-                                                                                                                                              $parameters.resource,
-                                                                                                                                            predicate:
-                                                                                                                                              BaseShaclCoreShapeStatic
-                                                                                                                                                .$schema
-                                                                                                                                                .properties
-                                                                                                                                                .xone
-                                                                                                                                                .identifier,
-                                                                                                                                            values:
-                                                                                                                                              valueList,
-                                                                                                                                          },
-                                                                                                                                        ),
-                                                                                                                                      ).chain(
-                                                                                                                                        (
-                                                                                                                                          values,
-                                                                                                                                        ) =>
-                                                                                                                                          values.chainMap(
-                                                                                                                                            (
-                                                                                                                                              value,
-                                                                                                                                            ) =>
-                                                                                                                                              value.toIdentifier(),
-                                                                                                                                          ),
-                                                                                                                                      ),
-                                                                                                                                  ),
-                                                                                                                              )
-                                                                                                                              .map(
-                                                                                                                                (
-                                                                                                                                  valueLists,
-                                                                                                                                ) =>
-                                                                                                                                  valueLists.map(
-                                                                                                                                    (
-                                                                                                                                      valueList,
-                                                                                                                                    ) =>
-                                                                                                                                      valueList.toArray(),
-                                                                                                                                  ),
-                                                                                                                              )
-                                                                                                                              .map(
-                                                                                                                                (
-                                                                                                                                  values,
-                                                                                                                                ) =>
-                                                                                                                                  values.toArray(),
-                                                                                                                              )
-                                                                                                                              .map(
-                                                                                                                                (
-                                                                                                                                  valuesArray,
-                                                                                                                                ) =>
-                                                                                                                                  Resource.Values.fromValue(
-                                                                                                                                    {
-                                                                                                                                      focusResource:
-                                                                                                                                        $parameters.resource,
-                                                                                                                                      predicate:
-                                                                                                                                        BaseShaclCoreShapeStatic
-                                                                                                                                          .$schema
-                                                                                                                                          .properties
-                                                                                                                                          .xone
-                                                                                                                                          .identifier,
-                                                                                                                                      value:
-                                                                                                                                        valuesArray,
-                                                                                                                                    },
-                                                                                                                                  ),
-                                                                                                                              )
-                                                                                                                              .chain(
-                                                                                                                                (
-                                                                                                                                  values,
-                                                                                                                                ) =>
-                                                                                                                                  values.head(),
-                                                                                                                              )
-                                                                                                                              .map(
-                                                                                                                                (
-                                                                                                                                  xone,
-                                                                                                                                ) => ({
-                                                                                                                                  $identifier,
-                                                                                                                                  and,
-                                                                                                                                  classes,
-                                                                                                                                  comments,
-                                                                                                                                  datatype,
-                                                                                                                                  deactivated,
-                                                                                                                                  flags,
-                                                                                                                                  hasValues,
-                                                                                                                                  in_,
-                                                                                                                                  isDefinedBy,
-                                                                                                                                  labels,
-                                                                                                                                  languageIn,
-                                                                                                                                  maxCount,
-                                                                                                                                  maxExclusive,
-                                                                                                                                  maxInclusive,
-                                                                                                                                  maxLength,
-                                                                                                                                  minCount,
-                                                                                                                                  minExclusive,
-                                                                                                                                  minInclusive,
-                                                                                                                                  minLength,
-                                                                                                                                  nodeKind,
-                                                                                                                                  nodes,
-                                                                                                                                  not,
-                                                                                                                                  or,
-                                                                                                                                  patterns,
-                                                                                                                                  xone,
-                                                                                                                                }),
-                                                                                                                              ),
-                                                                                                                        ),
-                                                                                                                  ),
-                                                                                                            ),
-                                                                                                      ),
-                                                                                                ),
-                                                                                          ),
-                                                                                    ),
-                                                                              ),
-                                                                        ),
+                                                                      ).chain(
+                                                                        (
+                                                                          values,
+                                                                        ) =>
+                                                                          values.chainMap(
+                                                                            (
+                                                                              value,
+                                                                            ) =>
+                                                                              value.toIdentifier(),
+                                                                          ),
+                                                                      ),
                                                                   ),
-                                                            ),
-                                                        ),
+                                                              )
+                                                              .map(
+                                                                (valueLists) =>
+                                                                  valueLists.map(
+                                                                    (
+                                                                      valueList,
+                                                                    ) =>
+                                                                      valueList.toArray(),
+                                                                  ),
+                                                              )
+                                                              .map((values) =>
+                                                                values.toArray(),
+                                                              )
+                                                              .map(
+                                                                (valuesArray) =>
+                                                                  Resource.Values.fromValue(
+                                                                    {
+                                                                      focusResource:
+                                                                        $parameters.resource,
+                                                                      propertyPath:
+                                                                        BaseShaclCoreShapeStatic
+                                                                          .$schema
+                                                                          .properties
+                                                                          .xone
+                                                                          .identifier,
+                                                                      value:
+                                                                        valuesArray,
+                                                                    },
+                                                                  ),
+                                                              ),
+                                                        }).map((xone) => ({
+                                                          $identifier,
+                                                          and,
+                                                          classes,
+                                                          comments,
+                                                          datatype,
+                                                          deactivated,
+                                                          flags,
+                                                          hasValues,
+                                                          in_,
+                                                          isDefinedBy,
+                                                          labels,
+                                                          languageIn,
+                                                          maxCount,
+                                                          maxExclusive,
+                                                          maxInclusive,
+                                                          maxLength,
+                                                          minCount,
+                                                          minExclusive,
+                                                          minInclusive,
+                                                          minLength,
+                                                          nodeKind,
+                                                          nodes,
+                                                          not,
+                                                          or,
+                                                          patterns,
+                                                          xone,
+                                                        })),
+                                                      ),
                                                     ),
+                                                  ),
                                                 ),
+                                              ),
                                             ),
+                                          ),
                                         ),
+                                      ),
                                     ),
+                                  ),
                                 ),
+                              ),
                             ),
+                          ),
                         ),
+                      ),
                     ),
+                  ),
                 ),
+              ),
             ),
+          ),
         ),
-    );
+      );
   }
 
   export function $toRdf(
@@ -3405,7 +2714,7 @@ export namespace ShaclCorePropertyShapeStatic {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/ns/shacl#PropertyShape":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -3415,7 +2724,7 @@ export namespace ShaclCorePropertyShapeStatic {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -3426,138 +2735,123 @@ export namespace ShaclCorePropertyShapeStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ShaclCorePropertyShapeStatic.$Identifier>(
-          $parameters.resource
-            .identifier as ShaclCorePropertyShapeStatic.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ShaclCorePropertyShape">(
-            "ShaclCorePropertyShape" as const,
-          ).chain(($type) =>
-            Either.of<Error, Resource.Values<Resource.TermValue>>(
-              $parameters.resource.values(
-                $schema.properties.defaultValue.identifier,
-                {
-                  graph: undefined,
-                  unique: true,
-                },
-              ),
-            )
-              .chain((values) =>
-                values.chainMap((value) =>
-                  Either.of<Error, BlankNode | Literal | NamedNode>(
-                    value.toTerm(),
-                  ).chain((term) => {
-                    switch (term.termType) {
-                      case "NamedNode":
-                      case "Literal":
-                        return Either.of<Error, NamedNode | Literal>(term);
-                      default:
-                        return Left<Error, NamedNode | Literal>(
-                          new Resource.MistypedTermValueError({
-                            actualValue: term,
-                            expectedValueType: "(NamedNode | Literal)",
-                            focusResource: $parameters.resource,
-                            predicate:
-                              ShaclCorePropertyShapeStatic.$schema.properties
-                                .defaultValue.identifier,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclCorePropertyShapeStatic.$schema.properties
-                          .defaultValue.identifier,
-                      value: Maybe.empty(),
-                    }),
-              )
-              .chain((values) => values.head())
-              .chain((defaultValue) =>
-                Either.of<Error, Resource.Values<Resource.TermValue>>(
-                  $parameters.resource.values(
-                    $schema.properties.descriptions.identifier,
-                    {
-                      graph: undefined,
-                      unique: true,
-                    },
-                  ),
-                )
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclCorePropertyShapeStatic.$schema.properties
-                          .descriptions.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclCorePropertyShapeStatic.$schema.properties
-                          .descriptions.identifier,
-                      value: valuesArray,
-                    }),
-                  )
-                  .chain((values) => values.head())
-                  .chain((descriptions) =>
-                    Either.of<Error, Resource.Values<Resource.TermValue>>(
-                      $parameters.resource.values(
-                        $schema.properties.groups.identifier,
-                        {
-                          graph: undefined,
-                          unique: true,
-                        },
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ShaclCorePropertyShape">(
+              "ShaclCorePropertyShape" as const,
+            ).chain(($type) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.defaultValue,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toTerm().chain((term) => {
+                          switch (term.termType) {
+                            case "NamedNode":
+                            case "Literal":
+                              return Either.of<Error, NamedNode | Literal>(
+                                term,
+                              );
+                            default:
+                              return Left<Error, NamedNode | Literal>(
+                                new Resource.MistypedTermValueError({
+                                  actualValue: term,
+                                  expectedValueType: "(NamedNode | Literal)",
+                                  focusResource: $parameters.resource,
+                                  propertyPath:
+                                    ShaclCorePropertyShapeStatic.$schema
+                                      .properties.defaultValue.identifier,
+                                }),
+                              );
+                          }
+                        }),
                       ),
                     )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<NamedNode | Literal>>(
+                            {
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                ShaclCorePropertyShapeStatic.$schema.properties
+                                  .defaultValue.identifier,
+                              value: Maybe.empty(),
+                            },
+                          ),
+                    ),
+              }).chain((defaultValue) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.descriptions,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
                       .chain((values) =>
-                        values.chainMap((value) => value.toIdentifier()),
+                        $fromRdfPreferredLanguages(
+                          values,
+                          $parameters.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
                       )
                       .map((values) => values.toArray())
                       .map((valuesArray) =>
                         Resource.Values.fromValue({
                           focusResource: $parameters.resource,
-                          predicate:
+                          propertyPath:
                             ShaclCorePropertyShapeStatic.$schema.properties
-                              .groups.identifier,
+                              .descriptions.identifier,
                           value: valuesArray,
                         }),
-                      )
-                      .chain((values) => values.head())
-                      .chain((groups) =>
-                        Either.of<Error, Resource.Values<Resource.TermValue>>(
-                          $parameters.resource.values(
-                            $schema.properties.names.identifier,
-                            {
-                              graph: undefined,
-                              unique: true,
-                            },
-                          ),
+                      ),
+                }).chain((descriptions) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.groups,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          values.chainMap((value) => value.toIdentifier()),
                         )
+                        .map((values) => values.toArray())
+                        .map((valuesArray) =>
+                          Resource.Values.fromValue({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ShaclCorePropertyShapeStatic.$schema.properties
+                                .groups.identifier,
+                            value: valuesArray,
+                          }),
+                        ),
+                  }).chain((groups) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.names,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                ShaclCorePropertyShapeStatic.$schema.properties
-                                  .names.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
@@ -3566,125 +2860,95 @@ export namespace ShaclCorePropertyShapeStatic {
                           .map((valuesArray) =>
                             Resource.Values.fromValue({
                               focusResource: $parameters.resource,
-                              predicate:
+                              propertyPath:
                                 ShaclCorePropertyShapeStatic.$schema.properties
                                   .names.identifier,
                               value: valuesArray,
                             }),
-                          )
-                          .chain((values) => values.head())
-                          .chain((names) =>
-                            Either.of<
-                              Error,
-                              Resource.Values<Resource.TermValue>
-                            >(
-                              $parameters.resource.values(
-                                $schema.properties.order.identifier,
-                                {
-                                  graph: undefined,
-                                  unique: true,
-                                },
-                              ),
+                          ),
+                    }).chain((names) =>
+                      $shaclPropertyFromRdf({
+                        graph: $parameters.graph,
+                        resource: $parameters.resource,
+                        propertySchema: $schema.properties.order,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
+                            .chain((values) =>
+                              values.chainMap((value) => value.toFloat()),
                             )
-                              .chain((values) =>
-                                values.chainMap((value) => value.toNumber()),
-                              )
-                              .map((values) =>
-                                values.length > 0
-                                  ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<Maybe<number>>({
-                                      focusResource: $parameters.resource,
-                                      predicate:
-                                        ShaclCorePropertyShapeStatic.$schema
-                                          .properties.order.identifier,
-                                      value: Maybe.empty(),
-                                    }),
-                              )
-                              .chain((values) => values.head())
-                              .chain((order) =>
-                                Either.of<
-                                  Error,
-                                  Resource.Values<Resource.TermValue>
-                                >(
-                                  $parameters.resource.values(
-                                    $schema.properties.path.identifier,
-                                    {
-                                      graph: undefined,
-                                      unique: true,
-                                    },
-                                  ),
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<Maybe<number>>({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      ShaclCorePropertyShapeStatic.$schema
+                                        .properties.order.identifier,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).chain((order) =>
+                        $shaclPropertyFromRdf({
+                          graph: $parameters.graph,
+                          resource: $parameters.resource,
+                          propertySchema: $schema.properties.path,
+                          typeFromRdf: (resourceValues) =>
+                            resourceValues.chain((values) =>
+                              values.chainMap((value) =>
+                                value.toResource().chain((resource) =>
+                                  PropertyPath.$fromRdf(resource, {
+                                    context: $parameters.context,
+                                    ignoreRdfType: true,
+                                    objectSet: $parameters.objectSet,
+                                    preferredLanguages:
+                                      $parameters.preferredLanguages,
+                                  }),
+                                ),
+                              ),
+                            ),
+                        }).chain((path) =>
+                          $shaclPropertyFromRdf({
+                            graph: $parameters.graph,
+                            resource: $parameters.resource,
+                            propertySchema: $schema.properties.uniqueLang,
+                            typeFromRdf: (resourceValues) =>
+                              resourceValues
+                                .chain((values) =>
+                                  values.chainMap((value) => value.toBoolean()),
                                 )
-                                  .chain((values) =>
-                                    values.chainMap((value) =>
-                                      value.toResource().chain((resource) =>
-                                        PropertyPath.$fromRdf(resource, {
-                                          context: $parameters.context,
-                                          ignoreRdfType: true,
-                                          objectSet: $parameters.objectSet,
-                                          preferredLanguages:
-                                            $parameters.preferredLanguages,
-                                        }),
-                                      ),
-                                    ),
-                                  )
-                                  .chain((values) => values.head())
-                                  .chain((path) =>
-                                    Either.of<
-                                      Error,
-                                      Resource.Values<Resource.TermValue>
-                                    >(
-                                      $parameters.resource.values(
-                                        $schema.properties.uniqueLang
-                                          .identifier,
+                                .map((values) =>
+                                  values.length > 0
+                                    ? values.map((value) => Maybe.of(value))
+                                    : Resource.Values.fromValue<Maybe<boolean>>(
                                         {
-                                          graph: undefined,
-                                          unique: true,
+                                          focusResource: $parameters.resource,
+                                          propertyPath:
+                                            ShaclCorePropertyShapeStatic.$schema
+                                              .properties.uniqueLang.identifier,
+                                          value: Maybe.empty(),
                                         },
                                       ),
-                                    )
-                                      .chain((values) =>
-                                        values.chainMap((value) =>
-                                          value.toBoolean(),
-                                        ),
-                                      )
-                                      .map((values) =>
-                                        values.length > 0
-                                          ? values.map((value) =>
-                                              Maybe.of(value),
-                                            )
-                                          : Resource.Values.fromValue<
-                                              Maybe<boolean>
-                                            >({
-                                              focusResource:
-                                                $parameters.resource,
-                                              predicate:
-                                                ShaclCorePropertyShapeStatic
-                                                  .$schema.properties.uniqueLang
-                                                  .identifier,
-                                              value: Maybe.empty(),
-                                            }),
-                                      )
-                                      .chain((values) => values.head())
-                                      .map((uniqueLang) => ({
-                                        ...$super0,
-                                        $identifier,
-                                        $type,
-                                        defaultValue,
-                                        descriptions,
-                                        groups,
-                                        names,
-                                        order,
-                                        path,
-                                        uniqueLang,
-                                      })),
-                                  ),
-                              ),
-                          ),
+                                ),
+                          }).map((uniqueLang) => ({
+                            ...$super0,
+                            $identifier,
+                            $type,
+                            defaultValue,
+                            descriptions,
+                            groups,
+                            names,
+                            order,
+                            path,
+                            uniqueLang,
+                          })),
+                        ),
                       ),
+                    ),
                   ),
+                ),
               ),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -3994,7 +3258,7 @@ export namespace ShaclmatePropertyShape {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/ns/shacl#PropertyShape":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -4004,7 +3268,7 @@ export namespace ShaclmatePropertyShape {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -4015,103 +3279,97 @@ export namespace ShaclmatePropertyShape {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ShaclmatePropertyShape.$Identifier>(
-          $parameters.resource.identifier as ShaclmatePropertyShape.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ShaclmatePropertyShape">(
-            "ShaclmatePropertyShape" as const,
-          ).chain(($type) =>
-            Either.of<Error, Resource.Values<Resource.TermValue>>(
-              $parameters.resource.values($schema.properties.lazy.identifier, {
-                graph: undefined,
-                unique: true,
-              }),
-            )
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclmatePropertyShape.$schema.properties.lazy
-                          .identifier,
-                      value: Maybe.empty(),
-                    }),
-              )
-              .chain((values) => values.head())
-              .chain((lazy) =>
-                Either.of<Error, Resource.Values<Resource.TermValue>>(
-                  $parameters.resource.values(
-                    $schema.properties.mutable.identifier,
-                    {
-                      graph: undefined,
-                      unique: true,
-                    },
-                  ),
-                )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toBoolean()),
-                  )
-                  .map((values) =>
-                    values.length > 0
-                      ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<boolean>>({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclmatePropertyShape.$schema.properties.mutable
-                              .identifier,
-                          value: Maybe.empty(),
-                        }),
-                  )
-                  .chain((values) => values.head())
-                  .chain((mutable) =>
-                    Either.of<Error, Resource.Values<Resource.TermValue>>(
-                      $parameters.resource.values(
-                        $schema.properties.name.identifier,
-                        {
-                          graph: undefined,
-                          unique: true,
-                        },
-                      ),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ShaclmatePropertyShape">(
+              "ShaclmatePropertyShape" as const,
+            ).chain(($type) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.lazy,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      values.chainMap((value) => value.toBoolean()),
                     )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<boolean>>({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ShaclmatePropertyShape.$schema.properties.lazy
+                                .identifier,
+                            value: Maybe.empty(),
+                          }),
+                    ),
+              }).chain((lazy) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.mutable,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclmatePropertyShape.$schema.properties.name
-                              .identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
-                          values,
-                        }),
-                      )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toString()),
+                        values.chainMap((value) => value.toBoolean()),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<string>>({
+                          : Resource.Values.fromValue<Maybe<boolean>>({
                               focusResource: $parameters.resource,
-                              predicate:
-                                ShaclmatePropertyShape.$schema.properties.name
-                                  .identifier,
+                              propertyPath:
+                                ShaclmatePropertyShape.$schema.properties
+                                  .mutable.identifier,
                               value: Maybe.empty(),
                             }),
-                      )
-                      .chain((values) => values.head())
-                      .chain((name) =>
-                        Either.of<Error, Resource.Values<Resource.TermValue>>(
-                          $parameters.resource.values(
-                            $schema.properties.partial.identifier,
-                            {
-                              graph: undefined,
-                              unique: true,
-                            },
+                      ),
+                }).chain((mutable) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.name,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          $fromRdfPreferredLanguages(
+                            values,
+                            $parameters.preferredLanguages,
                           ),
                         )
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
+                        )
+                        .map((values) =>
+                          values.length > 0
+                            ? values.map((value) => Maybe.of(value))
+                            : Resource.Values.fromValue<Maybe<string>>({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  ShaclmatePropertyShape.$schema.properties.name
+                                    .identifier,
+                                value: Maybe.empty(),
+                              }),
+                        ),
+                  }).chain((name) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.partial,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
                           .chain((values) =>
                             values.chainMap((value) => value.toIdentifier()),
                           )
@@ -4122,123 +3380,69 @@ export namespace ShaclmatePropertyShape {
                                   Maybe<BlankNode | NamedNode>
                                 >({
                                   focusResource: $parameters.resource,
-                                  predicate:
+                                  propertyPath:
                                     ShaclmatePropertyShape.$schema.properties
                                       .partial.identifier,
                                   value: Maybe.empty(),
                                 }),
-                          )
-                          .chain((values) => values.head())
-                          .chain((partial) =>
-                            Either.of<
-                              Error,
-                              Resource.Values<Resource.TermValue>
-                            >(
-                              $parameters.resource.values(
-                                $schema.properties.visibility.identifier,
-                                {
-                                  graph: undefined,
-                                  unique: true,
-                                },
+                          ),
+                    }).chain((partial) =>
+                      $shaclPropertyFromRdf({
+                        graph: $parameters.graph,
+                        resource: $parameters.resource,
+                        propertySchema: $schema.properties.visibility,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
+                            .chain((values) =>
+                              values.chainMap((value) =>
+                                value.toIri([
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_Visibility_Private",
+                                  ),
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_Visibility_Protected",
+                                  ),
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_Visibility_Public",
+                                  ),
+                                ]),
                               ),
                             )
-                              .chain((values) =>
-                                values.chainMap((value) =>
-                                  value.toIri().chain((iri) => {
-                                    switch (iri.value) {
-                                      case "http://purl.org/shaclmate/ontology#_Visibility_Private":
-                                        return Either.of<
-                                          Error,
-                                          NamedNode<
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                          >
-                                        >(
-                                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_Visibility_Private">,
-                                        );
-                                      case "http://purl.org/shaclmate/ontology#_Visibility_Protected":
-                                        return Either.of<
-                                          Error,
-                                          NamedNode<
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                          >
-                                        >(
-                                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_Visibility_Protected">,
-                                        );
-                                      case "http://purl.org/shaclmate/ontology#_Visibility_Public":
-                                        return Either.of<
-                                          Error,
-                                          NamedNode<
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                          >
-                                        >(
-                                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_Visibility_Public">,
-                                        );
-                                      default:
-                                        return Left<
-                                          Error,
-                                          NamedNode<
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                            | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                          >
-                                        >(
-                                          new Resource.MistypedTermValueError({
-                                            actualValue: iri,
-                                            expectedValueType:
-                                              'NamedNode<"http://purl.org/shaclmate/ontology#_Visibility_Private" | "http://purl.org/shaclmate/ontology#_Visibility_Protected" | "http://purl.org/shaclmate/ontology#_Visibility_Public">',
-                                            focusResource: $parameters.resource,
-                                            predicate:
-                                              ShaclmatePropertyShape.$schema
-                                                .properties.visibility
-                                                .identifier,
-                                          }),
-                                        );
-                                    }
-                                  }),
-                                ),
-                              )
-                              .map((values) =>
-                                values.length > 0
-                                  ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<
-                                      Maybe<
-                                        NamedNode<
-                                          | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                          | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                          | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                        >
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<
+                                    Maybe<
+                                      NamedNode<
+                                        | "http://purl.org/shaclmate/ontology#_Visibility_Private"
+                                        | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
+                                        | "http://purl.org/shaclmate/ontology#_Visibility_Public"
                                       >
-                                    >({
-                                      focusResource: $parameters.resource,
-                                      predicate:
-                                        ShaclmatePropertyShape.$schema
-                                          .properties.visibility.identifier,
-                                      value: Maybe.empty(),
-                                    }),
-                              )
-                              .chain((values) => values.head())
-                              .map((visibility) => ({
-                                ...$super0,
-                                $identifier,
-                                $type,
-                                lazy,
-                                mutable,
-                                name,
-                                partial,
-                                visibility,
-                              })),
-                          ),
-                      ),
+                                    >
+                                  >({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      ShaclmatePropertyShape.$schema.properties
+                                        .visibility.identifier,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).map((visibility) => ({
+                        ...$super0,
+                        $identifier,
+                        $type,
+                        lazy,
+                        mutable,
+                        name,
+                        partial,
+                        visibility,
+                      })),
+                    ),
                   ),
+                ),
               ),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -4472,7 +3676,7 @@ export namespace OwlOntologyStatic {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/2002/07/owl#Ontology":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -4482,7 +3686,7 @@ export namespace OwlOntologyStatic {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -4493,41 +3697,47 @@ export namespace OwlOntologyStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, OwlOntologyStatic.$Identifier>(
-        $parameters.resource.identifier as OwlOntologyStatic.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "OwlOntology">("OwlOntology" as const).chain(($type) =>
-          Either.of<Error, Resource.Values<Resource.TermValue>>(
-            $parameters.resource.values($schema.properties.labels.identifier, {
-              graph: undefined,
-              unique: true,
-            }),
-          )
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  OwlOntologyStatic.$schema.properties.labels.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString()))
-            .map((values) => values.toArray())
-            .map((valuesArray) =>
-              Resource.Values.fromValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  OwlOntologyStatic.$schema.properties.labels.identifier,
-                value: valuesArray,
-              }),
-            )
-            .chain((values) => values.head())
-            .map((labels) => ({ $identifier, $type, labels })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Right<"OwlOntology">("OwlOntology" as const).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.labels,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      $parameters.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) => values.toArray())
+                  .map((valuesArray) =>
+                    Resource.Values.fromValue({
+                      focusResource: $parameters.resource,
+                      propertyPath:
+                        OwlOntologyStatic.$schema.properties.labels.identifier,
+                      value: valuesArray,
+                    }),
+                  ),
+            }).map((labels) => ({ $identifier, $type, labels })),
+          ),
         ),
-      ),
     );
   }
 
@@ -4800,7 +4010,7 @@ export namespace ShaclmateOntology {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/2002/07/owl#Ontology":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -4810,7 +4020,7 @@ export namespace ShaclmateOntology {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -4821,607 +4031,204 @@ export namespace ShaclmateOntology {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ShaclmateOntology.$Identifier>(
-          $parameters.resource.identifier as ShaclmateOntology.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ShaclmateOntology">(
-            "ShaclmateOntology" as const,
-          ).chain(($type) =>
-            Either.of<Error, Resource.Values<Resource.TermValue>>(
-              $parameters.resource.values(
-                $schema.properties.tsFeatureExcludes.identifier,
-                {
-                  graph: undefined,
-                  unique: true,
-                },
-              ),
-            )
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri().chain((iri) => {
-                    switch (iri.value) {
-                      case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Json":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
-                        );
-                      case "http://purl.org/shaclmate/ontology#_TsFeature_Sparql":
-                        return Either.of<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                        );
-                      default:
-                        return Left<
-                          Error,
-                          NamedNode<
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                            | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                            | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                          >
-                        >(
-                          new Resource.MistypedTermValueError({
-                            actualValue: iri,
-                            expectedValueType:
-                              'NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
-                            focusResource: $parameters.resource,
-                            predicate:
-                              ShaclmateOntology.$schema.properties
-                                .tsFeatureExcludes.identifier,
-                          }),
-                        );
-                    }
-                  }),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    ShaclmateOntology.$schema.properties.tsFeatureExcludes
-                      .identifier,
-                  value: valuesArray,
-                }),
-              )
-              .chain((values) => values.head())
-              .chain((tsFeatureExcludes) =>
-                Either.of<Error, Resource.Values<Resource.TermValue>>(
-                  $parameters.resource.values(
-                    $schema.properties.tsFeatureIncludes.identifier,
-                    {
-                      graph: undefined,
-                      unique: true,
-                    },
-                  ),
-                )
-                  .chain((values) =>
-                    values.chainMap((value) =>
-                      value.toIri().chain((iri) => {
-                        switch (iri.value) {
-                          case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Json":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
-                            );
-                          case "http://purl.org/shaclmate/ontology#_TsFeature_Sparql":
-                            return Either.of<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                            );
-                          default:
-                            return Left<
-                              Error,
-                              NamedNode<
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                              >
-                            >(
-                              new Resource.MistypedTermValueError({
-                                actualValue: iri,
-                                expectedValueType:
-                                  'NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  ShaclmateOntology.$schema.properties
-                                    .tsFeatureIncludes.identifier,
-                              }),
-                            );
-                        }
-                      }),
-                    ),
-                  )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclmateOntology.$schema.properties.tsFeatureIncludes
-                          .identifier,
-                      value: valuesArray,
-                    }),
-                  )
-                  .chain((values) => values.head())
-                  .chain((tsFeatureIncludes) =>
-                    Either.of<Error, Resource.Values<Resource.TermValue>>(
-                      $parameters.resource.values(
-                        $schema.properties.tsImports.identifier,
-                        {
-                          graph: undefined,
-                          unique: true,
-                        },
-                      ),
-                    )
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ShaclmateOntology">("ShaclmateOntology" as const).chain(
+              ($type) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.tsFeatureExcludes,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclmateOntology.$schema.properties.tsImports
-                              .identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
-                          values,
-                        }),
-                      )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toString()),
+                        values.chainMap((value) =>
+                          value.toIri([
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                            ),
+                            dataFactory.namedNode(
+                              "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                            ),
+                          ]),
+                        ),
                       )
                       .map((values) => values.toArray())
                       .map((valuesArray) =>
                         Resource.Values.fromValue({
                           focusResource: $parameters.resource,
-                          predicate:
-                            ShaclmateOntology.$schema.properties.tsImports
-                              .identifier,
+                          propertyPath:
+                            ShaclmateOntology.$schema.properties
+                              .tsFeatureExcludes.identifier,
                           value: valuesArray,
                         }),
-                      )
-                      .chain((values) => values.head())
-                      .chain((tsImports) =>
-                        Either.of<Error, Resource.Values<Resource.TermValue>>(
-                          $parameters.resource.values(
-                            $schema.properties.tsObjectDeclarationType
-                              .identifier,
-                            {
-                              graph: undefined,
-                              unique: true,
-                            },
+                      ),
+                }).chain((tsFeatureExcludes) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.tsFeatureIncludes,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          values.chainMap((value) =>
+                            value.toIri([
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                              ),
+                            ]),
                           ),
                         )
+                        .map((values) => values.toArray())
+                        .map((valuesArray) =>
+                          Resource.Values.fromValue({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ShaclmateOntology.$schema.properties
+                                .tsFeatureIncludes.identifier,
+                            value: valuesArray,
+                          }),
+                        ),
+                  }).chain((tsFeatureIncludes) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.tsImports,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
                           .chain((values) =>
-                            values.chainMap((value) =>
-                              value.toIri().chain((iri) => {
-                                switch (iri.value) {
-                                  case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
-                                    return Either.of<
-                                      Error,
-                                      NamedNode<
-                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                      >
-                                    >(
-                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class">,
-                                    );
-                                  case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface":
-                                    return Either.of<
-                                      Error,
-                                      NamedNode<
-                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                      >
-                                    >(
-                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface">,
-                                    );
-                                  default:
-                                    return Left<
-                                      Error,
-                                      NamedNode<
-                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                      >
-                                    >(
-                                      new Resource.MistypedTermValueError({
-                                        actualValue: iri,
-                                        expectedValueType:
-                                          'NamedNode<"http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class" | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface">',
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          ShaclmateOntology.$schema.properties
-                                            .tsObjectDeclarationType.identifier,
-                                      }),
-                                    );
-                                }
-                              }),
+                            $fromRdfPreferredLanguages(
+                              values,
+                              $parameters.preferredLanguages,
                             ),
                           )
-                          .map((values) =>
-                            values.length > 0
-                              ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<
-                                  Maybe<
-                                    NamedNode<
-                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                    >
-                                  >
-                                >({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    ShaclmateOntology.$schema.properties
-                                      .tsObjectDeclarationType.identifier,
-                                  value: Maybe.empty(),
-                                }),
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
                           )
-                          .chain((values) => values.head())
-                          .map((tsObjectDeclarationType) => ({
-                            ...$super0,
-                            $identifier,
-                            $type,
-                            tsFeatureExcludes,
-                            tsFeatureIncludes,
-                            tsImports,
-                            tsObjectDeclarationType,
-                          })),
-                      ),
+                          .map((values) => values.toArray())
+                          .map((valuesArray) =>
+                            Resource.Values.fromValue({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                ShaclmateOntology.$schema.properties.tsImports
+                                  .identifier,
+                              value: valuesArray,
+                            }),
+                          ),
+                    }).chain((tsImports) =>
+                      $shaclPropertyFromRdf({
+                        graph: $parameters.graph,
+                        resource: $parameters.resource,
+                        propertySchema:
+                          $schema.properties.tsObjectDeclarationType,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
+                            .chain((values) =>
+                              values.chainMap((value) =>
+                                value.toIri([
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
+                                  ),
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
+                                  ),
+                                ]),
+                              ),
+                            )
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<
+                                    Maybe<
+                                      NamedNode<
+                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                                      >
+                                    >
+                                  >({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      ShaclmateOntology.$schema.properties
+                                        .tsObjectDeclarationType.identifier,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).map((tsObjectDeclarationType) => ({
+                        ...$super0,
+                        $identifier,
+                        $type,
+                        tsFeatureExcludes,
+                        tsFeatureIncludes,
+                        tsImports,
+                        tsObjectDeclarationType,
+                      })),
+                    ),
                   ),
-              ),
+                ),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -5718,7 +4525,7 @@ export namespace ShaclCoreNodeShapeStatic {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/ns/shacl#NodeShape":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -5728,7 +4535,7 @@ export namespace ShaclCoreNodeShapeStatic {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -5739,118 +4546,116 @@ export namespace ShaclCoreNodeShapeStatic {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ShaclCoreNodeShapeStatic.$Identifier>(
-          $parameters.resource
-            .identifier as ShaclCoreNodeShapeStatic.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ShaclCoreNodeShape">(
-            "ShaclCoreNodeShape" as const,
-          ).chain(($type) =>
-            Either.of<Error, Resource.Values<Resource.TermValue>>(
-              $parameters.resource.values(
-                $schema.properties.closed.identifier,
-                {
-                  graph: undefined,
-                  unique: true,
-                },
-              ),
-            )
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclCoreNodeShapeStatic.$schema.properties.closed
-                          .identifier,
-                      value: Maybe.empty(),
-                    }),
-              )
-              .chain((values) => values.head())
-              .chain((closed) =>
-                Either.of<Error, Resource.Values<Resource.TermValue>>(
-                  $parameters.resource.values(
-                    $schema.properties.ignoredProperties.identifier,
-                    {
-                      graph: undefined,
-                      unique: true,
-                    },
-                  ),
-                )
-                  .chain((values) =>
-                    values.chainMap((value) =>
-                      value.toList({ graph: undefined }),
-                    ),
-                  )
-                  .chain((valueLists) =>
-                    valueLists.chainMap((valueList) =>
-                      Either.of<Error, Resource.Values<Resource.TermValue>>(
-                        Resource.Values.fromArray({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclCoreNodeShapeStatic.$schema.properties
-                              .ignoredProperties.identifier,
-                          values: valueList,
-                        }),
-                      ).chain((values) =>
-                        values.chainMap((value) => value.toIri()),
-                      ),
-                    ),
-                  )
-                  .map((valueLists) =>
-                    valueLists.map((valueList) => valueList.toArray()),
-                  )
-                  .map((values) =>
-                    values.length > 0
-                      ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclCoreNodeShapeStatic.$schema.properties
-                              .ignoredProperties.identifier,
-                          value: Maybe.empty(),
-                        }),
-                  )
-                  .chain((values) => values.head())
-                  .chain((ignoredProperties) =>
-                    Either.of<Error, Resource.Values<Resource.TermValue>>(
-                      $parameters.resource.values(
-                        $schema.properties.properties.identifier,
-                        {
-                          graph: undefined,
-                          unique: true,
-                        },
-                      ),
-                    )
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ShaclCoreNodeShape">("ShaclCoreNodeShape" as const).chain(
+              ($type) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.closed,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
                       .chain((values) =>
-                        values.chainMap((value) => value.toIdentifier()),
+                        values.chainMap((value) => value.toBoolean()),
                       )
-                      .map((values) => values.toArray())
-                      .map((valuesArray) =>
-                        Resource.Values.fromValue({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclCoreNodeShapeStatic.$schema.properties
-                              .properties.identifier,
-                          value: valuesArray,
-                        }),
-                      )
-                      .chain((values) => values.head())
-                      .map((properties) => ({
-                        ...$super0,
-                        $identifier,
-                        $type,
-                        closed,
-                        ignoredProperties,
-                        properties,
-                      })),
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<Maybe<boolean>>({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                ShaclCoreNodeShapeStatic.$schema.properties
+                                  .closed.identifier,
+                              value: Maybe.empty(),
+                            }),
+                      ),
+                }).chain((closed) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.ignoredProperties,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          values.chainMap((value) =>
+                            value.toList({ graph: $parameters.graph }),
+                          ),
+                        )
+                        .chain((valueLists) =>
+                          valueLists.chainMap((valueList) =>
+                            Right(
+                              Resource.Values.fromArray({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  ShaclCoreNodeShapeStatic.$schema.properties
+                                    .ignoredProperties.identifier,
+                                values: valueList.toArray(),
+                              }),
+                            ).chain((values) =>
+                              values.chainMap((value) => value.toIri()),
+                            ),
+                          ),
+                        )
+                        .map((valueLists) =>
+                          valueLists.map((valueList) => valueList.toArray()),
+                        )
+                        .map((values) =>
+                          values.length > 0
+                            ? values.map((value) => Maybe.of(value))
+                            : Resource.Values.fromValue<
+                                Maybe<readonly NamedNode[]>
+                              >({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  ShaclCoreNodeShapeStatic.$schema.properties
+                                    .ignoredProperties.identifier,
+                                value: Maybe.empty(),
+                              }),
+                        ),
+                  }).chain((ignoredProperties) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.properties,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
+                          .chain((values) =>
+                            values.chainMap((value) => value.toIdentifier()),
+                          )
+                          .map((values) => values.toArray())
+                          .map((valuesArray) =>
+                            Resource.Values.fromValue({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                ShaclCoreNodeShapeStatic.$schema.properties
+                                  .properties.identifier,
+                              value: valuesArray,
+                            }),
+                          ),
+                    }).map((properties) => ({
+                      ...$super0,
+                      $identifier,
+                      $type,
+                      closed,
+                      ignoredProperties,
+                      properties,
+                    })),
                   ),
-              ),
+                ),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -6339,7 +5144,7 @@ export namespace ShaclmateNodeShape {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/ns/shacl#NodeShape":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -6349,7 +5154,7 @@ export namespace ShaclmateNodeShape {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -6360,81 +5165,27 @@ export namespace ShaclmateNodeShape {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ShaclmateNodeShape.$Identifier>(
-          $parameters.resource.identifier as ShaclmateNodeShape.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ShaclmateNodeShape">(
-            "ShaclmateNodeShape" as const,
-          ).chain(($type) =>
-            Either.of<Error, Resource.Values<Resource.TermValue>>(
-              $parameters.resource.values(
-                $schema.properties.abstract.identifier,
-                {
-                  graph: undefined,
-                  unique: true,
-                },
-              ),
-            )
-              .chain((values) => values.chainMap((value) => value.toBoolean()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<boolean>>({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclmateNodeShape.$schema.properties.abstract
-                          .identifier,
-                      value: Maybe.empty(),
-                    }),
-              )
-              .chain((values) => values.head())
-              .chain((abstract) =>
-                Either.of<Error, Resource.Values<Resource.TermValue>>(
-                  $parameters.resource.values(
-                    $schema.properties.discriminantValue.identifier,
-                    {
-                      graph: undefined,
-                      unique: true,
-                    },
-                  ),
-                )
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ShaclmateNodeShape.$schema.properties.discriminantValue
-                          .identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  )
-                  .map((values) =>
-                    values.length > 0
-                      ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<string>>({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ShaclmateNodeShape.$schema.properties
-                              .discriminantValue.identifier,
-                          value: Maybe.empty(),
-                        }),
-                  )
-                  .chain((values) => values.head())
-                  .chain((discriminantValue) =>
-                    Either.of<Error, Resource.Values<Resource.TermValue>>(
-                      $parameters.resource.values(
-                        $schema.properties.export_.identifier,
-                        {
-                          graph: undefined,
-                          unique: true,
-                        },
-                      ),
-                    )
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ShaclmateNodeShape">("ShaclmateNodeShape" as const).chain(
+              ($type) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.abstract,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
                       .chain((values) =>
                         values.chainMap((value) => value.toBoolean()),
                       )
@@ -6443,23 +5194,46 @@ export namespace ShaclmateNodeShape {
                           ? values.map((value) => Maybe.of(value))
                           : Resource.Values.fromValue<Maybe<boolean>>({
                               focusResource: $parameters.resource,
-                              predicate:
-                                ShaclmateNodeShape.$schema.properties.export_
+                              propertyPath:
+                                ShaclmateNodeShape.$schema.properties.abstract
                                   .identifier,
                               value: Maybe.empty(),
                             }),
-                      )
-                      .chain((values) => values.head())
-                      .chain((export_) =>
-                        Either.of<Error, Resource.Values<Resource.TermValue>>(
-                          $parameters.resource.values(
-                            $schema.properties.extern.identifier,
-                            {
-                              graph: undefined,
-                              unique: true,
-                            },
+                      ),
+                }).chain((abstract) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.discriminantValue,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          $fromRdfPreferredLanguages(
+                            values,
+                            $parameters.preferredLanguages,
                           ),
                         )
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
+                        )
+                        .map((values) =>
+                          values.length > 0
+                            ? values.map((value) => Maybe.of(value))
+                            : Resource.Values.fromValue<Maybe<string>>({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  ShaclmateNodeShape.$schema.properties
+                                    .discriminantValue.identifier,
+                                value: Maybe.empty(),
+                              }),
+                        ),
+                  }).chain((discriminantValue) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.export_,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
                           .chain((values) =>
                             values.chainMap((value) => value.toBoolean()),
                           )
@@ -6468,26 +5242,40 @@ export namespace ShaclmateNodeShape {
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<Maybe<boolean>>({
                                   focusResource: $parameters.resource,
-                                  predicate:
-                                    ShaclmateNodeShape.$schema.properties.extern
-                                      .identifier,
+                                  propertyPath:
+                                    ShaclmateNodeShape.$schema.properties
+                                      .export_.identifier,
                                   value: Maybe.empty(),
                                 }),
-                          )
-                          .chain((values) => values.head())
-                          .chain((extern) =>
-                            Either.of<
-                              Error,
-                              Resource.Values<Resource.TermValue>
-                            >(
-                              $parameters.resource.values(
-                                $schema.properties.fromRdfType.identifier,
-                                {
-                                  graph: undefined,
-                                  unique: true,
-                                },
-                              ),
+                          ),
+                    }).chain((export_) =>
+                      $shaclPropertyFromRdf({
+                        graph: $parameters.graph,
+                        resource: $parameters.resource,
+                        propertySchema: $schema.properties.extern,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
+                            .chain((values) =>
+                              values.chainMap((value) => value.toBoolean()),
                             )
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<Maybe<boolean>>({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      ShaclmateNodeShape.$schema.properties
+                                        .extern.identifier,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).chain((extern) =>
+                        $shaclPropertyFromRdf({
+                          graph: $parameters.graph,
+                          resource: $parameters.resource,
+                          propertySchema: $schema.properties.fromRdfType,
+                          typeFromRdf: (resourceValues) =>
+                            resourceValues
                               .chain((values) =>
                                 values.chainMap((value) => value.toIri()),
                               )
@@ -6497,131 +5285,122 @@ export namespace ShaclmateNodeShape {
                                   : Resource.Values.fromValue<Maybe<NamedNode>>(
                                       {
                                         focusResource: $parameters.resource,
-                                        predicate:
+                                        propertyPath:
                                           ShaclmateNodeShape.$schema.properties
                                             .fromRdfType.identifier,
                                         value: Maybe.empty(),
                                       },
                                     ),
-                              )
-                              .chain((values) => values.head())
-                              .chain((fromRdfType) =>
-                                Either.of<
-                                  Error,
-                                  Resource.Values<Resource.TermValue>
-                                >(
-                                  $parameters.resource.values(
-                                    $schema.properties.identifierMintingStrategy
-                                      .identifier,
-                                    {
-                                      graph: undefined,
-                                      unique: true,
-                                    },
+                              ),
+                        }).chain((fromRdfType) =>
+                          $shaclPropertyFromRdf({
+                            graph: $parameters.graph,
+                            resource: $parameters.resource,
+                            propertySchema:
+                              $schema.properties.identifierMintingStrategy,
+                            typeFromRdf: (resourceValues) =>
+                              resourceValues
+                                .chain((values) =>
+                                  values.chainMap((value) =>
+                                    value.toIri([
+                                      dataFactory.namedNode(
+                                        "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode",
+                                      ),
+                                      dataFactory.namedNode(
+                                        "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256",
+                                      ),
+                                      dataFactory.namedNode(
+                                        "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4",
+                                      ),
+                                    ]),
                                   ),
                                 )
+                                .map((values) =>
+                                  values.length > 0
+                                    ? values.map((value) => Maybe.of(value))
+                                    : Resource.Values.fromValue<
+                                        Maybe<
+                                          NamedNode<
+                                            | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
+                                            | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
+                                            | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
+                                          >
+                                        >
+                                      >({
+                                        focusResource: $parameters.resource,
+                                        propertyPath:
+                                          ShaclmateNodeShape.$schema.properties
+                                            .identifierMintingStrategy
+                                            .identifier,
+                                        value: Maybe.empty(),
+                                      }),
+                                ),
+                          }).chain((identifierMintingStrategy) =>
+                            $shaclPropertyFromRdf({
+                              graph: $parameters.graph,
+                              resource: $parameters.resource,
+                              propertySchema: $schema.properties.mutable,
+                              typeFromRdf: (resourceValues) =>
+                                resourceValues
                                   .chain((values) =>
                                     values.chainMap((value) =>
-                                      value.toIri().chain((iri) => {
-                                        switch (iri.value) {
-                                          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
-                                            return Either.of<
-                                              Error,
-                                              NamedNode<
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
-                                              >
-                                            >(
-                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode">,
-                                            );
-                                          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
-                                            return Either.of<
-                                              Error,
-                                              NamedNode<
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
-                                              >
-                                            >(
-                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256">,
-                                            );
-                                          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
-                                            return Either.of<
-                                              Error,
-                                              NamedNode<
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
-                                              >
-                                            >(
-                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4">,
-                                            );
-                                          default:
-                                            return Left<
-                                              Error,
-                                              NamedNode<
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
-                                                | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
-                                              >
-                                            >(
-                                              new Resource.MistypedTermValueError(
-                                                {
-                                                  actualValue: iri,
-                                                  expectedValueType:
-                                                    'NamedNode<"http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode" | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256" | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4">',
-                                                  focusResource:
-                                                    $parameters.resource,
-                                                  predicate:
-                                                    ShaclmateNodeShape.$schema
-                                                      .properties
-                                                      .identifierMintingStrategy
-                                                      .identifier,
-                                                },
-                                              ),
-                                            );
-                                        }
-                                      }),
+                                      value.toBoolean(),
                                     ),
                                   )
                                   .map((values) =>
                                     values.length > 0
                                       ? values.map((value) => Maybe.of(value))
                                       : Resource.Values.fromValue<
-                                          Maybe<
-                                            NamedNode<
-                                              | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
-                                              | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
-                                              | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
-                                            >
-                                          >
+                                          Maybe<boolean>
                                         >({
                                           focusResource: $parameters.resource,
-                                          predicate:
-                                            ShaclmateNodeShape.$schema
-                                              .properties
-                                              .identifierMintingStrategy
-                                              .identifier,
+                                          propertyPath:
+                                            ShaclmatePropertyShape.$schema
+                                              .properties.mutable.identifier,
                                           value: Maybe.empty(),
                                         }),
-                                  )
-                                  .chain((values) => values.head())
-                                  .chain((identifierMintingStrategy) =>
-                                    Either.of<
-                                      Error,
-                                      Resource.Values<Resource.TermValue>
-                                    >(
-                                      $parameters.resource.values(
-                                        $schema.properties.mutable.identifier,
-                                        {
-                                          graph: undefined,
-                                          unique: true,
-                                        },
+                                  ),
+                            }).chain((mutable) =>
+                              $shaclPropertyFromRdf({
+                                graph: $parameters.graph,
+                                resource: $parameters.resource,
+                                propertySchema: $schema.properties.name,
+                                typeFromRdf: (resourceValues) =>
+                                  resourceValues
+                                    .chain((values) =>
+                                      $fromRdfPreferredLanguages(
+                                        values,
+                                        $parameters.preferredLanguages,
                                       ),
                                     )
+                                    .chain((values) =>
+                                      values.chainMap((value) =>
+                                        value.toString(),
+                                      ),
+                                    )
+                                    .map((values) =>
+                                      values.length > 0
+                                        ? values.map((value) => Maybe.of(value))
+                                        : Resource.Values.fromValue<
+                                            Maybe<string>
+                                          >({
+                                            focusResource: $parameters.resource,
+                                            propertyPath:
+                                              ShaclmatePropertyShape.$schema
+                                                .properties.name.identifier,
+                                            value: Maybe.empty(),
+                                          }),
+                                    ),
+                              }).chain((name) =>
+                                $shaclPropertyFromRdf({
+                                  graph: $parameters.graph,
+                                  resource: $parameters.resource,
+                                  propertySchema: $schema.properties.rdfType,
+                                  typeFromRdf: (resourceValues) =>
+                                    resourceValues
                                       .chain((values) =>
                                         values.chainMap((value) =>
-                                          value.toBoolean(),
+                                          value.toIri(),
                                         ),
                                       )
                                       .map((values) =>
@@ -6630,911 +5409,263 @@ export namespace ShaclmateNodeShape {
                                               Maybe.of(value),
                                             )
                                           : Resource.Values.fromValue<
-                                              Maybe<boolean>
+                                              Maybe<NamedNode>
                                             >({
                                               focusResource:
                                                 $parameters.resource,
-                                              predicate:
-                                                ShaclmatePropertyShape.$schema
-                                                  .properties.mutable
+                                              propertyPath:
+                                                ShaclmateNodeShape.$schema
+                                                  .properties.rdfType
                                                   .identifier,
                                               value: Maybe.empty(),
                                             }),
-                                      )
-                                      .chain((values) => values.head())
-                                      .chain((mutable) =>
-                                        Either.of<
-                                          Error,
-                                          Resource.Values<Resource.TermValue>
-                                        >(
-                                          $parameters.resource.values(
-                                            $schema.properties.name.identifier,
-                                            {
-                                              graph: undefined,
-                                              unique: true,
-                                            },
+                                      ),
+                                }).chain((rdfType) =>
+                                  $shaclPropertyFromRdf({
+                                    graph: $parameters.graph,
+                                    resource: $parameters.resource,
+                                    propertySchema:
+                                      $schema.properties.toRdfTypes,
+                                    typeFromRdf: (resourceValues) =>
+                                      resourceValues
+                                        .chain((values) =>
+                                          values.chainMap((value) =>
+                                            value.toIri(),
                                           ),
                                         )
-                                          .chain((values) =>
-                                            $fromRdfPreferredLanguages({
-                                              focusResource:
-                                                $parameters.resource,
-                                              predicate:
-                                                ShaclmatePropertyShape.$schema
-                                                  .properties.name.identifier,
-                                              preferredLanguages:
-                                                $parameters.preferredLanguages,
-                                              values,
-                                            }),
-                                          )
+                                        .map((values) => values.toArray())
+                                        .map((valuesArray) =>
+                                          Resource.Values.fromValue({
+                                            focusResource: $parameters.resource,
+                                            propertyPath:
+                                              ShaclmateNodeShape.$schema
+                                                .properties.toRdfTypes
+                                                .identifier,
+                                            value: valuesArray,
+                                          }),
+                                        ),
+                                  }).chain((toRdfTypes) =>
+                                    $shaclPropertyFromRdf({
+                                      graph: $parameters.graph,
+                                      resource: $parameters.resource,
+                                      propertySchema:
+                                        $schema.properties.tsFeatureExcludes,
+                                      typeFromRdf: (resourceValues) =>
+                                        resourceValues
                                           .chain((values) =>
                                             values.chainMap((value) =>
-                                              value.toString(),
+                                              value.toIri([
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                                                ),
+                                                dataFactory.namedNode(
+                                                  "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                                                ),
+                                              ]),
                                             ),
                                           )
-                                          .map((values) =>
-                                            values.length > 0
-                                              ? values.map((value) =>
-                                                  Maybe.of(value),
-                                                )
-                                              : Resource.Values.fromValue<
-                                                  Maybe<string>
-                                                >({
-                                                  focusResource:
-                                                    $parameters.resource,
-                                                  predicate:
-                                                    ShaclmatePropertyShape
-                                                      .$schema.properties.name
-                                                      .identifier,
-                                                  value: Maybe.empty(),
-                                                }),
-                                          )
-                                          .chain((values) => values.head())
-                                          .chain((name) =>
-                                            Either.of<
-                                              Error,
-                                              Resource.Values<Resource.TermValue>
-                                            >(
-                                              $parameters.resource.values(
-                                                $schema.properties.rdfType
+                                          .map((values) => values.toArray())
+                                          .map((valuesArray) =>
+                                            Resource.Values.fromValue({
+                                              focusResource:
+                                                $parameters.resource,
+                                              propertyPath:
+                                                ShaclmateOntology.$schema
+                                                  .properties.tsFeatureExcludes
                                                   .identifier,
-                                                {
-                                                  graph: undefined,
-                                                  unique: true,
-                                                },
+                                              value: valuesArray,
+                                            }),
+                                          ),
+                                    }).chain((tsFeatureExcludes) =>
+                                      $shaclPropertyFromRdf({
+                                        graph: $parameters.graph,
+                                        resource: $parameters.resource,
+                                        propertySchema:
+                                          $schema.properties.tsFeatureIncludes,
+                                        typeFromRdf: (resourceValues) =>
+                                          resourceValues
+                                            .chain((values) =>
+                                              values.chainMap((value) =>
+                                                value.toIri([
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                                                  ),
+                                                  dataFactory.namedNode(
+                                                    "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                                                  ),
+                                                ]),
                                               ),
                                             )
+                                            .map((values) => values.toArray())
+                                            .map((valuesArray) =>
+                                              Resource.Values.fromValue({
+                                                focusResource:
+                                                  $parameters.resource,
+                                                propertyPath:
+                                                  ShaclmateOntology.$schema
+                                                    .properties
+                                                    .tsFeatureIncludes
+                                                    .identifier,
+                                                value: valuesArray,
+                                              }),
+                                            ),
+                                      }).chain((tsFeatureIncludes) =>
+                                        $shaclPropertyFromRdf({
+                                          graph: $parameters.graph,
+                                          resource: $parameters.resource,
+                                          propertySchema:
+                                            $schema.properties.tsImports,
+                                          typeFromRdf: (resourceValues) =>
+                                            resourceValues
                                               .chain((values) =>
-                                                values.chainMap((value) =>
-                                                  value.toIri(),
+                                                $fromRdfPreferredLanguages(
+                                                  values,
+                                                  $parameters.preferredLanguages,
                                                 ),
                                               )
-                                              .map((values) =>
-                                                values.length > 0
-                                                  ? values.map((value) =>
-                                                      Maybe.of(value),
-                                                    )
-                                                  : Resource.Values.fromValue<
-                                                      Maybe<NamedNode>
-                                                    >({
-                                                      focusResource:
-                                                        $parameters.resource,
-                                                      predicate:
-                                                        ShaclmateNodeShape
-                                                          .$schema.properties
-                                                          .rdfType.identifier,
-                                                      value: Maybe.empty(),
-                                                    }),
+                                              .chain((values) =>
+                                                values.chainMap((value) =>
+                                                  value.toString(),
+                                                ),
                                               )
-                                              .chain((values) => values.head())
-                                              .chain((rdfType) =>
-                                                Either.of<
-                                                  Error,
-                                                  Resource.Values<Resource.TermValue>
-                                                >(
-                                                  $parameters.resource.values(
-                                                    $schema.properties
-                                                      .toRdfTypes.identifier,
-                                                    {
-                                                      graph: undefined,
-                                                      unique: true,
-                                                    },
+                                              .map((values) => values.toArray())
+                                              .map((valuesArray) =>
+                                                Resource.Values.fromValue({
+                                                  focusResource:
+                                                    $parameters.resource,
+                                                  propertyPath:
+                                                    ShaclmateOntology.$schema
+                                                      .properties.tsImports
+                                                      .identifier,
+                                                  value: valuesArray,
+                                                }),
+                                              ),
+                                        }).chain((tsImports) =>
+                                          $shaclPropertyFromRdf({
+                                            graph: $parameters.graph,
+                                            resource: $parameters.resource,
+                                            propertySchema:
+                                              $schema.properties
+                                                .tsObjectDeclarationType,
+                                            typeFromRdf: (resourceValues) =>
+                                              resourceValues
+                                                .chain((values) =>
+                                                  values.chainMap((value) =>
+                                                    value.toIri([
+                                                      dataFactory.namedNode(
+                                                        "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
+                                                      ),
+                                                      dataFactory.namedNode(
+                                                        "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
+                                                      ),
+                                                    ]),
                                                   ),
                                                 )
-                                                  .chain((values) =>
-                                                    values.chainMap((value) =>
-                                                      value.toIri(),
-                                                    ),
-                                                  )
-                                                  .map((values) =>
-                                                    values.toArray(),
-                                                  )
-                                                  .map((valuesArray) =>
-                                                    Resource.Values.fromValue({
-                                                      focusResource:
-                                                        $parameters.resource,
-                                                      predicate:
-                                                        ShaclmateNodeShape
-                                                          .$schema.properties
-                                                          .toRdfTypes
-                                                          .identifier,
-                                                      value: valuesArray,
-                                                    }),
-                                                  )
-                                                  .chain((values) =>
-                                                    values.head(),
-                                                  )
-                                                  .chain((toRdfTypes) =>
-                                                    Either.of<
-                                                      Error,
-                                                      Resource.Values<Resource.TermValue>
-                                                    >(
-                                                      $parameters.resource.values(
-                                                        $schema.properties
-                                                          .tsFeatureExcludes
-                                                          .identifier,
-                                                        {
-                                                          graph: undefined,
-                                                          unique: true,
-                                                        },
-                                                      ),
-                                                    )
-                                                      .chain((values) =>
-                                                        values.chainMap(
-                                                          (value) =>
-                                                            value
-                                                              .toIri()
-                                                              .chain((iri) => {
-                                                                switch (
-                                                                  iri.value
-                                                                ) {
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Json":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
-                                                                    );
-                                                                  case "http://purl.org/shaclmate/ontology#_TsFeature_Sparql":
-                                                                    return Either.of<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                                                                    );
-                                                                  default:
-                                                                    return Left<
-                                                                      Error,
-                                                                      NamedNode<
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                      >
-                                                                    >(
-                                                                      new Resource.MistypedTermValueError(
-                                                                        {
-                                                                          actualValue:
-                                                                            iri,
-                                                                          expectedValueType:
-                                                                            'NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
-                                                                          focusResource:
-                                                                            $parameters.resource,
-                                                                          predicate:
-                                                                            ShaclmateOntology
-                                                                              .$schema
-                                                                              .properties
-                                                                              .tsFeatureExcludes
-                                                                              .identifier,
-                                                                        },
-                                                                      ),
-                                                                    );
-                                                                }
-                                                              }),
-                                                        ),
+                                                .map((values) =>
+                                                  values.length > 0
+                                                    ? values.map((value) =>
+                                                        Maybe.of(value),
                                                       )
-                                                      .map((values) =>
-                                                        values.toArray(),
-                                                      )
-                                                      .map((valuesArray) =>
-                                                        Resource.Values.fromValue(
-                                                          {
-                                                            focusResource:
-                                                              $parameters.resource,
-                                                            predicate:
-                                                              ShaclmateOntology
-                                                                .$schema
-                                                                .properties
-                                                                .tsFeatureExcludes
-                                                                .identifier,
-                                                            value: valuesArray,
-                                                          },
-                                                        ),
-                                                      )
-                                                      .chain((values) =>
-                                                        values.head(),
-                                                      )
-                                                      .chain(
-                                                        (tsFeatureExcludes) =>
-                                                          Either.of<
-                                                            Error,
-                                                            Resource.Values<Resource.TermValue>
-                                                          >(
-                                                            $parameters.resource.values(
-                                                              $schema.properties
-                                                                .tsFeatureIncludes
-                                                                .identifier,
-                                                              {
-                                                                graph:
-                                                                  undefined,
-                                                                unique: true,
-                                                              },
-                                                            ),
-                                                          )
-                                                            .chain((values) =>
-                                                              values.chainMap(
-                                                                (value) =>
-                                                                  value
-                                                                    .toIri()
-                                                                    .chain(
-                                                                      (iri) => {
-                                                                        switch (
-                                                                          iri.value
-                                                                        ) {
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Json":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
-                                                                            );
-                                                                          case "http://purl.org/shaclmate/ontology#_TsFeature_Sparql":
-                                                                            return Either.of<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                                                                            );
-                                                                          default:
-                                                                            return Left<
-                                                                              Error,
-                                                                              NamedNode<
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                                                                                | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                                                                              >
-                                                                            >(
-                                                                              new Resource.MistypedTermValueError(
-                                                                                {
-                                                                                  actualValue:
-                                                                                    iri,
-                                                                                  expectedValueType:
-                                                                                    'NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
-                                                                                  focusResource:
-                                                                                    $parameters.resource,
-                                                                                  predicate:
-                                                                                    ShaclmateOntology
-                                                                                      .$schema
-                                                                                      .properties
-                                                                                      .tsFeatureIncludes
-                                                                                      .identifier,
-                                                                                },
-                                                                              ),
-                                                                            );
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                              ),
-                                                            )
-                                                            .map((values) =>
-                                                              values.toArray(),
-                                                            )
-                                                            .map(
-                                                              (valuesArray) =>
-                                                                Resource.Values.fromValue(
-                                                                  {
-                                                                    focusResource:
-                                                                      $parameters.resource,
-                                                                    predicate:
-                                                                      ShaclmateOntology
-                                                                        .$schema
-                                                                        .properties
-                                                                        .tsFeatureIncludes
-                                                                        .identifier,
-                                                                    value:
-                                                                      valuesArray,
-                                                                  },
-                                                                ),
-                                                            )
-                                                            .chain((values) =>
-                                                              values.head(),
-                                                            )
-                                                            .chain(
-                                                              (
-                                                                tsFeatureIncludes,
-                                                              ) =>
-                                                                Either.of<
-                                                                  Error,
-                                                                  Resource.Values<Resource.TermValue>
-                                                                >(
-                                                                  $parameters.resource.values(
-                                                                    $schema
-                                                                      .properties
-                                                                      .tsImports
-                                                                      .identifier,
-                                                                    {
-                                                                      graph:
-                                                                        undefined,
-                                                                      unique: true,
-                                                                    },
-                                                                  ),
-                                                                )
-                                                                  .chain(
-                                                                    (values) =>
-                                                                      $fromRdfPreferredLanguages(
-                                                                        {
-                                                                          focusResource:
-                                                                            $parameters.resource,
-                                                                          predicate:
-                                                                            ShaclmateOntology
-                                                                              .$schema
-                                                                              .properties
-                                                                              .tsImports
-                                                                              .identifier,
-                                                                          preferredLanguages:
-                                                                            $parameters.preferredLanguages,
-                                                                          values,
-                                                                        },
-                                                                      ),
-                                                                  )
-                                                                  .chain(
-                                                                    (values) =>
-                                                                      values.chainMap(
-                                                                        (
-                                                                          value,
-                                                                        ) =>
-                                                                          value.toString(),
-                                                                      ),
-                                                                  )
-                                                                  .map(
-                                                                    (values) =>
-                                                                      values.toArray(),
-                                                                  )
-                                                                  .map(
-                                                                    (
-                                                                      valuesArray,
-                                                                    ) =>
-                                                                      Resource.Values.fromValue(
-                                                                        {
-                                                                          focusResource:
-                                                                            $parameters.resource,
-                                                                          predicate:
-                                                                            ShaclmateOntology
-                                                                              .$schema
-                                                                              .properties
-                                                                              .tsImports
-                                                                              .identifier,
-                                                                          value:
-                                                                            valuesArray,
-                                                                        },
-                                                                      ),
-                                                                  )
-                                                                  .chain(
-                                                                    (values) =>
-                                                                      values.head(),
-                                                                  )
-                                                                  .chain(
-                                                                    (
-                                                                      tsImports,
-                                                                    ) =>
-                                                                      Either.of<
-                                                                        Error,
-                                                                        Resource.Values<Resource.TermValue>
-                                                                      >(
-                                                                        $parameters.resource.values(
-                                                                          $schema
-                                                                            .properties
-                                                                            .tsObjectDeclarationType
-                                                                            .identifier,
-                                                                          {
-                                                                            graph:
-                                                                              undefined,
-                                                                            unique: true,
-                                                                          },
-                                                                        ),
-                                                                      )
-                                                                        .chain(
-                                                                          (
-                                                                            values,
-                                                                          ) =>
-                                                                            values.chainMap(
-                                                                              (
-                                                                                value,
-                                                                              ) =>
-                                                                                value
-                                                                                  .toIri()
-                                                                                  .chain(
-                                                                                    (
-                                                                                      iri,
-                                                                                    ) => {
-                                                                                      switch (
-                                                                                        iri.value
-                                                                                      ) {
-                                                                                        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
-                                                                                          return Either.of<
-                                                                                            Error,
-                                                                                            NamedNode<
-                                                                                              | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                                                                              | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                                                                            >
-                                                                                          >(
-                                                                                            iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class">,
-                                                                                          );
-                                                                                        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface":
-                                                                                          return Either.of<
-                                                                                            Error,
-                                                                                            NamedNode<
-                                                                                              | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                                                                              | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                                                                            >
-                                                                                          >(
-                                                                                            iri as NamedNode<"http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface">,
-                                                                                          );
-                                                                                        default:
-                                                                                          return Left<
-                                                                                            Error,
-                                                                                            NamedNode<
-                                                                                              | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                                                                              | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                                                                            >
-                                                                                          >(
-                                                                                            new Resource.MistypedTermValueError(
-                                                                                              {
-                                                                                                actualValue:
-                                                                                                  iri,
-                                                                                                expectedValueType:
-                                                                                                  'NamedNode<"http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class" | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface">',
-                                                                                                focusResource:
-                                                                                                  $parameters.resource,
-                                                                                                predicate:
-                                                                                                  ShaclmateOntology
-                                                                                                    .$schema
-                                                                                                    .properties
-                                                                                                    .tsObjectDeclarationType
-                                                                                                    .identifier,
-                                                                                              },
-                                                                                            ),
-                                                                                          );
-                                                                                      }
-                                                                                    },
-                                                                                  ),
-                                                                            ),
-                                                                        )
-                                                                        .map(
-                                                                          (
-                                                                            values,
-                                                                          ) =>
-                                                                            values.length >
-                                                                            0
-                                                                              ? values.map(
-                                                                                  (
-                                                                                    value,
-                                                                                  ) =>
-                                                                                    Maybe.of(
-                                                                                      value,
-                                                                                    ),
-                                                                                )
-                                                                              : Resource.Values.fromValue<
-                                                                                  Maybe<
-                                                                                    NamedNode<
-                                                                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                                                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                                                                    >
-                                                                                  >
-                                                                                >(
-                                                                                  {
-                                                                                    focusResource:
-                                                                                      $parameters.resource,
-                                                                                    predicate:
-                                                                                      ShaclmateOntology
-                                                                                        .$schema
-                                                                                        .properties
-                                                                                        .tsObjectDeclarationType
-                                                                                        .identifier,
-                                                                                    value:
-                                                                                      Maybe.empty(),
-                                                                                  },
-                                                                                ),
-                                                                        )
-                                                                        .chain(
-                                                                          (
-                                                                            values,
-                                                                          ) =>
-                                                                            values.head(),
-                                                                        )
-                                                                        .map(
-                                                                          (
-                                                                            tsObjectDeclarationType,
-                                                                          ) => ({
-                                                                            ...$super0,
-                                                                            $identifier,
-                                                                            $type,
-                                                                            abstract,
-                                                                            discriminantValue,
-                                                                            export_,
-                                                                            extern,
-                                                                            fromRdfType,
-                                                                            identifierMintingStrategy,
-                                                                            mutable,
-                                                                            name,
-                                                                            rdfType,
-                                                                            toRdfTypes,
-                                                                            tsFeatureExcludes,
-                                                                            tsFeatureIncludes,
-                                                                            tsImports,
-                                                                            tsObjectDeclarationType,
-                                                                          }),
-                                                                        ),
-                                                                  ),
-                                                            ),
-                                                      ),
-                                                  ),
-                                              ),
-                                          ),
+                                                    : Resource.Values.fromValue<
+                                                        Maybe<
+                                                          NamedNode<
+                                                            | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                                                            | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                                                          >
+                                                        >
+                                                      >({
+                                                        focusResource:
+                                                          $parameters.resource,
+                                                        propertyPath:
+                                                          ShaclmateOntology
+                                                            .$schema.properties
+                                                            .tsObjectDeclarationType
+                                                            .identifier,
+                                                        value: Maybe.empty(),
+                                                      }),
+                                                ),
+                                          }).map((tsObjectDeclarationType) => ({
+                                            ...$super0,
+                                            $identifier,
+                                            $type,
+                                            abstract,
+                                            discriminantValue,
+                                            export_,
+                                            extern,
+                                            fromRdfType,
+                                            identifierMintingStrategy,
+                                            mutable,
+                                            name,
+                                            rdfType,
+                                            toRdfTypes,
+                                            tsFeatureExcludes,
+                                            tsFeatureIncludes,
+                                            tsImports,
+                                            tsObjectDeclarationType,
+                                          })),
+                                        ),
                                       ),
+                                    ),
                                   ),
+                                ),
                               ),
+                            ),
                           ),
+                        ),
                       ),
+                    ),
                   ),
-              ),
+                ),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -7896,7 +6027,7 @@ export namespace ShaclmateNodeShape {
   } as const;
 }
 
-import { PropertyPath } from "./PropertyPath.js";
+import { PropertyPath } from "rdfjs-resource";
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
   readonly $type: "ShaclCorePropertyGroup";
@@ -8006,7 +6137,7 @@ export namespace ShaclCorePropertyGroup {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://www.w3.org/ns/shacl#PropertyGroup":
-                  return Either.of<Error, true>(true);
+                  return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
@@ -8016,7 +6147,7 @@ export namespace ShaclCorePropertyGroup {
                   { graph: $parameters.graph },
                 )
               ) {
-                return Either.of<Error, true>(true);
+                return Right(true as const);
               }
 
               return Left(
@@ -8027,79 +6158,77 @@ export namespace ShaclCorePropertyGroup {
                 ),
               );
             })
-        : Either.of<Error, true>(true)
+        : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, ShaclCorePropertyGroup.$Identifier>(
-        $parameters.resource.identifier as ShaclCorePropertyGroup.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "ShaclCorePropertyGroup">(
-          "ShaclCorePropertyGroup" as const,
-        ).chain(($type) =>
-          Either.of<Error, Resource.Values<Resource.TermValue>>(
-            $parameters.resource.values(
-              $schema.properties.comments.identifier,
-              {
-                graph: undefined,
-                unique: true,
-              },
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Right<"ShaclCorePropertyGroup">(
+            "ShaclCorePropertyGroup" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.comments,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      $parameters.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) => values.toArray())
+                  .map((valuesArray) =>
+                    Resource.Values.fromValue({
+                      focusResource: $parameters.resource,
+                      propertyPath:
+                        ShaclCorePropertyGroup.$schema.properties.comments
+                          .identifier,
+                      value: valuesArray,
+                    }),
+                  ),
+            }).chain((comments) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.labels,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        $parameters.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    )
+                    .map((values) => values.toArray())
+                    .map((valuesArray) =>
+                      Resource.Values.fromValue({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          ShaclCorePropertyGroup.$schema.properties.labels
+                            .identifier,
+                        value: valuesArray,
+                      }),
+                    ),
+              }).map((labels) => ({ $identifier, $type, comments, labels })),
             ),
-          )
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  ShaclCorePropertyGroup.$schema.properties.comments.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString()))
-            .map((values) => values.toArray())
-            .map((valuesArray) =>
-              Resource.Values.fromValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  ShaclCorePropertyGroup.$schema.properties.comments.identifier,
-                value: valuesArray,
-              }),
-            )
-            .chain((values) => values.head())
-            .chain((comments) =>
-              Either.of<Error, Resource.Values<Resource.TermValue>>(
-                $parameters.resource.values(
-                  $schema.properties.labels.identifier,
-                  {
-                    graph: undefined,
-                    unique: true,
-                  },
-                ),
-              )
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ShaclCorePropertyGroup.$schema.properties.labels
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) => values.toArray())
-                .map((valuesArray) =>
-                  Resource.Values.fromValue({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ShaclCorePropertyGroup.$schema.properties.labels
-                        .identifier,
-                    value: valuesArray,
-                  }),
-                )
-                .chain((values) => values.head())
-                .map((labels) => ({ $identifier, $type, comments, labels })),
-            ),
+          ),
         ),
-      ),
     );
   }
 
@@ -9427,15 +7556,26 @@ export namespace $ObjectSet {
   }
 }
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
-  protected readonly graph?: Exclude<Quad_Graph, Variable>;
-  protected readonly resourceSet: ResourceSet;
+  protected readonly $graph?: Exclude<Quad_Graph, Variable>;
+  readonly #dataset: DatasetCore | (() => DatasetCore);
 
   constructor(
-    dataset: DatasetCore,
+    dataset: DatasetCore | (() => DatasetCore),
     options?: { graph?: Exclude<Quad_Graph, Variable> },
   ) {
-    this.graph = options?.graph;
-    this.resourceSet = new ResourceSet(dataset, { dataFactory: dataFactory });
+    this.#dataset = dataset;
+    this.$graph = options?.graph;
+  }
+
+  protected $dataset(): DatasetCore {
+    if (typeof this.#dataset === "object") {
+      return this.#dataset;
+    }
+    return this.#dataset();
+  }
+
+  protected $resourceSet(): ResourceSet {
+    return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
   }
 
   async owlOntology(
@@ -10375,11 +8515,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
-    const graph = query?.graph ?? this.graph;
+    const graph = query?.graph ?? this.$graph;
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -10388,10 +8528,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let resources: { object?: ObjectT; resource: Resource }[];
+    const resourceSet = this.$resourceSet(); // Access once, in case it's instantiated lazily
     let sortResources: boolean;
     if (query?.identifiers) {
       resources = query.identifiers.map((identifier) => ({
-        resource: this.resourceSet.resource(identifier),
+        resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
     } else if (objectType.$fromRdfTypes.length > 0) {
@@ -10399,7 +8540,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       resources = [];
       sortResources = true;
       for (const fromRdfType of objectType.$fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+        for (const resource of resourceSet.instancesOf(fromRdfType, {
           graph,
         })) {
           if (!identifierSet.has(resource.identifier)) {
@@ -10412,7 +8553,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const quad of this.resourceSet.dataset) {
+      for (const quad of resourceSet.dataset) {
         if (graph && !quad.graph.equals(graph)) {
           continue;
         }
@@ -10429,7 +8570,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           continue;
         }
         identifierSet.add(quad.subject);
-        const resource = this.resourceSet.resource(quad.subject);
+        const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
         objectType
           .$fromRdf(resource, { graph, objectSet: this })
@@ -10469,11 +8610,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
-          return Either.of(objects);
+          return Right(objects);
         }
       }
     }
-    return Either.of(objects);
+    return Right(objects);
   }
 
   protected $objectUnionsSync<
@@ -10494,11 +8635,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
-    const graph = query?.graph ?? this.graph;
+    const graph = query?.graph ?? this.$graph;
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return Either.of([]);
+      return Right([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -10521,10 +8662,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       };
       resource: Resource;
     }[];
+    const resourceSet = this.$resourceSet(); // Access once, in case it's instantiated lazily
     let sortResources: boolean;
     if (query?.identifiers) {
       resources = query.identifiers.map((identifier) => ({
-        resource: this.resourceSet.resource(identifier),
+        resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
     } else if (
@@ -10535,7 +8677,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       sortResources = true;
       for (const objectType of objectTypes) {
         for (const fromRdfType of objectType.$fromRdfTypes) {
-          for (const resource of this.resourceSet.instancesOf(fromRdfType, {
+          for (const resource of resourceSet.instancesOf(fromRdfType, {
             graph,
           })) {
             if (!identifierSet.has(resource.identifier)) {
@@ -10549,7 +8691,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const quad of this.resourceSet.dataset) {
+      for (const quad of resourceSet.dataset) {
         if (graph && !quad.graph.equals(graph)) {
           continue;
         }
@@ -10567,7 +8709,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         identifierSet.add(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object types
-        const resource = this.resourceSet.resource(quad.subject);
+        const resource = resourceSet.resource(quad.subject);
         for (const objectType of objectTypes) {
           if (
             objectType
@@ -10631,10 +8773,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
-          return Either.of(objects);
+          return Right(objects);
         }
       }
     }
-    return Either.of(objects);
+    return Right(objects);
   }
 }

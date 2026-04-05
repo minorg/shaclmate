@@ -1,10 +1,9 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import { Either, type Maybe } from "purify-ts";
-import { Resource } from "rdfjs-resource";
+import { type PropertyPath, Resource } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 import type { OntologyLike } from "./OntologyLike.js";
-import type { PropertyPath } from "./PropertyPath.js";
 import { Shape } from "./Shape.js";
 import type { ShapesGraph } from "./ShapesGraph.js";
 
@@ -78,8 +77,8 @@ export class PropertyShape<
       `identifier=${Resource.Identifier.toString(this.identifier)}`,
     ];
     const path = this.path;
-    if (path.$type === "PredicatePath") {
-      keyValues.push(`path=${path.iri.value}`);
+    if (path.termType === "NamedNode") {
+      keyValues.push(`path=${path.value}`);
     }
     return `PropertyShape(${keyValues.join(", ")})`;
   }

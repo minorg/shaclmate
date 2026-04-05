@@ -5,30 +5,24 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_fromRdfPreferredLanguages = conditionalOutput(
   `${syntheticNamePrefix}fromRdfPreferredLanguages`,
   code`\
-function ${syntheticNamePrefix}fromRdfPreferredLanguages(
-  { focusResource, predicate, preferredLanguages, values }: {
-    focusResource: ${imports.Resource};
-    predicate: ${imports.NamedNode};
-    preferredLanguages?: readonly string[];
-    values: ${imports.Resource}.Values<${imports.Resource}.TermValue>
-  }): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>> {
+function ${syntheticNamePrefix}fromRdfPreferredLanguages(values: ${imports.Resource}.Values, preferredLanguages?: readonly string[]): ${imports.Either}<Error, ${imports.Resource}.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return ${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(values);
+    return ${imports.Right}(values);
   }
 
-  return values.chainMap(value => value.toLiteral()).map(literalValues => {
-    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-    // Within a preferredLanguage the literals may be in any order.
-    let filteredLiteralValues: ${imports.Resource}.Values<${imports.Literal}> | undefined;
-    for (const preferredLanguage of preferredLanguages) {
-      if (!filteredLiteralValues) {
-        filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
-      } else {
-        filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === preferredLanguage).toArray());
-      }
+  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+  // Within a preferredLanguage the literals may be in any order.
+  let filteredValues: ${imports.Resource}.Value[] = [];
+  for (const preferredLanguage of preferredLanguages) {
+    for (const value of values) {
+      value.toLiteral().ifRight(literal => {
+        if (literal.language === preferredLanguage) {
+          filteredValues.push(value);
+        }
+      });
     }
+  }
 
-    return filteredLiteralValues!.map(literalValue => new ${imports.Resource}.TermValue({ dataFactory: ${imports.dataFactory}, focusResource, predicate, term: literalValue }));
-  });
+  return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: values.focusResource, propertyPath: values.propertyPath, values: filteredValues }));
 }`,
 );

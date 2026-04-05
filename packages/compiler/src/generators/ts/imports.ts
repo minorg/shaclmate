@@ -31,6 +31,7 @@ export const imports = {
   Quad_Graph: imp("Quad_Graph@@rdfjs/types"),
   Resource: imp("Resource@rdfjs-resource"),
   ResourceSet: imp("ResourceSet@rdfjs-resource"),
+  Right: imp("Right@purify-ts"),
   sha256: imp("sha256@js-sha256"),
   sparqljs: imp("sparqljs*sparqljs"),
   uuid: imp("uuid*uuid"),

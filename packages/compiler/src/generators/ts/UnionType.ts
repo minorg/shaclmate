@@ -1,9 +1,11 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
+import { snippets } from "./snippets.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -102,6 +104,10 @@ class MemberType {
     return this.delegate.schemaType;
   }
 
+  get sparqlConstructTriplesFunction() {
+    return this.delegate.sparqlConstructTriplesFunction;
+  }
+
   get sparqlWherePatternsFunction() {
     return this.delegate.sparqlWherePatternsFunction;
   }
@@ -142,12 +148,6 @@ class MemberType {
       case "typeof":
         return instance;
     }
-  }
-
-  sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ) {
-    return this.delegate.sparqlConstructTriples(parameters);
   }
 
   toJsonExpression(
@@ -413,15 +413,32 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`\
+(({ ignoreRdfType, filter, schema, ...otherParameters }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => {
+  let triples: ${imports.sparqljs}.Triple[] = [];
+
+  ${joinCode(
+    this.memberTypes.map(
+      (memberType) => code`\
+triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], ignoreRdfType: false, schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));`,
+    ),
+  )}
+  
+  return triples;
+})`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`\
-(({ filter, schema, ...otherParameters }) => {
+(({ filter, schema, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => {
   const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });`,
+unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], ignoreRdfType: false, schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });`,
     ),
   )}
   
@@ -459,7 +476,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filte
     variables,
   }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
     return code`${variables.resourceValues}.chain(values => values.chainMap(value => {
-      const valueAsValues = ${imports.Either}.of(value.toValues());
+      const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.memberTypes.reduce(
         (expression, memberType) => {
           let typeExpression: Code = memberType.fromRdfExpression({
@@ -586,30 +603,6 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filte
       default:
         throw this.discriminant satisfies never;
     }
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Maybe<Code> {
-    const memberTypeSparqlConstructTriples = this.memberTypes.flatMap(
-      (memberType) =>
-        memberType
-          .sparqlConstructTriples({
-            ...parameters,
-            allowIgnoreRdfType: false,
-          })
-          .toList(),
-    );
-    if (memberTypeSparqlConstructTriples.length === 0) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of(
-      code`[${joinCode(
-        memberTypeSparqlConstructTriples.map((code_) => code`...${code_}`),
-        { on: "," },
-      )}]`,
-    );
   }
 
   override toJsonExpression({

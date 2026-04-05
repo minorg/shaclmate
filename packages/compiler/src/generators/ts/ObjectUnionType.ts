@@ -165,8 +165,13 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`(({ ignoreRdfType, schema, ...otherParameters }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(otherParameters))`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
+    return code`(({ ignoreRdfType, propertyPatterns, schema, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ focusIdentifier: valueVariable, ...otherParameters })))`;
   }
 
   get staticModuleName(): string {
@@ -269,19 +274,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       }
     }
     return expression;
-  }
-
-  override sparqlConstructTriples({
-    variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlConstructTriples"]
-  >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
-        subject: variables.valueVariable,
-        variablePrefix: variables.variablePrefix,
-      }})`,
-    );
   }
 
   override toJsonExpression({

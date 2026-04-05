@@ -15,7 +15,7 @@ export class FloatType extends AbstractNumericType<number> {
   }: Parameters<
     AbstractNumericType<number>["fromRdfResourceValueExpression"]
   >[0]): Code {
-    return code`${variables.value}.toNumber()`;
+    return code`${variables.value}.toFloat(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
   }
 
   protected override literalOf(value: number): string {

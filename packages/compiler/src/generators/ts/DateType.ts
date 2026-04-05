@@ -24,6 +24,6 @@ export class DateType extends AbstractDateType {
   protected override fromRdfResourceValueExpression({
     variables,
   }: Parameters<AbstractDateType["fromRdfResourceValueExpression"]>[0]): Code {
-    return code`${variables.value}.toDate()`;
+    return code`${variables.value}.toDate(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `new Date(${_.getTime()})`).join(", ")}]` : ""})`;
   }
 }

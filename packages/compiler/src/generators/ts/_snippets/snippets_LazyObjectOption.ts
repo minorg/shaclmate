@@ -22,7 +22,7 @@ export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${
 
   async resolve(): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
-      return ${imports.Either}.of(${imports.Maybe}.empty());
+      return ${imports.Right}(${imports.Maybe}.empty());
     }
     return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier)).map(${imports.Maybe}.of);
   }

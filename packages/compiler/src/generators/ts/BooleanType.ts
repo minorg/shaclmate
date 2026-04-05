@@ -53,17 +53,11 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   }: Parameters<
     AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = code`value.toBoolean()`;
-    if (this.primitiveIn.length === 1) {
-      const eitherTypeParameters = code`<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? ${imports.Either}.of${eitherTypeParameters}(primitiveValue) : ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})))`;
-    }
-
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn: undefined,
       preferredLanguages: undefined,
-      valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toBoolean(${this.primitiveIn.length === 1 ? `[${this.primitiveIn[0]}] as const` : ""})))`,
     };
   }
 }

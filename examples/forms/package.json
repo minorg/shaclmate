@@ -16,7 +16,7 @@
     "@types/n3": "~1.26.0",
     "n3": "~1.26.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "2.0.7",
+    "rdfjs-resource": "3.0.4",
     "zod": "~4.1.12"
   },
   "devDependencies": {
@@ -50,8 +50,6 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "link-dependencies": "npm link rdfjs-resource",
-    "unlink": "npm unlink -g @shaclmate/forms",
     "start": "vite dev --port 3000",
     "test": "biome check",
     "test:coverage": "biome check"

@@ -13,8 +13,14 @@ export function descendantClassIris(
     classResource: Resource,
     depth: number,
   ): void {
-    for (const childClassValue of classResource.valuesOf(rdfs.subClassOf)) {
-      childClassValue.toNamedResource().ifRight((childClassResource) => {
+    for (const childClassValue of classResource.values({
+      path: rdfs.subClassOf,
+      termType: "InversePath",
+    })) {
+      childClassValue.toResource().ifRight((childClassResource) => {
+        if (childClassResource.identifier.termType !== "NamedNode") {
+          return;
+        }
         if (descendantClassIris.has(childClassResource.identifier)) {
           return;
         }

@@ -8,7 +8,7 @@ export const snippets_EqualsResult = conditionalOutput(
 export type ${syntheticNamePrefix}EqualsResult = ${imports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
 export namespace ${syntheticNamePrefix}EqualsResult {
-  export const Equal: ${syntheticNamePrefix}EqualsResult = ${imports.Either}.of<Unequal, true>(true);
+  export const Equal: ${syntheticNamePrefix}EqualsResult = ${imports.Right}(true);
 
   export function fromBooleanEqualsResult(
     left: any,

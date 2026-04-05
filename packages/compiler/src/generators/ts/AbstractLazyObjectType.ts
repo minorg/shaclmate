@@ -94,6 +94,11 @@ export abstract class AbstractLazyObjectType<
   }
 
   @Memoize()
+  override get sparqlConstructTriplesFunction(): Code {
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlConstructTriplesFunction}({ schema: schema.partial(), ...otherParameters }))`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partial(), ...otherParameters }))`;
   }
@@ -136,12 +141,6 @@ export abstract class AbstractLazyObjectType<
     parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
   ): Code {
     return this.partialType.jsonZodSchema(parameters);
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Maybe<Code> {
-    return this.partialType.sparqlConstructTriples(parameters);
   }
 
   override toJsonExpression({

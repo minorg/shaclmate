@@ -14,12 +14,12 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): Code {
-  const sparqlWherePatternsFunctionType = code`(parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; }) => readonly ${imports.sparqljs}.Pattern[]`;
+  const sparqlWherePatternsFunctionType = code`(parameters?: { filter?: ObjectFilterT; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; }) => readonly ${imports.sparqljs}.Pattern[]`;
 
   const parameters = {
     constructObjectType: code`objectType: {\
   ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>; objectSet: ${syntheticNamePrefix}ObjectSet }) => ${imports.Either}<Error, ObjectT>;
-  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
+  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${imports.NamedNode} | ${imports.Variable}; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
     query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
@@ -102,7 +102,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
     if (Number.isNaN(parsedCount)) {
       return ${imports.Left}(new Error("'count' variable is NaN"));
     }
-    return ${imports.Either}.of(parsedCount);
+    return ${imports.Right}(parsedCount);
   }
 
   protected ${syntheticNamePrefix}mapBindingsToIdentifiers(bindings: readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[], variable: string): readonly ${imports.NamedNode}[] {
@@ -121,12 +121,12 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 
   protected async ${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, readonly ObjectIdentifierT[]>> {
     if (query?.identifiers) {
-      return ${imports.Either}.of(query.identifiers);
+      return ${imports.Right}(query.identifiers);
     }
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return ${imports.Either}.of([]);
+      return ${imports.Right}([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -233,7 +233,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       patterns = patterns.concat(query.where(this.${syntheticNamePrefix}objectVariable));
     }
 
-    patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
+    patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable }));
 
     patterns = ${snippets.normalizeSparqlWherePatterns}(patterns).concat();
 
