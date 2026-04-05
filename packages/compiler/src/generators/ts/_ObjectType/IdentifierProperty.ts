@@ -17,13 +17,7 @@ import type { IriType } from "../IriType.js";
 import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "../ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<
@@ -433,28 +427,14 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
   >[0]): Maybe<Code> {
-    if (this.type.in_.length > 0 && this.type.kind === "IriType") {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return Maybe.of(
-        code`(${joinCode(
-          this.type.in_.map(
-            (iri) =>
-              code`${variables.resource}.identifier.value === "${iri.value}"`,
-          ),
-          { on: " || " },
-        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, propertyPath: ${rdfjsTermExpression(rdf.subject)} }))`,
-      );
-    }
-
-    if (this.type.kind === "BlankNodeType" || this.type.kind === "IriType") {
-      return Maybe.of(
-        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, propertyPath: ${rdfjsTermExpression(rdf.subject)} }))`,
-      );
-    }
-
     return Maybe.of(
-      code`${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
+      code`${this.type.fromRdfExpression({
+        variables: {
+          ...variables,
+          predicate: rdfjsTermExpression(rdf.subject),
+          resourceValues: code`${imports.Right}(new ${imports.Resource}.Value(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, propertyPath: rdfjsTermExpression(rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
+        },
+      })}.chain(values => values.head())`,
     );
   }
 

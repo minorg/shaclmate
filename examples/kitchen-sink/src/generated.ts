@@ -11,7 +11,14 @@ import type {
 } from "@rdfjs/types";
 import { Decimal as BigDecimal } from "decimal.js";
 import { sha256 } from "js-sha256";
-import { Either, EitherAsync, Left, Maybe, NonEmptyList } from "purify-ts";
+import {
+  Either,
+  EitherAsync,
+  Left,
+  Maybe,
+  NonEmptyList,
+  Right,
+} from "purify-ts";
 import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
 import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
@@ -2527,20 +2534,17 @@ export namespace $NamedDefaultPartial {
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: NamedNode }> {
-    return (
-      $parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, $NamedDefaultPartial.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-    ).map(($identifier) => ({ $identifier }));
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) => values.head())
+      .map(($identifier) => ({ $identifier }));
   }
 
   export const $schema = {
@@ -2860,9 +2864,17 @@ export namespace $DefaultPartial {
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: BlankNode | NamedNode }> {
-    return Either.of<Error, $DefaultPartial.$Identifier>(
-      $parameters.resource.identifier as $DefaultPartial.$Identifier,
-    ).map(($identifier) => ({ $identifier }));
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .map(($identifier) => ({ $identifier }));
   }
 
   export const $schema = {
@@ -3231,47 +3243,46 @@ export namespace UuidV4IriIdentifierInterface {
       uuidV4IriProperty: string;
     }
   > {
-    return (
-      $parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, UuidV4IriIdentifierInterface.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-    ).chain(($identifier) =>
-      Either.of<Error, "UuidV4IriIdentifierInterface">(
-        "UuidV4IriIdentifierInterface" as const,
-      ).chain(($type) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.uuidV4IriProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    UuidV4IriIdentifierInterface.$schema.properties
-                      .uuidV4IriProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((uuidV4IriProperty) => ({
-          $identifier,
-          $type,
-          uuidV4IriProperty,
-        })),
-      ),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        Either.of<Error, "UuidV4IriIdentifierInterface">(
+          "UuidV4IriIdentifierInterface" as const,
+        ).chain(($type) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.uuidV4IriProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      UuidV4IriIdentifierInterface.$schema.properties
+                        .uuidV4IriProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((uuidV4IriProperty) => ({
+            $identifier,
+            $type,
+            uuidV4IriProperty,
+          })),
+        ),
+      );
   }
 
   export function $toRdf(
@@ -3740,39 +3751,36 @@ export namespace UuidV4IriIdentifierClass {
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: NamedNode; uuidV4IriProperty: string }> {
-    return (
-      $parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, UuidV4IriIdentifierClass.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.uuidV4IriProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty
-                    .identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((uuidV4IriProperty) => ({ $identifier, uuidV4IriProperty })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.uuidV4IriProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    UuidV4IriIdentifierClass.$schema.properties
+                      .uuidV4IriProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((uuidV4IriProperty) => ({ $identifier, uuidV4IriProperty })),
+      );
   }
 
   export const $schema = {
@@ -6153,38 +6161,108 @@ export namespace UnionDiscriminantsClass {
       setIriOrStringProperty: readonly (NamedNode | string)[];
     }
   > {
-    return Either.of<Error, UnionDiscriminantsClass.$Identifier>(
-      $parameters.resource.identifier as UnionDiscriminantsClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.optionalClassOrClassOrStringProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              values.chainMap((value) => {
-                const valueAsValues = Either.of(value.toValues());
-                return (
-                  valueAsValues
-                    .chain((values) =>
-                      values.chainMap((value) =>
-                        value.toResource().chain((resource) =>
-                          ClassUnionMember1.$fromRdf(resource, {
-                            context: $parameters.context,
-                            objectSet: $parameters.objectSet,
-                            preferredLanguages: $parameters.preferredLanguages,
-                          }),
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema:
+            $schema.properties.optionalClassOrClassOrStringProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) => {
+                  const valueAsValues = Either.of(value.toValues());
+                  return (
+                    valueAsValues
+                      .chain((values) =>
+                        values.chainMap((value) =>
+                          value.toResource().chain((resource) =>
+                            ClassUnionMember1.$fromRdf(resource, {
+                              context: $parameters.context,
+                              objectSet: $parameters.objectSet,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                            }),
+                          ),
                         ),
-                      ),
-                    )
-                    .map((values) =>
-                      values.map(
-                        (value) =>
-                          ({
-                            type: "0-ClassUnionMember1" as const,
-                            value,
-                          }) as
+                      )
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({
+                              type: "0-ClassUnionMember1" as const,
+                              value,
+                            }) as
+                              | {
+                                  type: "0-ClassUnionMember1";
+                                  value: ClassUnionMember1;
+                                }
+                              | {
+                                  type: "1-ClassUnionMember2";
+                                  value: ClassUnionMember2;
+                                }
+                              | { type: "2-string"; value: string },
+                        ),
+                      ) as Either<
+                      Error,
+                      Resource.Values<
+                        | {
+                            type: "0-ClassUnionMember1";
+                            value: ClassUnionMember1;
+                          }
+                        | {
+                            type: "1-ClassUnionMember2";
+                            value: ClassUnionMember2;
+                          }
+                        | { type: "2-string"; value: string }
+                      >
+                    >
+                  )
+                    .altLazy(
+                      () =>
+                        valueAsValues
+                          .chain((values) =>
+                            values.chainMap((value) =>
+                              value.toResource().chain((resource) =>
+                                ClassUnionMember2.$fromRdf(resource, {
+                                  context: $parameters.context,
+                                  objectSet: $parameters.objectSet,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                }),
+                              ),
+                            ),
+                          )
+                          .map((values) =>
+                            values.map(
+                              (value) =>
+                                ({
+                                  type: "1-ClassUnionMember2" as const,
+                                  value,
+                                }) as
+                                  | {
+                                      type: "0-ClassUnionMember1";
+                                      value: ClassUnionMember1;
+                                    }
+                                  | {
+                                      type: "1-ClassUnionMember2";
+                                      value: ClassUnionMember2;
+                                    }
+                                  | { type: "2-string"; value: string },
+                            ),
+                          ) as Either<
+                          Error,
+                          Resource.Values<
                             | {
                                 type: "0-ClassUnionMember1";
                                 value: ClassUnionMember1;
@@ -6193,160 +6271,10 @@ export namespace UnionDiscriminantsClass {
                                 type: "1-ClassUnionMember2";
                                 value: ClassUnionMember2;
                               }
-                            | { type: "2-string"; value: string },
-                      ),
-                    ) as Either<
-                    Error,
-                    Resource.Values<
-                      | {
-                          type: "0-ClassUnionMember1";
-                          value: ClassUnionMember1;
-                        }
-                      | {
-                          type: "1-ClassUnionMember2";
-                          value: ClassUnionMember2;
-                        }
-                      | { type: "2-string"; value: string }
-                    >
-                  >
-                )
-                  .altLazy(
-                    () =>
-                      valueAsValues
-                        .chain((values) =>
-                          values.chainMap((value) =>
-                            value.toResource().chain((resource) =>
-                              ClassUnionMember2.$fromRdf(resource, {
-                                context: $parameters.context,
-                                objectSet: $parameters.objectSet,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                              }),
-                            ),
-                          ),
-                        )
-                        .map((values) =>
-                          values.map(
-                            (value) =>
-                              ({
-                                type: "1-ClassUnionMember2" as const,
-                                value,
-                              }) as
-                                | {
-                                    type: "0-ClassUnionMember1";
-                                    value: ClassUnionMember1;
-                                  }
-                                | {
-                                    type: "1-ClassUnionMember2";
-                                    value: ClassUnionMember2;
-                                  }
-                                | { type: "2-string"; value: string },
-                          ),
-                        ) as Either<
-                        Error,
-                        Resource.Values<
-                          | {
-                              type: "0-ClassUnionMember1";
-                              value: ClassUnionMember1;
-                            }
-                          | {
-                              type: "1-ClassUnionMember2";
-                              value: ClassUnionMember2;
-                            }
-                          | { type: "2-string"; value: string }
-                        >
-                      >,
-                  )
-                  .altLazy(
-                    () =>
-                      valueAsValues
-                        .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              UnionDiscriminantsClass.$schema.properties
-                                .optionalClassOrClassOrStringProperty
-                                .identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
-                        )
-                        .map((values) =>
-                          values.map(
-                            (value) =>
-                              ({
-                                type: "2-string" as const,
-                                value,
-                              }) as
-                                | {
-                                    type: "0-ClassUnionMember1";
-                                    value: ClassUnionMember1;
-                                  }
-                                | {
-                                    type: "1-ClassUnionMember2";
-                                    value: ClassUnionMember2;
-                                  }
-                                | { type: "2-string"; value: string },
-                          ),
-                        ) as Either<
-                        Error,
-                        Resource.Values<
-                          | {
-                              type: "0-ClassUnionMember1";
-                              value: ClassUnionMember1;
-                            }
-                          | {
-                              type: "1-ClassUnionMember2";
-                              value: ClassUnionMember2;
-                            }
-                          | { type: "2-string"; value: string }
-                        >
-                      >,
-                  )
-                  .chain((values) => values.head());
-              }),
-            )
-            .map((values) =>
-              values.length > 0
-                ? values.map((value) => Maybe.of(value))
-                : Resource.Values.fromValue<
-                    Maybe<
-                      | {
-                          type: "0-ClassUnionMember1";
-                          value: ClassUnionMember1;
-                        }
-                      | {
-                          type: "1-ClassUnionMember2";
-                          value: ClassUnionMember2;
-                        }
-                      | { type: "2-string"; value: string }
-                    >
-                  >({
-                    focusResource: $parameters.resource,
-                    propertyPath:
-                      UnionDiscriminantsClass.$schema.properties
-                        .optionalClassOrClassOrStringProperty.identifier,
-                    value: Maybe.empty(),
-                  }),
-            ),
-      }).chain((optionalClassOrClassOrStringProperty) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.optionalIriOrLiteralProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => {
-                  const valueAsValues = Either.of(value.toValues());
-                  return (
-                    valueAsValues.chain((values) =>
-                      values.chainMap((value) => value.toIri()),
-                    ) as Either<Error, Resource.Values<NamedNode | Literal>>
-                  )
+                            | { type: "2-string"; value: string }
+                          >
+                        >,
+                    )
                     .altLazy(
                       () =>
                         valueAsValues
@@ -6355,17 +6283,46 @@ export namespace UnionDiscriminantsClass {
                               focusResource: $parameters.resource,
                               predicate:
                                 UnionDiscriminantsClass.$schema.properties
-                                  .optionalIriOrLiteralProperty.identifier,
+                                  .optionalClassOrClassOrStringProperty
+                                  .identifier,
                               preferredLanguages:
                                 $parameters.preferredLanguages,
                               values,
                             }),
                           )
                           .chain((values) =>
-                            values.chainMap((value) => value.toLiteral()),
+                            values.chainMap((value) => value.toString()),
+                          )
+                          .map((values) =>
+                            values.map(
+                              (value) =>
+                                ({
+                                  type: "2-string" as const,
+                                  value,
+                                }) as
+                                  | {
+                                      type: "0-ClassUnionMember1";
+                                      value: ClassUnionMember1;
+                                    }
+                                  | {
+                                      type: "1-ClassUnionMember2";
+                                      value: ClassUnionMember2;
+                                    }
+                                  | { type: "2-string"; value: string },
+                            ),
                           ) as Either<
                           Error,
-                          Resource.Values<NamedNode | Literal>
+                          Resource.Values<
+                            | {
+                                type: "0-ClassUnionMember1";
+                                value: ClassUnionMember1;
+                              }
+                            | {
+                                type: "1-ClassUnionMember2";
+                                value: ClassUnionMember2;
+                              }
+                            | { type: "2-string"; value: string }
+                          >
                         >,
                     )
                     .chain((values) => values.head());
@@ -6374,19 +6331,31 @@ export namespace UnionDiscriminantsClass {
               .map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
+                  : Resource.Values.fromValue<
+                      Maybe<
+                        | {
+                            type: "0-ClassUnionMember1";
+                            value: ClassUnionMember1;
+                          }
+                        | {
+                            type: "1-ClassUnionMember2";
+                            value: ClassUnionMember2;
+                          }
+                        | { type: "2-string"; value: string }
+                      >
+                    >({
                       focusResource: $parameters.resource,
                       propertyPath:
                         UnionDiscriminantsClass.$schema.properties
-                          .optionalIriOrLiteralProperty.identifier,
+                          .optionalClassOrClassOrStringProperty.identifier,
                       value: Maybe.empty(),
                     }),
               ),
-        }).chain((optionalIriOrLiteralProperty) =>
+        }).chain((optionalClassOrClassOrStringProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.optionalIriOrStringProperty,
+            propertySchema: $schema.properties.optionalIriOrLiteralProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -6395,7 +6364,7 @@ export namespace UnionDiscriminantsClass {
                     return (
                       valueAsValues.chain((values) =>
                         values.chainMap((value) => value.toIri()),
-                      ) as Either<Error, Resource.Values<NamedNode | string>>
+                      ) as Either<Error, Resource.Values<NamedNode | Literal>>
                     )
                       .altLazy(
                         () =>
@@ -6405,17 +6374,17 @@ export namespace UnionDiscriminantsClass {
                                 focusResource: $parameters.resource,
                                 predicate:
                                   UnionDiscriminantsClass.$schema.properties
-                                    .optionalIriOrStringProperty.identifier,
+                                    .optionalIriOrLiteralProperty.identifier,
                                 preferredLanguages:
                                   $parameters.preferredLanguages,
                                 values,
                               }),
                             )
                             .chain((values) =>
-                              values.chainMap((value) => value.toString()),
+                              values.chainMap((value) => value.toLiteral()),
                             ) as Either<
                             Error,
-                            Resource.Values<NamedNode | string>
+                            Resource.Values<NamedNode | Literal>
                           >,
                       )
                       .chain((values) => values.head());
@@ -6424,183 +6393,28 @@ export namespace UnionDiscriminantsClass {
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<NamedNode | string>>({
+                    : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
                         focusResource: $parameters.resource,
                         propertyPath:
                           UnionDiscriminantsClass.$schema.properties
-                            .optionalIriOrStringProperty.identifier,
+                            .optionalIriOrLiteralProperty.identifier,
                         value: Maybe.empty(),
                       }),
                 ),
-          }).chain((optionalIriOrStringProperty) =>
+          }).chain((optionalIriOrLiteralProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema:
-                $schema.properties.requiredClassOrClassOrStringProperty,
+              propertySchema: $schema.properties.optionalIriOrStringProperty,
               typeFromRdf: (resourceValues) =>
-                resourceValues.chain((values) =>
-                  values.chainMap((value) => {
-                    const valueAsValues = Either.of(value.toValues());
-                    return (
-                      valueAsValues
-                        .chain((values) =>
-                          values.chainMap((value) =>
-                            value.toResource().chain((resource) =>
-                              ClassUnionMember1.$fromRdf(resource, {
-                                context: $parameters.context,
-                                objectSet: $parameters.objectSet,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                              }),
-                            ),
-                          ),
-                        )
-                        .map((values) =>
-                          values.map(
-                            (value) =>
-                              ({
-                                type: "0-ClassUnionMember1" as const,
-                                value,
-                              }) as
-                                | {
-                                    type: "0-ClassUnionMember1";
-                                    value: ClassUnionMember1;
-                                  }
-                                | {
-                                    type: "1-ClassUnionMember2";
-                                    value: ClassUnionMember2;
-                                  }
-                                | { type: "2-string"; value: string },
-                          ),
-                        ) as Either<
-                        Error,
-                        Resource.Values<
-                          | {
-                              type: "0-ClassUnionMember1";
-                              value: ClassUnionMember1;
-                            }
-                          | {
-                              type: "1-ClassUnionMember2";
-                              value: ClassUnionMember2;
-                            }
-                          | { type: "2-string"; value: string }
-                        >
-                      >
-                    )
-                      .altLazy(
-                        () =>
-                          valueAsValues
-                            .chain((values) =>
-                              values.chainMap((value) =>
-                                value.toResource().chain((resource) =>
-                                  ClassUnionMember2.$fromRdf(resource, {
-                                    context: $parameters.context,
-                                    objectSet: $parameters.objectSet,
-                                    preferredLanguages:
-                                      $parameters.preferredLanguages,
-                                  }),
-                                ),
-                              ),
-                            )
-                            .map((values) =>
-                              values.map(
-                                (value) =>
-                                  ({
-                                    type: "1-ClassUnionMember2" as const,
-                                    value,
-                                  }) as
-                                    | {
-                                        type: "0-ClassUnionMember1";
-                                        value: ClassUnionMember1;
-                                      }
-                                    | {
-                                        type: "1-ClassUnionMember2";
-                                        value: ClassUnionMember2;
-                                      }
-                                    | { type: "2-string"; value: string },
-                              ),
-                            ) as Either<
-                            Error,
-                            Resource.Values<
-                              | {
-                                  type: "0-ClassUnionMember1";
-                                  value: ClassUnionMember1;
-                                }
-                              | {
-                                  type: "1-ClassUnionMember2";
-                                  value: ClassUnionMember2;
-                                }
-                              | { type: "2-string"; value: string }
-                            >
-                          >,
-                      )
-                      .altLazy(
-                        () =>
-                          valueAsValues
-                            .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  UnionDiscriminantsClass.$schema.properties
-                                    .requiredClassOrClassOrStringProperty
-                                    .identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
-                            )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toString()),
-                            )
-                            .map((values) =>
-                              values.map(
-                                (value) =>
-                                  ({
-                                    type: "2-string" as const,
-                                    value,
-                                  }) as
-                                    | {
-                                        type: "0-ClassUnionMember1";
-                                        value: ClassUnionMember1;
-                                      }
-                                    | {
-                                        type: "1-ClassUnionMember2";
-                                        value: ClassUnionMember2;
-                                      }
-                                    | { type: "2-string"; value: string },
-                              ),
-                            ) as Either<
-                            Error,
-                            Resource.Values<
-                              | {
-                                  type: "0-ClassUnionMember1";
-                                  value: ClassUnionMember1;
-                                }
-                              | {
-                                  type: "1-ClassUnionMember2";
-                                  value: ClassUnionMember2;
-                                }
-                              | { type: "2-string"; value: string }
-                            >
-                          >,
-                      )
-                      .chain((values) => values.head());
-                  }),
-                ),
-            }).chain((requiredClassOrClassOrStringProperty) =>
-              $shaclPropertyFromRdf({
-                graph: $parameters.graph,
-                resource: $parameters.resource,
-                propertySchema: $schema.properties.requiredIriOrLiteralProperty,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues.chain((values) =>
+                resourceValues
+                  .chain((values) =>
                     values.chainMap((value) => {
                       const valueAsValues = Either.of(value.toValues());
                       return (
                         valueAsValues.chain((values) =>
                           values.chainMap((value) => value.toIri()),
-                        ) as Either<Error, Resource.Values<NamedNode | Literal>>
+                        ) as Either<Error, Resource.Values<NamedNode | string>>
                       )
                         .altLazy(
                           () =>
@@ -6610,28 +6424,195 @@ export namespace UnionDiscriminantsClass {
                                   focusResource: $parameters.resource,
                                   predicate:
                                     UnionDiscriminantsClass.$schema.properties
-                                      .requiredIriOrLiteralProperty.identifier,
+                                      .optionalIriOrStringProperty.identifier,
                                   preferredLanguages:
                                     $parameters.preferredLanguages,
                                   values,
                                 }),
                               )
                               .chain((values) =>
-                                values.chainMap((value) => value.toLiteral()),
+                                values.chainMap((value) => value.toString()),
                               ) as Either<
                               Error,
-                              Resource.Values<NamedNode | Literal>
+                              Resource.Values<NamedNode | string>
+                            >,
+                        )
+                        .chain((values) => values.head());
+                    }),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<NamedNode | string>>({
+                          focusResource: $parameters.resource,
+                          propertyPath:
+                            UnionDiscriminantsClass.$schema.properties
+                              .optionalIriOrStringProperty.identifier,
+                          value: Maybe.empty(),
+                        }),
+                  ),
+            }).chain((optionalIriOrStringProperty) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema:
+                  $schema.properties.requiredClassOrClassOrStringProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues.chain((values) =>
+                    values.chainMap((value) => {
+                      const valueAsValues = Either.of(value.toValues());
+                      return (
+                        valueAsValues
+                          .chain((values) =>
+                            values.chainMap((value) =>
+                              value.toResource().chain((resource) =>
+                                ClassUnionMember1.$fromRdf(resource, {
+                                  context: $parameters.context,
+                                  objectSet: $parameters.objectSet,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                }),
+                              ),
+                            ),
+                          )
+                          .map((values) =>
+                            values.map(
+                              (value) =>
+                                ({
+                                  type: "0-ClassUnionMember1" as const,
+                                  value,
+                                }) as
+                                  | {
+                                      type: "0-ClassUnionMember1";
+                                      value: ClassUnionMember1;
+                                    }
+                                  | {
+                                      type: "1-ClassUnionMember2";
+                                      value: ClassUnionMember2;
+                                    }
+                                  | { type: "2-string"; value: string },
+                            ),
+                          ) as Either<
+                          Error,
+                          Resource.Values<
+                            | {
+                                type: "0-ClassUnionMember1";
+                                value: ClassUnionMember1;
+                              }
+                            | {
+                                type: "1-ClassUnionMember2";
+                                value: ClassUnionMember2;
+                              }
+                            | { type: "2-string"; value: string }
+                          >
+                        >
+                      )
+                        .altLazy(
+                          () =>
+                            valueAsValues
+                              .chain((values) =>
+                                values.chainMap((value) =>
+                                  value.toResource().chain((resource) =>
+                                    ClassUnionMember2.$fromRdf(resource, {
+                                      context: $parameters.context,
+                                      objectSet: $parameters.objectSet,
+                                      preferredLanguages:
+                                        $parameters.preferredLanguages,
+                                    }),
+                                  ),
+                                ),
+                              )
+                              .map((values) =>
+                                values.map(
+                                  (value) =>
+                                    ({
+                                      type: "1-ClassUnionMember2" as const,
+                                      value,
+                                    }) as
+                                      | {
+                                          type: "0-ClassUnionMember1";
+                                          value: ClassUnionMember1;
+                                        }
+                                      | {
+                                          type: "1-ClassUnionMember2";
+                                          value: ClassUnionMember2;
+                                        }
+                                      | { type: "2-string"; value: string },
+                                ),
+                              ) as Either<
+                              Error,
+                              Resource.Values<
+                                | {
+                                    type: "0-ClassUnionMember1";
+                                    value: ClassUnionMember1;
+                                  }
+                                | {
+                                    type: "1-ClassUnionMember2";
+                                    value: ClassUnionMember2;
+                                  }
+                                | { type: "2-string"; value: string }
+                              >
+                            >,
+                        )
+                        .altLazy(
+                          () =>
+                            valueAsValues
+                              .chain((values) =>
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    UnionDiscriminantsClass.$schema.properties
+                                      .requiredClassOrClassOrStringProperty
+                                      .identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toString()),
+                              )
+                              .map((values) =>
+                                values.map(
+                                  (value) =>
+                                    ({
+                                      type: "2-string" as const,
+                                      value,
+                                    }) as
+                                      | {
+                                          type: "0-ClassUnionMember1";
+                                          value: ClassUnionMember1;
+                                        }
+                                      | {
+                                          type: "1-ClassUnionMember2";
+                                          value: ClassUnionMember2;
+                                        }
+                                      | { type: "2-string"; value: string },
+                                ),
+                              ) as Either<
+                              Error,
+                              Resource.Values<
+                                | {
+                                    type: "0-ClassUnionMember1";
+                                    value: ClassUnionMember1;
+                                  }
+                                | {
+                                    type: "1-ClassUnionMember2";
+                                    value: ClassUnionMember2;
+                                  }
+                                | { type: "2-string"; value: string }
+                              >
                             >,
                         )
                         .chain((values) => values.head());
                     }),
                   ),
-              }).chain((requiredIriOrLiteralProperty) =>
+              }).chain((requiredClassOrClassOrStringProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
                   propertySchema:
-                    $schema.properties.requiredIriOrStringProperty,
+                    $schema.properties.requiredIriOrLiteralProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues.chain((values) =>
                       values.chainMap((value) => {
@@ -6641,7 +6622,7 @@ export namespace UnionDiscriminantsClass {
                             values.chainMap((value) => value.toIri()),
                           ) as Either<
                             Error,
-                            Resource.Values<NamedNode | string>
+                            Resource.Values<NamedNode | Literal>
                           >
                         )
                           .altLazy(
@@ -6652,54 +6633,168 @@ export namespace UnionDiscriminantsClass {
                                     focusResource: $parameters.resource,
                                     predicate:
                                       UnionDiscriminantsClass.$schema.properties
-                                        .requiredIriOrStringProperty.identifier,
+                                        .requiredIriOrLiteralProperty
+                                        .identifier,
                                     preferredLanguages:
                                       $parameters.preferredLanguages,
                                     values,
                                   }),
                                 )
                                 .chain((values) =>
-                                  values.chainMap((value) => value.toString()),
+                                  values.chainMap((value) => value.toLiteral()),
                                 ) as Either<
                                 Error,
-                                Resource.Values<NamedNode | string>
+                                Resource.Values<NamedNode | Literal>
                               >,
                           )
                           .chain((values) => values.head());
                       }),
                     ),
-                }).chain((requiredIriOrStringProperty) =>
+                }).chain((requiredIriOrLiteralProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
                     propertySchema:
-                      $schema.properties.setClassOrClassOrStringProperty,
+                      $schema.properties.requiredIriOrStringProperty,
                     typeFromRdf: (resourceValues) =>
-                      resourceValues
-                        .chain((values) =>
-                          values.chainMap((value) => {
-                            const valueAsValues = Either.of(value.toValues());
-                            return (
-                              valueAsValues
-                                .chain((values) =>
-                                  values.chainMap((value) =>
-                                    value.toResource().chain((resource) =>
-                                      ClassUnionMember1.$fromRdf(resource, {
-                                        context: $parameters.context,
-                                        objectSet: $parameters.objectSet,
-                                        preferredLanguages:
-                                          $parameters.preferredLanguages,
-                                      }),
+                      resourceValues.chain((values) =>
+                        values.chainMap((value) => {
+                          const valueAsValues = Either.of(value.toValues());
+                          return (
+                            valueAsValues.chain((values) =>
+                              values.chainMap((value) => value.toIri()),
+                            ) as Either<
+                              Error,
+                              Resource.Values<NamedNode | string>
+                            >
+                          )
+                            .altLazy(
+                              () =>
+                                valueAsValues
+                                  .chain((values) =>
+                                    $fromRdfPreferredLanguages({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        UnionDiscriminantsClass.$schema
+                                          .properties
+                                          .requiredIriOrStringProperty
+                                          .identifier,
+                                      preferredLanguages:
+                                        $parameters.preferredLanguages,
+                                      values,
+                                    }),
+                                  )
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toString(),
                                     ),
-                                  ),
-                                )
-                                .map((values) =>
-                                  values.map(
-                                    (value) =>
-                                      ({
-                                        type: "0-ClassUnionMember1" as const,
-                                        value,
-                                      }) as
+                                  ) as Either<
+                                  Error,
+                                  Resource.Values<NamedNode | string>
+                                >,
+                            )
+                            .chain((values) => values.head());
+                        }),
+                      ),
+                  }).chain((requiredIriOrStringProperty) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema:
+                        $schema.properties.setClassOrClassOrStringProperty,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
+                          .chain((values) =>
+                            values.chainMap((value) => {
+                              const valueAsValues = Either.of(value.toValues());
+                              return (
+                                valueAsValues
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toResource().chain((resource) =>
+                                        ClassUnionMember1.$fromRdf(resource, {
+                                          context: $parameters.context,
+                                          objectSet: $parameters.objectSet,
+                                          preferredLanguages:
+                                            $parameters.preferredLanguages,
+                                        }),
+                                      ),
+                                    ),
+                                  )
+                                  .map((values) =>
+                                    values.map(
+                                      (value) =>
+                                        ({
+                                          type: "0-ClassUnionMember1" as const,
+                                          value,
+                                        }) as
+                                          | {
+                                              type: "0-ClassUnionMember1";
+                                              value: ClassUnionMember1;
+                                            }
+                                          | {
+                                              type: "1-ClassUnionMember2";
+                                              value: ClassUnionMember2;
+                                            }
+                                          | { type: "2-string"; value: string },
+                                    ),
+                                  ) as Either<
+                                  Error,
+                                  Resource.Values<
+                                    | {
+                                        type: "0-ClassUnionMember1";
+                                        value: ClassUnionMember1;
+                                      }
+                                    | {
+                                        type: "1-ClassUnionMember2";
+                                        value: ClassUnionMember2;
+                                      }
+                                    | { type: "2-string"; value: string }
+                                  >
+                                >
+                              )
+                                .altLazy(
+                                  () =>
+                                    valueAsValues
+                                      .chain((values) =>
+                                        values.chainMap((value) =>
+                                          value.toResource().chain((resource) =>
+                                            ClassUnionMember2.$fromRdf(
+                                              resource,
+                                              {
+                                                context: $parameters.context,
+                                                objectSet:
+                                                  $parameters.objectSet,
+                                                preferredLanguages:
+                                                  $parameters.preferredLanguages,
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .map((values) =>
+                                        values.map(
+                                          (value) =>
+                                            ({
+                                              type: "1-ClassUnionMember2" as const,
+                                              value,
+                                            }) as
+                                              | {
+                                                  type: "0-ClassUnionMember1";
+                                                  value: ClassUnionMember1;
+                                                }
+                                              | {
+                                                  type: "1-ClassUnionMember2";
+                                                  value: ClassUnionMember2;
+                                                }
+                                              | {
+                                                  type: "2-string";
+                                                  value: string;
+                                                },
+                                        ),
+                                      ) as Either<
+                                      Error,
+                                      Resource.Values<
                                         | {
                                             type: "0-ClassUnionMember1";
                                             value: ClassUnionMember1;
@@ -6708,161 +6803,10 @@ export namespace UnionDiscriminantsClass {
                                             type: "1-ClassUnionMember2";
                                             value: ClassUnionMember2;
                                           }
-                                        | { type: "2-string"; value: string },
-                                  ),
-                                ) as Either<
-                                Error,
-                                Resource.Values<
-                                  | {
-                                      type: "0-ClassUnionMember1";
-                                      value: ClassUnionMember1;
-                                    }
-                                  | {
-                                      type: "1-ClassUnionMember2";
-                                      value: ClassUnionMember2;
-                                    }
-                                  | { type: "2-string"; value: string }
-                                >
-                              >
-                            )
-                              .altLazy(
-                                () =>
-                                  valueAsValues
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toResource().chain((resource) =>
-                                          ClassUnionMember2.$fromRdf(resource, {
-                                            context: $parameters.context,
-                                            objectSet: $parameters.objectSet,
-                                            preferredLanguages:
-                                              $parameters.preferredLanguages,
-                                          }),
-                                        ),
-                                      ),
-                                    )
-                                    .map((values) =>
-                                      values.map(
-                                        (value) =>
-                                          ({
-                                            type: "1-ClassUnionMember2" as const,
-                                            value,
-                                          }) as
-                                            | {
-                                                type: "0-ClassUnionMember1";
-                                                value: ClassUnionMember1;
-                                              }
-                                            | {
-                                                type: "1-ClassUnionMember2";
-                                                value: ClassUnionMember2;
-                                              }
-                                            | {
-                                                type: "2-string";
-                                                value: string;
-                                              },
-                                      ),
-                                    ) as Either<
-                                    Error,
-                                    Resource.Values<
-                                      | {
-                                          type: "0-ClassUnionMember1";
-                                          value: ClassUnionMember1;
-                                        }
-                                      | {
-                                          type: "1-ClassUnionMember2";
-                                          value: ClassUnionMember2;
-                                        }
-                                      | { type: "2-string"; value: string }
-                                    >
-                                  >,
-                              )
-                              .altLazy(
-                                () =>
-                                  valueAsValues
-                                    .chain((values) =>
-                                      $fromRdfPreferredLanguages({
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          UnionDiscriminantsClass.$schema
-                                            .properties
-                                            .setClassOrClassOrStringProperty
-                                            .identifier,
-                                        preferredLanguages:
-                                          $parameters.preferredLanguages,
-                                        values,
-                                      }),
-                                    )
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toString(),
-                                      ),
-                                    )
-                                    .map((values) =>
-                                      values.map(
-                                        (value) =>
-                                          ({
-                                            type: "2-string" as const,
-                                            value,
-                                          }) as
-                                            | {
-                                                type: "0-ClassUnionMember1";
-                                                value: ClassUnionMember1;
-                                              }
-                                            | {
-                                                type: "1-ClassUnionMember2";
-                                                value: ClassUnionMember2;
-                                              }
-                                            | {
-                                                type: "2-string";
-                                                value: string;
-                                              },
-                                      ),
-                                    ) as Either<
-                                    Error,
-                                    Resource.Values<
-                                      | {
-                                          type: "0-ClassUnionMember1";
-                                          value: ClassUnionMember1;
-                                        }
-                                      | {
-                                          type: "1-ClassUnionMember2";
-                                          value: ClassUnionMember2;
-                                        }
-                                      | { type: "2-string"; value: string }
-                                    >
-                                  >,
-                              )
-                              .chain((values) => values.head());
-                          }),
-                        )
-                        .map((values) => values.toArray())
-                        .map((valuesArray) =>
-                          Resource.Values.fromValue({
-                            focusResource: $parameters.resource,
-                            propertyPath:
-                              UnionDiscriminantsClass.$schema.properties
-                                .setClassOrClassOrStringProperty.identifier,
-                            value: valuesArray,
-                          }),
-                        ),
-                  }).chain((setClassOrClassOrStringProperty) =>
-                    $shaclPropertyFromRdf({
-                      graph: $parameters.graph,
-                      resource: $parameters.resource,
-                      propertySchema:
-                        $schema.properties.setIriOrLiteralProperty,
-                      typeFromRdf: (resourceValues) =>
-                        resourceValues
-                          .chain((values) =>
-                            values.chainMap((value) => {
-                              const valueAsValues = Either.of(value.toValues());
-                              return (
-                                valueAsValues.chain((values) =>
-                                  values.chainMap((value) => value.toIri()),
-                                ) as Either<
-                                  Error,
-                                  Resource.Values<NamedNode | Literal>
-                                >
-                              )
+                                        | { type: "2-string"; value: string }
+                                      >
+                                    >,
+                                )
                                 .altLazy(
                                   () =>
                                     valueAsValues
@@ -6872,7 +6816,7 @@ export namespace UnionDiscriminantsClass {
                                           predicate:
                                             UnionDiscriminantsClass.$schema
                                               .properties
-                                              .setIriOrLiteralProperty
+                                              .setClassOrClassOrStringProperty
                                               .identifier,
                                           preferredLanguages:
                                             $parameters.preferredLanguages,
@@ -6881,11 +6825,42 @@ export namespace UnionDiscriminantsClass {
                                       )
                                       .chain((values) =>
                                         values.chainMap((value) =>
-                                          value.toLiteral(),
+                                          value.toString(),
+                                        ),
+                                      )
+                                      .map((values) =>
+                                        values.map(
+                                          (value) =>
+                                            ({
+                                              type: "2-string" as const,
+                                              value,
+                                            }) as
+                                              | {
+                                                  type: "0-ClassUnionMember1";
+                                                  value: ClassUnionMember1;
+                                                }
+                                              | {
+                                                  type: "1-ClassUnionMember2";
+                                                  value: ClassUnionMember2;
+                                                }
+                                              | {
+                                                  type: "2-string";
+                                                  value: string;
+                                                },
                                         ),
                                       ) as Either<
                                       Error,
-                                      Resource.Values<NamedNode | Literal>
+                                      Resource.Values<
+                                        | {
+                                            type: "0-ClassUnionMember1";
+                                            value: ClassUnionMember1;
+                                          }
+                                        | {
+                                            type: "1-ClassUnionMember2";
+                                            value: ClassUnionMember2;
+                                          }
+                                        | { type: "2-string"; value: string }
+                                      >
                                     >,
                                 )
                                 .chain((values) => values.head());
@@ -6897,16 +6872,16 @@ export namespace UnionDiscriminantsClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 UnionDiscriminantsClass.$schema.properties
-                                  .setIriOrLiteralProperty.identifier,
+                                  .setClassOrClassOrStringProperty.identifier,
                               value: valuesArray,
                             }),
                           ),
-                    }).chain((setIriOrLiteralProperty) =>
+                    }).chain((setClassOrClassOrStringProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
                         resource: $parameters.resource,
                         propertySchema:
-                          $schema.properties.setIriOrStringProperty,
+                          $schema.properties.setIriOrLiteralProperty,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -6919,7 +6894,7 @@ export namespace UnionDiscriminantsClass {
                                     values.chainMap((value) => value.toIri()),
                                   ) as Either<
                                     Error,
-                                    Resource.Values<NamedNode | string>
+                                    Resource.Values<NamedNode | Literal>
                                   >
                                 )
                                   .altLazy(
@@ -6931,7 +6906,7 @@ export namespace UnionDiscriminantsClass {
                                             predicate:
                                               UnionDiscriminantsClass.$schema
                                                 .properties
-                                                .setIriOrStringProperty
+                                                .setIriOrLiteralProperty
                                                 .identifier,
                                             preferredLanguages:
                                               $parameters.preferredLanguages,
@@ -6940,11 +6915,11 @@ export namespace UnionDiscriminantsClass {
                                         )
                                         .chain((values) =>
                                           values.chainMap((value) =>
-                                            value.toString(),
+                                            value.toLiteral(),
                                           ),
                                         ) as Either<
                                         Error,
-                                        Resource.Values<NamedNode | string>
+                                        Resource.Values<NamedNode | Literal>
                                       >,
                                   )
                                   .chain((values) => values.head());
@@ -6956,22 +6931,83 @@ export namespace UnionDiscriminantsClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   UnionDiscriminantsClass.$schema.properties
-                                    .setIriOrStringProperty.identifier,
+                                    .setIriOrLiteralProperty.identifier,
                                 value: valuesArray,
                               }),
                             ),
-                      }).map((setIriOrStringProperty) => ({
-                        $identifier,
-                        optionalClassOrClassOrStringProperty,
-                        optionalIriOrLiteralProperty,
-                        optionalIriOrStringProperty,
-                        requiredClassOrClassOrStringProperty,
-                        requiredIriOrLiteralProperty,
-                        requiredIriOrStringProperty,
-                        setClassOrClassOrStringProperty,
-                        setIriOrLiteralProperty,
-                        setIriOrStringProperty,
-                      })),
+                      }).chain((setIriOrLiteralProperty) =>
+                        $shaclPropertyFromRdf({
+                          graph: $parameters.graph,
+                          resource: $parameters.resource,
+                          propertySchema:
+                            $schema.properties.setIriOrStringProperty,
+                          typeFromRdf: (resourceValues) =>
+                            resourceValues
+                              .chain((values) =>
+                                values.chainMap((value) => {
+                                  const valueAsValues = Either.of(
+                                    value.toValues(),
+                                  );
+                                  return (
+                                    valueAsValues.chain((values) =>
+                                      values.chainMap((value) => value.toIri()),
+                                    ) as Either<
+                                      Error,
+                                      Resource.Values<NamedNode | string>
+                                    >
+                                  )
+                                    .altLazy(
+                                      () =>
+                                        valueAsValues
+                                          .chain((values) =>
+                                            $fromRdfPreferredLanguages({
+                                              focusResource:
+                                                $parameters.resource,
+                                              predicate:
+                                                UnionDiscriminantsClass.$schema
+                                                  .properties
+                                                  .setIriOrStringProperty
+                                                  .identifier,
+                                              preferredLanguages:
+                                                $parameters.preferredLanguages,
+                                              values,
+                                            }),
+                                          )
+                                          .chain((values) =>
+                                            values.chainMap((value) =>
+                                              value.toString(),
+                                            ),
+                                          ) as Either<
+                                          Error,
+                                          Resource.Values<NamedNode | string>
+                                        >,
+                                    )
+                                    .chain((values) => values.head());
+                                }),
+                              )
+                              .map((values) => values.toArray())
+                              .map((valuesArray) =>
+                                Resource.Values.fromValue({
+                                  focusResource: $parameters.resource,
+                                  propertyPath:
+                                    UnionDiscriminantsClass.$schema.properties
+                                      .setIriOrStringProperty.identifier,
+                                  value: valuesArray,
+                                }),
+                              ),
+                        }).map((setIriOrStringProperty) => ({
+                          $identifier,
+                          optionalClassOrClassOrStringProperty,
+                          optionalIriOrLiteralProperty,
+                          optionalIriOrStringProperty,
+                          requiredClassOrClassOrStringProperty,
+                          requiredIriOrLiteralProperty,
+                          requiredIriOrStringProperty,
+                          setClassOrClassOrStringProperty,
+                          setIriOrLiteralProperty,
+                          setIriOrStringProperty,
+                        })),
+                      ),
                     ),
                   ),
                 ),
@@ -6979,8 +7015,7 @@ export namespace UnionDiscriminantsClass {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   export const $schema = {
@@ -9895,78 +9930,67 @@ export namespace TermPropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, TermPropertiesClass.$Identifier>(
-        $parameters.resource.identifier as TermPropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.blankNodeTermProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toBlankNode()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<BlankNode>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        TermPropertiesClass.$schema.properties
-                          .blankNodeTermProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).chain((blankNodeTermProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.booleanTermProperty,
+            propertySchema: $schema.properties.blankNodeTermProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  values.chainMap((value) => value.toBoolean()),
+                  values.chainMap((value) => value.toBlankNode()),
                 )
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<boolean>>({
+                    : Resource.Values.fromValue<Maybe<BlankNode>>({
                         focusResource: $parameters.resource,
                         propertyPath:
                           TermPropertiesClass.$schema.properties
-                            .booleanTermProperty.identifier,
+                            .blankNodeTermProperty.identifier,
                         value: Maybe.empty(),
                       }),
                 ),
-          }).chain((booleanTermProperty) =>
+          }).chain((blankNodeTermProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.dateTermProperty,
+              propertySchema: $schema.properties.booleanTermProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
-                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .chain((values) =>
+                    values.chainMap((value) => value.toBoolean()),
+                  )
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<Date>>({
+                      : Resource.Values.fromValue<Maybe<boolean>>({
                           focusResource: $parameters.resource,
                           propertyPath:
                             TermPropertiesClass.$schema.properties
-                              .dateTermProperty.identifier,
+                              .booleanTermProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   ),
-            }).chain((dateTermProperty) =>
+            }).chain((booleanTermProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.dateTimeTermProperty,
+                propertySchema: $schema.properties.dateTermProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      values.chainMap((value) => value.toDateTime()),
+                      values.chainMap((value) => value.toDate()),
                     )
                     .map((values) =>
                       values.length > 0
@@ -9975,150 +9999,173 @@ export namespace TermPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               TermPropertiesClass.$schema.properties
-                                .dateTimeTermProperty.identifier,
+                                .dateTermProperty.identifier,
                             value: Maybe.empty(),
                           }),
                     ),
-              }).chain((dateTimeTermProperty) =>
+              }).chain((dateTermProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
-                  propertySchema: $schema.properties.iriTermProperty,
+                  propertySchema: $schema.properties.dateTimeTermProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
-                        values.chainMap((value) => value.toIri()),
+                        values.chainMap((value) => value.toDateTime()),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<NamedNode>>({
+                          : Resource.Values.fromValue<Maybe<Date>>({
                               focusResource: $parameters.resource,
                               propertyPath:
                                 TermPropertiesClass.$schema.properties
-                                  .iriTermProperty.identifier,
+                                  .dateTimeTermProperty.identifier,
                               value: Maybe.empty(),
                             }),
                       ),
-                }).chain((iriTermProperty) =>
+                }).chain((dateTimeTermProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
-                    propertySchema: $schema.properties.literalTermProperty,
+                    propertySchema: $schema.properties.iriTermProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              TermPropertiesClass.$schema.properties
-                                .literalTermProperty.identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toLiteral()),
+                          values.chainMap((value) => value.toIri()),
                         )
                         .map((values) =>
                           values.length > 0
                             ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<Maybe<Literal>>({
+                            : Resource.Values.fromValue<Maybe<NamedNode>>({
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   TermPropertiesClass.$schema.properties
-                                    .literalTermProperty.identifier,
+                                    .iriTermProperty.identifier,
                                 value: Maybe.empty(),
                               }),
                         ),
-                  }).chain((literalTermProperty) =>
+                  }).chain((iriTermProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
                       resource: $parameters.resource,
-                      propertySchema: $schema.properties.numberTermProperty,
+                      propertySchema: $schema.properties.literalTermProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            values.chainMap((value) => value.toFloat()),
+                            $fromRdfPreferredLanguages({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                TermPropertiesClass.$schema.properties
+                                  .literalTermProperty.identifier,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                              values,
+                            }),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toLiteral()),
                           )
                           .map((values) =>
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<Maybe<number>>({
+                              : Resource.Values.fromValue<Maybe<Literal>>({
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     TermPropertiesClass.$schema.properties
-                                      .numberTermProperty.identifier,
+                                      .literalTermProperty.identifier,
                                   value: Maybe.empty(),
                                 }),
                           ),
-                    }).chain((numberTermProperty) =>
+                    }).chain((literalTermProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
                         resource: $parameters.resource,
-                        propertySchema: $schema.properties.stringTermProperty,
+                        propertySchema: $schema.properties.numberTermProperty,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  TermPropertiesClass.$schema.properties
-                                    .stringTermProperty.identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
-                            )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toString()),
+                              values.chainMap((value) => value.toFloat()),
                             )
                             .map((values) =>
                               values.length > 0
                                 ? values.map((value) => Maybe.of(value))
-                                : Resource.Values.fromValue<Maybe<string>>({
+                                : Resource.Values.fromValue<Maybe<number>>({
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       TermPropertiesClass.$schema.properties
-                                        .stringTermProperty.identifier,
+                                        .numberTermProperty.identifier,
                                     value: Maybe.empty(),
                                   }),
                             ),
-                      }).chain((stringTermProperty) =>
+                      }).chain((numberTermProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
                           resource: $parameters.resource,
-                          propertySchema: $schema.properties.termProperty,
+                          propertySchema: $schema.properties.stringTermProperty,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
-                                values.chainMap((value) => value.toTerm()),
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    TermPropertiesClass.$schema.properties
+                                      .stringTermProperty.identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toString()),
                               )
                               .map((values) =>
                                 values.length > 0
                                   ? values.map((value) => Maybe.of(value))
-                                  : Resource.Values.fromValue<
-                                      Maybe<BlankNode | NamedNode | Literal>
-                                    >({
+                                  : Resource.Values.fromValue<Maybe<string>>({
                                       focusResource: $parameters.resource,
                                       propertyPath:
                                         TermPropertiesClass.$schema.properties
-                                          .termProperty.identifier,
+                                          .stringTermProperty.identifier,
                                       value: Maybe.empty(),
                                     }),
                               ),
-                        }).map((termProperty) => ({
-                          $identifier,
-                          blankNodeTermProperty,
-                          booleanTermProperty,
-                          dateTermProperty,
-                          dateTimeTermProperty,
-                          iriTermProperty,
-                          literalTermProperty,
-                          numberTermProperty,
-                          stringTermProperty,
-                          termProperty,
-                        })),
+                        }).chain((stringTermProperty) =>
+                          $shaclPropertyFromRdf({
+                            graph: $parameters.graph,
+                            resource: $parameters.resource,
+                            propertySchema: $schema.properties.termProperty,
+                            typeFromRdf: (resourceValues) =>
+                              resourceValues
+                                .chain((values) =>
+                                  values.chainMap((value) => value.toTerm()),
+                                )
+                                .map((values) =>
+                                  values.length > 0
+                                    ? values.map((value) => Maybe.of(value))
+                                    : Resource.Values.fromValue<
+                                        Maybe<BlankNode | NamedNode | Literal>
+                                      >({
+                                        focusResource: $parameters.resource,
+                                        propertyPath:
+                                          TermPropertiesClass.$schema.properties
+                                            .termProperty.identifier,
+                                        value: Maybe.empty(),
+                                      }),
+                                ),
+                          }).map((termProperty) => ({
+                            $identifier,
+                            blankNodeTermProperty,
+                            booleanTermProperty,
+                            dateTermProperty,
+                            dateTimeTermProperty,
+                            iriTermProperty,
+                            literalTermProperty,
+                            numberTermProperty,
+                            stringTermProperty,
+                            termProperty,
+                          })),
+                        ),
                       ),
                     ),
                   ),
@@ -10127,7 +10174,6 @@ export namespace TermPropertiesClass {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -11037,39 +11083,36 @@ export namespace Sha256IriIdentifierClass {
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: NamedNode; sha256IriProperty: string }> {
-    return (
-      $parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, Sha256IriIdentifierClass.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.sha256IriProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  Sha256IriIdentifierClass.$schema.properties.sha256IriProperty
-                    .identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((sha256IriProperty) => ({ $identifier, sha256IriProperty })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.sha256IriProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    Sha256IriIdentifierClass.$schema.properties
+                      .sha256IriProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((sha256IriProperty) => ({ $identifier, sha256IriProperty })),
+      );
   }
 
   export const $schema = {
@@ -11577,44 +11620,52 @@ export namespace RecursiveClassUnionMember2 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, RecursiveClassUnionMember2.$Identifier>(
-        $parameters.resource
-          .identifier as RecursiveClassUnionMember2.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.recursiveClassUnionMember2Property,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    RecursiveClassUnion.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: false,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema:
+              $schema.properties.recursiveClassUnionMember2Property,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      RecursiveClassUnion.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: false,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
                   ),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<RecursiveClassUnion>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          RecursiveClassUnionMember2.$schema.properties
+                            .recursiveClassUnionMember2Property.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<RecursiveClassUnion>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        RecursiveClassUnionMember2.$schema.properties
-                          .recursiveClassUnionMember2Property.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((recursiveClassUnionMember2Property) => ({
-          $identifier,
-          recursiveClassUnionMember2Property,
-        })),
-      ),
+          }).map((recursiveClassUnionMember2Property) => ({
+            $identifier,
+            recursiveClassUnionMember2Property,
+          })),
+        ),
     );
   }
 
@@ -12178,44 +12229,52 @@ export namespace RecursiveClassUnionMember1 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, RecursiveClassUnionMember1.$Identifier>(
-        $parameters.resource
-          .identifier as RecursiveClassUnionMember1.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.recursiveClassUnionMember1Property,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    RecursiveClassUnion.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: false,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema:
+              $schema.properties.recursiveClassUnionMember1Property,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      RecursiveClassUnion.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: false,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
                   ),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<RecursiveClassUnion>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          RecursiveClassUnionMember1.$schema.properties
+                            .recursiveClassUnionMember1Property.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<RecursiveClassUnion>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        RecursiveClassUnionMember1.$schema.properties
-                          .recursiveClassUnionMember1Property.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((recursiveClassUnionMember1Property) => ({
-          $identifier,
-          recursiveClassUnionMember1Property,
-        })),
-      ),
+          }).map((recursiveClassUnionMember1Property) => ({
+            $identifier,
+            recursiveClassUnionMember1Property,
+          })),
+        ),
     );
   }
 
@@ -12757,49 +12816,39 @@ export namespace PropertyVisibilitiesClass {
       publicProperty: string;
     }
   > {
-    return Either.of<Error, PropertyVisibilitiesClass.$Identifier>(
-      $parameters.resource.identifier as PropertyVisibilitiesClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.privateProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  PropertyVisibilitiesClass.$schema.properties.privateProperty
-                    .identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).chain((privateProperty) =>
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
           resource: $parameters.resource,
-          propertySchema: $schema.properties.protectedProperty,
+          propertySchema: $schema.properties.privateProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    PropertyVisibilitiesClass.$schema.properties
-                      .protectedProperty.identifier,
+                    PropertyVisibilitiesClass.$schema.properties.privateProperty
+                      .identifier,
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
                 }),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
-        }).chain((protectedProperty) =>
+        }).chain((privateProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.publicProperty,
+            propertySchema: $schema.properties.protectedProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -12807,7 +12856,7 @@ export namespace PropertyVisibilitiesClass {
                     focusResource: $parameters.resource,
                     predicate:
                       PropertyVisibilitiesClass.$schema.properties
-                        .publicProperty.identifier,
+                        .protectedProperty.identifier,
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
                   }),
@@ -12815,15 +12864,35 @@ export namespace PropertyVisibilitiesClass {
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
                 ),
-          }).map((publicProperty) => ({
-            $identifier,
-            privateProperty,
-            protectedProperty,
-            publicProperty,
-          })),
+          }).chain((protectedProperty) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.publicProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        PropertyVisibilitiesClass.$schema.properties
+                          .publicProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((publicProperty) => ({
+              $identifier,
+              privateProperty,
+              protectedProperty,
+              publicProperty,
+            })),
+          ),
         ),
-      ),
-    );
+      );
   }
 
   export const $schema = {
@@ -13518,41 +13587,21 @@ export namespace PropertyCardinalitiesClass {
       requiredStringProperty: string;
     }
   > {
-    return Either.of<Error, PropertyCardinalitiesClass.$Identifier>(
-      $parameters.resource.identifier as PropertyCardinalitiesClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.emptyStringSetProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  PropertyCardinalitiesClass.$schema.properties
-                    .emptyStringSetProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString()))
-            .map((values) => values.toArray())
-            .map((valuesArray) =>
-              Resource.Values.fromValue({
-                focusResource: $parameters.resource,
-                propertyPath:
-                  PropertyCardinalitiesClass.$schema.properties
-                    .emptyStringSetProperty.identifier,
-                value: valuesArray,
-              }),
-            ),
-      }).chain((emptyStringSetProperty) =>
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
           resource: $parameters.resource,
-          propertySchema: $schema.properties.nonEmptyStringSetProperty,
+          propertySchema: $schema.properties.emptyStringSetProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -13560,33 +13609,27 @@ export namespace PropertyCardinalitiesClass {
                   focusResource: $parameters.resource,
                   predicate:
                     PropertyCardinalitiesClass.$schema.properties
-                      .nonEmptyStringSetProperty.identifier,
+                      .emptyStringSetProperty.identifier,
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
                 }),
               )
               .chain((values) => values.chainMap((value) => value.toString()))
-              .chain((values) =>
-                NonEmptyList.fromArray(values.toArray()).toEither(
-                  new Error(
-                    `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
-                  ),
-                ),
-              )
+              .map((values) => values.toArray())
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $parameters.resource,
                   propertyPath:
                     PropertyCardinalitiesClass.$schema.properties
-                      .nonEmptyStringSetProperty.identifier,
+                      .emptyStringSetProperty.identifier,
                   value: valuesArray,
                 }),
               ),
-        }).chain((nonEmptyStringSetProperty) =>
+        }).chain((emptyStringSetProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.optionalStringProperty,
+            propertySchema: $schema.properties.nonEmptyStringSetProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -13594,28 +13637,33 @@ export namespace PropertyCardinalitiesClass {
                     focusResource: $parameters.resource,
                     predicate:
                       PropertyCardinalitiesClass.$schema.properties
-                        .optionalStringProperty.identifier,
+                        .nonEmptyStringSetProperty.identifier,
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
                   }),
                 )
                 .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<string>>({
-                        focusResource: $parameters.resource,
-                        propertyPath:
-                          PropertyCardinalitiesClass.$schema.properties
-                            .optionalStringProperty.identifier,
-                        value: Maybe.empty(),
-                      }),
+                .chain((values) =>
+                  NonEmptyList.fromArray(values.toArray()).toEither(
+                    new Error(
+                      `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
+                    ),
+                  ),
+                )
+                .map((valuesArray) =>
+                  Resource.Values.fromValue({
+                    focusResource: $parameters.resource,
+                    propertyPath:
+                      PropertyCardinalitiesClass.$schema.properties
+                        .nonEmptyStringSetProperty.identifier,
+                    value: valuesArray,
+                  }),
                 ),
-          }).chain((optionalStringProperty) =>
+          }).chain((nonEmptyStringSetProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.requiredStringProperty,
+              propertySchema: $schema.properties.optionalStringProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -13623,25 +13671,56 @@ export namespace PropertyCardinalitiesClass {
                       focusResource: $parameters.resource,
                       predicate:
                         PropertyCardinalitiesClass.$schema.properties
-                          .requiredStringProperty.identifier,
+                          .optionalStringProperty.identifier,
                       preferredLanguages: $parameters.preferredLanguages,
                       values,
                     }),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<string>>({
+                          focusResource: $parameters.resource,
+                          propertyPath:
+                            PropertyCardinalitiesClass.$schema.properties
+                              .optionalStringProperty.identifier,
+                          value: Maybe.empty(),
+                        }),
                   ),
-            }).map((requiredStringProperty) => ({
-              $identifier,
-              emptyStringSetProperty,
-              nonEmptyStringSetProperty,
-              optionalStringProperty,
-              requiredStringProperty,
-            })),
+            }).chain((optionalStringProperty) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.requiredStringProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          PropertyCardinalitiesClass.$schema.properties
+                            .requiredStringProperty.identifier,
+                        preferredLanguages: $parameters.preferredLanguages,
+                        values,
+                      }),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((requiredStringProperty) => ({
+                $identifier,
+                emptyStringSetProperty,
+                nonEmptyStringSetProperty,
+                optionalStringProperty,
+                requiredStringProperty,
+              })),
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   export const $schema = {
@@ -14230,39 +14309,46 @@ export namespace PartialInterfaceUnionMember2 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, PartialInterfaceUnionMember2.$Identifier>(
-        $parameters.resource
-          .identifier as PartialInterfaceUnionMember2.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "PartialInterfaceUnionMember2">(
-          "PartialInterfaceUnionMember2" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PartialInterfaceUnionMember2.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "PartialInterfaceUnionMember2">(
+            "PartialInterfaceUnionMember2" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        PartialInterfaceUnionMember2.$schema.properties
+                          .lazilyResolvedStringProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((lazilyResolvedStringProperty) => ({
+              $identifier,
+              $type,
+              lazilyResolvedStringProperty,
+            })),
+          ),
         ),
-      ),
     );
   }
 
@@ -14833,39 +14919,46 @@ export namespace PartialInterfaceUnionMember1 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, PartialInterfaceUnionMember1.$Identifier>(
-        $parameters.resource
-          .identifier as PartialInterfaceUnionMember1.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "PartialInterfaceUnionMember1">(
-          "PartialInterfaceUnionMember1" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PartialInterfaceUnionMember1.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "PartialInterfaceUnionMember1">(
+            "PartialInterfaceUnionMember1" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        PartialInterfaceUnionMember1.$schema.properties
+                          .lazilyResolvedStringProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((lazilyResolvedStringProperty) => ({
+              $identifier,
+              $type,
+              lazilyResolvedStringProperty,
+            })),
+          ),
         ),
-      ),
     );
   }
 
@@ -15452,31 +15545,41 @@ export namespace PartialClassUnionMember2 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, PartialClassUnionMember2.$Identifier>(
-        $parameters.resource.identifier as PartialClassUnionMember2.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    PartialClassUnionMember2.$schema.properties
-                      .lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          lazilyResolvedStringProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      PartialClassUnionMember2.$schema.properties
+                        .lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            lazilyResolvedStringProperty,
+          })),
+        ),
     );
   }
 
@@ -16027,31 +16130,41 @@ export namespace PartialClassUnionMember1 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, PartialClassUnionMember1.$Identifier>(
-        $parameters.resource.identifier as PartialClassUnionMember1.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    PartialClassUnionMember1.$schema.properties
-                      .lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          lazilyResolvedStringProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      PartialClassUnionMember1.$schema.properties
+                        .lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            lazilyResolvedStringProperty,
+          })),
+        ),
     );
   }
 
@@ -16640,56 +16753,46 @@ export namespace OrderedPropertiesClass {
       orderedPropertyA: string;
     }
   > {
-    return Either.of<Error, OrderedPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as OrderedPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.orderedPropertyC,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  OrderedPropertiesClass.$schema.properties.orderedPropertyC
-                    .identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).chain((orderedPropertyC) =>
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
           resource: $parameters.resource,
-          propertySchema: $schema.properties.orderedPropertyB,
+          propertySchema: $schema.properties.orderedPropertyC,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    OrderedPropertiesClass.$schema.properties.orderedPropertyB
+                    OrderedPropertiesClass.$schema.properties.orderedPropertyC
                       .identifier,
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
                 }),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
-        }).chain((orderedPropertyB) =>
+        }).chain((orderedPropertyC) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.orderedPropertyA,
+            propertySchema: $schema.properties.orderedPropertyB,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
                   $fromRdfPreferredLanguages({
                     focusResource: $parameters.resource,
                     predicate:
-                      OrderedPropertiesClass.$schema.properties.orderedPropertyA
+                      OrderedPropertiesClass.$schema.properties.orderedPropertyB
                         .identifier,
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
@@ -16698,15 +16801,35 @@ export namespace OrderedPropertiesClass {
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
                 ),
-          }).map((orderedPropertyA) => ({
-            $identifier,
-            orderedPropertyC,
-            orderedPropertyB,
-            orderedPropertyA,
-          })),
+          }).chain((orderedPropertyB) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.orderedPropertyA,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        OrderedPropertiesClass.$schema.properties
+                          .orderedPropertyA.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((orderedPropertyA) => ({
+              $identifier,
+              orderedPropertyC,
+              orderedPropertyB,
+              orderedPropertyA,
+            })),
+          ),
         ),
-      ),
-    );
+      );
   }
 
   export const $schema = {
@@ -18257,86 +18380,73 @@ export namespace NumericPropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, NumericPropertiesClass.$Identifier>(
-        $parameters.resource.identifier as NumericPropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.byteNumericProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toInt()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<number>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        NumericPropertiesClass.$schema.properties
-                          .byteNumericProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).chain((byteNumericProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.decimalNumericProperty,
+            propertySchema: $schema.properties.byteNumericProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      NumericPropertiesClass.$schema.properties
-                        .decimalNumericProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) =>
-                    value.toLiteral().chain($decodeBigDecimalLiteral),
-                  ),
-                )
+                .chain((values) => values.chainMap((value) => value.toInt()))
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<BigDecimal>>({
+                    : Resource.Values.fromValue<Maybe<number>>({
                         focusResource: $parameters.resource,
                         propertyPath:
                           NumericPropertiesClass.$schema.properties
-                            .decimalNumericProperty.identifier,
+                            .byteNumericProperty.identifier,
                         value: Maybe.empty(),
                       }),
                 ),
-          }).chain((decimalNumericProperty) =>
+          }).chain((byteNumericProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.doubleNumericProperty,
+              propertySchema: $schema.properties.decimalNumericProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    values.chainMap((value) => value.toFloat()),
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        NumericPropertiesClass.$schema.properties
+                          .decimalNumericProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toLiteral().chain($decodeBigDecimalLiteral),
+                    ),
                   )
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<number>>({
+                      : Resource.Values.fromValue<Maybe<BigDecimal>>({
                           focusResource: $parameters.resource,
                           propertyPath:
                             NumericPropertiesClass.$schema.properties
-                              .doubleNumericProperty.identifier,
+                              .decimalNumericProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   ),
-            }).chain((doubleNumericProperty) =>
+            }).chain((decimalNumericProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.floatNumericProperty,
+                propertySchema: $schema.properties.doubleNumericProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -18349,79 +18459,78 @@ export namespace NumericPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               NumericPropertiesClass.$schema.properties
-                                .floatNumericProperty.identifier,
+                                .doubleNumericProperty.identifier,
                             value: Maybe.empty(),
                           }),
                     ),
-              }).chain((floatNumericProperty) =>
+              }).chain((doubleNumericProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
-                  propertySchema: $schema.properties.integerNumericProperty,
+                  propertySchema: $schema.properties.floatNumericProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
-                        values.chainMap((value) => value.toBigInt()),
+                        values.chainMap((value) => value.toFloat()),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<bigint>>({
+                          : Resource.Values.fromValue<Maybe<number>>({
                               focusResource: $parameters.resource,
                               propertyPath:
                                 NumericPropertiesClass.$schema.properties
-                                  .integerNumericProperty.identifier,
+                                  .floatNumericProperty.identifier,
                               value: Maybe.empty(),
                             }),
                       ),
-                }).chain((integerNumericProperty) =>
+                }).chain((floatNumericProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
-                    propertySchema: $schema.properties.intNumericProperty,
+                    propertySchema: $schema.properties.integerNumericProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          values.chainMap((value) => value.toInt()),
+                          values.chainMap((value) => value.toBigInt()),
                         )
                         .map((values) =>
                           values.length > 0
                             ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<Maybe<number>>({
+                            : Resource.Values.fromValue<Maybe<bigint>>({
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   NumericPropertiesClass.$schema.properties
-                                    .intNumericProperty.identifier,
+                                    .integerNumericProperty.identifier,
                                 value: Maybe.empty(),
                               }),
                         ),
-                  }).chain((intNumericProperty) =>
+                  }).chain((integerNumericProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
                       resource: $parameters.resource,
-                      propertySchema: $schema.properties.longNumericProperty,
+                      propertySchema: $schema.properties.intNumericProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            values.chainMap((value) => value.toBigInt()),
+                            values.chainMap((value) => value.toInt()),
                           )
                           .map((values) =>
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<Maybe<bigint>>({
+                              : Resource.Values.fromValue<Maybe<number>>({
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     NumericPropertiesClass.$schema.properties
-                                      .longNumericProperty.identifier,
+                                      .intNumericProperty.identifier,
                                   value: Maybe.empty(),
                                 }),
                           ),
-                    }).chain((longNumericProperty) =>
+                    }).chain((intNumericProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
                         resource: $parameters.resource,
-                        propertySchema:
-                          $schema.properties.negativeIntegerNumericProperty,
+                        propertySchema: $schema.properties.longNumericProperty,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -18434,18 +18543,16 @@ export namespace NumericPropertiesClass {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       NumericPropertiesClass.$schema.properties
-                                        .negativeIntegerNumericProperty
-                                        .identifier,
+                                        .longNumericProperty.identifier,
                                     value: Maybe.empty(),
                                   }),
                             ),
-                      }).chain((negativeIntegerNumericProperty) =>
+                      }).chain((longNumericProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
                           resource: $parameters.resource,
                           propertySchema:
-                            $schema.properties
-                              .nonNegativeIntegerNumericProperty,
+                            $schema.properties.negativeIntegerNumericProperty,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -18459,18 +18566,18 @@ export namespace NumericPropertiesClass {
                                       propertyPath:
                                         NumericPropertiesClass.$schema
                                           .properties
-                                          .nonNegativeIntegerNumericProperty
+                                          .negativeIntegerNumericProperty
                                           .identifier,
                                       value: Maybe.empty(),
                                     }),
                               ),
-                        }).chain((nonNegativeIntegerNumericProperty) =>
+                        }).chain((negativeIntegerNumericProperty) =>
                           $shaclPropertyFromRdf({
                             graph: $parameters.graph,
                             resource: $parameters.resource,
                             propertySchema:
                               $schema.properties
-                                .nonPositiveIntegerNumericProperty,
+                                .nonNegativeIntegerNumericProperty,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
@@ -18484,18 +18591,18 @@ export namespace NumericPropertiesClass {
                                         propertyPath:
                                           NumericPropertiesClass.$schema
                                             .properties
-                                            .nonPositiveIntegerNumericProperty
+                                            .nonNegativeIntegerNumericProperty
                                             .identifier,
                                         value: Maybe.empty(),
                                       }),
                                 ),
-                          }).chain((nonPositiveIntegerNumericProperty) =>
+                          }).chain((nonNegativeIntegerNumericProperty) =>
                             $shaclPropertyFromRdf({
                               graph: $parameters.graph,
                               resource: $parameters.resource,
                               propertySchema:
                                 $schema.properties
-                                  .positiveIntegerNumericProperty,
+                                  .nonPositiveIntegerNumericProperty,
                               typeFromRdf: (resourceValues) =>
                                 resourceValues
                                   .chain((values) =>
@@ -18513,43 +18620,46 @@ export namespace NumericPropertiesClass {
                                           propertyPath:
                                             NumericPropertiesClass.$schema
                                               .properties
-                                              .positiveIntegerNumericProperty
+                                              .nonPositiveIntegerNumericProperty
                                               .identifier,
                                           value: Maybe.empty(),
                                         }),
                                   ),
-                            }).chain((positiveIntegerNumericProperty) =>
+                            }).chain((nonPositiveIntegerNumericProperty) =>
                               $shaclPropertyFromRdf({
                                 graph: $parameters.graph,
                                 resource: $parameters.resource,
                                 propertySchema:
-                                  $schema.properties.shortNumericProperty,
+                                  $schema.properties
+                                    .positiveIntegerNumericProperty,
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
                                     .chain((values) =>
-                                      values.chainMap((value) => value.toInt()),
+                                      values.chainMap((value) =>
+                                        value.toBigInt(),
+                                      ),
                                     )
                                     .map((values) =>
                                       values.length > 0
                                         ? values.map((value) => Maybe.of(value))
                                         : Resource.Values.fromValue<
-                                            Maybe<number>
+                                            Maybe<bigint>
                                           >({
                                             focusResource: $parameters.resource,
                                             propertyPath:
                                               NumericPropertiesClass.$schema
-                                                .properties.shortNumericProperty
+                                                .properties
+                                                .positiveIntegerNumericProperty
                                                 .identifier,
                                             value: Maybe.empty(),
                                           }),
                                     ),
-                              }).chain((shortNumericProperty) =>
+                              }).chain((positiveIntegerNumericProperty) =>
                                 $shaclPropertyFromRdf({
                                   graph: $parameters.graph,
                                   resource: $parameters.resource,
                                   propertySchema:
-                                    $schema.properties
-                                      .unsignedByteNumericProperty,
+                                    $schema.properties.shortNumericProperty,
                                   typeFromRdf: (resourceValues) =>
                                     resourceValues
                                       .chain((values) =>
@@ -18570,18 +18680,18 @@ export namespace NumericPropertiesClass {
                                               propertyPath:
                                                 NumericPropertiesClass.$schema
                                                   .properties
-                                                  .unsignedByteNumericProperty
+                                                  .shortNumericProperty
                                                   .identifier,
                                               value: Maybe.empty(),
                                             }),
                                       ),
-                                }).chain((unsignedByteNumericProperty) =>
+                                }).chain((shortNumericProperty) =>
                                   $shaclPropertyFromRdf({
                                     graph: $parameters.graph,
                                     resource: $parameters.resource,
                                     propertySchema:
                                       $schema.properties
-                                        .unsignedIntNumericProperty,
+                                        .unsignedByteNumericProperty,
                                     typeFromRdf: (resourceValues) =>
                                       resourceValues
                                         .chain((values) =>
@@ -18602,23 +18712,23 @@ export namespace NumericPropertiesClass {
                                                 propertyPath:
                                                   NumericPropertiesClass.$schema
                                                     .properties
-                                                    .unsignedIntNumericProperty
+                                                    .unsignedByteNumericProperty
                                                     .identifier,
                                                 value: Maybe.empty(),
                                               }),
                                         ),
-                                  }).chain((unsignedIntNumericProperty) =>
+                                  }).chain((unsignedByteNumericProperty) =>
                                     $shaclPropertyFromRdf({
                                       graph: $parameters.graph,
                                       resource: $parameters.resource,
                                       propertySchema:
                                         $schema.properties
-                                          .unsignedLongNumericProperty,
+                                          .unsignedIntNumericProperty,
                                       typeFromRdf: (resourceValues) =>
                                         resourceValues
                                           .chain((values) =>
                                             values.chainMap((value) =>
-                                              value.toBigInt(),
+                                              value.toInt(),
                                             ),
                                           )
                                           .map((values) =>
@@ -18627,30 +18737,30 @@ export namespace NumericPropertiesClass {
                                                   Maybe.of(value),
                                                 )
                                               : Resource.Values.fromValue<
-                                                  Maybe<bigint>
+                                                  Maybe<number>
                                                 >({
                                                   focusResource:
                                                     $parameters.resource,
                                                   propertyPath:
                                                     NumericPropertiesClass
                                                       .$schema.properties
-                                                      .unsignedLongNumericProperty
+                                                      .unsignedIntNumericProperty
                                                       .identifier,
                                                   value: Maybe.empty(),
                                                 }),
                                           ),
-                                    }).chain((unsignedLongNumericProperty) =>
+                                    }).chain((unsignedIntNumericProperty) =>
                                       $shaclPropertyFromRdf({
                                         graph: $parameters.graph,
                                         resource: $parameters.resource,
                                         propertySchema:
                                           $schema.properties
-                                            .unsignedShortNumericProperty,
+                                            .unsignedLongNumericProperty,
                                         typeFromRdf: (resourceValues) =>
                                           resourceValues
                                             .chain((values) =>
                                               values.chainMap((value) =>
-                                                value.toInt(),
+                                                value.toBigInt(),
                                               ),
                                             )
                                             .map((values) =>
@@ -18659,38 +18769,71 @@ export namespace NumericPropertiesClass {
                                                     Maybe.of(value),
                                                   )
                                                 : Resource.Values.fromValue<
-                                                    Maybe<number>
+                                                    Maybe<bigint>
                                                   >({
                                                     focusResource:
                                                       $parameters.resource,
                                                     propertyPath:
                                                       NumericPropertiesClass
                                                         .$schema.properties
-                                                        .unsignedShortNumericProperty
+                                                        .unsignedLongNumericProperty
                                                         .identifier,
                                                     value: Maybe.empty(),
                                                   }),
                                             ),
-                                      }).map(
-                                        (unsignedShortNumericProperty) => ({
-                                          $identifier,
-                                          byteNumericProperty,
-                                          decimalNumericProperty,
-                                          doubleNumericProperty,
-                                          floatNumericProperty,
-                                          integerNumericProperty,
-                                          intNumericProperty,
-                                          longNumericProperty,
-                                          negativeIntegerNumericProperty,
-                                          nonNegativeIntegerNumericProperty,
-                                          nonPositiveIntegerNumericProperty,
-                                          positiveIntegerNumericProperty,
-                                          shortNumericProperty,
-                                          unsignedByteNumericProperty,
-                                          unsignedIntNumericProperty,
-                                          unsignedLongNumericProperty,
-                                          unsignedShortNumericProperty,
-                                        }),
+                                      }).chain((unsignedLongNumericProperty) =>
+                                        $shaclPropertyFromRdf({
+                                          graph: $parameters.graph,
+                                          resource: $parameters.resource,
+                                          propertySchema:
+                                            $schema.properties
+                                              .unsignedShortNumericProperty,
+                                          typeFromRdf: (resourceValues) =>
+                                            resourceValues
+                                              .chain((values) =>
+                                                values.chainMap((value) =>
+                                                  value.toInt(),
+                                                ),
+                                              )
+                                              .map((values) =>
+                                                values.length > 0
+                                                  ? values.map((value) =>
+                                                      Maybe.of(value),
+                                                    )
+                                                  : Resource.Values.fromValue<
+                                                      Maybe<number>
+                                                    >({
+                                                      focusResource:
+                                                        $parameters.resource,
+                                                      propertyPath:
+                                                        NumericPropertiesClass
+                                                          .$schema.properties
+                                                          .unsignedShortNumericProperty
+                                                          .identifier,
+                                                      value: Maybe.empty(),
+                                                    }),
+                                              ),
+                                        }).map(
+                                          (unsignedShortNumericProperty) => ({
+                                            $identifier,
+                                            byteNumericProperty,
+                                            decimalNumericProperty,
+                                            doubleNumericProperty,
+                                            floatNumericProperty,
+                                            integerNumericProperty,
+                                            intNumericProperty,
+                                            longNumericProperty,
+                                            negativeIntegerNumericProperty,
+                                            nonNegativeIntegerNumericProperty,
+                                            nonPositiveIntegerNumericProperty,
+                                            positiveIntegerNumericProperty,
+                                            shortNumericProperty,
+                                            unsignedByteNumericProperty,
+                                            unsignedIntNumericProperty,
+                                            unsignedLongNumericProperty,
+                                            unsignedShortNumericProperty,
+                                          }),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -18707,7 +18850,6 @@ export namespace NumericPropertiesClass {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -19917,27 +20059,35 @@ export namespace NonClass {
     Error,
     { $identifier: BlankNode | NamedNode; nonClassProperty: string }
   > {
-    return Either.of<Error, NonClass.$Identifier>(
-      $parameters.resource.identifier as NonClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.nonClassProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  NonClass.$schema.properties.nonClassProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((nonClassProperty) => ({ $identifier, nonClassProperty })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.nonClassProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    NonClass.$schema.properties.nonClassProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((nonClassProperty) => ({ $identifier, nonClassProperty })),
+      );
   }
 
   export const $schema = {
@@ -20360,31 +20510,39 @@ export namespace NoRdfTypeClassUnionMember2 {
       noRdfTypeClassUnionMember2Property: string;
     }
   > {
-    return Either.of<Error, NoRdfTypeClassUnionMember2.$Identifier>(
-      $parameters.resource.identifier as NoRdfTypeClassUnionMember2.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  NoRdfTypeClassUnionMember2.$schema.properties
-                    .noRdfTypeClassUnionMember2Property.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((noRdfTypeClassUnionMember2Property) => ({
-        $identifier,
-        noRdfTypeClassUnionMember2Property,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.noRdfTypeClassUnionMember2Property,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    NoRdfTypeClassUnionMember2.$schema.properties
+                      .noRdfTypeClassUnionMember2Property.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((noRdfTypeClassUnionMember2Property) => ({
+          $identifier,
+          noRdfTypeClassUnionMember2Property,
+        })),
+      );
   }
 
   export const $schema = {
@@ -20810,31 +20968,39 @@ export namespace NoRdfTypeClassUnionMember1 {
       noRdfTypeClassUnionMember1Property: string;
     }
   > {
-    return Either.of<Error, NoRdfTypeClassUnionMember1.$Identifier>(
-      $parameters.resource.identifier as NoRdfTypeClassUnionMember1.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  NoRdfTypeClassUnionMember1.$schema.properties
-                    .noRdfTypeClassUnionMember1Property.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((noRdfTypeClassUnionMember1Property) => ({
-        $identifier,
-        noRdfTypeClassUnionMember1Property,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.noRdfTypeClassUnionMember1Property,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    NoRdfTypeClassUnionMember1.$schema.properties
+                      .noRdfTypeClassUnionMember1Property.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((noRdfTypeClassUnionMember1Property) => ({
+          $identifier,
+          noRdfTypeClassUnionMember1Property,
+        })),
+      );
   }
 
   export const $schema = {
@@ -21534,93 +21700,73 @@ export namespace MutablePropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, MutablePropertiesClass.$Identifier>(
-        $parameters.resource.identifier as MutablePropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.mutableListProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: $parameters.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Either.of<Error, Resource.Values>(
-                    Resource.Values.fromArray({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        MutablePropertiesClass.$schema.properties
-                          .mutableListProperty.identifier,
-                      values: valueList.toArray(),
-                    }),
-                  )
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          MutablePropertiesClass.$schema.properties
-                            .mutableListProperty.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
-                        values,
-                      }),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray().concat()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string[]>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        MutablePropertiesClass.$schema.properties
-                          .mutableListProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).chain((mutableListProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.mutableSetProperty,
+            propertySchema: $schema.properties.mutableListProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      MutablePropertiesClass.$schema.properties
-                        .mutableSetProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
+                  values.chainMap((value) =>
+                    value.toList({ graph: $parameters.graph }),
+                  ),
                 )
-                .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) => values.toArray().concat())
-                .map((valuesArray) =>
-                  Resource.Values.fromValue({
-                    focusResource: $parameters.resource,
-                    propertyPath:
-                      MutablePropertiesClass.$schema.properties
-                        .mutableSetProperty.identifier,
-                    value: valuesArray,
-                  }),
+                .chain((valueLists) =>
+                  valueLists.chainMap((valueList) =>
+                    Either.of<Error, Resource.Values>(
+                      Resource.Values.fromArray({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          MutablePropertiesClass.$schema.properties
+                            .mutableListProperty.identifier,
+                        values: valueList.toArray(),
+                      }),
+                    )
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            MutablePropertiesClass.$schema.properties
+                              .mutableListProperty.identifier,
+                          preferredLanguages: $parameters.preferredLanguages,
+                          values,
+                        }),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
+                      ),
+                  ),
+                )
+                .map((valueLists) =>
+                  valueLists.map((valueList) => valueList.toArray().concat()),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<string[]>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          MutablePropertiesClass.$schema.properties
+                            .mutableListProperty.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-          }).chain((mutableSetProperty) =>
+          }).chain((mutableListProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.mutableStringProperty,
+              propertySchema: $schema.properties.mutableSetProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -21628,7 +21774,7 @@ export namespace MutablePropertiesClass {
                       focusResource: $parameters.resource,
                       predicate:
                         MutablePropertiesClass.$schema.properties
-                          .mutableStringProperty.identifier,
+                          .mutableSetProperty.identifier,
                       preferredLanguages: $parameters.preferredLanguages,
                       values,
                     }),
@@ -21636,26 +21782,56 @@ export namespace MutablePropertiesClass {
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
                   )
-                  .map((values) =>
-                    values.length > 0
-                      ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<string>>({
-                          focusResource: $parameters.resource,
-                          propertyPath:
-                            MutablePropertiesClass.$schema.properties
-                              .mutableStringProperty.identifier,
-                          value: Maybe.empty(),
-                        }),
+                  .map((values) => values.toArray().concat())
+                  .map((valuesArray) =>
+                    Resource.Values.fromValue({
+                      focusResource: $parameters.resource,
+                      propertyPath:
+                        MutablePropertiesClass.$schema.properties
+                          .mutableSetProperty.identifier,
+                      value: valuesArray,
+                    }),
                   ),
-            }).map((mutableStringProperty) => ({
-              $identifier,
-              mutableListProperty,
-              mutableSetProperty,
-              mutableStringProperty,
-            })),
+            }).chain((mutableSetProperty) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.mutableStringProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          MutablePropertiesClass.$schema.properties
+                            .mutableStringProperty.identifier,
+                        preferredLanguages: $parameters.preferredLanguages,
+                        values,
+                      }),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<string>>({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              MutablePropertiesClass.$schema.properties
+                                .mutableStringProperty.identifier,
+                            value: Maybe.empty(),
+                          }),
+                    ),
+              }).map((mutableStringProperty) => ({
+                $identifier,
+                mutableListProperty,
+                mutableSetProperty,
+                mutableStringProperty,
+              })),
+            ),
           ),
         ),
-      ),
     );
   }
 
@@ -22639,54 +22815,21 @@ export namespace ListPropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, ListPropertiesClass.$Identifier>(
-        $parameters.resource.identifier as ListPropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.iriListProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toList({ graph: $parameters.graph }),
-                ),
-              )
-              .chain((valueLists) =>
-                valueLists.chainMap((valueList) =>
-                  Either.of<Error, Resource.Values>(
-                    Resource.Values.fromArray({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        ListPropertiesClass.$schema.properties.iriListProperty
-                          .identifier,
-                      values: valueList.toArray(),
-                    }),
-                  ).chain((values) =>
-                    values.chainMap((value) => value.toIri()),
-                  ),
-                ),
-              )
-              .map((valueLists) =>
-                valueLists.map((valueList) => valueList.toArray()),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        ListPropertiesClass.$schema.properties.iriListProperty
-                          .identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).chain((iriListProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.objectListProperty,
+            propertySchema: $schema.properties.iriListProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -22700,21 +22843,12 @@ export namespace ListPropertiesClass {
                       Resource.Values.fromArray({
                         focusResource: $parameters.resource,
                         propertyPath:
-                          ListPropertiesClass.$schema.properties
-                            .objectListProperty.identifier,
+                          ListPropertiesClass.$schema.properties.iriListProperty
+                            .identifier,
                         values: valueList.toArray(),
                       }),
                     ).chain((values) =>
-                      values.chainMap((value) =>
-                        value.toResource().chain((resource) =>
-                          NonClass.$fromRdf(resource, {
-                            context: $parameters.context,
-                            ignoreRdfType: true,
-                            objectSet: $parameters.objectSet,
-                            preferredLanguages: $parameters.preferredLanguages,
-                          }),
-                        ),
-                      ),
+                      values.chainMap((value) => value.toIri()),
                     ),
                   ),
                 )
@@ -22724,19 +22858,19 @@ export namespace ListPropertiesClass {
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<readonly NonClass[]>>({
+                    : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
                         focusResource: $parameters.resource,
                         propertyPath:
-                          ListPropertiesClass.$schema.properties
-                            .objectListProperty.identifier,
+                          ListPropertiesClass.$schema.properties.iriListProperty
+                            .identifier,
                         value: Maybe.empty(),
                       }),
                 ),
-          }).chain((objectListProperty) =>
+          }).chain((iriListProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.stringListProperty,
+              propertySchema: $schema.properties.objectListProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -22751,23 +22885,22 @@ export namespace ListPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ListPropertiesClass.$schema.properties
-                              .stringListProperty.identifier,
+                              .objectListProperty.identifier,
                           values: valueList.toArray(),
                         }),
-                      )
-                        .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              ListPropertiesClass.$schema.properties
-                                .stringListProperty.identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
+                      ).chain((values) =>
+                        values.chainMap((value) =>
+                          value.toResource().chain((resource) =>
+                            NonClass.$fromRdf(resource, {
+                              context: $parameters.context,
+                              ignoreRdfType: true,
+                              objectSet: $parameters.objectSet,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                            }),
+                          ),
                         ),
+                      ),
                     ),
                   )
                   .map((valueLists) =>
@@ -22776,23 +22909,76 @@ export namespace ListPropertiesClass {
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<readonly string[]>>({
+                      : Resource.Values.fromValue<Maybe<readonly NonClass[]>>({
                           focusResource: $parameters.resource,
                           propertyPath:
                             ListPropertiesClass.$schema.properties
-                              .stringListProperty.identifier,
+                              .objectListProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   ),
-            }).map((stringListProperty) => ({
-              $identifier,
-              iriListProperty,
-              objectListProperty,
-              stringListProperty,
-            })),
+            }).chain((objectListProperty) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.stringListProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toList({ graph: $parameters.graph }),
+                      ),
+                    )
+                    .chain((valueLists) =>
+                      valueLists.chainMap((valueList) =>
+                        Either.of<Error, Resource.Values>(
+                          Resource.Values.fromArray({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ListPropertiesClass.$schema.properties
+                                .stringListProperty.identifier,
+                            values: valueList.toArray(),
+                          }),
+                        )
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                ListPropertiesClass.$schema.properties
+                                  .stringListProperty.identifier,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                              values,
+                            }),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          ),
+                      ),
+                    )
+                    .map((valueLists) =>
+                      valueLists.map((valueList) => valueList.toArray()),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<readonly string[]>>({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ListPropertiesClass.$schema.properties
+                                .stringListProperty.identifier,
+                            value: Maybe.empty(),
+                          }),
+                    ),
+              }).map((stringListProperty) => ({
+                $identifier,
+                iriListProperty,
+                objectListProperty,
+                stringListProperty,
+              })),
+            ),
           ),
         ),
-      ),
     );
   }
 
@@ -23451,37 +23637,45 @@ export namespace PartialInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
-    return Either.of<Error, PartialInterface.$Identifier>(
-      $parameters.resource.identifier as PartialInterface.$Identifier,
-    ).chain(($identifier) =>
-      Either.of<Error, "PartialInterface">("PartialInterface" as const).chain(
-        ($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PartialInterface.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
-      ),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        Either.of<Error, "PartialInterface">("PartialInterface" as const).chain(
+          ($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        PartialInterface.$schema.properties
+                          .lazilyResolvedStringProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((lazilyResolvedStringProperty) => ({
+              $identifier,
+              $type,
+              lazilyResolvedStringProperty,
+            })),
+        ),
+      );
   }
 
   export function $toRdf(
@@ -25417,64 +25611,25 @@ export namespace LazyPropertiesInterface {
       >;
     }
   > {
-    return Either.of<Error, LazyPropertiesInterface.$Identifier>(
-      $parameters.resource.identifier as LazyPropertiesInterface.$Identifier,
-    ).chain(($identifier) =>
-      Either.of<Error, "LazyPropertiesInterface">(
-        "LazyPropertiesInterface" as const,
-      ).chain(($type) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema:
-            $schema.properties.optionalLazyToResolvedInterfaceProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    $DefaultPartial.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: true,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
-                  ),
-                ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        LazyPropertiesInterface.$schema.properties
-                          .optionalLazyToResolvedInterfaceProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              )
-              .map((values) =>
-                values.map(
-                  (partial) =>
-                    new $LazyObjectOption<
-                      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-                      $DefaultPartial,
-                      LazilyResolvedBlankNodeOrIriIdentifierInterface
-                    >({
-                      partial,
-                      resolver: (identifier) =>
-                        $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
-                          identifier,
-                        ),
-                    }),
-                ),
-              ),
-        }).chain((optionalLazyToResolvedInterfaceProperty) =>
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        Either.of<Error, "LazyPropertiesInterface">(
+          "LazyPropertiesInterface" as const,
+        ).chain(($type) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
             propertySchema:
-              $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
+              $schema.properties.optionalLazyToResolvedInterfaceProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -25496,8 +25651,7 @@ export namespace LazyPropertiesInterface {
                         focusResource: $parameters.resource,
                         propertyPath:
                           LazyPropertiesInterface.$schema.properties
-                            .optionalLazyToResolvedInterfaceUnionProperty
-                            .identifier,
+                            .optionalLazyToResolvedInterfaceProperty.identifier,
                         value: Maybe.empty(),
                       }),
                 )
@@ -25505,31 +25659,30 @@ export namespace LazyPropertiesInterface {
                   values.map(
                     (partial) =>
                       new $LazyObjectOption<
-                        LazilyResolvedInterfaceUnion.$Identifier,
+                        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
                         $DefaultPartial,
-                        LazilyResolvedInterfaceUnion
+                        LazilyResolvedBlankNodeOrIriIdentifierInterface
                       >({
                         partial,
                         resolver: (identifier) =>
-                          $parameters.objectSet.lazilyResolvedInterfaceUnion(
+                          $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                             identifier,
                           ),
                       }),
                   ),
                 ),
-          }).chain((optionalLazyToResolvedInterfaceUnionProperty) =>
+          }).chain((optionalLazyToResolvedInterfaceProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
               propertySchema:
-                $schema.properties
-                  .optionalLazyToResolvedIriIdentifierInterfaceProperty,
+                $schema.properties.optionalLazyToResolvedInterfaceUnionProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
                     values.chainMap((value) =>
                       value.toResource().chain((resource) =>
-                        $NamedDefaultPartial.$fromRdf(resource, {
+                        $DefaultPartial.$fromRdf(resource, {
                           context: $parameters.context,
                           ignoreRdfType: true,
                           objectSet: $parameters.objectSet,
@@ -25541,11 +25694,11 @@ export namespace LazyPropertiesInterface {
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<$NamedDefaultPartial>>({
+                      : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                           focusResource: $parameters.resource,
                           propertyPath:
                             LazyPropertiesInterface.$schema.properties
-                              .optionalLazyToResolvedIriIdentifierInterfaceProperty
+                              .optionalLazyToResolvedInterfaceUnionProperty
                               .identifier,
                           value: Maybe.empty(),
                         }),
@@ -25554,31 +25707,31 @@ export namespace LazyPropertiesInterface {
                     values.map(
                       (partial) =>
                         new $LazyObjectOption<
-                          LazilyResolvedIriIdentifierInterface.$Identifier,
-                          $NamedDefaultPartial,
-                          LazilyResolvedIriIdentifierInterface
+                          LazilyResolvedInterfaceUnion.$Identifier,
+                          $DefaultPartial,
+                          LazilyResolvedInterfaceUnion
                         >({
                           partial,
                           resolver: (identifier) =>
-                            $parameters.objectSet.lazilyResolvedIriIdentifierInterface(
+                            $parameters.objectSet.lazilyResolvedInterfaceUnion(
                               identifier,
                             ),
                         }),
                     ),
                   ),
-            }).chain((optionalLazyToResolvedIriIdentifierInterfaceProperty) =>
+            }).chain((optionalLazyToResolvedInterfaceUnionProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
                 propertySchema:
                   $schema.properties
-                    .optionalPartialInterfaceToResolvedInterfaceProperty,
+                    .optionalLazyToResolvedIriIdentifierInterfaceProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
                       values.chainMap((value) =>
                         value.toResource().chain((resource) =>
-                          PartialInterface.$fromRdf(resource, {
+                          $NamedDefaultPartial.$fromRdf(resource, {
                             context: $parameters.context,
                             ignoreRdfType: true,
                             objectSet: $parameters.objectSet,
@@ -25590,11 +25743,13 @@ export namespace LazyPropertiesInterface {
                     .map((values) =>
                       values.length > 0
                         ? values.map((value) => Maybe.of(value))
-                        : Resource.Values.fromValue<Maybe<PartialInterface>>({
+                        : Resource.Values.fromValue<
+                            Maybe<$NamedDefaultPartial>
+                          >({
                             focusResource: $parameters.resource,
                             propertyPath:
                               LazyPropertiesInterface.$schema.properties
-                                .optionalPartialInterfaceToResolvedInterfaceProperty
+                                .optionalLazyToResolvedIriIdentifierInterfaceProperty
                                 .identifier,
                             value: Maybe.empty(),
                           }),
@@ -25603,25 +25758,25 @@ export namespace LazyPropertiesInterface {
                       values.map(
                         (partial) =>
                           new $LazyObjectOption<
-                            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-                            PartialInterface,
-                            LazilyResolvedBlankNodeOrIriIdentifierInterface
+                            LazilyResolvedIriIdentifierInterface.$Identifier,
+                            $NamedDefaultPartial,
+                            LazilyResolvedIriIdentifierInterface
                           >({
                             partial,
                             resolver: (identifier) =>
-                              $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                              $parameters.objectSet.lazilyResolvedIriIdentifierInterface(
                                 identifier,
                               ),
                           }),
                       ),
                     ),
-              }).chain((optionalPartialInterfaceToResolvedInterfaceProperty) =>
+              }).chain((optionalLazyToResolvedIriIdentifierInterfaceProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
                   propertySchema:
                     $schema.properties
-                      .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+                      .optionalPartialInterfaceToResolvedInterfaceProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -25644,7 +25799,7 @@ export namespace LazyPropertiesInterface {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 LazyPropertiesInterface.$schema.properties
-                                  .optionalPartialInterfaceToResolvedInterfaceUnionProperty
+                                  .optionalPartialInterfaceToResolvedInterfaceProperty
                                   .identifier,
                               value: Maybe.empty(),
                             }),
@@ -25653,34 +25808,34 @@ export namespace LazyPropertiesInterface {
                         values.map(
                           (partial) =>
                             new $LazyObjectOption<
-                              LazilyResolvedInterfaceUnion.$Identifier,
+                              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
                               PartialInterface,
-                              LazilyResolvedInterfaceUnion
+                              LazilyResolvedBlankNodeOrIriIdentifierInterface
                             >({
                               partial,
                               resolver: (identifier) =>
-                                $parameters.objectSet.lazilyResolvedInterfaceUnion(
+                                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                                   identifier,
                                 ),
                             }),
                         ),
                       ),
                 }).chain(
-                  (optionalPartialInterfaceToResolvedInterfaceUnionProperty) =>
+                  (optionalPartialInterfaceToResolvedInterfaceProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
                       resource: $parameters.resource,
                       propertySchema:
                         $schema.properties
-                          .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+                          .optionalPartialInterfaceToResolvedInterfaceUnionProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
                             values.chainMap((value) =>
                               value.toResource().chain((resource) =>
-                                PartialInterfaceUnion.$fromRdf(resource, {
+                                PartialInterface.$fromRdf(resource, {
                                   context: $parameters.context,
-                                  ignoreRdfType: false,
+                                  ignoreRdfType: true,
                                   objectSet: $parameters.objectSet,
                                   preferredLanguages:
                                     $parameters.preferredLanguages,
@@ -25692,12 +25847,12 @@ export namespace LazyPropertiesInterface {
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<
-                                  Maybe<PartialInterfaceUnion>
+                                  Maybe<PartialInterface>
                                 >({
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     LazyPropertiesInterface.$schema.properties
-                                      .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
+                                      .optionalPartialInterfaceToResolvedInterfaceUnionProperty
                                       .identifier,
                                   value: Maybe.empty(),
                                 }),
@@ -25707,7 +25862,7 @@ export namespace LazyPropertiesInterface {
                               (partial) =>
                                 new $LazyObjectOption<
                                   LazilyResolvedInterfaceUnion.$Identifier,
-                                  PartialInterfaceUnion,
+                                  PartialInterface,
                                   LazilyResolvedInterfaceUnion
                                 >({
                                   partial,
@@ -25720,22 +25875,22 @@ export namespace LazyPropertiesInterface {
                           ),
                     }).chain(
                       (
-                        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+                        optionalPartialInterfaceToResolvedInterfaceUnionProperty,
                       ) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
                           resource: $parameters.resource,
                           propertySchema:
                             $schema.properties
-                              .requiredLazyToResolvedInterfaceProperty,
+                              .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
                                 values.chainMap((value) =>
                                   value.toResource().chain((resource) =>
-                                    $DefaultPartial.$fromRdf(resource, {
+                                    PartialInterfaceUnion.$fromRdf(resource, {
                                       context: $parameters.context,
-                                      ignoreRdfType: true,
+                                      ignoreRdfType: false,
                                       objectSet: $parameters.objectSet,
                                       preferredLanguages:
                                         $parameters.preferredLanguages,
@@ -25744,121 +25899,85 @@ export namespace LazyPropertiesInterface {
                                 ),
                               )
                               .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) => Maybe.of(value))
+                                  : Resource.Values.fromValue<
+                                      Maybe<PartialInterfaceUnion>
+                                    >({
+                                      focusResource: $parameters.resource,
+                                      propertyPath:
+                                        LazyPropertiesInterface.$schema
+                                          .properties
+                                          .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
+                                          .identifier,
+                                      value: Maybe.empty(),
+                                    }),
+                              )
+                              .map((values) =>
                                 values.map(
                                   (partial) =>
-                                    new $LazyObject<
-                                      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-                                      $DefaultPartial,
-                                      LazilyResolvedBlankNodeOrIriIdentifierInterface
+                                    new $LazyObjectOption<
+                                      LazilyResolvedInterfaceUnion.$Identifier,
+                                      PartialInterfaceUnion,
+                                      LazilyResolvedInterfaceUnion
                                     >({
                                       partial,
                                       resolver: (identifier) =>
-                                        $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                                        $parameters.objectSet.lazilyResolvedInterfaceUnion(
                                           identifier,
                                         ),
                                     }),
                                 ),
                               ),
-                        }).chain((requiredLazyToResolvedInterfaceProperty) =>
-                          $shaclPropertyFromRdf({
-                            graph: $parameters.graph,
-                            resource: $parameters.resource,
-                            propertySchema:
-                              $schema.properties
-                                .requiredPartialInterfaceToResolvedInterfaceProperty,
-                            typeFromRdf: (resourceValues) =>
-                              resourceValues
-                                .chain((values) =>
-                                  values.chainMap((value) =>
-                                    value.toResource().chain((resource) =>
-                                      PartialInterface.$fromRdf(resource, {
-                                        context: $parameters.context,
-                                        ignoreRdfType: true,
-                                        objectSet: $parameters.objectSet,
-                                        preferredLanguages:
-                                          $parameters.preferredLanguages,
-                                      }),
-                                    ),
-                                  ),
-                                )
-                                .map((values) =>
-                                  values.map(
-                                    (partial) =>
-                                      new $LazyObject<
-                                        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-                                        PartialInterface,
-                                        LazilyResolvedBlankNodeOrIriIdentifierInterface
-                                      >({
-                                        partial,
-                                        resolver: (identifier) =>
-                                          $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
-                                            identifier,
-                                          ),
-                                      }),
-                                  ),
-                                ),
-                          }).chain(
-                            (
-                              requiredPartialInterfaceToResolvedInterfaceProperty,
-                            ) =>
-                              $shaclPropertyFromRdf({
-                                graph: $parameters.graph,
-                                resource: $parameters.resource,
-                                propertySchema:
-                                  $schema.properties
-                                    .setLazyToResolvedInterfaceProperty,
-                                typeFromRdf: (resourceValues) =>
-                                  resourceValues
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toResource().chain((resource) =>
-                                          $DefaultPartial.$fromRdf(resource, {
-                                            context: $parameters.context,
-                                            ignoreRdfType: true,
-                                            objectSet: $parameters.objectSet,
-                                            preferredLanguages:
-                                              $parameters.preferredLanguages,
-                                          }),
-                                        ),
-                                      ),
-                                    )
-                                    .map((values) => values.toArray())
-                                    .map((valuesArray) =>
-                                      Resource.Values.fromValue({
-                                        focusResource: $parameters.resource,
-                                        propertyPath:
-                                          LazyPropertiesInterface.$schema
-                                            .properties
-                                            .setLazyToResolvedInterfaceProperty
-                                            .identifier,
-                                        value: valuesArray,
-                                      }),
-                                    )
-                                    .map((values) =>
-                                      values.map(
-                                        (partials) =>
-                                          new $LazyObjectSet<
-                                            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-                                            $DefaultPartial,
-                                            LazilyResolvedBlankNodeOrIriIdentifierInterface
-                                          >({
-                                            partials,
-                                            resolver: (identifiers) =>
-                                              $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
-                                                {
-                                                  identifiers,
-                                                },
-                                              ),
-                                          }),
+                        }).chain(
+                          (
+                            optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+                          ) =>
+                            $shaclPropertyFromRdf({
+                              graph: $parameters.graph,
+                              resource: $parameters.resource,
+                              propertySchema:
+                                $schema.properties
+                                  .requiredLazyToResolvedInterfaceProperty,
+                              typeFromRdf: (resourceValues) =>
+                                resourceValues
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toResource().chain((resource) =>
+                                        $DefaultPartial.$fromRdf(resource, {
+                                          context: $parameters.context,
+                                          ignoreRdfType: true,
+                                          objectSet: $parameters.objectSet,
+                                          preferredLanguages:
+                                            $parameters.preferredLanguages,
+                                        }),
                                       ),
                                     ),
-                              }).chain((setLazyToResolvedInterfaceProperty) =>
+                                  )
+                                  .map((values) =>
+                                    values.map(
+                                      (partial) =>
+                                        new $LazyObject<
+                                          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+                                          $DefaultPartial,
+                                          LazilyResolvedBlankNodeOrIriIdentifierInterface
+                                        >({
+                                          partial,
+                                          resolver: (identifier) =>
+                                            $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                                              identifier,
+                                            ),
+                                        }),
+                                    ),
+                                  ),
+                            }).chain(
+                              (requiredLazyToResolvedInterfaceProperty) =>
                                 $shaclPropertyFromRdf({
                                   graph: $parameters.graph,
                                   resource: $parameters.resource,
                                   propertySchema:
                                     $schema.properties
-                                      .setPartialInterfaceToResolvedInterfaceProperty,
+                                      .requiredPartialInterfaceToResolvedInterfaceProperty,
                                   typeFromRdf: (resourceValues) =>
                                     resourceValues
                                       .chain((values) =>
@@ -25878,56 +25997,167 @@ export namespace LazyPropertiesInterface {
                                           ),
                                         ),
                                       )
-                                      .map((values) => values.toArray())
-                                      .map((valuesArray) =>
-                                        Resource.Values.fromValue({
-                                          focusResource: $parameters.resource,
-                                          propertyPath:
-                                            LazyPropertiesInterface.$schema
-                                              .properties
-                                              .setPartialInterfaceToResolvedInterfaceProperty
-                                              .identifier,
-                                          value: valuesArray,
-                                        }),
-                                      )
                                       .map((values) =>
                                         values.map(
-                                          (partials) =>
-                                            new $LazyObjectSet<
+                                          (partial) =>
+                                            new $LazyObject<
                                               LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
                                               PartialInterface,
                                               LazilyResolvedBlankNodeOrIriIdentifierInterface
                                             >({
-                                              partials,
-                                              resolver: (identifiers) =>
-                                                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
-                                                  {
-                                                    identifiers,
-                                                  },
+                                              partial,
+                                              resolver: (identifier) =>
+                                                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                                                  identifier,
                                                 ),
                                             }),
                                         ),
                                       ),
-                                }).map(
+                                }).chain(
                                   (
-                                    setPartialInterfaceToResolvedInterfaceProperty,
-                                  ) => ({
-                                    $identifier,
-                                    $type,
-                                    optionalLazyToResolvedInterfaceProperty,
-                                    optionalLazyToResolvedInterfaceUnionProperty,
-                                    optionalLazyToResolvedIriIdentifierInterfaceProperty,
-                                    optionalPartialInterfaceToResolvedInterfaceProperty,
-                                    optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-                                    optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-                                    requiredLazyToResolvedInterfaceProperty,
                                     requiredPartialInterfaceToResolvedInterfaceProperty,
-                                    setLazyToResolvedInterfaceProperty,
-                                    setPartialInterfaceToResolvedInterfaceProperty,
-                                  }),
+                                  ) =>
+                                    $shaclPropertyFromRdf({
+                                      graph: $parameters.graph,
+                                      resource: $parameters.resource,
+                                      propertySchema:
+                                        $schema.properties
+                                          .setLazyToResolvedInterfaceProperty,
+                                      typeFromRdf: (resourceValues) =>
+                                        resourceValues
+                                          .chain((values) =>
+                                            values.chainMap((value) =>
+                                              value
+                                                .toResource()
+                                                .chain((resource) =>
+                                                  $DefaultPartial.$fromRdf(
+                                                    resource,
+                                                    {
+                                                      context:
+                                                        $parameters.context,
+                                                      ignoreRdfType: true,
+                                                      objectSet:
+                                                        $parameters.objectSet,
+                                                      preferredLanguages:
+                                                        $parameters.preferredLanguages,
+                                                    },
+                                                  ),
+                                                ),
+                                            ),
+                                          )
+                                          .map((values) => values.toArray())
+                                          .map((valuesArray) =>
+                                            Resource.Values.fromValue({
+                                              focusResource:
+                                                $parameters.resource,
+                                              propertyPath:
+                                                LazyPropertiesInterface.$schema
+                                                  .properties
+                                                  .setLazyToResolvedInterfaceProperty
+                                                  .identifier,
+                                              value: valuesArray,
+                                            }),
+                                          )
+                                          .map((values) =>
+                                            values.map(
+                                              (partials) =>
+                                                new $LazyObjectSet<
+                                                  LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+                                                  $DefaultPartial,
+                                                  LazilyResolvedBlankNodeOrIriIdentifierInterface
+                                                >({
+                                                  partials,
+                                                  resolver: (identifiers) =>
+                                                    $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+                                                      {
+                                                        identifiers,
+                                                      },
+                                                    ),
+                                                }),
+                                            ),
+                                          ),
+                                    }).chain(
+                                      (setLazyToResolvedInterfaceProperty) =>
+                                        $shaclPropertyFromRdf({
+                                          graph: $parameters.graph,
+                                          resource: $parameters.resource,
+                                          propertySchema:
+                                            $schema.properties
+                                              .setPartialInterfaceToResolvedInterfaceProperty,
+                                          typeFromRdf: (resourceValues) =>
+                                            resourceValues
+                                              .chain((values) =>
+                                                values.chainMap((value) =>
+                                                  value
+                                                    .toResource()
+                                                    .chain((resource) =>
+                                                      PartialInterface.$fromRdf(
+                                                        resource,
+                                                        {
+                                                          context:
+                                                            $parameters.context,
+                                                          ignoreRdfType: true,
+                                                          objectSet:
+                                                            $parameters.objectSet,
+                                                          preferredLanguages:
+                                                            $parameters.preferredLanguages,
+                                                        },
+                                                      ),
+                                                    ),
+                                                ),
+                                              )
+                                              .map((values) => values.toArray())
+                                              .map((valuesArray) =>
+                                                Resource.Values.fromValue({
+                                                  focusResource:
+                                                    $parameters.resource,
+                                                  propertyPath:
+                                                    LazyPropertiesInterface
+                                                      .$schema.properties
+                                                      .setPartialInterfaceToResolvedInterfaceProperty
+                                                      .identifier,
+                                                  value: valuesArray,
+                                                }),
+                                              )
+                                              .map((values) =>
+                                                values.map(
+                                                  (partials) =>
+                                                    new $LazyObjectSet<
+                                                      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+                                                      PartialInterface,
+                                                      LazilyResolvedBlankNodeOrIriIdentifierInterface
+                                                    >({
+                                                      partials,
+                                                      resolver: (identifiers) =>
+                                                        $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+                                                          {
+                                                            identifiers,
+                                                          },
+                                                        ),
+                                                    }),
+                                                ),
+                                              ),
+                                        }).map(
+                                          (
+                                            setPartialInterfaceToResolvedInterfaceProperty,
+                                          ) => ({
+                                            $identifier,
+                                            $type,
+                                            optionalLazyToResolvedInterfaceProperty,
+                                            optionalLazyToResolvedInterfaceUnionProperty,
+                                            optionalLazyToResolvedIriIdentifierInterfaceProperty,
+                                            optionalPartialInterfaceToResolvedInterfaceProperty,
+                                            optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+                                            optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+                                            requiredLazyToResolvedInterfaceProperty,
+                                            requiredPartialInterfaceToResolvedInterfaceProperty,
+                                            setLazyToResolvedInterfaceProperty,
+                                            setPartialInterfaceToResolvedInterfaceProperty,
+                                          }),
+                                        ),
+                                    ),
                                 ),
-                              ),
-                          ),
+                            ),
                         ),
                     ),
                 ),
@@ -25935,8 +26165,7 @@ export namespace LazyPropertiesInterface {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   export function $toRdf(
@@ -27316,31 +27545,39 @@ export namespace PartialClass {
     Error,
     { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
   > {
-    return Either.of<Error, PartialClass.$Identifier>(
-      $parameters.resource.identifier as PartialClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.lazilyResolvedStringProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  PartialClass.$schema.properties.lazilyResolvedStringProperty
-                    .identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((lazilyResolvedStringProperty) => ({
-        $identifier,
-        lazilyResolvedStringProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    PartialClass.$schema.properties.lazilyResolvedStringProperty
+                      .identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((lazilyResolvedStringProperty) => ({
+          $identifier,
+          lazilyResolvedStringProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -29265,60 +29502,22 @@ export namespace LazyPropertiesClass {
       >;
     }
   > {
-    return Either.of<Error, LazyPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as LazyPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.optionalLazyToResolvedClassProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              values.chainMap((value) =>
-                value.toResource().chain((resource) =>
-                  $DefaultPartial.$fromRdf(resource, {
-                    context: $parameters.context,
-                    ignoreRdfType: true,
-                    objectSet: $parameters.objectSet,
-                    preferredLanguages: $parameters.preferredLanguages,
-                  }),
-                ),
-              ),
-            )
-            .map((values) =>
-              values.length > 0
-                ? values.map((value) => Maybe.of(value))
-                : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
-                    focusResource: $parameters.resource,
-                    propertyPath:
-                      LazyPropertiesClass.$schema.properties
-                        .optionalLazyToResolvedClassProperty.identifier,
-                    value: Maybe.empty(),
-                  }),
-            )
-            .map((values) =>
-              values.map(
-                (partial) =>
-                  new $LazyObjectOption<
-                    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-                    $DefaultPartial,
-                    LazilyResolvedBlankNodeOrIriIdentifierClass
-                  >({
-                    partial,
-                    resolver: (identifier) =>
-                      $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
-                        identifier,
-                      ),
-                  }),
-              ),
-            ),
-      }).chain((optionalLazyToResolvedClassProperty) =>
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
           resource: $parameters.resource,
           propertySchema:
-            $schema.properties.optionalLazyToResolvedClassUnionProperty,
+            $schema.properties.optionalLazyToResolvedClassProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
@@ -29340,7 +29539,7 @@ export namespace LazyPropertiesClass {
                       focusResource: $parameters.resource,
                       propertyPath:
                         LazyPropertiesClass.$schema.properties
-                          .optionalLazyToResolvedClassUnionProperty.identifier,
+                          .optionalLazyToResolvedClassProperty.identifier,
                       value: Maybe.empty(),
                     }),
               )
@@ -29348,31 +29547,30 @@ export namespace LazyPropertiesClass {
                 values.map(
                   (partial) =>
                     new $LazyObjectOption<
-                      LazilyResolvedClassUnion.$Identifier,
+                      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
                       $DefaultPartial,
-                      LazilyResolvedClassUnion
+                      LazilyResolvedBlankNodeOrIriIdentifierClass
                     >({
                       partial,
                       resolver: (identifier) =>
-                        $parameters.objectSet.lazilyResolvedClassUnion(
+                        $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                           identifier,
                         ),
                     }),
                 ),
               ),
-        }).chain((optionalLazyToResolvedClassUnionProperty) =>
+        }).chain((optionalLazyToResolvedClassProperty) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
             propertySchema:
-              $schema.properties
-                .optionalLazyToResolvedIriIdentifierClassProperty,
+              $schema.properties.optionalLazyToResolvedClassUnionProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
                   values.chainMap((value) =>
                     value.toResource().chain((resource) =>
-                      $NamedDefaultPartial.$fromRdf(resource, {
+                      $DefaultPartial.$fromRdf(resource, {
                         context: $parameters.context,
                         ignoreRdfType: true,
                         objectSet: $parameters.objectSet,
@@ -29384,11 +29582,11 @@ export namespace LazyPropertiesClass {
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<$NamedDefaultPartial>>({
+                    : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
                         focusResource: $parameters.resource,
                         propertyPath:
                           LazyPropertiesClass.$schema.properties
-                            .optionalLazyToResolvedIriIdentifierClassProperty
+                            .optionalLazyToResolvedClassUnionProperty
                             .identifier,
                         value: Maybe.empty(),
                       }),
@@ -29397,30 +29595,31 @@ export namespace LazyPropertiesClass {
                   values.map(
                     (partial) =>
                       new $LazyObjectOption<
-                        LazilyResolvedIriIdentifierClass.$Identifier,
-                        $NamedDefaultPartial,
-                        LazilyResolvedIriIdentifierClass
+                        LazilyResolvedClassUnion.$Identifier,
+                        $DefaultPartial,
+                        LazilyResolvedClassUnion
                       >({
                         partial,
                         resolver: (identifier) =>
-                          $parameters.objectSet.lazilyResolvedIriIdentifierClass(
+                          $parameters.objectSet.lazilyResolvedClassUnion(
                             identifier,
                           ),
                       }),
                   ),
                 ),
-          }).chain((optionalLazyToResolvedIriIdentifierClassProperty) =>
+          }).chain((optionalLazyToResolvedClassUnionProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
               propertySchema:
-                $schema.properties.optionalPartialClassToResolvedClassProperty,
+                $schema.properties
+                  .optionalLazyToResolvedIriIdentifierClassProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
                     values.chainMap((value) =>
                       value.toResource().chain((resource) =>
-                        PartialClass.$fromRdf(resource, {
+                        $NamedDefaultPartial.$fromRdf(resource, {
                           context: $parameters.context,
                           ignoreRdfType: true,
                           objectSet: $parameters.objectSet,
@@ -29432,11 +29631,11 @@ export namespace LazyPropertiesClass {
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<PartialClass>>({
+                      : Resource.Values.fromValue<Maybe<$NamedDefaultPartial>>({
                           focusResource: $parameters.resource,
                           propertyPath:
                             LazyPropertiesClass.$schema.properties
-                              .optionalPartialClassToResolvedClassProperty
+                              .optionalLazyToResolvedIriIdentifierClassProperty
                               .identifier,
                           value: Maybe.empty(),
                         }),
@@ -29445,25 +29644,25 @@ export namespace LazyPropertiesClass {
                     values.map(
                       (partial) =>
                         new $LazyObjectOption<
-                          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-                          PartialClass,
-                          LazilyResolvedBlankNodeOrIriIdentifierClass
+                          LazilyResolvedIriIdentifierClass.$Identifier,
+                          $NamedDefaultPartial,
+                          LazilyResolvedIriIdentifierClass
                         >({
                           partial,
                           resolver: (identifier) =>
-                            $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                            $parameters.objectSet.lazilyResolvedIriIdentifierClass(
                               identifier,
                             ),
                         }),
                     ),
                   ),
-            }).chain((optionalPartialClassToResolvedClassProperty) =>
+            }).chain((optionalLazyToResolvedIriIdentifierClassProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
                 propertySchema:
                   $schema.properties
-                    .optionalPartialClassToResolvedClassUnionProperty,
+                    .optionalPartialClassToResolvedClassProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -29485,7 +29684,7 @@ export namespace LazyPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               LazyPropertiesClass.$schema.properties
-                                .optionalPartialClassToResolvedClassUnionProperty
+                                .optionalPartialClassToResolvedClassProperty
                                 .identifier,
                             value: Maybe.empty(),
                           }),
@@ -29494,33 +29693,33 @@ export namespace LazyPropertiesClass {
                       values.map(
                         (partial) =>
                           new $LazyObjectOption<
-                            LazilyResolvedClassUnion.$Identifier,
+                            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
                             PartialClass,
-                            LazilyResolvedClassUnion
+                            LazilyResolvedBlankNodeOrIriIdentifierClass
                           >({
                             partial,
                             resolver: (identifier) =>
-                              $parameters.objectSet.lazilyResolvedClassUnion(
+                              $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                                 identifier,
                               ),
                           }),
                       ),
                     ),
-              }).chain((optionalPartialClassToResolvedClassUnionProperty) =>
+              }).chain((optionalPartialClassToResolvedClassProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
                   propertySchema:
                     $schema.properties
-                      .optionalPartialClassUnionToResolvedClassUnionProperty,
+                      .optionalPartialClassToResolvedClassUnionProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
                         values.chainMap((value) =>
                           value.toResource().chain((resource) =>
-                            PartialClassUnion.$fromRdf(resource, {
+                            PartialClass.$fromRdf(resource, {
                               context: $parameters.context,
-                              ignoreRdfType: false,
+                              ignoreRdfType: true,
                               objectSet: $parameters.objectSet,
                               preferredLanguages:
                                 $parameters.preferredLanguages,
@@ -29531,23 +29730,21 @@ export namespace LazyPropertiesClass {
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<PartialClassUnion>>(
-                              {
-                                focusResource: $parameters.resource,
-                                propertyPath:
-                                  LazyPropertiesClass.$schema.properties
-                                    .optionalPartialClassUnionToResolvedClassUnionProperty
-                                    .identifier,
-                                value: Maybe.empty(),
-                              },
-                            ),
+                          : Resource.Values.fromValue<Maybe<PartialClass>>({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                LazyPropertiesClass.$schema.properties
+                                  .optionalPartialClassToResolvedClassUnionProperty
+                                  .identifier,
+                              value: Maybe.empty(),
+                            }),
                       )
                       .map((values) =>
                         values.map(
                           (partial) =>
                             new $LazyObjectOption<
                               LazilyResolvedClassUnion.$Identifier,
-                              PartialClassUnion,
+                              PartialClass,
                               LazilyResolvedClassUnion
                             >({
                               partial,
@@ -29558,57 +29755,72 @@ export namespace LazyPropertiesClass {
                             }),
                         ),
                       ),
-                }).chain(
-                  (optionalPartialClassUnionToResolvedClassUnionProperty) =>
-                    $shaclPropertyFromRdf({
-                      graph: $parameters.graph,
-                      resource: $parameters.resource,
-                      propertySchema:
-                        $schema.properties.requiredLazyToResolvedClassProperty,
-                      typeFromRdf: (resourceValues) =>
-                        resourceValues
-                          .chain((values) =>
-                            values.chainMap((value) =>
-                              value.toResource().chain((resource) =>
-                                $DefaultPartial.$fromRdf(resource, {
-                                  context: $parameters.context,
-                                  ignoreRdfType: true,
-                                  objectSet: $parameters.objectSet,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
-                                }),
-                              ),
-                            ),
-                          )
-                          .map((values) =>
-                            values.map(
-                              (partial) =>
-                                new $LazyObject<
-                                  LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-                                  $DefaultPartial,
-                                  LazilyResolvedBlankNodeOrIriIdentifierClass
-                                >({
-                                  partial,
-                                  resolver: (identifier) =>
-                                    $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
-                                      identifier,
-                                    ),
-                                }),
+                }).chain((optionalPartialClassToResolvedClassUnionProperty) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema:
+                      $schema.properties
+                        .optionalPartialClassUnionToResolvedClassUnionProperty,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          values.chainMap((value) =>
+                            value.toResource().chain((resource) =>
+                              PartialClassUnion.$fromRdf(resource, {
+                                context: $parameters.context,
+                                ignoreRdfType: false,
+                                objectSet: $parameters.objectSet,
+                                preferredLanguages:
+                                  $parameters.preferredLanguages,
+                              }),
                             ),
                           ),
-                    }).chain((requiredLazyToResolvedClassProperty) =>
+                        )
+                        .map((values) =>
+                          values.length > 0
+                            ? values.map((value) => Maybe.of(value))
+                            : Resource.Values.fromValue<
+                                Maybe<PartialClassUnion>
+                              >({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  LazyPropertiesClass.$schema.properties
+                                    .optionalPartialClassUnionToResolvedClassUnionProperty
+                                    .identifier,
+                                value: Maybe.empty(),
+                              }),
+                        )
+                        .map((values) =>
+                          values.map(
+                            (partial) =>
+                              new $LazyObjectOption<
+                                LazilyResolvedClassUnion.$Identifier,
+                                PartialClassUnion,
+                                LazilyResolvedClassUnion
+                              >({
+                                partial,
+                                resolver: (identifier) =>
+                                  $parameters.objectSet.lazilyResolvedClassUnion(
+                                    identifier,
+                                  ),
+                              }),
+                          ),
+                        ),
+                  }).chain(
+                    (optionalPartialClassUnionToResolvedClassUnionProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
                         resource: $parameters.resource,
                         propertySchema:
                           $schema.properties
-                            .requiredPartialClassToResolvedClassProperty,
+                            .requiredLazyToResolvedClassProperty,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
                               values.chainMap((value) =>
                                 value.toResource().chain((resource) =>
-                                  PartialClass.$fromRdf(resource, {
+                                  $DefaultPartial.$fromRdf(resource, {
                                     context: $parameters.context,
                                     ignoreRdfType: true,
                                     objectSet: $parameters.objectSet,
@@ -29623,7 +29835,7 @@ export namespace LazyPropertiesClass {
                                 (partial) =>
                                   new $LazyObject<
                                     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-                                    PartialClass,
+                                    $DefaultPartial,
                                     LazilyResolvedBlankNodeOrIriIdentifierClass
                                   >({
                                     partial,
@@ -29634,18 +29846,19 @@ export namespace LazyPropertiesClass {
                                   }),
                               ),
                             ),
-                      }).chain((requiredPartialClassToResolvedClassProperty) =>
+                      }).chain((requiredLazyToResolvedClassProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
                           resource: $parameters.resource,
                           propertySchema:
-                            $schema.properties.setLazyToResolvedClassProperty,
+                            $schema.properties
+                              .requiredPartialClassToResolvedClassProperty,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
                                 values.chainMap((value) =>
                                   value.toResource().chain((resource) =>
-                                    $DefaultPartial.$fromRdf(resource, {
+                                    PartialClass.$fromRdf(resource, {
                                       context: $parameters.context,
                                       ignoreRdfType: true,
                                       objectSet: $parameters.objectSet,
@@ -29655,107 +29868,150 @@ export namespace LazyPropertiesClass {
                                   ),
                                 ),
                               )
-                              .map((values) => values.toArray())
-                              .map((valuesArray) =>
-                                Resource.Values.fromValue({
-                                  focusResource: $parameters.resource,
-                                  propertyPath:
-                                    LazyPropertiesClass.$schema.properties
-                                      .setLazyToResolvedClassProperty
-                                      .identifier,
-                                  value: valuesArray,
-                                }),
-                              )
                               .map((values) =>
                                 values.map(
-                                  (partials) =>
-                                    new $LazyObjectSet<
+                                  (partial) =>
+                                    new $LazyObject<
                                       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-                                      $DefaultPartial,
+                                      PartialClass,
                                       LazilyResolvedBlankNodeOrIriIdentifierClass
                                     >({
-                                      partials,
-                                      resolver: (identifiers) =>
-                                        $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
-                                          { identifiers },
+                                      partial,
+                                      resolver: (identifier) =>
+                                        $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                                          identifier,
                                         ),
                                     }),
                                 ),
                               ),
-                        }).chain((setLazyToResolvedClassProperty) =>
-                          $shaclPropertyFromRdf({
-                            graph: $parameters.graph,
-                            resource: $parameters.resource,
-                            propertySchema:
-                              $schema.properties
-                                .setPartialClassToResolvedClassProperty,
-                            typeFromRdf: (resourceValues) =>
-                              resourceValues
-                                .chain((values) =>
-                                  values.chainMap((value) =>
-                                    value.toResource().chain((resource) =>
-                                      PartialClass.$fromRdf(resource, {
-                                        context: $parameters.context,
-                                        ignoreRdfType: true,
-                                        objectSet: $parameters.objectSet,
-                                        preferredLanguages:
-                                          $parameters.preferredLanguages,
-                                      }),
+                        }).chain(
+                          (requiredPartialClassToResolvedClassProperty) =>
+                            $shaclPropertyFromRdf({
+                              graph: $parameters.graph,
+                              resource: $parameters.resource,
+                              propertySchema:
+                                $schema.properties
+                                  .setLazyToResolvedClassProperty,
+                              typeFromRdf: (resourceValues) =>
+                                resourceValues
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toResource().chain((resource) =>
+                                        $DefaultPartial.$fromRdf(resource, {
+                                          context: $parameters.context,
+                                          ignoreRdfType: true,
+                                          objectSet: $parameters.objectSet,
+                                          preferredLanguages:
+                                            $parameters.preferredLanguages,
+                                        }),
+                                      ),
+                                    ),
+                                  )
+                                  .map((values) => values.toArray())
+                                  .map((valuesArray) =>
+                                    Resource.Values.fromValue({
+                                      focusResource: $parameters.resource,
+                                      propertyPath:
+                                        LazyPropertiesClass.$schema.properties
+                                          .setLazyToResolvedClassProperty
+                                          .identifier,
+                                      value: valuesArray,
+                                    }),
+                                  )
+                                  .map((values) =>
+                                    values.map(
+                                      (partials) =>
+                                        new $LazyObjectSet<
+                                          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+                                          $DefaultPartial,
+                                          LazilyResolvedBlankNodeOrIriIdentifierClass
+                                        >({
+                                          partials,
+                                          resolver: (identifiers) =>
+                                            $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
+                                              {
+                                                identifiers,
+                                              },
+                                            ),
+                                        }),
                                     ),
                                   ),
-                                )
-                                .map((values) => values.toArray())
-                                .map((valuesArray) =>
-                                  Resource.Values.fromValue({
-                                    focusResource: $parameters.resource,
-                                    propertyPath:
-                                      LazyPropertiesClass.$schema.properties
-                                        .setPartialClassToResolvedClassProperty
-                                        .identifier,
-                                    value: valuesArray,
-                                  }),
-                                )
-                                .map((values) =>
-                                  values.map(
-                                    (partials) =>
-                                      new $LazyObjectSet<
-                                        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-                                        PartialClass,
-                                        LazilyResolvedBlankNodeOrIriIdentifierClass
-                                      >({
-                                        partials,
-                                        resolver: (identifiers) =>
-                                          $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
-                                            {
-                                              identifiers,
-                                            },
-                                          ),
+                            }).chain((setLazyToResolvedClassProperty) =>
+                              $shaclPropertyFromRdf({
+                                graph: $parameters.graph,
+                                resource: $parameters.resource,
+                                propertySchema:
+                                  $schema.properties
+                                    .setPartialClassToResolvedClassProperty,
+                                typeFromRdf: (resourceValues) =>
+                                  resourceValues
+                                    .chain((values) =>
+                                      values.chainMap((value) =>
+                                        value.toResource().chain((resource) =>
+                                          PartialClass.$fromRdf(resource, {
+                                            context: $parameters.context,
+                                            ignoreRdfType: true,
+                                            objectSet: $parameters.objectSet,
+                                            preferredLanguages:
+                                              $parameters.preferredLanguages,
+                                          }),
+                                        ),
+                                      ),
+                                    )
+                                    .map((values) => values.toArray())
+                                    .map((valuesArray) =>
+                                      Resource.Values.fromValue({
+                                        focusResource: $parameters.resource,
+                                        propertyPath:
+                                          LazyPropertiesClass.$schema.properties
+                                            .setPartialClassToResolvedClassProperty
+                                            .identifier,
+                                        value: valuesArray,
                                       }),
-                                  ),
-                                ),
-                          }).map((setPartialClassToResolvedClassProperty) => ({
-                            $identifier,
-                            optionalLazyToResolvedClassProperty,
-                            optionalLazyToResolvedClassUnionProperty,
-                            optionalLazyToResolvedIriIdentifierClassProperty,
-                            optionalPartialClassToResolvedClassProperty,
-                            optionalPartialClassToResolvedClassUnionProperty,
-                            optionalPartialClassUnionToResolvedClassUnionProperty,
-                            requiredLazyToResolvedClassProperty,
-                            requiredPartialClassToResolvedClassProperty,
-                            setLazyToResolvedClassProperty,
-                            setPartialClassToResolvedClassProperty,
-                          })),
+                                    )
+                                    .map((values) =>
+                                      values.map(
+                                        (partials) =>
+                                          new $LazyObjectSet<
+                                            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+                                            PartialClass,
+                                            LazilyResolvedBlankNodeOrIriIdentifierClass
+                                          >({
+                                            partials,
+                                            resolver: (identifiers) =>
+                                              $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
+                                                {
+                                                  identifiers,
+                                                },
+                                              ),
+                                          }),
+                                      ),
+                                    ),
+                              }).map(
+                                (setPartialClassToResolvedClassProperty) => ({
+                                  $identifier,
+                                  optionalLazyToResolvedClassProperty,
+                                  optionalLazyToResolvedClassUnionProperty,
+                                  optionalLazyToResolvedIriIdentifierClassProperty,
+                                  optionalPartialClassToResolvedClassProperty,
+                                  optionalPartialClassToResolvedClassUnionProperty,
+                                  optionalPartialClassUnionToResolvedClassUnionProperty,
+                                  requiredLazyToResolvedClassProperty,
+                                  requiredPartialClassToResolvedClassProperty,
+                                  setLazyToResolvedClassProperty,
+                                  setPartialClassToResolvedClassProperty,
+                                }),
+                              ),
+                            ),
                         ),
                       ),
-                    ),
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   export const $schema = {
@@ -30964,47 +31220,46 @@ export namespace LazilyResolvedIriIdentifierInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
-    return (
-      $parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, LazilyResolvedIriIdentifierInterface.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-    ).chain(($identifier) =>
-      Either.of<Error, "LazilyResolvedIriIdentifierInterface">(
-        "LazilyResolvedIriIdentifierInterface" as const,
-      ).chain(($type) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    LazilyResolvedIriIdentifierInterface.$schema.properties
-                      .lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          $type,
-          lazilyResolvedStringProperty,
-        })),
-      ),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        Either.of<Error, "LazilyResolvedIriIdentifierInterface">(
+          "LazilyResolvedIriIdentifierInterface" as const,
+        ).chain(($type) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      LazilyResolvedIriIdentifierInterface.$schema.properties
+                        .lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            $type,
+            lazilyResolvedStringProperty,
+          })),
+        ),
+      );
   }
 
   export function $toRdf(
@@ -31449,42 +31704,39 @@ export namespace LazilyResolvedIriIdentifierClass {
     Error,
     { $identifier: NamedNode; lazilyResolvedStringProperty: string }
   > {
-    return (
-      $parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, LazilyResolvedIriIdentifierClass.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.lazilyResolvedStringProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  LazilyResolvedIriIdentifierClass.$schema.properties
-                    .lazilyResolvedStringProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((lazilyResolvedStringProperty) => ({
-        $identifier,
-        lazilyResolvedStringProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    LazilyResolvedIriIdentifierClass.$schema.properties
+                      .lazilyResolvedStringProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((lazilyResolvedStringProperty) => ({
+          $identifier,
+          lazilyResolvedStringProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -31936,39 +32188,46 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, LazilyResolvedInterfaceUnionMember2.$Identifier>(
-        $parameters.resource
-          .identifier as LazilyResolvedInterfaceUnionMember2.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "LazilyResolvedInterfaceUnionMember2">(
-          "LazilyResolvedInterfaceUnionMember2" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedInterfaceUnionMember2.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "LazilyResolvedInterfaceUnionMember2">(
+            "LazilyResolvedInterfaceUnionMember2" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        LazilyResolvedInterfaceUnionMember2.$schema.properties
+                          .lazilyResolvedStringProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((lazilyResolvedStringProperty) => ({
+              $identifier,
+              $type,
+              lazilyResolvedStringProperty,
+            })),
+          ),
         ),
-      ),
     );
   }
 
@@ -32544,39 +32803,46 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, LazilyResolvedInterfaceUnionMember1.$Identifier>(
-        $parameters.resource
-          .identifier as LazilyResolvedInterfaceUnionMember1.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "LazilyResolvedInterfaceUnionMember1">(
-          "LazilyResolvedInterfaceUnionMember1" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedInterfaceUnionMember1.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "LazilyResolvedInterfaceUnionMember1">(
+            "LazilyResolvedInterfaceUnionMember1" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        LazilyResolvedInterfaceUnionMember1.$schema.properties
+                          .lazilyResolvedStringProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((lazilyResolvedStringProperty) => ({
+              $identifier,
+              $type,
+              lazilyResolvedStringProperty,
+            })),
+          ),
         ),
-      ),
     );
   }
 
@@ -33167,32 +33433,41 @@ export namespace LazilyResolvedClassUnionMember2 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, LazilyResolvedClassUnionMember2.$Identifier>(
-        $parameters.resource
-          .identifier as LazilyResolvedClassUnionMember2.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    LazilyResolvedClassUnionMember2.$schema.properties
-                      .lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          lazilyResolvedStringProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      LazilyResolvedClassUnionMember2.$schema.properties
+                        .lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            lazilyResolvedStringProperty,
+          })),
+        ),
     );
   }
 
@@ -33747,32 +34022,41 @@ export namespace LazilyResolvedClassUnionMember1 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, LazilyResolvedClassUnionMember1.$Identifier>(
-        $parameters.resource
-          .identifier as LazilyResolvedClassUnionMember1.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    LazilyResolvedClassUnionMember1.$schema.properties
-                      .lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          lazilyResolvedStringProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      LazilyResolvedClassUnionMember1.$schema.properties
+                        .lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            lazilyResolvedStringProperty,
+          })),
+        ),
     );
   }
 
@@ -34321,42 +34605,46 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<
-        Error,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
-      >(
-        $parameters.resource
-          .identifier as LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "LazilyResolvedBlankNodeOrIriIdentifierInterface">(
-          "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
-                        .properties.lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "LazilyResolvedBlankNodeOrIriIdentifierInterface">(
+            "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
+                          .properties.lazilyResolvedStringProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((lazilyResolvedStringProperty) => ({
+              $identifier,
+              $type,
+              lazilyResolvedStringProperty,
+            })),
+          ),
         ),
-      ),
     );
   }
 
@@ -34960,32 +35248,41 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>(
-        $parameters.resource
-          .identifier as LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    LazilyResolvedBlankNodeOrIriIdentifierClass.$schema
-                      .properties.lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          lazilyResolvedStringProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.lazilyResolvedStringProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      LazilyResolvedBlankNodeOrIriIdentifierClass.$schema
+                        .properties.lazilyResolvedStringProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((lazilyResolvedStringProperty) => ({
+            $identifier,
+            lazilyResolvedStringProperty,
+          })),
+        ),
     );
   }
 
@@ -35544,69 +35841,77 @@ export namespace LanguageInPropertiesClass {
       languageInLiteralProperty: NonEmptyList<Literal>;
     }
   > {
-    return Either.of<Error, LanguageInPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as LanguageInPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.languageInLiteralProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              values.chainMap((value) =>
-                value.toLiteral().chain((literalValue) => {
-                  switch (literalValue.language) {
-                    case "en":
-                    case "fr":
-                      return Either.of(value);
-                    default:
-                      return Left(
-                        new Resource.MistypedTermValueError({
-                          actualValue: literalValue,
-                          expectedValueType: "Literal",
-                          focusResource: $parameters.resource,
-                          propertyPath:
-                            LanguageInPropertiesClass.$schema.properties
-                              .languageInLiteralProperty.identifier,
-                        }),
-                      );
-                  }
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.languageInLiteralProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toLiteral().chain((literalValue) => {
+                    switch (literalValue.language) {
+                      case "en":
+                      case "fr":
+                        return Either.of(value);
+                      default:
+                        return Left(
+                          new Resource.MistypedTermValueError({
+                            actualValue: literalValue,
+                            expectedValueType: "Literal",
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              LanguageInPropertiesClass.$schema.properties
+                                .languageInLiteralProperty.identifier,
+                          }),
+                        );
+                    }
+                  }),
+                ),
+              )
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    LanguageInPropertiesClass.$schema.properties
+                      .languageInLiteralProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toLiteral()))
+              .chain((values) =>
+                NonEmptyList.fromArray(values.toArray()).toEither(
+                  new Error(
+                    `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
+                  ),
+                ),
+              )
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $parameters.resource,
+                  propertyPath:
+                    LanguageInPropertiesClass.$schema.properties
+                      .languageInLiteralProperty.identifier,
+                  value: valuesArray,
                 }),
               ),
-            )
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  LanguageInPropertiesClass.$schema.properties
-                    .languageInLiteralProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toLiteral()))
-            .chain((values) =>
-              NonEmptyList.fromArray(values.toArray()).toEither(
-                new Error(
-                  `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
-                ),
-              ),
-            )
-            .map((valuesArray) =>
-              Resource.Values.fromValue({
-                focusResource: $parameters.resource,
-                propertyPath:
-                  LanguageInPropertiesClass.$schema.properties
-                    .languageInLiteralProperty.identifier,
-                value: valuesArray,
-              }),
-            ),
-      }).map((languageInLiteralProperty) => ({
-        $identifier,
-        languageInLiteralProperty,
-      })),
-    );
+        }).map((languageInLiteralProperty) => ({
+          $identifier,
+          languageInLiteralProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -36232,75 +36537,83 @@ export namespace JsPrimitiveUnionPropertyClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, JsPrimitiveUnionPropertyClass.$Identifier>(
-        $parameters.resource
-          .identifier as JsPrimitiveUnionPropertyClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.jsPrimitiveUnionProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => {
-                  const valueAsValues = Either.of(value.toValues());
-                  return (
-                    valueAsValues.chain((values) =>
-                      values.chainMap((value) => value.toBoolean()),
-                    ) as Either<
-                      Error,
-                      Resource.Values<boolean | number | string>
-                    >
-                  )
-                    .altLazy(
-                      () =>
-                        valueAsValues.chain((values) =>
-                          values.chainMap((value) => value.toFloat()),
-                        ) as Either<
-                          Error,
-                          Resource.Values<boolean | number | string>
-                        >,
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.jsPrimitiveUnionProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) => {
+                    const valueAsValues = Either.of(value.toValues());
+                    return (
+                      valueAsValues.chain((values) =>
+                        values.chainMap((value) => value.toBoolean()),
+                      ) as Either<
+                        Error,
+                        Resource.Values<boolean | number | string>
+                      >
                     )
-                    .altLazy(
-                      () =>
-                        valueAsValues
-                          .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                JsPrimitiveUnionPropertyClass.$schema.properties
-                                  .jsPrimitiveUnionProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
-                              values,
-                            }),
-                          )
-                          .chain((values) =>
-                            values.chainMap((value) => value.toString()),
+                      .altLazy(
+                        () =>
+                          valueAsValues.chain((values) =>
+                            values.chainMap((value) => value.toFloat()),
                           ) as Either<
-                          Error,
-                          Resource.Values<boolean | number | string>
-                        >,
-                    )
-                    .chain((values) => values.head());
-                }),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $parameters.resource,
-                  propertyPath:
-                    JsPrimitiveUnionPropertyClass.$schema.properties
-                      .jsPrimitiveUnionProperty.identifier,
-                  value: valuesArray,
-                }),
-              ),
-        }).map((jsPrimitiveUnionProperty) => ({
-          $identifier,
-          jsPrimitiveUnionProperty,
-        })),
-      ),
+                            Error,
+                            Resource.Values<boolean | number | string>
+                          >,
+                      )
+                      .altLazy(
+                        () =>
+                          valueAsValues
+                            .chain((values) =>
+                              $fromRdfPreferredLanguages({
+                                focusResource: $parameters.resource,
+                                predicate:
+                                  JsPrimitiveUnionPropertyClass.$schema
+                                    .properties.jsPrimitiveUnionProperty
+                                    .identifier,
+                                preferredLanguages:
+                                  $parameters.preferredLanguages,
+                                values,
+                              }),
+                            )
+                            .chain((values) =>
+                              values.chainMap((value) => value.toString()),
+                            ) as Either<
+                            Error,
+                            Resource.Values<boolean | number | string>
+                          >,
+                      )
+                      .chain((values) => values.head());
+                  }),
+                )
+                .map((values) => values.toArray())
+                .map((valuesArray) =>
+                  Resource.Values.fromValue({
+                    focusResource: $parameters.resource,
+                    propertyPath:
+                      JsPrimitiveUnionPropertyClass.$schema.properties
+                        .jsPrimitiveUnionProperty.identifier,
+                    value: valuesArray,
+                  }),
+                ),
+          }).map((jsPrimitiveUnionProperty) => ({
+            $identifier,
+            jsPrimitiveUnionProperty,
+          })),
+        ),
     );
   }
 
@@ -36987,26 +37300,24 @@ export namespace IriIdentifierInterface {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      ($parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, IriIdentifierInterface.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-      ).chain(($identifier) =>
-        Either.of<Error, "IriIdentifierInterface">(
-          "IriIdentifierInterface" as const,
-        ).map(($type) => ({
-          $identifier,
-          $type,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "IriIdentifierInterface">(
+            "IriIdentifierInterface" as const,
+          ).map(($type) => ({
+            $identifier,
+            $type,
+          })),
+        ),
     );
   }
 
@@ -37485,19 +37796,17 @@ export namespace IriIdentifierClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      ($parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, IriIdentifierClass.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-      ).map(($identifier) => ({ $identifier })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ $identifier })),
     );
   }
 
@@ -37928,33 +38237,40 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       interfaceUnionMemberCommonParentProperty: string;
     }
   > {
-    return Either.of<Error, InterfaceUnionMemberCommonParentStatic.$Identifier>(
-      $parameters.resource
-        .identifier as InterfaceUnionMemberCommonParentStatic.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema:
-          $schema.properties.interfaceUnionMemberCommonParentProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  InterfaceUnionMemberCommonParentStatic.$schema.properties
-                    .interfaceUnionMemberCommonParentProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((interfaceUnionMemberCommonParentProperty) => ({
-        $identifier,
-        interfaceUnionMemberCommonParentProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema:
+            $schema.properties.interfaceUnionMemberCommonParentProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    InterfaceUnionMemberCommonParentStatic.$schema.properties
+                      .interfaceUnionMemberCommonParentProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((interfaceUnionMemberCommonParentProperty) => ({
+          $identifier,
+          interfaceUnionMemberCommonParentProperty,
+        })),
+      );
   }
 
   export function $toRdf(
@@ -38417,39 +38733,48 @@ export namespace InterfaceUnionMember2 {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, InterfaceUnionMember2.$Identifier>(
-          $parameters.resource.identifier as InterfaceUnionMember2.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "InterfaceUnionMember2">(
-            "InterfaceUnionMember2" as const,
-          ).chain(($type) =>
-            $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
-              propertySchema: $schema.properties.interfaceUnionMember2Property,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        InterfaceUnionMember2.$schema.properties
-                          .interfaceUnionMember2Property.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((interfaceUnionMember2Property) => ({
-              ...$super0,
-              $identifier,
-              $type,
-              interfaceUnionMember2Property,
-            })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Either.of<Error, "InterfaceUnionMember2">(
+              "InterfaceUnionMember2" as const,
+            ).chain(($type) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema:
+                  $schema.properties.interfaceUnionMember2Property,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          InterfaceUnionMember2.$schema.properties
+                            .interfaceUnionMember2Property.identifier,
+                        preferredLanguages: $parameters.preferredLanguages,
+                        values,
+                      }),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((interfaceUnionMember2Property) => ({
+                ...$super0,
+                $identifier,
+                $type,
+                interfaceUnionMember2Property,
+              })),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -39007,39 +39332,48 @@ export namespace InterfaceUnionMember1 {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, InterfaceUnionMember1.$Identifier>(
-          $parameters.resource.identifier as InterfaceUnionMember1.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "InterfaceUnionMember1">(
-            "InterfaceUnionMember1" as const,
-          ).chain(($type) =>
-            $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
-              propertySchema: $schema.properties.interfaceUnionMember1Property,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        InterfaceUnionMember1.$schema.properties
-                          .interfaceUnionMember1Property.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((interfaceUnionMember1Property) => ({
-              ...$super0,
-              $identifier,
-              $type,
-              interfaceUnionMember1Property,
-            })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Either.of<Error, "InterfaceUnionMember1">(
+              "InterfaceUnionMember1" as const,
+            ).chain(($type) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema:
+                  $schema.properties.interfaceUnionMember1Property,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          InterfaceUnionMember1.$schema.properties
+                            .interfaceUnionMember1Property.identifier,
+                        preferredLanguages: $parameters.preferredLanguages,
+                        values,
+                      }),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((interfaceUnionMember1Property) => ({
+                ...$super0,
+                $identifier,
+                $type,
+                interfaceUnionMember1Property,
+              })),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -39558,33 +39892,43 @@ export namespace Interface {
       interfaceProperty: string;
     }
   > {
-    return Either.of<Error, Interface.$Identifier>(
-      $parameters.resource.identifier as Interface.$Identifier,
-    ).chain(($identifier) =>
-      Either.of<Error, "Interface">("Interface" as const).chain(($type) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.interfaceProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    Interface.$schema.properties.interfaceProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((interfaceProperty) => ({
-          $identifier,
-          $type,
-          interfaceProperty,
-        })),
-      ),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        Either.of<Error, "Interface">("Interface" as const).chain(($type) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.interfaceProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      Interface.$schema.properties.interfaceProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((interfaceProperty) => ({
+            $identifier,
+            $type,
+            interfaceProperty,
+          })),
+        ),
+      );
   }
 
   export function $toRdf(
@@ -40100,44 +40444,51 @@ export namespace IndirectRecursiveHelperClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, IndirectRecursiveHelperClass.$Identifier>(
-        $parameters.resource
-          .identifier as IndirectRecursiveHelperClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.indirectRecursiveProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    IndirectRecursiveClass.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: true,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.indirectRecursiveProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      IndirectRecursiveClass.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: true,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
                   ),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<IndirectRecursiveClass>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          IndirectRecursiveHelperClass.$schema.properties
+                            .indirectRecursiveProperty.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<IndirectRecursiveClass>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        IndirectRecursiveHelperClass.$schema.properties
-                          .indirectRecursiveProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((indirectRecursiveProperty) => ({
-          $identifier,
-          indirectRecursiveProperty,
-        })),
-      ),
+          }).map((indirectRecursiveProperty) => ({
+            $identifier,
+            indirectRecursiveProperty,
+          })),
+        ),
     );
   }
 
@@ -40701,45 +41052,53 @@ export namespace IndirectRecursiveClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, IndirectRecursiveClass.$Identifier>(
-        $parameters.resource.identifier as IndirectRecursiveClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.indirectRecursiveHelperProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    IndirectRecursiveHelperClass.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: true,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.indirectRecursiveHelperProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      IndirectRecursiveHelperClass.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: true,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
                   ),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<
+                        Maybe<IndirectRecursiveHelperClass>
+                      >({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          IndirectRecursiveClass.$schema.properties
+                            .indirectRecursiveHelperProperty.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<IndirectRecursiveHelperClass>
-                    >({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        IndirectRecursiveClass.$schema.properties
-                          .indirectRecursiveHelperProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((indirectRecursiveHelperProperty) => ({
-          $identifier,
-          indirectRecursiveHelperProperty,
-        })),
-      ),
+          }).map((indirectRecursiveHelperProperty) => ({
+            $identifier,
+            indirectRecursiveHelperProperty,
+          })),
+        ),
     );
   }
 
@@ -41628,183 +41987,194 @@ export namespace InPropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, InPropertiesClass.$Identifier>(
-        $parameters.resource.identifier as InPropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.inBooleansProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => value.toBoolean([true] as const)),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<true>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        InPropertiesClass.$schema.properties.inBooleansProperty
-                          .identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).chain((inBooleansProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.inDateTimesProperty,
+            propertySchema: $schema.properties.inBooleansProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  values.chainMap((value) =>
-                    value.toDateTime([new Date(1523268000000)]),
-                  ),
+                  values.chainMap((value) => value.toBoolean([true] as const)),
                 )
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<Date>>({
+                    : Resource.Values.fromValue<Maybe<true>>({
                         focusResource: $parameters.resource,
                         propertyPath:
                           InPropertiesClass.$schema.properties
-                            .inDateTimesProperty.identifier,
+                            .inBooleansProperty.identifier,
                         value: Maybe.empty(),
                       }),
                 ),
-          }).chain((inDateTimesProperty) =>
+          }).chain((inBooleansProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.inDoublesProperty,
+              propertySchema: $schema.properties.inDateTimesProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    values.chainMap((value) => value.toFloat([1, 2] as const)),
+                    values.chainMap((value) =>
+                      value.toDateTime([new Date(1523268000000)]),
+                    ),
                   )
                   .map((values) =>
                     values.length > 0
                       ? values.map((value) => Maybe.of(value))
-                      : Resource.Values.fromValue<Maybe<1 | 2>>({
+                      : Resource.Values.fromValue<Maybe<Date>>({
                           focusResource: $parameters.resource,
                           propertyPath:
                             InPropertiesClass.$schema.properties
-                              .inDoublesProperty.identifier,
+                              .inDateTimesProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   ),
-            }).chain((inDoublesProperty) =>
+            }).chain((inDateTimesProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.inIntegersProperty,
+                propertySchema: $schema.properties.inDoublesProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
                       values.chainMap((value) =>
-                        value.toBigInt([1n, 2n] as const),
+                        value.toFloat([1, 2] as const),
                       ),
                     )
                     .map((values) =>
                       values.length > 0
                         ? values.map((value) => Maybe.of(value))
-                        : Resource.Values.fromValue<Maybe<1n | 2n>>({
+                        : Resource.Values.fromValue<Maybe<1 | 2>>({
                             focusResource: $parameters.resource,
                             propertyPath:
                               InPropertiesClass.$schema.properties
-                                .inIntegersProperty.identifier,
+                                .inDoublesProperty.identifier,
                             value: Maybe.empty(),
                           }),
                     ),
-              }).chain((inIntegersProperty) =>
+              }).chain((inDoublesProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
-                  propertySchema: $schema.properties.inIrisProperty,
+                  propertySchema: $schema.properties.inIntegersProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
                         values.chainMap((value) =>
-                          value.toIri([
-                            dataFactory.namedNode(
-                              "http://example.com/InPropertiesIri1",
-                            ),
-                            dataFactory.namedNode(
-                              "http://example.com/InPropertiesIri2",
-                            ),
-                          ]),
+                          value.toBigInt([1n, 2n] as const),
                         ),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<
-                              Maybe<
-                                NamedNode<
-                                  | "http://example.com/InPropertiesIri1"
-                                  | "http://example.com/InPropertiesIri2"
-                                >
-                              >
-                            >({
+                          : Resource.Values.fromValue<Maybe<1n | 2n>>({
                               focusResource: $parameters.resource,
                               propertyPath:
                                 InPropertiesClass.$schema.properties
-                                  .inIrisProperty.identifier,
+                                  .inIntegersProperty.identifier,
                               value: Maybe.empty(),
                             }),
                       ),
-                }).chain((inIrisProperty) =>
+                }).chain((inIntegersProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
-                    propertySchema: $schema.properties.inStringsProperty,
+                    propertySchema: $schema.properties.inIrisProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              InPropertiesClass.$schema.properties
-                                .inStringsProperty.identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
                           values.chainMap((value) =>
-                            value.toString(["text", "html"] as const),
+                            value.toIri([
+                              dataFactory.namedNode(
+                                "http://example.com/InPropertiesIri1",
+                              ),
+                              dataFactory.namedNode(
+                                "http://example.com/InPropertiesIri2",
+                              ),
+                            ]),
                           ),
                         )
                         .map((values) =>
                           values.length > 0
                             ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<Maybe<"text" | "html">>(
-                                {
+                            : Resource.Values.fromValue<
+                                Maybe<
+                                  NamedNode<
+                                    | "http://example.com/InPropertiesIri1"
+                                    | "http://example.com/InPropertiesIri2"
+                                  >
+                                >
+                              >({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  InPropertiesClass.$schema.properties
+                                    .inIrisProperty.identifier,
+                                value: Maybe.empty(),
+                              }),
+                        ),
+                  }).chain((inIrisProperty) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema: $schema.properties.inStringsProperty,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                InPropertiesClass.$schema.properties
+                                  .inStringsProperty.identifier,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                              values,
+                            }),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) =>
+                              value.toString(["text", "html"] as const),
+                            ),
+                          )
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => Maybe.of(value))
+                              : Resource.Values.fromValue<
+                                  Maybe<"text" | "html">
+                                >({
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     InPropertiesClass.$schema.properties
                                       .inStringsProperty.identifier,
                                   value: Maybe.empty(),
-                                },
-                              ),
-                        ),
-                  }).map((inStringsProperty) => ({
-                    $identifier,
-                    inBooleansProperty,
-                    inDateTimesProperty,
-                    inDoublesProperty,
-                    inIntegersProperty,
-                    inIrisProperty,
-                    inStringsProperty,
-                  })),
+                                }),
+                          ),
+                    }).map((inStringsProperty) => ({
+                      $identifier,
+                      inBooleansProperty,
+                      inDateTimesProperty,
+                      inDoublesProperty,
+                      inIntegersProperty,
+                      inIrisProperty,
+                      inStringsProperty,
+                    })),
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -42670,56 +43040,57 @@ export namespace InIdentifierClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      ($parameters.resource.identifier.value ===
-        "http://example.com/InIdentifierInstance1" ||
-      $parameters.resource.identifier.value ===
-        "http://example.com/InIdentifierInstance2"
-        ? Either.of<Error, InIdentifierClass.$Identifier>(
-            $parameters.resource.identifier as InIdentifierClass.$Identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType:
-                'NamedNode<"http://example.com/InIdentifierInstance1" | "http://example.com/InIdentifierInstance2">',
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.inIdentifierProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    InIdentifierClass.$schema.properties.inIdentifierProperty
-                      .identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<string>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        InIdentifierClass.$schema.properties
-                          .inIdentifierProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((inIdentifierProperty) => ({
-          $identifier,
-          inIdentifierProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) =>
+          values.chainMap((value) =>
+            value.toIri([
+              dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
+              dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
+            ]),
+          ),
+        )
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.inIdentifierProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      InIdentifierClass.$schema.properties.inIdentifierProperty
+                        .identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) => values.chainMap((value) => value.toString()))
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<string>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          InIdentifierClass.$schema.properties
+                            .inIdentifierProperty.identifier,
+                        value: Maybe.empty(),
+                      }),
+                ),
+          }).map((inIdentifierProperty) => ({
+            $identifier,
+            inIdentifierProperty,
+          })),
+        ),
     );
   }
 
@@ -43223,32 +43594,39 @@ export namespace IdentifierOverride1ClassStatic {
     Error,
     { $identifier: BlankNode | NamedNode; identifierOverrideProperty: string }
   > {
-    return Either.of<Error, IdentifierOverride1ClassStatic.$Identifier>(
-      $parameters.resource
-        .identifier as IdentifierOverride1ClassStatic.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.identifierOverrideProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  IdentifierOverride1ClassStatic.$schema.properties
-                    .identifierOverrideProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((identifierOverrideProperty) => ({
-        $identifier,
-        identifierOverrideProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.identifierOverrideProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    IdentifierOverride1ClassStatic.$schema.properties
+                      .identifierOverrideProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((identifierOverrideProperty) => ({
+          $identifier,
+          identifierOverrideProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -43561,19 +43939,17 @@ export namespace IdentifierOverride2ClassStatic {
       ...$parameters,
       ignoreRdfType: true,
     }).chain(($super0) =>
-      ($parameters.resource.identifier.termType === "NamedNode"
-        ? Either.of<Error, IdentifierOverride2ClassStatic.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "NamedNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-      ).map(($identifier) => ({ ...$super0, $identifier })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ ...$super0, $identifier })),
     );
   }
 
@@ -43907,19 +44283,17 @@ export namespace IdentifierOverride3ClassStatic {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        ($parameters.resource.identifier.termType === "NamedNode"
-          ? Either.of<Error, IdentifierOverride3ClassStatic.$Identifier>(
-              $parameters.resource.identifier,
-            )
-          : Left(
-              new Resource.MistypedTermValueError({
-                actualValue: $parameters.resource.identifier,
-                expectedValueType: "NamedNode",
-                focusResource: $parameters.resource,
-                propertyPath: $RdfVocabularies.rdf.subject,
-              }),
-            )
-        ).map(($identifier) => ({ ...$super0, $identifier })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIri()))
+          .chain((values) => values.head())
+          .map(($identifier) => ({ ...$super0, $identifier })),
       ),
     );
   }
@@ -44383,19 +44757,17 @@ export namespace IdentifierOverride4ClassStatic {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        ($parameters.resource.identifier.termType === "NamedNode"
-          ? Either.of<Error, IdentifierOverride4ClassStatic.$Identifier>(
-              $parameters.resource.identifier,
-            )
-          : Left(
-              new Resource.MistypedTermValueError({
-                actualValue: $parameters.resource.identifier,
-                expectedValueType: "NamedNode",
-                focusResource: $parameters.resource,
-                propertyPath: $RdfVocabularies.rdf.subject,
-              }),
-            )
-        ).map(($identifier) => ({ ...$super0, $identifier })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIri()))
+          .chain((values) => values.head())
+          .map(($identifier) => ({ ...$super0, $identifier })),
       ),
     );
   }
@@ -44851,19 +45223,17 @@ export namespace IdentifierOverride5Class {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        ($parameters.resource.identifier.termType === "NamedNode"
-          ? Either.of<Error, IdentifierOverride5Class.$Identifier>(
-              $parameters.resource.identifier,
-            )
-          : Left(
-              new Resource.MistypedTermValueError({
-                actualValue: $parameters.resource.identifier,
-                expectedValueType: "NamedNode",
-                focusResource: $parameters.resource,
-                propertyPath: $RdfVocabularies.rdf.subject,
-              }),
-            )
-        ).map(($identifier) => ({ ...$super0, $identifier })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIri()))
+          .chain((values) => values.head())
+          .map(($identifier) => ({ ...$super0, $identifier })),
       ),
     );
   }
@@ -45388,59 +45758,69 @@ export namespace HasValuePropertiesClass {
       hasLiteralValueProperty: string;
     }
   > {
-    return Either.of<Error, HasValuePropertiesClass.$Identifier>(
-      $parameters.resource.identifier as HasValuePropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.hasIriValueProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              Either.sequence(
-                [
-                  dataFactory.namedNode(
-                    "http://example.com/HasValuePropertiesClassIri1",
-                  ),
-                ].map((hasValue) =>
-                  values.find((value) => value.term.equals(hasValue)),
-                ),
-              ).map(() => values),
-            )
-            .chain((values) => values.chainMap((value) => value.toIri())),
-      }).chain((hasIriValueProperty) =>
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
         $shaclPropertyFromRdf({
           graph: $parameters.graph,
           resource: $parameters.resource,
-          propertySchema: $schema.properties.hasLiteralValueProperty,
+          propertySchema: $schema.properties.hasIriValueProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
                 Either.sequence(
-                  [dataFactory.literal("test")].map((hasValue) =>
+                  [
+                    dataFactory.namedNode(
+                      "http://example.com/HasValuePropertiesClassIri1",
+                    ),
+                  ].map((hasValue) =>
                     values.find((value) => value.term.equals(hasValue)),
                   ),
                 ).map(() => values),
               )
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    HasValuePropertiesClass.$schema.properties
-                      .hasLiteralValueProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((hasLiteralValueProperty) => ({
-          $identifier,
-          hasIriValueProperty,
-          hasLiteralValueProperty,
-        })),
-      ),
-    );
+              .chain((values) => values.chainMap((value) => value.toIri())),
+        }).chain((hasIriValueProperty) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.hasLiteralValueProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  Either.sequence(
+                    [dataFactory.literal("test")].map((hasValue) =>
+                      values.find((value) => value.term.equals(hasValue)),
+                    ),
+                  ).map(() => values),
+                )
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      HasValuePropertiesClass.$schema.properties
+                        .hasLiteralValueProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((hasLiteralValueProperty) => ({
+            $identifier,
+            hasIriValueProperty,
+            hasLiteralValueProperty,
+          })),
+        ),
+      );
   }
 
   export const $schema = {
@@ -45945,31 +46325,41 @@ export namespace FlattenClassUnionMember3 {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, FlattenClassUnionMember3.$Identifier>(
-        $parameters.resource.identifier as FlattenClassUnionMember3.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.flattenClassUnionMember3Property,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    FlattenClassUnionMember3.$schema.properties
-                      .flattenClassUnionMember3Property.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((flattenClassUnionMember3Property) => ({
-          $identifier,
-          flattenClassUnionMember3Property,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.flattenClassUnionMember3Property,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      FlattenClassUnionMember3.$schema.properties
+                        .flattenClassUnionMember3Property.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((flattenClassUnionMember3Property) => ({
+            $identifier,
+            flattenClassUnionMember3Property,
+          })),
+        ),
     );
   }
 
@@ -46549,40 +46939,51 @@ export namespace ExternClassPropertyClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, ExternClassPropertyClass.$Identifier>(
-        $parameters.resource.identifier as ExternClassPropertyClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.externClassProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    ExternClass.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: true,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.externClassProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      ExternClass.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: true,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
                   ),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<ExternClass>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          ExternClassPropertyClass.$schema.properties
+                            .externClassProperty.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<ExternClass>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        ExternClassPropertyClass.$schema.properties
-                          .externClassProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((externClassProperty) => ({ $identifier, externClassProperty })),
-      ),
+          }).map((externClassProperty) => ({
+            $identifier,
+            externClassProperty,
+          })),
+        ),
     );
   }
 
@@ -47108,33 +47509,40 @@ export namespace AbstractBaseClassForExternClassStatic {
       abstractBaseClassForExternClassProperty: string;
     }
   > {
-    return Either.of<Error, AbstractBaseClassForExternClassStatic.$Identifier>(
-      $parameters.resource
-        .identifier as AbstractBaseClassForExternClassStatic.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema:
-          $schema.properties.abstractBaseClassForExternClassProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  AbstractBaseClassForExternClassStatic.$schema.properties
-                    .abstractBaseClassForExternClassProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((abstractBaseClassForExternClassProperty) => ({
-        $identifier,
-        abstractBaseClassForExternClassProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema:
+            $schema.properties.abstractBaseClassForExternClassProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    AbstractBaseClassForExternClassStatic.$schema.properties
+                      .abstractBaseClassForExternClassProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((abstractBaseClassForExternClassProperty) => ({
+          $identifier,
+          abstractBaseClassForExternClassProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -47604,31 +48012,41 @@ export namespace ExplicitRdfTypeClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, ExplicitRdfTypeClass.$Identifier>(
-        $parameters.resource.identifier as ExplicitRdfTypeClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.explicitRdfTypeProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    ExplicitRdfTypeClass.$schema.properties
-                      .explicitRdfTypeProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((explicitRdfTypeProperty) => ({
-          $identifier,
-          explicitRdfTypeProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.explicitRdfTypeProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      ExplicitRdfTypeClass.$schema.properties
+                        .explicitRdfTypeProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((explicitRdfTypeProperty) => ({
+            $identifier,
+            explicitRdfTypeProperty,
+          })),
+        ),
     );
   }
 
@@ -48194,32 +48612,41 @@ export namespace ExplicitFromToRdfTypesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, ExplicitFromToRdfTypesClass.$Identifier>(
-        $parameters.resource
-          .identifier as ExplicitFromToRdfTypesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    ExplicitFromToRdfTypesClass.$schema.properties
-                      .explicitFromToRdfTypesProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((explicitFromToRdfTypesProperty) => ({
-          $identifier,
-          explicitFromToRdfTypesProperty,
-        })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.explicitFromToRdfTypesProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages({
+                    focusResource: $parameters.resource,
+                    predicate:
+                      ExplicitFromToRdfTypesClass.$schema.properties
+                        .explicitFromToRdfTypesProperty.identifier,
+                    preferredLanguages: $parameters.preferredLanguages,
+                    values,
+                  }),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((explicitFromToRdfTypesProperty) => ({
+            $identifier,
+            explicitFromToRdfTypesProperty,
+          })),
+        ),
     );
   }
 
@@ -48803,43 +49230,51 @@ export namespace DirectRecursiveClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, DirectRecursiveClass.$Identifier>(
-        $parameters.resource.identifier as DirectRecursiveClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.directRecursiveProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toResource().chain((resource) =>
-                    DirectRecursiveClass.$fromRdf(resource, {
-                      context: $parameters.context,
-                      ignoreRdfType: true,
-                      objectSet: $parameters.objectSet,
-                      preferredLanguages: $parameters.preferredLanguages,
-                    }),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.directRecursiveProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      DirectRecursiveClass.$fromRdf(resource, {
+                        context: $parameters.context,
+                        ignoreRdfType: true,
+                        objectSet: $parameters.objectSet,
+                        preferredLanguages: $parameters.preferredLanguages,
+                      }),
+                    ),
                   ),
+                )
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<DirectRecursiveClass>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          DirectRecursiveClass.$schema.properties
+                            .directRecursiveProperty.identifier,
+                        value: Maybe.empty(),
+                      }),
                 ),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<DirectRecursiveClass>>({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        DirectRecursiveClass.$schema.properties
-                          .directRecursiveProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).map((directRecursiveProperty) => ({
-          $identifier,
-          directRecursiveProperty,
-        })),
-      ),
+          }).map((directRecursiveProperty) => ({
+            $identifier,
+            directRecursiveProperty,
+          })),
+        ),
     );
   }
 
@@ -49718,37 +50153,21 @@ export namespace DefaultValuePropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, DefaultValuePropertiesClass.$Identifier>(
-        $parameters.resource
-          .identifier as DefaultValuePropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.dateDefaultValueProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .map((values) =>
-                values.length > 0
-                  ? values
-                  : new Resource.Value({
-                      dataFactory: dataFactory,
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        DefaultValuePropertiesClass.$schema.properties
-                          .dateDefaultValueProperty.identifier,
-                      term: dataFactory.literal(
-                        "2018-04-09",
-                        $RdfVocabularies.xsd.date,
-                      ),
-                    }).toValues(),
-              )
-              .chain((values) => values.chainMap((value) => value.toDate())),
-        }).chain((dateDefaultValueProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.dateTimeDefaultValueProperty,
+            propertySchema: $schema.properties.dateDefaultValueProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .map((values) =>
@@ -49759,22 +50178,19 @@ export namespace DefaultValuePropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           DefaultValuePropertiesClass.$schema.properties
-                            .dateTimeDefaultValueProperty.identifier,
+                            .dateDefaultValueProperty.identifier,
                         term: dataFactory.literal(
-                          "2018-04-09T10:00:00Z",
-                          $RdfVocabularies.xsd.dateTime,
+                          "2018-04-09",
+                          $RdfVocabularies.xsd.date,
                         ),
                       }).toValues(),
                 )
-                .chain((values) =>
-                  values.chainMap((value) => value.toDateTime()),
-                ),
-          }).chain((dateTimeDefaultValueProperty) =>
+                .chain((values) => values.chainMap((value) => value.toDate())),
+          }).chain((dateDefaultValueProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema:
-                $schema.properties.falseBooleanDefaultValueProperty,
+              propertySchema: $schema.properties.dateTimeDefaultValueProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .map((values) =>
@@ -49785,21 +50201,22 @@ export namespace DefaultValuePropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             DefaultValuePropertiesClass.$schema.properties
-                              .falseBooleanDefaultValueProperty.identifier,
+                              .dateTimeDefaultValueProperty.identifier,
                           term: dataFactory.literal(
-                            "false",
-                            $RdfVocabularies.xsd.boolean,
+                            "2018-04-09T10:00:00Z",
+                            $RdfVocabularies.xsd.dateTime,
                           ),
                         }).toValues(),
                   )
                   .chain((values) =>
-                    values.chainMap((value) => value.toBoolean()),
+                    values.chainMap((value) => value.toDateTime()),
                   ),
-            }).chain((falseBooleanDefaultValueProperty) =>
+            }).chain((dateTimeDefaultValueProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.numberDefaultValueProperty,
+                propertySchema:
+                  $schema.properties.falseBooleanDefaultValueProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .map((values) =>
@@ -49810,21 +50227,21 @@ export namespace DefaultValuePropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               DefaultValuePropertiesClass.$schema.properties
-                                .numberDefaultValueProperty.identifier,
+                                .falseBooleanDefaultValueProperty.identifier,
                             term: dataFactory.literal(
-                              "0.0e0",
-                              $RdfVocabularies.xsd.double,
+                              "false",
+                              $RdfVocabularies.xsd.boolean,
                             ),
                           }).toValues(),
                     )
                     .chain((values) =>
-                      values.chainMap((value) => value.toFloat()),
+                      values.chainMap((value) => value.toBoolean()),
                     ),
-              }).chain((numberDefaultValueProperty) =>
+              }).chain((falseBooleanDefaultValueProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
-                  propertySchema: $schema.properties.stringDefaultValueProperty,
+                  propertySchema: $schema.properties.numberDefaultValueProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .map((values) =>
@@ -49835,29 +50252,22 @@ export namespace DefaultValuePropertiesClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 DefaultValuePropertiesClass.$schema.properties
-                                  .stringDefaultValueProperty.identifier,
-                              term: dataFactory.literal(""),
+                                  .numberDefaultValueProperty.identifier,
+                              term: dataFactory.literal(
+                                "0.0e0",
+                                $RdfVocabularies.xsd.double,
+                              ),
                             }).toValues(),
                       )
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            DefaultValuePropertiesClass.$schema.properties
-                              .stringDefaultValueProperty.identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
-                          values,
-                        }),
-                      )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toString()),
+                        values.chainMap((value) => value.toFloat()),
                       ),
-                }).chain((stringDefaultValueProperty) =>
+                }).chain((numberDefaultValueProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
                     propertySchema:
-                      $schema.properties.trueBooleanDefaultValueProperty,
+                      $schema.properties.stringDefaultValueProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .map((values) =>
@@ -49868,31 +50278,66 @@ export namespace DefaultValuePropertiesClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   DefaultValuePropertiesClass.$schema.properties
-                                    .trueBooleanDefaultValueProperty.identifier,
-                                term: dataFactory.literal(
-                                  "true",
-                                  $RdfVocabularies.xsd.boolean,
-                                ),
+                                    .stringDefaultValueProperty.identifier,
+                                term: dataFactory.literal(""),
                               }).toValues(),
                         )
                         .chain((values) =>
-                          values.chainMap((value) => value.toBoolean()),
+                          $fromRdfPreferredLanguages({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              DefaultValuePropertiesClass.$schema.properties
+                                .stringDefaultValueProperty.identifier,
+                            preferredLanguages: $parameters.preferredLanguages,
+                            values,
+                          }),
+                        )
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
                         ),
-                  }).map((trueBooleanDefaultValueProperty) => ({
-                    $identifier,
-                    dateDefaultValueProperty,
-                    dateTimeDefaultValueProperty,
-                    falseBooleanDefaultValueProperty,
-                    numberDefaultValueProperty,
-                    stringDefaultValueProperty,
-                    trueBooleanDefaultValueProperty,
-                  })),
+                  }).chain((stringDefaultValueProperty) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema:
+                        $schema.properties.trueBooleanDefaultValueProperty,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
+                          .map((values) =>
+                            values.length > 0
+                              ? values
+                              : new Resource.Value({
+                                  dataFactory: dataFactory,
+                                  focusResource: $parameters.resource,
+                                  propertyPath:
+                                    DefaultValuePropertiesClass.$schema
+                                      .properties
+                                      .trueBooleanDefaultValueProperty
+                                      .identifier,
+                                  term: dataFactory.literal(
+                                    "true",
+                                    $RdfVocabularies.xsd.boolean,
+                                  ),
+                                }).toValues(),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toBoolean()),
+                          ),
+                    }).map((trueBooleanDefaultValueProperty) => ({
+                      $identifier,
+                      dateDefaultValueProperty,
+                      dateTimeDefaultValueProperty,
+                      falseBooleanDefaultValueProperty,
+                      numberDefaultValueProperty,
+                      stringDefaultValueProperty,
+                      trueBooleanDefaultValueProperty,
+                    })),
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -51449,89 +51894,21 @@ export namespace DateUnionPropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, DateUnionPropertiesClass.$Identifier>(
-        $parameters.resource.identifier as DateUnionPropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.dateOrDateTimeProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) => {
-                  const valueAsValues = Either.of(value.toValues());
-                  return (
-                    valueAsValues
-                      .chain((values) =>
-                        values.chainMap((value) => value.toDate()),
-                      )
-                      .map((values) =>
-                        values.map(
-                          (value) =>
-                            ({
-                              type: "date" as const,
-                              value,
-                            }) as
-                              | { type: "date"; value: Date }
-                              | { type: "dateTime"; value: Date },
-                        ),
-                      ) as Either<
-                      Error,
-                      Resource.Values<
-                        | { type: "date"; value: Date }
-                        | { type: "dateTime"; value: Date }
-                      >
-                    >
-                  )
-                    .altLazy(
-                      () =>
-                        valueAsValues
-                          .chain((values) =>
-                            values.chainMap((value) => value.toDateTime()),
-                          )
-                          .map((values) =>
-                            values.map(
-                              (value) =>
-                                ({
-                                  type: "dateTime" as const,
-                                  value,
-                                }) as
-                                  | { type: "date"; value: Date }
-                                  | { type: "dateTime"; value: Date },
-                            ),
-                          ) as Either<
-                          Error,
-                          Resource.Values<
-                            | { type: "date"; value: Date }
-                            | { type: "dateTime"; value: Date }
-                          >
-                        >,
-                    )
-                    .chain((values) => values.head());
-                }),
-              )
-              .map((values) =>
-                values.length > 0
-                  ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<
-                      Maybe<
-                        | { type: "date"; value: Date }
-                        | { type: "dateTime"; value: Date }
-                      >
-                    >({
-                      focusResource: $parameters.resource,
-                      propertyPath:
-                        DateUnionPropertiesClass.$schema.properties
-                          .dateOrDateTimeProperty.identifier,
-                      value: Maybe.empty(),
-                    }),
-              ),
-        }).chain((dateOrDateTimeProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.dateOrStringProperty,
+            propertySchema: $schema.properties.dateOrDateTimeProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -51550,13 +51927,13 @@ export namespace DateUnionPropertiesClass {
                                 value,
                               }) as
                                 | { type: "date"; value: Date }
-                                | { type: "string"; value: string },
+                                | { type: "dateTime"; value: Date },
                           ),
                         ) as Either<
                         Error,
                         Resource.Values<
                           | { type: "date"; value: Date }
-                          | { type: "string"; value: string }
+                          | { type: "dateTime"; value: Date }
                         >
                       >
                     )
@@ -51564,34 +51941,23 @@ export namespace DateUnionPropertiesClass {
                         () =>
                           valueAsValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  DateUnionPropertiesClass.$schema.properties
-                                    .dateOrStringProperty.identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
-                            )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toString()),
+                              values.chainMap((value) => value.toDateTime()),
                             )
                             .map((values) =>
                               values.map(
                                 (value) =>
                                   ({
-                                    type: "string" as const,
+                                    type: "dateTime" as const,
                                     value,
                                   }) as
                                     | { type: "date"; value: Date }
-                                    | { type: "string"; value: string },
+                                    | { type: "dateTime"; value: Date },
                               ),
                             ) as Either<
                             Error,
                             Resource.Values<
                               | { type: "date"; value: Date }
-                              | { type: "string"; value: string }
+                              | { type: "dateTime"; value: Date }
                             >
                           >,
                       )
@@ -51604,21 +51970,21 @@ export namespace DateUnionPropertiesClass {
                     : Resource.Values.fromValue<
                         Maybe<
                           | { type: "date"; value: Date }
-                          | { type: "string"; value: string }
+                          | { type: "dateTime"; value: Date }
                         >
                       >({
                         focusResource: $parameters.resource,
                         propertyPath:
                           DateUnionPropertiesClass.$schema.properties
-                            .dateOrStringProperty.identifier,
+                            .dateOrDateTimeProperty.identifier,
                         value: Maybe.empty(),
                       }),
                 ),
-          }).chain((dateOrStringProperty) =>
+          }).chain((dateOrDateTimeProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.dateTimeOrDateProperty,
+              propertySchema: $schema.properties.dateOrStringProperty,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -51627,23 +51993,23 @@ export namespace DateUnionPropertiesClass {
                       return (
                         valueAsValues
                           .chain((values) =>
-                            values.chainMap((value) => value.toDateTime()),
+                            values.chainMap((value) => value.toDate()),
                           )
                           .map((values) =>
                             values.map(
                               (value) =>
                                 ({
-                                  type: "dateTime" as const,
+                                  type: "date" as const,
                                   value,
                                 }) as
-                                  | { type: "dateTime"; value: Date }
-                                  | { type: "date"; value: Date },
+                                  | { type: "date"; value: Date }
+                                  | { type: "string"; value: string },
                             ),
                           ) as Either<
                           Error,
                           Resource.Values<
-                            | { type: "dateTime"; value: Date }
                             | { type: "date"; value: Date }
+                            | { type: "string"; value: string }
                           >
                         >
                       )
@@ -51651,23 +52017,34 @@ export namespace DateUnionPropertiesClass {
                           () =>
                             valueAsValues
                               .chain((values) =>
-                                values.chainMap((value) => value.toDate()),
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    DateUnionPropertiesClass.$schema.properties
+                                      .dateOrStringProperty.identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toString()),
                               )
                               .map((values) =>
                                 values.map(
                                   (value) =>
                                     ({
-                                      type: "date" as const,
+                                      type: "string" as const,
                                       value,
                                     }) as
-                                      | { type: "dateTime"; value: Date }
-                                      | { type: "date"; value: Date },
+                                      | { type: "date"; value: Date }
+                                      | { type: "string"; value: string },
                                 ),
                               ) as Either<
                               Error,
                               Resource.Values<
-                                | { type: "dateTime"; value: Date }
                                 | { type: "date"; value: Date }
+                                | { type: "string"; value: string }
                               >
                             >,
                         )
@@ -51679,22 +52056,22 @@ export namespace DateUnionPropertiesClass {
                       ? values.map((value) => Maybe.of(value))
                       : Resource.Values.fromValue<
                           Maybe<
-                            | { type: "dateTime"; value: Date }
                             | { type: "date"; value: Date }
+                            | { type: "string"; value: string }
                           >
                         >({
                           focusResource: $parameters.resource,
                           propertyPath:
                             DateUnionPropertiesClass.$schema.properties
-                              .dateTimeOrDateProperty.identifier,
+                              .dateOrStringProperty.identifier,
                           value: Maybe.empty(),
                         }),
                   ),
-            }).chain((dateTimeOrDateProperty) =>
+            }).chain((dateOrStringProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.stringOrDateProperty,
+                propertySchema: $schema.properties.dateTimeOrDateProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -51703,33 +52080,22 @@ export namespace DateUnionPropertiesClass {
                         return (
                           valueAsValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  DateUnionPropertiesClass.$schema.properties
-                                    .stringOrDateProperty.identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
-                            )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toString()),
+                              values.chainMap((value) => value.toDateTime()),
                             )
                             .map((values) =>
                               values.map(
                                 (value) =>
                                   ({
-                                    type: "string" as const,
+                                    type: "dateTime" as const,
                                     value,
                                   }) as
-                                    | { type: "string"; value: string }
+                                    | { type: "dateTime"; value: Date }
                                     | { type: "date"; value: Date },
                               ),
                             ) as Either<
                             Error,
                             Resource.Values<
-                              | { type: "string"; value: string }
+                              | { type: "dateTime"; value: Date }
                               | { type: "date"; value: Date }
                             >
                           >
@@ -51747,13 +52113,13 @@ export namespace DateUnionPropertiesClass {
                                         type: "date" as const,
                                         value,
                                       }) as
-                                        | { type: "string"; value: string }
+                                        | { type: "dateTime"; value: Date }
                                         | { type: "date"; value: Date },
                                   ),
                                 ) as Either<
                                 Error,
                                 Resource.Values<
-                                  | { type: "string"; value: string }
+                                  | { type: "dateTime"; value: Date }
                                   | { type: "date"; value: Date }
                                 >
                               >,
@@ -51766,28 +52132,115 @@ export namespace DateUnionPropertiesClass {
                         ? values.map((value) => Maybe.of(value))
                         : Resource.Values.fromValue<
                             Maybe<
-                              | { type: "string"; value: string }
+                              | { type: "dateTime"; value: Date }
                               | { type: "date"; value: Date }
                             >
                           >({
                             focusResource: $parameters.resource,
                             propertyPath:
                               DateUnionPropertiesClass.$schema.properties
-                                .stringOrDateProperty.identifier,
+                                .dateTimeOrDateProperty.identifier,
                             value: Maybe.empty(),
                           }),
                     ),
-              }).map((stringOrDateProperty) => ({
-                $identifier,
-                dateOrDateTimeProperty,
-                dateOrStringProperty,
-                dateTimeOrDateProperty,
-                stringOrDateProperty,
-              })),
+              }).chain((dateTimeOrDateProperty) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.stringOrDateProperty,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        values.chainMap((value) => {
+                          const valueAsValues = Either.of(value.toValues());
+                          return (
+                            valueAsValues
+                              .chain((values) =>
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    DateUnionPropertiesClass.$schema.properties
+                                      .stringOrDateProperty.identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toString()),
+                              )
+                              .map((values) =>
+                                values.map(
+                                  (value) =>
+                                    ({
+                                      type: "string" as const,
+                                      value,
+                                    }) as
+                                      | { type: "string"; value: string }
+                                      | { type: "date"; value: Date },
+                                ),
+                              ) as Either<
+                              Error,
+                              Resource.Values<
+                                | { type: "string"; value: string }
+                                | { type: "date"; value: Date }
+                              >
+                            >
+                          )
+                            .altLazy(
+                              () =>
+                                valueAsValues
+                                  .chain((values) =>
+                                    values.chainMap((value) => value.toDate()),
+                                  )
+                                  .map((values) =>
+                                    values.map(
+                                      (value) =>
+                                        ({
+                                          type: "date" as const,
+                                          value,
+                                        }) as
+                                          | { type: "string"; value: string }
+                                          | { type: "date"; value: Date },
+                                    ),
+                                  ) as Either<
+                                  Error,
+                                  Resource.Values<
+                                    | { type: "string"; value: string }
+                                    | { type: "date"; value: Date }
+                                  >
+                                >,
+                            )
+                            .chain((values) => values.head());
+                        }),
+                      )
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<
+                              Maybe<
+                                | { type: "string"; value: string }
+                                | { type: "date"; value: Date }
+                              >
+                            >({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                DateUnionPropertiesClass.$schema.properties
+                                  .stringOrDateProperty.identifier,
+                              value: Maybe.empty(),
+                            }),
+                      ),
+                }).map((stringOrDateProperty) => ({
+                  $identifier,
+                  dateOrDateTimeProperty,
+                  dateOrStringProperty,
+                  dateTimeOrDateProperty,
+                  stringOrDateProperty,
+                })),
+              ),
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -54272,124 +54725,95 @@ export namespace ConvertibleTypePropertiesClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, ConvertibleTypePropertiesClass.$Identifier>(
-        $parameters.resource
-          .identifier as ConvertibleTypePropertiesClass.$Identifier,
-      ).chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.convertibleIriNonEmptySetProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) => values.chainMap((value) => value.toIri()))
-              .chain((values) =>
-                NonEmptyList.fromArray(values.toArray()).toEither(
-                  new Error(
-                    `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
-                  ),
-                ),
-              )
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $parameters.resource,
-                  propertyPath:
-                    ConvertibleTypePropertiesClass.$schema.properties
-                      .convertibleIriNonEmptySetProperty.identifier,
-                  value: valuesArray,
-                }),
-              ),
-        }).chain((convertibleIriNonEmptySetProperty) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: $parameters.graph,
             resource: $parameters.resource,
-            propertySchema: $schema.properties.convertibleIriOptionProperty,
+            propertySchema:
+              $schema.properties.convertibleIriNonEmptySetProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) => values.chainMap((value) => value.toIri()))
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<NamedNode>>({
-                        focusResource: $parameters.resource,
-                        propertyPath:
-                          ConvertibleTypePropertiesClass.$schema.properties
-                            .convertibleIriOptionProperty.identifier,
-                        value: Maybe.empty(),
-                      }),
+                .chain((values) =>
+                  NonEmptyList.fromArray(values.toArray()).toEither(
+                    new Error(
+                      `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
+                    ),
+                  ),
+                )
+                .map((valuesArray) =>
+                  Resource.Values.fromValue({
+                    focusResource: $parameters.resource,
+                    propertyPath:
+                      ConvertibleTypePropertiesClass.$schema.properties
+                        .convertibleIriNonEmptySetProperty.identifier,
+                    value: valuesArray,
+                  }),
                 ),
-          }).chain((convertibleIriOptionProperty) =>
+          }).chain((convertibleIriNonEmptySetProperty) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
-              propertySchema: $schema.properties.convertibleIriProperty,
+              propertySchema: $schema.properties.convertibleIriOptionProperty,
               typeFromRdf: (resourceValues) =>
-                resourceValues.chain((values) =>
-                  values.chainMap((value) => value.toIri()),
-                ),
-            }).chain((convertibleIriProperty) =>
+                resourceValues
+                  .chain((values) => values.chainMap((value) => value.toIri()))
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<NamedNode>>({
+                          focusResource: $parameters.resource,
+                          propertyPath:
+                            ConvertibleTypePropertiesClass.$schema.properties
+                              .convertibleIriOptionProperty.identifier,
+                          value: Maybe.empty(),
+                        }),
+                  ),
+            }).chain((convertibleIriOptionProperty) =>
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.convertibleIriSetProperty,
+                propertySchema: $schema.properties.convertibleIriProperty,
                 typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      values.chainMap((value) => value.toIri()),
-                    )
-                    .map((values) => values.toArray())
-                    .map((valuesArray) =>
-                      Resource.Values.fromValue({
-                        focusResource: $parameters.resource,
-                        propertyPath:
-                          ConvertibleTypePropertiesClass.$schema.properties
-                            .convertibleIriSetProperty.identifier,
-                        value: valuesArray,
-                      }),
-                    ),
-              }).chain((convertibleIriSetProperty) =>
+                  resourceValues.chain((values) =>
+                    values.chainMap((value) => value.toIri()),
+                  ),
+              }).chain((convertibleIriProperty) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
-                  propertySchema:
-                    $schema.properties.convertibleLiteralNonEmptySetProperty,
+                  propertySchema: $schema.properties.convertibleIriSetProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            ConvertibleTypePropertiesClass.$schema.properties
-                              .convertibleLiteralNonEmptySetProperty.identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
-                          values,
-                        }),
+                        values.chainMap((value) => value.toIri()),
                       )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toLiteral()),
-                      )
-                      .chain((values) =>
-                        NonEmptyList.fromArray(values.toArray()).toEither(
-                          new Error(
-                            `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
-                          ),
-                        ),
-                      )
+                      .map((values) => values.toArray())
                       .map((valuesArray) =>
                         Resource.Values.fromValue({
                           focusResource: $parameters.resource,
                           propertyPath:
                             ConvertibleTypePropertiesClass.$schema.properties
-                              .convertibleLiteralNonEmptySetProperty.identifier,
+                              .convertibleIriSetProperty.identifier,
                           value: valuesArray,
                         }),
                       ),
-                }).chain((convertibleLiteralNonEmptySetProperty) =>
+                }).chain((convertibleIriSetProperty) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
                     propertySchema:
-                      $schema.properties.convertibleLiteralOptionProperty,
+                      $schema.properties.convertibleLiteralNonEmptySetProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
@@ -54397,7 +54821,8 @@ export namespace ConvertibleTypePropertiesClass {
                             focusResource: $parameters.resource,
                             predicate:
                               ConvertibleTypePropertiesClass.$schema.properties
-                                .convertibleLiteralOptionProperty.identifier,
+                                .convertibleLiteralNonEmptySetProperty
+                                .identifier,
                             preferredLanguages: $parameters.preferredLanguages,
                             values,
                           }),
@@ -54405,24 +54830,29 @@ export namespace ConvertibleTypePropertiesClass {
                         .chain((values) =>
                           values.chainMap((value) => value.toLiteral()),
                         )
-                        .map((values) =>
-                          values.length > 0
-                            ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<Maybe<Literal>>({
-                                focusResource: $parameters.resource,
-                                propertyPath:
-                                  ConvertibleTypePropertiesClass.$schema
-                                    .properties.convertibleLiteralOptionProperty
-                                    .identifier,
-                                value: Maybe.empty(),
-                              }),
+                        .chain((values) =>
+                          NonEmptyList.fromArray(values.toArray()).toEither(
+                            new Error(
+                              `${Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
+                            ),
+                          ),
+                        )
+                        .map((valuesArray) =>
+                          Resource.Values.fromValue({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ConvertibleTypePropertiesClass.$schema.properties
+                                .convertibleLiteralNonEmptySetProperty
+                                .identifier,
+                            value: valuesArray,
+                          }),
                         ),
-                  }).chain((convertibleLiteralOptionProperty) =>
+                  }).chain((convertibleLiteralNonEmptySetProperty) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
                       resource: $parameters.resource,
                       propertySchema:
-                        $schema.properties.convertibleLiteralProperty,
+                        $schema.properties.convertibleLiteralOptionProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -54430,7 +54860,7 @@ export namespace ConvertibleTypePropertiesClass {
                               focusResource: $parameters.resource,
                               predicate:
                                 ConvertibleTypePropertiesClass.$schema
-                                  .properties.convertibleLiteralProperty
+                                  .properties.convertibleLiteralOptionProperty
                                   .identifier,
                               preferredLanguages:
                                 $parameters.preferredLanguages,
@@ -54439,13 +54869,26 @@ export namespace ConvertibleTypePropertiesClass {
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toLiteral()),
+                          )
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => Maybe.of(value))
+                              : Resource.Values.fromValue<Maybe<Literal>>({
+                                  focusResource: $parameters.resource,
+                                  propertyPath:
+                                    ConvertibleTypePropertiesClass.$schema
+                                      .properties
+                                      .convertibleLiteralOptionProperty
+                                      .identifier,
+                                  value: Maybe.empty(),
+                                }),
                           ),
-                    }).chain((convertibleLiteralProperty) =>
+                    }).chain((convertibleLiteralOptionProperty) =>
                       $shaclPropertyFromRdf({
                         graph: $parameters.graph,
                         resource: $parameters.resource,
                         propertySchema:
-                          $schema.properties.convertibleLiteralSetProperty,
+                          $schema.properties.convertibleLiteralProperty,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
@@ -54453,7 +54896,7 @@ export namespace ConvertibleTypePropertiesClass {
                                 focusResource: $parameters.resource,
                                 predicate:
                                   ConvertibleTypePropertiesClass.$schema
-                                    .properties.convertibleLiteralSetProperty
+                                    .properties.convertibleLiteralProperty
                                     .identifier,
                                 preferredLanguages:
                                   $parameters.preferredLanguages,
@@ -54462,128 +54905,154 @@ export namespace ConvertibleTypePropertiesClass {
                             )
                             .chain((values) =>
                               values.chainMap((value) => value.toLiteral()),
-                            )
-                            .map((values) => values.toArray())
-                            .map((valuesArray) =>
-                              Resource.Values.fromValue({
-                                focusResource: $parameters.resource,
-                                propertyPath:
-                                  ConvertibleTypePropertiesClass.$schema
-                                    .properties.convertibleLiteralSetProperty
-                                    .identifier,
-                                value: valuesArray,
-                              }),
                             ),
-                      }).chain((convertibleLiteralSetProperty) =>
+                      }).chain((convertibleLiteralProperty) =>
                         $shaclPropertyFromRdf({
                           graph: $parameters.graph,
                           resource: $parameters.resource,
                           propertySchema:
-                            $schema.properties
-                              .convertibleTermNonEmptySetProperty,
+                            $schema.properties.convertibleLiteralSetProperty,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
-                                values.chainMap((value) => value.toTerm()),
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    ConvertibleTypePropertiesClass.$schema
+                                      .properties.convertibleLiteralSetProperty
+                                      .identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
                               )
                               .chain((values) =>
-                                NonEmptyList.fromArray(
-                                  values.toArray(),
-                                ).toEither(
-                                  new Error(
-                                    `${Resource.Identifier.toString(
-                                      $parameters.resource.identifier,
-                                    )} is an empty set`,
-                                  ),
-                                ),
+                                values.chainMap((value) => value.toLiteral()),
                               )
+                              .map((values) => values.toArray())
                               .map((valuesArray) =>
                                 Resource.Values.fromValue({
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     ConvertibleTypePropertiesClass.$schema
-                                      .properties
-                                      .convertibleTermNonEmptySetProperty
+                                      .properties.convertibleLiteralSetProperty
                                       .identifier,
                                   value: valuesArray,
                                 }),
                               ),
-                        }).chain((convertibleTermNonEmptySetProperty) =>
+                        }).chain((convertibleLiteralSetProperty) =>
                           $shaclPropertyFromRdf({
                             graph: $parameters.graph,
                             resource: $parameters.resource,
                             propertySchema:
-                              $schema.properties.convertibleTermOptionProperty,
+                              $schema.properties
+                                .convertibleTermNonEmptySetProperty,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
                                   values.chainMap((value) => value.toTerm()),
                                 )
-                                .map((values) =>
-                                  values.length > 0
-                                    ? values.map((value) => Maybe.of(value))
-                                    : Resource.Values.fromValue<
-                                        Maybe<BlankNode | NamedNode | Literal>
-                                      >({
-                                        focusResource: $parameters.resource,
-                                        propertyPath:
-                                          ConvertibleTypePropertiesClass.$schema
-                                            .properties
-                                            .convertibleTermOptionProperty
-                                            .identifier,
-                                        value: Maybe.empty(),
-                                      }),
+                                .chain((values) =>
+                                  NonEmptyList.fromArray(
+                                    values.toArray(),
+                                  ).toEither(
+                                    new Error(
+                                      `${Resource.Identifier.toString(
+                                        $parameters.resource.identifier,
+                                      )} is an empty set`,
+                                    ),
+                                  ),
+                                )
+                                .map((valuesArray) =>
+                                  Resource.Values.fromValue({
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      ConvertibleTypePropertiesClass.$schema
+                                        .properties
+                                        .convertibleTermNonEmptySetProperty
+                                        .identifier,
+                                    value: valuesArray,
+                                  }),
                                 ),
-                          }).chain((convertibleTermOptionProperty) =>
+                          }).chain((convertibleTermNonEmptySetProperty) =>
                             $shaclPropertyFromRdf({
                               graph: $parameters.graph,
                               resource: $parameters.resource,
                               propertySchema:
-                                $schema.properties.convertibleTermProperty,
+                                $schema.properties
+                                  .convertibleTermOptionProperty,
                               typeFromRdf: (resourceValues) =>
-                                resourceValues.chain((values) =>
-                                  values.chainMap((value) => value.toTerm()),
-                                ),
-                            }).chain((convertibleTermProperty) =>
+                                resourceValues
+                                  .chain((values) =>
+                                    values.chainMap((value) => value.toTerm()),
+                                  )
+                                  .map((values) =>
+                                    values.length > 0
+                                      ? values.map((value) => Maybe.of(value))
+                                      : Resource.Values.fromValue<
+                                          Maybe<BlankNode | NamedNode | Literal>
+                                        >({
+                                          focusResource: $parameters.resource,
+                                          propertyPath:
+                                            ConvertibleTypePropertiesClass
+                                              .$schema.properties
+                                              .convertibleTermOptionProperty
+                                              .identifier,
+                                          value: Maybe.empty(),
+                                        }),
+                                  ),
+                            }).chain((convertibleTermOptionProperty) =>
                               $shaclPropertyFromRdf({
                                 graph: $parameters.graph,
                                 resource: $parameters.resource,
                                 propertySchema:
-                                  $schema.properties.convertibleTermSetProperty,
+                                  $schema.properties.convertibleTermProperty,
                                 typeFromRdf: (resourceValues) =>
-                                  resourceValues
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toTerm(),
+                                  resourceValues.chain((values) =>
+                                    values.chainMap((value) => value.toTerm()),
+                                  ),
+                              }).chain((convertibleTermProperty) =>
+                                $shaclPropertyFromRdf({
+                                  graph: $parameters.graph,
+                                  resource: $parameters.resource,
+                                  propertySchema:
+                                    $schema.properties
+                                      .convertibleTermSetProperty,
+                                  typeFromRdf: (resourceValues) =>
+                                    resourceValues
+                                      .chain((values) =>
+                                        values.chainMap((value) =>
+                                          value.toTerm(),
+                                        ),
+                                      )
+                                      .map((values) => values.toArray())
+                                      .map((valuesArray) =>
+                                        Resource.Values.fromValue({
+                                          focusResource: $parameters.resource,
+                                          propertyPath:
+                                            ConvertibleTypePropertiesClass
+                                              .$schema.properties
+                                              .convertibleTermSetProperty
+                                              .identifier,
+                                          value: valuesArray,
+                                        }),
                                       ),
-                                    )
-                                    .map((values) => values.toArray())
-                                    .map((valuesArray) =>
-                                      Resource.Values.fromValue({
-                                        focusResource: $parameters.resource,
-                                        propertyPath:
-                                          ConvertibleTypePropertiesClass.$schema
-                                            .properties
-                                            .convertibleTermSetProperty
-                                            .identifier,
-                                        value: valuesArray,
-                                      }),
-                                    ),
-                              }).map((convertibleTermSetProperty) => ({
-                                $identifier,
-                                convertibleIriNonEmptySetProperty,
-                                convertibleIriOptionProperty,
-                                convertibleIriProperty,
-                                convertibleIriSetProperty,
-                                convertibleLiteralNonEmptySetProperty,
-                                convertibleLiteralOptionProperty,
-                                convertibleLiteralProperty,
-                                convertibleLiteralSetProperty,
-                                convertibleTermNonEmptySetProperty,
-                                convertibleTermOptionProperty,
-                                convertibleTermProperty,
-                                convertibleTermSetProperty,
-                              })),
+                                }).map((convertibleTermSetProperty) => ({
+                                  $identifier,
+                                  convertibleIriNonEmptySetProperty,
+                                  convertibleIriOptionProperty,
+                                  convertibleIriProperty,
+                                  convertibleIriSetProperty,
+                                  convertibleLiteralNonEmptySetProperty,
+                                  convertibleLiteralOptionProperty,
+                                  convertibleLiteralProperty,
+                                  convertibleLiteralSetProperty,
+                                  convertibleTermNonEmptySetProperty,
+                                  convertibleTermOptionProperty,
+                                  convertibleTermProperty,
+                                  convertibleTermSetProperty,
+                                })),
+                              ),
                             ),
                           ),
                         ),
@@ -54595,7 +55064,6 @@ export namespace ConvertibleTypePropertiesClass {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -55672,40 +56140,47 @@ export namespace BaseInterfaceWithPropertiesStatic {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, BaseInterfaceWithPropertiesStatic.$Identifier>(
-        $parameters.resource
-          .identifier as BaseInterfaceWithPropertiesStatic.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "BaseInterfaceWithProperties">(
-          "BaseInterfaceWithProperties" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema:
-              $schema.properties.baseInterfaceWithPropertiesProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      BaseInterfaceWithPropertiesStatic.$schema.properties
-                        .baseInterfaceWithPropertiesProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((baseInterfaceWithPropertiesProperty) => ({
-            $identifier,
-            $type,
-            baseInterfaceWithPropertiesProperty,
-          })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "BaseInterfaceWithProperties">(
+            "BaseInterfaceWithProperties" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema:
+                $schema.properties.baseInterfaceWithPropertiesProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        BaseInterfaceWithPropertiesStatic.$schema.properties
+                          .baseInterfaceWithPropertiesProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((baseInterfaceWithPropertiesProperty) => ({
+              $identifier,
+              $type,
+              baseInterfaceWithPropertiesProperty,
+            })),
+          ),
         ),
-      ),
     );
   }
 
@@ -56272,14 +56747,21 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, BaseInterfaceWithoutPropertiesStatic.$Identifier>(
-          $parameters.resource
-            .identifier as BaseInterfaceWithoutPropertiesStatic.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "BaseInterfaceWithoutProperties">(
-            "BaseInterfaceWithoutProperties" as const,
-          ).map(($type) => ({ ...$super0, $identifier, $type })),
-        ),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Either.of<Error, "BaseInterfaceWithoutProperties">(
+              "BaseInterfaceWithoutProperties" as const,
+            ).map(($type) => ({ ...$super0, $identifier, $type })),
+          ),
       ),
     );
   }
@@ -56822,41 +57304,48 @@ export namespace ConcreteParentInterfaceStatic {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ConcreteParentInterfaceStatic.$Identifier>(
-          $parameters.resource
-            .identifier as ConcreteParentInterfaceStatic.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ConcreteParentInterface">(
-            "ConcreteParentInterface" as const,
-          ).chain(($type) =>
-            $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
-              propertySchema:
-                $schema.properties.concreteParentInterfaceProperty,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ConcreteParentInterfaceStatic.$schema.properties
-                          .concreteParentInterfaceProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((concreteParentInterfaceProperty) => ({
-              ...$super0,
-              $identifier,
-              $type,
-              concreteParentInterfaceProperty,
-            })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Either.of<Error, "ConcreteParentInterface">(
+              "ConcreteParentInterface" as const,
+            ).chain(($type) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema:
+                  $schema.properties.concreteParentInterfaceProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          ConcreteParentInterfaceStatic.$schema.properties
+                            .concreteParentInterfaceProperty.identifier,
+                        preferredLanguages: $parameters.preferredLanguages,
+                        values,
+                      }),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((concreteParentInterfaceProperty) => ({
+                ...$super0,
+                $identifier,
+                $type,
+                concreteParentInterfaceProperty,
+              })),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -57437,39 +57926,48 @@ export namespace ConcreteChildInterface {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ConcreteChildInterface.$Identifier>(
-          $parameters.resource.identifier as ConcreteChildInterface.$Identifier,
-        ).chain(($identifier) =>
-          Either.of<Error, "ConcreteChildInterface">(
-            "ConcreteChildInterface" as const,
-          ).chain(($type) =>
-            $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
-              propertySchema: $schema.properties.concreteChildInterfaceProperty,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ConcreteChildInterface.$schema.properties
-                          .concreteChildInterfaceProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((concreteChildInterfaceProperty) => ({
-              ...$super0,
-              $identifier,
-              $type,
-              concreteChildInterfaceProperty,
-            })),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Either.of<Error, "ConcreteChildInterface">(
+              "ConcreteChildInterface" as const,
+            ).chain(($type) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema:
+                  $schema.properties.concreteChildInterfaceProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          ConcreteChildInterface.$schema.properties
+                            .concreteChildInterfaceProperty.identifier,
+                        preferredLanguages: $parameters.preferredLanguages,
+                        values,
+                      }),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((concreteChildInterfaceProperty) => ({
+                ...$super0,
+                $identifier,
+                $type,
+                concreteChildInterfaceProperty,
+              })),
+            ),
           ),
-        ),
       ),
     );
   }
@@ -58019,33 +58517,40 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       abstractBaseClassWithPropertiesProperty: string;
     }
   > {
-    return Either.of<Error, AbstractBaseClassWithPropertiesStatic.$Identifier>(
-      $parameters.resource
-        .identifier as AbstractBaseClassWithPropertiesStatic.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema:
-          $schema.properties.abstractBaseClassWithPropertiesProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  AbstractBaseClassWithPropertiesStatic.$schema.properties
-                    .abstractBaseClassWithPropertiesProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((abstractBaseClassWithPropertiesProperty) => ({
-        $identifier,
-        abstractBaseClassWithPropertiesProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema:
+            $schema.properties.abstractBaseClassWithPropertiesProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    AbstractBaseClassWithPropertiesStatic.$schema.properties
+                      .abstractBaseClassWithPropertiesProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((abstractBaseClassWithPropertiesProperty) => ({
+          $identifier,
+          abstractBaseClassWithPropertiesProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -58361,10 +58866,17 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       ...$parameters,
       ignoreRdfType: true,
     }).chain(($super0) =>
-      Either.of<Error, AbstractBaseClassWithoutPropertiesStatic.$Identifier>(
-        $parameters.resource
-          .identifier as AbstractBaseClassWithoutPropertiesStatic.$Identifier,
-      ).map(($identifier) => ({ ...$super0, $identifier })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ ...$super0, $identifier })),
     );
   }
 
@@ -58776,35 +59288,42 @@ export namespace ConcreteParentClassStatic {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ConcreteParentClassStatic.$Identifier>(
-          $parameters.resource
-            .identifier as ConcreteParentClassStatic.$Identifier,
-        ).chain(($identifier) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.concreteParentClassProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ConcreteParentClassStatic.$schema.properties
-                        .concreteParentClassProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((concreteParentClassProperty) => ({
-            ...$super0,
-            $identifier,
-            concreteParentClassProperty,
-          })),
-        ),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.concreteParentClassProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        ConcreteParentClassStatic.$schema.properties
+                          .concreteParentClassProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((concreteParentClassProperty) => ({
+              ...$super0,
+              $identifier,
+              concreteParentClassProperty,
+            })),
+          ),
       ),
     );
   }
@@ -59360,34 +59879,42 @@ export namespace ConcreteChildClass {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ConcreteChildClass.$Identifier>(
-          $parameters.resource.identifier as ConcreteChildClass.$Identifier,
-        ).chain(($identifier) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.concreteChildClassProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ConcreteChildClass.$schema.properties
-                        .concreteChildClassProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((concreteChildClassProperty) => ({
-            ...$super0,
-            $identifier,
-            concreteChildClassProperty,
-          })),
-        ),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.concreteChildClassProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        ConcreteChildClass.$schema.properties
+                          .concreteChildClassProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((concreteChildClassProperty) => ({
+              ...$super0,
+              $identifier,
+              concreteChildClassProperty,
+            })),
+          ),
       ),
     );
   }
@@ -59868,32 +60395,40 @@ export namespace ClassUnionMemberCommonParentStatic {
       classUnionMemberCommonParentProperty: string;
     }
   > {
-    return Either.of<Error, ClassUnionMemberCommonParentStatic.$Identifier>(
-      $parameters.resource
-        .identifier as ClassUnionMemberCommonParentStatic.$Identifier,
-    ).chain(($identifier) =>
-      $shaclPropertyFromRdf({
-        graph: $parameters.graph,
-        resource: $parameters.resource,
-        propertySchema: $schema.properties.classUnionMemberCommonParentProperty,
-        typeFromRdf: (resourceValues) =>
-          resourceValues
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  ClassUnionMemberCommonParentStatic.$schema.properties
-                    .classUnionMemberCommonParentProperty.identifier,
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString())),
-      }).map((classUnionMemberCommonParentProperty) => ({
-        $identifier,
-        classUnionMemberCommonParentProperty,
-      })),
-    );
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema:
+            $schema.properties.classUnionMemberCommonParentProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    ClassUnionMemberCommonParentStatic.$schema.properties
+                      .classUnionMemberCommonParentProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((classUnionMemberCommonParentProperty) => ({
+          $identifier,
+          classUnionMemberCommonParentProperty,
+        })),
+      );
   }
 
   export const $schema = {
@@ -60325,34 +60860,42 @@ export namespace ClassUnionMember2 {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ClassUnionMember2.$Identifier>(
-          $parameters.resource.identifier as ClassUnionMember2.$Identifier,
-        ).chain(($identifier) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.classUnionMember2Property,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ClassUnionMember2.$schema.properties
-                        .classUnionMember2Property.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((classUnionMember2Property) => ({
-            ...$super0,
-            $identifier,
-            classUnionMember2Property,
-          })),
-        ),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.classUnionMember2Property,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        ClassUnionMember2.$schema.properties
+                          .classUnionMember2Property.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((classUnionMember2Property) => ({
+              ...$super0,
+              $identifier,
+              classUnionMember2Property,
+            })),
+          ),
       ),
     );
   }
@@ -60867,34 +61410,42 @@ export namespace ClassUnionMember1 {
             })
         : Either.of<Error, true>(true)
       ).chain((_rdfTypeCheck) =>
-        Either.of<Error, ClassUnionMember1.$Identifier>(
-          $parameters.resource.identifier as ClassUnionMember1.$Identifier,
-        ).chain(($identifier) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.classUnionMember1Property,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ClassUnionMember1.$schema.properties
-                        .classUnionMember1Property.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
-                    values,
-                  }),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((classUnionMember1Property) => ({
-            ...$super0,
-            $identifier,
-            classUnionMember1Property,
-          })),
-        ),
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $parameters.resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $parameters.resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.classUnionMember1Property,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        ClassUnionMember1.$schema.properties
+                          .classUnionMember1Property.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((classUnionMember1Property) => ({
+              ...$super0,
+              $identifier,
+              classUnionMember1Property,
+            })),
+          ),
       ),
     );
   }
@@ -61389,14 +61940,21 @@ export namespace BlankNodeOrIriIdentifierInterface {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, BlankNodeOrIriIdentifierInterface.$Identifier>(
-        $parameters.resource
-          .identifier as BlankNodeOrIriIdentifierInterface.$Identifier,
-      ).chain(($identifier) =>
-        Either.of<Error, "BlankNodeOrIriIdentifierInterface">(
-          "BlankNodeOrIriIdentifierInterface" as const,
-        ).map(($type) => ({ $identifier, $type })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "BlankNodeOrIriIdentifierInterface">(
+            "BlankNodeOrIriIdentifierInterface" as const,
+          ).map(($type) => ({ $identifier, $type })),
+        ),
     );
   }
 
@@ -61890,10 +62448,17 @@ export namespace BlankNodeOrIriIdentifierClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      Either.of<Error, BlankNodeOrIriIdentifierClass.$Identifier>(
-        $parameters.resource
-          .identifier as BlankNodeOrIriIdentifierClass.$Identifier,
-      ).map(($identifier) => ({ $identifier })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ $identifier })),
     );
   }
 
@@ -62341,23 +62906,21 @@ export namespace BlankNodeIdentifierInterface {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      ($parameters.resource.identifier.termType === "BlankNode"
-        ? Either.of<Error, BlankNodeIdentifierInterface.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "BlankNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-      ).chain(($identifier) =>
-        Either.of<Error, "BlankNodeIdentifierInterface">(
-          "BlankNodeIdentifierInterface" as const,
-        ).map(($type) => ({ $identifier, $type })),
-      ),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toBlankNode()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Either.of<Error, "BlankNodeIdentifierInterface">(
+            "BlankNodeIdentifierInterface" as const,
+          ).map(($type) => ({ $identifier, $type })),
+        ),
     );
   }
 
@@ -62845,19 +63408,17 @@ export namespace BlankNodeIdentifierClass {
             })
         : Either.of<Error, true>(true)
     ).chain((_rdfTypeCheck) =>
-      ($parameters.resource.identifier.termType === "BlankNode"
-        ? Either.of<Error, BlankNodeIdentifierClass.$Identifier>(
-            $parameters.resource.identifier,
-          )
-        : Left(
-            new Resource.MistypedTermValueError({
-              actualValue: $parameters.resource.identifier,
-              expectedValueType: "BlankNode",
-              focusResource: $parameters.resource,
-              propertyPath: $RdfVocabularies.rdf.subject,
-            }),
-          )
-      ).map(($identifier) => ({ $identifier })),
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toBlankNode()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ $identifier })),
     );
   }
 
