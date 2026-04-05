@@ -795,17 +795,10 @@ function $filterTerm(
   return true;
 }
 
-function $fromRdfLanguageIn({
-  focusResource,
-  languageIn,
-  predicate,
-  values,
-}: {
-  focusResource: Resource;
-  languageIn: readonly string[];
-  predicate: NamedNode;
-  values: Resource.Values;
-}): Either<Error, Resource.Values> {
+function $fromRdfLanguageIn(
+  values: Resource.Values,
+  languageIn: readonly string[],
+): Either<Error, Resource.Values> {
   return values.chainMap((value) =>
     value.toLiteral().chain((literal) =>
       languageIn.includes(literal.language)
@@ -814,8 +807,8 @@ function $fromRdfLanguageIn({
             new Resource.MistypedTermValueError({
               actualValue: literal,
               expectedValueType: "Literal",
-              focusResource: focusResource,
-              propertyPath: predicate,
+              focusResource: value.focusResource,
+              propertyPath: value.propertyPath,
             }),
           ),
     ),
@@ -830,17 +823,10 @@ type $FromRdfOptions = {
   preferredLanguages?: readonly string[];
 };
 
-function $fromRdfPreferredLanguages({
-  focusResource,
-  predicate,
-  preferredLanguages,
-  values,
-}: {
-  focusResource: Resource;
-  predicate: NamedNode;
-  preferredLanguages?: readonly string[];
-  values: Resource.Values;
-}): Either<Error, Resource.Values> {
+function $fromRdfPreferredLanguages(
+  values: Resource.Values,
+  preferredLanguages?: readonly string[],
+): Either<Error, Resource.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
     return Right(values);
   }
@@ -860,8 +846,8 @@ function $fromRdfPreferredLanguages({
 
   return Right(
     Resource.Values.fromArray({
-      focusResource,
-      propertyPath: predicate,
+      focusResource: values.focusResource,
+      propertyPath: values.propertyPath,
       values: filteredValues,
     }),
   );
@@ -3289,14 +3275,10 @@ export namespace UuidV4IriIdentifierInterface {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      UuidV4IriIdentifierInterface.$schema.properties
-                        .uuidV4IriProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -3794,14 +3776,10 @@ export namespace UuidV4IriIdentifierClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    UuidV4IriIdentifierClass.$schema.properties
-                      .uuidV4IriProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((uuidV4IriProperty) => ({ $identifier, uuidV4IriProperty })),
@@ -6304,16 +6282,10 @@ export namespace UnionDiscriminantsClass {
                       () =>
                         valueAsValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                UnionDiscriminantsClass.$schema.properties
-                                  .optionalClassOrClassOrStringProperty
-                                  .identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
@@ -6395,15 +6367,10 @@ export namespace UnionDiscriminantsClass {
                         () =>
                           valueAsValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  UnionDiscriminantsClass.$schema.properties
-                                    .optionalIriOrLiteralProperty.identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
+                              $fromRdfPreferredLanguages(
                                 values,
-                              }),
+                                $parameters.preferredLanguages,
+                              ),
                             )
                             .chain((values) =>
                               values.chainMap((value) => value.toLiteral()),
@@ -6445,15 +6412,10 @@ export namespace UnionDiscriminantsClass {
                           () =>
                             valueAsValues
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    UnionDiscriminantsClass.$schema.properties
-                                      .optionalIriOrStringProperty.identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
+                                $fromRdfPreferredLanguages(
                                   values,
-                                }),
+                                  $parameters.preferredLanguages,
+                                ),
                               )
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
@@ -6583,16 +6545,10 @@ export namespace UnionDiscriminantsClass {
                           () =>
                             valueAsValues
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    UnionDiscriminantsClass.$schema.properties
-                                      .requiredClassOrClassOrStringProperty
-                                      .identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
+                                $fromRdfPreferredLanguages(
                                   values,
-                                }),
+                                  $parameters.preferredLanguages,
+                                ),
                               )
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
@@ -6654,16 +6610,10 @@ export namespace UnionDiscriminantsClass {
                             () =>
                               valueAsValues
                                 .chain((values) =>
-                                  $fromRdfPreferredLanguages({
-                                    focusResource: $parameters.resource,
-                                    predicate:
-                                      UnionDiscriminantsClass.$schema.properties
-                                        .requiredIriOrLiteralProperty
-                                        .identifier,
-                                    preferredLanguages:
-                                      $parameters.preferredLanguages,
+                                  $fromRdfPreferredLanguages(
                                     values,
-                                  }),
+                                    $parameters.preferredLanguages,
+                                  ),
                                 )
                                 .chain((values) =>
                                   values.chainMap((value) => value.toLiteral()),
@@ -6697,17 +6647,10 @@ export namespace UnionDiscriminantsClass {
                               () =>
                                 valueAsValues
                                   .chain((values) =>
-                                    $fromRdfPreferredLanguages({
-                                      focusResource: $parameters.resource,
-                                      predicate:
-                                        UnionDiscriminantsClass.$schema
-                                          .properties
-                                          .requiredIriOrStringProperty
-                                          .identifier,
-                                      preferredLanguages:
-                                        $parameters.preferredLanguages,
+                                    $fromRdfPreferredLanguages(
                                       values,
-                                    }),
+                                      $parameters.preferredLanguages,
+                                    ),
                                   )
                                   .chain((values) =>
                                     values.chainMap((value) =>
@@ -6836,17 +6779,10 @@ export namespace UnionDiscriminantsClass {
                                   () =>
                                     valueAsValues
                                       .chain((values) =>
-                                        $fromRdfPreferredLanguages({
-                                          focusResource: $parameters.resource,
-                                          predicate:
-                                            UnionDiscriminantsClass.$schema
-                                              .properties
-                                              .setClassOrClassOrStringProperty
-                                              .identifier,
-                                          preferredLanguages:
-                                            $parameters.preferredLanguages,
+                                        $fromRdfPreferredLanguages(
                                           values,
-                                        }),
+                                          $parameters.preferredLanguages,
+                                        ),
                                       )
                                       .chain((values) =>
                                         values.chainMap((value) =>
@@ -6924,17 +6860,10 @@ export namespace UnionDiscriminantsClass {
                                     () =>
                                       valueAsValues
                                         .chain((values) =>
-                                          $fromRdfPreferredLanguages({
-                                            focusResource: $parameters.resource,
-                                            predicate:
-                                              UnionDiscriminantsClass.$schema
-                                                .properties
-                                                .setIriOrLiteralProperty
-                                                .identifier,
-                                            preferredLanguages:
-                                              $parameters.preferredLanguages,
+                                          $fromRdfPreferredLanguages(
                                             values,
-                                          }),
+                                            $parameters.preferredLanguages,
+                                          ),
                                         )
                                         .chain((values) =>
                                           values.chainMap((value) =>
@@ -6981,18 +6910,10 @@ export namespace UnionDiscriminantsClass {
                                       () =>
                                         valueAsValues
                                           .chain((values) =>
-                                            $fromRdfPreferredLanguages({
-                                              focusResource:
-                                                $parameters.resource,
-                                              predicate:
-                                                UnionDiscriminantsClass.$schema
-                                                  .properties
-                                                  .setIriOrStringProperty
-                                                  .identifier,
-                                              preferredLanguages:
-                                                $parameters.preferredLanguages,
+                                            $fromRdfPreferredLanguages(
                                               values,
-                                            }),
+                                              $parameters.preferredLanguages,
+                                            ),
                                           )
                                           .chain((values) =>
                                             values.chainMap((value) =>
@@ -10074,15 +9995,10 @@ export namespace TermPropertiesClass {
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                TermPropertiesClass.$schema.properties
-                                  .literalTermProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toLiteral()),
@@ -10127,15 +10043,10 @@ export namespace TermPropertiesClass {
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    TermPropertiesClass.$schema.properties
-                                      .stringTermProperty.identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
+                                $fromRdfPreferredLanguages(
                                   values,
-                                }),
+                                  $parameters.preferredLanguages,
+                                ),
                               )
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
@@ -11122,14 +11033,10 @@ export namespace Sha256IriIdentifierClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    Sha256IriIdentifierClass.$schema.properties
-                      .sha256IriProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((sha256IriProperty) => ({ $identifier, sha256IriProperty })),
@@ -12855,14 +12762,10 @@ export namespace PropertyVisibilitiesClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    PropertyVisibilitiesClass.$schema.properties.privateProperty
-                      .identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).chain((privateProperty) =>
@@ -12873,14 +12776,10 @@ export namespace PropertyVisibilitiesClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PropertyVisibilitiesClass.$schema.properties
-                        .protectedProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -12893,14 +12792,10 @@ export namespace PropertyVisibilitiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        PropertyVisibilitiesClass.$schema.properties
-                          .publicProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -13626,14 +13521,10 @@ export namespace PropertyCardinalitiesClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    PropertyCardinalitiesClass.$schema.properties
-                      .emptyStringSetProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString()))
               .map((values) => values.toArray())
@@ -13654,14 +13545,10 @@ export namespace PropertyCardinalitiesClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PropertyCardinalitiesClass.$schema.properties
-                        .nonEmptyStringSetProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) => values.chainMap((value) => value.toString()))
                 .chain((values) =>
@@ -13688,14 +13575,10 @@ export namespace PropertyCardinalitiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        PropertyCardinalitiesClass.$schema.properties
-                          .optionalStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -13719,14 +13602,10 @@ export namespace PropertyCardinalitiesClass {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          PropertyCardinalitiesClass.$schema.properties
-                            .requiredStringProperty.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -14351,14 +14230,10 @@ export namespace PartialInterfaceUnionMember2 {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        PartialInterfaceUnionMember2.$schema.properties
-                          .lazilyResolvedStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -14961,14 +14836,10 @@ export namespace PartialInterfaceUnionMember1 {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        PartialInterfaceUnionMember1.$schema.properties
-                          .lazilyResolvedStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -15584,14 +15455,10 @@ export namespace PartialClassUnionMember2 {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PartialClassUnionMember2.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -16169,14 +16036,10 @@ export namespace PartialClassUnionMember1 {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PartialClassUnionMember1.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -16792,14 +16655,10 @@ export namespace OrderedPropertiesClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    OrderedPropertiesClass.$schema.properties.orderedPropertyC
-                      .identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).chain((orderedPropertyC) =>
@@ -16810,14 +16669,10 @@ export namespace OrderedPropertiesClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      OrderedPropertiesClass.$schema.properties.orderedPropertyB
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -16830,14 +16685,10 @@ export namespace OrderedPropertiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        OrderedPropertiesClass.$schema.properties
-                          .orderedPropertyA.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -18438,14 +18289,10 @@ export namespace NumericPropertiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        NumericPropertiesClass.$schema.properties
-                          .decimalNumericProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) =>
@@ -20098,13 +19945,10 @@ export namespace NonClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    NonClass.$schema.properties.nonClassProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((nonClassProperty) => ({ $identifier, nonClassProperty })),
@@ -20549,14 +20393,10 @@ export namespace NoRdfTypeClassUnionMember2 {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    NoRdfTypeClassUnionMember2.$schema.properties
-                      .noRdfTypeClassUnionMember2Property.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((noRdfTypeClassUnionMember2Property) => ({
@@ -21007,14 +20847,10 @@ export namespace NoRdfTypeClassUnionMember1 {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    NoRdfTypeClassUnionMember1.$schema.properties
-                      .noRdfTypeClassUnionMember1Property.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((noRdfTypeClassUnionMember1Property) => ({
@@ -21755,14 +21591,10 @@ export namespace MutablePropertiesClass {
                       }),
                     )
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            MutablePropertiesClass.$schema.properties
-                              .mutableListProperty.identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
+                        $fromRdfPreferredLanguages(
                           values,
-                        }),
+                          $parameters.preferredLanguages,
+                        ),
                       )
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
@@ -21791,14 +21623,10 @@ export namespace MutablePropertiesClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        MutablePropertiesClass.$schema.properties
-                          .mutableSetProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -21821,14 +21649,10 @@ export namespace MutablePropertiesClass {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          MutablePropertiesClass.$schema.properties
-                            .mutableStringProperty.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -22962,15 +22786,10 @@ export namespace ListPropertiesClass {
                           }),
                         )
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                ListPropertiesClass.$schema.properties
-                                  .stringListProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
@@ -23677,14 +23496,10 @@ export namespace PartialInterface {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      PartialInterface.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -27583,14 +27398,10 @@ export namespace PartialClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    PartialClass.$schema.properties.lazilyResolvedStringProperty
-                      .identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((lazilyResolvedStringProperty) => ({
@@ -31261,14 +31072,10 @@ export namespace LazilyResolvedIriIdentifierInterface {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedIriIdentifierInterface.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -31742,14 +31549,10 @@ export namespace LazilyResolvedIriIdentifierClass {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    LazilyResolvedIriIdentifierClass.$schema.properties
-                      .lazilyResolvedStringProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((lazilyResolvedStringProperty) => ({
@@ -32229,14 +32032,10 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        LazilyResolvedInterfaceUnionMember2.$schema.properties
-                          .lazilyResolvedStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -32844,14 +32643,10 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        LazilyResolvedInterfaceUnionMember1.$schema.properties
-                          .lazilyResolvedStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -33471,14 +33266,10 @@ export namespace LazilyResolvedClassUnionMember2 {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedClassUnionMember2.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -34060,14 +33851,10 @@ export namespace LazilyResolvedClassUnionMember1 {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedClassUnionMember1.$schema.properties
-                        .lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -34646,14 +34433,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
-                          .properties.lazilyResolvedStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -35286,14 +35069,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      LazilyResolvedBlankNodeOrIriIdentifierClass.$schema
-                        .properties.lazilyResolvedStringProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -35878,25 +35657,12 @@ export namespace LanguageInPropertiesClass {
           propertySchema: $schema.properties.languageInLiteralProperty,
           typeFromRdf: (resourceValues) =>
             resourceValues
+              .chain((values) => $fromRdfLanguageIn(values, ["en", "fr"]))
               .chain((values) =>
-                $fromRdfLanguageIn({
-                  focusResource: $parameters.resource,
-                  languageIn: ["en", "fr"],
-                  predicate:
-                    LanguageInPropertiesClass.$schema.properties
-                      .languageInLiteralProperty.identifier,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
-              )
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    LanguageInPropertiesClass.$schema.properties
-                      .languageInLiteralProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toLiteral()))
               .chain((values) =>
@@ -36586,16 +36352,10 @@ export namespace JsPrimitiveUnionPropertyClass {
                         () =>
                           valueAsValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  JsPrimitiveUnionPropertyClass.$schema
-                                    .properties.jsPrimitiveUnionProperty
-                                    .identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
+                              $fromRdfPreferredLanguages(
                                 values,
-                              }),
+                                $parameters.preferredLanguages,
+                              ),
                             )
                             .chain((values) =>
                               values.chainMap((value) => value.toString()),
@@ -38264,14 +38024,10 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    InterfaceUnionMemberCommonParentStatic.$schema.properties
-                      .interfaceUnionMemberCommonParentProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((interfaceUnionMemberCommonParentProperty) => ({
@@ -38763,14 +38519,10 @@ export namespace InterfaceUnionMember2 {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          InterfaceUnionMember2.$schema.properties
-                            .interfaceUnionMember2Property.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -39362,14 +39114,10 @@ export namespace InterfaceUnionMember1 {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          InterfaceUnionMember1.$schema.properties
-                            .interfaceUnionMember1Property.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -39919,13 +39667,10 @@ export namespace Interface {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      Interface.$schema.properties.interfaceProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -42140,15 +41885,10 @@ export namespace InPropertiesClass {
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                InPropertiesClass.$schema.properties
-                                  .inStringsProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) =>
@@ -43073,14 +42813,10 @@ export namespace InIdentifierClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      InIdentifierClass.$schema.properties.inIdentifierProperty
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) => values.chainMap((value) => value.toString()))
                 .map((values) =>
@@ -43620,14 +43356,10 @@ export namespace IdentifierOverride1ClassStatic {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    IdentifierOverride1ClassStatic.$schema.properties
-                      .identifierOverrideProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((identifierOverrideProperty) => ({
@@ -45806,14 +45538,10 @@ export namespace HasValuePropertiesClass {
                   ).map(() => values),
                 )
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      HasValuePropertiesClass.$schema.properties
-                        .hasLiteralValueProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -46347,14 +46075,10 @@ export namespace FlattenClassUnionMember3 {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      FlattenClassUnionMember3.$schema.properties
-                        .flattenClassUnionMember3Property.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -47532,14 +47256,10 @@ export namespace AbstractBaseClassForExternClassStatic {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    AbstractBaseClassForExternClassStatic.$schema.properties
-                      .abstractBaseClassForExternClassProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((abstractBaseClassForExternClassProperty) => ({
@@ -48034,14 +47754,10 @@ export namespace ExplicitRdfTypeClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ExplicitRdfTypeClass.$schema.properties
-                        .explicitRdfTypeProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -48634,14 +48350,10 @@ export namespace ExplicitFromToRdfTypesClass {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ExplicitFromToRdfTypesClass.$schema.properties
-                        .explicitFromToRdfTypesProperty.identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -50287,14 +49999,10 @@ export namespace DefaultValuePropertiesClass {
                               }).toValues(),
                         )
                         .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              DefaultValuePropertiesClass.$schema.properties
-                                .stringDefaultValueProperty.identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
+                          $fromRdfPreferredLanguages(
                             values,
-                          }),
+                            $parameters.preferredLanguages,
+                          ),
                         )
                         .chain((values) =>
                           values.chainMap((value) => value.toString()),
@@ -52021,15 +51729,10 @@ export namespace DateUnionPropertiesClass {
                           () =>
                             valueAsValues
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    DateUnionPropertiesClass.$schema.properties
-                                      .dateOrStringProperty.identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
+                                $fromRdfPreferredLanguages(
                                   values,
-                                }),
+                                  $parameters.preferredLanguages,
+                                ),
                               )
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
@@ -52160,15 +51863,10 @@ export namespace DateUnionPropertiesClass {
                           return (
                             valueAsValues
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    DateUnionPropertiesClass.$schema.properties
-                                      .stringOrDateProperty.identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
+                                $fromRdfPreferredLanguages(
                                   values,
-                                }),
+                                  $parameters.preferredLanguages,
+                                ),
                               )
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
@@ -54821,15 +54519,10 @@ export namespace ConvertibleTypePropertiesClass {
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              ConvertibleTypePropertiesClass.$schema.properties
-                                .convertibleLiteralNonEmptySetProperty
-                                .identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
+                          $fromRdfPreferredLanguages(
                             values,
-                          }),
+                            $parameters.preferredLanguages,
+                          ),
                         )
                         .chain((values) =>
                           values.chainMap((value) => value.toLiteral()),
@@ -54860,16 +54553,10 @@ export namespace ConvertibleTypePropertiesClass {
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                ConvertibleTypePropertiesClass.$schema
-                                  .properties.convertibleLiteralOptionProperty
-                                  .identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toLiteral()),
@@ -54896,16 +54583,10 @@ export namespace ConvertibleTypePropertiesClass {
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  ConvertibleTypePropertiesClass.$schema
-                                    .properties.convertibleLiteralProperty
-                                    .identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
+                              $fromRdfPreferredLanguages(
                                 values,
-                              }),
+                                $parameters.preferredLanguages,
+                              ),
                             )
                             .chain((values) =>
                               values.chainMap((value) => value.toLiteral()),
@@ -54919,16 +54600,10 @@ export namespace ConvertibleTypePropertiesClass {
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    ConvertibleTypePropertiesClass.$schema
-                                      .properties.convertibleLiteralSetProperty
-                                      .identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
+                                $fromRdfPreferredLanguages(
                                   values,
-                                }),
+                                  $parameters.preferredLanguages,
+                                ),
                               )
                               .chain((values) =>
                                 values.chainMap((value) => value.toLiteral()),
@@ -56162,14 +55837,10 @@ export namespace BaseInterfaceWithPropertiesStatic {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        BaseInterfaceWithPropertiesStatic.$schema.properties
-                          .baseInterfaceWithPropertiesProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -57330,14 +57001,10 @@ export namespace ConcreteParentInterfaceStatic {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          ConcreteParentInterfaceStatic.$schema.properties
-                            .concreteParentInterfaceProperty.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -57952,14 +57619,10 @@ export namespace ConcreteChildInterface {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          ConcreteChildInterface.$schema.properties
-                            .concreteChildInterfaceProperty.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -58540,14 +58203,10 @@ export namespace AbstractBaseClassWithPropertiesStatic {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    AbstractBaseClassWithPropertiesStatic.$schema.properties
-                      .abstractBaseClassWithPropertiesProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((abstractBaseClassWithPropertiesProperty) => ({
@@ -59310,14 +58969,10 @@ export namespace ConcreteParentClassStatic {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ConcreteParentClassStatic.$schema.properties
-                          .concreteParentClassProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -59901,14 +59556,10 @@ export namespace ConcreteChildClass {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ConcreteChildClass.$schema.properties
-                          .concreteChildClassProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -60418,14 +60069,10 @@ export namespace ClassUnionMemberCommonParentStatic {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    ClassUnionMemberCommonParentStatic.$schema.properties
-                      .classUnionMemberCommonParentProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
+                $fromRdfPreferredLanguages(
                   values,
-                }),
+                  $parameters.preferredLanguages,
+                ),
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }).map((classUnionMemberCommonParentProperty) => ({
@@ -60882,14 +60529,10 @@ export namespace ClassUnionMember2 {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ClassUnionMember2.$schema.properties
-                          .classUnionMember2Property.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -61432,14 +61075,10 @@ export namespace ClassUnionMember1 {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        ClassUnionMember1.$schema.properties
-                          .classUnionMember1Property.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),

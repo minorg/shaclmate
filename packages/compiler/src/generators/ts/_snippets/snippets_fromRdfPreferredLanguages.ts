@@ -5,13 +5,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_fromRdfPreferredLanguages = conditionalOutput(
   `${syntheticNamePrefix}fromRdfPreferredLanguages`,
   code`\
-function ${syntheticNamePrefix}fromRdfPreferredLanguages(
-  { focusResource, predicate, preferredLanguages, values }: {
-    focusResource: ${imports.Resource};
-    predicate: ${imports.NamedNode};
-    preferredLanguages?: readonly string[];
-    values: ${imports.Resource}.Values
-  }): ${imports.Either}<Error, ${imports.Resource}.Values> {
+function ${syntheticNamePrefix}fromRdfPreferredLanguages(values: ${imports.Resource}.Values, preferredLanguages?: readonly string[]): ${imports.Either}<Error, ${imports.Resource}.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
     return ${imports.Right}(values);
   }
@@ -29,6 +23,6 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     }
   }
 
-  return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource, propertyPath: predicate, values: filteredValues }));
+  return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: values.focusResource, propertyPath: values.propertyPath, values: filteredValues }));
 }`,
 );

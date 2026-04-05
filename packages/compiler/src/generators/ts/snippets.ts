@@ -35,6 +35,7 @@ import { snippets_filterNumeric } from "./_snippets/snippets_filterNumeric.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
 import { snippets_fromRdfLanguageIn } from "./_snippets/snippets_fromRdfLanguageIn.js";
+import { snippets_fromRdfNodeKinds } from "./_snippets/snippets_fromRdfNodeKinds.js";
 import { snippets_fromRdfPreferredLanguages } from "./_snippets/snippets_fromRdfPreferredLanguages.js";
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
 import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
@@ -137,6 +138,7 @@ export const snippets = {
   filterTerm: snippets_filterTerm,
   FromRdfOptions: snippets_FromRdfOptions,
   fromRdfLanguageIn: snippets_fromRdfLanguageIn,
+  fromRdfNodeKinds: snippets_fromRdfNodeKinds,
   fromRdfPreferredLanguages: snippets_fromRdfPreferredLanguages,
   Hasher: snippets_Hasher,
   IdentifierFilter: snippets_IdentifierFilter,
