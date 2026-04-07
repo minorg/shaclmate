@@ -9,7 +9,12 @@ import type {
   Variable,
 } from "@rdfjs/types";
 import { Either, Left, Maybe, Right } from "purify-ts";
-import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
+import {
+  LiteralFactory,
+  PropertyPath,
+  Resource,
+  ResourceSet,
+} from "rdfjs-resource";
 
 interface $BooleanFilter {
   readonly value?: boolean;
@@ -404,13 +409,13 @@ function $shaclPropertyFromRdf<T>({
   ) => Either<Error, Resource.Values<T>>;
 }): Either<Error, T> {
   return typeFromRdf(
-    Right(resource.values(propertySchema.identifier, { graph, unique: true })),
+    Right(resource.values(propertySchema.path, { graph, unique: true })),
   ).chain((values) => values.head());
 }
 
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
-  readonly identifier: NamedNode;
   readonly kind: "Shacl";
+  readonly path: PropertyPath;
   readonly type: () => TypeSchemaT;
 }
 
@@ -848,8 +853,7 @@ export namespace BaseShaclCoreShapeStatic {
                     Resource.Values.fromArray({
                       focusResource: $parameters.resource,
                       propertyPath:
-                        BaseShaclCoreShapeStatic.$schema.properties.and
-                          .identifier,
+                        BaseShaclCoreShapeStatic.$schema.properties.and.path,
                       values: valueList.toArray(),
                     }),
                   ).chain((values) =>
@@ -865,7 +869,7 @@ export namespace BaseShaclCoreShapeStatic {
                 Resource.Values.fromValue({
                   focusResource: $parameters.resource,
                   propertyPath:
-                    BaseShaclCoreShapeStatic.$schema.properties.and.identifier,
+                    BaseShaclCoreShapeStatic.$schema.properties.and.path,
                   value: valuesArray,
                 }),
               ),
@@ -882,8 +886,7 @@ export namespace BaseShaclCoreShapeStatic {
                   Resource.Values.fromValue({
                     focusResource: $parameters.resource,
                     propertyPath:
-                      BaseShaclCoreShapeStatic.$schema.properties.classes
-                        .identifier,
+                      BaseShaclCoreShapeStatic.$schema.properties.classes.path,
                     value: valuesArray,
                   }),
                 ),
@@ -909,7 +912,7 @@ export namespace BaseShaclCoreShapeStatic {
                       focusResource: $parameters.resource,
                       propertyPath:
                         BaseShaclCoreShapeStatic.$schema.properties.comments
-                          .identifier,
+                          .path,
                       value: valuesArray,
                     }),
                   ),
@@ -930,7 +933,7 @@ export namespace BaseShaclCoreShapeStatic {
                             focusResource: $parameters.resource,
                             propertyPath:
                               BaseShaclCoreShapeStatic.$schema.properties
-                                .datatype.identifier,
+                                .datatype.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -951,7 +954,7 @@ export namespace BaseShaclCoreShapeStatic {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 BaseShaclCoreShapeStatic.$schema.properties
-                                  .deactivated.identifier,
+                                  .deactivated.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -977,7 +980,7 @@ export namespace BaseShaclCoreShapeStatic {
                             focusResource: $parameters.resource,
                             propertyPath:
                               BaseShaclCoreShapeStatic.$schema.properties.flags
-                                .identifier,
+                                .path,
                             value: valuesArray,
                           }),
                         ),
@@ -1007,7 +1010,7 @@ export namespace BaseShaclCoreShapeStatic {
                                         focusResource: $parameters.resource,
                                         propertyPath:
                                           BaseShaclCoreShapeStatic.$schema
-                                            .properties.hasValues.identifier,
+                                            .properties.hasValues.path,
                                       }),
                                     );
                                 }
@@ -1020,7 +1023,7 @@ export namespace BaseShaclCoreShapeStatic {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 BaseShaclCoreShapeStatic.$schema.properties
-                                  .hasValues.identifier,
+                                  .hasValues.path,
                               value: valuesArray,
                             }),
                           ),
@@ -1043,7 +1046,7 @@ export namespace BaseShaclCoreShapeStatic {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       BaseShaclCoreShapeStatic.$schema
-                                        .properties.in_.identifier,
+                                        .properties.in_.path,
                                     values: valueList.toArray(),
                                   }),
                                 ).chain((values) =>
@@ -1071,7 +1074,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                 propertyPath:
                                                   BaseShaclCoreShapeStatic
                                                     .$schema.properties.in_
-                                                    .identifier,
+                                                    .path,
                                               },
                                             ),
                                           );
@@ -1095,7 +1098,7 @@ export namespace BaseShaclCoreShapeStatic {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       BaseShaclCoreShapeStatic.$schema
-                                        .properties.in_.identifier,
+                                        .properties.in_.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -1120,7 +1123,7 @@ export namespace BaseShaclCoreShapeStatic {
                                       focusResource: $parameters.resource,
                                       propertyPath:
                                         BaseShaclCoreShapeStatic.$schema
-                                          .properties.isDefinedBy.identifier,
+                                          .properties.isDefinedBy.path,
                                       value: Maybe.empty(),
                                     }),
                               ),
@@ -1146,7 +1149,7 @@ export namespace BaseShaclCoreShapeStatic {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       BaseShaclCoreShapeStatic.$schema
-                                        .properties.labels.identifier,
+                                        .properties.labels.path,
                                     value: valuesArray,
                                   }),
                                 ),
@@ -1171,7 +1174,7 @@ export namespace BaseShaclCoreShapeStatic {
                                           focusResource: $parameters.resource,
                                           propertyPath:
                                             BaseShaclCoreShapeStatic.$schema
-                                              .properties.languageIn.identifier,
+                                              .properties.languageIn.path,
                                           values: valueList.toArray(),
                                         }),
                                       )
@@ -1202,7 +1205,7 @@ export namespace BaseShaclCoreShapeStatic {
                                           focusResource: $parameters.resource,
                                           propertyPath:
                                             BaseShaclCoreShapeStatic.$schema
-                                              .properties.languageIn.identifier,
+                                              .properties.languageIn.path,
                                           value: Maybe.empty(),
                                         }),
                                   ),
@@ -1225,7 +1228,7 @@ export namespace BaseShaclCoreShapeStatic {
                                             focusResource: $parameters.resource,
                                             propertyPath:
                                               BaseShaclCoreShapeStatic.$schema
-                                                .properties.maxCount.identifier,
+                                                .properties.maxCount.path,
                                             value: Maybe.empty(),
                                           }),
                                     ),
@@ -1260,8 +1263,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                 $parameters.resource,
                                               propertyPath:
                                                 BaseShaclCoreShapeStatic.$schema
-                                                  .properties.maxExclusive
-                                                  .identifier,
+                                                  .properties.maxExclusive.path,
                                               value: Maybe.empty(),
                                             }),
                                       ),
@@ -1297,7 +1299,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                 propertyPath:
                                                   BaseShaclCoreShapeStatic
                                                     .$schema.properties
-                                                    .maxInclusive.identifier,
+                                                    .maxInclusive.path,
                                                 value: Maybe.empty(),
                                               }),
                                         ),
@@ -1327,7 +1329,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                   propertyPath:
                                                     BaseShaclCoreShapeStatic
                                                       .$schema.properties
-                                                      .maxLength.identifier,
+                                                      .maxLength.path,
                                                   value: Maybe.empty(),
                                                 }),
                                           ),
@@ -1357,7 +1359,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                     propertyPath:
                                                       BaseShaclCoreShapeStatic
                                                         .$schema.properties
-                                                        .minCount.identifier,
+                                                        .minCount.path,
                                                     value: Maybe.empty(),
                                                   }),
                                             ),
@@ -1393,8 +1395,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                       propertyPath:
                                                         BaseShaclCoreShapeStatic
                                                           .$schema.properties
-                                                          .minExclusive
-                                                          .identifier,
+                                                          .minExclusive.path,
                                                       value: Maybe.empty(),
                                                     }),
                                               ),
@@ -1430,8 +1431,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                         propertyPath:
                                                           BaseShaclCoreShapeStatic
                                                             .$schema.properties
-                                                            .minInclusive
-                                                            .identifier,
+                                                            .minInclusive.path,
                                                         value: Maybe.empty(),
                                                       }),
                                                 ),
@@ -1462,8 +1462,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                             BaseShaclCoreShapeStatic
                                                               .$schema
                                                               .properties
-                                                              .minLength
-                                                              .identifier,
+                                                              .minLength.path,
                                                           value: Maybe.empty(),
                                                         }),
                                                   ),
@@ -1522,8 +1521,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                               BaseShaclCoreShapeStatic
                                                                 .$schema
                                                                 .properties
-                                                                .nodeKind
-                                                                .identifier,
+                                                                .nodeKind.path,
                                                             value:
                                                               Maybe.empty(),
                                                           }),
@@ -1557,8 +1555,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                               BaseShaclCoreShapeStatic
                                                                 .$schema
                                                                 .properties
-                                                                .nodes
-                                                                .identifier,
+                                                                .nodes.path,
                                                             value: valuesArray,
                                                           },
                                                         ),
@@ -1592,8 +1589,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                                 BaseShaclCoreShapeStatic
                                                                   .$schema
                                                                   .properties
-                                                                  .not
-                                                                  .identifier,
+                                                                  .not.path,
                                                               value:
                                                                 valuesArray,
                                                             },
@@ -1632,7 +1628,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                                           .$schema
                                                                           .properties
                                                                           .or
-                                                                          .identifier,
+                                                                          .path,
                                                                       values:
                                                                         valueList.toArray(),
                                                                     },
@@ -1664,8 +1660,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                                   BaseShaclCoreShapeStatic
                                                                     .$schema
                                                                     .properties
-                                                                    .or
-                                                                    .identifier,
+                                                                    .or.path,
                                                                 value:
                                                                   valuesArray,
                                                               },
@@ -1710,7 +1705,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                                         .$schema
                                                                         .properties
                                                                         .patterns
-                                                                        .identifier,
+                                                                        .path,
                                                                     value:
                                                                       valuesArray,
                                                                   },
@@ -1756,7 +1751,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                                                 .$schema
                                                                                 .properties
                                                                                 .xone
-                                                                                .identifier,
+                                                                                .path,
                                                                             values:
                                                                               valueList.toArray(),
                                                                           },
@@ -1797,7 +1792,7 @@ export namespace BaseShaclCoreShapeStatic {
                                                                           .$schema
                                                                           .properties
                                                                           .xone
-                                                                          .identifier,
+                                                                          .path,
                                                                       value:
                                                                         valuesArray,
                                                                     },
@@ -1871,7 +1866,7 @@ export namespace BaseShaclCoreShapeStatic {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_baseShaclCoreShape.$identifier);
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.and.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
       _baseShaclCoreShape.and.flatMap((item) => [
         item.length > 0
           ? item.reduce(
@@ -1924,24 +1919,24 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.classes.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       _baseShaclCoreShape.classes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.comments.identifier,
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
       _baseShaclCoreShape.comments.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.datatype.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
       _baseShaclCoreShape.datatype.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.deactivated.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
       _baseShaclCoreShape.deactivated
         .toList()
         .flatMap((value) => [
@@ -1950,19 +1945,19 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.flags.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
       _baseShaclCoreShape.flags.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.hasValues.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
       _baseShaclCoreShape.hasValues.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.in_.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
       _baseShaclCoreShape.in_.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -2015,19 +2010,19 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.isDefinedBy.identifier,
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#isDefinedBy"),
       _baseShaclCoreShape.isDefinedBy.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.labels.identifier,
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
       _baseShaclCoreShape.labels.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.languageIn.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
       _baseShaclCoreShape.languageIn.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -2080,7 +2075,7 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.maxCount.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       _baseShaclCoreShape.maxCount
         .toList()
         .flatMap((value) => [
@@ -2089,17 +2084,17 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.maxExclusive.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
       _baseShaclCoreShape.maxExclusive.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.maxInclusive.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
       _baseShaclCoreShape.maxInclusive.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.maxLength.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       _baseShaclCoreShape.maxLength
         .toList()
         .flatMap((value) => [
@@ -2108,7 +2103,7 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.minCount.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       _baseShaclCoreShape.minCount
         .toList()
         .flatMap((value) => [
@@ -2117,17 +2112,17 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.minExclusive.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
       _baseShaclCoreShape.minExclusive.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.minInclusive.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
       _baseShaclCoreShape.minInclusive.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.minLength.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       _baseShaclCoreShape.minLength
         .toList()
         .flatMap((value) => [
@@ -2136,22 +2131,22 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.nodeKind.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
       _baseShaclCoreShape.nodeKind.toList(),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.nodes.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
       _baseShaclCoreShape.nodes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.not.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
       _baseShaclCoreShape.not.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.or.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
       _baseShaclCoreShape.or.flatMap((item) => [
         item.length > 0
           ? item.reduce(
@@ -2204,14 +2199,14 @@ export namespace BaseShaclCoreShapeStatic {
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.patterns.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
       _baseShaclCoreShape.patterns.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      BaseShaclCoreShapeStatic.$schema.properties.xone.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
       _baseShaclCoreShape.xone.flatMap((item) => [
         item.length > 0
           ? item.reduce(
@@ -2293,7 +2288,7 @@ export namespace BaseShaclCoreShapeStatic {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
       },
       classes: {
         kind: "Shacl" as const,
@@ -2301,7 +2296,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
       comments: {
         kind: "Shacl" as const,
@@ -2309,7 +2304,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
       },
@@ -2319,9 +2314,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#datatype",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
       },
       deactivated: {
         kind: "Shacl" as const,
@@ -2329,9 +2322,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#deactivated",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
       },
       flags: {
         kind: "Shacl" as const,
@@ -2339,7 +2330,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
       },
       hasValues: {
         kind: "Shacl" as const,
@@ -2347,9 +2338,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#hasValue",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
       },
       in_: {
         kind: "Shacl" as const,
@@ -2360,7 +2349,7 @@ export namespace BaseShaclCoreShapeStatic {
             item: () => ({ kind: "Term" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
       },
       isDefinedBy: {
         kind: "Shacl" as const,
@@ -2368,7 +2357,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
@@ -2378,7 +2367,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },
@@ -2391,9 +2380,7 @@ export namespace BaseShaclCoreShapeStatic {
             item: () => ({ kind: "String" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#languageIn",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
       },
       maxCount: {
         kind: "Shacl" as const,
@@ -2401,9 +2388,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxCount",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       },
       maxExclusive: {
         kind: "Shacl" as const,
@@ -2411,9 +2396,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxExclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
       },
       maxInclusive: {
         kind: "Shacl" as const,
@@ -2421,9 +2404,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxInclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
       },
       maxLength: {
         kind: "Shacl" as const,
@@ -2431,9 +2412,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxLength",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       },
       minCount: {
         kind: "Shacl" as const,
@@ -2441,9 +2420,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minCount",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       },
       minExclusive: {
         kind: "Shacl" as const,
@@ -2451,9 +2428,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minExclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
       },
       minInclusive: {
         kind: "Shacl" as const,
@@ -2461,9 +2436,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minInclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
       },
       minLength: {
         kind: "Shacl" as const,
@@ -2471,9 +2444,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minLength",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
       nodeKind: {
         kind: "Shacl" as const,
@@ -2495,9 +2466,7 @@ export namespace BaseShaclCoreShapeStatic {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#nodeKind",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
       },
       nodes: {
         kind: "Shacl" as const,
@@ -2505,7 +2474,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
       },
       not: {
         kind: "Shacl" as const,
@@ -2513,7 +2482,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
       },
       or: {
         kind: "Shacl" as const,
@@ -2524,7 +2493,7 @@ export namespace BaseShaclCoreShapeStatic {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
       },
       patterns: {
         kind: "Shacl" as const,
@@ -2532,7 +2501,7 @@ export namespace BaseShaclCoreShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
       },
       xone: {
         kind: "Shacl" as const,
@@ -2543,7 +2512,7 @@ export namespace BaseShaclCoreShapeStatic {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
       },
     },
   } as const;
@@ -2774,7 +2743,7 @@ export namespace ShaclCorePropertyShapeStatic {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     ShaclCorePropertyShapeStatic.$schema
-                                      .properties.defaultValue.identifier,
+                                      .properties.defaultValue.path,
                                 }),
                               );
                           }
@@ -2789,7 +2758,7 @@ export namespace ShaclCorePropertyShapeStatic {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclCorePropertyShapeStatic.$schema.properties
-                                  .defaultValue.identifier,
+                                  .defaultValue.path,
                               value: Maybe.empty(),
                             },
                           ),
@@ -2816,7 +2785,7 @@ export namespace ShaclCorePropertyShapeStatic {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ShaclCorePropertyShapeStatic.$schema.properties
-                              .descriptions.identifier,
+                              .descriptions.path,
                           value: valuesArray,
                         }),
                       ),
@@ -2836,7 +2805,7 @@ export namespace ShaclCorePropertyShapeStatic {
                             focusResource: $parameters.resource,
                             propertyPath:
                               ShaclCorePropertyShapeStatic.$schema.properties
-                                .groups.identifier,
+                                .groups.path,
                             value: valuesArray,
                           }),
                         ),
@@ -2862,7 +2831,7 @@ export namespace ShaclCorePropertyShapeStatic {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclCorePropertyShapeStatic.$schema.properties
-                                  .names.identifier,
+                                  .names.path,
                               value: valuesArray,
                             }),
                           ),
@@ -2883,7 +2852,7 @@ export namespace ShaclCorePropertyShapeStatic {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       ShaclCorePropertyShapeStatic.$schema
-                                        .properties.order.identifier,
+                                        .properties.order.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -2924,7 +2893,7 @@ export namespace ShaclCorePropertyShapeStatic {
                                           focusResource: $parameters.resource,
                                           propertyPath:
                                             ShaclCorePropertyShapeStatic.$schema
-                                              .properties.uniqueLang.identifier,
+                                              .properties.uniqueLang.path,
                                           value: Maybe.empty(),
                                         },
                                       ),
@@ -2977,31 +2946,31 @@ export namespace ShaclCorePropertyShapeStatic {
       );
     }
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.defaultValue.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
       _shaclCorePropertyShape.defaultValue.toList(),
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.descriptions.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
       _shaclCorePropertyShape.descriptions.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.groups.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
       _shaclCorePropertyShape.groups.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.names.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
       _shaclCorePropertyShape.names.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.order.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
       _shaclCorePropertyShape.order
         .toList()
         .flatMap((value) => [
@@ -3010,7 +2979,7 @@ export namespace ShaclCorePropertyShapeStatic {
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.path.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
       [
         PropertyPath.$toRdf(_shaclCorePropertyShape.path, {
           graph: options?.graph,
@@ -3020,7 +2989,7 @@ export namespace ShaclCorePropertyShapeStatic {
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyShapeStatic.$schema.properties.uniqueLang.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
       _shaclCorePropertyShape.uniqueLang
         .toList()
         .flatMap((value) => [
@@ -3040,9 +3009,7 @@ export namespace ShaclCorePropertyShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#defaultValue",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
       },
       descriptions: {
         kind: "Shacl" as const,
@@ -3050,9 +3017,7 @@ export namespace ShaclCorePropertyShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#description",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
       },
       groups: {
         kind: "Shacl" as const,
@@ -3060,7 +3025,7 @@ export namespace ShaclCorePropertyShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
       },
       names: {
         kind: "Shacl" as const,
@@ -3068,7 +3033,7 @@ export namespace ShaclCorePropertyShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
       },
       order: {
         kind: "Shacl" as const,
@@ -3076,12 +3041,12 @@ export namespace ShaclCorePropertyShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
       },
       path: {
         kind: "Shacl" as const,
         type: () => PropertyPath.$schema,
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
       },
       uniqueLang: {
         kind: "Shacl" as const,
@@ -3089,9 +3054,7 @@ export namespace ShaclCorePropertyShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#uniqueLang",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
       },
     },
   } as const;
@@ -3311,7 +3274,7 @@ export namespace ShaclmatePropertyShape {
                             focusResource: $parameters.resource,
                             propertyPath:
                               ShaclmatePropertyShape.$schema.properties.lazy
-                                .identifier,
+                                .path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -3332,7 +3295,7 @@ export namespace ShaclmatePropertyShape {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclmatePropertyShape.$schema.properties
-                                  .mutable.identifier,
+                                  .mutable.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -3359,7 +3322,7 @@ export namespace ShaclmatePropertyShape {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   ShaclmatePropertyShape.$schema.properties.name
-                                    .identifier,
+                                    .path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -3382,7 +3345,7 @@ export namespace ShaclmatePropertyShape {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     ShaclmatePropertyShape.$schema.properties
-                                      .partial.identifier,
+                                      .partial.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -3423,7 +3386,7 @@ export namespace ShaclmatePropertyShape {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       ShaclmatePropertyShape.$schema.properties
-                                        .visibility.identifier,
+                                        .visibility.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -3474,7 +3437,7 @@ export namespace ShaclmatePropertyShape {
       );
     }
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.lazy.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#lazy"),
       _shaclmatePropertyShape.lazy
         .toList()
         .flatMap((value) => [
@@ -3483,7 +3446,7 @@ export namespace ShaclmatePropertyShape {
       options?.graph,
     );
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.mutable.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
       _shaclmatePropertyShape.mutable
         .toList()
         .flatMap((value) => [
@@ -3492,19 +3455,19 @@ export namespace ShaclmatePropertyShape {
       options?.graph,
     );
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.name.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       _shaclmatePropertyShape.name
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.partial.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#partial"),
       _shaclmatePropertyShape.partial.toList(),
       options?.graph,
     );
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.visibility.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#visibility"),
       _shaclmatePropertyShape.visibility.toList(),
       options?.graph,
     );
@@ -3520,9 +3483,7 @@ export namespace ShaclmatePropertyShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#lazy",
-        ),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#lazy"),
       },
       mutable: {
         kind: "Shacl" as const,
@@ -3530,7 +3491,7 @@ export namespace ShaclmatePropertyShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#mutable",
         ),
       },
@@ -3540,9 +3501,7 @@ export namespace ShaclmatePropertyShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#name",
-        ),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       },
       partial: {
         kind: "Shacl" as const,
@@ -3550,7 +3509,7 @@ export namespace ShaclmatePropertyShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#partial",
         ),
       },
@@ -3573,7 +3532,7 @@ export namespace ShaclmatePropertyShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#visibility",
         ),
       },
@@ -3731,7 +3690,7 @@ export namespace OwlOntologyStatic {
                     Resource.Values.fromValue({
                       focusResource: $parameters.resource,
                       propertyPath:
-                        OwlOntologyStatic.$schema.properties.labels.identifier,
+                        OwlOntologyStatic.$schema.properties.labels.path,
                       value: valuesArray,
                     }),
                   ),
@@ -3761,7 +3720,7 @@ export namespace OwlOntologyStatic {
       );
     }
     resource.add(
-      OwlOntologyStatic.$schema.properties.labels.identifier,
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
       _owlOntology.labels.flatMap((item) => [$literalFactory.string(item)]),
       options?.graph,
     );
@@ -3788,7 +3747,7 @@ export namespace OwlOntologyStatic {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },
@@ -4094,7 +4053,7 @@ export namespace ShaclmateOntology {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ShaclmateOntology.$schema.properties
-                              .tsFeatureExcludes.identifier,
+                              .tsFeatureExcludes.path,
                           value: valuesArray,
                         }),
                       ),
@@ -4147,7 +4106,7 @@ export namespace ShaclmateOntology {
                             focusResource: $parameters.resource,
                             propertyPath:
                               ShaclmateOntology.$schema.properties
-                                .tsFeatureIncludes.identifier,
+                                .tsFeatureIncludes.path,
                             value: valuesArray,
                           }),
                         ),
@@ -4173,7 +4132,7 @@ export namespace ShaclmateOntology {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclmateOntology.$schema.properties.tsImports
-                                  .identifier,
+                                  .path,
                               value: valuesArray,
                             }),
                           ),
@@ -4211,7 +4170,7 @@ export namespace ShaclmateOntology {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       ShaclmateOntology.$schema.properties
-                                        .tsObjectDeclarationType.identifier,
+                                        .tsObjectDeclarationType.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -4257,24 +4216,30 @@ export namespace ShaclmateOntology {
       );
     }
     resource.add(
-      ShaclmateOntology.$schema.properties.tsFeatureExcludes.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
+      ),
       _shaclmateOntology.tsFeatureExcludes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsFeatureIncludes.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
+      ),
       _shaclmateOntology.tsFeatureIncludes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsImports.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#tsImport"),
       _shaclmateOntology.tsImports.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsObjectDeclarationType.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
+      ),
       _shaclmateOntology.tsObjectDeclarationType.toList(),
       options?.graph,
     );
@@ -4324,7 +4289,7 @@ export namespace ShaclmateOntology {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsFeatureExclude",
         ),
       },
@@ -4368,7 +4333,7 @@ export namespace ShaclmateOntology {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsFeatureInclude",
         ),
       },
@@ -4378,7 +4343,7 @@ export namespace ShaclmateOntology {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsImport",
         ),
       },
@@ -4398,7 +4363,7 @@ export namespace ShaclmateOntology {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
         ),
       },
@@ -4577,7 +4542,7 @@ export namespace ShaclCoreNodeShapeStatic {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclCoreNodeShapeStatic.$schema.properties
-                                  .closed.identifier,
+                                  .closed.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -4600,7 +4565,7 @@ export namespace ShaclCoreNodeShapeStatic {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   ShaclCoreNodeShapeStatic.$schema.properties
-                                    .ignoredProperties.identifier,
+                                    .ignoredProperties.path,
                                 values: valueList.toArray(),
                               }),
                             ).chain((values) =>
@@ -4620,7 +4585,7 @@ export namespace ShaclCoreNodeShapeStatic {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   ShaclCoreNodeShapeStatic.$schema.properties
-                                    .ignoredProperties.identifier,
+                                    .ignoredProperties.path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -4640,7 +4605,7 @@ export namespace ShaclCoreNodeShapeStatic {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclCoreNodeShapeStatic.$schema.properties
-                                  .properties.identifier,
+                                  .properties.path,
                               value: valuesArray,
                             }),
                           ),
@@ -4684,7 +4649,7 @@ export namespace ShaclCoreNodeShapeStatic {
       );
     }
     resource.add(
-      ShaclCoreNodeShapeStatic.$schema.properties.closed.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
       _shaclCoreNodeShape.closed
         .toList()
         .flatMap((value) => [
@@ -4693,7 +4658,7 @@ export namespace ShaclCoreNodeShapeStatic {
       options?.graph,
     );
     resource.add(
-      ShaclCoreNodeShapeStatic.$schema.properties.ignoredProperties.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#ignoredProperties"),
       _shaclCoreNodeShape.ignoredProperties.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -4746,7 +4711,7 @@ export namespace ShaclCoreNodeShapeStatic {
       options?.graph,
     );
     resource.add(
-      ShaclCoreNodeShapeStatic.$schema.properties.properties.identifier,
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
       _shaclCoreNodeShape.properties.flatMap((item) => [item]),
       options?.graph,
     );
@@ -4762,7 +4727,7 @@ export namespace ShaclCoreNodeShapeStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
       },
       ignoredProperties: {
         kind: "Shacl" as const,
@@ -4773,7 +4738,7 @@ export namespace ShaclCoreNodeShapeStatic {
             item: () => ({ kind: "Iri" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#ignoredProperties",
         ),
       },
@@ -4783,9 +4748,7 @@ export namespace ShaclCoreNodeShapeStatic {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#property",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
       },
     },
   } as const;
@@ -5196,7 +5159,7 @@ export namespace ShaclmateNodeShape {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 ShaclmateNodeShape.$schema.properties.abstract
-                                  .identifier,
+                                  .path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -5223,7 +5186,7 @@ export namespace ShaclmateNodeShape {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   ShaclmateNodeShape.$schema.properties
-                                    .discriminantValue.identifier,
+                                    .discriminantValue.path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -5244,7 +5207,7 @@ export namespace ShaclmateNodeShape {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     ShaclmateNodeShape.$schema.properties
-                                      .export_.identifier,
+                                      .export_.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -5265,7 +5228,7 @@ export namespace ShaclmateNodeShape {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       ShaclmateNodeShape.$schema.properties
-                                        .extern.identifier,
+                                        .extern.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -5287,7 +5250,7 @@ export namespace ShaclmateNodeShape {
                                         focusResource: $parameters.resource,
                                         propertyPath:
                                           ShaclmateNodeShape.$schema.properties
-                                            .fromRdfType.identifier,
+                                            .fromRdfType.path,
                                         value: Maybe.empty(),
                                       },
                                     ),
@@ -5330,8 +5293,7 @@ export namespace ShaclmateNodeShape {
                                         focusResource: $parameters.resource,
                                         propertyPath:
                                           ShaclmateNodeShape.$schema.properties
-                                            .identifierMintingStrategy
-                                            .identifier,
+                                            .identifierMintingStrategy.path,
                                         value: Maybe.empty(),
                                       }),
                                 ),
@@ -5356,7 +5318,7 @@ export namespace ShaclmateNodeShape {
                                           focusResource: $parameters.resource,
                                           propertyPath:
                                             ShaclmatePropertyShape.$schema
-                                              .properties.mutable.identifier,
+                                              .properties.mutable.path,
                                           value: Maybe.empty(),
                                         }),
                                   ),
@@ -5387,7 +5349,7 @@ export namespace ShaclmateNodeShape {
                                             focusResource: $parameters.resource,
                                             propertyPath:
                                               ShaclmatePropertyShape.$schema
-                                                .properties.name.identifier,
+                                                .properties.name.path,
                                             value: Maybe.empty(),
                                           }),
                                     ),
@@ -5415,8 +5377,7 @@ export namespace ShaclmateNodeShape {
                                                 $parameters.resource,
                                               propertyPath:
                                                 ShaclmateNodeShape.$schema
-                                                  .properties.rdfType
-                                                  .identifier,
+                                                  .properties.rdfType.path,
                                               value: Maybe.empty(),
                                             }),
                                       ),
@@ -5439,8 +5400,7 @@ export namespace ShaclmateNodeShape {
                                             focusResource: $parameters.resource,
                                             propertyPath:
                                               ShaclmateNodeShape.$schema
-                                                .properties.toRdfTypes
-                                                .identifier,
+                                                .properties.toRdfTypes.path,
                                             value: valuesArray,
                                           }),
                                         ),
@@ -5496,7 +5456,7 @@ export namespace ShaclmateNodeShape {
                                               propertyPath:
                                                 ShaclmateOntology.$schema
                                                   .properties.tsFeatureExcludes
-                                                  .identifier,
+                                                  .path,
                                               value: valuesArray,
                                             }),
                                           ),
@@ -5552,8 +5512,7 @@ export namespace ShaclmateNodeShape {
                                                 propertyPath:
                                                   ShaclmateOntology.$schema
                                                     .properties
-                                                    .tsFeatureIncludes
-                                                    .identifier,
+                                                    .tsFeatureIncludes.path,
                                                 value: valuesArray,
                                               }),
                                             ),
@@ -5584,7 +5543,7 @@ export namespace ShaclmateNodeShape {
                                                   propertyPath:
                                                     ShaclmateOntology.$schema
                                                       .properties.tsImports
-                                                      .identifier,
+                                                      .path,
                                                   value: valuesArray,
                                                 }),
                                               ),
@@ -5628,7 +5587,7 @@ export namespace ShaclmateNodeShape {
                                                           ShaclmateOntology
                                                             .$schema.properties
                                                             .tsObjectDeclarationType
-                                                            .identifier,
+                                                            .path,
                                                         value: Maybe.empty(),
                                                       }),
                                                 ),
@@ -5694,7 +5653,7 @@ export namespace ShaclmateNodeShape {
       );
     }
     resource.add(
-      ShaclmateNodeShape.$schema.properties.abstract.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#abstract"),
       _shaclmateNodeShape.abstract
         .toList()
         .flatMap((value) => [
@@ -5703,14 +5662,16 @@ export namespace ShaclmateNodeShape {
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.discriminantValue.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#discriminantValue",
+      ),
       _shaclmateNodeShape.discriminantValue
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.export_.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#export"),
       _shaclmateNodeShape.export_
         .toList()
         .flatMap((value) => [
@@ -5719,7 +5680,7 @@ export namespace ShaclmateNodeShape {
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.extern.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#extern"),
       _shaclmateNodeShape.extern
         .toList()
         .flatMap((value) => [
@@ -5728,18 +5689,19 @@ export namespace ShaclmateNodeShape {
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.fromRdfType.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#fromRdfType"),
       _shaclmateNodeShape.fromRdfType.toList(),
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.identifierMintingStrategy
-        .identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#identifierMintingStrategy",
+      ),
       _shaclmateNodeShape.identifierMintingStrategy.toList(),
       options?.graph,
     );
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.mutable.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
       _shaclmateNodeShape.mutable
         .toList()
         .flatMap((value) => [
@@ -5748,41 +5710,47 @@ export namespace ShaclmateNodeShape {
       options?.graph,
     );
     resource.add(
-      ShaclmatePropertyShape.$schema.properties.name.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       _shaclmateNodeShape.name
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.rdfType.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#rdfType"),
       _shaclmateNodeShape.rdfType.toList(),
       options?.graph,
     );
     resource.add(
-      ShaclmateNodeShape.$schema.properties.toRdfTypes.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#toRdfType"),
       _shaclmateNodeShape.toRdfTypes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsFeatureExcludes.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
+      ),
       _shaclmateNodeShape.tsFeatureExcludes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsFeatureIncludes.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
+      ),
       _shaclmateNodeShape.tsFeatureIncludes.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsImports.identifier,
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#tsImport"),
       _shaclmateNodeShape.tsImports.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      ShaclmateOntology.$schema.properties.tsObjectDeclarationType.identifier,
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
+      ),
       _shaclmateNodeShape.tsObjectDeclarationType.toList(),
       options?.graph,
     );
@@ -5798,7 +5766,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#abstract",
         ),
       },
@@ -5808,7 +5776,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#discriminantValue",
         ),
       },
@@ -5818,7 +5786,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#export",
         ),
       },
@@ -5828,7 +5796,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#extern",
         ),
       },
@@ -5838,7 +5806,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#fromRdfType",
         ),
       },
@@ -5861,7 +5829,7 @@ export namespace ShaclmateNodeShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#identifierMintingStrategy",
         ),
       },
@@ -5871,7 +5839,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#mutable",
         ),
       },
@@ -5881,9 +5849,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#name",
-        ),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       },
       rdfType: {
         kind: "Shacl" as const,
@@ -5891,7 +5857,7 @@ export namespace ShaclmateNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#rdfType",
         ),
       },
@@ -5901,7 +5867,7 @@ export namespace ShaclmateNodeShape {
           kind: "Set" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#toRdfType",
         ),
       },
@@ -5945,7 +5911,7 @@ export namespace ShaclmateNodeShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsFeatureExclude",
         ),
       },
@@ -5989,7 +5955,7 @@ export namespace ShaclmateNodeShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsFeatureInclude",
         ),
       },
@@ -5999,7 +5965,7 @@ export namespace ShaclmateNodeShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsImport",
         ),
       },
@@ -6019,7 +5985,7 @@ export namespace ShaclmateNodeShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
         ),
       },
@@ -6027,7 +5993,6 @@ export namespace ShaclmateNodeShape {
   } as const;
 }
 
-import { PropertyPath } from "rdfjs-resource";
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
   readonly $type: "ShaclCorePropertyGroup";
@@ -6194,8 +6159,7 @@ export namespace ShaclCorePropertyGroup {
                     Resource.Values.fromValue({
                       focusResource: $parameters.resource,
                       propertyPath:
-                        ShaclCorePropertyGroup.$schema.properties.comments
-                          .identifier,
+                        ShaclCorePropertyGroup.$schema.properties.comments.path,
                       value: valuesArray,
                     }),
                   ),
@@ -6220,8 +6184,7 @@ export namespace ShaclCorePropertyGroup {
                       Resource.Values.fromValue({
                         focusResource: $parameters.resource,
                         propertyPath:
-                          ShaclCorePropertyGroup.$schema.properties.labels
-                            .identifier,
+                          ShaclCorePropertyGroup.$schema.properties.labels.path,
                         value: valuesArray,
                       }),
                     ),
@@ -6252,14 +6215,14 @@ export namespace ShaclCorePropertyGroup {
       );
     }
     resource.add(
-      ShaclCorePropertyGroup.$schema.properties.comments.identifier,
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
       _shaclCorePropertyGroup.comments.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      ShaclCorePropertyGroup.$schema.properties.labels.identifier,
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
       _shaclCorePropertyGroup.labels.flatMap((item) => [
         $literalFactory.string(item),
       ]),
@@ -6287,7 +6250,7 @@ export namespace ShaclCorePropertyGroup {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
       },
@@ -6297,7 +6260,7 @@ export namespace ShaclCorePropertyGroup {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },
@@ -6379,7 +6342,7 @@ export namespace ShaclCoreShape {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
       },
       classes: {
         kind: "Shacl" as const,
@@ -6387,7 +6350,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
       comments: {
         kind: "Shacl" as const,
@@ -6395,7 +6358,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
       },
@@ -6405,9 +6368,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#datatype",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
       },
       deactivated: {
         kind: "Shacl" as const,
@@ -6415,9 +6376,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#deactivated",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
       },
       flags: {
         kind: "Shacl" as const,
@@ -6425,7 +6384,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
       },
       hasValues: {
         kind: "Shacl" as const,
@@ -6433,9 +6392,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#hasValue",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
       },
       in_: {
         kind: "Shacl" as const,
@@ -6446,7 +6403,7 @@ export namespace ShaclCoreShape {
             item: () => ({ kind: "Term" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
       },
       isDefinedBy: {
         kind: "Shacl" as const,
@@ -6454,7 +6411,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
@@ -6464,7 +6421,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },
@@ -6477,9 +6434,7 @@ export namespace ShaclCoreShape {
             item: () => ({ kind: "String" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#languageIn",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
       },
       maxCount: {
         kind: "Shacl" as const,
@@ -6487,9 +6442,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxCount",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       },
       maxExclusive: {
         kind: "Shacl" as const,
@@ -6497,9 +6450,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxExclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
       },
       maxInclusive: {
         kind: "Shacl" as const,
@@ -6507,9 +6458,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxInclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
       },
       maxLength: {
         kind: "Shacl" as const,
@@ -6517,9 +6466,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxLength",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       },
       minCount: {
         kind: "Shacl" as const,
@@ -6527,9 +6474,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minCount",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       },
       minExclusive: {
         kind: "Shacl" as const,
@@ -6537,9 +6482,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minExclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
       },
       minInclusive: {
         kind: "Shacl" as const,
@@ -6547,9 +6490,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minInclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
       },
       minLength: {
         kind: "Shacl" as const,
@@ -6557,9 +6498,7 @@ export namespace ShaclCoreShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minLength",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
       nodeKind: {
         kind: "Shacl" as const,
@@ -6581,9 +6520,7 @@ export namespace ShaclCoreShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#nodeKind",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
       },
       nodes: {
         kind: "Shacl" as const,
@@ -6591,7 +6528,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
       },
       not: {
         kind: "Shacl" as const,
@@ -6599,7 +6536,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
       },
       or: {
         kind: "Shacl" as const,
@@ -6610,7 +6547,7 @@ export namespace ShaclCoreShape {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
       },
       patterns: {
         kind: "Shacl" as const,
@@ -6618,7 +6555,7 @@ export namespace ShaclCoreShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
       },
       xone: {
         kind: "Shacl" as const,
@@ -6629,7 +6566,7 @@ export namespace ShaclCoreShape {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
       },
     },
   } as const;
@@ -6745,7 +6682,7 @@ export namespace ShaclmateShape {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
       },
       classes: {
         kind: "Shacl" as const,
@@ -6753,7 +6690,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
       comments: {
         kind: "Shacl" as const,
@@ -6761,7 +6698,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
       },
@@ -6771,9 +6708,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#datatype",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
       },
       deactivated: {
         kind: "Shacl" as const,
@@ -6781,9 +6716,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#deactivated",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
       },
       flags: {
         kind: "Shacl" as const,
@@ -6791,7 +6724,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
       },
       hasValues: {
         kind: "Shacl" as const,
@@ -6799,9 +6732,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#hasValue",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
       },
       in_: {
         kind: "Shacl" as const,
@@ -6812,7 +6743,7 @@ export namespace ShaclmateShape {
             item: () => ({ kind: "Term" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
       },
       isDefinedBy: {
         kind: "Shacl" as const,
@@ -6820,7 +6751,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
@@ -6830,7 +6761,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },
@@ -6843,9 +6774,7 @@ export namespace ShaclmateShape {
             item: () => ({ kind: "String" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#languageIn",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
       },
       maxCount: {
         kind: "Shacl" as const,
@@ -6853,9 +6782,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxCount",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       },
       maxExclusive: {
         kind: "Shacl" as const,
@@ -6863,9 +6790,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxExclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
       },
       maxInclusive: {
         kind: "Shacl" as const,
@@ -6873,9 +6798,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxInclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
       },
       maxLength: {
         kind: "Shacl" as const,
@@ -6883,9 +6806,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#maxLength",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       },
       minCount: {
         kind: "Shacl" as const,
@@ -6893,9 +6814,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minCount",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       },
       minExclusive: {
         kind: "Shacl" as const,
@@ -6903,9 +6822,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minExclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
       },
       minInclusive: {
         kind: "Shacl" as const,
@@ -6913,9 +6830,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minInclusive",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
       },
       minLength: {
         kind: "Shacl" as const,
@@ -6923,9 +6838,7 @@ export namespace ShaclmateShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#minLength",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
       nodeKind: {
         kind: "Shacl" as const,
@@ -6947,9 +6860,7 @@ export namespace ShaclmateShape {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://www.w3.org/ns/shacl#nodeKind",
-        ),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
       },
       nodes: {
         kind: "Shacl" as const,
@@ -6957,7 +6868,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
       },
       not: {
         kind: "Shacl" as const,
@@ -6965,7 +6876,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
       },
       or: {
         kind: "Shacl" as const,
@@ -6976,7 +6887,7 @@ export namespace ShaclmateShape {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
       },
       patterns: {
         kind: "Shacl" as const,
@@ -6984,7 +6895,7 @@ export namespace ShaclmateShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
       },
       xone: {
         kind: "Shacl" as const,
@@ -6995,7 +6906,7 @@ export namespace ShaclmateShape {
             item: () => ({ kind: "Identifier" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+        path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
       },
     },
   } as const;
@@ -7184,7 +7095,7 @@ export namespace $Object {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },

@@ -8,7 +8,12 @@ import type {
   Variable,
 } from "@rdfjs/types";
 import { Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
-import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
+import {
+  LiteralFactory,
+  type PropertyPath,
+  Resource,
+  ResourceSet,
+} from "rdfjs-resource";
 import { z } from "zod";
 
 /**
@@ -251,24 +256,17 @@ function $filterString(filter: $StringFilter, value: string) {
 }
 
 type $FromRdfOptions = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
   preferredLanguages?: readonly string[];
 };
 
-function $fromRdfPreferredLanguages({
-  focusResource,
-  predicate,
-  preferredLanguages,
-  values,
-}: {
-  focusResource: Resource;
-  predicate: NamedNode;
-  preferredLanguages?: readonly string[];
-  values: Resource.Values;
-}): Either<Error, Resource.Values> {
+function $fromRdfPreferredLanguages(
+  values: Resource.Values,
+  preferredLanguages?: readonly string[],
+): Either<Error, Resource.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
     return Right(values);
   }
@@ -288,8 +286,8 @@ function $fromRdfPreferredLanguages({
 
   return Right(
     Resource.Values.fromArray({
-      focusResource,
-      propertyPath: predicate,
+      focusResource: values.focusResource,
+      propertyPath: values.propertyPath,
       values: filteredValues,
     }),
   );
@@ -373,7 +371,7 @@ interface $NumericFilter<T> {
 }
 
 type $PropertiesFromRdfParameters = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
@@ -484,13 +482,13 @@ function $shaclPropertyFromRdf<T>({
   ) => Either<Error, Resource.Values<T>>;
 }): Either<Error, T> {
   return typeFromRdf(
-    Right(resource.values(propertySchema.identifier, { graph, unique: true })),
+    Right(resource.values(propertySchema.path, { graph, unique: true })),
   ).chain((values) => values.head());
 }
 
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
-  readonly identifier: NamedNode;
   readonly kind: "Shacl";
+  readonly path: PropertyPath;
   readonly type: () => TypeSchemaT;
 }
 
@@ -780,14 +778,10 @@ export namespace NestedNodeShape {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      NestedNodeShape.$schema.properties.requiredStringProperty
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) =>
                   values.chainMap((value) => value.toString()),
@@ -814,7 +808,7 @@ export namespace NestedNodeShape {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_nestedNodeShape.$identifier);
     resource.add(
-      NestedNodeShape.$schema.properties.requiredStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/requiredStringProperty"),
       [$literalFactory.string(_nestedNodeShape.requiredStringProperty)],
       options?.graph,
     );
@@ -837,7 +831,7 @@ export namespace NestedNodeShape {
       requiredStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
       },
@@ -1369,14 +1363,10 @@ export namespace FormNodeShape {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      FormNodeShape.$schema.properties.emptyStringSetProperty
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) => values.chainMap((value) => value.toString()))
                 .map((values) => values.toArray())
@@ -1385,7 +1375,7 @@ export namespace FormNodeShape {
                     focusResource: $parameters.resource,
                     propertyPath:
                       FormNodeShape.$schema.properties.emptyStringSetProperty
-                        .identifier,
+                        .path,
                     value: valuesArray,
                   }),
                 ),
@@ -1415,14 +1405,10 @@ export namespace FormNodeShape {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          FormNodeShape.$schema.properties
-                            .nonEmptyStringSetProperty.identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -1439,7 +1425,7 @@ export namespace FormNodeShape {
                         focusResource: $parameters.resource,
                         propertyPath:
                           FormNodeShape.$schema.properties
-                            .nonEmptyStringSetProperty.identifier,
+                            .nonEmptyStringSetProperty.path,
                         value: valuesArray,
                       }),
                     ),
@@ -1451,14 +1437,10 @@ export namespace FormNodeShape {
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            FormNodeShape.$schema.properties
-                              .optionalStringProperty.identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
+                        $fromRdfPreferredLanguages(
                           values,
-                        }),
+                          $parameters.preferredLanguages,
+                        ),
                       )
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
@@ -1470,7 +1452,7 @@ export namespace FormNodeShape {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 FormNodeShape.$schema.properties
-                                  .optionalStringProperty.identifier,
+                                  .optionalStringProperty.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -1491,15 +1473,10 @@ export namespace FormNodeShape {
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                FormNodeShape.$schema.properties
-                                  .requiredStringProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
@@ -1536,14 +1513,14 @@ export namespace FormNodeShape {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_formNodeShape.$identifier);
     resource.add(
-      FormNodeShape.$schema.properties.emptyStringSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
       _formNodeShape.emptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      FormNodeShape.$schema.properties.nestedObjectProperty.identifier,
+      dataFactory.namedNode("http://example.com/nestedObjectProperty"),
       [
         NestedNodeShape.$toRdf(_formNodeShape.nestedObjectProperty, {
           graph: options?.graph,
@@ -1553,21 +1530,21 @@ export namespace FormNodeShape {
       options?.graph,
     );
     resource.add(
-      FormNodeShape.$schema.properties.nonEmptyStringSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
       _formNodeShape.nonEmptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      FormNodeShape.$schema.properties.optionalStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalStringProperty"),
       _formNodeShape.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      FormNodeShape.$schema.properties.requiredIntegerProperty.identifier,
+      dataFactory.namedNode("http://example.com/requiredIntegerProperty"),
       [
         $literalFactory.number(
           _formNodeShape.requiredIntegerProperty,
@@ -1577,7 +1554,7 @@ export namespace FormNodeShape {
       options?.graph,
     );
     resource.add(
-      FormNodeShape.$schema.properties.requiredStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/requiredStringProperty"),
       [$literalFactory.string(_formNodeShape.requiredStringProperty)],
       options?.graph,
     );
@@ -1603,16 +1580,14 @@ export namespace FormNodeShape {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
       },
       nestedObjectProperty: {
         kind: "Shacl" as const,
         type: () => NestedNodeShape.$schema,
-        identifier: dataFactory.namedNode(
-          "http://example.com/nestedObjectProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/nestedObjectProperty"),
       },
       nonEmptyStringSetProperty: {
         kind: "Shacl" as const,
@@ -1621,7 +1596,7 @@ export namespace FormNodeShape {
           item: () => ({ kind: "String" as const }),
           minCount: 1,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/nonEmptyStringSetProperty",
         ),
       },
@@ -1631,21 +1606,21 @@ export namespace FormNodeShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredIntegerProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "Int" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredIntegerProperty",
         ),
       },
       requiredStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
       },
@@ -1759,7 +1734,7 @@ export namespace $Object {
       requiredStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
       },

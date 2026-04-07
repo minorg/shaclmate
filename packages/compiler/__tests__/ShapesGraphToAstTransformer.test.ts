@@ -79,7 +79,9 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
             const astObjectType = astObjectTypesByShapeIdentifier[classIri];
             expect(astObjectType).toBeDefined();
             const recursiveProperty = astObjectType.properties.find(
-              (property) => property.path.value === recursivePropertyIri,
+              (property) =>
+                property.path.termType === "NamedNode" &&
+                property.path.value === recursivePropertyIri,
             );
             expect(recursiveProperty).toBeDefined();
             expect(recursiveProperty!.recursive).toStrictEqual(true);
