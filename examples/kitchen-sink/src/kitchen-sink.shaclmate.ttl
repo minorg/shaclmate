@@ -920,6 +920,41 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :noRdfTypeClassUnionMember2Property
     ] .
 
+:NodeKindsClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Shape that has properties with different sh:nodeKind combinations" ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:BlankNode ;
+        sh:path :blankNodeKindProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:path :blankNodeOrIriNodeKindProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:BlankNodeOrLiteral ;
+        sh:path :blankNodeOrLiteralNodeKindProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :iriNodeKindProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRIOrLiteral ;
+        sh:path :iriOrLiteralNodeKindProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:path :literalNodeKindProperty
+    ] .
+
 :NonClass
     a sh:NodeShape ;
     rdfs:comment "Node shape that isn't an rdfs:Class." ;

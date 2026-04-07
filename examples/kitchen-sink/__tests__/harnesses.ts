@@ -528,6 +528,45 @@ export const harnesses = {
     }),
     kitchenSink.MutablePropertiesClass,
   ),
+  // nodeKindsClass1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
+  nodeKindsClass1: new ClassHarness(
+    new kitchenSink.NodeKindsClass({
+      $identifier,
+      blankNodeKindProperty: dataFactory.blankNode(),
+      blankNodeOrIriNodeKindProperty: dataFactory.blankNode(),
+      blankNodeOrLiteralNodeKindProperty: dataFactory.blankNode(),
+      iriNodeKindProperty: dataFactory.namedNode(
+        "http://example.com/iriNodeKindPropertyValue",
+      ),
+      iriOrLiteralNodeKindProperty: dataFactory.namedNode(
+        "http://example.com/iriOrLiteralNodeKindPropertyValue",
+      ),
+      literalNodeKindProperty: dataFactory.literal("literalNodeKindValue"),
+    }),
+    kitchenSink.NodeKindsClass,
+  ),
+  nodeKindsClass2: new ClassHarness(
+    new kitchenSink.NodeKindsClass({
+      $identifier,
+      blankNodeKindProperty: dataFactory.blankNode(),
+      blankNodeOrIriNodeKindProperty: dataFactory.namedNode(
+        "http://example.com/blankNodeOrIriNodeKindPropertyValue",
+      ),
+      blankNodeOrLiteralNodeKindProperty: dataFactory.literal(
+        "blankNodeOrLiteralNodeKindPropertyValue",
+      ),
+      iriNodeKindProperty: dataFactory.namedNode(
+        "http://example.com/iriNodeKindPropertyValue",
+      ),
+      iriOrLiteralNodeKindProperty: dataFactory.literal(
+        "iriOrLiteralNodeKindPropertyValue",
+      ),
+      literalNodeKindProperty: dataFactory.literal(
+        "literalNodeKindPropertyValue",
+      ),
+    }),
+    kitchenSink.NodeKindsClass,
+  ),
   noRdfTypeClassUnionMember1: new ClassUnionHarness(
     new kitchenSink.NoRdfTypeClassUnionMember1({
       $identifier,
