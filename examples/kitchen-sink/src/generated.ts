@@ -13185,6 +13185,14 @@ export class PropertyPathsClass {
       );
     }
     resource.add(
+      {
+        path: dataFactory.namedNode("http://example.com/inversePathProperty"),
+        termType: "InversePath" as const,
+      },
+      this.inversePathProperty.toList(),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://example.com/predicatePathProperty"),
       this.predicatePathProperty
         .toList()

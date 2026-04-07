@@ -344,14 +344,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     }
 
     const propertyPath = propertyPathToCode(this.path);
-    return this.path.termType === "NamedNode"
-      ? [
-          code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfExpression(
-            {
-              variables: { ...variables, propertyPath },
-            },
-          )}, ${variables.graph});`,
-        ]
-      : [];
+    return [
+      code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfExpression(
+        {
+          variables: { ...variables, propertyPath },
+        },
+      )}, ${variables.graph});`,
+    ];
   }
 }
