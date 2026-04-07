@@ -16,7 +16,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
   typeSparqlConstructTriples: ${snippets_SparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${imports.sparqljs}.Triple[] {
-  if (propertyShema.path.termType !== "NamedNode") {
+  if (propertySchema.path.termType !== "NamedNode") {
     throw new Error("non-predicate paths not supported in SPARQL");
   }
 

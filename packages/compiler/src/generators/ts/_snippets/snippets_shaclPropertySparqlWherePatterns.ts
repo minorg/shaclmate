@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
   typeSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${snippets_SparqlPattern}[] {
-  if (propertyShema.path.termType !== "NamedNode") {
+  if (propertySchema.path.termType !== "NamedNode") {
     throw new Error("non-predicate paths not supported in SPARQL");
   }
 

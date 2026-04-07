@@ -19,7 +19,12 @@ import {
   NonEmptyList,
   Right,
 } from "purify-ts";
-import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
+import {
+  LiteralFactory,
+  type PropertyPath,
+  Resource,
+  ResourceSet,
+} from "rdfjs-resource";
 import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
 import { z } from "zod";
@@ -1859,13 +1864,13 @@ function $shaclPropertyFromRdf<T>({
   ) => Either<Error, Resource.Values<T>>;
 }): Either<Error, T> {
   return typeFromRdf(
-    Right(resource.values(propertySchema.identifier, { graph, unique: true })),
+    Right(resource.values(propertySchema.path, { graph, unique: true })),
   ).chain((values) => values.head());
 }
 
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
-  readonly identifier: NamedNode;
   readonly kind: "Shacl";
+  readonly path: PropertyPath;
   readonly type: () => TypeSchemaT;
 }
 
@@ -1889,13 +1894,17 @@ function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
   >;
   variablePrefix: string;
 }): readonly sparqljs.Triple[] {
+  if (propertySchema.path.termType !== "NamedNode") {
+    throw new Error("non-predicate paths not supported in SPARQL");
+  }
+
   const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
   const valueVariable = dataFactory.variable!(valueString);
 
   return [
     {
       subject: focusIdentifier,
-      predicate: propertySchema.identifier,
+      predicate: propertySchema.path,
       object: valueVariable,
     } as sparqljs.Triple,
   ].concat(
@@ -1928,6 +1937,10 @@ function $shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({
   typeSparqlWherePatterns: $SparqlWherePatternsFunction<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly $SparqlPattern[] {
+  if (propertySchema.path.termType !== "NamedNode") {
+    throw new Error("non-predicate paths not supported in SPARQL");
+  }
+
   const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
   const valueVariable = dataFactory.variable!(valueString);
 
@@ -1936,7 +1949,7 @@ function $shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({
       triples: [
         {
           subject: focusIdentifier,
-          predicate: propertySchema.identifier,
+          predicate: propertySchema.path,
           object: valueVariable,
         },
       ],
@@ -3307,8 +3320,7 @@ export namespace UuidV4IriIdentifierInterface {
       _uuidV4IriIdentifierInterface.$identifier,
     );
     resource.add(
-      UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
       [$literalFactory.string(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
       options?.graph,
     );
@@ -3335,9 +3347,7 @@ export namespace UuidV4IriIdentifierInterface {
       uuidV4IriProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/uuidV4IriProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
       },
     },
   } as const;
@@ -3601,7 +3611,7 @@ export class UuidV4IriIdentifierClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier,
+      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
       [$literalFactory.string(this.uuidV4IriProperty)],
       options?.graph,
     );
@@ -3806,9 +3816,7 @@ export namespace UuidV4IriIdentifierClass {
       uuidV4IriProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/uuidV4IriProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
       },
     },
   } as const;
@@ -4889,8 +4897,9 @@ export class UnionDiscriminantsClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      UnionDiscriminantsClass.$schema.properties
-        .optionalClassOrClassOrStringProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalClassOrClassOrStringProperty",
+      ),
       this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         value.type === "2-string"
           ? ([$literalFactory.string(value.value)] as (
@@ -4920,8 +4929,7 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/optionalIriOrLiteralProperty"),
       this.optionalIriOrLiteralProperty
         .toList()
         .flatMap(
@@ -4939,8 +4947,7 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/optionalIriOrStringProperty"),
       this.optionalIriOrStringProperty
         .toList()
         .flatMap((value) =>
@@ -4967,8 +4974,9 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties
-        .requiredClassOrClassOrStringProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/requiredClassOrClassOrStringProperty",
+      ),
       this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
             $literalFactory.string(
@@ -5000,8 +5008,7 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/requiredIriOrLiteralProperty"),
       [this.requiredIriOrLiteralProperty] as (
         | bigint
         | boolean
@@ -5014,8 +5021,7 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/requiredIriOrStringProperty"),
       typeof this.requiredIriOrStringProperty === "string"
         ? ([$literalFactory.string(this.requiredIriOrStringProperty)] as (
             | bigint
@@ -5038,8 +5044,9 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/setClassOrClassOrStringProperty",
+      ),
       this.setClassOrClassOrStringProperty.flatMap((item) =>
         item.type === "2-string"
           ? ([$literalFactory.string(item.value)] as (
@@ -5069,8 +5076,7 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/setIriOrLiteralProperty"),
       this.setIriOrLiteralProperty.flatMap(
         (item) =>
           [item] as (
@@ -5086,8 +5092,7 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
-      UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/setIriOrStringProperty"),
       this.setIriOrStringProperty.flatMap((item) =>
         typeof item === "string"
           ? ([$literalFactory.string(item)] as (
@@ -6344,7 +6349,7 @@ export namespace UnionDiscriminantsClass {
                       focusResource: $parameters.resource,
                       propertyPath:
                         UnionDiscriminantsClass.$schema.properties
-                          .optionalClassOrClassOrStringProperty.identifier,
+                          .optionalClassOrClassOrStringProperty.path,
                       value: Maybe.empty(),
                     }),
               ),
@@ -6389,7 +6394,7 @@ export namespace UnionDiscriminantsClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           UnionDiscriminantsClass.$schema.properties
-                            .optionalIriOrLiteralProperty.identifier,
+                            .optionalIriOrLiteralProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -6434,7 +6439,7 @@ export namespace UnionDiscriminantsClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             UnionDiscriminantsClass.$schema.properties
-                              .optionalIriOrStringProperty.identifier,
+                              .optionalIriOrStringProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -6833,7 +6838,7 @@ export namespace UnionDiscriminantsClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 UnionDiscriminantsClass.$schema.properties
-                                  .setClassOrClassOrStringProperty.identifier,
+                                  .setClassOrClassOrStringProperty.path,
                               value: valuesArray,
                             }),
                           ),
@@ -6883,7 +6888,7 @@ export namespace UnionDiscriminantsClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   UnionDiscriminantsClass.$schema.properties
-                                    .setIriOrLiteralProperty.identifier,
+                                    .setIriOrLiteralProperty.path,
                                 value: valuesArray,
                               }),
                             ),
@@ -6933,7 +6938,7 @@ export namespace UnionDiscriminantsClass {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     UnionDiscriminantsClass.$schema.properties
-                                      .setIriOrStringProperty.identifier,
+                                      .setIriOrStringProperty.path,
                                   value: valuesArray,
                                 }),
                               ),
@@ -6995,7 +7000,7 @@ export namespace UnionDiscriminantsClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalClassOrClassOrStringProperty",
         ),
       },
@@ -7017,7 +7022,7 @@ export namespace UnionDiscriminantsClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalIriOrLiteralProperty",
         ),
       },
@@ -7039,7 +7044,7 @@ export namespace UnionDiscriminantsClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalIriOrStringProperty",
         ),
       },
@@ -7062,7 +7067,7 @@ export namespace UnionDiscriminantsClass {
             },
           },
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredClassOrClassOrStringProperty",
         ),
       },
@@ -7081,7 +7086,7 @@ export namespace UnionDiscriminantsClass {
             },
           },
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredIriOrLiteralProperty",
         ),
       },
@@ -7100,7 +7105,7 @@ export namespace UnionDiscriminantsClass {
             },
           },
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredIriOrStringProperty",
         ),
       },
@@ -7126,7 +7131,7 @@ export namespace UnionDiscriminantsClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setClassOrClassOrStringProperty",
         ),
       },
@@ -7148,7 +7153,7 @@ export namespace UnionDiscriminantsClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setIriOrLiteralProperty",
         ),
       },
@@ -7170,7 +7175,7 @@ export namespace UnionDiscriminantsClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setIriOrStringProperty",
         ),
       },
@@ -9384,12 +9389,12 @@ export class TermPropertiesClass {
       );
     }
     resource.add(
-      TermPropertiesClass.$schema.properties.blankNodeTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/blankNodeTermProperty"),
       this.blankNodeTermProperty.toList(),
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.booleanTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/booleanTermProperty"),
       this.booleanTermProperty
         .toList()
         .flatMap((value) => [
@@ -9398,7 +9403,7 @@ export class TermPropertiesClass {
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.dateTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/dateTermProperty"),
       this.dateTermProperty
         .toList()
         .flatMap((value) => [
@@ -9407,7 +9412,7 @@ export class TermPropertiesClass {
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.dateTimeTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
       this.dateTimeTermProperty
         .toList()
         .flatMap((value) => [
@@ -9416,17 +9421,17 @@ export class TermPropertiesClass {
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.iriTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/iriTermProperty"),
       this.iriTermProperty.toList(),
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.literalTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/literalTermProperty"),
       this.literalTermProperty.toList(),
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.numberTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/numberTermProperty"),
       this.numberTermProperty
         .toList()
         .flatMap((value) => [
@@ -9435,14 +9440,14 @@ export class TermPropertiesClass {
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.stringTermProperty.identifier,
+      dataFactory.namedNode("http://example.com/stringTermProperty"),
       this.stringTermProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      TermPropertiesClass.$schema.properties.termProperty.identifier,
+      dataFactory.namedNode("http://example.com/termProperty"),
       this.termProperty.toList(),
       options?.graph,
     );
@@ -9899,7 +9904,7 @@ export namespace TermPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           TermPropertiesClass.$schema.properties
-                            .blankNodeTermProperty.identifier,
+                            .blankNodeTermProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -9920,7 +9925,7 @@ export namespace TermPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             TermPropertiesClass.$schema.properties
-                              .booleanTermProperty.identifier,
+                              .booleanTermProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -9941,7 +9946,7 @@ export namespace TermPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               TermPropertiesClass.$schema.properties
-                                .dateTermProperty.identifier,
+                                .dateTermProperty.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -9962,7 +9967,7 @@ export namespace TermPropertiesClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 TermPropertiesClass.$schema.properties
-                                  .dateTimeTermProperty.identifier,
+                                  .dateTimeTermProperty.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -9983,7 +9988,7 @@ export namespace TermPropertiesClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   TermPropertiesClass.$schema.properties
-                                    .iriTermProperty.identifier,
+                                    .iriTermProperty.path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -10010,7 +10015,7 @@ export namespace TermPropertiesClass {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     TermPropertiesClass.$schema.properties
-                                      .literalTermProperty.identifier,
+                                      .literalTermProperty.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -10031,7 +10036,7 @@ export namespace TermPropertiesClass {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       TermPropertiesClass.$schema.properties
-                                        .numberTermProperty.identifier,
+                                        .numberTermProperty.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -10058,7 +10063,7 @@ export namespace TermPropertiesClass {
                                       focusResource: $parameters.resource,
                                       propertyPath:
                                         TermPropertiesClass.$schema.properties
-                                          .stringTermProperty.identifier,
+                                          .stringTermProperty.path,
                                       value: Maybe.empty(),
                                     }),
                               ),
@@ -10081,7 +10086,7 @@ export namespace TermPropertiesClass {
                                         focusResource: $parameters.resource,
                                         propertyPath:
                                           TermPropertiesClass.$schema.properties
-                                            .termProperty.identifier,
+                                            .termProperty.path,
                                         value: Maybe.empty(),
                                       }),
                                 ),
@@ -10128,9 +10133,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BlankNode" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/blankNodeTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/blankNodeTermProperty"),
       },
       booleanTermProperty: {
         kind: "Shacl" as const,
@@ -10138,9 +10141,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/booleanTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/booleanTermProperty"),
       },
       dateTermProperty: {
         kind: "Shacl" as const,
@@ -10148,9 +10149,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Date" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/dateTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/dateTermProperty"),
       },
       dateTimeTermProperty: {
         kind: "Shacl" as const,
@@ -10158,9 +10157,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "DateTime" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/dateTimeTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
       },
       iriTermProperty: {
         kind: "Shacl" as const,
@@ -10168,7 +10165,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
+        path: dataFactory.namedNode("http://example.com/iriTermProperty"),
       },
       literalTermProperty: {
         kind: "Shacl" as const,
@@ -10176,9 +10173,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/literalTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/literalTermProperty"),
       },
       numberTermProperty: {
         kind: "Shacl" as const,
@@ -10186,9 +10181,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/numberTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/numberTermProperty"),
       },
       stringTermProperty: {
         kind: "Shacl" as const,
@@ -10196,9 +10189,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/stringTermProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/stringTermProperty"),
       },
       termProperty: {
         kind: "Shacl" as const,
@@ -10206,7 +10197,7 @@ export namespace TermPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode("http://example.com/termProperty"),
+        path: dataFactory.namedNode("http://example.com/termProperty"),
       },
     },
   } as const;
@@ -10858,7 +10849,7 @@ export class Sha256IriIdentifierClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier,
+      dataFactory.namedNode("http://example.com/sha256IriProperty"),
       [$literalFactory.string(this.sha256IriProperty)],
       options?.graph,
     );
@@ -11063,9 +11054,7 @@ export namespace Sha256IriIdentifierClass {
       sha256IriProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/sha256IriProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/sha256IriProperty"),
       },
     },
   } as const;
@@ -11331,8 +11320,9 @@ export class RecursiveClassUnionMember2 {
       );
     }
     resource.add(
-      RecursiveClassUnionMember2.$schema.properties
-        .recursiveClassUnionMember2Property.identifier,
+      dataFactory.namedNode(
+        "http://example.com/recursiveClassUnionMember2Property",
+      ),
       this.recursiveClassUnionMember2Property.toList().flatMap((value) => [
         RecursiveClassUnion.$toRdf(value, {
           graph: options?.graph,
@@ -11585,7 +11575,7 @@ export namespace RecursiveClassUnionMember2 {
                         focusResource: $parameters.resource,
                         propertyPath:
                           RecursiveClassUnionMember2.$schema.properties
-                            .recursiveClassUnionMember2Property.identifier,
+                            .recursiveClassUnionMember2Property.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -11616,7 +11606,7 @@ export namespace RecursiveClassUnionMember2 {
           kind: "Maybe" as const,
           item: () => RecursiveClassUnion.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/recursiveClassUnionMember2Property",
         ),
       },
@@ -11940,8 +11930,9 @@ export class RecursiveClassUnionMember1 {
       );
     }
     resource.add(
-      RecursiveClassUnionMember1.$schema.properties
-        .recursiveClassUnionMember1Property.identifier,
+      dataFactory.namedNode(
+        "http://example.com/recursiveClassUnionMember1Property",
+      ),
       this.recursiveClassUnionMember1Property.toList().flatMap((value) => [
         RecursiveClassUnion.$toRdf(value, {
           graph: options?.graph,
@@ -12194,7 +12185,7 @@ export namespace RecursiveClassUnionMember1 {
                         focusResource: $parameters.resource,
                         propertyPath:
                           RecursiveClassUnionMember1.$schema.properties
-                            .recursiveClassUnionMember1Property.identifier,
+                            .recursiveClassUnionMember1Property.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -12225,7 +12216,7 @@ export namespace RecursiveClassUnionMember1 {
           kind: "Maybe" as const,
           item: () => RecursiveClassUnion.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/recursiveClassUnionMember1Property",
         ),
       },
@@ -12556,17 +12547,17 @@ export class PropertyVisibilitiesClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier,
+      dataFactory.namedNode("http://example.com/privateProperty"),
       [$literalFactory.string(this.privateProperty)],
       options?.graph,
     );
     resource.add(
-      PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier,
+      dataFactory.namedNode("http://example.com/protectedProperty"),
       [$literalFactory.string(this.protectedProperty)],
       options?.graph,
     );
     resource.add(
-      PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier,
+      dataFactory.namedNode("http://example.com/publicProperty"),
       [$literalFactory.string(this.publicProperty)],
       options?.graph,
     );
@@ -12827,19 +12818,17 @@ export namespace PropertyVisibilitiesClass {
       privateProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode("http://example.com/privateProperty"),
+        path: dataFactory.namedNode("http://example.com/privateProperty"),
       },
       protectedProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/protectedProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/protectedProperty"),
       },
       publicProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode("http://example.com/publicProperty"),
+        path: dataFactory.namedNode("http://example.com/publicProperty"),
       },
     },
   } as const;
@@ -13233,32 +13222,28 @@ export class PropertyCardinalitiesClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
       this.emptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
       this.nonEmptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       options?.graph,
     );
     resource.add(
-      PropertyCardinalitiesClass.$schema.properties.optionalStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/optionalStringProperty"),
       this.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      PropertyCardinalitiesClass.$schema.properties.requiredStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/requiredStringProperty"),
       [$literalFactory.string(this.requiredStringProperty)],
       options?.graph,
     );
@@ -13533,7 +13518,7 @@ export namespace PropertyCardinalitiesClass {
                   focusResource: $parameters.resource,
                   propertyPath:
                     PropertyCardinalitiesClass.$schema.properties
-                      .emptyStringSetProperty.identifier,
+                      .emptyStringSetProperty.path,
                   value: valuesArray,
                 }),
               ),
@@ -13563,7 +13548,7 @@ export namespace PropertyCardinalitiesClass {
                     focusResource: $parameters.resource,
                     propertyPath:
                       PropertyCardinalitiesClass.$schema.properties
-                        .nonEmptyStringSetProperty.identifier,
+                        .nonEmptyStringSetProperty.path,
                     value: valuesArray,
                   }),
                 ),
@@ -13590,7 +13575,7 @@ export namespace PropertyCardinalitiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             PropertyCardinalitiesClass.$schema.properties
-                              .optionalStringProperty.identifier,
+                              .optionalStringProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -13642,7 +13627,7 @@ export namespace PropertyCardinalitiesClass {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
       },
@@ -13653,7 +13638,7 @@ export namespace PropertyCardinalitiesClass {
           item: () => ({ kind: "String" as const }),
           minCount: 1,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/nonEmptyStringSetProperty",
         ),
       },
@@ -13663,14 +13648,14 @@ export namespace PropertyCardinalitiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
       },
@@ -14272,8 +14257,7 @@ export namespace PartialInterfaceUnionMember2 {
       );
     }
     resource.add(
-      PartialInterfaceUnionMember2.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [
         $literalFactory.string(
           _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
@@ -14300,7 +14284,7 @@ export namespace PartialInterfaceUnionMember2 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -14878,8 +14862,7 @@ export namespace PartialInterfaceUnionMember1 {
       );
     }
     resource.add(
-      PartialInterfaceUnionMember1.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [
         $literalFactory.string(
           _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
@@ -14906,7 +14889,7 @@ export namespace PartialInterfaceUnionMember1 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -15239,8 +15222,7 @@ export class PartialClassUnionMember2 {
       );
     }
     resource.add(
-      PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -15487,7 +15469,7 @@ export namespace PartialClassUnionMember2 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -15820,8 +15802,7 @@ export class PartialClassUnionMember1 {
       );
     }
     resource.add(
-      PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -16068,7 +16049,7 @@ export namespace PartialClassUnionMember1 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -16429,17 +16410,17 @@ export class OrderedPropertiesClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier,
+      dataFactory.namedNode("http://example.com/orderedPropertyC"),
       [$literalFactory.string(this.orderedPropertyC)],
       options?.graph,
     );
     resource.add(
-      OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier,
+      dataFactory.namedNode("http://example.com/orderedPropertyB"),
       [$literalFactory.string(this.orderedPropertyB)],
       options?.graph,
     );
     resource.add(
-      OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier,
+      dataFactory.namedNode("http://example.com/orderedPropertyA"),
       [$literalFactory.string(this.orderedPropertyA)],
       options?.graph,
     );
@@ -16720,23 +16701,17 @@ export namespace OrderedPropertiesClass {
       orderedPropertyC: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/orderedPropertyC",
-        ),
+        path: dataFactory.namedNode("http://example.com/orderedPropertyC"),
       },
       orderedPropertyB: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/orderedPropertyB",
-        ),
+        path: dataFactory.namedNode("http://example.com/orderedPropertyB"),
       },
       orderedPropertyA: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/orderedPropertyA",
-        ),
+        path: dataFactory.namedNode("http://example.com/orderedPropertyA"),
       },
     },
   } as const;
@@ -17553,7 +17528,7 @@ export class NumericPropertiesClass {
       );
     }
     resource.add(
-      NumericPropertiesClass.$schema.properties.byteNumericProperty.identifier,
+      dataFactory.namedNode("http://example.com/byteNumericProperty"),
       this.byteNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17562,16 +17537,14 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.decimalNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/decimalNumericProperty"),
       this.decimalNumericProperty
         .toList()
         .flatMap((value) => [$bigDecimalLiteral(value)]),
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.doubleNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/doubleNumericProperty"),
       this.doubleNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17580,7 +17553,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.floatNumericProperty.identifier,
+      dataFactory.namedNode("http://example.com/floatNumericProperty"),
       this.floatNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17589,8 +17562,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.integerNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/integerNumericProperty"),
       this.integerNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17599,7 +17571,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.intNumericProperty.identifier,
+      dataFactory.namedNode("http://example.com/intNumericProperty"),
       this.intNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17608,7 +17580,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.longNumericProperty.identifier,
+      dataFactory.namedNode("http://example.com/longNumericProperty"),
       this.longNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17617,8 +17589,9 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.negativeIntegerNumericProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/negativeIntegerNumericProperty",
+      ),
       this.negativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17627,8 +17600,9 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties
-        .nonNegativeIntegerNumericProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/nonNegativeIntegerNumericProperty",
+      ),
       this.nonNegativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17640,8 +17614,9 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties
-        .nonPositiveIntegerNumericProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/nonPositiveIntegerNumericProperty",
+      ),
       this.nonPositiveIntegerNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17653,8 +17628,9 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.positiveIntegerNumericProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/positiveIntegerNumericProperty",
+      ),
       this.positiveIntegerNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17663,7 +17639,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.shortNumericProperty.identifier,
+      dataFactory.namedNode("http://example.com/shortNumericProperty"),
       this.shortNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17672,8 +17648,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.unsignedByteNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/unsignedByteNumericProperty"),
       this.unsignedByteNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17682,8 +17657,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.unsignedIntNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/unsignedIntNumericProperty"),
       this.unsignedIntNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17692,8 +17666,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.unsignedLongNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/unsignedLongNumericProperty"),
       this.unsignedLongNumericProperty
         .toList()
         .flatMap((value) => [
@@ -17702,8 +17675,7 @@ export class NumericPropertiesClass {
       options?.graph,
     );
     resource.add(
-      NumericPropertiesClass.$schema.properties.unsignedShortNumericProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/unsignedShortNumericProperty"),
       this.unsignedShortNumericProperty
         .toList()
         .flatMap((value) => [
@@ -18277,7 +18249,7 @@ export namespace NumericPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           NumericPropertiesClass.$schema.properties
-                            .byteNumericProperty.identifier,
+                            .byteNumericProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -18306,7 +18278,7 @@ export namespace NumericPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             NumericPropertiesClass.$schema.properties
-                              .decimalNumericProperty.identifier,
+                              .decimalNumericProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -18327,7 +18299,7 @@ export namespace NumericPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               NumericPropertiesClass.$schema.properties
-                                .doubleNumericProperty.identifier,
+                                .doubleNumericProperty.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -18348,7 +18320,7 @@ export namespace NumericPropertiesClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 NumericPropertiesClass.$schema.properties
-                                  .floatNumericProperty.identifier,
+                                  .floatNumericProperty.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -18369,7 +18341,7 @@ export namespace NumericPropertiesClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   NumericPropertiesClass.$schema.properties
-                                    .integerNumericProperty.identifier,
+                                    .integerNumericProperty.path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -18390,7 +18362,7 @@ export namespace NumericPropertiesClass {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     NumericPropertiesClass.$schema.properties
-                                      .intNumericProperty.identifier,
+                                      .intNumericProperty.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -18411,7 +18383,7 @@ export namespace NumericPropertiesClass {
                                     focusResource: $parameters.resource,
                                     propertyPath:
                                       NumericPropertiesClass.$schema.properties
-                                        .longNumericProperty.identifier,
+                                        .longNumericProperty.path,
                                     value: Maybe.empty(),
                                   }),
                             ),
@@ -18434,8 +18406,7 @@ export namespace NumericPropertiesClass {
                                       propertyPath:
                                         NumericPropertiesClass.$schema
                                           .properties
-                                          .negativeIntegerNumericProperty
-                                          .identifier,
+                                          .negativeIntegerNumericProperty.path,
                                       value: Maybe.empty(),
                                     }),
                               ),
@@ -18460,7 +18431,7 @@ export namespace NumericPropertiesClass {
                                           NumericPropertiesClass.$schema
                                             .properties
                                             .nonNegativeIntegerNumericProperty
-                                            .identifier,
+                                            .path,
                                         value: Maybe.empty(),
                                       }),
                                 ),
@@ -18489,7 +18460,7 @@ export namespace NumericPropertiesClass {
                                             NumericPropertiesClass.$schema
                                               .properties
                                               .nonPositiveIntegerNumericProperty
-                                              .identifier,
+                                              .path,
                                           value: Maybe.empty(),
                                         }),
                                   ),
@@ -18518,7 +18489,7 @@ export namespace NumericPropertiesClass {
                                               NumericPropertiesClass.$schema
                                                 .properties
                                                 .positiveIntegerNumericProperty
-                                                .identifier,
+                                                .path,
                                             value: Maybe.empty(),
                                           }),
                                     ),
@@ -18548,8 +18519,7 @@ export namespace NumericPropertiesClass {
                                               propertyPath:
                                                 NumericPropertiesClass.$schema
                                                   .properties
-                                                  .shortNumericProperty
-                                                  .identifier,
+                                                  .shortNumericProperty.path,
                                               value: Maybe.empty(),
                                             }),
                                       ),
@@ -18581,7 +18551,7 @@ export namespace NumericPropertiesClass {
                                                   NumericPropertiesClass.$schema
                                                     .properties
                                                     .unsignedByteNumericProperty
-                                                    .identifier,
+                                                    .path,
                                                 value: Maybe.empty(),
                                               }),
                                         ),
@@ -18613,7 +18583,7 @@ export namespace NumericPropertiesClass {
                                                     NumericPropertiesClass
                                                       .$schema.properties
                                                       .unsignedIntNumericProperty
-                                                      .identifier,
+                                                      .path,
                                                   value: Maybe.empty(),
                                                 }),
                                           ),
@@ -18645,7 +18615,7 @@ export namespace NumericPropertiesClass {
                                                       NumericPropertiesClass
                                                         .$schema.properties
                                                         .unsignedLongNumericProperty
-                                                        .identifier,
+                                                        .path,
                                                     value: Maybe.empty(),
                                                   }),
                                             ),
@@ -18677,7 +18647,7 @@ export namespace NumericPropertiesClass {
                                                         NumericPropertiesClass
                                                           .$schema.properties
                                                           .unsignedShortNumericProperty
-                                                          .identifier,
+                                                          .path,
                                                       value: Maybe.empty(),
                                                     }),
                                               ),
@@ -18740,9 +18710,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/byteNumericProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/byteNumericProperty"),
       },
       decimalNumericProperty: {
         kind: "Shacl" as const,
@@ -18750,7 +18718,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigDecimal" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/decimalNumericProperty",
         ),
       },
@@ -18760,9 +18728,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/doubleNumericProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/doubleNumericProperty"),
       },
       floatNumericProperty: {
         kind: "Shacl" as const,
@@ -18770,9 +18736,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/floatNumericProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/floatNumericProperty"),
       },
       integerNumericProperty: {
         kind: "Shacl" as const,
@@ -18780,7 +18744,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/integerNumericProperty",
         ),
       },
@@ -18790,9 +18754,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/intNumericProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/intNumericProperty"),
       },
       longNumericProperty: {
         kind: "Shacl" as const,
@@ -18800,9 +18762,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/longNumericProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/longNumericProperty"),
       },
       negativeIntegerNumericProperty: {
         kind: "Shacl" as const,
@@ -18810,7 +18770,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/negativeIntegerNumericProperty",
         ),
       },
@@ -18820,7 +18780,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/nonNegativeIntegerNumericProperty",
         ),
       },
@@ -18830,7 +18790,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/nonPositiveIntegerNumericProperty",
         ),
       },
@@ -18840,7 +18800,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/positiveIntegerNumericProperty",
         ),
       },
@@ -18850,9 +18810,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/shortNumericProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/shortNumericProperty"),
       },
       unsignedByteNumericProperty: {
         kind: "Shacl" as const,
@@ -18860,7 +18818,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/unsignedByteNumericProperty",
         ),
       },
@@ -18870,7 +18828,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/unsignedIntNumericProperty",
         ),
       },
@@ -18880,7 +18838,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/unsignedLongNumericProperty",
         ),
       },
@@ -18890,7 +18848,7 @@ export namespace NumericPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Int" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/unsignedShortNumericProperty",
         ),
       },
@@ -19777,7 +19735,7 @@ export class NonClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      NonClass.$schema.properties.nonClassProperty.identifier,
+      dataFactory.namedNode("http://example.com/nonClassProperty"),
       [$literalFactory.string(this.nonClassProperty)],
       options?.graph,
     );
@@ -19971,9 +19929,7 @@ export namespace NonClass {
       nonClassProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/nonClassProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/nonClassProperty"),
       },
     },
   } as const;
@@ -20209,8 +20165,9 @@ export class NoRdfTypeClassUnionMember2 {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      NoRdfTypeClassUnionMember2.$schema.properties
-        .noRdfTypeClassUnionMember2Property.identifier,
+      dataFactory.namedNode(
+        "http://example.com/noRdfTypeClassUnionMember2Property",
+      ),
       [$literalFactory.string(this.noRdfTypeClassUnionMember2Property)],
       options?.graph,
     );
@@ -20422,7 +20379,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       noRdfTypeClassUnionMember2Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/noRdfTypeClassUnionMember2Property",
         ),
       },
@@ -20663,8 +20620,9 @@ export class NoRdfTypeClassUnionMember1 {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      NoRdfTypeClassUnionMember1.$schema.properties
-        .noRdfTypeClassUnionMember1Property.identifier,
+      dataFactory.namedNode(
+        "http://example.com/noRdfTypeClassUnionMember1Property",
+      ),
       [$literalFactory.string(this.noRdfTypeClassUnionMember1Property)],
       options?.graph,
     );
@@ -20876,7 +20834,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       noRdfTypeClassUnionMember1Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/noRdfTypeClassUnionMember1Property",
         ),
       },
@@ -21232,7 +21190,7 @@ export class MutablePropertiesClass {
       );
     }
     resource.add(
-      MutablePropertiesClass.$schema.properties.mutableListProperty.identifier,
+      dataFactory.namedNode("http://example.com/mutableListProperty"),
       this.mutableListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -21285,13 +21243,12 @@ export class MutablePropertiesClass {
       options?.graph,
     );
     resource.add(
-      MutablePropertiesClass.$schema.properties.mutableSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/mutableSetProperty"),
       this.mutableSetProperty.flatMap((item) => [$literalFactory.string(item)]),
       options?.graph,
     );
     resource.add(
-      MutablePropertiesClass.$schema.properties.mutableStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/mutableStringProperty"),
       this.mutableStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -21586,7 +21543,7 @@ export namespace MutablePropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           MutablePropertiesClass.$schema.properties
-                            .mutableListProperty.identifier,
+                            .mutableListProperty.path,
                         values: valueList.toArray(),
                       }),
                     )
@@ -21611,7 +21568,7 @@ export namespace MutablePropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           MutablePropertiesClass.$schema.properties
-                            .mutableListProperty.identifier,
+                            .mutableListProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -21637,7 +21594,7 @@ export namespace MutablePropertiesClass {
                       focusResource: $parameters.resource,
                       propertyPath:
                         MutablePropertiesClass.$schema.properties
-                          .mutableSetProperty.identifier,
+                          .mutableSetProperty.path,
                       value: valuesArray,
                     }),
                   ),
@@ -21664,7 +21621,7 @@ export namespace MutablePropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               MutablePropertiesClass.$schema.properties
-                                .mutableStringProperty.identifier,
+                                .mutableStringProperty.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -21706,9 +21663,7 @@ export namespace MutablePropertiesClass {
             item: () => ({ kind: "String" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/mutableListProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/mutableListProperty"),
       },
       mutableSetProperty: {
         kind: "Shacl" as const,
@@ -21716,9 +21671,7 @@ export namespace MutablePropertiesClass {
           kind: "Set" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/mutableSetProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/mutableSetProperty"),
       },
       mutableStringProperty: {
         kind: "Shacl" as const,
@@ -21726,9 +21679,7 @@ export namespace MutablePropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/mutableStringProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/mutableStringProperty"),
       },
     },
   } as const;
@@ -22242,7 +22193,7 @@ export class ListPropertiesClass {
       );
     }
     resource.add(
-      ListPropertiesClass.$schema.properties.iriListProperty.identifier,
+      dataFactory.namedNode("http://example.com/iriListProperty"),
       this.iriListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -22295,7 +22246,7 @@ export class ListPropertiesClass {
       options?.graph,
     );
     resource.add(
-      ListPropertiesClass.$schema.properties.objectListProperty.identifier,
+      dataFactory.namedNode("http://example.com/objectListProperty"),
       this.objectListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -22353,7 +22304,7 @@ export class ListPropertiesClass {
       options?.graph,
     );
     resource.add(
-      ListPropertiesClass.$schema.properties.stringListProperty.identifier,
+      dataFactory.namedNode("http://example.com/stringListProperty"),
       this.stringListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -22689,7 +22640,7 @@ export namespace ListPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           ListPropertiesClass.$schema.properties.iriListProperty
-                            .identifier,
+                            .path,
                         values: valueList.toArray(),
                       }),
                     ).chain((values) =>
@@ -22707,7 +22658,7 @@ export namespace ListPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           ListPropertiesClass.$schema.properties.iriListProperty
-                            .identifier,
+                            .path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -22730,7 +22681,7 @@ export namespace ListPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ListPropertiesClass.$schema.properties
-                              .objectListProperty.identifier,
+                              .objectListProperty.path,
                           values: valueList.toArray(),
                         }),
                       ).chain((values) =>
@@ -22758,7 +22709,7 @@ export namespace ListPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ListPropertiesClass.$schema.properties
-                              .objectListProperty.identifier,
+                              .objectListProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -22781,7 +22732,7 @@ export namespace ListPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               ListPropertiesClass.$schema.properties
-                                .stringListProperty.identifier,
+                                .stringListProperty.path,
                             values: valueList.toArray(),
                           }),
                         )
@@ -22806,7 +22757,7 @@ export namespace ListPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               ListPropertiesClass.$schema.properties
-                                .stringListProperty.identifier,
+                                .stringListProperty.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -22844,7 +22795,7 @@ export namespace ListPropertiesClass {
             item: () => ({ kind: "Iri" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
+        path: dataFactory.namedNode("http://example.com/iriListProperty"),
       },
       objectListProperty: {
         kind: "Shacl" as const,
@@ -22852,9 +22803,7 @@ export namespace ListPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "List" as const, item: () => NonClass.$schema }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/objectListProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/objectListProperty"),
       },
       stringListProperty: {
         kind: "Shacl" as const,
@@ -22865,9 +22814,7 @@ export namespace ListPropertiesClass {
             item: () => ({ kind: "String" as const }),
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/stringListProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/stringListProperty"),
       },
     },
   } as const;
@@ -23526,8 +23473,7 @@ export namespace PartialInterface {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_partialInterface.$identifier);
     resource.add(
-      PartialInterface.$schema.properties.lazilyResolvedStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(_partialInterface.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -23550,7 +23496,7 @@ export namespace PartialInterface {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -25486,7 +25432,7 @@ export namespace LazyPropertiesInterface {
                         focusResource: $parameters.resource,
                         propertyPath:
                           LazyPropertiesInterface.$schema.properties
-                            .optionalLazyToResolvedInterfaceProperty.identifier,
+                            .optionalLazyToResolvedInterfaceProperty.path,
                         value: Maybe.empty(),
                       }),
                 )
@@ -25534,7 +25480,7 @@ export namespace LazyPropertiesInterface {
                           propertyPath:
                             LazyPropertiesInterface.$schema.properties
                               .optionalLazyToResolvedInterfaceUnionProperty
-                              .identifier,
+                              .path,
                           value: Maybe.empty(),
                         }),
                   )
@@ -25585,7 +25531,7 @@ export namespace LazyPropertiesInterface {
                             propertyPath:
                               LazyPropertiesInterface.$schema.properties
                                 .optionalLazyToResolvedIriIdentifierInterfaceProperty
-                                .identifier,
+                                .path,
                             value: Maybe.empty(),
                           }),
                     )
@@ -25635,7 +25581,7 @@ export namespace LazyPropertiesInterface {
                               propertyPath:
                                 LazyPropertiesInterface.$schema.properties
                                   .optionalPartialInterfaceToResolvedInterfaceProperty
-                                  .identifier,
+                                  .path,
                               value: Maybe.empty(),
                             }),
                       )
@@ -25688,7 +25634,7 @@ export namespace LazyPropertiesInterface {
                                   propertyPath:
                                     LazyPropertiesInterface.$schema.properties
                                       .optionalPartialInterfaceToResolvedInterfaceUnionProperty
-                                      .identifier,
+                                      .path,
                                   value: Maybe.empty(),
                                 }),
                           )
@@ -25744,7 +25690,7 @@ export namespace LazyPropertiesInterface {
                                         LazyPropertiesInterface.$schema
                                           .properties
                                           .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
-                                          .identifier,
+                                          .path,
                                       value: Maybe.empty(),
                                     }),
                               )
@@ -25889,7 +25835,7 @@ export namespace LazyPropertiesInterface {
                                                 LazyPropertiesInterface.$schema
                                                   .properties
                                                   .setLazyToResolvedInterfaceProperty
-                                                  .identifier,
+                                                  .path,
                                               value: valuesArray,
                                             }),
                                           )
@@ -25950,7 +25896,7 @@ export namespace LazyPropertiesInterface {
                                                     LazyPropertiesInterface
                                                       .$schema.properties
                                                       .setPartialInterfaceToResolvedInterfaceProperty
-                                                      .identifier,
+                                                      .path,
                                                   value: valuesArray,
                                                 }),
                                               )
@@ -26016,8 +25962,9 @@ export namespace LazyPropertiesInterface {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_lazyPropertiesInterface.$identifier);
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .optionalLazyToResolvedInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedInterfaceProperty",
+      ),
       _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26027,8 +25974,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .optionalLazyToResolvedInterfaceUnionProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
+      ),
       _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26038,8 +25986,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .optionalLazyToResolvedIriIdentifierInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
+      ),
       _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26049,8 +25998,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .optionalPartialInterfaceToResolvedInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
+      ),
       _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26062,8 +26012,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .optionalPartialInterfaceToResolvedInterfaceUnionProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+      ),
       _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26075,9 +26026,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+      ),
       _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26089,8 +26040,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .requiredLazyToResolvedInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/requiredLazyToResolvedInterfaceProperty",
+      ),
       [
         _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toRdf(
           {
@@ -26102,8 +26054,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .requiredPartialInterfaceToResolvedInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
+      ),
       [
         PartialInterface.$toRdf(
           _lazyPropertiesInterface
@@ -26117,8 +26070,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .setLazyToResolvedInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/setLazyToResolvedInterfaceProperty",
+      ),
       _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.flatMap(
         (item) => [
           item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
@@ -26128,8 +26082,9 @@ export namespace LazyPropertiesInterface {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesInterface.$schema.properties
-        .setPartialInterfaceToResolvedInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
+      ),
       _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.flatMap(
         (item) => [
           PartialInterface.$toRdf(item, {
@@ -26165,7 +26120,7 @@ export namespace LazyPropertiesInterface {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceProperty",
         ),
       },
@@ -26178,7 +26133,7 @@ export namespace LazyPropertiesInterface {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
         ),
       },
@@ -26191,7 +26146,7 @@ export namespace LazyPropertiesInterface {
             item: () => $NamedDefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
         ),
       },
@@ -26204,7 +26159,7 @@ export namespace LazyPropertiesInterface {
             item: () => PartialInterface.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
         ),
       },
@@ -26217,7 +26172,7 @@ export namespace LazyPropertiesInterface {
             item: () => PartialInterface.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         ),
       },
@@ -26230,7 +26185,7 @@ export namespace LazyPropertiesInterface {
             item: () => PartialInterfaceUnion.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         ),
       },
@@ -26240,7 +26195,7 @@ export namespace LazyPropertiesInterface {
           kind: "LazyObject" as const,
           partial: () => $DefaultPartial.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedInterfaceProperty",
         ),
       },
@@ -26250,7 +26205,7 @@ export namespace LazyPropertiesInterface {
           kind: "LazyObject" as const,
           partial: () => PartialInterface.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
         ),
       },
@@ -26263,7 +26218,7 @@ export namespace LazyPropertiesInterface {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedInterfaceProperty",
         ),
       },
@@ -26276,7 +26231,7 @@ export namespace LazyPropertiesInterface {
             item: () => PartialInterface.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
         ),
       },
@@ -27223,7 +27178,7 @@ export class PartialClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -27427,7 +27382,7 @@ export namespace PartialClass {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -28538,8 +28493,9 @@ export class LazyPropertiesClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedClassProperty",
+      ),
       this.optionalLazyToResolvedClassProperty.partial
         .toList()
         .flatMap((value) => [
@@ -28549,8 +28505,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .optionalLazyToResolvedClassUnionProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedClassUnionProperty",
+      ),
       this.optionalLazyToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -28560,8 +28517,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .optionalLazyToResolvedIriIdentifierClassProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
+      ),
       this.optionalLazyToResolvedIriIdentifierClassProperty.partial
         .toList()
         .flatMap((value) => [
@@ -28571,8 +28529,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .optionalPartialClassToResolvedClassProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialClassToResolvedClassProperty",
+      ),
       this.optionalPartialClassToResolvedClassProperty.partial
         .toList()
         .flatMap((value) => [
@@ -28582,8 +28541,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .optionalPartialClassToResolvedClassUnionProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
+      ),
       this.optionalPartialClassToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -28593,8 +28553,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .optionalPartialClassUnionToResolvedClassUnionProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
+      ),
       this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -28606,8 +28567,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/requiredLazyToResolvedClassProperty",
+      ),
       [
         this.requiredLazyToResolvedClassProperty.partial.$toRdf({
           graph: options?.graph,
@@ -28617,8 +28579,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .requiredPartialClassToResolvedClassProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/requiredPartialClassToResolvedClassProperty",
+      ),
       [
         this.requiredPartialClassToResolvedClassProperty.partial.$toRdf({
           graph: options?.graph,
@@ -28628,8 +28591,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/setLazyToResolvedClassProperty",
+      ),
       this.setLazyToResolvedClassProperty.partials.flatMap((item) => [
         item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
           .identifier,
@@ -28637,8 +28601,9 @@ export class LazyPropertiesClass {
       options?.graph,
     );
     resource.add(
-      LazyPropertiesClass.$schema.properties
-        .setPartialClassToResolvedClassProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/setPartialClassToResolvedClassProperty",
+      ),
       this.setPartialClassToResolvedClassProperty.partials.flatMap((item) => [
         item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
           .identifier,
@@ -29370,7 +29335,7 @@ export namespace LazyPropertiesClass {
                       focusResource: $parameters.resource,
                       propertyPath:
                         LazyPropertiesClass.$schema.properties
-                          .optionalLazyToResolvedClassProperty.identifier,
+                          .optionalLazyToResolvedClassProperty.path,
                       value: Maybe.empty(),
                     }),
               )
@@ -29417,8 +29382,7 @@ export namespace LazyPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           LazyPropertiesClass.$schema.properties
-                            .optionalLazyToResolvedClassUnionProperty
-                            .identifier,
+                            .optionalLazyToResolvedClassUnionProperty.path,
                         value: Maybe.empty(),
                       }),
                 )
@@ -29467,7 +29431,7 @@ export namespace LazyPropertiesClass {
                           propertyPath:
                             LazyPropertiesClass.$schema.properties
                               .optionalLazyToResolvedIriIdentifierClassProperty
-                              .identifier,
+                              .path,
                           value: Maybe.empty(),
                         }),
                   )
@@ -29516,7 +29480,7 @@ export namespace LazyPropertiesClass {
                             propertyPath:
                               LazyPropertiesClass.$schema.properties
                                 .optionalPartialClassToResolvedClassProperty
-                                .identifier,
+                                .path,
                             value: Maybe.empty(),
                           }),
                     )
@@ -29566,7 +29530,7 @@ export namespace LazyPropertiesClass {
                               propertyPath:
                                 LazyPropertiesClass.$schema.properties
                                   .optionalPartialClassToResolvedClassUnionProperty
-                                  .identifier,
+                                  .path,
                               value: Maybe.empty(),
                             }),
                       )
@@ -29618,7 +29582,7 @@ export namespace LazyPropertiesClass {
                                 propertyPath:
                                   LazyPropertiesClass.$schema.properties
                                     .optionalPartialClassUnionToResolvedClassUnionProperty
-                                    .identifier,
+                                    .path,
                                 value: Maybe.empty(),
                               }),
                         )
@@ -29744,8 +29708,7 @@ export namespace LazyPropertiesClass {
                                       focusResource: $parameters.resource,
                                       propertyPath:
                                         LazyPropertiesClass.$schema.properties
-                                          .setLazyToResolvedClassProperty
-                                          .identifier,
+                                          .setLazyToResolvedClassProperty.path,
                                       value: valuesArray,
                                     }),
                                   )
@@ -29796,7 +29759,7 @@ export namespace LazyPropertiesClass {
                                         propertyPath:
                                           LazyPropertiesClass.$schema.properties
                                             .setPartialClassToResolvedClassProperty
-                                            .identifier,
+                                            .path,
                                         value: valuesArray,
                                       }),
                                     )
@@ -29867,7 +29830,7 @@ export namespace LazyPropertiesClass {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassProperty",
         ),
       },
@@ -29880,7 +29843,7 @@ export namespace LazyPropertiesClass {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassUnionProperty",
         ),
       },
@@ -29893,7 +29856,7 @@ export namespace LazyPropertiesClass {
             item: () => $NamedDefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
         ),
       },
@@ -29906,7 +29869,7 @@ export namespace LazyPropertiesClass {
             item: () => PartialClass.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassProperty",
         ),
       },
@@ -29919,7 +29882,7 @@ export namespace LazyPropertiesClass {
             item: () => PartialClass.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
         ),
       },
@@ -29932,7 +29895,7 @@ export namespace LazyPropertiesClass {
             item: () => PartialClassUnion.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
         ),
       },
@@ -29942,7 +29905,7 @@ export namespace LazyPropertiesClass {
           kind: "LazyObject" as const,
           partial: () => $DefaultPartial.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedClassProperty",
         ),
       },
@@ -29952,7 +29915,7 @@ export namespace LazyPropertiesClass {
           kind: "LazyObject" as const,
           partial: () => PartialClass.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredPartialClassToResolvedClassProperty",
         ),
       },
@@ -29965,7 +29928,7 @@ export namespace LazyPropertiesClass {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedClassProperty",
         ),
       },
@@ -29978,7 +29941,7 @@ export namespace LazyPropertiesClass {
             item: () => PartialClass.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/setPartialClassToResolvedClassProperty",
         ),
       },
@@ -31104,8 +31067,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       _lazilyResolvedIriIdentifierInterface.$identifier,
     );
     resource.add(
-      LazilyResolvedIriIdentifierInterface.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [
         $literalFactory.string(
           _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
@@ -31132,7 +31094,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -31363,8 +31325,7 @@ export class LazilyResolvedIriIdentifierClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      LazilyResolvedIriIdentifierClass.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -31578,7 +31539,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -32074,8 +32035,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       );
     }
     resource.add(
-      LazilyResolvedInterfaceUnionMember2.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [
         $literalFactory.string(
           _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
@@ -32102,7 +32062,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -32685,8 +32645,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       );
     }
     resource.add(
-      LazilyResolvedInterfaceUnionMember1.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [
         $literalFactory.string(
           _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
@@ -32713,7 +32672,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -33048,8 +33007,7 @@ export class LazilyResolvedClassUnionMember2 {
       );
     }
     resource.add(
-      LazilyResolvedClassUnionMember2.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -33298,7 +33256,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -33633,8 +33591,7 @@ export class LazilyResolvedClassUnionMember1 {
       );
     }
     resource.add(
-      LazilyResolvedClassUnionMember1.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -33883,7 +33840,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -34475,8 +34432,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       );
     }
     resource.add(
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [
         $literalFactory.string(
           _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
@@ -34503,7 +34459,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -34845,8 +34801,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
       );
     }
     resource.add(
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
-        .lazilyResolvedStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
       options?.graph,
     );
@@ -35101,7 +35056,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -35449,8 +35404,7 @@ export class LanguageInPropertiesClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/languageInLiteralProperty"),
       this.languageInLiteralProperty.flatMap((item) => [item]),
       options?.graph,
     );
@@ -35677,7 +35631,7 @@ export namespace LanguageInPropertiesClass {
                   focusResource: $parameters.resource,
                   propertyPath:
                     LanguageInPropertiesClass.$schema.properties
-                      .languageInLiteralProperty.identifier,
+                      .languageInLiteralProperty.path,
                   value: valuesArray,
                 }),
               ),
@@ -35708,7 +35662,7 @@ export namespace LanguageInPropertiesClass {
           item: () => ({ kind: "Literal" as const, languageIn: ["en", "fr"] }),
           minCount: 1,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/languageInLiteralProperty",
         ),
       },
@@ -36022,8 +35976,7 @@ export class JsPrimitiveUnionPropertyClass {
       );
     }
     resource.add(
-      JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/jsPrimitiveUnionProperty"),
       this.jsPrimitiveUnionProperty.flatMap((item) =>
         typeof item === "string"
           ? ([$literalFactory.string(item)] as (
@@ -36373,7 +36326,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                     focusResource: $parameters.resource,
                     propertyPath:
                       JsPrimitiveUnionPropertyClass.$schema.properties
-                        .jsPrimitiveUnionProperty.identifier,
+                        .jsPrimitiveUnionProperty.path,
                     value: valuesArray,
                   }),
                 ),
@@ -36420,7 +36373,7 @@ export namespace JsPrimitiveUnionPropertyClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/jsPrimitiveUnionProperty",
         ),
       },
@@ -38052,8 +38005,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       _interfaceUnionMemberCommonParent.$identifier,
     );
     resource.add(
-      InterfaceUnionMemberCommonParentStatic.$schema.properties
-        .interfaceUnionMemberCommonParentProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/interfaceUnionMemberCommonParentProperty",
+      ),
       [
         $literalFactory.string(
           _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
@@ -38080,7 +38034,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       interfaceUnionMemberCommonParentProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
       },
@@ -38566,8 +38520,7 @@ export namespace InterfaceUnionMember2 {
       );
     }
     resource.add(
-      InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property
-        .identifier,
+      dataFactory.namedNode("http://example.com/interfaceUnionMember2Property"),
       [
         $literalFactory.string(
           _interfaceUnionMember2.interfaceUnionMember2Property,
@@ -38584,7 +38537,7 @@ export namespace InterfaceUnionMember2 {
       interfaceUnionMember2Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/interfaceUnionMember2Property",
         ),
       },
@@ -39161,8 +39114,7 @@ export namespace InterfaceUnionMember1 {
       );
     }
     resource.add(
-      InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property
-        .identifier,
+      dataFactory.namedNode("http://example.com/interfaceUnionMember1Property"),
       [
         $literalFactory.string(
           _interfaceUnionMember1.interfaceUnionMember1Property,
@@ -39179,7 +39131,7 @@ export namespace InterfaceUnionMember1 {
       interfaceUnionMember1Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/interfaceUnionMember1Property",
         ),
       },
@@ -39697,7 +39649,7 @@ export namespace Interface {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(_interface.$identifier);
     resource.add(
-      Interface.$schema.properties.interfaceProperty.identifier,
+      dataFactory.namedNode("http://example.com/interfaceProperty"),
       [$literalFactory.string(_interface.interfaceProperty)],
       options?.graph,
     );
@@ -39720,9 +39672,7 @@ export namespace Interface {
       interfaceProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/interfaceProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/interfaceProperty"),
       },
     },
   } as const;
@@ -39986,8 +39936,7 @@ export class IndirectRecursiveHelperClass {
       );
     }
     resource.add(
-      IndirectRecursiveHelperClass.$schema.properties.indirectRecursiveProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/indirectRecursiveProperty"),
       this.indirectRecursiveProperty
         .toList()
         .flatMap((value) => [
@@ -40233,7 +40182,7 @@ export namespace IndirectRecursiveHelperClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           IndirectRecursiveHelperClass.$schema.properties
-                            .indirectRecursiveProperty.identifier,
+                            .indirectRecursiveProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -40264,7 +40213,7 @@ export namespace IndirectRecursiveHelperClass {
           kind: "Maybe" as const,
           item: () => IndirectRecursiveClass.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/indirectRecursiveProperty",
         ),
       },
@@ -40588,8 +40537,9 @@ export class IndirectRecursiveClass {
       );
     }
     resource.add(
-      IndirectRecursiveClass.$schema.properties.indirectRecursiveHelperProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/indirectRecursiveHelperProperty",
+      ),
       this.indirectRecursiveHelperProperty
         .toList()
         .flatMap((value) => [
@@ -40843,7 +40793,7 @@ export namespace IndirectRecursiveClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           IndirectRecursiveClass.$schema.properties
-                            .indirectRecursiveHelperProperty.identifier,
+                            .indirectRecursiveHelperProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -40874,7 +40824,7 @@ export namespace IndirectRecursiveClass {
           kind: "Maybe" as const,
           item: () => IndirectRecursiveHelperClass.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/indirectRecursiveHelperProperty",
         ),
       },
@@ -41361,7 +41311,7 @@ export class InPropertiesClass {
       );
     }
     resource.add(
-      InPropertiesClass.$schema.properties.inBooleansProperty.identifier,
+      dataFactory.namedNode("http://example.com/inBooleansProperty"),
       this.inBooleansProperty
         .toList()
         .flatMap((value) => [
@@ -41370,7 +41320,7 @@ export class InPropertiesClass {
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inDateTimesProperty.identifier,
+      dataFactory.namedNode("http://example.com/inDateTimesProperty"),
       this.inDateTimesProperty
         .toList()
         .flatMap((value) => [
@@ -41379,7 +41329,7 @@ export class InPropertiesClass {
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inDoublesProperty.identifier,
+      dataFactory.namedNode("http://example.com/inDoublesProperty"),
       this.inDoublesProperty
         .toList()
         .flatMap((value) => [
@@ -41388,7 +41338,7 @@ export class InPropertiesClass {
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inIntegersProperty.identifier,
+      dataFactory.namedNode("http://example.com/inIntegersProperty"),
       this.inIntegersProperty
         .toList()
         .flatMap((value) => [
@@ -41397,12 +41347,12 @@ export class InPropertiesClass {
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inIrisProperty.identifier,
+      dataFactory.namedNode("http://example.com/inIrisProperty"),
       this.inIrisProperty.toList(),
       options?.graph,
     );
     resource.add(
-      InPropertiesClass.$schema.properties.inStringsProperty.identifier,
+      dataFactory.namedNode("http://example.com/inStringsProperty"),
       this.inStringsProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -41767,7 +41717,7 @@ export namespace InPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           InPropertiesClass.$schema.properties
-                            .inBooleansProperty.identifier,
+                            .inBooleansProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -41790,7 +41740,7 @@ export namespace InPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             InPropertiesClass.$schema.properties
-                              .inDateTimesProperty.identifier,
+                              .inDateTimesProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -41813,7 +41763,7 @@ export namespace InPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               InPropertiesClass.$schema.properties
-                                .inDoublesProperty.identifier,
+                                .inDoublesProperty.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -41836,7 +41786,7 @@ export namespace InPropertiesClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 InPropertiesClass.$schema.properties
-                                  .inIntegersProperty.identifier,
+                                  .inIntegersProperty.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -41873,7 +41823,7 @@ export namespace InPropertiesClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   InPropertiesClass.$schema.properties
-                                    .inIrisProperty.identifier,
+                                    .inIrisProperty.path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -41904,7 +41854,7 @@ export namespace InPropertiesClass {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     InPropertiesClass.$schema.properties
-                                      .inStringsProperty.identifier,
+                                      .inStringsProperty.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -41945,9 +41895,7 @@ export namespace InPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Boolean" as const, in: [true] }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inBooleansProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/inBooleansProperty"),
       },
       inDateTimesProperty: {
         kind: "Shacl" as const,
@@ -41958,9 +41906,7 @@ export namespace InPropertiesClass {
             in: [new Date("2018-04-09T10:00:00.000Z")],
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inDateTimesProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/inDateTimesProperty"),
       },
       inDoublesProperty: {
         kind: "Shacl" as const,
@@ -41968,9 +41914,7 @@ export namespace InPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const, in: [1, 2] }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inDoublesProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/inDoublesProperty"),
       },
       inIntegersProperty: {
         kind: "Shacl" as const,
@@ -41978,9 +41922,7 @@ export namespace InPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "BigInt" as const, in: [1n, 2n] }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inIntegersProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/inIntegersProperty"),
       },
       inIrisProperty: {
         kind: "Shacl" as const,
@@ -41994,7 +41936,7 @@ export namespace InPropertiesClass {
             ],
           }),
         }),
-        identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
+        path: dataFactory.namedNode("http://example.com/inIrisProperty"),
       },
       inStringsProperty: {
         kind: "Shacl" as const,
@@ -42002,9 +41944,7 @@ export namespace InPropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const, in: ["text", "html"] }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inStringsProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/inStringsProperty"),
       },
     },
   } as const;
@@ -42533,7 +42473,7 @@ export class InIdentifierClass {
       );
     }
     resource.add(
-      InIdentifierClass.$schema.properties.inIdentifierProperty.identifier,
+      dataFactory.namedNode("http://example.com/inIdentifierProperty"),
       this.inIdentifierProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -42826,7 +42766,7 @@ export namespace InIdentifierClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           InIdentifierClass.$schema.properties
-                            .inIdentifierProperty.identifier,
+                            .inIdentifierProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -42863,9 +42803,7 @@ export namespace InIdentifierClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/inIdentifierProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/inIdentifierProperty"),
       },
     },
   } as const;
@@ -43197,8 +43135,7 @@ export abstract class IdentifierOverride1Class {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      IdentifierOverride1ClassStatic.$schema.properties
-        .identifierOverrideProperty.identifier,
+      dataFactory.namedNode("http://example.com/identifierOverrideProperty"),
       [$literalFactory.string(this.identifierOverrideProperty)],
       options?.graph,
     );
@@ -43389,7 +43326,7 @@ export namespace IdentifierOverride1ClassStatic {
       identifierOverrideProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/identifierOverrideProperty",
         ),
       },
@@ -45306,13 +45243,12 @@ export class HasValuePropertiesClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      HasValuePropertiesClass.$schema.properties.hasIriValueProperty.identifier,
+      dataFactory.namedNode("http://example.com/hasIriValueProperty"),
       [this.hasIriValueProperty],
       options?.graph,
     );
     resource.add(
-      HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/hasLiteralValueProperty"),
       [$literalFactory.string(this.hasLiteralValueProperty)],
       options?.graph,
     );
@@ -45571,14 +45507,12 @@ export namespace HasValuePropertiesClass {
       hasIriValueProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "Iri" as const }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/hasIriValueProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/hasIriValueProperty"),
       },
       hasLiteralValueProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/hasLiteralValueProperty",
         ),
       },
@@ -45855,8 +45789,9 @@ export class FlattenClassUnionMember3 {
       );
     }
     resource.add(
-      FlattenClassUnionMember3.$schema.properties
-        .flattenClassUnionMember3Property.identifier,
+      dataFactory.namedNode(
+        "http://example.com/flattenClassUnionMember3Property",
+      ),
       [$literalFactory.string(this.flattenClassUnionMember3Property)],
       options?.graph,
     );
@@ -46107,7 +46042,7 @@ export namespace FlattenClassUnionMember3 {
       flattenClassUnionMember3Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/flattenClassUnionMember3Property",
         ),
       },
@@ -46460,8 +46395,7 @@ export class ExternClassPropertyClass {
       );
     }
     resource.add(
-      ExternClassPropertyClass.$schema.properties.externClassProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/externClassProperty"),
       this.externClassProperty
         .toList()
         .flatMap((value) => [
@@ -46703,7 +46637,7 @@ export namespace ExternClassPropertyClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           ExternClassPropertyClass.$schema.properties
-                            .externClassProperty.identifier,
+                            .externClassProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -46734,9 +46668,7 @@ export namespace ExternClassPropertyClass {
           kind: "Maybe" as const,
           item: () => ExternClass.$schema,
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/externClassProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/externClassProperty"),
       },
     },
   } as const;
@@ -47101,8 +47033,9 @@ export abstract class AbstractBaseClassForExternClass {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      AbstractBaseClassForExternClassStatic.$schema.properties
-        .abstractBaseClassForExternClassProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/abstractBaseClassForExternClassProperty",
+      ),
       [$literalFactory.string(this.abstractBaseClassForExternClassProperty)],
       options?.graph,
     );
@@ -47285,7 +47218,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       abstractBaseClassForExternClassProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/abstractBaseClassForExternClassProperty",
         ),
       },
@@ -47539,8 +47472,7 @@ export class ExplicitRdfTypeClass {
       );
     }
     resource.add(
-      ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/explicitRdfTypeProperty"),
       [$literalFactory.string(this.explicitRdfTypeProperty)],
       options?.graph,
     );
@@ -47786,7 +47718,7 @@ export namespace ExplicitRdfTypeClass {
       explicitRdfTypeProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/explicitRdfTypeProperty",
         ),
       },
@@ -48130,8 +48062,9 @@ export class ExplicitFromToRdfTypesClass {
       );
     }
     resource.add(
-      ExplicitFromToRdfTypesClass.$schema.properties
-        .explicitFromToRdfTypesProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/explicitFromToRdfTypesProperty",
+      ),
       [$literalFactory.string(this.explicitFromToRdfTypesProperty)],
       options?.graph,
     );
@@ -48382,7 +48315,7 @@ export namespace ExplicitFromToRdfTypesClass {
       explicitFromToRdfTypesProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/explicitFromToRdfTypesProperty",
         ),
       },
@@ -48735,8 +48668,7 @@ export class DirectRecursiveClass {
       );
     }
     resource.add(
-      DirectRecursiveClass.$schema.properties.directRecursiveProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/directRecursiveProperty"),
       this.directRecursiveProperty
         .toList()
         .flatMap((value) => [
@@ -48982,7 +48914,7 @@ export namespace DirectRecursiveClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           DirectRecursiveClass.$schema.properties
-                            .directRecursiveProperty.identifier,
+                            .directRecursiveProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -49013,7 +48945,7 @@ export namespace DirectRecursiveClass {
           kind: "Maybe" as const,
           item: () => DirectRecursiveClass.$schema,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/directRecursiveProperty",
         ),
       },
@@ -49484,8 +49416,7 @@ export class DefaultValuePropertiesClass {
       );
     }
     resource.add(
-      DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/dateDefaultValueProperty"),
       $dateEquals(
         this.dateDefaultValueProperty,
         new Date("2018-04-09T00:00:00.000Z"),
@@ -49500,8 +49431,7 @@ export class DefaultValuePropertiesClass {
       options?.graph,
     );
     resource.add(
-      DefaultValuePropertiesClass.$schema.properties
-        .dateTimeDefaultValueProperty.identifier,
+      dataFactory.namedNode("http://example.com/dateTimeDefaultValueProperty"),
       $dateEquals(
         this.dateTimeDefaultValueProperty,
         new Date("2018-04-09T10:00:00.000Z"),
@@ -49516,8 +49446,9 @@ export class DefaultValuePropertiesClass {
       options?.graph,
     );
     resource.add(
-      DefaultValuePropertiesClass.$schema.properties
-        .falseBooleanDefaultValueProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/falseBooleanDefaultValueProperty",
+      ),
       $strictEquals(this.falseBooleanDefaultValueProperty, false).isLeft()
         ? [
             $literalFactory.boolean(
@@ -49529,8 +49460,7 @@ export class DefaultValuePropertiesClass {
       options?.graph,
     );
     resource.add(
-      DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/numberDefaultValueProperty"),
       $strictEquals(this.numberDefaultValueProperty, 0).isLeft()
         ? [
             $literalFactory.number(
@@ -49542,16 +49472,16 @@ export class DefaultValuePropertiesClass {
       options?.graph,
     );
     resource.add(
-      DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/stringDefaultValueProperty"),
       $strictEquals(this.stringDefaultValueProperty, "").isLeft()
         ? [$literalFactory.string(this.stringDefaultValueProperty)]
         : [],
       options?.graph,
     );
     resource.add(
-      DefaultValuePropertiesClass.$schema.properties
-        .trueBooleanDefaultValueProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/trueBooleanDefaultValueProperty",
+      ),
       $strictEquals(this.trueBooleanDefaultValueProperty, true).isLeft()
         ? [
             $literalFactory.boolean(
@@ -49894,7 +49824,7 @@ export namespace DefaultValuePropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           DefaultValuePropertiesClass.$schema.properties
-                            .dateDefaultValueProperty.identifier,
+                            .dateDefaultValueProperty.path,
                         term: dataFactory.literal(
                           "2018-04-09",
                           $RdfVocabularies.xsd.date,
@@ -49917,7 +49847,7 @@ export namespace DefaultValuePropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             DefaultValuePropertiesClass.$schema.properties
-                              .dateTimeDefaultValueProperty.identifier,
+                              .dateTimeDefaultValueProperty.path,
                           term: dataFactory.literal(
                             "2018-04-09T10:00:00Z",
                             $RdfVocabularies.xsd.dateTime,
@@ -49943,7 +49873,7 @@ export namespace DefaultValuePropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               DefaultValuePropertiesClass.$schema.properties
-                                .falseBooleanDefaultValueProperty.identifier,
+                                .falseBooleanDefaultValueProperty.path,
                             term: dataFactory.literal(
                               "false",
                               $RdfVocabularies.xsd.boolean,
@@ -49968,7 +49898,7 @@ export namespace DefaultValuePropertiesClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 DefaultValuePropertiesClass.$schema.properties
-                                  .numberDefaultValueProperty.identifier,
+                                  .numberDefaultValueProperty.path,
                               term: dataFactory.literal(
                                 "0.0e0",
                                 $RdfVocabularies.xsd.double,
@@ -49994,7 +49924,7 @@ export namespace DefaultValuePropertiesClass {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   DefaultValuePropertiesClass.$schema.properties
-                                    .stringDefaultValueProperty.identifier,
+                                    .stringDefaultValueProperty.path,
                                 term: dataFactory.literal(""),
                               }).toValues(),
                         )
@@ -50024,8 +49954,7 @@ export namespace DefaultValuePropertiesClass {
                                   propertyPath:
                                     DefaultValuePropertiesClass.$schema
                                       .properties
-                                      .trueBooleanDefaultValueProperty
-                                      .identifier,
+                                      .trueBooleanDefaultValueProperty.path,
                                   term: dataFactory.literal(
                                     "true",
                                     $RdfVocabularies.xsd.boolean,
@@ -50080,7 +50009,7 @@ export namespace DefaultValuePropertiesClass {
             $RdfVocabularies.xsd.date,
           ),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/dateDefaultValueProperty",
         ),
       },
@@ -50094,7 +50023,7 @@ export namespace DefaultValuePropertiesClass {
             $RdfVocabularies.xsd.dateTime,
           ),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/dateTimeDefaultValueProperty",
         ),
       },
@@ -50108,7 +50037,7 @@ export namespace DefaultValuePropertiesClass {
             $RdfVocabularies.xsd.boolean,
           ),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/falseBooleanDefaultValueProperty",
         ),
       },
@@ -50122,7 +50051,7 @@ export namespace DefaultValuePropertiesClass {
             $RdfVocabularies.xsd.double,
           ),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/numberDefaultValueProperty",
         ),
       },
@@ -50133,7 +50062,7 @@ export namespace DefaultValuePropertiesClass {
           item: () => ({ kind: "String" as const }),
           defaultValue: dataFactory.literal(""),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/stringDefaultValueProperty",
         ),
       },
@@ -50147,7 +50076,7 @@ export namespace DefaultValuePropertiesClass {
             $RdfVocabularies.xsd.boolean,
           ),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/trueBooleanDefaultValueProperty",
         ),
       },
@@ -50978,8 +50907,7 @@ export class DateUnionPropertiesClass {
       );
     }
     resource.add(
-      DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/dateOrDateTimeProperty"),
       this.dateOrDateTimeProperty
         .toList()
         .flatMap((value) =>
@@ -51013,8 +50941,7 @@ export class DateUnionPropertiesClass {
       options?.graph,
     );
     resource.add(
-      DateUnionPropertiesClass.$schema.properties.dateOrStringProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/dateOrStringProperty"),
       this.dateOrStringProperty
         .toList()
         .flatMap((value) =>
@@ -51043,8 +50970,7 @@ export class DateUnionPropertiesClass {
       options?.graph,
     );
     resource.add(
-      DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/dateTimeOrDateProperty"),
       this.dateTimeOrDateProperty
         .toList()
         .flatMap((value) =>
@@ -51078,8 +51004,7 @@ export class DateUnionPropertiesClass {
       options?.graph,
     );
     resource.add(
-      DateUnionPropertiesClass.$schema.properties.stringOrDateProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/stringOrDateProperty"),
       this.stringOrDateProperty
         .toList()
         .flatMap((value) =>
@@ -51688,7 +51613,7 @@ export namespace DateUnionPropertiesClass {
                         focusResource: $parameters.resource,
                         propertyPath:
                           DateUnionPropertiesClass.$schema.properties
-                            .dateOrDateTimeProperty.identifier,
+                            .dateOrDateTimeProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -51770,7 +51695,7 @@ export namespace DateUnionPropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             DateUnionPropertiesClass.$schema.properties
-                              .dateOrStringProperty.identifier,
+                              .dateOrStringProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -51846,7 +51771,7 @@ export namespace DateUnionPropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               DateUnionPropertiesClass.$schema.properties
-                                .dateTimeOrDateProperty.identifier,
+                                .dateTimeOrDateProperty.path,
                             value: Maybe.empty(),
                           }),
                     ),
@@ -51928,7 +51853,7 @@ export namespace DateUnionPropertiesClass {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 DateUnionPropertiesClass.$schema.properties
-                                  .stringOrDateProperty.identifier,
+                                  .stringOrDateProperty.path,
                               value: Maybe.empty(),
                             }),
                       ),
@@ -51977,7 +51902,7 @@ export namespace DateUnionPropertiesClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/dateOrDateTimeProperty",
         ),
       },
@@ -51999,9 +51924,7 @@ export namespace DateUnionPropertiesClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/dateOrStringProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/dateOrStringProperty"),
       },
       dateTimeOrDateProperty: {
         kind: "Shacl" as const,
@@ -52021,7 +51944,7 @@ export namespace DateUnionPropertiesClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/dateTimeOrDateProperty",
         ),
       },
@@ -52043,9 +51966,7 @@ export namespace DateUnionPropertiesClass {
             },
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/stringOrDateProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/stringOrDateProperty"),
       },
     },
   } as const;
@@ -53668,74 +53589,70 @@ export class ConvertibleTypePropertiesClass {
       );
     }
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleIriNonEmptySetProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/convertibleIriNonEmptySetProperty",
+      ),
       this.convertibleIriNonEmptySetProperty.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleIriOptionProperty.identifier,
+      dataFactory.namedNode("http://example.com/convertibleIriOptionProperty"),
       this.convertibleIriOptionProperty.toList(),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/convertibleIriProperty"),
       [this.convertibleIriProperty],
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleIriSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/convertibleIriSetProperty"),
       this.convertibleIriSetProperty.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleLiteralNonEmptySetProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/convertibleLiteralNonEmptySetProperty",
+      ),
       this.convertibleLiteralNonEmptySetProperty.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleLiteralOptionProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/convertibleLiteralOptionProperty",
+      ),
       this.convertibleLiteralOptionProperty.toList(),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleLiteralProperty.identifier,
+      dataFactory.namedNode("http://example.com/convertibleLiteralProperty"),
       [this.convertibleLiteralProperty],
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleLiteralSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/convertibleLiteralSetProperty"),
       this.convertibleLiteralSetProperty.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleTermNonEmptySetProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/convertibleTermNonEmptySetProperty",
+      ),
       this.convertibleTermNonEmptySetProperty.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleTermOptionProperty.identifier,
+      dataFactory.namedNode("http://example.com/convertibleTermOptionProperty"),
       this.convertibleTermOptionProperty.toList(),
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/convertibleTermProperty"),
       [this.convertibleTermProperty],
       options?.graph,
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$schema.properties
-        .convertibleTermSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/convertibleTermSetProperty"),
       this.convertibleTermSetProperty.flatMap((item) => [item]),
       options?.graph,
     );
@@ -54458,7 +54375,7 @@ export namespace ConvertibleTypePropertiesClass {
                     focusResource: $parameters.resource,
                     propertyPath:
                       ConvertibleTypePropertiesClass.$schema.properties
-                        .convertibleIriNonEmptySetProperty.identifier,
+                        .convertibleIriNonEmptySetProperty.path,
                     value: valuesArray,
                   }),
                 ),
@@ -54477,7 +54394,7 @@ export namespace ConvertibleTypePropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ConvertibleTypePropertiesClass.$schema.properties
-                              .convertibleIriOptionProperty.identifier,
+                              .convertibleIriOptionProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -54506,7 +54423,7 @@ export namespace ConvertibleTypePropertiesClass {
                           focusResource: $parameters.resource,
                           propertyPath:
                             ConvertibleTypePropertiesClass.$schema.properties
-                              .convertibleIriSetProperty.identifier,
+                              .convertibleIriSetProperty.path,
                           value: valuesArray,
                         }),
                       ),
@@ -54539,8 +54456,7 @@ export namespace ConvertibleTypePropertiesClass {
                             focusResource: $parameters.resource,
                             propertyPath:
                               ConvertibleTypePropertiesClass.$schema.properties
-                                .convertibleLiteralNonEmptySetProperty
-                                .identifier,
+                                .convertibleLiteralNonEmptySetProperty.path,
                             value: valuesArray,
                           }),
                         ),
@@ -54569,8 +54485,7 @@ export namespace ConvertibleTypePropertiesClass {
                                   propertyPath:
                                     ConvertibleTypePropertiesClass.$schema
                                       .properties
-                                      .convertibleLiteralOptionProperty
-                                      .identifier,
+                                      .convertibleLiteralOptionProperty.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -54615,7 +54530,7 @@ export namespace ConvertibleTypePropertiesClass {
                                   propertyPath:
                                     ConvertibleTypePropertiesClass.$schema
                                       .properties.convertibleLiteralSetProperty
-                                      .identifier,
+                                      .path,
                                   value: valuesArray,
                                 }),
                               ),
@@ -54649,7 +54564,7 @@ export namespace ConvertibleTypePropertiesClass {
                                       ConvertibleTypePropertiesClass.$schema
                                         .properties
                                         .convertibleTermNonEmptySetProperty
-                                        .identifier,
+                                        .path,
                                     value: valuesArray,
                                   }),
                                 ),
@@ -54676,7 +54591,7 @@ export namespace ConvertibleTypePropertiesClass {
                                             ConvertibleTypePropertiesClass
                                               .$schema.properties
                                               .convertibleTermOptionProperty
-                                              .identifier,
+                                              .path,
                                           value: Maybe.empty(),
                                         }),
                                   ),
@@ -54711,8 +54626,7 @@ export namespace ConvertibleTypePropertiesClass {
                                           propertyPath:
                                             ConvertibleTypePropertiesClass
                                               .$schema.properties
-                                              .convertibleTermSetProperty
-                                              .identifier,
+                                              .convertibleTermSetProperty.path,
                                           value: valuesArray,
                                         }),
                                       ),
@@ -54766,7 +54680,7 @@ export namespace ConvertibleTypePropertiesClass {
           item: () => ({ kind: "Iri" as const }),
           minCount: 1,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleIriNonEmptySetProperty",
         ),
       },
@@ -54776,14 +54690,14 @@ export namespace ConvertibleTypePropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleIriOptionProperty",
         ),
       },
       convertibleIriProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "Iri" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleIriProperty",
         ),
       },
@@ -54793,7 +54707,7 @@ export namespace ConvertibleTypePropertiesClass {
           kind: "Set" as const,
           item: () => ({ kind: "Iri" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleIriSetProperty",
         ),
       },
@@ -54804,7 +54718,7 @@ export namespace ConvertibleTypePropertiesClass {
           item: () => ({ kind: "Literal" as const }),
           minCount: 1,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleLiteralNonEmptySetProperty",
         ),
       },
@@ -54814,14 +54728,14 @@ export namespace ConvertibleTypePropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleLiteralOptionProperty",
         ),
       },
       convertibleLiteralProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "Literal" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleLiteralProperty",
         ),
       },
@@ -54831,7 +54745,7 @@ export namespace ConvertibleTypePropertiesClass {
           kind: "Set" as const,
           item: () => ({ kind: "Literal" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleLiteralSetProperty",
         ),
       },
@@ -54842,7 +54756,7 @@ export namespace ConvertibleTypePropertiesClass {
           item: () => ({ kind: "Term" as const }),
           minCount: 1,
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleTermNonEmptySetProperty",
         ),
       },
@@ -54852,14 +54766,14 @@ export namespace ConvertibleTypePropertiesClass {
           kind: "Maybe" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleTermOptionProperty",
         ),
       },
       convertibleTermProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "Term" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleTermProperty",
         ),
       },
@@ -54869,7 +54783,7 @@ export namespace ConvertibleTypePropertiesClass {
           kind: "Set" as const,
           item: () => ({ kind: "Term" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/convertibleTermSetProperty",
         ),
       },
@@ -55877,8 +55791,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
       );
     }
     resource.add(
-      BaseInterfaceWithPropertiesStatic.$schema.properties
-        .baseInterfaceWithPropertiesProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/baseInterfaceWithPropertiesProperty",
+      ),
       [
         $literalFactory.string(
           _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
@@ -55910,7 +55825,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       baseInterfaceWithPropertiesProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/baseInterfaceWithPropertiesProperty",
         ),
       },
@@ -57048,8 +56963,9 @@ export namespace ConcreteParentInterfaceStatic {
       );
     }
     resource.add(
-      ConcreteParentInterfaceStatic.$schema.properties
-        .concreteParentInterfaceProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/concreteParentInterfaceProperty",
+      ),
       [
         $literalFactory.string(
           _concreteParentInterface.concreteParentInterfaceProperty,
@@ -57066,7 +56982,7 @@ export namespace ConcreteParentInterfaceStatic {
       concreteParentInterfaceProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/concreteParentInterfaceProperty",
         ),
       },
@@ -57666,8 +57582,9 @@ export namespace ConcreteChildInterface {
       );
     }
     resource.add(
-      ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty
-        .identifier,
+      dataFactory.namedNode(
+        "http://example.com/concreteChildInterfaceProperty",
+      ),
       [
         $literalFactory.string(
           _concreteChildInterface.concreteChildInterfaceProperty,
@@ -57684,7 +57601,7 @@ export namespace ConcreteChildInterface {
       concreteChildInterfaceProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/concreteChildInterfaceProperty",
         ),
       },
@@ -58047,8 +57964,9 @@ export abstract class AbstractBaseClassWithProperties {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      AbstractBaseClassWithPropertiesStatic.$schema.properties
-        .abstractBaseClassWithPropertiesProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/abstractBaseClassWithPropertiesProperty",
+      ),
       [$literalFactory.string(this.abstractBaseClassWithPropertiesProperty)],
       options?.graph,
     );
@@ -58236,7 +58154,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       abstractBaseClassWithPropertiesProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/abstractBaseClassWithPropertiesProperty",
         ),
       },
@@ -58748,8 +58666,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
       );
     }
     resource.add(
-      ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/concreteParentClassProperty"),
       [$literalFactory.string(this.concreteParentClassProperty)],
       options?.graph,
     );
@@ -58993,7 +58910,7 @@ export namespace ConcreteParentClassStatic {
       concreteParentClassProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/concreteParentClassProperty",
         ),
       },
@@ -59341,8 +59258,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
       );
     }
     resource.add(
-      ConcreteChildClass.$schema.properties.concreteChildClassProperty
-        .identifier,
+      dataFactory.namedNode("http://example.com/concreteChildClassProperty"),
       [$literalFactory.string(this.concreteChildClassProperty)],
       options?.graph,
     );
@@ -59580,7 +59496,7 @@ export namespace ConcreteChildClass {
       concreteChildClassProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/concreteChildClassProperty",
         ),
       },
@@ -59913,8 +59829,9 @@ export abstract class ClassUnionMemberCommonParent {
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
-      ClassUnionMemberCommonParentStatic.$schema.properties
-        .classUnionMemberCommonParentProperty.identifier,
+      dataFactory.namedNode(
+        "http://example.com/classUnionMemberCommonParentProperty",
+      ),
       [$literalFactory.string(this.classUnionMemberCommonParentProperty)],
       options?.graph,
     );
@@ -60098,7 +60015,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       classUnionMemberCommonParentProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/classUnionMemberCommonParentProperty",
         ),
       },
@@ -60316,7 +60233,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
       );
     }
     resource.add(
-      ClassUnionMember2.$schema.properties.classUnionMember2Property.identifier,
+      dataFactory.namedNode("http://example.com/classUnionMember2Property"),
       [$literalFactory.string(this.classUnionMember2Property)],
       options?.graph,
     );
@@ -60553,7 +60470,7 @@ export namespace ClassUnionMember2 {
       classUnionMember2Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/classUnionMember2Property",
         ),
       },
@@ -60862,7 +60779,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
       );
     }
     resource.add(
-      ClassUnionMember1.$schema.properties.classUnionMember1Property.identifier,
+      dataFactory.namedNode("http://example.com/classUnionMember1Property"),
       [$literalFactory.string(this.classUnionMember1Property)],
       options?.graph,
     );
@@ -61099,7 +61016,7 @@ export namespace ClassUnionMember1 {
       classUnionMember1Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/classUnionMember1Property",
         ),
       },
@@ -63400,7 +63317,7 @@ export namespace ClassUnion {
       classUnionMemberCommonParentProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/classUnionMemberCommonParentProperty",
         ),
       },
@@ -64117,7 +64034,7 @@ export namespace InterfaceUnion {
       interfaceUnionMemberCommonParentProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
       },
@@ -64476,7 +64393,7 @@ export namespace LazilyResolvedClassUnion {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -64870,7 +64787,7 @@ export namespace LazilyResolvedInterfaceUnion {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -65228,7 +65145,7 @@ export namespace PartialClassUnion {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
@@ -65591,7 +65508,7 @@ export namespace PartialInterfaceUnion {
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
       },
