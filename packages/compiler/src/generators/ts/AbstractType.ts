@@ -248,7 +248,7 @@ export abstract class AbstractType {
    *
    * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
    *   graph: DefaultGraph | NamedNode | undefined to .add to; if undefined, add to the default graph
-   *   predicate: predicate (NamedNode)
+   *   propertyPath: predicate path (NamedNode) or InversePath on a predicate path
    *   resource: the Resource to .add to
    *   resourceSet: ResourceSet for any new Resources needed while conversion (of e.g., nested objects)
    *   value: value of this type, to be converted to (BlankNode | Literal | NamedNode | bigint | boolean | number | string) or an array of the same
@@ -256,7 +256,7 @@ export abstract class AbstractType {
   abstract toRdfExpression(parameters: {
     variables: {
       graph: Code;
-      predicate: Code;
+      propertyPath: Code;
       resource: Code;
       resourceSet: Code;
       value: Code;

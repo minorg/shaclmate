@@ -331,15 +331,24 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["toRdfStatements"]
   >[0]): readonly Code[] {
-    if (this.path.termType !== "NamedNode") {
-      return [];
+    switch (this.path.termType) {
+      case "NamedNode":
+        break;
+      case "InversePath":
+        if (this.path.path.termType === "NamedNode") {
+          break;
+        }
+        return [];
+      default:
+        return [];
     }
-    const predicate = rdfjsTermExpression(this.path);
+
+    const propertyPath = propertyPathToCode(this.path);
     return this.path.termType === "NamedNode"
       ? [
-          code`${variables.resource}.add(${predicate}, ${this.type.toRdfExpression(
+          code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfExpression(
             {
-              variables: { ...variables, predicate },
+              variables: { ...variables, propertyPath },
             },
           )}, ${variables.graph});`,
         ]
