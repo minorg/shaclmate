@@ -20061,6 +20061,1375 @@ export namespace NonClass {
     );
     return patterns;
   }
+} /**
+ * Shape that has properties with different sh:nodeKind combinations
+ */
+
+export class NodeKindsClass {
+  private _$identifier?: NodeKindsClass.$Identifier;
+
+  readonly $type: "NodeKindsClass" = "NodeKindsClass" as const;
+
+  readonly blankNodeKindProperty: BlankNode;
+
+  readonly blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
+
+  readonly blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
+
+  readonly iriNodeKindProperty: NamedNode;
+
+  readonly iriOrLiteralNodeKindProperty: NamedNode | Literal;
+
+  readonly literalNodeKindProperty: Literal;
+
+  constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly blankNodeKindProperty: BlankNode;
+    readonly blankNodeOrIriNodeKindProperty: (BlankNode | NamedNode) | string;
+    readonly blankNodeOrLiteralNodeKindProperty:
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | (BlankNode | Literal);
+    readonly iriNodeKindProperty: NamedNode | string;
+    readonly iriOrLiteralNodeKindProperty:
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | (NamedNode | Literal);
+    readonly literalNodeKindProperty:
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (parameters.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+    this.blankNodeKindProperty = parameters.blankNodeKindProperty;
+    if (typeof parameters.blankNodeOrIriNodeKindProperty === "object") {
+      this.blankNodeOrIriNodeKindProperty =
+        parameters.blankNodeOrIriNodeKindProperty;
+    } else if (typeof parameters.blankNodeOrIriNodeKindProperty === "string") {
+      this.blankNodeOrIriNodeKindProperty = dataFactory.namedNode(
+        parameters.blankNodeOrIriNodeKindProperty,
+      );
+    } else {
+      this.blankNodeOrIriNodeKindProperty =
+        parameters.blankNodeOrIriNodeKindProperty satisfies never;
+    }
+    if (typeof parameters.blankNodeOrLiteralNodeKindProperty === "bigint") {
+      this.blankNodeOrLiteralNodeKindProperty = $literalFactory.bigint(
+        parameters.blankNodeOrLiteralNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.blankNodeOrLiteralNodeKindProperty === "boolean"
+    ) {
+      this.blankNodeOrLiteralNodeKindProperty = $literalFactory.boolean(
+        parameters.blankNodeOrLiteralNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.blankNodeOrLiteralNodeKindProperty === "object" &&
+      parameters.blankNodeOrLiteralNodeKindProperty instanceof Date
+    ) {
+      this.blankNodeOrLiteralNodeKindProperty = $literalFactory.date(
+        parameters.blankNodeOrLiteralNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.blankNodeOrLiteralNodeKindProperty === "number"
+    ) {
+      this.blankNodeOrLiteralNodeKindProperty = $literalFactory.number(
+        parameters.blankNodeOrLiteralNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.blankNodeOrLiteralNodeKindProperty === "string"
+    ) {
+      this.blankNodeOrLiteralNodeKindProperty = $literalFactory.string(
+        parameters.blankNodeOrLiteralNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.blankNodeOrLiteralNodeKindProperty === "object"
+    ) {
+      this.blankNodeOrLiteralNodeKindProperty =
+        parameters.blankNodeOrLiteralNodeKindProperty;
+    } else {
+      this.blankNodeOrLiteralNodeKindProperty =
+        parameters.blankNodeOrLiteralNodeKindProperty satisfies never;
+    }
+    if (typeof parameters.iriNodeKindProperty === "object") {
+      this.iriNodeKindProperty = parameters.iriNodeKindProperty;
+    } else if (typeof parameters.iriNodeKindProperty === "string") {
+      this.iriNodeKindProperty = dataFactory.namedNode(
+        parameters.iriNodeKindProperty,
+      );
+    } else {
+      this.iriNodeKindProperty = parameters.iriNodeKindProperty satisfies never;
+    }
+    if (typeof parameters.iriOrLiteralNodeKindProperty === "bigint") {
+      this.iriOrLiteralNodeKindProperty = $literalFactory.bigint(
+        parameters.iriOrLiteralNodeKindProperty,
+      );
+    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "boolean") {
+      this.iriOrLiteralNodeKindProperty = $literalFactory.boolean(
+        parameters.iriOrLiteralNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.iriOrLiteralNodeKindProperty === "object" &&
+      parameters.iriOrLiteralNodeKindProperty instanceof Date
+    ) {
+      this.iriOrLiteralNodeKindProperty = $literalFactory.date(
+        parameters.iriOrLiteralNodeKindProperty,
+      );
+    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "number") {
+      this.iriOrLiteralNodeKindProperty = $literalFactory.number(
+        parameters.iriOrLiteralNodeKindProperty,
+      );
+    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "string") {
+      this.iriOrLiteralNodeKindProperty = $literalFactory.string(
+        parameters.iriOrLiteralNodeKindProperty,
+      );
+    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "object") {
+      this.iriOrLiteralNodeKindProperty =
+        parameters.iriOrLiteralNodeKindProperty;
+    } else {
+      this.iriOrLiteralNodeKindProperty =
+        parameters.iriOrLiteralNodeKindProperty satisfies never;
+    }
+    if (typeof parameters.literalNodeKindProperty === "bigint") {
+      this.literalNodeKindProperty = $literalFactory.bigint(
+        parameters.literalNodeKindProperty,
+      );
+    } else if (typeof parameters.literalNodeKindProperty === "boolean") {
+      this.literalNodeKindProperty = $literalFactory.boolean(
+        parameters.literalNodeKindProperty,
+      );
+    } else if (
+      typeof parameters.literalNodeKindProperty === "object" &&
+      parameters.literalNodeKindProperty instanceof Date
+    ) {
+      this.literalNodeKindProperty = $literalFactory.date(
+        parameters.literalNodeKindProperty,
+      );
+    } else if (typeof parameters.literalNodeKindProperty === "number") {
+      this.literalNodeKindProperty = $literalFactory.number(
+        parameters.literalNodeKindProperty,
+      );
+    } else if (typeof parameters.literalNodeKindProperty === "string") {
+      this.literalNodeKindProperty = $literalFactory.string(
+        parameters.literalNodeKindProperty,
+      );
+    } else if (typeof parameters.literalNodeKindProperty === "object") {
+      this.literalNodeKindProperty = parameters.literalNodeKindProperty;
+    } else {
+      this.literalNodeKindProperty =
+        parameters.literalNodeKindProperty satisfies never;
+    }
+  }
+
+  get $identifier(): NodeKindsClass.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: NodeKindsClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.blankNodeKindProperty,
+          other.blankNodeKindProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "blankNodeKindProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.blankNodeOrIriNodeKindProperty,
+          other.blankNodeOrIriNodeKindProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "blankNodeOrIriNodeKindProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.blankNodeOrLiteralNodeKindProperty,
+          other.blankNodeOrLiteralNodeKindProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "blankNodeOrLiteralNodeKindProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.iriNodeKindProperty,
+          other.iriNodeKindProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "iriNodeKindProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.iriOrLiteralNodeKindProperty,
+          other.iriOrLiteralNodeKindProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "iriOrLiteralNodeKindProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.literalNodeKindProperty,
+          other.literalNodeKindProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "literalNodeKindProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(this.blankNodeKindProperty.termType);
+    _hasher.update(this.blankNodeKindProperty.value);
+    _hasher.update(this.blankNodeOrIriNodeKindProperty.termType);
+    _hasher.update(this.blankNodeOrIriNodeKindProperty.value);
+    _hasher.update(this.blankNodeOrLiteralNodeKindProperty.termType);
+    _hasher.update(this.blankNodeOrLiteralNodeKindProperty.value);
+    _hasher.update(this.iriNodeKindProperty.termType);
+    _hasher.update(this.iriNodeKindProperty.value);
+    _hasher.update(this.iriOrLiteralNodeKindProperty.termType);
+    _hasher.update(this.iriOrLiteralNodeKindProperty.value);
+    _hasher.update(this.literalNodeKindProperty.termType);
+    _hasher.update(this.literalNodeKindProperty.value);
+    _hasher.update(this.literalNodeKindProperty.datatype.value);
+    _hasher.update(this.literalNodeKindProperty.language);
+    return _hasher;
+  }
+
+  $toJson(): NodeKindsClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        blankNodeKindProperty: {
+          "@id": `_:${this.blankNodeKindProperty.value}`,
+        },
+        blankNodeOrIriNodeKindProperty:
+          this.blankNodeOrIriNodeKindProperty.termType === "BlankNode"
+            ? { "@id": `_:${this.blankNodeOrIriNodeKindProperty.value}` }
+            : { "@id": this.blankNodeOrIriNodeKindProperty.value },
+        blankNodeOrLiteralNodeKindProperty:
+          this.blankNodeOrLiteralNodeKindProperty.termType === "Literal"
+            ? {
+                "@language":
+                  this.blankNodeOrLiteralNodeKindProperty.language.length > 0
+                    ? this.blankNodeOrLiteralNodeKindProperty.language
+                    : undefined,
+                "@type":
+                  this.blankNodeOrLiteralNodeKindProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.blankNodeOrLiteralNodeKindProperty.datatype.value
+                    : undefined,
+                "@value": this.blankNodeOrLiteralNodeKindProperty.value,
+                termType: "Literal" as const,
+              }
+            : {
+                "@id": `_:${this.blankNodeOrLiteralNodeKindProperty.value}`,
+                termType: "BlankNode" as const,
+              },
+        iriNodeKindProperty: { "@id": this.iriNodeKindProperty.value },
+        iriOrLiteralNodeKindProperty:
+          this.iriOrLiteralNodeKindProperty.termType === "Literal"
+            ? {
+                "@language":
+                  this.iriOrLiteralNodeKindProperty.language.length > 0
+                    ? this.iriOrLiteralNodeKindProperty.language
+                    : undefined,
+                "@type":
+                  this.iriOrLiteralNodeKindProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.iriOrLiteralNodeKindProperty.datatype.value
+                    : undefined,
+                "@value": this.iriOrLiteralNodeKindProperty.value,
+                termType: "Literal" as const,
+              }
+            : {
+                "@id": this.iriOrLiteralNodeKindProperty.value,
+                termType: "NamedNode" as const,
+              },
+        literalNodeKindProperty: {
+          "@language":
+            this.literalNodeKindProperty.language.length > 0
+              ? this.literalNodeKindProperty.language
+              : undefined,
+          "@type":
+            this.literalNodeKindProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.literalNodeKindProperty.datatype.value
+              : undefined,
+          "@value": this.literalNodeKindProperty.value,
+        },
+      } satisfies NodeKindsClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/NodeKindsClass"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/blankNodeKindProperty"),
+      [this.blankNodeKindProperty],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/blankNodeOrIriNodeKindProperty",
+      ),
+      [this.blankNodeOrIriNodeKindProperty],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/blankNodeOrLiteralNodeKindProperty",
+      ),
+      [this.blankNodeOrLiteralNodeKindProperty],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/iriNodeKindProperty"),
+      [this.iriNodeKindProperty],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/iriOrLiteralNodeKindProperty"),
+      [this.iriOrLiteralNodeKindProperty],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/literalNodeKindProperty"),
+      [this.literalNodeKindProperty],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NodeKindsClass {
+  export function $filter(
+    filter: NodeKindsClass.$Filter,
+    value: NodeKindsClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeKindProperty !== undefined &&
+      !$filterBlankNode(
+        filter.blankNodeKindProperty,
+        value.blankNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeOrIriNodeKindProperty !== undefined &&
+      !$filterIdentifier(
+        filter.blankNodeOrIriNodeKindProperty,
+        value.blankNodeOrIriNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeOrLiteralNodeKindProperty !== undefined &&
+      !$filterTerm(
+        filter.blankNodeOrLiteralNodeKindProperty,
+        value.blankNodeOrLiteralNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.iriNodeKindProperty !== undefined &&
+      !$filterIri(filter.iriNodeKindProperty, value.iriNodeKindProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriOrLiteralNodeKindProperty !== undefined &&
+      !$filterTerm(
+        filter.iriOrLiteralNodeKindProperty,
+        value.iriOrLiteralNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.literalNodeKindProperty !== undefined &&
+      !$filterLiteral(
+        filter.literalNodeKindProperty,
+        value.literalNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly blankNodeKindProperty?: $BlankNodeFilter;
+    readonly blankNodeOrIriNodeKindProperty?: $IdentifierFilter;
+    readonly blankNodeOrLiteralNodeKindProperty?: $TermFilter;
+    readonly iriNodeKindProperty?: $IriFilter;
+    readonly iriOrLiteralNodeKindProperty?: $TermFilter;
+    readonly literalNodeKindProperty?: $LiteralFilter;
+  };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NodeKindsClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      blankNodeKindProperty: BlankNode;
+      blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
+      blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
+      iriNodeKindProperty: NamedNode;
+      iriOrLiteralNodeKindProperty: NamedNode | Literal;
+      literalNodeKindProperty: Literal;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const blankNodeKindProperty = dataFactory.blankNode(
+      $jsonObject["blankNodeKindProperty"]["@id"].substring(2),
+    );
+    const blankNodeOrIriNodeKindProperty = $jsonObject[
+      "blankNodeOrIriNodeKindProperty"
+    ]["@id"].startsWith("_:")
+      ? dataFactory.blankNode(
+          $jsonObject["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
+        )
+      : dataFactory.namedNode(
+          $jsonObject["blankNodeOrIriNodeKindProperty"]["@id"],
+        );
+    const blankNodeOrLiteralNodeKindProperty =
+      $jsonObject["blankNodeOrLiteralNodeKindProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@value"],
+            $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@language"] !==
+              undefined
+              ? $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@language"]
+              : $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@type"] !==
+                  undefined
+                ? dataFactory.namedNode(
+                    $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : dataFactory.blankNode(
+            $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@id"].substring(
+              2,
+            ),
+          );
+    const iriNodeKindProperty = dataFactory.namedNode(
+      $jsonObject["iriNodeKindProperty"]["@id"],
+    );
+    const iriOrLiteralNodeKindProperty =
+      $jsonObject["iriOrLiteralNodeKindProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["iriOrLiteralNodeKindProperty"]["@value"],
+            $jsonObject["iriOrLiteralNodeKindProperty"]["@language"] !==
+              undefined
+              ? $jsonObject["iriOrLiteralNodeKindProperty"]["@language"]
+              : $jsonObject["iriOrLiteralNodeKindProperty"]["@type"] !==
+                  undefined
+                ? dataFactory.namedNode(
+                    $jsonObject["iriOrLiteralNodeKindProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : dataFactory.namedNode(
+            $jsonObject["iriOrLiteralNodeKindProperty"]["@id"],
+          );
+    const literalNodeKindProperty = dataFactory.literal(
+      $jsonObject["literalNodeKindProperty"]["@value"],
+      $jsonObject["literalNodeKindProperty"]["@language"] !== undefined
+        ? $jsonObject["literalNodeKindProperty"]["@language"]
+        : $jsonObject["literalNodeKindProperty"]["@type"] !== undefined
+          ? dataFactory.namedNode(
+              $jsonObject["literalNodeKindProperty"]["@type"],
+            )
+          : undefined,
+    );
+    return Right({
+      $identifier,
+      blankNodeKindProperty,
+      blankNodeOrIriNodeKindProperty,
+      blankNodeOrLiteralNodeKindProperty,
+      iriNodeKindProperty,
+      iriOrLiteralNodeKindProperty,
+      literalNodeKindProperty,
+    });
+  }
+
+  export function $fromJson(json: unknown): Either<z.ZodError, NodeKindsClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NodeKindsClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NodeKindsClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/blankNodeKindProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/blankNodeOrIriNodeKindProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/blankNodeOrLiteralNodeKindProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/iriNodeKindProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/iriOrLiteralNodeKindProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/literalNodeKindProperty`,
+          type: "Control",
+        },
+      ],
+      label: "NodeKindsClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("NodeKindsClass"),
+      blankNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+      blankNodeOrIriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+      blankNodeOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
+        z.object({
+          "@id": z.string().min(1),
+          termType: z.literal("BlankNode"),
+        }),
+        z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+          termType: z.literal("Literal"),
+        }),
+      ]),
+      iriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+      iriOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
+        z.object({
+          "@id": z.string().min(1),
+          termType: z.literal("NamedNode"),
+        }),
+        z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+          termType: z.literal("Literal"),
+        }),
+      ]),
+      literalNodeKindProperty: z.object({
+        "@language": z.string().optional(),
+        "@type": z.string().optional(),
+        "@value": z.string(),
+      }),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NodeKindsClass";
+    readonly blankNodeKindProperty: { readonly "@id": string };
+    readonly blankNodeOrIriNodeKindProperty: { readonly "@id": string };
+    readonly blankNodeOrLiteralNodeKindProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly iriNodeKindProperty: { readonly "@id": string };
+    readonly iriOrLiteralNodeKindProperty:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly literalNodeKindProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+  };
+
+  export function isNodeKindsClass(object: $Object): object is NodeKindsClass {
+    switch (object.$type) {
+      case "NodeKindsClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NodeKindsClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NodeKindsClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NodeKindsClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    {
+      $identifier: BlankNode | NamedNode;
+      blankNodeKindProperty: BlankNode;
+      blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
+      blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
+      iriNodeKindProperty: NamedNode;
+      iriOrLiteralNodeKindProperty: NamedNode | Literal;
+      literalNodeKindProperty: Literal;
+    }
+  > {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/NodeKindsClass":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(NodeKindsClass.$fromRdfType, {
+                  graph: $parameters.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NodeKindsClass)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.blankNodeKindProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues.chain((values) =>
+                values.chainMap((value) => value.toBlankNode()),
+              ),
+          }).chain((blankNodeKindProperty) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.blankNodeOrIriNodeKindProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues.chain((values) =>
+                  values.chainMap((value) => value.toIdentifier()),
+                ),
+            }).chain((blankNodeOrIriNodeKindProperty) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema:
+                  $schema.properties.blankNodeOrLiteralNodeKindProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues.chain((values) =>
+                    values.chainMap((value) =>
+                      value.toTerm().chain((term) => {
+                        switch (term.termType) {
+                          case "BlankNode":
+                          case "Literal":
+                            return Either.of<Error, BlankNode | Literal>(term);
+                          default:
+                            return Left<Error, BlankNode | Literal>(
+                              new Resource.MistypedTermValueError({
+                                actualValue: term,
+                                expectedValueType: "(BlankNode | Literal)",
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  NodeKindsClass.$schema.properties
+                                    .blankNodeOrLiteralNodeKindProperty.path,
+                              }),
+                            );
+                        }
+                      }),
+                    ),
+                  ),
+              }).chain((blankNodeOrLiteralNodeKindProperty) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.iriNodeKindProperty,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues.chain((values) =>
+                      values.chainMap((value) => value.toIri()),
+                    ),
+                }).chain((iriNodeKindProperty) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema:
+                      $schema.properties.iriOrLiteralNodeKindProperty,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues.chain((values) =>
+                        values.chainMap((value) =>
+                          value.toTerm().chain((term) => {
+                            switch (term.termType) {
+                              case "NamedNode":
+                              case "Literal":
+                                return Either.of<Error, NamedNode | Literal>(
+                                  term,
+                                );
+                              default:
+                                return Left<Error, NamedNode | Literal>(
+                                  new Resource.MistypedTermValueError({
+                                    actualValue: term,
+                                    expectedValueType: "(NamedNode | Literal)",
+                                    focusResource: $parameters.resource,
+                                    propertyPath:
+                                      NodeKindsClass.$schema.properties
+                                        .iriOrLiteralNodeKindProperty.path,
+                                  }),
+                                );
+                            }
+                          }),
+                        ),
+                      ),
+                  }).chain((iriOrLiteralNodeKindProperty) =>
+                    $shaclPropertyFromRdf({
+                      graph: $parameters.graph,
+                      resource: $parameters.resource,
+                      propertySchema:
+                        $schema.properties.literalNodeKindProperty,
+                      typeFromRdf: (resourceValues) =>
+                        resourceValues
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages(
+                              values,
+                              $parameters.preferredLanguages,
+                            ),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toLiteral()),
+                          ),
+                    }).map((literalNodeKindProperty) => ({
+                      $identifier,
+                      blankNodeKindProperty,
+                      blankNodeOrIriNodeKindProperty,
+                      blankNodeOrLiteralNodeKindProperty,
+                      iriNodeKindProperty,
+                      iriOrLiteralNodeKindProperty,
+                      literalNodeKindProperty,
+                    })),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NodeKindsClass"],
+        }),
+      },
+      blankNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "BlankNode" as const }),
+        path: dataFactory.namedNode("http://example.com/blankNodeKindProperty"),
+      },
+      blankNodeOrIriNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Identifier" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/blankNodeOrIriNodeKindProperty",
+        ),
+      },
+      blankNodeOrLiteralNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Term" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/blankNodeOrLiteralNodeKindProperty",
+        ),
+      },
+      iriNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Iri" as const }),
+        path: dataFactory.namedNode("http://example.com/iriNodeKindProperty"),
+      },
+      iriOrLiteralNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Term" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/iriOrLiteralNodeKindProperty",
+        ),
+      },
+      literalNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Literal" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/literalNodeKindProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: NodeKindsClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NodeKindsClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NodeKindsClass.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: NodeKindsClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NodeKindsClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: NodeKindsClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("nodeKindsClass");
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "nodeKindsClass")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "nodeKindsClass")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "nodeKindsClass")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.blankNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeKindProperty",
+        propertySchema: $schema.properties.blankNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.blankNodeOrIriNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeOrIriNodeKindProperty",
+        propertySchema: $schema.properties.blankNodeOrIriNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.blankNodeOrLiteralNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeOrLiteralNodeKindProperty",
+        propertySchema: $schema.properties.blankNodeOrLiteralNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.iriNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriNodeKindProperty",
+        propertySchema: $schema.properties.iriNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.iriOrLiteralNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriOrLiteralNodeKindProperty",
+        propertySchema: $schema.properties.iriOrLiteralNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.literalNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "literalNodeKindProperty",
+        propertySchema: $schema.properties.literalNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: NodeKindsClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("nodeKindsClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "nodeKindsClass")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NodeKindsClass.$fromRdfType,
+          subject: focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
+                        : "nodeKindsClass")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: NodeKindsClass.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "nodeKindsClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.blankNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "blankNodeKindProperty",
+        propertySchema: $schema.properties.blankNodeKindProperty,
+        typeSparqlWherePatterns: $blankNodeSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.blankNodeOrIriNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "blankNodeOrIriNodeKindProperty",
+        propertySchema: $schema.properties.blankNodeOrIriNodeKindProperty,
+        typeSparqlWherePatterns: $identifierSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.blankNodeOrLiteralNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "blankNodeOrLiteralNodeKindProperty",
+        propertySchema: $schema.properties.blankNodeOrLiteralNodeKindProperty,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.iriNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "iriNodeKindProperty",
+        propertySchema: $schema.properties.iriNodeKindProperty,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.iriOrLiteralNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "iriOrLiteralNodeKindProperty",
+        propertySchema: $schema.properties.iriOrLiteralNodeKindProperty,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.literalNodeKindProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "literalNodeKindProperty",
+        propertySchema: $schema.properties.literalNodeKindProperty,
+        typeSparqlWherePatterns: $literalSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nodeKindsClass"),
+      }),
+    );
+    return patterns;
+  }
 }
 export class NoRdfTypeClassUnionMember2 {
   private _$identifier?: NoRdfTypeClassUnionMember2.$Identifier;
@@ -66473,6 +67842,7 @@ export type $Object =
   | MutablePropertiesClass
   | NoRdfTypeClassUnionMember1
   | NoRdfTypeClassUnionMember2
+  | NodeKindsClass
   | NonClass
   | NumericPropertiesClass
   | OrderedPropertiesClass
@@ -66740,6 +68110,9 @@ export namespace $Object {
       }
       if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(left)) {
         return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
+      }
+      if (NodeKindsClass.isNodeKindsClass(left)) {
+        return left.$equals(right as unknown as NodeKindsClass);
       }
       if (NonClass.isNonClass(left)) {
         return left.$equals(right as unknown as NonClass);
@@ -67420,6 +68793,13 @@ export namespace $Object {
       return false;
     }
     if (
+      NodeKindsClass.isNodeKindsClass(value) &&
+      filter.on?.NodeKindsClass &&
+      !NodeKindsClass.$filter(filter.on.NodeKindsClass, value as NodeKindsClass)
+    ) {
+      return false;
+    }
+    if (
       NonClass.isNonClass(value) &&
       filter.on?.NonClass &&
       !NonClass.$filter(filter.on.NonClass, value as NonClass)
@@ -67825,6 +69205,7 @@ export namespace $Object {
         NoRdfTypeClassUnionMember2.$Filter,
         "$identifier"
       >;
+      readonly NodeKindsClass?: Omit<NodeKindsClass.$Filter, "$identifier">;
       readonly NonClass?: Omit<NonClass.$Filter, "$identifier">;
       readonly NumericPropertiesClass?: Omit<
         NumericPropertiesClass.$Filter,
@@ -68096,6 +69477,9 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
     if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (NodeKindsClass.isNodeKindsClass(_object)) {
       return _object.$hash(_hasher);
     }
     if (NonClass.isNonClass(_object)) {
@@ -68447,6 +69831,9 @@ export namespace $Object {
             $Object
           >,
       )
+      .altLazy(
+        () => NodeKindsClass.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
       .altLazy(() => NonClass.$fromJson(json) as Either<z.ZodError, $Object>)
       .altLazy(
         () =>
@@ -68606,6 +69993,7 @@ export namespace $Object {
       MutablePropertiesClass.$jsonZodSchema(),
       NoRdfTypeClassUnionMember1.$jsonZodSchema(),
       NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+      NodeKindsClass.$jsonZodSchema(),
       NonClass.$jsonZodSchema(),
       NumericPropertiesClass.$jsonZodSchema(),
       OrderedPropertiesClass.$jsonZodSchema(),
@@ -68688,6 +70076,7 @@ export namespace $Object {
     | MutablePropertiesClass.$Json
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json
+    | NodeKindsClass.$Json
     | NonClass.$Json
     | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
@@ -68903,6 +70292,9 @@ export namespace $Object {
     if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
       return _object.$toJson();
     }
+    if (NodeKindsClass.isNodeKindsClass(_object)) {
+      return _object.$toJson();
+    }
     if (NonClass.isNonClass(_object)) {
       return _object.$toJson();
     }
@@ -69012,6 +70404,7 @@ export namespace $Object {
     | MutablePropertiesClass.$Json
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json
+    | NodeKindsClass.$Json
     | NonClass.$Json
     | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
@@ -69395,6 +70788,13 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          NodeKindsClass.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           NonClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -69726,6 +71126,9 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
     if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NodeKindsClass.isNodeKindsClass(_object)) {
       return _object.$toRdf(_parameters);
     }
     if (NonClass.isNonClass(_object)) {
@@ -70315,6 +71718,15 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
           : "objectNoRdfTypeClassUnionMember2",
+      }).concat(),
+      ...NodeKindsClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NodeKindsClass,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectNodeKindsClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NodeKindsClass`
+          : "objectNodeKindsClass",
       }).concat(),
       ...NonClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NonClass,
@@ -71141,6 +72553,18 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
               : "objectNoRdfTypeClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NodeKindsClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NodeKindsClass,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectNodeKindsClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NodeKindsClass`
+              : "objectNodeKindsClass",
           }).concat(),
           type: "group",
         },
@@ -72725,6 +74149,31 @@ export interface $ObjectSet {
       MutablePropertiesClass.$Identifier
     >,
   ): Promise<Either<Error, readonly MutablePropertiesClass[]>>;
+
+  nodeKindsClass(
+    identifier: NodeKindsClass.$Identifier,
+  ): Promise<Either<Error, NodeKindsClass>>;
+
+  nodeKindsClassCount(
+    query?: Pick<
+      $ObjectSet.Query<NodeKindsClass.$Filter, NodeKindsClass.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  nodeKindsClassIdentifiers(
+    query?: $ObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NodeKindsClass.$Identifier[]>>;
+
+  nodeKindsClasses(
+    query?: $ObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NodeKindsClass[]>>;
 
   nonClass(identifier: NonClass.$Identifier): Promise<Either<Error, NonClass>>;
 
@@ -77811,6 +79260,87 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async nodeKindsClass(
+    identifier: NodeKindsClass.$Identifier,
+  ): Promise<Either<Error, NodeKindsClass>> {
+    return this.nodeKindsClassSync(identifier);
+  }
+
+  nodeKindsClassSync(
+    identifier: NodeKindsClass.$Identifier,
+  ): Either<Error, NodeKindsClass> {
+    return this.nodeKindsClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async nodeKindsClassCount(
+    query?: Pick<
+      $ObjectSet.Query<NodeKindsClass.$Filter, NodeKindsClass.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.nodeKindsClassCountSync(query);
+  }
+
+  nodeKindsClassCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NodeKindsClass.$Filter, NodeKindsClass.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.nodeKindsClassesSync(query).map((objects) => objects.length);
+  }
+
+  async nodeKindsClassIdentifiers(
+    query?: $ObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NodeKindsClass.$Identifier[]>> {
+    return this.nodeKindsClassIdentifiersSync(query);
+  }
+
+  nodeKindsClassIdentifiersSync(
+    query?: $ObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Either<Error, readonly NodeKindsClass.$Identifier[]> {
+    return this.nodeKindsClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async nodeKindsClasses(
+    query?: $ObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NodeKindsClass[]>> {
+    return this.nodeKindsClassesSync(query);
+  }
+
+  nodeKindsClassesSync(
+    query?: $ObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Either<Error, readonly NodeKindsClass[]> {
+    return this.$objectsSync<
+      NodeKindsClass,
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >(
+      {
+        $filter: NodeKindsClass.$filter,
+        $fromRdf: NodeKindsClass.$fromRdf,
+        $fromRdfTypes: [NodeKindsClass.$fromRdfType],
+      },
+      query,
+    );
+  }
+
   async nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<Either<Error, NonClass>> {
@@ -80724,6 +82254,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
+          $fromRdf: NodeKindsClass.$fromRdf,
+          $fromRdfTypes: [NodeKindsClass.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
           $fromRdf: NonClass.$fromRdf,
           $fromRdfTypes: [],
         },
@@ -83428,6 +84963,54 @@ export class $SparqlObjectSet implements $ObjectSet {
       MutablePropertiesClass.$Filter,
       MutablePropertiesClass.$Identifier
     >(MutablePropertiesClass, query);
+  }
+
+  async nodeKindsClass(
+    identifier: NodeKindsClass.$Identifier,
+  ): Promise<Either<Error, NodeKindsClass>> {
+    return (await this.nodeKindsClasses({ identifiers: [identifier] })).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async nodeKindsClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NodeKindsClass.$Filter,
+        NodeKindsClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >(NodeKindsClass, query);
+  }
+
+  async nodeKindsClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NodeKindsClass.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >(NodeKindsClass, query);
+  }
+
+  async nodeKindsClasses(
+    query?: $SparqlObjectSet.Query<
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NodeKindsClass[]>> {
+    return this.$objects<
+      NodeKindsClass,
+      NodeKindsClass.$Filter,
+      NodeKindsClass.$Identifier
+    >(NodeKindsClass, query);
   }
 
   async nonClass(
