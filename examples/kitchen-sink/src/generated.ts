@@ -13034,13 +13034,13 @@ export class PropertyPathsClass {
 
   readonly $type: "PropertyPathsClass" = "PropertyPathsClass" as const;
 
-  readonly inversePathProperty: Maybe<string>;
+  readonly inversePathProperty: Maybe<NamedNode>;
 
   readonly predicatePathProperty: Maybe<string>;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly inversePathProperty?: Maybe<string> | string;
+    readonly inversePathProperty?: Maybe<NamedNode> | NamedNode | string;
     readonly predicatePathProperty?: Maybe<string> | string;
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -13053,8 +13053,12 @@ export class PropertyPathsClass {
     }
     if (Maybe.isMaybe(parameters?.inversePathProperty)) {
       this.inversePathProperty = parameters?.inversePathProperty;
-    } else if (typeof parameters?.inversePathProperty === "string") {
+    } else if (typeof parameters?.inversePathProperty === "object") {
       this.inversePathProperty = Maybe.of(parameters?.inversePathProperty);
+    } else if (typeof parameters?.inversePathProperty === "string") {
+      this.inversePathProperty = Maybe.of(
+        dataFactory.namedNode(parameters?.inversePathProperty),
+      );
     } else if (parameters?.inversePathProperty === undefined) {
       this.inversePathProperty = Maybe.empty();
     } else {
@@ -13101,7 +13105,7 @@ export class PropertyPathsClass {
         ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.inversePathProperty,
           other.inversePathProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -13137,7 +13141,8 @@ export class PropertyPathsClass {
     _hasher: HasherT,
   ): HasherT {
     this.inversePathProperty.ifJust((value0) => {
-      _hasher.update(value0);
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
     });
     this.predicatePathProperty.ifJust((value0) => {
       _hasher.update(value0);
@@ -13154,7 +13159,7 @@ export class PropertyPathsClass {
             : this.$identifier.value,
         $type: this.$type,
         inversePathProperty: this.inversePathProperty
-          .map((item) => item)
+          .map((item) => ({ "@id": item.value }))
           .extract(),
         predicatePathProperty: this.predicatePathProperty
           .map((item) => item)
@@ -13207,7 +13212,7 @@ export namespace PropertyPathsClass {
     }
     if (
       filter.inversePathProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.inversePathProperty,
         value.inversePathProperty,
       )
@@ -13228,7 +13233,7 @@ export namespace PropertyPathsClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly inversePathProperty?: $MaybeFilter<$StringFilter>;
+    readonly inversePathProperty?: $MaybeFilter<$IriFilter>;
     readonly predicatePathProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -13247,7 +13252,7 @@ export namespace PropertyPathsClass {
     z.ZodError,
     {
       $identifier: BlankNode | NamedNode;
-      inversePathProperty: Maybe<string>;
+      inversePathProperty: Maybe<NamedNode>;
       predicatePathProperty: Maybe<string>;
     }
   > {
@@ -13261,7 +13266,7 @@ export namespace PropertyPathsClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const inversePathProperty = Maybe.fromNullable(
       $jsonObject["inversePathProperty"],
-    );
+    ).map((item) => dataFactory.namedNode(item["@id"]));
     const predicatePathProperty = Maybe.fromNullable(
       $jsonObject["predicatePathProperty"],
     );
@@ -13318,7 +13323,7 @@ export namespace PropertyPathsClass {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("PropertyPathsClass"),
-      inversePathProperty: z.string().optional(),
+      inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
       predicatePathProperty: z.string().optional(),
     }) satisfies z.ZodType<$Json>;
   }
@@ -13326,7 +13331,7 @@ export namespace PropertyPathsClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "PropertyPathsClass";
-    readonly inversePathProperty?: string;
+    readonly inversePathProperty?: { readonly "@id": string };
     readonly predicatePathProperty?: string;
   };
 
@@ -13369,7 +13374,7 @@ export namespace PropertyPathsClass {
     Error,
     {
       $identifier: BlankNode | NamedNode;
-      inversePathProperty: Maybe<string>;
+      inversePathProperty: Maybe<NamedNode>;
       predicatePathProperty: Maybe<string>;
     }
   > {
@@ -13422,17 +13427,11 @@ export namespace PropertyPathsClass {
             propertySchema: $schema.properties.inversePathProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    $parameters.preferredLanguages,
-                  ),
-                )
-                .chain((values) => values.chainMap((value) => value.toString()))
+                .chain((values) => values.chainMap((value) => value.toIri()))
                 .map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<string>>({
+                    : Resource.Values.fromValue<Maybe<NamedNode>>({
                         focusResource: $parameters.resource,
                         propertyPath:
                           PropertyPathsClass.$schema.properties
@@ -13494,11 +13493,11 @@ export namespace PropertyPathsClass {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
+          item: () => ({ kind: "Iri" as const }),
         }),
         path: {
-          kind: "InversePath" as const,
           path: dataFactory.namedNode("http://example.com/inversePathProperty"),
+          termType: "InversePath" as const,
         },
       },
       predicatePathProperty: {
@@ -13621,8 +13620,8 @@ export namespace PropertyPathsClass {
         propertyName: "inversePathProperty",
         propertySchema: $schema.properties.inversePathProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $StringFilter,
-          $StringSchema
+          $IriFilter,
+          $IriSchema
         >((_: object) => []),
         variablePrefix:
           parameters?.variablePrefix ??
@@ -13740,9 +13739,9 @@ export namespace PropertyPathsClass {
         propertyName: "inversePathProperty",
         propertySchema: $schema.properties.inversePathProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $StringFilter,
-          $StringSchema
-        >($stringSparqlWherePatterns),
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"

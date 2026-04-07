@@ -14,12 +14,12 @@ function propertyPathToCode(propertyPath: PropertyPath): Code {
   switch (propertyPath.termType) {
     case "AlternativePath":
     case "SequencePath":
-      return code`{ kind: ${literalOf(propertyPath.termType)} as const, members: [${joinCode(propertyPath.members.map(propertyPathToCode), { on: "," })}] }`;
+      return code`{ members: [${joinCode(propertyPath.members.map(propertyPathToCode), { on: "," })}] as const, termType: ${literalOf(propertyPath.termType)} as const }`;
     case "InversePath":
     case "OneOrMorePath":
     case "ZeroOrMorePath":
     case "ZeroOrOnePath":
-      return code`{ kind: ${literalOf(propertyPath.termType)} as const, path: ${propertyPathToCode(propertyPath.path)} }`;
+      return code`{ path: ${propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
     case "NamedNode":
       return rdfjsTermExpression(propertyPath);
   }

@@ -634,6 +634,14 @@ export const harnesses = {
     }),
     kitchenSink.PropertyCardinalitiesClass,
   ),
+  propertyPathsClass: new ClassHarness(
+    new kitchenSink.PropertyPathsClass({
+      $identifier,
+      inversePathProperty: "inversePathPropertyValue",
+      predicatePathProperty: "predicatePathPropertyValue",
+    }),
+    kitchenSink.PropertyPathsClass,
+  ),
   propertyVisibilitiesClass: new ClassHarness(
     new kitchenSink.PropertyVisibilitiesClass({
       $identifier,

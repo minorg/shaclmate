@@ -4883,12 +4883,11 @@
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "LiteralType",
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": []
+              "kind": "IriType",
+              "hasValue": [],
+              "nodeKinds": [
+                "IRI"
+              ]
             }
           },
           "visibility": "public"
