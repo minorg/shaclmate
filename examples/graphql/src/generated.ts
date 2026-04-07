@@ -19,7 +19,12 @@ import {
   GraphQLUnionType,
 } from "graphql";
 import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
-import { LiteralFactory, Resource, ResourceSet } from "rdfjs-resource";
+import {
+  LiteralFactory,
+  type PropertyPath,
+  Resource,
+  ResourceSet,
+} from "rdfjs-resource";
 
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
@@ -152,24 +157,17 @@ function $filterString(filter: $StringFilter, value: string) {
 }
 
 type $FromRdfOptions = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType?: boolean;
   objectSet?: $ObjectSet;
   preferredLanguages?: readonly string[];
 };
 
-function $fromRdfPreferredLanguages({
-  focusResource,
-  predicate,
-  preferredLanguages,
-  values,
-}: {
-  focusResource: Resource;
-  predicate: NamedNode;
-  preferredLanguages?: readonly string[];
-  values: Resource.Values;
-}): Either<Error, Resource.Values> {
+function $fromRdfPreferredLanguages(
+  values: Resource.Values,
+  preferredLanguages?: readonly string[],
+): Either<Error, Resource.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
     return Right(values);
   }
@@ -189,8 +187,8 @@ function $fromRdfPreferredLanguages({
 
   return Right(
     Resource.Values.fromArray({
-      focusResource,
-      propertyPath: predicate,
+      focusResource: values.focusResource,
+      propertyPath: values.propertyPath,
       values: filteredValues,
     }),
   );
@@ -343,7 +341,7 @@ interface $NumericFilter<T> {
 }
 
 type $PropertiesFromRdfParameters = {
-  context?: any;
+  context?: unknown;
   graph?: Exclude<Quad_Graph, Variable>;
   ignoreRdfType: boolean;
   objectSet: $ObjectSet;
@@ -454,13 +452,13 @@ function $shaclPropertyFromRdf<T>({
   ) => Either<Error, Resource.Values<T>>;
 }): Either<Error, T> {
   return typeFromRdf(
-    Right(resource.values(propertySchema.identifier, { graph, unique: true })),
+    Right(resource.values(propertySchema.path, { graph, unique: true })),
   ).chain((values) => values.head());
 }
 
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
-  readonly identifier: NamedNode;
   readonly kind: "Shacl";
+  readonly path: PropertyPath;
   readonly type: () => TypeSchemaT;
 }
 
@@ -654,7 +652,7 @@ export class UnionMember2 {
       );
     }
     resource.add(
-      UnionMember2.$schema.properties.optionalStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalStringProperty"),
       this.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -818,14 +816,10 @@ export namespace UnionMember2 {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      UnionMember2.$schema.properties.optionalStringProperty
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) => values.chainMap((value) => value.toString()))
                 .map((values) =>
@@ -835,7 +829,7 @@ export namespace UnionMember2 {
                         focusResource: $parameters.resource,
                         propertyPath:
                           UnionMember2.$schema.properties.optionalStringProperty
-                            .identifier,
+                            .path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -866,7 +860,7 @@ export namespace UnionMember2 {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
@@ -936,7 +930,7 @@ export class UnionMember1 {
       );
     }
     resource.add(
-      UnionMember1.$schema.properties.optionalNumberProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalNumberProperty"),
       this.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -1109,7 +1103,7 @@ export namespace UnionMember1 {
                         focusResource: $parameters.resource,
                         propertyPath:
                           UnionMember1.$schema.properties.optionalNumberProperty
-                            .identifier,
+                            .path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -1140,7 +1134,7 @@ export namespace UnionMember1 {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
       },
@@ -1231,7 +1225,7 @@ export class Nested {
       );
     }
     resource.add(
-      UnionMember1.$schema.properties.optionalNumberProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalNumberProperty"),
       this.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -1240,14 +1234,14 @@ export class Nested {
       options?.graph,
     );
     resource.add(
-      UnionMember2.$schema.properties.optionalStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalStringProperty"),
       this.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      Nested.$schema.properties.requiredStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/requiredStringProperty"),
       [$literalFactory.string(this.requiredStringProperty)],
       options?.graph,
     );
@@ -1449,7 +1443,7 @@ export namespace Nested {
                         focusResource: $parameters.resource,
                         propertyPath:
                           UnionMember1.$schema.properties.optionalNumberProperty
-                            .identifier,
+                            .path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -1461,14 +1455,10 @@ export namespace Nested {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        UnionMember2.$schema.properties.optionalStringProperty
-                          .identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -1480,7 +1470,7 @@ export namespace Nested {
                           focusResource: $parameters.resource,
                           propertyPath:
                             UnionMember2.$schema.properties
-                              .optionalStringProperty.identifier,
+                              .optionalStringProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -1492,14 +1482,10 @@ export namespace Nested {
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          Nested.$schema.properties.requiredStringProperty
-                            .identifier,
-                        preferredLanguages: $parameters.preferredLanguages,
+                      $fromRdfPreferredLanguages(
                         values,
-                      }),
+                        $parameters.preferredLanguages,
+                      ),
                     )
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
@@ -1535,7 +1521,7 @@ export namespace Nested {
           kind: "Maybe" as const,
           item: () => ({ kind: "Float" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalNumberProperty",
         ),
       },
@@ -1545,14 +1531,14 @@ export namespace Nested {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
       },
@@ -1612,7 +1598,7 @@ export class Parent {
       );
     }
     resource.add(
-      ParentStatic.$schema.properties.parentStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/parentStringProperty"),
       this.parentStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -1783,14 +1769,10 @@ export namespace ParentStatic {
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
-                  $fromRdfPreferredLanguages({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ParentStatic.$schema.properties.parentStringProperty
-                        .identifier,
-                    preferredLanguages: $parameters.preferredLanguages,
+                  $fromRdfPreferredLanguages(
                     values,
-                  }),
+                    $parameters.preferredLanguages,
+                  ),
                 )
                 .chain((values) => values.chainMap((value) => value.toString()))
                 .map((values) =>
@@ -1800,7 +1782,7 @@ export namespace ParentStatic {
                         focusResource: $parameters.resource,
                         propertyPath:
                           ParentStatic.$schema.properties.parentStringProperty
-                            .identifier,
+                            .path,
                         value: Maybe.empty(),
                       }),
                 ),
@@ -1832,9 +1814,7 @@ export namespace ParentStatic {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/parentStringProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/parentStringProperty"),
       },
     },
   } as const;
@@ -2036,14 +2016,14 @@ export class Child extends Parent {
       );
     }
     resource.add(
-      Child.$schema.properties.childStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/childStringProperty"),
       this.childStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      Child.$schema.properties.lazyObjectSetProperty.identifier,
+      dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
       this.lazyObjectSetProperty.partials.flatMap((item) => [
         item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
           .identifier,
@@ -2051,7 +2031,7 @@ export class Child extends Parent {
       options?.graph,
     );
     resource.add(
-      Child.$schema.properties.optionalLazyObjectProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalLazyObjectProperty"),
       this.optionalLazyObjectProperty.partial
         .toList()
         .flatMap((value) => [
@@ -2061,7 +2041,7 @@ export class Child extends Parent {
       options?.graph,
     );
     resource.add(
-      Child.$schema.properties.optionalObjectProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalObjectProperty"),
       this.optionalObjectProperty
         .toList()
         .flatMap((value) => [
@@ -2071,14 +2051,14 @@ export class Child extends Parent {
       options?.graph,
     );
     resource.add(
-      UnionMember2.$schema.properties.optionalStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/optionalStringProperty"),
       this.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
-      Nested.$schema.properties.requiredStringProperty.identifier,
+      dataFactory.namedNode("http://example.com/requiredStringProperty"),
       [$literalFactory.string(this.requiredStringProperty)],
       options?.graph,
     );
@@ -2364,13 +2344,10 @@ export namespace Child {
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        Child.$schema.properties.childStringProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
+                    $fromRdfPreferredLanguages(
                       values,
-                    }),
+                      $parameters.preferredLanguages,
+                    ),
                   )
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
@@ -2381,8 +2358,7 @@ export namespace Child {
                       : Resource.Values.fromValue<Maybe<string>>({
                           focusResource: $parameters.resource,
                           propertyPath:
-                            Child.$schema.properties.childStringProperty
-                              .identifier,
+                            Child.$schema.properties.childStringProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -2410,8 +2386,7 @@ export namespace Child {
                       Resource.Values.fromValue({
                         focusResource: $parameters.resource,
                         propertyPath:
-                          Child.$schema.properties.lazyObjectSetProperty
-                            .identifier,
+                          Child.$schema.properties.lazyObjectSetProperty.path,
                         value: valuesArray,
                       }),
                     )
@@ -2456,7 +2431,7 @@ export namespace Child {
                               focusResource: $parameters.resource,
                               propertyPath:
                                 Child.$schema.properties
-                                  .optionalLazyObjectProperty.identifier,
+                                  .optionalLazyObjectProperty.path,
                               value: Maybe.empty(),
                             }),
                       )
@@ -2501,7 +2476,7 @@ export namespace Child {
                                 focusResource: $parameters.resource,
                                 propertyPath:
                                   Child.$schema.properties
-                                    .optionalObjectProperty.identifier,
+                                    .optionalObjectProperty.path,
                                 value: Maybe.empty(),
                               }),
                         ),
@@ -2513,15 +2488,10 @@ export namespace Child {
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            $fromRdfPreferredLanguages({
-                              focusResource: $parameters.resource,
-                              predicate:
-                                UnionMember2.$schema.properties
-                                  .optionalStringProperty.identifier,
-                              preferredLanguages:
-                                $parameters.preferredLanguages,
+                            $fromRdfPreferredLanguages(
                               values,
-                            }),
+                              $parameters.preferredLanguages,
+                            ),
                           )
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
@@ -2533,7 +2503,7 @@ export namespace Child {
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     UnionMember2.$schema.properties
-                                      .optionalStringProperty.identifier,
+                                      .optionalStringProperty.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
@@ -2546,15 +2516,10 @@ export namespace Child {
                         typeFromRdf: (resourceValues) =>
                           resourceValues
                             .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  Nested.$schema.properties
-                                    .requiredStringProperty.identifier,
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
+                              $fromRdfPreferredLanguages(
                                 values,
-                              }),
+                                $parameters.preferredLanguages,
+                              ),
                             )
                             .chain((values) =>
                               values.chainMap((value) => value.toString()),
@@ -2588,9 +2553,7 @@ export namespace Child {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/childStringProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/childStringProperty"),
       },
       lazyObjectSetProperty: {
         kind: "Shacl" as const,
@@ -2601,9 +2564,7 @@ export namespace Child {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
-          "http://example.com/lazyObjectSetProperty",
-        ),
+        path: dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
       },
       optionalLazyObjectProperty: {
         kind: "Shacl" as const,
@@ -2614,14 +2575,14 @@ export namespace Child {
             item: () => $DefaultPartial.$schema,
           }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalLazyObjectProperty",
         ),
       },
       optionalObjectProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "Maybe" as const, item: () => Nested.$schema }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalObjectProperty",
         ),
       },
@@ -2631,14 +2592,14 @@ export namespace Child {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
       },
       requiredStringProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
-        identifier: dataFactory.namedNode(
+        path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
       },
