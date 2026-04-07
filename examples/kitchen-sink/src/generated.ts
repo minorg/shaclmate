@@ -13026,6 +13026,752 @@ export namespace PropertyVisibilitiesClass {
     return patterns;
   }
 } /**
+ * Shape that uses different property path types in its properties
+ */
+
+export class PropertyPathsClass {
+  private _$identifier?: PropertyPathsClass.$Identifier;
+
+  readonly $type: "PropertyPathsClass" = "PropertyPathsClass" as const;
+
+  readonly inversePathProperty: Maybe<string>;
+
+  readonly predicatePathProperty: Maybe<string>;
+
+  constructor(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly inversePathProperty?: Maybe<string> | string;
+    readonly predicatePathProperty?: Maybe<string> | string;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.inversePathProperty)) {
+      this.inversePathProperty = parameters?.inversePathProperty;
+    } else if (typeof parameters?.inversePathProperty === "string") {
+      this.inversePathProperty = Maybe.of(parameters?.inversePathProperty);
+    } else if (parameters?.inversePathProperty === undefined) {
+      this.inversePathProperty = Maybe.empty();
+    } else {
+      this.inversePathProperty =
+        parameters?.inversePathProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.predicatePathProperty)) {
+      this.predicatePathProperty = parameters?.predicatePathProperty;
+    } else if (typeof parameters?.predicatePathProperty === "string") {
+      this.predicatePathProperty = Maybe.of(parameters?.predicatePathProperty);
+    } else if (parameters?.predicatePathProperty === undefined) {
+      this.predicatePathProperty = Maybe.empty();
+    } else {
+      this.predicatePathProperty =
+        parameters?.predicatePathProperty satisfies never;
+    }
+  }
+
+  get $identifier(): PropertyPathsClass.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: PropertyPathsClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.inversePathProperty,
+          other.inversePathProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "inversePathProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.predicatePathProperty,
+          other.predicatePathProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "predicatePathProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    this.inversePathProperty.ifJust((value0) => {
+      _hasher.update(value0);
+    });
+    this.predicatePathProperty.ifJust((value0) => {
+      _hasher.update(value0);
+    });
+    return _hasher;
+  }
+
+  $toJson(): PropertyPathsClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        inversePathProperty: this.inversePathProperty
+          .map((item) => item)
+          .extract(),
+        predicatePathProperty: this.predicatePathProperty
+          .map((item) => item)
+          .extract(),
+      } satisfies PropertyPathsClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/PropertyPathsClass"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/predicatePathProperty"),
+      this.predicatePathProperty
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace PropertyPathsClass {
+  export function $filter(
+    filter: PropertyPathsClass.$Filter,
+    value: PropertyPathsClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.inversePathProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.inversePathProperty,
+        value.inversePathProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.predicatePathProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.predicatePathProperty,
+        value.predicatePathProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly inversePathProperty?: $MaybeFilter<$StringFilter>;
+    readonly predicatePathProperty?: $MaybeFilter<$StringFilter>;
+  };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/PropertyPathsClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      inversePathProperty: Maybe<string>;
+      predicatePathProperty: Maybe<string>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const inversePathProperty = Maybe.fromNullable(
+      $jsonObject["inversePathProperty"],
+    );
+    const predicatePathProperty = Maybe.fromNullable(
+      $jsonObject["predicatePathProperty"],
+    );
+    return Right({ $identifier, inversePathProperty, predicatePathProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, PropertyPathsClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new PropertyPathsClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyPathsClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inversePathProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/predicatePathProperty`,
+          type: "Control",
+        },
+      ],
+      label: "PropertyPathsClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("PropertyPathsClass"),
+      inversePathProperty: z.string().optional(),
+      predicatePathProperty: z.string().optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyPathsClass";
+    readonly inversePathProperty?: string;
+    readonly predicatePathProperty?: string;
+  };
+
+  export function isPropertyPathsClass(
+    object: $Object,
+  ): object is PropertyPathsClass {
+    switch (object.$type) {
+      case "PropertyPathsClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PropertyPathsClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PropertyPathsClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyPathsClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    {
+      $identifier: BlankNode | NamedNode;
+      inversePathProperty: Maybe<string>;
+      predicatePathProperty: Maybe<string>;
+    }
+  > {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/PropertyPathsClass":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  PropertyPathsClass.$fromRdfType,
+                  { graph: $parameters.graph },
+                )
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyPathsClass)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.inversePathProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages(
+                    values,
+                    $parameters.preferredLanguages,
+                  ),
+                )
+                .chain((values) => values.chainMap((value) => value.toString()))
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<string>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          PropertyPathsClass.$schema.properties
+                            .inversePathProperty.path,
+                        value: Maybe.empty(),
+                      }),
+                ),
+          }).chain((inversePathProperty) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.predicatePathProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      $parameters.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<string>>({
+                          focusResource: $parameters.resource,
+                          propertyPath:
+                            PropertyPathsClass.$schema.properties
+                              .predicatePathProperty.path,
+                          value: Maybe.empty(),
+                        }),
+                  ),
+            }).map((predicatePathProperty) => ({
+              $identifier,
+              inversePathProperty,
+              predicatePathProperty,
+            })),
+          ),
+        ),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PropertyPathsClass"],
+        }),
+      },
+      inversePathProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: {
+          kind: "InversePath" as const,
+          path: dataFactory.namedNode("http://example.com/inversePathProperty"),
+        },
+      },
+      predicatePathProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/predicatePathProperty"),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: PropertyPathsClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyPathsClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PropertyPathsClass.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: PropertyPathsClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyPathsClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: PropertyPathsClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("propertyPathsClass");
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "propertyPathsClass")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "propertyPathsClass")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "propertyPathsClass")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.inversePathProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inversePathProperty",
+        propertySchema: $schema.properties.inversePathProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyPathsClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.predicatePathProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "predicatePathProperty",
+        propertySchema: $schema.properties.predicatePathProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyPathsClass"),
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: PropertyPathsClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("propertyPathsClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "propertyPathsClass")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: PropertyPathsClass.$fromRdfType,
+          subject: focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
+                        : "propertyPathsClass")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: PropertyPathsClass.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "propertyPathsClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.inversePathProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "inversePathProperty",
+        propertySchema: $schema.properties.inversePathProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyPathsClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.predicatePathProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "predicatePathProperty",
+        propertySchema: $schema.properties.predicatePathProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyPathsClass"),
+      }),
+    );
+    return patterns;
+  }
+} /**
  * Shape that has properties with different cardinalities
  */
 
@@ -67851,6 +68597,7 @@ export type $Object =
   | PartialInterfaceUnionMember1
   | PartialInterfaceUnionMember2
   | PropertyCardinalitiesClass
+  | PropertyPathsClass
   | PropertyVisibilitiesClass
   | RecursiveClassUnionMember1
   | RecursiveClassUnionMember2
@@ -68143,6 +68890,9 @@ export namespace $Object {
       }
       if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(left)) {
         return left.$equals(right as unknown as PropertyCardinalitiesClass);
+      }
+      if (PropertyPathsClass.isPropertyPathsClass(left)) {
+        return left.$equals(right as unknown as PropertyPathsClass);
       }
       if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(left)) {
         return left.$equals(right as unknown as PropertyVisibilitiesClass);
@@ -68877,6 +69627,16 @@ export namespace $Object {
       return false;
     }
     if (
+      PropertyPathsClass.isPropertyPathsClass(value) &&
+      filter.on?.PropertyPathsClass &&
+      !PropertyPathsClass.$filter(
+        filter.on.PropertyPathsClass,
+        value as PropertyPathsClass,
+      )
+    ) {
+      return false;
+    }
+    if (
       PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value) &&
       filter.on?.PropertyVisibilitiesClass &&
       !PropertyVisibilitiesClass.$filter(
@@ -69235,6 +69995,10 @@ export namespace $Object {
         PropertyCardinalitiesClass.$Filter,
         "$identifier"
       >;
+      readonly PropertyPathsClass?: Omit<
+        PropertyPathsClass.$Filter,
+        "$identifier"
+      >;
       readonly PropertyVisibilitiesClass?: Omit<
         PropertyVisibilitiesClass.$Filter,
         "$identifier"
@@ -69504,6 +70268,9 @@ export namespace $Object {
       return PartialInterfaceUnionMember2.$hash(_object, _hasher);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
       return _object.$hash(_hasher);
     }
     if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
@@ -69879,6 +70646,9 @@ export namespace $Object {
           >,
       )
       .altLazy(
+        () => PropertyPathsClass.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
+      .altLazy(
         () =>
           PropertyVisibilitiesClass.$fromJson(json) as Either<
             z.ZodError,
@@ -70002,6 +70772,7 @@ export namespace $Object {
       PartialInterfaceUnionMember1.$jsonZodSchema(),
       PartialInterfaceUnionMember2.$jsonZodSchema(),
       PropertyCardinalitiesClass.$jsonZodSchema(),
+      PropertyPathsClass.$jsonZodSchema(),
       PropertyVisibilitiesClass.$jsonZodSchema(),
       RecursiveClassUnionMember1.$jsonZodSchema(),
       RecursiveClassUnionMember2.$jsonZodSchema(),
@@ -70085,6 +70856,7 @@ export namespace $Object {
     | PartialInterfaceUnionMember1.$Json
     | PartialInterfaceUnionMember2.$Json
     | PropertyCardinalitiesClass.$Json
+    | PropertyPathsClass.$Json
     | PropertyVisibilitiesClass.$Json
     | RecursiveClassUnionMember1.$Json
     | RecursiveClassUnionMember2.$Json
@@ -70319,6 +71091,9 @@ export namespace $Object {
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
       return _object.$toJson();
     }
+    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
+      return _object.$toJson();
+    }
     if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
       return _object.$toJson();
     }
@@ -70413,6 +71188,7 @@ export namespace $Object {
     | PartialInterfaceUnionMember1.$Json
     | PartialInterfaceUnionMember2.$Json
     | PropertyCardinalitiesClass.$Json
+    | PropertyPathsClass.$Json
     | PropertyVisibilitiesClass.$Json
     | RecursiveClassUnionMember1.$Json
     | RecursiveClassUnionMember2.$Json
@@ -70851,6 +71627,13 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          PropertyPathsClass.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           PropertyVisibilitiesClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -71153,6 +71936,9 @@ export namespace $Object {
       return PartialInterfaceUnionMember2.$toRdf(_object, _parameters);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
       return _object.$toRdf(_parameters);
     }
     if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
@@ -71799,6 +72585,15 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
           : "objectPropertyCardinalitiesClass",
+      }).concat(),
+      ...PropertyPathsClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PropertyPathsClass,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectPropertyPathsClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}PropertyPathsClass`
+          : "objectPropertyPathsClass",
       }).concat(),
       ...PropertyVisibilitiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PropertyVisibilitiesClass,
@@ -72661,6 +73456,18 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
               : "objectPropertyCardinalitiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyPathsClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PropertyPathsClass,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectPropertyPathsClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PropertyPathsClass`
+              : "objectPropertyPathsClass",
           }).concat(),
           type: "group",
         },
@@ -74491,6 +75298,34 @@ export interface $ObjectSet {
       PropertyCardinalitiesClass.$Identifier
     >,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass[]>>;
+
+  propertyPathsClass(
+    identifier: PropertyPathsClass.$Identifier,
+  ): Promise<Either<Error, PropertyPathsClass>>;
+
+  propertyPathsClassCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        PropertyPathsClass.$Filter,
+        PropertyPathsClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  propertyPathsClassIdentifiers(
+    query?: $ObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPathsClass.$Identifier[]>>;
+
+  propertyPathsClasses(
+    query?: $ObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPathsClass[]>>;
 
   propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
@@ -80359,6 +81194,95 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async propertyPathsClass(
+    identifier: PropertyPathsClass.$Identifier,
+  ): Promise<Either<Error, PropertyPathsClass>> {
+    return this.propertyPathsClassSync(identifier);
+  }
+
+  propertyPathsClassSync(
+    identifier: PropertyPathsClass.$Identifier,
+  ): Either<Error, PropertyPathsClass> {
+    return this.propertyPathsClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async propertyPathsClassCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        PropertyPathsClass.$Filter,
+        PropertyPathsClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.propertyPathsClassCountSync(query);
+  }
+
+  propertyPathsClassCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        PropertyPathsClass.$Filter,
+        PropertyPathsClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.propertyPathsClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async propertyPathsClassIdentifiers(
+    query?: $ObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPathsClass.$Identifier[]>> {
+    return this.propertyPathsClassIdentifiersSync(query);
+  }
+
+  propertyPathsClassIdentifiersSync(
+    query?: $ObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Either<Error, readonly PropertyPathsClass.$Identifier[]> {
+    return this.propertyPathsClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async propertyPathsClasses(
+    query?: $ObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPathsClass[]>> {
+    return this.propertyPathsClassesSync(query);
+  }
+
+  propertyPathsClassesSync(
+    query?: $ObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Either<Error, readonly PropertyPathsClass[]> {
+    return this.$objectsSync<
+      PropertyPathsClass,
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >(
+      {
+        $filter: PropertyPathsClass.$filter,
+        $fromRdf: PropertyPathsClass.$fromRdf,
+        $fromRdfTypes: [PropertyPathsClass.$fromRdfType],
+      },
+      query,
+    );
+  }
+
   async propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyVisibilitiesClass>> {
@@ -82296,6 +83220,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: PropertyCardinalitiesClass.$fromRdf,
           $fromRdfTypes: [],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: PropertyPathsClass.$fromRdf,
+          $fromRdfTypes: [PropertyPathsClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -85578,6 +86507,54 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyCardinalitiesClass.$Filter,
       PropertyCardinalitiesClass.$Identifier
     >(PropertyCardinalitiesClass, query);
+  }
+
+  async propertyPathsClass(
+    identifier: PropertyPathsClass.$Identifier,
+  ): Promise<Either<Error, PropertyPathsClass>> {
+    return (await this.propertyPathsClasses({ identifiers: [identifier] })).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async propertyPathsClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        PropertyPathsClass.$Filter,
+        PropertyPathsClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >(PropertyPathsClass, query);
+  }
+
+  async propertyPathsClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPathsClass.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >(PropertyPathsClass, query);
+  }
+
+  async propertyPathsClasses(
+    query?: $SparqlObjectSet.Query<
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPathsClass[]>> {
+    return this.$objects<
+      PropertyPathsClass,
+      PropertyPathsClass.$Filter,
+      PropertyPathsClass.$Identifier
+    >(PropertyPathsClass, query);
   }
 
   async propertyVisibilitiesClass(

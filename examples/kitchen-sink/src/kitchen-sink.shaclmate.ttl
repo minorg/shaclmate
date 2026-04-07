@@ -1184,6 +1184,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
+        sh:name "inversePathProperty" ;
         sh:path [
             sh:inversePath :inversePathProperty
         ]
