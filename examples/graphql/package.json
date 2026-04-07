@@ -6,7 +6,7 @@
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.4"
+    "rdfjs-resource": "3.0.5"
   },
   "devDependencies": {
     "@types/rdfjs__data-model": "~2.0.9",
