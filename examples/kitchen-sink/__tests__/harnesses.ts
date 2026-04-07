@@ -637,7 +637,7 @@ export const harnesses = {
   propertyPathsClass: new ClassHarness(
     new kitchenSink.PropertyPathsClass({
       $identifier,
-      inversePathProperty: "inversePathPropertyValue",
+      inversePathProperty: "http://example.com/inversePathPropertyValue",
       predicatePathProperty: "predicatePathPropertyValue",
     }),
     kitchenSink.PropertyPathsClass,
