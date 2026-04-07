@@ -1,6 +1,6 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import { Either, type Maybe } from "purify-ts";
-import { type PropertyPath, Resource } from "rdfjs-resource";
+import { PropertyPath, Resource } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 import type { OntologyLike } from "./OntologyLike.js";
@@ -73,13 +73,9 @@ export class PropertyShape<
 
   @Memoize()
   override toString(): string {
-    const keyValues: string[] = [
+    return `PropertyShape(${[
       `identifier=${Resource.Identifier.toString(this.identifier)}`,
-    ];
-    const path = this.path;
-    if (path.termType === "NamedNode") {
-      keyValues.push(`path=${path.value}`);
-    }
-    return `PropertyShape(${keyValues.join(", ")})`;
+      `path=${PropertyPath.$toString(this.path)}`,
+    ].join(", ")})`;
   }
 }

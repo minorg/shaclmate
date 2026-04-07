@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
-import { Resource } from "rdfjs-resource";
+import { type PropertyPath, Resource } from "rdfjs-resource";
 import * as ast from "../../ast/index.js";
 import { stringToValidTsIdentifier } from "./stringToValidTsIdentifier.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -8,7 +8,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export function tsName(astConstruct: {
   label: Maybe<string>;
   name: Maybe<string>;
-  path?: NamedNode;
+  path?: ast.Curie | PropertyPath;
   synthetic?: boolean;
   shapeIdentifier: BlankNode | NamedNode;
 }): string {
