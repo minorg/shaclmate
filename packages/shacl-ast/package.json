@@ -11,7 +11,7 @@
     "@types/rdfjs__term-map": "~2.0.10",
     "@types/rdfjs__term-set": "~2.0.9",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.5",
+    "rdfjs-resource": "3.0.6",
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
