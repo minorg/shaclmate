@@ -170,7 +170,7 @@ export class AstJsonGenerator implements Generator {
             mutable: property.mutable,
             name: property.name.extract(),
             order: property.order,
-            path: property.path.value,
+            path: property.path,
             recursive: property.recursive ? true : undefined,
             shapeIdentifier: Resource.Identifier.toString(
               property.shapeIdentifier,

@@ -251,13 +251,6 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         }
       }
 
-      const path = propertyShape.path;
-      if (path.termType !== "NamedNode") {
-        return Left(
-          new Error(`${propertyShape} has non-predicate path, unsupported`),
-        );
-      }
-
       return Either.of(
         new ast.ObjectType.Property({
           comment: propertyShape.comment,
@@ -267,7 +260,10 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           name: propertyShape.shaclmateName.alt(propertyShape.name),
           objectType,
           order: propertyShape.order.orDefault(0),
-          path: this.curieFactory.create(path).extract() ?? path,
+          path:
+            (propertyShape.path.termType === "NamedNode"
+              ? this.curieFactory.create(propertyShape.path).extract()
+              : undefined) ?? propertyShape.path,
           shapeIdentifier:
             (propertyShape.identifier.termType === "NamedNode"
               ? this.curieFactory.create(propertyShape.identifier).extract()

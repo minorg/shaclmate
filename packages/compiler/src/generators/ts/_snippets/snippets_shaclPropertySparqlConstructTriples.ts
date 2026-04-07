@@ -16,10 +16,14 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
   typeSparqlConstructTriples: ${snippets_SparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${imports.sparqljs}.Triple[] {
+  if (propertySchema.path.termType !== "NamedNode") {
+    throw new Error("non-predicate paths not supported in SPARQL");
+  }
+
   const valueString = \`\${variablePrefix}\${propertyName[0].toUpperCase()}\${propertyName.slice(1)}\`;
   const valueVariable = ${imports.dataFactory}.variable!(valueString);
 
-  return [{ subject: focusIdentifier, predicate: propertySchema.identifier, object: valueVariable } as ${imports.sparqljs}.Triple]
+  return [{ subject: focusIdentifier, predicate: propertySchema.path, object: valueVariable } as ${imports.sparqljs}.Triple]
     .concat(typeSparqlConstructTriples({
       filter,
       ignoreRdfType,

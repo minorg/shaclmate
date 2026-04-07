@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
-import { Resource } from "rdfjs-resource";
+import { PropertyPath, Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
@@ -295,7 +295,7 @@ export namespace ObjectType {
     /**
      * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
      */
-    readonly path: Curie | NamedNode;
+    readonly path: Curie | PropertyPath;
 
     /**
      * Identifier of the property shape.
@@ -332,7 +332,7 @@ export namespace ObjectType {
       name: Maybe<string>;
       objectType: ObjectType;
       order: number;
-      path: Curie | NamedNode;
+      path: Curie | PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
       visibility: PropertyVisibility;
@@ -550,7 +550,7 @@ export namespace ObjectType {
     }
 
     toString(): string {
-      return `${this.name.orDefault(Resource.Identifier.toString(this.shapeIdentifier))}(path=${this.path.value})`;
+      return `${this.name.orDefault(Resource.Identifier.toString(this.shapeIdentifier))}(path=${PropertyPath.$toString(this.path)})`;
     }
   }
 }

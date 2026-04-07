@@ -24,7 +24,7 @@ describe("sparql", () => {
         languageInDataset.add(
           oxigraph.quad(
             languageInSubject,
-            oxigraph.namedNode(property.identifier.value),
+            oxigraph.namedNode(property.path.value),
             language.length > 0
               ? oxigraph.literal(`${language}value`, language)
               : oxigraph.literal("value"),

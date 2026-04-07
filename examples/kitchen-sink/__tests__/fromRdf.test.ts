@@ -32,17 +32,16 @@ describe("fromRdf", () => {
         if (property.kind !== "Shacl") {
           continue;
         }
-        const predicate = dataFactory.namedNode(property.identifier.value);
 
         languageInDataset.add(
           dataFactory.quad(
             invalidLanguageInResource.identifier,
-            predicate,
+            property.path,
             languageLiteral,
           ),
         );
 
-        switch (property.identifier.value) {
+        switch (property.path.value) {
           case "http://example.com/languageInLiteralProperty":
             if (!validLanguageInLanguage.includes(language)) {
               continue;
@@ -53,7 +52,7 @@ describe("fromRdf", () => {
         languageInDataset.add(
           dataFactory.quad(
             validLanguageInResource.identifier,
-            predicate,
+            property.path,
             languageLiteral,
           ),
         );
@@ -94,7 +93,7 @@ describe("fromRdf", () => {
     );
     resource.add(
       kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
-        .explicitFromToRdfTypesProperty.identifier,
+        .explicitFromToRdfTypesProperty.path,
       dataFactory.literal("test"),
     );
 
@@ -113,7 +112,7 @@ describe("fromRdf", () => {
     );
     resource.add(
       kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
-        .explicitFromToRdfTypesProperty.identifier,
+        .explicitFromToRdfTypesProperty.path,
       dataFactory.literal("test"),
     );
 
@@ -165,7 +164,7 @@ describe("fromRdf", () => {
       dataFactory.quad(
         identifier,
         kitchenSink.HasValuePropertiesClass.$schema.properties
-          .hasIriValueProperty.identifier,
+          .hasIriValueProperty.path,
         dataFactory.namedNode("http://example.com/HasValuePropertiesClassIri1"),
       ),
     );
@@ -173,7 +172,7 @@ describe("fromRdf", () => {
       dataFactory.quad(
         identifier,
         kitchenSink.HasValuePropertiesClass.$schema.properties
-          .hasLiteralValueProperty.identifier,
+          .hasLiteralValueProperty.path,
         dataFactory.literal("nottest"),
       ),
     );
@@ -196,7 +195,7 @@ describe("fromRdf", () => {
       dataFactory.quad(
         identifier,
         kitchenSink.InIdentifierClass.$schema.properties.inIdentifierProperty
-          .identifier,
+          .path,
         dataFactory.literal("whatever"),
       ),
     );
@@ -214,8 +213,7 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.InPropertiesClass.$schema.properties.inIrisProperty
-          .identifier,
+        kitchenSink.InPropertiesClass.$schema.properties.inIrisProperty.path,
         dataFactory.namedNode("http://example.com/WithInPropertiesIriInvalid"),
       ),
     );
@@ -242,8 +240,7 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.InPropertiesClass.$schema.properties.inStringsProperty
-          .identifier,
+        kitchenSink.InPropertiesClass.$schema.properties.inStringsProperty.path,
         object,
       ),
     );
@@ -419,7 +416,7 @@ describe("fromRdf", () => {
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.ListPropertiesClass.$schema.properties.stringListProperty
-        .identifier,
+        .path,
       dataFactory.blankNode(),
     );
     const result = kitchenSink.ListPropertiesClass.$fromRdf(instanceResource);
@@ -435,7 +432,7 @@ describe("fromRdf", () => {
     const listResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.ListPropertiesClass.$schema.properties.stringListProperty
-        .identifier,
+        .path,
       listResource.identifier,
     );
     listResource.add(rdf.first, dataFactory.blankNode());
@@ -452,7 +449,7 @@ describe("fromRdf", () => {
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.PropertyCardinalitiesClass.$schema.properties
-        .emptyStringSetProperty.identifier,
+        .emptyStringSetProperty.path,
       dataFactory.blankNode(),
     );
     const result =

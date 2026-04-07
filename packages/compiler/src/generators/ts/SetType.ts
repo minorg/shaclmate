@@ -39,7 +39,7 @@ export class SetType<
       );
     }
     chain.push(
-      code`map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.predicate}, value: valuesArray }))`,
+      code`map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
     );
     return joinCode(chain, { on: "." });
   }

@@ -6,8 +6,8 @@ export const snippets_ShaclPropertySchema = conditionalOutput(
   `${syntheticNamePrefix}ShaclPropertySchema`,
   code`\
 export interface ${syntheticNamePrefix}ShaclPropertySchema<TypeSchemaT = object> {
-  readonly identifier: ${imports.NamedNode};
   readonly kind: "Shacl";
+  readonly path: ${imports.PropertyPath};
   readonly type: () => TypeSchemaT;
 }`,
 );

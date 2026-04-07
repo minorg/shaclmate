@@ -47,7 +47,7 @@ describe("toRdf", async () => {
       resource
         .value(
           kitchenSink.ConcreteChildClass.$schema.properties
-            .concreteChildClassProperty.identifier,
+            .concreteChildClassProperty.path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -74,7 +74,7 @@ describe("toRdf", async () => {
       resource
         .value(
           kitchenSink.ExplicitRdfTypeClass.$schema.properties
-            .explicitRdfTypeProperty.identifier,
+            .explicitRdfTypeProperty.path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -98,7 +98,7 @@ describe("toRdf", async () => {
       resource
         .value(
           kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
-            .explicitFromToRdfTypesProperty.identifier,
+            .explicitFromToRdfTypesProperty.path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -118,7 +118,7 @@ describe("toRdf", async () => {
       resource
         .value(
           kitchenSink.DefaultValuePropertiesClass.$schema.properties
-            .falseBooleanDefaultValueProperty.identifier,
+            .falseBooleanDefaultValueProperty.path,
         )
         .chain((value) => value.toBoolean())
         .unsafeCoerce(),
