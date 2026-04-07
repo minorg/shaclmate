@@ -1,6 +1,5 @@
-import type * as rdfjs from "@rdfjs/types";
-
 import { Maybe } from "purify-ts";
+import type { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -11,6 +10,21 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
+function propertyPathToCode(propertyPath: PropertyPath): Code {
+  switch (propertyPath.termType) {
+    case "AlternativePath":
+    case "SequencePath":
+      return code`{ kind: ${literalOf(propertyPath.termType)} as const, members: [${joinCode(propertyPath.members.map(propertyPathToCode), { on: "," })}] }`;
+    case "InversePath":
+    case "OneOrMorePath":
+    case "ZeroOrMorePath":
+    case "ZeroOrOnePath":
+      return code`{ kind: ${literalOf(propertyPath.termType)} as const, path: ${propertyPathToCode(propertyPath.path)} }`;
+    case "NamedNode":
+      return rdfjsTermExpression(propertyPath);
+  }
+}
+
 export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
@@ -18,7 +32,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override readonly kind = "ShaclProperty";
   override readonly mutable: boolean;
-  readonly path: rdfjs.NamedNode;
+  readonly path: PropertyPath;
   override readonly recursive: boolean;
 
   constructor({
@@ -34,7 +48,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     description: Maybe<string>;
     label: Maybe<string>;
     mutable: boolean;
-    path: rdfjs.NamedNode;
+    path: PropertyPath;
     recursive: boolean;
   } & ConstructorParameters<typeof AbstractProperty<TypeT>>[0]) {
     super(superParameters);
@@ -145,18 +159,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  @Memoize()
-  protected get predicate(): Code {
-    return code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
-  }
-
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
       // comment: this.comment.map(JSON.stringify).extract(),
       // description: this.description.map(JSON.stringify).extract(),
-      identifier: this.objectType.features.has("rdf")
-        ? rdfjsTermExpression(this.path)
+      path: this.objectType.features.has("rdf")
+        ? propertyPathToCode(this.path)
         : undefined,
       // label: this.label.map(JSON.stringify).extract(),
       // mutable: this.mutable ? true : undefined,
@@ -237,7 +246,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           variables: {
             ...variables,
             ignoreRdfType: true,
-            predicate: this.predicate,
+            propertyPath: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
             resourceValues: code`resourceValues`,
           },
         })})`,
@@ -322,12 +331,18 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["toRdfStatements"]
   >[0]): readonly Code[] {
-    return [
-      code`${variables.resource}.add(${this.predicate}, ${this.type.toRdfExpression(
-        {
-          variables: { ...variables, predicate: this.predicate },
-        },
-      )}, ${variables.graph});`,
-    ];
+    if (this.path.termType !== "NamedNode") {
+      return [];
+    }
+    const predicate = rdfjsTermExpression(this.path);
+    return this.path.termType === "NamedNode"
+      ? [
+          code`${variables.resource}.add(${predicate}, ${this.type.toRdfExpression(
+            {
+              variables: { ...variables, predicate },
+            },
+          )}, ${variables.graph});`,
+        ]
+      : [];
   }
 }

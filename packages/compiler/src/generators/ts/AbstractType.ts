@@ -161,12 +161,13 @@ export abstract class AbstractType {
    *
    * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
    *   context: unanticipated properties (...) passed to Object.fromRdf
+   *   graph: DefaultGraph | NamedNode | undefined to match (subject, predicate, object) triples in; if undefined, match triples in all graphs
    *   ignoreRdfType: whether the RDF type of objects/object unions should be ignored
    *   objectSet: the ObjectSet passed to Object.fromRdf
-   *   predicate: the predicate of the object's property
    *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
-   *   resource: the rdfjsResource.Resource passed to Object.fromRdf
-   *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type.
+   *   propertyPath: the PropertyPath of the object's property
+   *   resource: the Resource passed to Object.fromRdf
+   *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type
    */
   abstract fromRdfExpression(parameters: {
     variables: {
@@ -175,7 +176,7 @@ export abstract class AbstractType {
       ignoreRdfType?: boolean;
       objectSet: Code;
       preferredLanguages: Code;
-      predicate: Code;
+      propertyPath: Code;
       resource: Code;
       resourceValues: Code;
     };
@@ -242,8 +243,15 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * An expression that converts a property value of this type to an array of values that can be .add'd to a Resource.
-   * (BlankNode | Literal | NamedNode | bigint | boolean | number | string)[].
+   * An expression that converts a property value of this type to a value or an array of values that can be .add'd to a Resource with
+   *   resource.add(predicate, convertedValue, graph)
+   *
+   * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
+   *   graph: DefaultGraph | NamedNode | undefined to .add to; if undefined, add to the default graph
+   *   predicate: predicate (NamedNode)
+   *   resource: the Resource to .add to
+   *   resourceSet: ResourceSet for any new Resources needed while conversion (of e.g., nested objects)
+   *   value: value of this type, to be converted to (BlankNode | Literal | NamedNode | bigint | boolean | number | string) or an array of the same
    */
   abstract toRdfExpression(parameters: {
     variables: {

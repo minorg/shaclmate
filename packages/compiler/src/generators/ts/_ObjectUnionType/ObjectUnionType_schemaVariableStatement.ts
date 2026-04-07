@@ -1,3 +1,4 @@
+import { PropertyPath } from "rdfjs-resource";
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -26,7 +27,12 @@ export function ObjectUnionType_schemaVariableStatement(
       }
       let commonProperty = commonPropertiesByName[memberTypeProperty.name];
       if (commonProperty) {
-        if (commonProperty.property.path.equals(memberTypeProperty.path)) {
+        if (
+          PropertyPath.equals(
+            commonProperty.property.path,
+            memberTypeProperty.path,
+          )
+        ) {
           commonProperty.memberTypesWithProperty[memberTypeI] = true;
         }
       } else {

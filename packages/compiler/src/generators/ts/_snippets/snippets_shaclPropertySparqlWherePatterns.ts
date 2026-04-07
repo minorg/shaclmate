@@ -18,13 +18,17 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
   typeSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${snippets_SparqlPattern}[] {
+  if (propertyShema.path.termType !== "NamedNode") {
+    throw new Error("non-predicate paths not supported in SPARQL");
+  }
+
   const valueString = \`\${variablePrefix}\${propertyName[0].toUpperCase()}\${propertyName.slice(1)}\`;
   const valueVariable = ${imports.dataFactory}.variable!(valueString);
 
   const propertyPatterns: ${imports.sparqljs}.BgpPattern[] = [{
     triples: [{
       subject: focusIdentifier,
-      predicate: propertySchema.identifier,
+      predicate: propertySchema.path,
       object: valueVariable,
     }],
     type: "bgp"
