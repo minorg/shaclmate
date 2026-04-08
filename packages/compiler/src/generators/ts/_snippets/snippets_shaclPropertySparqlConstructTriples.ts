@@ -79,7 +79,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
         propertyPath satisfies never;
         throw new Error(\`\${propertyName}: unhandled property path termType: \${(propertyPath as any).termType}\`);
       }
-    }    
+    }
   }
 
   const valueString = \`\${variablePrefix}\${propertyName[0].toUpperCase()}\${propertyName.slice(1)}\`;
