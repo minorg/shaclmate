@@ -104,7 +104,7 @@ SHACLmate uses `sh:name` to derive identifiers for generated code. Per the SHACL
 
 ### [Property paths](https://www.w3.org/TR/shacl/#property-paths)
 
-Only [predicate paths](https://www.w3.org/TR/shacl/#property-path-predicate) are supported.
+[Predicate paths](https://www.w3.org/TR/shacl/#property-path-predicate) and [inverse paths](https://www.w3.org/TR/shacl/#property-path-inverse) are supported. Other paths are experimental.
 
 ### [Value type constraint components](https://www.w3.org/TR/shacl/#core-components-value-type)
 
@@ -119,8 +119,8 @@ SHACLmate generates built-in TypeScript types from corresponding XSD datatypes:
 | XSD datatype | TypeScript type |
 | ------------ | --------------- |
 | `xsd:anyURI` | `string` |
-| `xsd:boolean`  | `boolean` |
-| `xsd:date` | `Date` |
+| `xsd:boolean`| `boolean` |
+| `xsd:date`   | `Date` |
 | `xsd:dateTime` | `Date` |
 | Numeric types | `number` |
 | `xsd:string` | `string` |
