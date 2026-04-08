@@ -62,10 +62,6 @@ describe("sparql", () => {
       continue;
     }
 
-    if (id !== "propertyPathsClass") {
-      continue;
-    }
-
     it(`${id} round trip`, async ({ expect }) => {
       const toRdfDataset = harness.toRdf().dataset;
       const toRdfQuads: Quad[] = [];
