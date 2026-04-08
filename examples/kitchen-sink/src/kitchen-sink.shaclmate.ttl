@@ -1178,6 +1178,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :nonEmptyStringSetProperty
     ] .
 
+:PropertyPathsClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Shape that uses different property path types in its properties" ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:name "inversePathProperty" ;
+        sh:nodeKind sh:IRI ;
+        sh:path [
+            sh:inversePath :inversePathProperty
+        ]
+    ], [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :predicatePathProperty
+    ] .
+
 :PropertyVisibilitiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that have visibility modifiers (private, protected, public)" ;

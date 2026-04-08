@@ -232,7 +232,7 @@ export abstract class AbstractProperty<
   abstract toRdfStatements(parameters: {
     variables: Omit<
       Parameters<Type["toRdfExpression"]>[0]["variables"],
-      "predicate"
+      "propertyPath"
     >;
   }): readonly Code[];
 }

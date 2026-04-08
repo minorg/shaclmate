@@ -16,14 +16,76 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
   typeSparqlConstructTriples: ${snippets_SparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${imports.sparqljs}.Triple[] {
-  if (propertySchema.path.termType !== "NamedNode") {
-    throw new Error("non-predicate paths not supported in SPARQL");
+  const propertyPathSparqlConstructTriples = ({ end, propertyPath, start, variableCounter }: {
+    variableCounter: { value: number };
+    end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
+    propertyPath: ${imports.PropertyPath};
+    start: ${imports.NamedNode} | ${imports.Variable};
+  }): readonly ${imports.sparqljs}.Triple[] => {
+    switch (propertyPath.termType) {
+      case "AlternativePath": {
+        return propertyPath.members.flatMap((member) =>
+          propertyPathSparqlConstructTriples({ end, propertyPath: member, start, variableCounter }),
+        );
+      }
+
+      case "InversePath": {
+        if (end.termType === "Literal") {
+          throw new Error(\`invalid term type for inverse path: \${end.termType}\`);
+        }
+
+        return propertyPathSparqlConstructTriples({
+          end: start,
+          propertyPath: propertyPath.path,
+          start: end,
+          variableCounter,
+        });
+      }
+
+      case "NamedNode": {
+        return [{ subject: start, predicate: propertyPath as NamedNode, object: end }];
+      }
+
+      case "SequencePath": {
+        if (propertyPath.members.length === 0) {
+          return [];
+        }
+
+        if (propertyPath.members.length === 1) {
+          return propertyPathSparqlConstructTriples({ end, propertyPath: propertyPath.members[0], start, variableCounter });
+        }
+
+        let triples: ${imports.sparqljs}.Triple[] = [];
+        let current: ${imports.NamedNode} | ${imports.Variable} = start;
+        for (let memberI = 0; memberI < propertyPath.members.length; memberI++) {
+          const next: ${imports.NamedNode} | ${imports.Literal} | ${imports.Variable} = memberI === propertyPath.members.length - 1
+            ? end
+            : ${imports.dataFactory}.variable(\`\${variablePrefix}\${variableCounter.value++}\`);
+          triples = triples.concat(propertyPathSparqlConstructTriples({ end: next, propertyPath: propertyPath.members[memberI], start: current, variableCounter }));
+          current = next as ${imports.NamedNode} | ${imports.Variable};
+        }
+
+        return triples;
+      }
+
+      case "OneOrMorePath":
+      case "ZeroOrMorePath":
+      case "ZeroOrOnePath": {
+        throw new Error(\`\${propertyName}: \${propertyPath.termType} property path cannot be represented as SPARQL CONSTRUCT triples\`);
+      }
+
+      default: {
+        propertyPath satisfies never;
+        throw new Error(\`\${propertyName}: unhandled property path termType: \${(propertyPath as any).termType}\`);
+      }
+    }
   }
 
   const valueString = \`\${variablePrefix}\${propertyName[0].toUpperCase()}\${propertyName.slice(1)}\`;
   const valueVariable = ${imports.dataFactory}.variable!(valueString);
 
-  return [{ subject: focusIdentifier, predicate: propertySchema.path, object: valueVariable } as ${imports.sparqljs}.Triple]
+  const variableCounter = { value: 0 };
+  return propertyPathSparqlConstructTriples({ end: valueVariable, propertyPath: propertySchema.path, start: focusIdentifier, variableCounter })
     .concat(typeSparqlConstructTriples({
       filter,
       ignoreRdfType,

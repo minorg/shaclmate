@@ -14,12 +14,12 @@ function propertyPathToCode(propertyPath: PropertyPath): Code {
   switch (propertyPath.termType) {
     case "AlternativePath":
     case "SequencePath":
-      return code`{ kind: ${literalOf(propertyPath.termType)} as const, members: [${joinCode(propertyPath.members.map(propertyPathToCode), { on: "," })}] }`;
+      return code`{ members: [${joinCode(propertyPath.members.map(propertyPathToCode), { on: "," })}] as const, termType: ${literalOf(propertyPath.termType)} as const }`;
     case "InversePath":
     case "OneOrMorePath":
     case "ZeroOrMorePath":
     case "ZeroOrOnePath":
-      return code`{ kind: ${literalOf(propertyPath.termType)} as const, path: ${propertyPathToCode(propertyPath.path)} }`;
+      return code`{ path: ${propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
     case "NamedNode":
       return rdfjsTermExpression(propertyPath);
   }
@@ -331,18 +331,25 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["toRdfStatements"]
   >[0]): readonly Code[] {
-    if (this.path.termType !== "NamedNode") {
-      return [];
+    switch (this.path.termType) {
+      case "NamedNode":
+        break;
+      case "InversePath":
+        if (this.path.path.termType === "NamedNode") {
+          break;
+        }
+        return [];
+      default:
+        return [];
     }
-    const predicate = rdfjsTermExpression(this.path);
-    return this.path.termType === "NamedNode"
-      ? [
-          code`${variables.resource}.add(${predicate}, ${this.type.toRdfExpression(
-            {
-              variables: { ...variables, predicate },
-            },
-          )}, ${variables.graph});`,
-        ]
-      : [];
+
+    const propertyPath = propertyPathToCode(this.path);
+    return [
+      code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfExpression(
+        {
+          variables: { ...variables, propertyPath },
+        },
+      )}, ${variables.graph});`,
+    ];
   }
 }

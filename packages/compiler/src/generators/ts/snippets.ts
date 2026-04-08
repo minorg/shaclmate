@@ -89,6 +89,7 @@ import { snippets_shaclPropertySparqlConstructTriples } from "./_snippets/snippe
 import { snippets_shaclPropertySparqlWherePatterns } from "./_snippets/snippets_shaclPropertySparqlWherePatterns.js";
 import { snippets_sortSparqlPatterns } from "./_snippets/snippets_sortSparqlPatterns.js";
 import { snippets_sparqlInstancesOfPattern } from "./_snippets/snippets_sparqlInstancesOfPattern.js";
+import { snippets_sparqlPropertyPath } from "./_snippets/snippets_sparqlPropertyPath.js";
 import { snippets_sparqlValueInPattern } from "./_snippets/snippets_sparqlValueInPattern.js";
 import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
@@ -190,6 +191,7 @@ export const snippets = {
   SparqlPattern_isSolutionGenerating:
     snippets_SparqlPattern_isSolutionGenerating,
   SparqlPattern: snippets_SparqlPattern,
+  sparqlPropertyPath: snippets_sparqlPropertyPath,
   sparqlValueInPattern: snippets_sparqlValueInPattern,
   SparqlWherePatternsFunction: snippets_SparqlWherePatternsFunction,
   SparqlWherePatternsFunctionParameters:

@@ -145,7 +145,7 @@ export class ListType<
     
     ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
     
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { graph: variables.graph, predicate: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 
     if (itemIndex + 1 === list.length) {
       currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)}, ${variables.graph});
