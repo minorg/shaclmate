@@ -1347,7 +1347,7 @@ function $literalSchemaSparqlPatterns({
 }: {
   filterPatterns: readonly $SparqlFilterPattern[];
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly sparqljs.BgpPattern[];
+  propertyPatterns: readonly $SparqlPattern[];
   schema: Readonly<{
     languageIn?: readonly string[];
     in?: readonly (
@@ -1954,17 +1954,21 @@ function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
 
         let triples: sparqljs.Triple[] = [];
         let current: NamedNode | Variable = start;
-        for (let i = 0; i < propertyPath.members.length; i++) {
-          const isLast = i === propertyPath.members.length - 1;
-          const next: NamedNode | Literal | Variable = isLast
-            ? end
-            : dataFactory.variable(
-                `${variablePrefix}${variableCounter.value++}`,
-              );
+        for (
+          let memberI = 0;
+          memberI < propertyPath.members.length;
+          memberI++
+        ) {
+          const next: NamedNode | Literal | Variable =
+            memberI === propertyPath.members.length - 1
+              ? end
+              : dataFactory.variable(
+                  `${variablePrefix}${variableCounter.value++}`,
+                );
           triples = triples.concat(
             propertyPathSparqlConstructTriples({
               end: next,
-              propertyPath: propertyPath.members[i],
+              propertyPath: propertyPath.members[memberI],
               start: current,
               variableCounter,
             }),
@@ -2031,25 +2035,114 @@ function $shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({
   typeSparqlWherePatterns: $SparqlWherePatternsFunction<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly $SparqlPattern[] {
-  if (propertySchema.path.termType !== "NamedNode") {
-    throw new Error("non-predicate paths not supported in SPARQL");
-  }
+  const propertyPathSparqlWherePatterns = ({
+    end,
+    propertyPath,
+    start,
+    variableCounter,
+  }: {
+    end: Literal | NamedNode | Variable;
+    propertyPath: PropertyPath;
+    start: NamedNode | Variable;
+    variableCounter: { value: number };
+  }): $SparqlPattern[] => {
+    switch (propertyPath.termType) {
+      case "AlternativePath": {
+        return [
+          {
+            patterns: propertyPath.members.map((member) => ({
+              patterns: propertyPathSparqlWherePatterns({
+                end,
+                propertyPath: member,
+                start,
+                variableCounter,
+              }),
+              type: "group" as const,
+            })),
+            type: "union",
+          },
+        ];
+      }
+
+      case "InversePath":
+      case "NamedNode":
+      case "OneOrMorePath":
+      case "ZeroOrMorePath":
+      case "ZeroOrOnePath": {
+        return [
+          {
+            triples: [
+              {
+                subject: start,
+                predicate: $sparqlPropertyPath(propertyPath),
+                object: end,
+              },
+            ],
+            type: "bgp",
+          },
+        ];
+      }
+
+      case "SequencePath": {
+        if (propertyPath.members.length === 0) {
+          return [];
+        }
+
+        if (propertyPath.members.length === 1) {
+          return propertyPathSparqlWherePatterns({
+            end,
+            propertyPath: propertyPath.members[0],
+            start,
+            variableCounter,
+          });
+        }
+
+        let patterns: $SparqlPattern[] = [];
+        let current: NamedNode | Variable = start;
+        for (
+          let memberI = 0;
+          memberI < propertyPath.members.length;
+          memberI++
+        ) {
+          const next: NamedNode | Literal | Variable =
+            memberI === propertyPath.members.length - 1
+              ? end
+              : dataFactory.variable(
+                  `${variablePrefix}${variableCounter.value++}`,
+                );
+          patterns = patterns.concat(
+            propertyPathSparqlWherePatterns({
+              end: next,
+              propertyPath: propertyPath.members[memberI],
+              start: current,
+              variableCounter,
+            }),
+          );
+          current = next as NamedNode | Variable;
+        }
+
+        return patterns;
+      }
+
+      default: {
+        propertyPath satisfies never;
+        throw new Error(
+          `${propertyName}: unhandled property path termType: ${(propertyPath as any).termType}`,
+        );
+      }
+    }
+  };
 
   const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
   const valueVariable = dataFactory.variable!(valueString);
 
-  const propertyPatterns: sparqljs.BgpPattern[] = [
-    {
-      triples: [
-        {
-          subject: focusIdentifier,
-          predicate: propertySchema.path,
-          object: valueVariable,
-        },
-      ],
-      type: "bgp",
-    },
-  ];
+  const variableCounter = { value: 0 };
+  const propertyPatterns = propertyPathSparqlWherePatterns({
+    end: valueVariable,
+    propertyPath: propertySchema.path,
+    start: focusIdentifier,
+    variableCounter,
+  });
 
   return typeSparqlWherePatterns({
     filter,
@@ -2167,6 +2260,67 @@ namespace $SparqlPattern {
   }
 }
 
+/**
+ * Convert a PropertyPath to a sparqljs.PropertyPath.
+ */
+function $sparqlPropertyPath(
+  propertyPath: PropertyPath,
+): NamedNode | sparqljs.PropertyPath {
+  switch (propertyPath.termType) {
+    case "AlternativePath":
+      return {
+        type: "path",
+        pathType: "|",
+        items: propertyPath.members.map($sparqlPropertyPath),
+      };
+
+    case "InversePath":
+      return {
+        type: "path",
+        pathType: "^",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    case "NamedNode":
+      return propertyPath;
+
+    case "OneOrMorePath":
+      return {
+        type: "path",
+        pathType: "+",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    case "SequencePath":
+      return {
+        type: "path",
+        pathType: "/",
+        items: propertyPath.members.map($sparqlPropertyPath),
+      };
+
+    case "ZeroOrMorePath":
+      return {
+        type: "path",
+        pathType: "*",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    case "ZeroOrOnePath":
+      return {
+        type: "path",
+        pathType: "?",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    default: {
+      propertyPath satisfies never;
+      throw new Error(
+        `unhandled property path termType: ${(propertyPath as any).termType}`,
+      );
+    }
+  }
+}
+
 function $sparqlValueInPattern({
   lift,
   valueIn,
@@ -2215,7 +2369,7 @@ type $SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   filter?: FilterT;
   ignoreRdfType?: boolean;
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly sparqljs.BgpPattern[];
+  propertyPatterns: readonly $SparqlPattern[];
   schema: SchemaT;
   valueVariable: Variable;
   variablePrefix: string;
@@ -2412,7 +2566,7 @@ function $termSchemaSparqlPatterns({
   valueVariable,
 }: {
   filterPatterns: readonly $SparqlFilterPattern[];
-  propertyPatterns: readonly sparqljs.BgpPattern[];
+  propertyPatterns: readonly $SparqlPattern[];
   schema: Readonly<{
     in?: readonly (
       | bigint

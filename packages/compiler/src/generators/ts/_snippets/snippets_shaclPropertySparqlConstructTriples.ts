@@ -57,12 +57,11 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
 
         let triples: ${imports.sparqljs}.Triple[] = [];
         let current: ${imports.NamedNode} | ${imports.Variable} = start;
-        for (let i = 0; i < propertyPath.members.length; i++) {
-          const isLast = i === propertyPath.members.length - 1;
-          const next: ${imports.NamedNode} | ${imports.Literal} | ${imports.Variable} = isLast
+        for (let memberI = 0; memberI < propertyPath.members.length; memberI++) {
+          const next: ${imports.NamedNode} | ${imports.Literal} | ${imports.Variable} = memberI === propertyPath.members.length - 1
             ? end
             : ${imports.dataFactory}.variable(\`\${variablePrefix}\${variableCounter.value++}\`);
-          triples = triples.concat(propertyPathSparqlConstructTriples({ end: next, propertyPath: propertyPath.members[i], start: current, variableCounter }));
+          triples = triples.concat(propertyPathSparqlConstructTriples({ end: next, propertyPath: propertyPath.members[memberI], start: current, variableCounter }));
           current = next as ${imports.NamedNode} | ${imports.Variable};
         }
 

@@ -106,7 +106,7 @@ export abstract class AbstractType {
    * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
    * - filter?: an instance of filterType
    * - preferredLanguages: array of preferred language code (strings); may be empty
-   * - propertyPatterns: array of sparqljs.BgpPattern's for the property; may be empty
+   * - propertyPatterns: array of sparqljs.Pattern's for the property; may be empty
    * - schema: instance of this.schemaType
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: prefix to use for new variables

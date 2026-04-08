@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}literalSchemaSparqlPatterns({
 }: {
   filterPatterns: readonly ${snippets_SparqlFilterPattern}[],
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly ${imports.sparqljs}.BgpPattern[];
+  propertyPatterns: readonly ${snippets_SparqlPattern}[];
   schema: Readonly<{
     languageIn?: readonly string[];
     in?: readonly (bigint | boolean | Date | string | number | ${imports.Literal} | ${imports.NamedNode})[];
