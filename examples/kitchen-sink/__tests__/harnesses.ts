@@ -59,6 +59,33 @@ export const harnesses = {
       kitchenSink.BlankNodeOrIriIdentifierInterface.$create(),
       kitchenSink.BlankNodeOrIriIdentifierInterface,
     ),
+  // classPropertiesClass: new ClassHarness(
+  //   new kitchenSink.ClassPropertiesClass({
+  //     $identifier,
+  //     iriClassProperty: dataFactory.namedNode(
+  //       "http://example.com/iriClassPropertyInstance",
+  //     ),
+  //     multiClassProperty: dataFactory.namedNode(
+  //       "http://example.com/multiClassPropertyInstance",
+  //     ),
+  //     nodeClassProperty1: new kitchenSink.NonClass({
+  //       $identifier: dataFactory.namedNode(
+  //         "http://example.com/nodeClassProperty1Instance",
+  //       ),
+  //       nonClassProperty: "test",
+  //     }),
+  //     nodeClassProperty2: new kitchenSink.PartialClass({
+  //       $identifier: dataFactory.namedNode(
+  //         "http://example.com/nodeClassProperty1Instance",
+  //       ),
+  //       lazilyResolvedStringProperty: "test",
+  //     }),
+  //     singleClassProperty: dataFactory.namedNode(
+  //       "http://example.com/singleClassPropertyInstance",
+  //     ),
+  //   }),
+  //   kitchenSink.ClassPropertiesClass,
+  // ),
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,

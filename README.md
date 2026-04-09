@@ -102,6 +102,25 @@ SHACLmate supports a subset of SHACL with a few extensions (under the [`shaclmat
 
 SHACLmate uses `sh:name` to derive identifiers for generated code. Per the SHACL specification, `sh:name` is only valid on property shapes. SHACLmate prefers `shaclmate:name` for the identifiers of node shapes and as a way of overriding `sh:name` on property shapes.
 
+### Targets
+
+`sh:targetNode`, `sh:targetClass`, `sh:targetSubjectsOf`, and `sh:targetObjectsOf` are ignored.
+
+#### Implicit class targets
+
+```
+ex:Person
+	a rdfs:Class, sh:NodeShape .
+```
+
+When a node shape is declared as a class, instances of that shape are assumed to have an `rdf:type` of the shape:
+
+```
+ex:examplePerson a ex:Person .
+```
+
+without having to explicit declare a property shape on `rdf:type` for the node shape or have `sh:class` alongside `sh:node` in properties that reference the node shape (a common pattern in SHACL). The generator ignores the latter because the `rdf:type` of a node shape is considered fixed.
+
 ### [Property paths](https://www.w3.org/TR/shacl/#property-paths)
 
 [Predicate paths](https://www.w3.org/TR/shacl/#property-path-predicate) and [inverse paths](https://www.w3.org/TR/shacl/#property-path-inverse) are supported. Other paths are experimental.
@@ -167,8 +186,8 @@ Unsupported.
 
 ### [Logical constraint components](https://www.w3.org/TR/shacl/#core-components-logical)
 
-* `sh:xone` is (mostly) supported on node shapes and property shapes and used to generate union types in TypeScript. 
 * `sh:and` is recognized by the compiler but not generators.
+* `sh:xone` is (mostly) supported on node shapes and property shapes and used to generate union types in TypeScript. 
 
 ### [Shape-based constraint components](https://www.w3.org/TR/shacl/#core-components-shape)
 

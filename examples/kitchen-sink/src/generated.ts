@@ -20634,435 +20634,6 @@ export namespace NumericPropertiesClass {
     return patterns;
   }
 } /**
- * Node shape that isn't an rdfs:Class.
- */
-
-export class NonClass {
-  private _$identifier?: NonClass.$Identifier;
-
-  readonly $type: "NonClass" = "NonClass" as const;
-
-  readonly nonClassProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly nonClassProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-    this.nonClassProperty = parameters.nonClassProperty;
-  }
-
-  get $identifier(): NonClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: NonClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.nonClassProperty, other.nonClassProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "nonClassProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
-  }
-
-  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
-    this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<HasherT extends $Hasher>(
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(this.nonClassProperty);
-    return _hasher;
-  }
-
-  $toJson(): NonClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        nonClassProperty: this.nonClassProperty,
-      } satisfies NonClass.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier);
-    resource.add(
-      dataFactory.namedNode("http://example.com/nonClassProperty"),
-      [$literalFactory.string(this.nonClassProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace NonClass {
-  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.nonClassProperty !== undefined &&
-      !$filterString(filter.nonClassProperty, value.nonClassProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly nonClassProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    z.ZodError,
-    { $identifier: BlankNode | NamedNode; nonClassProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const nonClassProperty = $jsonObject["nonClassProperty"];
-    return Right({ $identifier, nonClassProperty });
-  }
-
-  export function $fromJson(json: unknown): Either<z.ZodError, NonClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NonClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NonClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "NonClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NonClass"),
-      nonClassProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NonClass";
-    readonly nonClassProperty: string;
-  };
-
-  export function isNonClass(object: $Object): object is NonClass {
-    switch (object.$type) {
-      case "NonClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NonClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NonClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NonClass(properties));
-  }
-
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; nonClassProperty: string }
-  > {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $parameters.resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $parameters.resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.nonClassProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  $parameters.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((nonClassProperty) => ({ $identifier, nonClassProperty })),
-      );
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NonClass"],
-        }),
-      },
-      nonClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/nonClassProperty"),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      filter?: NonClass.$Filter;
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: NamedNode | Variable;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const {
-      filter,
-      ignoreRdfType,
-      preferredLanguages,
-      subject,
-      ...queryParameters
-    } = parameters ?? {};
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        NonClass.$sparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          NonClass.$sparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType,
-            preferredLanguages,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      filter?: NonClass.$Filter;
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: NamedNode | Variable;
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      NonClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTriples(parameters?: {
-    filter?: NonClass.$Filter;
-    focusIdentifier?: NamedNode | Variable;
-    ignoreRdfType?: boolean;
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const focusIdentifier =
-      parameters?.focusIdentifier ?? dataFactory.variable!("nonClass");
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters?.filter?.nonClassProperty,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "nonClassProperty",
-        propertySchema: $schema.properties.nonClassProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "nonClass"),
-      }),
-    );
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    filter?: NonClass.$Filter;
-    focusIdentifier?: NamedNode | Variable;
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    variablePrefix?: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    const focusIdentifier =
-      parameters?.focusIdentifier ?? dataFactory.variable!("nonClass");
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters?.filter?.$identifier,
-          preferredLanguages: parameters?.preferredLanguages,
-          propertyPatterns: [],
-          schema: NonClass.$schema.properties.$identifier.type(),
-          valueVariable: focusIdentifier,
-          variablePrefix:
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "nonClass"),
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters?.filter?.nonClassProperty,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyName: "nonClassProperty",
-        propertySchema: $schema.properties.nonClassProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "nonClass"),
-      }),
-    );
-    return patterns;
-  }
-} /**
  * Shape that has properties with different sh:nodeKind combinations
  */
 
@@ -29440,448 +29011,6 @@ export namespace LazyPropertiesInterface {
           (focusIdentifier.termType === "Variable"
             ? focusIdentifier.value
             : "lazyPropertiesInterface"),
-      }),
-    );
-    return patterns;
-  }
-} /**
- * Node shape used as a partial by LazyPropertiesClass
- */
-
-export class PartialClass {
-  private _$identifier?: PartialClass.$Identifier;
-
-  readonly $type: "PartialClass" = "PartialClass" as const;
-
-  readonly lazilyResolvedStringProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly lazilyResolvedStringProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-    this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
-  }
-
-  get $identifier(): PartialClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: PartialClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          this.lazilyResolvedStringProperty,
-          other.lazilyResolvedStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "lazilyResolvedStringProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
-  }
-
-  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
-    this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<HasherT extends $Hasher>(
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(this.lazilyResolvedStringProperty);
-    return _hasher;
-  }
-
-  $toJson(): PartialClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
-      } satisfies PartialClass.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier);
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [$literalFactory.string(this.lazilyResolvedStringProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace PartialClass {
-  export function $filter(
-    filter: PartialClass.$Filter,
-    value: PartialClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    z.ZodError,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromJson(json: unknown): Either<z.ZodError, PartialClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PartialClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialClass"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClass";
-    readonly lazilyResolvedStringProperty: string;
-  };
-
-  export function isPartialClass(object: $Object): object is PartialClass {
-    switch (object.$type) {
-      case "PartialClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PartialClass(properties));
-  }
-
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $parameters.resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $parameters.resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: $parameters.graph,
-          resource: $parameters.resource,
-          propertySchema: $schema.properties.lazilyResolvedStringProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  $parameters.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((lazilyResolvedStringProperty) => ({
-          $identifier,
-          lazilyResolvedStringProperty,
-        })),
-      );
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialClass"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      filter?: PartialClass.$Filter;
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: NamedNode | Variable;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const {
-      filter,
-      ignoreRdfType,
-      preferredLanguages,
-      subject,
-      ...queryParameters
-    } = parameters ?? {};
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PartialClass.$sparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          PartialClass.$sparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType,
-            preferredLanguages,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      filter?: PartialClass.$Filter;
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: NamedNode | Variable;
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PartialClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTriples(parameters?: {
-    filter?: PartialClass.$Filter;
-    focusIdentifier?: NamedNode | Variable;
-    ignoreRdfType?: boolean;
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const focusIdentifier =
-      parameters?.focusIdentifier ?? dataFactory.variable!("partialClass");
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: $schema.properties.lazilyResolvedStringProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "partialClass"),
-      }),
-    );
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    filter?: PartialClass.$Filter;
-    focusIdentifier?: NamedNode | Variable;
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    variablePrefix?: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    const focusIdentifier =
-      parameters?.focusIdentifier ?? dataFactory.variable!("partialClass");
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters?.filter?.$identifier,
-          preferredLanguages: parameters?.preferredLanguages,
-          propertyPatterns: [],
-          schema: PartialClass.$schema.properties.$identifier.type(),
-          valueVariable: focusIdentifier,
-          variablePrefix:
-            parameters?.variablePrefix ??
-            (focusIdentifier.termType === "Variable"
-              ? focusIdentifier.value
-              : "partialClass"),
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters?.filter?.lazilyResolvedStringProperty,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyName: "lazilyResolvedStringProperty",
-        propertySchema: $schema.properties.lazilyResolvedStringProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "partialClass"),
       }),
     );
     return patterns;
@@ -63615,6 +62744,2160 @@ export namespace ClassUnionMember1 {
     return patterns;
   }
 } /**
+ * Node shape that isn't an rdfs:Class.
+ */
+
+export class NonClass {
+  private _$identifier?: NonClass.$Identifier;
+
+  readonly $type: "NonClass" = "NonClass" as const;
+
+  readonly nonClassProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly nonClassProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (parameters.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+    this.nonClassProperty = parameters.nonClassProperty;
+  }
+
+  get $identifier(): NonClass.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: NonClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.nonClassProperty, other.nonClassProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "nonClassProperty",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(this.nonClassProperty);
+    return _hasher;
+  }
+
+  $toJson(): NonClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        nonClassProperty: this.nonClassProperty,
+      } satisfies NonClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    resource.add(
+      dataFactory.namedNode("http://example.com/nonClassProperty"),
+      [$literalFactory.string(this.nonClassProperty)],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NonClass {
+  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.nonClassProperty !== undefined &&
+      !$filterString(filter.nonClassProperty, value.nonClassProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly nonClassProperty?: $StringFilter;
+  };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): Either<
+    z.ZodError,
+    { $identifier: BlankNode | NamedNode; nonClassProperty: string }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const nonClassProperty = $jsonObject["nonClassProperty"];
+    return Right({ $identifier, nonClassProperty });
+  }
+
+  export function $fromJson(json: unknown): Either<z.ZodError, NonClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NonClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NonClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonClassProperty`,
+          type: "Control",
+        },
+      ],
+      label: "NonClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("NonClass"),
+      nonClassProperty: z.string(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NonClass";
+    readonly nonClassProperty: string;
+  };
+
+  export function isNonClass(object: $Object): object is NonClass {
+    switch (object.$type) {
+      case "NonClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NonClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NonClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NonClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    { $identifier: BlankNode | NamedNode; nonClassProperty: string }
+  > {
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.nonClassProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  $parameters.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((nonClassProperty) => ({ $identifier, nonClassProperty })),
+      );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NonClass"],
+        }),
+      },
+      nonClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/nonClassProperty"),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: NonClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NonClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NonClass.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: NonClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NonClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: NonClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("nonClass");
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nonClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nonClassProperty",
+        propertySchema: $schema.properties.nonClassProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nonClass"),
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: NonClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("nonClass");
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: NonClass.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "nonClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.nonClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "nonClassProperty",
+        propertySchema: $schema.properties.nonClassProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "nonClass"),
+      }),
+    );
+    return patterns;
+  }
+} /**
+ * Node shape used as a partial by LazyPropertiesClass
+ */
+
+export class PartialClass {
+  private _$identifier?: PartialClass.$Identifier;
+
+  readonly $type: "PartialClass" = "PartialClass" as const;
+
+  readonly lazilyResolvedStringProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly lazilyResolvedStringProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (parameters.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+    this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
+  }
+
+  get $identifier(): PartialClass.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: PartialClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.lazilyResolvedStringProperty,
+          other.lazilyResolvedStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "lazilyResolvedStringProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(this.lazilyResolvedStringProperty);
+    return _hasher;
+  }
+
+  $toJson(): PartialClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
+      } satisfies PartialClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [$literalFactory.string(this.lazilyResolvedStringProperty)],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace PartialClass {
+  export function $filter(
+    filter: PartialClass.$Filter,
+    value: PartialClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): Either<
+    z.ZodError,
+    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const lazilyResolvedStringProperty =
+      $jsonObject["lazilyResolvedStringProperty"];
+    return Right({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromJson(json: unknown): Either<z.ZodError, PartialClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new PartialClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PartialClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "PartialClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("PartialClass"),
+      lazilyResolvedStringProperty: z.string(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function isPartialClass(object: $Object): object is PartialClass {
+    switch (object.$type) {
+      case "PartialClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PartialClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
+  > {
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $parameters.resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $parameters.resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: $parameters.graph,
+          resource: $parameters.resource,
+          propertySchema: $schema.properties.lazilyResolvedStringProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  $parameters.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((lazilyResolvedStringProperty) => ({
+          $identifier,
+          lazilyResolvedStringProperty,
+        })),
+      );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialClass"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: PartialClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PartialClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PartialClass.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: PartialClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PartialClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: PartialClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialClass");
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "partialClass"),
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: PartialClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("partialClass");
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: PartialClass.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "partialClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: $schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "partialClass"),
+      }),
+    );
+    return patterns;
+  }
+} /**
+ * Shape with properties that are not nested objects
+ */
+
+export class ClassPropertiesClass {
+  private _$identifier?: ClassPropertiesClass.$Identifier;
+
+  readonly $type: "ClassPropertiesClass" = "ClassPropertiesClass" as const;
+
+  /**
+   * Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI
+   */
+  readonly iriClassProperty: Maybe<NamedNode>;
+
+  /**
+   * Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI
+   */
+  readonly multiClassProperty: Maybe<BlankNode | NamedNode>;
+
+  /**
+   * Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target
+   */
+  readonly nodeClassProperty1: Maybe<NonClass>;
+
+  /**
+   * Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target
+   */
+  readonly nodeClassProperty2: Maybe<PartialClass>;
+
+  /**
+   * Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI
+   */
+  readonly singleClassProperty: Maybe<BlankNode | NamedNode>;
+
+  constructor(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly iriClassProperty?: Maybe<NamedNode> | NamedNode | string;
+    readonly multiClassProperty?:
+      | Maybe<BlankNode | NamedNode>
+      | (BlankNode | NamedNode)
+      | string;
+    readonly nodeClassProperty1?: Maybe<NonClass> | NonClass;
+    readonly nodeClassProperty2?: Maybe<PartialClass> | PartialClass;
+    readonly singleClassProperty?:
+      | Maybe<BlankNode | NamedNode>
+      | (BlankNode | NamedNode)
+      | string;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.iriClassProperty)) {
+      this.iriClassProperty = parameters?.iriClassProperty;
+    } else if (typeof parameters?.iriClassProperty === "object") {
+      this.iriClassProperty = Maybe.of(parameters?.iriClassProperty);
+    } else if (typeof parameters?.iriClassProperty === "string") {
+      this.iriClassProperty = Maybe.of(
+        dataFactory.namedNode(parameters?.iriClassProperty),
+      );
+    } else if (parameters?.iriClassProperty === undefined) {
+      this.iriClassProperty = Maybe.empty();
+    } else {
+      this.iriClassProperty = parameters?.iriClassProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.multiClassProperty)) {
+      this.multiClassProperty = parameters?.multiClassProperty;
+    } else if (typeof parameters?.multiClassProperty === "object") {
+      this.multiClassProperty = Maybe.of(parameters?.multiClassProperty);
+    } else if (typeof parameters?.multiClassProperty === "string") {
+      this.multiClassProperty = Maybe.of(
+        dataFactory.namedNode(parameters?.multiClassProperty),
+      );
+    } else if (parameters?.multiClassProperty === undefined) {
+      this.multiClassProperty = Maybe.empty();
+    } else {
+      this.multiClassProperty = parameters?.multiClassProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.nodeClassProperty1)) {
+      this.nodeClassProperty1 = parameters?.nodeClassProperty1;
+    } else if (
+      typeof parameters?.nodeClassProperty1 === "object" &&
+      parameters?.nodeClassProperty1 instanceof NonClass
+    ) {
+      this.nodeClassProperty1 = Maybe.of(parameters?.nodeClassProperty1);
+    } else if (parameters?.nodeClassProperty1 === undefined) {
+      this.nodeClassProperty1 = Maybe.empty();
+    } else {
+      this.nodeClassProperty1 = parameters?.nodeClassProperty1 satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.nodeClassProperty2)) {
+      this.nodeClassProperty2 = parameters?.nodeClassProperty2;
+    } else if (
+      typeof parameters?.nodeClassProperty2 === "object" &&
+      parameters?.nodeClassProperty2 instanceof PartialClass
+    ) {
+      this.nodeClassProperty2 = Maybe.of(parameters?.nodeClassProperty2);
+    } else if (parameters?.nodeClassProperty2 === undefined) {
+      this.nodeClassProperty2 = Maybe.empty();
+    } else {
+      this.nodeClassProperty2 = parameters?.nodeClassProperty2 satisfies never;
+    }
+    if (Maybe.isMaybe(parameters?.singleClassProperty)) {
+      this.singleClassProperty = parameters?.singleClassProperty;
+    } else if (typeof parameters?.singleClassProperty === "object") {
+      this.singleClassProperty = Maybe.of(parameters?.singleClassProperty);
+    } else if (typeof parameters?.singleClassProperty === "string") {
+      this.singleClassProperty = Maybe.of(
+        dataFactory.namedNode(parameters?.singleClassProperty),
+      );
+    } else if (parameters?.singleClassProperty === undefined) {
+      this.singleClassProperty = Maybe.empty();
+    } else {
+      this.singleClassProperty =
+        parameters?.singleClassProperty satisfies never;
+    }
+  }
+
+  get $identifier(): ClassPropertiesClass.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: ClassPropertiesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.iriClassProperty,
+          other.iriClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "iriClassProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.multiClassProperty,
+          other.multiClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "multiClassProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+          this.nodeClassProperty1,
+          other.nodeClassProperty1,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "nodeClassProperty1",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+          this.nodeClassProperty2,
+          other.nodeClassProperty2,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "nodeClassProperty2",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.singleClassProperty,
+          other.singleClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "singleClassProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    this.iriClassProperty.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
+    this.multiClassProperty.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
+    this.nodeClassProperty1.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    this.nodeClassProperty2.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    this.singleClassProperty.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
+    return _hasher;
+  }
+
+  $toJson(): ClassPropertiesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        iriClassProperty: this.iriClassProperty
+          .map((item) => ({ "@id": item.value }))
+          .extract(),
+        multiClassProperty: this.multiClassProperty
+          .map((item) =>
+            item.termType === "BlankNode"
+              ? { "@id": `_:${item.value}` }
+              : { "@id": item.value },
+          )
+          .extract(),
+        nodeClassProperty1: this.nodeClassProperty1
+          .map((item) => item.$toJson())
+          .extract(),
+        nodeClassProperty2: this.nodeClassProperty2
+          .map((item) => item.$toJson())
+          .extract(),
+        singleClassProperty: this.singleClassProperty
+          .map((item) =>
+            item.termType === "BlankNode"
+              ? { "@id": `_:${item.value}` }
+              : { "@id": item.value },
+          )
+          .extract(),
+      } satisfies ClassPropertiesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ClassPropertiesClass"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/iriClassProperty"),
+      this.iriClassProperty.toList(),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/multiClassProperty"),
+      this.multiClassProperty.toList(),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/nodeClassProperty1"),
+      this.nodeClassProperty1
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/nodeClassProperty2"),
+      this.nodeClassProperty2
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/singleClassProperty"),
+      this.singleClassProperty.toList(),
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace ClassPropertiesClass {
+  export function $filter(
+    filter: ClassPropertiesClass.$Filter,
+    value: ClassPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriClassProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.iriClassProperty,
+        value.iriClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.multiClassProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.multiClassProperty, value.multiClassProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.nodeClassProperty1 !== undefined &&
+      !$filterMaybe<NonClass, NonClass.$Filter>(NonClass.$filter)(
+        filter.nodeClassProperty1,
+        value.nodeClassProperty1,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nodeClassProperty2 !== undefined &&
+      !$filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+        filter.nodeClassProperty2,
+        value.nodeClassProperty2,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.singleClassProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.singleClassProperty, value.singleClassProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly iriClassProperty?: $MaybeFilter<$IriFilter>;
+    readonly multiClassProperty?: $MaybeFilter<$IdentifierFilter>;
+    readonly nodeClassProperty1?: $MaybeFilter<NonClass.$Filter>;
+    readonly nodeClassProperty2?: $MaybeFilter<PartialClass.$Filter>;
+    readonly singleClassProperty?: $MaybeFilter<$IdentifierFilter>;
+  };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassPropertiesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      iriClassProperty: Maybe<NamedNode>;
+      multiClassProperty: Maybe<BlankNode | NamedNode>;
+      nodeClassProperty1: Maybe<NonClass>;
+      nodeClassProperty2: Maybe<PartialClass>;
+      singleClassProperty: Maybe<BlankNode | NamedNode>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const iriClassProperty = Maybe.fromNullable(
+      $jsonObject["iriClassProperty"],
+    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const multiClassProperty = Maybe.fromNullable(
+      $jsonObject["multiClassProperty"],
+    ).map((item) =>
+      item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(item["@id"].substring(2))
+        : dataFactory.namedNode(item["@id"]),
+    );
+    const nodeClassProperty1 = Maybe.fromNullable(
+      $jsonObject["nodeClassProperty1"],
+    ).map((item) => NonClass.$fromJson(item).unsafeCoerce());
+    const nodeClassProperty2 = Maybe.fromNullable(
+      $jsonObject["nodeClassProperty2"],
+    ).map((item) => PartialClass.$fromJson(item).unsafeCoerce());
+    const singleClassProperty = Maybe.fromNullable(
+      $jsonObject["singleClassProperty"],
+    ).map((item) =>
+      item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(item["@id"].substring(2))
+        : dataFactory.namedNode(item["@id"]),
+    );
+    return Right({
+      $identifier,
+      iriClassProperty,
+      multiClassProperty,
+      nodeClassProperty1,
+      nodeClassProperty2,
+      singleClassProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, ClassPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new ClassPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ClassPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/iriClassProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/multiClassProperty`,
+          type: "Control",
+        },
+        NonClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/nodeClassProperty1`,
+        }),
+        PartialClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/nodeClassProperty2`,
+        }),
+        {
+          scope: `${scopePrefix}/properties/singleClassProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ClassPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("ClassPropertiesClass"),
+      iriClassProperty: z
+        .object({ "@id": z.string().min(1) })
+        .optional()
+        .describe(
+          "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+        ),
+      multiClassProperty: z
+        .object({ "@id": z.string().min(1) })
+        .optional()
+        .describe(
+          "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+        ),
+      nodeClassProperty1: NonClass.$jsonZodSchema()
+        .optional()
+        .describe(
+          "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
+        ),
+      nodeClassProperty2: PartialClass.$jsonZodSchema()
+        .optional()
+        .describe(
+          "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
+        ),
+      singleClassProperty: z
+        .object({ "@id": z.string().min(1) })
+        .optional()
+        .describe(
+          "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+        ),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ClassPropertiesClass";
+    readonly iriClassProperty?: { readonly "@id": string };
+    readonly multiClassProperty?: { readonly "@id": string };
+    readonly nodeClassProperty1?: NonClass.$Json;
+    readonly nodeClassProperty2?: PartialClass.$Json;
+    readonly singleClassProperty?: { readonly "@id": string };
+  };
+
+  export function isClassPropertiesClass(
+    object: $Object,
+  ): object is ClassPropertiesClass {
+    switch (object.$type) {
+      case "ClassPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ClassPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ClassPropertiesClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    {
+      $identifier: BlankNode | NamedNode;
+      iriClassProperty: Maybe<NamedNode>;
+      multiClassProperty: Maybe<BlankNode | NamedNode>;
+      nodeClassProperty1: Maybe<NonClass>;
+      nodeClassProperty2: Maybe<PartialClass>;
+      singleClassProperty: Maybe<BlankNode | NamedNode>;
+    }
+  > {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassPropertiesClass":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  ClassPropertiesClass.$fromRdfType,
+                  { graph: $parameters.graph },
+                )
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassPropertiesClass)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.iriClassProperty,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) => values.chainMap((value) => value.toIri()))
+                .map((values) =>
+                  values.length > 0
+                    ? values.map((value) => Maybe.of(value))
+                    : Resource.Values.fromValue<Maybe<NamedNode>>({
+                        focusResource: $parameters.resource,
+                        propertyPath:
+                          ClassPropertiesClass.$schema.properties
+                            .iriClassProperty.path,
+                        value: Maybe.empty(),
+                      }),
+                ),
+          }).chain((iriClassProperty) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.multiClassProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    values.chainMap((value) => value.toIdentifier()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<BlankNode | NamedNode>>(
+                          {
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ClassPropertiesClass.$schema.properties
+                                .multiClassProperty.path,
+                            value: Maybe.empty(),
+                          },
+                        ),
+                  ),
+            }).chain((multiClassProperty) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.nodeClassProperty1,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      values.chainMap((value) =>
+                        value.toResource().chain((resource) =>
+                          NonClass.$fromRdf(resource, {
+                            context: $parameters.context,
+                            ignoreRdfType: true,
+                            objectSet: $parameters.objectSet,
+                            preferredLanguages: $parameters.preferredLanguages,
+                          }),
+                        ),
+                      ),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<NonClass>>({
+                            focusResource: $parameters.resource,
+                            propertyPath:
+                              ClassPropertiesClass.$schema.properties
+                                .nodeClassProperty1.path,
+                            value: Maybe.empty(),
+                          }),
+                    ),
+              }).chain((nodeClassProperty1) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.nodeClassProperty2,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        values.chainMap((value) =>
+                          value.toResource().chain((resource) =>
+                            PartialClass.$fromRdf(resource, {
+                              context: $parameters.context,
+                              ignoreRdfType: true,
+                              objectSet: $parameters.objectSet,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                            }),
+                          ),
+                        ),
+                      )
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<Maybe<PartialClass>>({
+                              focusResource: $parameters.resource,
+                              propertyPath:
+                                ClassPropertiesClass.$schema.properties
+                                  .nodeClassProperty2.path,
+                              value: Maybe.empty(),
+                            }),
+                      ),
+                }).chain((nodeClassProperty2) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.singleClassProperty,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          values.chainMap((value) => value.toIdentifier()),
+                        )
+                        .map((values) =>
+                          values.length > 0
+                            ? values.map((value) => Maybe.of(value))
+                            : Resource.Values.fromValue<
+                                Maybe<BlankNode | NamedNode>
+                              >({
+                                focusResource: $parameters.resource,
+                                propertyPath:
+                                  ClassPropertiesClass.$schema.properties
+                                    .singleClassProperty.path,
+                                value: Maybe.empty(),
+                              }),
+                        ),
+                  }).map((singleClassProperty) => ({
+                    $identifier,
+                    iriClassProperty,
+                    multiClassProperty,
+                    nodeClassProperty1,
+                    nodeClassProperty2,
+                    singleClassProperty,
+                  })),
+                ),
+              ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassPropertiesClass"],
+        }),
+      },
+      iriClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/iriClassProperty"),
+      },
+      multiClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Identifier" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/multiClassProperty"),
+      },
+      nodeClassProperty1: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Maybe" as const, item: () => NonClass.$schema }),
+        path: dataFactory.namedNode("http://example.com/nodeClassProperty1"),
+      },
+      nodeClassProperty2: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => PartialClass.$schema,
+        }),
+        path: dataFactory.namedNode("http://example.com/nodeClassProperty2"),
+      },
+      singleClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Identifier" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/singleClassProperty"),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: ClassPropertiesClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassPropertiesClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassPropertiesClass.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: ClassPropertiesClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassPropertiesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: ClassPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("classPropertiesClass");
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "classPropertiesClass")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "classPropertiesClass")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "classPropertiesClass")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.iriClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriClassProperty",
+        propertySchema: $schema.properties.iriClassProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.multiClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "multiClassProperty",
+        propertySchema: $schema.properties.multiClassProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nodeClassProperty1,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nodeClassProperty1",
+        propertySchema: $schema.properties.nodeClassProperty1,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          NonClass.$Filter,
+          typeof NonClass.$schema
+        >(
+          ({
+            ignoreRdfType,
+            schema,
+            ...otherParameters
+          }: $SparqlConstructTriplesFunctionParameters<
+            NonClass.$Filter,
+            typeof NonClass.$schema
+          >) =>
+            NonClass.$sparqlConstructTriples({
+              ignoreRdfType: ignoreRdfType ?? true,
+              ...otherParameters,
+            }),
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.nodeClassProperty2,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nodeClassProperty2",
+        propertySchema: $schema.properties.nodeClassProperty2,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          PartialClass.$Filter,
+          typeof PartialClass.$schema
+        >(
+          ({
+            ignoreRdfType,
+            schema,
+            ...otherParameters
+          }: $SparqlConstructTriplesFunctionParameters<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >) =>
+            PartialClass.$sparqlConstructTriples({
+              ignoreRdfType: ignoreRdfType ?? true,
+              ...otherParameters,
+            }),
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.singleClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "singleClassProperty",
+        propertySchema: $schema.properties.singleClassProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >((_: object) => []),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: ClassPropertiesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("classPropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "classPropertiesClass")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ClassPropertiesClass.$fromRdfType,
+          subject: focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
+                        : "classPropertiesClass")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassPropertiesClass.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "classPropertiesClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.iriClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "iriClassProperty",
+        propertySchema: $schema.properties.iriClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.multiClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "multiClassProperty",
+        propertySchema: $schema.properties.multiClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >($identifierSparqlWherePatterns),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.nodeClassProperty1,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "nodeClassProperty1",
+        propertySchema: $schema.properties.nodeClassProperty1,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          NonClass.$Filter,
+          typeof NonClass.$schema
+        >(
+          ({
+            ignoreRdfType,
+            propertyPatterns,
+            schema,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            NonClass.$Filter,
+            typeof NonClass.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              NonClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
+                ignoreRdfType: ignoreRdfType ?? true,
+                ...otherParameters,
+              }),
+            ),
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.nodeClassProperty2,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "nodeClassProperty2",
+        propertySchema: $schema.properties.nodeClassProperty2,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          PartialClass.$Filter,
+          typeof PartialClass.$schema
+        >(
+          ({
+            ignoreRdfType,
+            propertyPatterns,
+            schema,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            PartialClass.$Filter,
+            typeof PartialClass.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              PartialClass.$sparqlWherePatterns({
+                focusIdentifier: valueVariable,
+                ignoreRdfType: ignoreRdfType ?? true,
+                ...otherParameters,
+              }),
+            ),
+        ),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.singleClassProperty,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "singleClassProperty",
+        propertySchema: $schema.properties.singleClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >($identifierSparqlWherePatterns),
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "classPropertiesClass"),
+      }),
+    );
+    return patterns;
+  }
+} /**
  * Node shape that can have a blank node or IRI as an identifier
  */
 
@@ -68789,6 +70072,9 @@ export type $Object =
   | BlankNodeIdentifierInterface
   | BlankNodeOrIriIdentifierClass
   | BlankNodeOrIriIdentifierInterface
+  | ClassPropertiesClass
+  | PartialClass
+  | NonClass
   | ClassUnionMember1
   | ClassUnionMember2
   | ClassUnionMemberCommonParent
@@ -68836,7 +70122,6 @@ export type $Object =
   | LazilyResolvedIriIdentifierClass
   | LazilyResolvedIriIdentifierInterface
   | LazyPropertiesClass
-  | PartialClass
   | LazyPropertiesInterface
   | PartialInterface
   | ListPropertiesClass
@@ -68844,7 +70129,6 @@ export type $Object =
   | NoRdfTypeClassUnionMember1
   | NoRdfTypeClassUnionMember2
   | NodeKindsClass
-  | NonClass
   | NumericPropertiesClass
   | OrderedPropertiesClass
   | PartialClassUnionMember1
@@ -68888,6 +70172,15 @@ export namespace $Object {
           left,
           right as unknown as BlankNodeOrIriIdentifierInterface,
         );
+      }
+      if (ClassPropertiesClass.isClassPropertiesClass(left)) {
+        return left.$equals(right as unknown as ClassPropertiesClass);
+      }
+      if (PartialClass.isPartialClass(left)) {
+        return left.$equals(right as unknown as PartialClass);
+      }
+      if (NonClass.isNonClass(left)) {
+        return left.$equals(right as unknown as NonClass);
       }
       if (ClassUnionMember1.isClassUnionMember1(left)) {
         return left.$equals(right as unknown as ClassUnionMember1);
@@ -69086,9 +70379,6 @@ export namespace $Object {
       if (LazyPropertiesClass.isLazyPropertiesClass(left)) {
         return left.$equals(right as unknown as LazyPropertiesClass);
       }
-      if (PartialClass.isPartialClass(left)) {
-        return left.$equals(right as unknown as PartialClass);
-      }
       if (LazyPropertiesInterface.isLazyPropertiesInterface(left)) {
         return LazyPropertiesInterface.$equals(
           left,
@@ -69115,9 +70405,6 @@ export namespace $Object {
       }
       if (NodeKindsClass.isNodeKindsClass(left)) {
         return left.$equals(right as unknown as NodeKindsClass);
-      }
-      if (NonClass.isNonClass(left)) {
-        return left.$equals(right as unknown as NonClass);
       }
       if (NumericPropertiesClass.isNumericPropertiesClass(left)) {
         return left.$equals(right as unknown as NumericPropertiesClass);
@@ -69232,6 +70519,30 @@ export namespace $Object {
         filter.on.BlankNodeOrIriIdentifierInterface,
         value as BlankNodeOrIriIdentifierInterface,
       )
+    ) {
+      return false;
+    }
+    if (
+      ClassPropertiesClass.isClassPropertiesClass(value) &&
+      filter.on?.ClassPropertiesClass &&
+      !ClassPropertiesClass.$filter(
+        filter.on.ClassPropertiesClass,
+        value as ClassPropertiesClass,
+      )
+    ) {
+      return false;
+    }
+    if (
+      PartialClass.isPartialClass(value) &&
+      filter.on?.PartialClass &&
+      !PartialClass.$filter(filter.on.PartialClass, value as PartialClass)
+    ) {
+      return false;
+    }
+    if (
+      NonClass.isNonClass(value) &&
+      filter.on?.NonClass &&
+      !NonClass.$filter(filter.on.NonClass, value as NonClass)
     ) {
       return false;
     }
@@ -69731,13 +71042,6 @@ export namespace $Object {
       return false;
     }
     if (
-      PartialClass.isPartialClass(value) &&
-      filter.on?.PartialClass &&
-      !PartialClass.$filter(filter.on.PartialClass, value as PartialClass)
-    ) {
-      return false;
-    }
-    if (
       LazyPropertiesInterface.isLazyPropertiesInterface(value) &&
       filter.on?.LazyPropertiesInterface &&
       !LazyPropertiesInterface.$filter(
@@ -69801,13 +71105,6 @@ export namespace $Object {
       NodeKindsClass.isNodeKindsClass(value) &&
       filter.on?.NodeKindsClass &&
       !NodeKindsClass.$filter(filter.on.NodeKindsClass, value as NodeKindsClass)
-    ) {
-      return false;
-    }
-    if (
-      NonClass.isNonClass(value) &&
-      filter.on?.NonClass &&
-      !NonClass.$filter(filter.on.NonClass, value as NonClass)
     ) {
       return false;
     }
@@ -70013,6 +71310,12 @@ export namespace $Object {
         BlankNodeOrIriIdentifierInterface.$Filter,
         "$identifier"
       >;
+      readonly ClassPropertiesClass?: Omit<
+        ClassPropertiesClass.$Filter,
+        "$identifier"
+      >;
+      readonly PartialClass?: Omit<PartialClass.$Filter, "$identifier">;
+      readonly NonClass?: Omit<NonClass.$Filter, "$identifier">;
       readonly ClassUnionMember1?: Omit<
         ClassUnionMember1.$Filter,
         "$identifier"
@@ -70198,7 +71501,6 @@ export namespace $Object {
         LazyPropertiesClass.$Filter,
         "$identifier"
       >;
-      readonly PartialClass?: Omit<PartialClass.$Filter, "$identifier">;
       readonly LazyPropertiesInterface?: Omit<
         LazyPropertiesInterface.$Filter,
         "$identifier"
@@ -70221,7 +71523,6 @@ export namespace $Object {
         "$identifier"
       >;
       readonly NodeKindsClass?: Omit<NodeKindsClass.$Filter, "$identifier">;
-      readonly NonClass?: Omit<NonClass.$Filter, "$identifier">;
       readonly NumericPropertiesClass?: Omit<
         NumericPropertiesClass.$Filter,
         "$identifier"
@@ -70315,6 +71616,15 @@ export namespace $Object {
       )
     ) {
       return BlankNodeOrIriIdentifierInterface.$hash(_object, _hasher);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (PartialClass.isPartialClass(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (NonClass.isNonClass(_object)) {
+      return _object.$hash(_hasher);
     }
     if (ClassUnionMember1.isClassUnionMember1(_object)) {
       return _object.$hash(_hasher);
@@ -70477,9 +71787,6 @@ export namespace $Object {
     if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
       return _object.$hash(_hasher);
     }
-    if (PartialClass.isPartialClass(_object)) {
-      return _object.$hash(_hasher);
-    }
     if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
       return LazyPropertiesInterface.$hash(_object, _hasher);
     }
@@ -70499,9 +71806,6 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
     if (NodeKindsClass.isNodeKindsClass(_object)) {
-      return _object.$hash(_hasher);
-    }
-    if (NonClass.isNonClass(_object)) {
       return _object.$hash(_hasher);
     }
     if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
@@ -70593,6 +71897,14 @@ export namespace $Object {
             $Object
           >,
       )
+      .altLazy(
+        () =>
+          ClassPropertiesClass.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
+      .altLazy(
+        () => PartialClass.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
+      .altLazy(() => NonClass.$fromJson(json) as Either<z.ZodError, $Object>)
       .altLazy(
         () => ClassUnionMember1.$fromJson(json) as Either<z.ZodError, $Object>,
       )
@@ -70819,9 +72131,6 @@ export namespace $Object {
           LazyPropertiesClass.$fromJson(json) as Either<z.ZodError, $Object>,
       )
       .altLazy(
-        () => PartialClass.$fromJson(json) as Either<z.ZodError, $Object>,
-      )
-      .altLazy(
         () =>
           LazyPropertiesInterface.$fromJson(json) as Either<
             z.ZodError,
@@ -70856,7 +72165,6 @@ export namespace $Object {
       .altLazy(
         () => NodeKindsClass.$fromJson(json) as Either<z.ZodError, $Object>,
       )
-      .altLazy(() => NonClass.$fromJson(json) as Either<z.ZodError, $Object>)
       .altLazy(
         () =>
           NumericPropertiesClass.$fromJson(json) as Either<z.ZodError, $Object>,
@@ -70971,6 +72279,9 @@ export namespace $Object {
       BlankNodeIdentifierInterface.$jsonZodSchema(),
       BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
       BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
+      ClassPropertiesClass.$jsonZodSchema(),
+      PartialClass.$jsonZodSchema(),
+      NonClass.$jsonZodSchema(),
       ClassUnionMember1.$jsonZodSchema(),
       ClassUnionMember2.$jsonZodSchema(),
       ConcreteChildClass.$jsonZodSchema(),
@@ -71011,7 +72322,6 @@ export namespace $Object {
       LazilyResolvedIriIdentifierClass.$jsonZodSchema(),
       LazilyResolvedIriIdentifierInterface.$jsonZodSchema(),
       LazyPropertiesClass.$jsonZodSchema(),
-      PartialClass.$jsonZodSchema(),
       LazyPropertiesInterface.$jsonZodSchema(),
       PartialInterface.$jsonZodSchema(),
       ListPropertiesClass.$jsonZodSchema(),
@@ -71019,7 +72329,6 @@ export namespace $Object {
       NoRdfTypeClassUnionMember1.$jsonZodSchema(),
       NoRdfTypeClassUnionMember2.$jsonZodSchema(),
       NodeKindsClass.$jsonZodSchema(),
-      NonClass.$jsonZodSchema(),
       NumericPropertiesClass.$jsonZodSchema(),
       OrderedPropertiesClass.$jsonZodSchema(),
       PartialClassUnionMember1.$jsonZodSchema(),
@@ -71048,6 +72357,9 @@ export namespace $Object {
     | BlankNodeIdentifierInterface.$Json
     | BlankNodeOrIriIdentifierClass.$Json
     | BlankNodeOrIriIdentifierInterface.$Json
+    | ClassPropertiesClass.$Json
+    | PartialClass.$Json
+    | NonClass.$Json
     | ClassUnionMember1.$Json
     | ClassUnionMember2.$Json
     | ClassUnionMemberCommonParentStatic.$Json
@@ -71095,7 +72407,6 @@ export namespace $Object {
     | LazilyResolvedIriIdentifierClass.$Json
     | LazilyResolvedIriIdentifierInterface.$Json
     | LazyPropertiesClass.$Json
-    | PartialClass.$Json
     | LazyPropertiesInterface.$Json
     | PartialInterface.$Json
     | ListPropertiesClass.$Json
@@ -71103,7 +72414,6 @@ export namespace $Object {
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json
     | NodeKindsClass.$Json
-    | NonClass.$Json
     | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
     | PartialClassUnionMember1.$Json
@@ -71139,6 +72449,15 @@ export namespace $Object {
       )
     ) {
       return BlankNodeOrIriIdentifierInterface.$toJson(_object);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (PartialClass.isPartialClass(_object)) {
+      return _object.$toJson();
+    }
+    if (NonClass.isNonClass(_object)) {
+      return _object.$toJson();
     }
     if (ClassUnionMember1.isClassUnionMember1(_object)) {
       return _object.$toJson();
@@ -71298,9 +72617,6 @@ export namespace $Object {
     if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
       return _object.$toJson();
     }
-    if (PartialClass.isPartialClass(_object)) {
-      return _object.$toJson();
-    }
     if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
       return LazyPropertiesInterface.$toJson(_object);
     }
@@ -71320,9 +72636,6 @@ export namespace $Object {
       return _object.$toJson();
     }
     if (NodeKindsClass.isNodeKindsClass(_object)) {
-      return _object.$toJson();
-    }
-    if (NonClass.isNonClass(_object)) {
       return _object.$toJson();
     }
     if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
@@ -71387,6 +72700,9 @@ export namespace $Object {
     | BlankNodeIdentifierInterface.$Json
     | BlankNodeOrIriIdentifierClass.$Json
     | BlankNodeOrIriIdentifierInterface.$Json
+    | ClassPropertiesClass.$Json
+    | PartialClass.$Json
+    | NonClass.$Json
     | ClassUnionMember1.$Json
     | ClassUnionMember2.$Json
     | ConcreteChildClass.$Json
@@ -71427,7 +72743,6 @@ export namespace $Object {
     | LazilyResolvedIriIdentifierClass.$Json
     | LazilyResolvedIriIdentifierInterface.$Json
     | LazyPropertiesClass.$Json
-    | PartialClass.$Json
     | LazyPropertiesInterface.$Json
     | PartialInterface.$Json
     | ListPropertiesClass.$Json
@@ -71435,7 +72750,6 @@ export namespace $Object {
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json
     | NodeKindsClass.$Json
-    | NonClass.$Json
     | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
     | PartialClassUnionMember1.$Json
@@ -71484,6 +72798,27 @@ export namespace $Object {
       .altLazy(
         () =>
           BlankNodeOrIriIdentifierInterface.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassPropertiesClass.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PartialClass.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NonClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -71770,13 +73105,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          PartialClass.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
           LazyPropertiesInterface.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -71820,13 +73148,6 @@ export namespace $Object {
       .altLazy(
         () =>
           NodeKindsClass.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NonClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -71983,6 +73304,15 @@ export namespace $Object {
       )
     ) {
       return BlankNodeOrIriIdentifierInterface.$toRdf(_object, _parameters);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PartialClass.isPartialClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NonClass.isNonClass(_object)) {
+      return _object.$toRdf(_parameters);
     }
     if (ClassUnionMember1.isClassUnionMember1(_object)) {
       return _object.$toRdf(_parameters);
@@ -72145,9 +73475,6 @@ export namespace $Object {
     if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
       return _object.$toRdf(_parameters);
     }
-    if (PartialClass.isPartialClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
     if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
       return LazyPropertiesInterface.$toRdf(_object, _parameters);
     }
@@ -72167,9 +73494,6 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
     if (NodeKindsClass.isNodeKindsClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NonClass.isNonClass(_object)) {
       return _object.$toRdf(_parameters);
     }
     if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
@@ -72327,6 +73651,33 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface`
           : "objectBlankNodeOrIriIdentifierInterface",
+      }).concat(),
+      ...ClassPropertiesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.ClassPropertiesClass,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectClassPropertiesClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}ClassPropertiesClass`
+          : "objectClassPropertiesClass",
+      }).concat(),
+      ...PartialClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PartialClass,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectPartialClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}PartialClass`
+          : "objectPartialClass",
+      }).concat(),
+      ...NonClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NonClass,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectNonClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NonClass`
+          : "objectNonClass",
       }).concat(),
       ...ClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.ClassUnionMember1,
@@ -72697,15 +74048,6 @@ export namespace $Object {
           ? `${parameters.variablePrefix}LazyPropertiesClass`
           : "objectLazyPropertiesClass",
       }).concat(),
-      ...PartialClass.$sparqlConstructTriples({
-        filter: parameters?.filter?.on?.PartialClass,
-        focusIdentifier:
-          parameters?.focusIdentifier ??
-          dataFactory.variable!("objectPartialClass"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}PartialClass`
-          : "objectPartialClass",
-      }).concat(),
       ...LazyPropertiesInterface.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.LazyPropertiesInterface,
         focusIdentifier:
@@ -72768,15 +74110,6 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}NodeKindsClass`
           : "objectNodeKindsClass",
-      }).concat(),
-      ...NonClass.$sparqlConstructTriples({
-        filter: parameters?.filter?.on?.NonClass,
-        focusIdentifier:
-          parameters?.focusIdentifier ??
-          dataFactory.variable!("objectNonClass"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}NonClass`
-          : "objectNonClass",
       }).concat(),
       ...NumericPropertiesClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.NumericPropertiesClass,
@@ -73020,6 +74353,42 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface`
               : "objectBlankNodeOrIriIdentifierInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassPropertiesClass,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectClassPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassPropertiesClass`
+              : "objectClassPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialClass,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectPartialClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialClass`
+              : "objectPartialClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NonClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NonClass,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectNonClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NonClass`
+              : "objectNonClass",
           }).concat(),
           type: "group",
         },
@@ -73523,18 +74892,6 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: PartialClass.$sparqlWherePatterns({
-            filter: parameters?.filter?.on?.PartialClass,
-            focusIdentifier:
-              parameters?.focusIdentifier ??
-              dataFactory.variable!("objectPartialClass"),
-            variablePrefix: parameters?.variablePrefix
-              ? `${parameters.variablePrefix}PartialClass`
-              : "objectPartialClass",
-          }).concat(),
-          type: "group",
-        },
-        {
           patterns: LazyPropertiesInterface.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.LazyPropertiesInterface,
             focusIdentifier:
@@ -73615,18 +74972,6 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}NodeKindsClass`
               : "objectNodeKindsClass",
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NonClass.$sparqlWherePatterns({
-            filter: parameters?.filter?.on?.NonClass,
-            focusIdentifier:
-              parameters?.focusIdentifier ??
-              dataFactory.variable!("objectNonClass"),
-            variablePrefix: parameters?.variablePrefix
-              ? `${parameters.variablePrefix}NonClass`
-              : "objectNonClass",
           }).concat(),
           type: "group",
         },
@@ -74034,6 +75379,34 @@ export interface $ObjectSet {
       BlankNodeOrIriIdentifierInterface.$Identifier
     >,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>>;
+
+  classPropertiesClass(
+    identifier: ClassPropertiesClass.$Identifier,
+  ): Promise<Either<Error, ClassPropertiesClass>>;
+
+  classPropertiesClassCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassPropertiesClass.$Filter,
+        ClassPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassPropertiesClass.$Identifier[]>>;
+
+  classPropertiesClasses(
+    query?: $ObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassPropertiesClass[]>>;
 
   classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
@@ -76654,6 +78027,95 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $filter: BlankNodeOrIriIdentifierInterface.$filter,
         $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
         $fromRdfTypes: [BlankNodeOrIriIdentifierInterface.$fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async classPropertiesClass(
+    identifier: ClassPropertiesClass.$Identifier,
+  ): Promise<Either<Error, ClassPropertiesClass>> {
+    return this.classPropertiesClassSync(identifier);
+  }
+
+  classPropertiesClassSync(
+    identifier: ClassPropertiesClass.$Identifier,
+  ): Either<Error, ClassPropertiesClass> {
+    return this.classPropertiesClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async classPropertiesClassCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassPropertiesClass.$Filter,
+        ClassPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classPropertiesClassCountSync(query);
+  }
+
+  classPropertiesClassCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassPropertiesClass.$Filter,
+        ClassPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async classPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassPropertiesClass.$Identifier[]>> {
+    return this.classPropertiesClassIdentifiersSync(query);
+  }
+
+  classPropertiesClassIdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Either<Error, readonly ClassPropertiesClass.$Identifier[]> {
+    return this.classPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async classPropertiesClasses(
+    query?: $ObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassPropertiesClass[]>> {
+    return this.classPropertiesClassesSync(query);
+  }
+
+  classPropertiesClassesSync(
+    query?: $ObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Either<Error, readonly ClassPropertiesClass[]> {
+    return this.$objectsSync<
+      ClassPropertiesClass,
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >(
+      {
+        $filter: ClassPropertiesClass.$filter,
+        $fromRdf: ClassPropertiesClass.$fromRdf,
+        $fromRdfTypes: [ClassPropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -83172,6 +84634,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
+          $fromRdf: ClassPropertiesClass.$fromRdf,
+          $fromRdfTypes: [ClassPropertiesClass.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: PartialClass.$fromRdf,
+          $fromRdfTypes: [],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: NonClass.$fromRdf,
+          $fromRdfTypes: [],
+        },
+        {
+          $filter: $Object.$filter,
           $fromRdf: ClassUnionMember1.$fromRdf,
           $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
         },
@@ -83398,11 +84875,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdf: PartialClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: $Object.$filter,
           $fromRdf: LazyPropertiesInterface.$fromRdf,
           $fromRdfTypes: [],
         },
@@ -83435,11 +84907,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: NodeKindsClass.$fromRdf,
           $fromRdfTypes: [NodeKindsClass.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: NonClass.$fromRdf,
-          $fromRdfTypes: [],
         },
         {
           $filter: $Object.$filter,
@@ -84135,6 +85602,54 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierInterface.$Filter,
       BlankNodeOrIriIdentifierInterface.$Identifier
     >(BlankNodeOrIriIdentifierInterface, query);
+  }
+
+  async classPropertiesClass(
+    identifier: ClassPropertiesClass.$Identifier,
+  ): Promise<Either<Error, ClassPropertiesClass>> {
+    return (
+      await this.classPropertiesClasses({ identifiers: [identifier] })
+    ).map((objects) => objects[0]);
+  }
+
+  async classPropertiesClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassPropertiesClass.$Filter,
+        ClassPropertiesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >(ClassPropertiesClass, query);
+  }
+
+  async classPropertiesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassPropertiesClass.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >(ClassPropertiesClass, query);
+  }
+
+  async classPropertiesClasses(
+    query?: $SparqlObjectSet.Query<
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassPropertiesClass[]>> {
+    return this.$objects<
+      ClassPropertiesClass,
+      ClassPropertiesClass.$Filter,
+      ClassPropertiesClass.$Identifier
+    >(ClassPropertiesClass, query);
   }
 
   async classUnionMember1(

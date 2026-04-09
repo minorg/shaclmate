@@ -66,110 +66,164 @@ export function shapeNodeKinds(
       ? nodeShapeNodeKinds(shape)
       : propertyShapeNodeKinds(shape)
   ).chain((explicitNodeKinds) => {
-    const implicitNodeKinds = new Set<NodeKind>();
-
-    for (const [constraint, constraintNodeKinds] of [
+    // Consider constraints that dictate certain node kinds, like sh:datatype dictates a Literal nodeKind.
+    const constraintExcludeNodeKinds = new Set<NodeKind>();
+    const constraintIncludeNodeKinds = new Set<NodeKind>();
+    for (const [constraint, { excludeNodeKinds, includeNodeKinds }] of [
+      [
+        "sh:class",
+        shape.constraints.classes.length > 0
+          ? { excludeNodeKinds: ["Literal" as const] }
+          : {},
+      ],
       [
         "sh:datatype",
-        shape.constraints.datatype
-          .map(() => ["Literal"])
-          .orDefault([]) as readonly NodeKind[],
+        {
+          includeNodeKinds: shape.constraints.datatype
+            .map(() => ["Literal" as const])
+            .orDefault([]) as readonly NodeKind[],
+        },
+      ],
+      [
+        "sh:defaultValue",
+        {
+          includeNodeKinds:
+            shape.kind === "PropertyShape"
+              ? shape.defaultValue
+                  .map((value) => NodeKind.fromTermType(value.termType))
+                  .toList()
+              : [],
+        },
+      ],
+      [
+        "sh:hasValue",
+        {
+          includeNodeKinds: shape.constraints.hasValues.map((value) =>
+            NodeKind.fromTermType(value.termType),
+          ),
+        },
       ],
       [
         "sh:in",
-        shape.constraints.in_.map((in_) => NodeKind.fromTermType(in_.termType)),
+        {
+          includeNodeKinds: shape.constraints.in_.map((in_) =>
+            NodeKind.fromTermType(in_.termType),
+          ),
+        },
       ],
       [
         "sh:languageIn",
         shape.constraints.languageIn.length > 0
-          ? ["Literal" as const]
-          : ([] as readonly NodeKind[]),
+          ? { includeNodeKinds: ["Literal" as const] }
+          : {},
       ],
       [
         "sh:maxExclusive",
-        shape.constraints.maxExclusive
-          .map(() => ["Literal"])
-          .orDefault([]) as readonly NodeKind[],
+        {
+          includeNodeKinds: shape.constraints.maxExclusive
+            .map(() => ["Literal" as const])
+            .orDefault([]) as readonly NodeKind[],
+        },
       ],
       [
         "sh:maxInclusive",
-        shape.constraints.maxInclusive
-          .map(() => ["Literal"])
-          .orDefault([]) as readonly NodeKind[],
+        {
+          includeNodeKinds: shape.constraints.maxInclusive
+            .map(() => ["Literal" as const])
+            .orDefault([]) as readonly NodeKind[],
+        },
       ],
       [
         "sh:minExclusive",
-        shape.constraints.minExclusive
-          .map(() => ["Literal"])
-          .orDefault([]) as readonly NodeKind[],
+        {
+          includeNodeKinds: shape.constraints.minExclusive
+            .map(() => ["Literal"])
+            .orDefault([]) as readonly NodeKind[],
+        },
       ],
       [
         "sh:minInclusive",
-        shape.constraints.minInclusive
-          .map(() => ["Literal"])
-          .orDefault([]) as readonly NodeKind[],
-      ],
-      // Order is important here
-      // We don't want sh:defaultValue earlier because it should only determine the node kinds if nothing else did.
-      [
-        "sh:hasValue",
-        shape.constraints.hasValues.map((value) =>
-          NodeKind.fromTermType(value.termType),
-        ),
-      ],
-      [
-        "sh:defaultValue",
-        shape.kind === "PropertyShape"
-          ? shape.defaultValue
-              .map((value) => NodeKind.fromTermType(value.termType))
-              .toList()
-          : [],
+        {
+          includeNodeKinds: shape.constraints.minInclusive
+            .map(() => ["Literal"])
+            .orDefault([]) as readonly NodeKind[],
+        },
       ],
     ] as const) {
-      for (const constraintNodeKind of constraintNodeKinds) {
-        // Check if the constraint's node kind conflicts with sh:nodeKind
+      for (const excludeNodeKind of excludeNodeKinds ?? []) {
         if (
           explicitNodeKinds.size > 0 &&
-          !explicitNodeKinds.has(constraintNodeKind)
+          explicitNodeKinds.has(excludeNodeKind)
         ) {
           return Left(
             new Error(
-              `${shape} has ${constraint} ${constraintNodeKind} term that conflicts with sh:nodeKind`,
+              `${shape} has ${constraint} that conflicts with sh:nodeKind`,
             ),
           );
         }
 
-        // Check if the constraint's node kind conflicts with a prior constraint's node kind(s)
-        if (
-          implicitNodeKinds.size > 0 &&
-          !implicitNodeKinds.has(constraintNodeKind)
-        ) {
-          return Left(
-            new Error(
-              `${shape} has ${constraint} ${constraintNodeKind} term that conflicts with other constraint node kinds`,
-            ),
-          );
-        }
+        constraintExcludeNodeKinds.add(excludeNodeKind);
       }
 
-      // The constraint's node kinds didn't conflict with sh:nodeKind or prior constraint node kinds,
-      // so make them the implicit node kinds.
-      for (const constraintNodeKind of constraintNodeKinds) {
-        implicitNodeKinds.add(constraintNodeKind);
+      for (const includeNodeKind of includeNodeKinds ?? []) {
+        if (
+          explicitNodeKinds.size > 0 &&
+          !explicitNodeKinds.has(includeNodeKind)
+        ) {
+          return Left(
+            new Error(
+              `${shape} has ${constraint} that conflicts with sh:nodeKind`,
+            ),
+          );
+        }
+
+        constraintIncludeNodeKinds.add(includeNodeKind);
       }
     }
 
     if (explicitNodeKinds.size > 0) {
       return Either.of(explicitNodeKinds);
     }
-    if (implicitNodeKinds.size > 0) {
-      return Either.of(implicitNodeKinds);
+
+    // There were no explicit sh:nodeKind, try to infer the shape's node kind from the node kinds excluded and included by constraints
+    const constraintNodeKinds = new Set<NodeKind>();
+    if (constraintIncludeNodeKinds.size > 0) {
+      // If constraints dictated/included certain node kinds be included. Add those to the set.
+      for (const constraintIncludeNodeKind of constraintIncludeNodeKinds) {
+        constraintNodeKinds.add(constraintIncludeNodeKind);
+      }
+      // Check whether other constraints' excluded node kinds conflict.
+      if (constraintExcludeNodeKinds.size > 0) {
+        for (const constraintExcludeNodeKind of constraintExcludeNodeKinds) {
+          if (constraintIncludeNodeKinds.has(constraintExcludeNodeKind)) {
+            return Left(
+              new Error(
+                `${shape} has constraints with conflicting exclude/include node kinds`,
+              ),
+            );
+          }
+        }
+      }
+    } else if (constraintExcludeNodeKinds.size > 0) {
+      // No constraint dictated that certain node kinds be included, but some constraint dictated that certain node kinds be excluded.
+      // Start with all node kinds and exclude.
+      constraintNodeKinds.add("BlankNode");
+      constraintNodeKinds.add("IRI");
+      constraintNodeKinds.add("Literal");
+      for (const constraintExcludeNodeKind of constraintExcludeNodeKinds) {
+        constraintNodeKinds.delete(constraintExcludeNodeKind);
+      }
     }
+    if (constraintNodeKinds.size > 0) {
+      return Either.of(constraintNodeKinds);
+    }
+
     if (shape.kind === "NodeShape") {
       return Either.of(
         options?.defaultNodeShapeNodeKinds ?? defaultNodeShapeNodeKinds,
       );
     }
+
     return Either.of(
       options?.defaultPropertyShapeNodeKinds ?? defaultPropertyShapeNodeKinds,
     );

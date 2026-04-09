@@ -1,4 +1,3 @@
-import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
@@ -18,32 +17,12 @@ export function transformShapeToAstCompoundType(
 ): Either<Error, Maybe<Exclude<ast.Type, ast.PlaceholderType>>> {
   shapeStack.push(shape);
   try {
-    return Eithers.chain4(
+    return Eithers.chain3(
       shape.constraints.and,
-      Either.sequence(
-        shape.constraints.classes.map((classIri) => {
-          if (
-            classIri.equals(owl.Class) ||
-            classIri.equals(owl.Thing) ||
-            classIri.equals(rdfs.Class)
-          ) {
-            return Left(
-              new Error(`class ${classIri.value} is not transformable`),
-            );
-          }
-
-          return this.shapesGraph.nodeShapeByIdentifier(classIri);
-        }),
-      ),
       shape.constraints.nodes,
       shape.constraints.xone,
     ).chain(
-      ([
-        andConstraintShapes,
-        classConstraintShapes,
-        nodeConstraintShapes,
-        xoneConstraintShapes,
-      ]) => {
+      ([andConstraintShapes, nodeConstraintShapes, xoneConstraintShapes]) => {
         let compoundTypeKind: "IntersectionType" | "UnionType";
         // Distinguish constraints that take arbitrary shapes from those that only take node shapes
         // With the latter we'll do special transformations.
@@ -52,9 +31,6 @@ export function transformShapeToAstCompoundType(
 
         if (andConstraintShapes.length > 0) {
           memberShapes = andConstraintShapes;
-          compoundTypeKind = "IntersectionType";
-        } else if (classConstraintShapes.length > 0) {
-          memberNodeShapes = classConstraintShapes;
           compoundTypeKind = "IntersectionType";
         } else if (nodeConstraintShapes.length > 0) {
           memberNodeShapes = nodeConstraintShapes;
