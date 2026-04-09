@@ -1,5 +1,6 @@
 import dataFactory from "@rdfjs/data-model";
 import { Either, Left, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
@@ -8,21 +9,6 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
-
-function astItemType(astType: ast.Type): AbstractContainerType.ItemType {
-  switch (astType.kind) {
-    case "DefaultValueType":
-    case "OptionType":
-    case "SetType":
-      return astType.itemType;
-    case "LazyObjectOptionType":
-    case "LazyObjectSetType":
-    case "LazyObjectType":
-      throw new Error();
-    default:
-      return astType;
-  }
-}
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -191,30 +177,52 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
 
     if (astResolveItemType) {
-      const astItemType_ = astItemType(astType);
+      let astItemType: AbstractContainerType.ItemType;
+      switch (astType.kind) {
+        case "DefaultValueType":
+        case "OptionType":
+        case "SetType":
+          astItemType = astType.itemType;
+          break;
+        case "LazyObjectOptionType":
+        case "LazyObjectSetType":
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: break is unreachable
+        case "LazyObjectType":
+          invariant(
+            false,
+            `lazy types should not appear here: ${astType.kind}`,
+          );
+        default:
+          astItemType = astType;
+          break;
+      }
+
       let astPartialItemType: ast.ObjectType | ast.ObjectUnionType;
-      switch (astItemType_.kind) {
+      switch (astItemType.kind) {
         case "BlankNodeType":
         case "IdentifierType":
         case "IriType":
           astPartialItemType = synthesizePartialAstObjectType({
-            identifierType: astItemType_,
+            identifierType: astItemType,
             tsFeatures: astResolveItemType.tsFeatures,
           });
           break;
         case "ObjectType":
         case "ObjectUnionType":
-          astPartialItemType = astItemType_;
+          astPartialItemType = astItemType;
           break;
         default:
           return Left(
             new Error(
-              `${propertyShape} has a resolve with an incompatible partial type ${astItemType_.kind}`,
+              `${propertyShape} has a resolve with an incompatible partial type ${astItemType.kind}`,
             ),
           );
       }
 
       switch (astType.kind) {
+        case "BlankNodeType":
+        case "IdentifierType":
+        case "IriType":
         case "ObjectType":
         case "ObjectUnionType":
           astType = new ast.LazyObjectType({
@@ -249,6 +257,8 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             }),
           });
           break;
+        default:
+          invariant(false, `unexpected lazy AST type ${astType.kind}`);
       }
     }
 
