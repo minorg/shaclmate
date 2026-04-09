@@ -722,56 +722,51 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredLazyToResolvedClassProperty
     ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriIdentifierClass ;
+        shaclmate:resolve :LazilyResolvedIriIdentifierClass ;
         sh:path :optionalLazyToResolvedIriIdentifierClassProperty
     ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
+        shaclmate:resolve :LazilyResolvedClassUnion ;
         sh:path :optionalLazyToResolvedClassUnionProperty
     ], [
-        shaclmate:partial :PartialClass ;
+        sh:node :PartialClass ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :optionalPartialClassToResolvedClassProperty
     ], [
-        shaclmate:partial :PartialClass ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:node :PartialClass ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setPartialClassToResolvedClassProperty
     ], [
-        shaclmate:partial :PartialClass ;
+        sh:node :PartialClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredPartialClassToResolvedClassProperty
     ], [
-        shaclmate:partial :PartialClass ;
+        sh:node :PartialClass ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
+        shaclmate:resolve :LazilyResolvedClassUnion ;
         sh:path :optionalPartialClassToResolvedClassUnionProperty
     ], [
-        shaclmate:partial :PartialClassUnion ;
+        sh:node :PartialClassUnion ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
+        shaclmate:resolve :LazilyResolvedClassUnion ;
         sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
     ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :optionalLazyToResolvedClassProperty
     ], [
-        shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setLazyToResolvedClassProperty
     ] .
 
@@ -780,56 +775,51 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :requiredLazyToResolvedInterfaceProperty
     ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriIdentifierInterface ;
+        shaclmate:resolve :LazilyResolvedIriIdentifierInterface ;
         sh:path :optionalLazyToResolvedIriIdentifierInterfaceProperty
     ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedInterfaceUnion ;
+        shaclmate:resolve :LazilyResolvedInterfaceUnion ;
         sh:path :optionalLazyToResolvedInterfaceUnionProperty
     ], [
-        shaclmate:partial :PartialInterface ;
+        sh:node :PartialInterface ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :optionalPartialInterfaceToResolvedInterfaceProperty
     ], [
-        shaclmate:partial :PartialInterface ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
+        sh:node :PartialInterface ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :setPartialInterfaceToResolvedInterfaceProperty
     ], [
-        shaclmate:partial :PartialInterface ;
+        sh:node :PartialInterface ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :requiredPartialInterfaceToResolvedInterfaceProperty
     ], [
-        shaclmate:partial :PartialInterface ;
+        sh:node :PartialInterface ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedInterfaceUnion ;
+        shaclmate:resolve :LazilyResolvedInterfaceUnion ;
         sh:path :optionalPartialInterfaceToResolvedInterfaceUnionProperty
     ], [
-        shaclmate:partial :PartialInterfaceUnion ;
+        sh:node :PartialInterfaceUnion ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedInterfaceUnion ;
+        shaclmate:resolve :LazilyResolvedInterfaceUnion ;
         sh:path :optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
     ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :optionalLazyToResolvedInterfaceProperty
     ], [
-        shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
+        shaclmate:resolve :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :setLazyToResolvedInterfaceProperty
     ] .
 
