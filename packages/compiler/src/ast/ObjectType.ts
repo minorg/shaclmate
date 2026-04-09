@@ -461,7 +461,7 @@ export namespace ObjectType {
                   objectType,
                   property,
                   propertyType: propertyType.concat(
-                    currentPropertyType.resolvedType,
+                    currentPropertyType.resolveType,
                   ),
                 }),
               )

@@ -80,7 +80,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
       return {
         ...common,
         partialType: typeToJson(type.partialType),
-        resolvedType: typeToJson(type.resolvedType),
+        resolveType: typeToJson(type.resolveType),
       };
     case "ListType": {
       return {
