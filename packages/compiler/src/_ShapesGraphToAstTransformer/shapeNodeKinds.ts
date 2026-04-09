@@ -70,6 +70,12 @@ export function shapeNodeKinds(
 
     for (const [constraint, constraintNodeKinds] of [
       [
+        "sh:class",
+        shape.constraints.classes.length > 0
+          ? ["BlankNode" as const, "NamedNode" as const]
+          : ([] as readonly NodeKind[]),
+      ],
+      [
         "sh:datatype",
         shape.constraints.datatype
           .map(() => ["Literal"])
