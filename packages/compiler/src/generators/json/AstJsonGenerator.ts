@@ -63,7 +63,10 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "IriType":
       return {
         ...common,
-        hasValue: type.hasValues.map(termToJson),
+        hasValue:
+          type.hasValues.length > 0
+            ? type.hasValues.map(termToJson)
+            : undefined,
         nodeKinds: [...type.nodeKinds],
       };
     case "IntersectionType":
@@ -93,7 +96,10 @@ function typeToJson(type: ast.Type): AstJson.Type {
       return {
         ...common,
         datatype: type.datatype.extract(),
-        hasValue: type.hasValues.map(termToJson),
+        hasValue:
+          type.hasValues.length > 0
+            ? type.hasValues.map(termToJson)
+            : undefined,
         maxExclusive: type.maxExclusive.map(termToJson).extract(),
         maxInclusive: type.maxInclusive.map(termToJson).extract(),
         minExclusive: type.minExclusive.map(termToJson).extract(),
