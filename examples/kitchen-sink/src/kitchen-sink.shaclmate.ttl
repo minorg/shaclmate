@@ -85,6 +85,39 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
 
+:ClassPropertiesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Shape with properties that are not nested objects" ;
+    sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialClass ;
+        sh:path :nodeClassProperty2
+    ], [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClassProperty
+    ], [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClassProperty
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :iriClassProperty
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :NonClass ;
+        sh:path :nodeClassProperty1
+    ] .
+
 :ClassUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
@@ -438,22 +471,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
-        sh:in (true
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inBooleansProperty
-    ], [
-        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDateTimesProperty
-    ], [
-        sh:in (1
-            2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIntegersProperty
-    ], [
         sh:in (:InPropertiesIri1
             :InPropertiesIri2
         ) ;
@@ -471,6 +488,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inStringsProperty
+    ], [
+        sh:in (true
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inBooleansProperty
+    ], [
+        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDateTimesProperty
+    ], [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegersProperty
     ] .
 
 :IndirectRecursiveClass
