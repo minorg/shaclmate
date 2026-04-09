@@ -11,10 +11,10 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
-  ResolvedTypeT extends AbstractLazyObjectType.ResolvedTypeConstraint,
+  ResolveTypeT extends AbstractLazyObjectType.ResolveTypeConstraint,
 > extends AbstractType {
   protected readonly partialType: PartialTypeT;
-  protected readonly resolvedType: ResolvedTypeT;
+  protected readonly resolveType: ResolveTypeT;
   protected readonly runtimeClass: {
     readonly name: Code;
     readonly partialPropertyName: string;
@@ -28,20 +28,20 @@ export abstract class AbstractLazyObjectType<
 
   constructor({
     partialType,
-    resolvedType,
+    resolveType,
     runtimeClass,
     ...superParameters
   }: {
     partialType: PartialTypeT;
-    resolvedType: ResolvedTypeT;
+    resolveType: ResolveTypeT;
     runtimeClass: AbstractLazyObjectType<
-      ResolvedTypeT,
+      ResolveTypeT,
       PartialTypeT
     >["runtimeClass"];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.partialType = partialType;
-    this.resolvedType = resolvedType;
+    this.resolveType = resolveType;
     this.runtimeClass = runtimeClass;
   }
 
@@ -72,7 +72,7 @@ export abstract class AbstractLazyObjectType<
   }
 
   override get graphqlType(): AbstractType.GraphqlType {
-    return this.resolvedType.graphqlType;
+    return this.resolveType.graphqlType;
   }
 
   override get name(): Code {
@@ -89,7 +89,7 @@ export abstract class AbstractLazyObjectType<
     return code`${{
       kind: this.kind,
       partialType: this.partialType.schemaType,
-      resolvedType: this.resolvedType.schemaType,
+      resolveType: this.resolveType.schemaType,
     }}`;
   }
 
@@ -108,7 +108,7 @@ export abstract class AbstractLazyObjectType<
       ...super.schemaObject,
       partial: code`() => (${this.partialType.schema})`,
       // Commenting out to reduce schema size
-      // resolved: code`() => (${this.resolvedType.schema})`,
+      // resolved: code`() => (${this.resolveType.schema})`,
     };
   }
 
@@ -196,7 +196,7 @@ export namespace AbstractLazyObjectType {
     | ObjectTypeConstraint
     | OptionType<ObjectTypeConstraint>
     | SetType<ObjectTypeConstraint>;
-  export type ResolvedTypeConstraint = PartialTypeConstraint;
+  export type ResolveTypeConstraint = PartialTypeConstraint;
 
   export type Conversion = AbstractType.Conversion;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;

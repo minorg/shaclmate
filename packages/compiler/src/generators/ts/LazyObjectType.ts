@@ -15,7 +15,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
 
   constructor({
     partialType,
-    resolvedType,
+    resolveType,
     ...superParameters
   }: Omit<
     ConstructorParameters<
@@ -29,9 +29,9 @@ export class LazyObjectType extends AbstractLazyObjectType<
     super({
       ...superParameters,
       partialType,
-      resolvedType,
+      resolveType,
       runtimeClass: {
-        name: code`${snippets.LazyObject}<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
+        name: code`${snippets.LazyObject}<${resolveType.identifierTypeAlias}, ${partialType.name}, ${resolveType.name}>`,
         partialPropertyName: "partial",
         rawName: code`${snippets.LazyObject}`,
       },
@@ -44,28 +44,28 @@ export class LazyObjectType extends AbstractLazyObjectType<
     if (this.partialType.kind === "ObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => ${imports.Right}(${value} as ${this.resolvedType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
         // Don't check instanceof value since the ObjectType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
-        sourceTypeName: this.resolvedType.name,
+        sourceTypeName: this.resolveType.name,
         sourceTypeof: "object",
       });
     } else if (
-      this.resolvedType.kind === "ObjectUnionType" &&
+      this.resolveType.kind === "ObjectUnionType" &&
       this.partialType.kind === "ObjectUnionType" &&
-      this.resolvedType.memberTypes.length ===
+      this.resolveType.memberTypes.length ===
         this.partialType.memberTypes.length
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolvedType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Right}(${value} as ${this.resolvedType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolveType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolveType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
         // Don't check instanceof value since the ObjectUnionType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
-        sourceTypeName: this.resolvedType.name,
+        sourceTypeName: this.resolveType.name,
         sourceTypeof: "object",
       });
     }
@@ -83,7 +83,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     parameters: Parameters<Super["fromRdfExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
+    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(identifier) })))`;
   }
 
   override graphqlResolveExpression({

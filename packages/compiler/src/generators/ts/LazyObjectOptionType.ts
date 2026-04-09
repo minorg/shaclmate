@@ -23,7 +23,7 @@ export class LazyObjectOptionType extends Super {
 
   constructor({
     partialType,
-    resolvedType,
+    resolveType,
     ...superParameters
   }: Omit<
     ConstructorParameters<
@@ -37,9 +37,9 @@ export class LazyObjectOptionType extends Super {
     super({
       ...superParameters,
       partialType,
-      resolvedType,
+      resolveType,
       runtimeClass: {
-        name: code`${snippets.LazyObjectOption}<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+        name: code`${snippets.LazyObjectOption}<${resolveType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolveType.itemType.name}>`,
         partialPropertyName: "partial",
         rawName: code`${snippets.LazyObjectOption}`,
       },
@@ -54,48 +54,48 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             code`${imports.Maybe}.isMaybe(${value})`,
-          sourceTypeName: code`${imports.Maybe}<${this.resolvedType.itemType.name}>`,
+          sourceTypeName: code`${imports.Maybe}<${this.resolveType.itemType.name}>`,
           sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => ${imports.Right}(${value} as ${this.resolvedType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
           // Don't check instanceof value since the ObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
-          sourceTypeName: this.resolvedType.itemType.name,
+          sourceTypeName: this.resolveType.itemType.name,
           sourceTypeof: "object",
         },
       );
     } else if (
-      this.resolvedType.itemType.kind === "ObjectUnionType" &&
+      this.resolveType.itemType.kind === "ObjectUnionType" &&
       this.partialType.itemType.kind === "ObjectUnionType" &&
-      this.resolvedType.itemType.memberTypes.length ===
+      this.resolveType.itemType.memberTypes.length ===
         this.partialType.itemType.memberTypes.length
     ) {
-      const maybeMap = code`.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })`;
+      const maybeMap = code`.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolveType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })`;
 
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             code`${imports.Maybe}.isMaybe(${value})`,
-          sourceTypeName: code`${imports.Maybe}<${this.resolvedType.itemType.name}>`,
+          sourceTypeName: code`${imports.Maybe}<${this.resolveType.itemType.name}>`,
           sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${imports.Right}(${value} as ${this.resolvedType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
           // Don't check instanceof value since the ObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
-          sourceTypeName: this.resolvedType.itemType.name,
+          sourceTypeName: this.resolveType.itemType.name,
           sourceTypeof: "object",
         },
       );
@@ -122,7 +122,7 @@ export class LazyObjectOptionType extends Super {
     parameters: Parameters<Super["fromRdfExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) })))`;
+    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.object}(identifier) })))`;
   }
 
   override graphqlResolveExpression({

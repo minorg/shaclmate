@@ -3062,10 +3062,9 @@ export namespace ShaclCorePropertyShapeStatic {
 export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
   readonly $identifier: ShaclmatePropertyShape.$Identifier;
   readonly $type: "ShaclmatePropertyShape";
-  readonly lazy: Maybe<boolean>;
   readonly mutable: Maybe<boolean>;
   readonly name: Maybe<string>;
-  readonly partial: Maybe<BlankNode | NamedNode>;
+  readonly resolve: Maybe<BlankNode | NamedNode>;
   readonly visibility: Maybe<
     NamedNode<
       | "http://purl.org/shaclmate/ontology#_Visibility_Private"
@@ -3081,15 +3080,6 @@ export namespace ShaclmatePropertyShape {
     value: ShaclmatePropertyShape,
   ): boolean {
     if (!ShaclCorePropertyShapeStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.lazy !== undefined &&
-      !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
-        filter.lazy,
-        value.lazy,
-      )
-    ) {
       return false;
     }
     if (
@@ -3111,10 +3101,10 @@ export namespace ShaclmatePropertyShape {
       return false;
     }
     if (
-      filter.partial !== undefined &&
+      filter.resolve !== undefined &&
       !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
         $filterIdentifier,
-      )(filter.partial, value.partial)
+      )(filter.resolve, value.resolve)
     ) {
       return false;
     }
@@ -3136,10 +3126,9 @@ export namespace ShaclmatePropertyShape {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly lazy?: $MaybeFilter<$BooleanFilter>;
     readonly mutable?: $MaybeFilter<$BooleanFilter>;
     readonly name?: $MaybeFilter<$StringFilter>;
-    readonly partial?: $MaybeFilter<$IdentifierFilter>;
+    readonly resolve?: $MaybeFilter<$IdentifierFilter>;
     readonly visibility?: $MaybeFilter<$IriFilter>;
   } & ShaclCorePropertyShapeStatic.$Filter;
 
@@ -3194,10 +3183,9 @@ export namespace ShaclmatePropertyShape {
     {
       $identifier: BlankNode | NamedNode;
       $type: "ShaclmatePropertyShape";
-      lazy: Maybe<boolean>;
       mutable: Maybe<boolean>;
       name: Maybe<string>;
-      partial: Maybe<BlankNode | NamedNode>;
+      resolve: Maybe<BlankNode | NamedNode>;
       visibility: Maybe<
         NamedNode<
           | "http://purl.org/shaclmate/ontology#_Visibility_Private"
@@ -3261,7 +3249,7 @@ export namespace ShaclmatePropertyShape {
               $shaclPropertyFromRdf({
                 graph: $parameters.graph,
                 resource: $parameters.resource,
-                propertySchema: $schema.properties.lazy,
+                propertySchema: $schema.properties.mutable,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -3273,134 +3261,111 @@ export namespace ShaclmatePropertyShape {
                         : Resource.Values.fromValue<Maybe<boolean>>({
                             focusResource: $parameters.resource,
                             propertyPath:
-                              ShaclmatePropertyShape.$schema.properties.lazy
+                              ShaclmatePropertyShape.$schema.properties.mutable
                                 .path,
                             value: Maybe.empty(),
                           }),
                     ),
-              }).chain((lazy) =>
+              }).chain((mutable) =>
                 $shaclPropertyFromRdf({
                   graph: $parameters.graph,
                   resource: $parameters.resource,
-                  propertySchema: $schema.properties.mutable,
+                  propertySchema: $schema.properties.name,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
-                        values.chainMap((value) => value.toBoolean()),
+                        $fromRdfPreferredLanguages(
+                          values,
+                          $parameters.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
                       )
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<boolean>>({
+                          : Resource.Values.fromValue<Maybe<string>>({
                               focusResource: $parameters.resource,
                               propertyPath:
-                                ShaclmatePropertyShape.$schema.properties
-                                  .mutable.path,
+                                ShaclmatePropertyShape.$schema.properties.name
+                                  .path,
                               value: Maybe.empty(),
                             }),
                       ),
-                }).chain((mutable) =>
+                }).chain((name) =>
                   $shaclPropertyFromRdf({
                     graph: $parameters.graph,
                     resource: $parameters.resource,
-                    propertySchema: $schema.properties.name,
+                    propertySchema: $schema.properties.resolve,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          $fromRdfPreferredLanguages(
-                            values,
-                            $parameters.preferredLanguages,
-                          ),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
+                          values.chainMap((value) => value.toIdentifier()),
                         )
                         .map((values) =>
                           values.length > 0
                             ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<Maybe<string>>({
+                            : Resource.Values.fromValue<
+                                Maybe<BlankNode | NamedNode>
+                              >({
                                 focusResource: $parameters.resource,
                                 propertyPath:
-                                  ShaclmatePropertyShape.$schema.properties.name
-                                    .path,
+                                  ShaclmatePropertyShape.$schema.properties
+                                    .resolve.path,
                                 value: Maybe.empty(),
                               }),
                         ),
-                  }).chain((name) =>
+                  }).chain((resolve) =>
                     $shaclPropertyFromRdf({
                       graph: $parameters.graph,
                       resource: $parameters.resource,
-                      propertySchema: $schema.properties.partial,
+                      propertySchema: $schema.properties.visibility,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            values.chainMap((value) => value.toIdentifier()),
+                            values.chainMap((value) =>
+                              value.toIri([
+                                dataFactory.namedNode(
+                                  "http://purl.org/shaclmate/ontology#_Visibility_Private",
+                                ),
+                                dataFactory.namedNode(
+                                  "http://purl.org/shaclmate/ontology#_Visibility_Protected",
+                                ),
+                                dataFactory.namedNode(
+                                  "http://purl.org/shaclmate/ontology#_Visibility_Public",
+                                ),
+                              ]),
+                            ),
                           )
                           .map((values) =>
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<
-                                  Maybe<BlankNode | NamedNode>
+                                  Maybe<
+                                    NamedNode<
+                                      | "http://purl.org/shaclmate/ontology#_Visibility_Private"
+                                      | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
+                                      | "http://purl.org/shaclmate/ontology#_Visibility_Public"
+                                    >
+                                  >
                                 >({
                                   focusResource: $parameters.resource,
                                   propertyPath:
                                     ShaclmatePropertyShape.$schema.properties
-                                      .partial.path,
+                                      .visibility.path,
                                   value: Maybe.empty(),
                                 }),
                           ),
-                    }).chain((partial) =>
-                      $shaclPropertyFromRdf({
-                        graph: $parameters.graph,
-                        resource: $parameters.resource,
-                        propertySchema: $schema.properties.visibility,
-                        typeFromRdf: (resourceValues) =>
-                          resourceValues
-                            .chain((values) =>
-                              values.chainMap((value) =>
-                                value.toIri([
-                                  dataFactory.namedNode(
-                                    "http://purl.org/shaclmate/ontology#_Visibility_Private",
-                                  ),
-                                  dataFactory.namedNode(
-                                    "http://purl.org/shaclmate/ontology#_Visibility_Protected",
-                                  ),
-                                  dataFactory.namedNode(
-                                    "http://purl.org/shaclmate/ontology#_Visibility_Public",
-                                  ),
-                                ]),
-                              ),
-                            )
-                            .map((values) =>
-                              values.length > 0
-                                ? values.map((value) => Maybe.of(value))
-                                : Resource.Values.fromValue<
-                                    Maybe<
-                                      NamedNode<
-                                        | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                        | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                        | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                      >
-                                    >
-                                  >({
-                                    focusResource: $parameters.resource,
-                                    propertyPath:
-                                      ShaclmatePropertyShape.$schema.properties
-                                        .visibility.path,
-                                    value: Maybe.empty(),
-                                  }),
-                            ),
-                      }).map((visibility) => ({
-                        ...$super0,
-                        $identifier,
-                        $type,
-                        lazy,
-                        mutable,
-                        name,
-                        partial,
-                        visibility,
-                      })),
-                    ),
+                    }).map((visibility) => ({
+                      ...$super0,
+                      $identifier,
+                      $type,
+                      mutable,
+                      name,
+                      resolve,
+                      visibility,
+                    })),
                   ),
                 ),
               ),
@@ -3437,15 +3402,6 @@ export namespace ShaclmatePropertyShape {
       );
     }
     resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#lazy"),
-      _shaclmatePropertyShape.lazy
-        .toList()
-        .flatMap((value) => [
-          $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
-        ]),
-      options?.graph,
-    );
-    resource.add(
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
       _shaclmatePropertyShape.mutable
         .toList()
@@ -3462,8 +3418,8 @@ export namespace ShaclmatePropertyShape {
       options?.graph,
     );
     resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#partial"),
-      _shaclmatePropertyShape.partial.toList(),
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#resolve"),
+      _shaclmatePropertyShape.resolve.toList(),
       options?.graph,
     );
     resource.add(
@@ -3477,14 +3433,6 @@ export namespace ShaclmatePropertyShape {
   export const $schema = {
     properties: {
       ...ShaclCorePropertyShapeStatic.$schema.properties,
-      lazy: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Boolean" as const }),
-        }),
-        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#lazy"),
-      },
       mutable: {
         kind: "Shacl" as const,
         type: () => ({
@@ -3503,14 +3451,14 @@ export namespace ShaclmatePropertyShape {
         }),
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       },
-      partial: {
+      resolve: {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
           item: () => ({ kind: "Identifier" as const }),
         }),
         path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#partial",
+          "http://purl.org/shaclmate/ontology#resolve",
         ),
       },
       visibility: {

@@ -328,7 +328,7 @@ export class TypeFactory {
       partialType: this.createOptionType(astType.partialType) as OptionType<
         ObjectType | ObjectUnionType
       >,
-      resolvedType: this.createOptionType(astType.resolvedType) as OptionType<
+      resolveType: this.createOptionType(astType.resolveType) as OptionType<
         ObjectType | ObjectUnionType
       >,
     });
@@ -341,7 +341,7 @@ export class TypeFactory {
       partialType: this.createSetType(astType.partialType) as SetType<
         ObjectType | ObjectUnionType
       >,
-      resolvedType: this.createSetType(astType.resolvedType) as SetType<
+      resolveType: this.createSetType(astType.resolveType) as SetType<
         ObjectType | ObjectUnionType
       >,
     });
@@ -355,7 +355,7 @@ export class TypeFactory {
       partialType: this.createType(astType.partialType) as
         | ObjectType
         | ObjectUnionType,
-      resolvedType: this.createType(astType.resolvedType) as
+      resolveType: this.createType(astType.resolveType) as
         | ObjectType
         | ObjectUnionType,
     });
