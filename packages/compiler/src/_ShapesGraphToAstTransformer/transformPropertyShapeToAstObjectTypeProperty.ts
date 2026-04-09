@@ -1,5 +1,6 @@
 import dataFactory from "@rdfjs/data-model";
 import { Either, Left, Maybe } from "purify-ts";
+import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/index.js";
@@ -7,6 +8,21 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
+
+function astItemType(astType: ast.Type): AbstractContainerType.ItemType {
+  switch (astType.kind) {
+    case "DefaultValueType":
+    case "OptionType":
+    case "SetType":
+      return astType.itemType;
+    case "LazyObjectOptionType":
+    case "LazyObjectSetType":
+    case "LazyObjectType":
+      throw new Error();
+    default:
+      return astType;
+  }
+}
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -144,134 +160,118 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 ): Either<Error, ast.ObjectType.Property> {
   return Eithers.chain3(
     transformShapeToAstAbstractTypeProperties(propertyShape),
-    propertyShape.partial,
+    propertyShape.resolve,
     transformPropertyShapeToAstType.bind(this)(propertyShape),
-  ).chain(
-    ([astAbstractTypeProperties, propertyShapePartial, propertyShapeType]) => {
-      let propertyShapePartialItemType:
-        | ast.ObjectType
-        | ast.ObjectUnionType
-        | undefined;
+  ).chain(([astAbstractTypeProperties, propertyShapeResolve, astType]) => {
+    let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
 
-      if (propertyShapePartial.isJust()) {
-        const propertyShapePartialTypeEither = this.transformNodeShapeToAstType(
-          propertyShapePartial.unsafeCoerce(),
-        ).chain((propertyShapePartialType) => {
-          switch (propertyShapePartialType.kind) {
-            case "ListType":
-            case "ObjectIntersectionType":
-              return Left(
-                new Error(
-                  `${propertyShape} partial cannot refer to a ${propertyShapePartialType.kind}`,
-                ),
-              );
-            case "ObjectType":
-            case "ObjectUnionType":
-              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-                propertyShapePartialType,
-              );
-          }
-        });
-        if (propertyShapePartialTypeEither.isLeft()) {
-          return propertyShapePartialTypeEither;
-        }
-        propertyShapePartialItemType =
-          propertyShapePartialTypeEither.unsafeCoerce();
-      }
-
-      if (propertyShapePartialItemType || propertyShape.lazy.orDefault(false)) {
-        switch (propertyShapeType.kind) {
-          case "ObjectType":
-          case "ObjectUnionType":
-            propertyShapeType = new ast.LazyObjectType({
-              ...astAbstractTypeProperties,
-              partialType:
-                propertyShapePartialItemType ??
-                synthesizePartialAstObjectType({
-                  identifierType: propertyShapeType.identifierType,
-                  tsFeatures: propertyShapeType.tsFeatures,
-                }),
-              resolvedType: propertyShapeType,
-            });
-            break;
-          case "OptionType":
-          case "SetType": {
-            switch (propertyShapeType.itemType.kind) {
-              case "ObjectType":
-              case "ObjectUnionType":
-                break;
-              default:
-                return Left(
-                  new Error(
-                    `${propertyShape} marked lazy but has ${propertyShapeType.kind} of ${propertyShapeType.itemType.kind}`,
-                  ),
-                );
-            }
-
-            const partialItemType =
-              propertyShapePartialItemType ??
-              synthesizePartialAstObjectType({
-                identifierType: propertyShapeType.itemType.identifierType,
-                tsFeatures: propertyShapeType.itemType.tsFeatures,
-              });
-            switch (propertyShapeType.kind) {
-              case "OptionType":
-                propertyShapeType = new ast.LazyObjectOptionType({
-                  ...astAbstractTypeProperties,
-                  partialType: new ast.OptionType({
-                    itemType: partialItemType,
-                  }),
-                  resolvedType: propertyShapeType as ast.OptionType<
-                    ast.ObjectType | ast.ObjectUnionType
-                  >,
-                });
-                break;
-              case "SetType":
-                propertyShapeType = new ast.LazyObjectSetType({
-                  ...astAbstractTypeProperties,
-                  partialType: new ast.SetType({
-                    itemType: partialItemType,
-                    minCount: 0,
-                    mutable: false,
-                  }),
-                  resolvedType: propertyShapeType as ast.SetType<
-                    ast.ObjectType | ast.ObjectUnionType
-                  >,
-                });
-                break;
-            }
-            break;
-          }
-          default:
+    if (propertyShapeResolve.isJust()) {
+      const astResolveTypeEither = this.transformNodeShapeToAstType(
+        propertyShapeResolve.unsafeCoerce(),
+      ).chain((astResolveType) => {
+        switch (astResolveType.kind) {
+          case "ListType":
+          case "ObjectIntersectionType":
             return Left(
               new Error(
-                `${propertyShape} marked lazy but has ${propertyShapeType.kind}`,
+                `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
               ),
             );
+          case "ObjectType":
+          case "ObjectUnionType":
+            return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+              astResolveType,
+            );
         }
+      });
+      if (astResolveTypeEither.isLeft()) {
+        return astResolveTypeEither;
+      }
+      astResolveItemType = astResolveTypeEither.unsafeCoerce();
+    }
+
+    if (astResolveItemType) {
+      const astItemType_ = astItemType(astType);
+      let astPartialItemType: ast.ObjectType | ast.ObjectUnionType;
+      switch (astItemType_.kind) {
+        case "BlankNodeType":
+        case "IdentifierType":
+        case "IriType":
+          astPartialItemType = synthesizePartialAstObjectType({
+            identifierType: astItemType_,
+            tsFeatures: astResolveItemType.tsFeatures,
+          });
+          break;
+        case "ObjectType":
+        case "ObjectUnionType":
+          astPartialItemType = astItemType_;
+          break;
+        default:
+          return Left(
+            new Error(
+              `${propertyShape} has a resolve with an incompatible partial type ${astItemType_.kind}`,
+            ),
+          );
       }
 
-      return Either.of(
-        new ast.ObjectType.Property({
-          comment: propertyShape.comment,
-          description: propertyShape.description,
-          label: propertyShape.label,
-          mutable: propertyShape.mutable.orDefault(false),
-          name: propertyShape.shaclmateName.alt(propertyShape.name),
-          objectType,
-          order: propertyShape.order.orDefault(0),
-          path:
-            (propertyShape.path.termType === "NamedNode"
-              ? this.curieFactory.create(propertyShape.path).extract()
-              : undefined) ?? propertyShape.path,
-          shapeIdentifier:
-            (propertyShape.identifier.termType === "NamedNode"
-              ? this.curieFactory.create(propertyShape.identifier).extract()
-              : undefined) ?? propertyShape.identifier,
-          type: propertyShapeType,
-          visibility: propertyShape.visibility,
-        }),
-      );
-    },
-  );
+      switch (astType.kind) {
+        case "ObjectType":
+        case "ObjectUnionType":
+          astType = new ast.LazyObjectType({
+            ...astAbstractTypeProperties,
+            partialType: astPartialItemType,
+            resolveType: astResolveItemType,
+          });
+          break;
+        case "OptionType":
+          astType = new ast.LazyObjectOptionType({
+            ...astAbstractTypeProperties,
+            partialType: new ast.OptionType({
+              itemType: astPartialItemType,
+            }),
+            resolveType: new ast.OptionType({
+              itemType: astResolveItemType,
+            }),
+          });
+          break;
+        case "SetType":
+          astType = new ast.LazyObjectSetType({
+            ...astAbstractTypeProperties,
+            partialType: new ast.SetType({
+              itemType: astPartialItemType,
+              minCount: 0,
+              mutable: false,
+            }),
+            resolveType: new ast.SetType({
+              itemType: astResolveItemType,
+              minCount: 0,
+              mutable: false,
+            }),
+          });
+          break;
+      }
+    }
+
+    return Either.of(
+      new ast.ObjectType.Property({
+        comment: propertyShape.comment,
+        description: propertyShape.description,
+        label: propertyShape.label,
+        mutable: propertyShape.mutable.orDefault(false),
+        name: propertyShape.shaclmateName.alt(propertyShape.name),
+        objectType,
+        order: propertyShape.order.orDefault(0),
+        path:
+          (propertyShape.path.termType === "NamedNode"
+            ? this.curieFactory.create(propertyShape.path).extract()
+            : undefined) ?? propertyShape.path,
+        shapeIdentifier:
+          (propertyShape.identifier.termType === "NamedNode"
+            ? this.curieFactory.create(propertyShape.identifier).extract()
+            : undefined) ?? propertyShape.identifier,
+        type: astType,
+        visibility: propertyShape.visibility,
+      }),
+    );
+  });
 }
