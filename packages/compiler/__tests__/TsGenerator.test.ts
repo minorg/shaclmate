@@ -85,7 +85,9 @@ function generate(parameters: {
 }
 
 describe("TsGenerator", () => {
-  for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
+  for (const [id, shapesGraphEither] of Object.entries(
+    testData.shapesGraphs.wellFormed,
+  )) {
     if (shapesGraphEither === null) {
       continue;
     }
@@ -123,11 +125,32 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "kitchenSink") {
-        return;
-      }
+      // if (id !== "kitchenSink") {
+      //   return;
+      // }
 
       compile(generate(shapesGraphEither.unsafeCoerce()), sourceDirectoryPath);
     }, 60000);
   }
+
+  describe("TsFeature combinations", () => {
+    const { iriPrefixMap, shapesGraph } =
+      testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
+    const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);
+
+    for (const tsFeatureCombination of [["create"]] as const) {
+      it(tsFeatureCombination.join("+"), () => {
+        const source = new TsGenerator().generate(
+          new ShapesGraphToAstTransformer({
+            iriPrefixMap,
+            shapesGraph,
+            tsFeaturesDefault: new Set(tsFeatureCombination),
+          })
+            .transform()
+            .unsafeCoerce(),
+        );
+        compile(source, sourceDirectoryPath);
+      });
+    }
+  });
 });

@@ -12,21 +12,6 @@ import { Either, Maybe } from "purify-ts";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function parseDataset(
-  ...filePaths: readonly string[]
-): Either<Error, DatasetCore> {
-  return Either.encase(() => {
-    const dataset = datasetFactory.dataset();
-    const parser = new Parser({ format: "Turtle" });
-    for (const filePath of filePaths) {
-      for (const quad of parser.parse(fs.readFileSync(filePath).toString())) {
-        dataset.add(quad);
-      }
-    }
-    return dataset;
-  });
-}
-
 function parseShapesGraph(...filePaths: readonly string[]): Either<
   Error,
   {
@@ -73,154 +58,156 @@ function parseShapesGraph(...filePaths: readonly string[]): Either<
 }
 
 export const testData = {
-  illFormed: {
-    get defaultValueHasValueConflict() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "default-value-has-value-conflict.shaclmate.ttl",
-        ),
-      );
+  shapesGraphs: {
+    illFormed: {
+      get defaultValueHasValueConflict() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "default-value-has-value-conflict.shaclmate.ttl",
+          ),
+        );
+      },
+
+      get defaultValueMultipleHasValues() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "default-value-multiple-has-values.shaclmate.ttl",
+          ),
+        );
+      },
+
+      get defaultValueInConflict() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "default-value-in-conflict.shaclmate.ttl",
+          ),
+        );
+      },
+
+      get incompatibleNodeShapeIdentifiers() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "incompatible-node-shape-identifiers.shaclmate.ttl",
+          ),
+        );
+      },
+
+      get noRequiredProperty() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "no-required-property.shaclmate.ttl",
+          ),
+        );
+      },
+
+      get undefinedParentClass() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "undefined-parent-class.shaclmate.ttl",
+          ),
+        );
+      },
     },
 
-    get defaultValueMultipleHasValues() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "default-value-multiple-has-values.shaclmate.ttl",
-        ),
-      );
-    },
+    wellFormed: {
+      get compilerInput() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "shacl-ast",
+            "src",
+            "shacl-ast.shaclmate.ttl",
+          ),
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "src",
+            "input",
+            "input.shaclmate.ttl",
+          ),
+        );
+      },
 
-    get defaultValueInConflict() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "default-value-in-conflict.shaclmate.ttl",
-        ),
-      );
-    },
+      get externalProject() {
+        return Maybe.of(
+          path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
+        )
+          .filter((filePath) => fs.existsSync(filePath))
+          .map(parseShapesGraph)
+          .extractNullable();
+      },
 
-    get incompatibleNodeShapeIdentifiers() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "incompatible-node-shape-identifiers.shaclmate.ttl",
-        ),
-      );
-    },
+      get kitchenSink() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "..",
+            "examples",
+            "kitchen-sink",
+            "src",
+            "kitchen-sink.shaclmate.ttl",
+          ),
+        );
+      },
 
-    get noRequiredProperty() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "no-required-property.shaclmate.ttl",
-        ),
-      );
-    },
+      get shaclAst() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "shacl-ast",
+            "src",
+            "shacl-ast.shaclmate.ttl",
+          ),
+        );
+      },
 
-    get undefinedParentClass() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "undefined-parent-class.shaclmate.ttl",
-        ),
-      );
-    },
-  },
+      get skos() {
+        return Maybe.of(
+          path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "..",
+            "..",
+            "kos-kit",
+            "lib",
+            "packages",
+            "models",
+            "models.shaclmate.ttl",
+          ),
+        )
+          .filter((filePath) => fs.existsSync(filePath))
+          .map(parseShapesGraph)
+          .extractNullable();
+      },
 
-  wellFormed: {
-    get compilerInput() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "..",
-          "..",
-          "shacl-ast",
-          "src",
-          "shacl-ast.shaclmate.ttl",
-        ),
-        path.join(
-          thisDirectoryPath,
-          "..",
-          "src",
-          "input",
-          "input.shaclmate.ttl",
-        ),
-      );
-    },
-
-    get externalProject() {
-      return Maybe.of(
-        path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
-      )
-        .filter((filePath) => fs.existsSync(filePath))
-        .map(parseShapesGraph)
-        .extractNullable();
-    },
-
-    get kitchenSink() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "..",
-          "..",
-          "..",
-          "examples",
-          "kitchen-sink",
-          "src",
-          "kitchen-sink.shaclmate.ttl",
-        ),
-      );
-    },
-
-    get shaclAst() {
-      return parseShapesGraph(
-        path.join(
-          thisDirectoryPath,
-          "..",
-          "..",
-          "shacl-ast",
-          "src",
-          "shacl-ast.shaclmate.ttl",
-        ),
-      );
-    },
-
-    get skos() {
-      return Maybe.of(
-        path.join(
-          thisDirectoryPath,
-          "..",
-          "..",
-          "..",
-          "..",
-          "kos-kit",
-          "lib",
-          "packages",
-          "models",
-          "models.shaclmate.ttl",
-        ),
-      )
-        .filter((filePath) => fs.existsSync(filePath))
-        .map(parseShapesGraph)
-        .extractNullable();
-    },
-
-    get tsFeatureCombinations() {
-      return parseDataset(
-        path.join(
-          thisDirectoryPath,
-          "data",
-          "ts-feature-combinations.shaclmate.ttl",
-        ),
-      );
+      get tsFeatureCombinations() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "ts-feature-combinations.shaclmate.ttl",
+          ),
+        );
+      },
     },
   },
 } as const;

@@ -8,7 +8,9 @@ import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";
 
 describe("ShapesGraphToAstTransformer: well-formed", () => {
-  for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
+  for (const [id, shapesGraphEither] of Object.entries(
+    testData.shapesGraphs.wellFormed,
+  )) {
     if (shapesGraphEither === null) {
       continue;
     }
@@ -95,7 +97,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 describe("ShapesGraphToAstTransformer: illFormed", () => {
   it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
+      testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -107,7 +109,7 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
 
   it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
+      testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -119,7 +121,7 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
 
   it("sh:defaultValue and sh:in conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.illFormed.defaultValueInConflict.unsafeCoerce(),
+      testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -131,7 +133,7 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
 
   it("incompatible node shape identifiers", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
+      testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -141,7 +143,7 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
 
   it("no required property property", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.illFormed.noRequiredProperty.unsafeCoerce(),
+      testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -152,7 +154,7 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
 
   it("undefined parent class", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.illFormed.undefinedParentClass.unsafeCoerce(),
+      testData.shapesGraphs.illFormed.undefinedParentClass.unsafeCoerce(),
     )
       .transform()
       .extract();
