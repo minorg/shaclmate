@@ -2,6 +2,8 @@
 
 Command line program and libraries for generating [TypeScript](https://www.typescriptlang.org/) code from [SHACL](https://www.w3.org/TR/shacl/) shapes.
 
+> ⚠️ **Under active development.** SHACLmate is experimental — both the compiler and generated code should be considered unstable and subject to breaking changes.
+
 ## Motivation
 
 Working with [RDF](https://www.w3.org/RDF/), [SPARQL](https://www.w3.org/TR/sparql11-overview/), and triple stores in code has never been as easy or productive as working with more mainstream technologies like relational databases. The RDF ecosystem lacks open source tools like [dbt](https://www.getdbt.com/) or [Prisma](https://www.prisma.io/) that minimize friction in the developer experience and lower the barrier to adoption. The degree of friction is far out of proportion to any differences in essential complexity between the underlying graph and relational technologies.
@@ -223,3 +225,11 @@ Qualified value shapes are unsupported.
 ### SPARQL-based constraints and constraint components
 
 Unsupported.
+
+## Contributing
+
+Thank you for your interest in SHACLmate! The project is not accepting external contributions at this time. Feel free to open an issue if you encounter a bug or have a feature request.
+
+## License
+
+[Apache 2.0](LICENSE)
