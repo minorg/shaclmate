@@ -8,7 +8,6 @@ import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
-import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
@@ -239,7 +238,7 @@ export function transformNodeShapeToAstObjectCompoundType(
 ): Either<Error, ast.ObjectIntersectionType | ast.ObjectUnionType> {
   return Eithers.chain3(
     nodeShape.constraints.and,
-    nodeShapeTsFeatures(nodeShape),
+    nodeShapeTsFeatures.bind(this)(nodeShape),
     nodeShape.constraints.xone,
   ).chain(([andShapes, tsFeatures, xoneShapes]) => {
     let compoundTypeShapes: readonly input.Shape[];
@@ -325,7 +324,7 @@ export function transformNodeShapeToAstType(
     nodeShapeIdentifierMintingStrategy(nodeShape),
     shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
     nodeShape.constraints.properties,
-    nodeShapeTsFeatures(nodeShape),
+    nodeShapeTsFeatures.bind(this)(nodeShape),
     nodeShape.tsObjectDeclarationType.isJust()
       ? Either.of(nodeShape.tsObjectDeclarationType)
       : nodeShape.isDefinedBy.map((ontology) =>
@@ -434,7 +433,7 @@ export function transformNodeShapeToAstType(
         shapeIdentifier: this.shapeIdentifier(nodeShape),
         synthetic: false,
         toRdfTypes,
-        tsFeatures: tsFeatures.orDefault(new Set(tsFeaturesDefault)),
+        tsFeatures,
         tsImports: nodeShape.tsImports,
         tsObjectDeclarationType: tsObjectDeclarationType.orDefault("class"),
       });

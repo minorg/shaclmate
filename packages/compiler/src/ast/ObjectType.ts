@@ -4,12 +4,10 @@ import { PropertyPath, Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type {
-  IdentifierMintingStrategy,
-  PropertyVisibility,
-  TsFeature,
-  TsObjectDeclarationType,
-} from "../enums/index.js";
+import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
+import type { PropertyVisibility } from "../enums/PropertyVisibility.js";
+import type { TsFeature } from "../enums/TsFeature.js";
+import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Curie } from "./Curie.js";

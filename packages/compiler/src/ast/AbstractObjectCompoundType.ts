@@ -43,7 +43,7 @@ export abstract class AbstractObjectCompoundType<
   /**
    * TypeScript features to generate.
    */
-  readonly #tsFeatures: Maybe<ReadonlySet<TsFeature>>;
+  readonly #tsFeatures: ReadonlySet<TsFeature>;
 
   constructor({
     export_,
@@ -55,7 +55,7 @@ export abstract class AbstractObjectCompoundType<
     export_: boolean;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
-    tsFeatures: Maybe<ReadonlySet<TsFeature>>;
+    tsFeatures: ReadonlySet<TsFeature>;
   } & ConstructorParameters<
     typeof AbstractCompoundType<ObjectCompoundTypeT | ObjectType>
   >[0]) {
@@ -194,7 +194,7 @@ export abstract class AbstractObjectCompoundType<
       }
     }
 
-    return this.#tsFeatures.orDefault(mergedMemberTsFeatures);
+    return this.#tsFeatures;
   }
 
   override addMemberType(memberType: Type): Either<Error, void> {

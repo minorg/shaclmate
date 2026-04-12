@@ -1,4 +1,4 @@
-import type { TsFeature } from "../../enums/index.js";
+import type { TsFeature } from "../../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { Code } from "./ts-poet-wrapper.js";
 

@@ -4,7 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../../enums/index.js";
+import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";

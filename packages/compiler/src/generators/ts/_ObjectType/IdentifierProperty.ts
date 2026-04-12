@@ -4,11 +4,8 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
-import type {
-  IdentifierMintingStrategy,
-  PropertyVisibility,
-} from "../../../enums/index.js";
+import type { IdentifierMintingStrategy } from "../../../enums/IdentifierMintingStrategy.js";
+import type { PropertyVisibility } from "../../../enums/PropertyVisibility.js";
 import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";

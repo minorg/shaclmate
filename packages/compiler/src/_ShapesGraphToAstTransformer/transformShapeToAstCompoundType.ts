@@ -140,7 +140,7 @@ export function transformShapeToAstCompoundType(
                 export_: true,
                 name: shape.shaclmateName,
                 shapeIdentifier: this.shapeIdentifier(shape),
-                tsFeatures: Maybe.empty(),
+                tsFeatures: this.tsFeaturesDefault,
               });
 
               for (const memberType of memberTypes) {
