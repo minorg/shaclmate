@@ -5940,7 +5940,6 @@ export namespace ShaclmateNodeShape {
     },
   } as const;
 }
-
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
   readonly $type: "ShaclCorePropertyGroup";
