@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-const VERSION = "4.0.2";
+const VERSION = "4.0.3";
 
 const externalDependencies = {
   "@jsonforms/core": "3.5.1",
