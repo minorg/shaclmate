@@ -22,7 +22,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run test:coverage",
     "test:watch": "vitest watch",
-    "typecheck": "turbo run build:noEmit",
+    "typecheck": "turbo run typecheck",
     "typecheck:watch": "turbo run --concurrency 11 dev:noEmit dev:tests"
   },
   "workspaces": [

@@ -21,6 +21,7 @@
       "persistent": true
     },
     "typecheck": {
+      "dependsOn": ["^typecheck"],
       "cache": false,
     },
     "typecheck:watch": {
