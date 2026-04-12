@@ -4,11 +4,8 @@ import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
-import type {
-  IdentifierMintingStrategy,
-  TsObjectDeclarationType,
-} from "../../enums/index.js";
+import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
+import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";

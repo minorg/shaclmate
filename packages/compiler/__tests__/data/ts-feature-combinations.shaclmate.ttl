@@ -1,0 +1,119 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:ChildClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ParentClass ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :childStringProperty
+    ] .
+
+:ChildInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Interface, sh:NodeShape ;
+    rdfs:subClassOf :ParentInterface ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :childStringProperty
+    ] .
+
+:ClassUnion
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:xone (:ClassUnionMember1
+        :ClassUnionMember2
+    ) .
+
+:ClassUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+        sh:path :classUnionMember1Property
+    ] .
+
+:ClassUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :classUnionMember2Property
+    ] .
+
+:InterfaceUnion
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:xone (:InterfaceUnionMember1
+        :InterfaceUnionMember2
+    ) .
+
+:InterfaceUnionMember1
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+        sh:path :interfaceUnionMember1Property
+    ] .
+
+:InterfaceUnionMember2
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :interfaceUnionMember2Property
+    ] .
+
+:NestedClass
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :nestedStringProperty
+    ] .
+
+:NestedInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :nestedStringProperty
+    ] .
+
+:ParentClass
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
+
+:ParentInterface
+    a owl:Class, sh:NodeShape ;
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
+

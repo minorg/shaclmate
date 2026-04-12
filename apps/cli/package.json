@@ -3,7 +3,7 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.2",
+    "@shaclmate/compiler": "4.0.3",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/types": "~2.0.1",
     "@types/n3": "~1.26.0",
@@ -36,7 +36,7 @@
   "license": "Apache-2.0",
   "main": "./dist/index.js",
   "name": "@shaclmate/cli",
-  "packageManager": "npm@10.9.0",
+  "packageManager": "npm@11.11.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minorg/shaclmate.git"
@@ -51,5 +51,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.2"
+  "version": "4.0.3"
 }

@@ -4,11 +4,8 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, List, type Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type {
-  IdentifierMintingStrategy,
-  TsFeature,
-  TsObjectDeclarationType,
-} from "../enums/index.js";
+import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
+import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as generated from "./generated.js";
 import type {
   Ontology,
@@ -17,7 +14,6 @@ import type {
   ShapesGraph,
 } from "./index.js";
 import type { Shape } from "./Shape.js";
-import { tsFeatures } from "./tsFeatures.js";
 
 export class NodeShape extends ShaclCoreNodeShape<
   any,
@@ -185,9 +181,12 @@ export class NodeShape extends ShaclCoreNodeShape<
     return this.generatedShaclmateNodeShape.toRdfTypes;
   }
 
-  @Memoize()
-  get tsFeatures(): Maybe<ReadonlySet<TsFeature>> {
-    return tsFeatures(this.generatedShaclmateNodeShape);
+  get tsFeatureExcludes() {
+    return this.generatedShaclmateNodeShape.tsFeatureExcludes;
+  }
+
+  get tsFeatureIncludes() {
+    return this.generatedShaclmateNodeShape.tsFeatureIncludes;
   }
 
   get tsImports(): readonly string[] {

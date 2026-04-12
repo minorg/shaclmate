@@ -40,7 +40,7 @@
   "license": "Apache-2.0",
   "main": "./dist/index.js",
   "name": "@shaclmate/kitchen-sink-example",
-  "packageManager": "npm@10.9.0",
+  "packageManager": "npm@11.11.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -57,5 +57,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.2"
+  "version": "4.0.3"
 }

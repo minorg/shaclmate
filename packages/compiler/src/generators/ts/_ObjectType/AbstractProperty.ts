@@ -1,7 +1,7 @@
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { PropertyVisibility } from "../../../enums/index.js";
+import type { PropertyVisibility } from "../../../enums/PropertyVisibility.js";
 import type { ObjectType } from "../ObjectType.js";
 import { removeUndefined } from "../removeUndefined.js";
 import type { Type } from "../Type.js";

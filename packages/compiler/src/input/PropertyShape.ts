@@ -2,7 +2,7 @@ import { PropertyShape as ShaclCorePropertyShape } from "@shaclmate/shacl-ast";
 
 import { Either, List, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import type { PropertyVisibility } from "../enums/index.js";
+import type { PropertyVisibility } from "../enums/PropertyVisibility.js";
 import type * as generated from "./generated.js";
 import type {
   NodeShape,

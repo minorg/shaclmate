@@ -60,18 +60,18 @@
     sh:property :optionalStringProperty .
 
 :lazyObjectSetProperty
-    shaclmate:lazy true ;
+    shaclmate:resolve :Nested ;
     a sh:PropertyShape ;
     rdfs:comment "Lazy object set property" ;
-    sh:node :Nested ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path :lazyObjectSetProperty .
 
 :optionalLazyObjectProperty
-    shaclmate:lazy true ;
+    shaclmate:resolve :Nested ;
     a sh:PropertyShape ;
     rdfs:comment "Optional lazy object property" ;
     sh:maxCount 1 ;
-    sh:node :Nested ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path :optionalLazyObjectProperty .
 
 :optionalNumberProperty

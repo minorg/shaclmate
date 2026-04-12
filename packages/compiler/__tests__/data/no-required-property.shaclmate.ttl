@@ -1,8 +1,14 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://example.com/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 :NodeShape
     rdfs:comment "Node shape that has no required properties and no implicit required rdf:type property" ;
-    sh:property [ sh:path :property ; sh:datatype xsd:string; sh:maxCount 1 ] .
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :property
+    ] .
+

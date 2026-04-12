@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-const VERSION = "4.0.2";
+const VERSION = "4.0.3";
 
 const externalDependencies = {
   "@jsonforms/core": "3.5.1",
@@ -385,7 +385,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
           license: "Apache-2.0",
           main: files.size > 0 ? "./dist/index.js" : undefined,
           name: `@shaclmate/${workspaceName}${workspacesDirectoryName === "examples" ? "-example" : ""}`,
-          packageManager: "npm@10.9.0",
+          packageManager: "npm@11.11.0",
           private: workspacesDirectoryName === "examples" ? true : undefined,
           repository: {
             type: "git",

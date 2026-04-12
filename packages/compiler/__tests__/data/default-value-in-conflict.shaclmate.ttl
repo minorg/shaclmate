@@ -1,3 +1,4 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://example.com/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -6,7 +7,9 @@
     a rdfs:Class, sh:NodeShape ;
     sh:property [
         sh:defaultValue :defaultValue ;
-        sh:in ( :otherValue );
+        sh:in (:otherValue
+        ) ;
         sh:maxCount 1 ;
         sh:path :path
     ] .
+

@@ -6,6 +6,7 @@ import { Either } from "purify-ts";
 import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
 import * as _ShapesGraphToAstTransformer from "./_ShapesGraphToAstTransformer/index.js";
 import type * as ast from "./ast/index.js";
+import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
 
 export class ShapesGraphToAstTransformer {
@@ -23,16 +24,22 @@ export class ShapesGraphToAstTransformer {
     _ShapesGraphToAstTransformer.transformPropertyShapeToAstObjectTypeProperty;
   protected transformShapeToAstType =
     _ShapesGraphToAstTransformer.transformShapeToAstType;
+  protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
     iriPrefixMap,
     shapesGraph,
+    tsFeaturesDefault,
   }: {
     iriPrefixMap: PrefixMap;
     shapesGraph: input.ShapesGraph;
+    tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }) {
     this.curieFactory = new CurieFactory({ prefixMap: iriPrefixMap });
     this.shapesGraph = shapesGraph;
+    this.tsFeaturesDefault =
+      tsFeaturesDefault ??
+      new Set(["create", "equals", "hash", "json", "rdf"] as const);
   }
 
   transform(): Either<Error, ast.Ast> {
