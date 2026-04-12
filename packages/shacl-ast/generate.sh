@@ -11,8 +11,6 @@ format_rdf() {
 
 format_rdf $PWD/src/shacl-ast.shaclmate.ttl
 ../../apps/cli/dist/cli.js generate $PWD/src/shacl-ast.shaclmate.ttl >$PWD/src/generated.ts
-# ../../apps/cli/dist/cli.js generate $PWD/src/shacl-ast.shaclmate.ttl
-# ../../apps/cli/dist/cli.js show-ast-json $PWD/src/shacl-ast.shaclmate.ttl
 npm exec biome -- check --write --unsafe $PWD/src/generated.ts
 npm exec biome -- check --write --unsafe $PWD/src/generated.ts
 

@@ -10,6 +10,6 @@ format_rdf() {
 }
 
 format_rdf src/forms.shaclmate.ttl
-../../apps/cli/dist/cli.js generate src/forms.shaclmate.ttl >src/generated.ts
+../../apps/cli/dist/cli.js generate ts src/forms.shaclmate.ttl >src/generated.ts
 npm exec biome -- check --write src/generated.ts
 npm exec biome -- check --write src/generated.ts
