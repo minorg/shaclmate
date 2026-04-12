@@ -1,34 +1,58 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://example.com/> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
-:AlternativePathPropertyShape 
+:AlternativeInversePathPropertyShape
     a sh:PropertyShape ;
-    sh:path [ sh:alternativePath ( :predicate1 :predicate2 ) ] .
+    sh:path [
+        sh:alternativePath ([
+                sh:inversePath :predicate1
+            ]
+            [
+                sh:inversePath :predicate2
+            ]
+        )
+    ] .
 
-:AlternativeInversePathPropertyShape 
+:AlternativePathPropertyShape
     a sh:PropertyShape ;
-    sh:path [ sh:alternativePath ( [ sh:inversePath :predicate1 ] [ sh:inversePath :predicate2 ] ) ] .
+    sh:path [
+        sh:alternativePath (:predicate1
+            :predicate2
+        )
+    ] .
 
-:InversePathPropertyShape 
+:InversePathPropertyShape
     a sh:PropertyShape ;
-    sh:path [ sh:inversePath :predicate ] .
+    sh:path [
+        sh:inversePath :predicate
+    ] .
 
-:OneOrMorePathPropertyShape 
+:OneOrMorePathPropertyShape
     a sh:PropertyShape ;
-    sh:path [ sh:oneOrMorePath :predicate ] .
+    sh:path [
+        sh:oneOrMorePath :predicate
+    ] .
 
 :PredicatePathPropertyShape
     a sh:PropertyShape ;
     sh:path :predicate .
 
-:SequencePathPropertyShape 
+:SequencePathPropertyShape
     a sh:PropertyShape ;
-    sh:path ( :predicate1 :predicate2 ) .
+    sh:path (:predicate1
+        :predicate2
+    ) .
 
-:ZeroOrMorePathPropertyShape 
+:ZeroOrMorePathPropertyShape
     a sh:PropertyShape ;
-    sh:path [ sh:zeroOrMorePath :predicate ] .
+    sh:path [
+        sh:zeroOrMorePath :predicate
+    ] .
 
-:ZeroOrOnePathPropertyShape 
+:ZeroOrOnePathPropertyShape
     a sh:PropertyShape ;
-    sh:path [ sh:zeroOrOnePath :predicate ] .
+    sh:path [
+        sh:zeroOrOnePath :predicate
+    ] .
+

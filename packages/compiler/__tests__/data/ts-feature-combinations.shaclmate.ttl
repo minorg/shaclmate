@@ -47,16 +47,17 @@
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
-    sh:datatype xsd:double ;
-    sh:maxCount 1 ;
-    sh:path :unionMember1Property
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+        sh:path :unionMember1Property
     ] .
 
 :UnionMember2
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
-    sh:datatype xsd:double ;
-    sh:maxCount 1 ;
-    sh:path :unionMember2Property
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+        sh:path :unionMember2Property
     ] .
+
