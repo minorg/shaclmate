@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
-import type { TsFeature } from "../enums/TsFeature.js";
+import { TS_FEATURES, type TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 
@@ -17,16 +17,6 @@ type TsFeatureIri = NamedNode<
   | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
 >;
 
-const tsFeaturesAll: readonly TsFeature[] = [
-  "create",
-  "equals",
-  "graphql",
-  "hash",
-  "json",
-  "rdf",
-  "sparql",
-];
-
 export function nodeShapeTsFeatures(
   this: ShapesGraphToAstTransformer,
   nodeShape: input.NodeShape,
@@ -35,7 +25,7 @@ export function nodeShapeTsFeatures(
   function iriToTsFeatures(iri: TsFeatureIri): readonly TsFeature[] {
     switch (iri.value) {
       case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
-        return tsFeaturesAll;
+        return TS_FEATURES;
       case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
         return ["create"];
       case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
