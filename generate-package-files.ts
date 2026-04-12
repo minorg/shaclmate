@@ -495,13 +495,23 @@ fs.writeFileSync(
   path.join(myDirPath, "package.json"),
   `${JSON.stringify(
     {
-      devDependencies: [
-        "tsx",
-        "turbo",
-        "yaml",
-        "vitest",
-        "@vitest/coverage-v8",
-      ],
+      devDependencies: (
+        [
+          "tsx",
+          "turbo",
+          "yaml",
+          "vitest",
+          "@vitest/coverage-v8",
+        ] satisfies readonly (keyof typeof externalDependencies)[]
+      )
+        .toSorted()
+        .reduce(
+          (map, packageName) => {
+            map[packageName] = externalDependencies[packageName];
+            return map;
+          },
+          {} as Record<string, string>,
+        ),
       name: "shaclmate",
       optionalDependencies: {
         "@biomejs/cli-linux-x64": externalDependencies["@biomejs/biome"],
@@ -587,24 +597,33 @@ fs.writeFileSync(
             name: "Run CLI",
             run: "apps/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null",
           },
-          // ...packages
-          //   .filter((workspace) =>
-          //     fs.existsSync(
-          //       path.join(myDirPath, "packages", workspaceName, "__tests__"),
-          //     ),
-          //   )
-          //   .map((workspace) => {
-          //     return {
-          //       if: "always()",
-          //       uses: "davelosert/vitest-coverage-report-action@v2",
-          //       with: {
-          //         "file-coverage-mode": "all",
-          //         name: workspaceName,
-          //         "json-final-path": `./packages/${workspaceName}/coverage/coverage-final.json`,
-          //         "json-summary-path": `./packages/${workspaceName}/coverage/coverage-summary.json`,
-          //       },
-          //     };
-          //   }),
+          ...Object.entries(workspaces).flatMap(
+            ([workspacesDirectoryName, workspaces_]) =>
+              Object.keys(workspaces_).flatMap((workspaceName) =>
+                workspacesDirectoryName === "packages" &&
+                fs.existsSync(
+                  path.join(
+                    myDirPath,
+                    workspacesDirectoryName,
+                    workspaceName,
+                    "__tests__",
+                  ),
+                )
+                  ? [
+                      {
+                        if: "always()",
+                        uses: "davelosert/vitest-coverage-report-action@v2",
+                        with: {
+                          "file-coverage-mode": "all",
+                          name: workspaceName,
+                          "json-final-path": `./packages/${workspaceName}/coverage/coverage-final.json`,
+                          "json-summary-path": `./packages/${workspaceName}/coverage/coverage-summary.json`,
+                        },
+                      },
+                    ]
+                  : [],
+              ),
+          ),
         ],
       },
     },
