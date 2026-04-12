@@ -22,20 +22,11 @@ jobs:
         run: npm run build
       - name: Test
         run: npm run test:coverage
+      - name: Coverage report
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-path: coverage/coverage-summary.json
+          json-final-path: coverage/coverage-final.json
       - name: Run CLI
         run: apps/cli/dist/cli.js generate
           examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
-      - if: always()
-        uses: davelosert/vitest-coverage-report-action@v2
-        with:
-          file-coverage-mode: all
-          name: shacl-ast
-          json-final-path: ./packages/shacl-ast/coverage/coverage-final.json
-          json-summary-path: ./packages/shacl-ast/coverage/coverage-summary.json
-      - if: always()
-        uses: davelosert/vitest-coverage-report-action@v2
-        with:
-          file-coverage-mode: all
-          name: compiler
-          json-final-path: ./packages/compiler/coverage/coverage-final.json
-          json-summary-path: ./packages/compiler/coverage/coverage-summary.json

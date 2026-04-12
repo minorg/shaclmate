@@ -4,8 +4,8 @@
   },
   "dependencies": {
     "@shaclmate/compiler": "3.0.4",
-    "@rdfjs/types": "~2.0.1",
     "@rdfjs/prefix-map": "~0.1.2",
+    "@rdfjs/types": "~2.0.1",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__prefix-map": "~0.1.5",
     "cmd-ts": "~0.13.0",
@@ -14,10 +14,9 @@
     "rdf-validate-shacl": "0.5.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
     "@tsconfig/node18": "~18.2.4",
     "@tsconfig/strictest": "~2.0.8",
-    "@types/node": "~22",
+    "@types/node": "~18",
     "depcheck": "~1.4.7",
     "rimraf": "~6.0.1",
     "typescript": "5.9.3"
@@ -36,14 +35,11 @@
   },
   "scripts": {
     "build": "tsc -b && chmod +x dist/cli.js",
-    "build:noEmit": "tsc --noEmit",
-    "check": "biome check",
-    "check:write": "biome check --write",
-    "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
-    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput"
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

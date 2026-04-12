@@ -1,5 +1,4 @@
-/// <reference types="vitest" />
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
@@ -9,7 +8,8 @@ export default defineConfig({
       // If you want a coverage reports even if your tests are failing, include the reportOnFailure option
       reportOnFailure: true,
     },
-    include: ["**/__tests__/**/*.test.ts"],
+    // include: ["**/__tests__/**/*.test.ts"],
+    projects: ["apps/*", "examples/*", "!examples/generate.sh", "packages/*"],
     passWithNoTests: true,
   },
 });
