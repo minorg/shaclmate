@@ -138,35 +138,40 @@ function generate({
 run(
   subcommands({
     cmds: {
-      generate: command({
+      generate: subcommands({
+        cmds: {
+          "ast-json": command({
+            name: "ast-json",
+            description: "generate AST JSON for the SHACL Shapes Graph AST",
+            args: {
+              inputFilePaths,
+              outputFilePath,
+            },
+            handler: async ({ inputFilePaths, outputFilePath }) => {
+              generate({
+                generator: new AstJsonGenerator(),
+                inputFilePaths,
+                outputFilePath,
+              });
+            },
+          }),
+          ts: command({
+            name: "ts",
+            description: "generate TypeScript for the SHACL Shapes Graph AST",
+            args: {
+              inputFilePaths,
+              outputFilePath,
+            },
+            handler: async ({ inputFilePaths, outputFilePath }) => {
+              generate({
+                generator: new TsGenerator(),
+                inputFilePaths,
+                outputFilePath,
+              });
+            },
+          }),
+        },
         name: "generate",
-        description: "generate TypeScript for the SHACL Shapes Graph AST",
-        args: {
-          inputFilePaths,
-          outputFilePath,
-        },
-        handler: async ({ inputFilePaths, outputFilePath }) => {
-          generate({
-            generator: new TsGenerator(),
-            inputFilePaths,
-            outputFilePath,
-          });
-        },
-      }),
-      "show-ast-json": command({
-        name: "show-ast-json",
-        description: "show AST JSON for the SHACL Shapes Graph AST",
-        args: {
-          inputFilePaths,
-          outputFilePath,
-        },
-        handler: async ({ inputFilePaths, outputFilePath }) => {
-          generate({
-            generator: new AstJsonGenerator(),
-            inputFilePaths,
-            outputFilePath,
-          });
-        },
       }),
     },
     description: "shaclmate command line interface",

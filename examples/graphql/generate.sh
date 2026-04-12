@@ -10,6 +10,6 @@ format_rdf() {
 }
 
 format_rdf src/graphql.shaclmate.ttl
-../../apps/cli/dist/cli.js generate src/graphql.shaclmate.ttl >src/generated.ts
+../../apps/cli/dist/cli.js generate ts src/graphql.shaclmate.ttl >src/generated.ts
 npm exec biome -- check --write src/generated.ts
 npm exec biome -- check --write src/generated.ts
