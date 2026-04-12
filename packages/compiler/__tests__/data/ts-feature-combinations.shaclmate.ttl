@@ -8,7 +8,18 @@
 
 :ChildClass
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :Parent ;
+    rdfs:subClassOf :ParentClass ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :childStringProperty
+    ] .
+
+:ChildInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Interface, sh:NodeShape ;
+    rdfs:subClassOf :ParentInterface ;
     sh:nodeKind sh:IRI ;
     sh:property [
         sh:datatype xsd:string ;
@@ -42,7 +53,7 @@
     ] .
 
 :InterfaceUnion
-    a owl:Interface, sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:xone (:InterfaceUnionMember1
         :InterfaceUnionMember2
@@ -50,7 +61,7 @@
 
 :InterfaceUnionMember1
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a owl:Interface, sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:double ;
@@ -60,7 +71,7 @@
 
 :InterfaceUnionMember2
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a owl:Interface, sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:string ;
@@ -91,7 +102,16 @@
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:IRI ;
     sh:property [
-        rdfs:comment "Parent string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
+
+:ParentInterface
+    a owl:Class, sh:NodeShape ;
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:path :parentStringProperty

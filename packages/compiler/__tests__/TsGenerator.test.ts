@@ -138,7 +138,23 @@ describe("TsGenerator", () => {
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
     const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);
 
-    for (const tsFeatureCombination of [["create"]] as const) {
+    const tsFeaturesAll = [
+      "create",
+      "equals",
+      "graphql",
+      "hash",
+      "json",
+      "rdf",
+      "sparql",
+    ] as const;
+
+    for (const tsFeatureCombination of [
+      ["json"],
+      ["rdf", "sparql"],
+      tsFeaturesAll,
+      // Ablation
+      ...tsFeaturesAll.map((_, i) => tsFeaturesAll.filter((_, j) => i !== j)),
+    ] as const) {
       it(tsFeatureCombination.join("+"), () => {
         const source = new TsGenerator().generate(
           new ShapesGraphToAstTransformer({

@@ -5,7 +5,6 @@ import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import type { DatasetCore } from "@rdfjs/types";
 import { ShapesGraph } from "@shaclmate/compiler";
 import { Parser } from "n3";
 import { Either, Maybe } from "purify-ts";
