@@ -3,8 +3,7 @@
     "@vitest/coverage-v8": "~4.0.18",
     "tsx": "~4.16.2",
     "turbo": "~2.5.5",
-    "vitest": "~4.0.18",
-    "yaml": "~2.5.0"
+    "vitest": "~4.0.18"
   },
   "name": "shaclmate",
   "optionalDependencies": {
@@ -14,24 +13,21 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:packages": "turbo run --filter \"./packages/*\" build",
-    "build:noEmit": "turbo run build:noEmit",
     "check": "biome check",
     "check:write": "biome check --write",
     "check:write:unsafe": "biome check --write --unsafe",
     "clean": "turbo run clean",
     "depcheck": "turbo run depcheck",
     "dev": "turbo run --concurrency 11 dev dev:tests",
-    "dev:noEmit": "turbo run --concurrency 11 dev:noEmit dev:tests",
-    "test": "turbo run test",
-    "test:coverage": "turbo run test:coverage"
+    "test": "vitest run",
+    "test:coverage": "vitest run test:coverage",
+    "test:watch": "vitest watch",
+    "typecheck": "turbo run build:noEmit",
+    "typecheck:watch": "turbo run --concurrency 11 dev:noEmit dev:tests"
   },
   "workspaces": [
-    "apps/cli",
-    "examples/forms",
-    "examples/graphql",
-    "examples/kitchen-sink",
-    "packages/compiler",
-    "packages/shacl-ast"
+    "apps/*",
+    "examples/*",
+    "packages/*"
   ]
 }

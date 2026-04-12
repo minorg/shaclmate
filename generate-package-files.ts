@@ -3,12 +3,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import { stringify as stringifyYaml } from "yaml";
 
 const VERSION = "3.0.4";
 
 const externalDependencies = {
-  "@biomejs/biome": "2.3.10",
   "@jsonforms/core": "3.5.1",
   "@jsonforms/material-renderers": "3.5.1",
   "@jsonforms/react": "3.5.1",
@@ -65,15 +63,10 @@ const externalDependencies = {
   toposort: "2.0.2",
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
-  tsx: "~4.16.2",
-  turbo: "~2.5.5",
   typescript: "5.9.3",
   "typescript-memoize": "~1.1.1",
   uuid: "~9.0.1",
   vite: "6.0.7",
-  vitest: "~4.0.18",
-  "@vitest/coverage-v8": "~4.0.18",
-  yaml: "~2.5.0",
   zod: "~4.1.12",
 };
 
@@ -149,8 +142,6 @@ const workspaces = {
       scripts: {
         build: "tsc && vite build",
         start: "vite dev --port 3000",
-        test: "biome check",
-        "test:coverage": "biome check",
       },
     },
 
@@ -351,16 +342,12 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             ),
             ...(workspace.devDependencies?.external ?? [])
               .concat(
-                "@biomejs/biome",
                 "@tsconfig/node18",
                 "@tsconfig/strictest",
                 "@types/node",
                 "depcheck",
                 "rimraf",
                 "typescript",
-                ...(testsDirectoryPath !== null
-                  ? (["vitest", "@vitest/coverage-v8"] as const)
-                  : []),
               )
               .toSorted()
               .reduce(
@@ -399,22 +386,16 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
                     .join(" && ")}`
                 : ""
             }`,
-            "build:noEmit": "tsc --noEmit",
-            check: "biome check",
-            "check:write": "biome check --write",
-            "check:write:unsafe": "biome check --write --unsafe",
             clean: "rimraf dist",
             depcheck: "depcheck .",
             dev: "tsc -w --preserveWatchOutput",
-            "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
             ...(testsDirectoryPath !== null
               ? {
                   "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
-                  test: "biome check && vitest run",
-                  "test:coverage": "biome check && vitest run --coverage",
-                  "test:watch": "biome check && vitest watch",
                 }
               : {}),
+            typecheck: "tsc --noEmit",
+            "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
             ...workspace.scripts,
           },
           type: "module",
@@ -426,7 +407,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
       )}\n`,
     );
 
-    for (const fileName of ["biome.json", "LICENSE"]) {
+    for (const fileName of ["LICENSE"]) {
       const packageFilePath = path.resolve(packageDirectoryPath, fileName);
       if (fs.existsSync(packageFilePath)) {
         continue;
@@ -489,143 +470,3 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
     }
   }
 }
-
-// Root package.json
-fs.writeFileSync(
-  path.join(myDirPath, "package.json"),
-  `${JSON.stringify(
-    {
-      devDependencies: (
-        [
-          "tsx",
-          "turbo",
-          "yaml",
-          "vitest",
-          "@vitest/coverage-v8",
-        ] satisfies readonly (keyof typeof externalDependencies)[]
-      )
-        .toSorted()
-        .reduce(
-          (map, packageName) => {
-            map[packageName] = externalDependencies[packageName];
-            return map;
-          },
-          {} as Record<string, string>,
-        ),
-      name: "shaclmate",
-      optionalDependencies: {
-        "@biomejs/cli-linux-x64": externalDependencies["@biomejs/biome"],
-      },
-      packageManager: "npm@11.11.0",
-      private: true,
-      scripts: {
-        build: "turbo run build",
-        "build:packages": 'turbo run --filter "./packages/*" build',
-        "build:noEmit": "turbo run build:noEmit",
-        check: "biome check",
-        "check:write": "biome check --write",
-        "check:write:unsafe": "biome check --write --unsafe",
-        clean: "turbo run clean",
-        depcheck: "turbo run depcheck",
-        dev: "turbo run --concurrency 11 dev dev:tests",
-        "dev:noEmit": "turbo run --concurrency 11 dev:noEmit dev:tests",
-        test: "turbo run test",
-        "test:coverage": "turbo run test:coverage",
-        // ...packages.reduce(
-        //   (watchEntries, workspace) => {
-        //     watchEntries[`watch:${workspaceName}`] =
-        //       `npm run watch -w @shaclmate/${workspaceName}`;
-        //     return watchEntries;
-        //   },
-        //   {} as Record<string, string>,
-        // ),
-      },
-      workspaces: Object.entries(workspaces).flatMap(
-        ([workspacesDirectoryName, workspaces_]) =>
-          Object.keys(workspaces_).map(
-            (workspaceName) => `${workspacesDirectoryName}/${workspaceName}`,
-          ),
-      ),
-    },
-    undefined,
-    2,
-  )}\n`,
-);
-
-// Continuous Integration workflow file
-fs.writeFileSync(
-  path.join(myDirPath, ".github", "workflows", "continuous-integration.yml"),
-  stringifyYaml({
-    name: "Continuous Integration",
-    on: {
-      push: {
-        "branches-ignore": ["main"],
-      },
-      workflow_dispatch: null,
-    },
-    jobs: {
-      build: {
-        env: {
-          DO_NOT_TRACK: 1,
-        },
-        name: "Build and test",
-        "runs-on": "ubuntu-latest",
-        steps: [
-          {
-            uses: "actions/checkout@v4",
-          },
-          {
-            uses: "actions/setup-node@v4",
-            with: {
-              cache: "npm",
-              "node-version": 20,
-            },
-          },
-          {
-            name: "Install dependencies",
-            run: "npm ci",
-          },
-          {
-            name: "Build",
-            run: "npm run build",
-          },
-          {
-            name: "Test",
-            run: "npm run test:coverage",
-          },
-          {
-            name: "Run CLI",
-            run: "apps/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null",
-          },
-          ...Object.entries(workspaces).flatMap(
-            ([workspacesDirectoryName, workspaces_]) =>
-              Object.keys(workspaces_).flatMap((workspaceName) =>
-                workspacesDirectoryName === "packages" &&
-                fs.existsSync(
-                  path.join(
-                    myDirPath,
-                    workspacesDirectoryName,
-                    workspaceName,
-                    "__tests__",
-                  ),
-                )
-                  ? [
-                      {
-                        if: "always()",
-                        uses: "davelosert/vitest-coverage-report-action@v2",
-                        with: {
-                          "file-coverage-mode": "all",
-                          name: workspaceName,
-                          "json-final-path": `./packages/${workspaceName}/coverage/coverage-final.json`,
-                          "json-summary-path": `./packages/${workspaceName}/coverage/coverage-summary.json`,
-                        },
-                      },
-                    ]
-                  : [],
-              ),
-          ),
-        ],
-      },
-    },
-  }),
-);

@@ -6,8 +6,6 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
-    "build:noEmit": {
-    },
     "clean": {
       "cache": false
     },
@@ -18,24 +16,17 @@
       "cache": false,
       "persistent": true
     },
-    "dev:noEmit": {
-      "cache": false,
-      "persistent": true
-    },
     "dev:tests": {
       "cache": false,
       "persistent": true
     },
-    "link-dependencies": {
-      "cache": false
+    "typecheck": {
+      "cache": false,
     },
-    "test": {
+    "typecheck:watch": {
+      "cache": false,
+      "persistent": true
     },
-    "test:coverage": {
-    },
-    "unlink": {
-      "cache": false
-    }
   },
   "ui": "tui"
 }

@@ -1,5 +1,4 @@
-/// <reference types="vitest" />
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
@@ -10,6 +9,7 @@ export default defineConfig({
       reportOnFailure: true,
     },
     include: ["**/__tests__/**/*.test.ts"],
+    projects: ["apps/*", "examples/*", "packages/*"],
     passWithNoTests: true,
   },
 });

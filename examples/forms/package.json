@@ -20,7 +20,6 @@
     "zod": "~4.1.12"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
     "@tsconfig/node18": "~18.2.4",
     "@tsconfig/strictest": "~2.0.8",
     "@types/node": "~18",
@@ -42,17 +41,12 @@
   },
   "scripts": {
     "build": "tsc && vite build",
-    "build:noEmit": "tsc --noEmit",
-    "check": "biome check",
-    "check:write": "biome check --write",
-    "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
-    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "start": "vite dev --port 3000",
-    "test": "biome check",
-    "test:coverage": "biome check"
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
+    "start": "vite dev --port 3000"
   },
   "type": "module",
   "version": "3.0.4"

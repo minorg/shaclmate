@@ -14,7 +14,6 @@
     "rdf-validate-shacl": "0.5.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
     "@tsconfig/node18": "~18.2.4",
     "@tsconfig/strictest": "~2.0.8",
     "@types/node": "~18",
@@ -36,14 +35,11 @@
   },
   "scripts": {
     "build": "tsc -b && chmod +x dist/cli.js",
-    "build:noEmit": "tsc --noEmit",
-    "check": "biome check",
-    "check:write": "biome check --write",
-    "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
-    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput"
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

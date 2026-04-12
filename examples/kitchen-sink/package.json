@@ -12,7 +12,6 @@
     "zod": "~4.1.12"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
     "@kos-kit/sparql-client": "2.0.116",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
@@ -27,14 +26,12 @@
     "@types/rdfjs__serializer-turtle": "~1.1.0",
     "@types/sparqljs": "3.1.12",
     "@types/uuid": "~9.0.1",
-    "@vitest/coverage-v8": "~4.0.18",
     "depcheck": "~1.4.7",
     "n3": "~1.26.0",
     "oxigraph": "0.4.11",
     "rdf-validate-shacl": "0.5.8",
     "rimraf": "~6.0.1",
-    "typescript": "5.9.3",
-    "vitest": "~4.0.18"
+    "typescript": "5.9.3"
   },
   "files": [
     "dist/*.d.ts",
@@ -51,18 +48,12 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "build:noEmit": "tsc --noEmit",
-    "check": "biome check",
-    "check:write": "biome check --write",
-    "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
-    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
-    "test": "biome check && vitest run",
-    "test:coverage": "biome check && vitest run --coverage",
-    "test:watch": "biome check && vitest watch"
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
