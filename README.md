@@ -6,9 +6,7 @@ Command line program and libraries for generating [TypeScript](https://www.types
 
 Working with [RDF](https://www.w3.org/RDF/), [SPARQL](https://www.w3.org/TR/sparql11-overview/), and triple stores in code has never been as easy or productive as working with more mainstream technologies like relational databases. The RDF ecosystem lacks open source tools like [dbt](https://www.getdbt.com/) or [Prisma](https://www.prisma.io/) that minimize friction in the developer experience and lower the barrier to adoption. The degree of friction is far out of proportion to any differences in essential complexity between the underlying graph and relational technologies.
 
-**SHACLmate is a tool for generating idiomatic, object-oriented abstractions over RDF graphs**, so developers can concentrate more on concise business logic and less on the graph data model.  Most tools in the RDF ecosystem take the opposite approach, emphasizing explicit, low-level manipulation and navigation of RDF graphs and execution of hand-written SPARQL queries at runtime (c.f., [RDF JavaScript Libraries](https://rdf.js.org/) for JavaScript/TypeScript examples). That approach is comparable to writing SQL directly in code when working with a relational database. It's occasionally necessary, but it shouldn't be the only option, especially for developers who are relatively unfamiliar with the RDF data model.
-
-SHACLmate currently generates idiomatic TypeScript classes/interfaces from SHACL shapes. Crafting SHACL shapes is an obvious barrier to adoption and a productive developer experience. There are few open source tools for working with SHACL, and the examples in this repository were hand-written in Turtle. We are working on support for other input formats (e.g., a hosted domain-specific language for defining shapes) as well as additional output formats (other programming languages).
+**SHACLmate is a tool for generating idiomatic, object-oriented abstractions over RDF graphs**, so developers can concentrate more on concise business logic and less on the graph data model.  Most tools in the RDF ecosystem take the opposite approach, emphasizing explicit, low-level manipulation and navigation of RDF graphs and execution of hand-written SPARQL queries at runtime. That approach is comparable to writing SQL directly in code when working with a relational database. It's occasionally necessary, but it shouldn't be the only option, especially for developers who are relatively unfamiliar with the RDF data model.
 
 ## Prerequisites
 
@@ -18,11 +16,11 @@ SHACLmate currently generates idiomatic TypeScript classes/interfaces from SHACL
 
 ### Generate TypeScript code from SHACL shapes
 
-    npx -y "@shaclmate/cli@latest" generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >generated.ts
+    npx -y "@shaclmate/cli@latest" generate ts examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >generated.ts
 
 Substituting the path to your SHACL file for the example path.
 
-The generated code is serialized by [ts-morph](https://ts-morph.com/) with minimal indentation and newlines. You will probably want to format it using a tool like [Biome](https://biomejs.dev/) or [prettier](https://prettier.io/).
+The generated code is serialized by [ts-poet](https://www.npmjs.com/package/ts-poet) with minimal indentation and newlines. You will probably want to format it using a tool like [Biome](https://biomejs.dev/) or [prettier](https://prettier.io/).
 
 ### Add runtime dependencies
 
@@ -46,7 +44,7 @@ See [`examples/kitchen-sink/package.json`](examples/kitchen-sink/package.json) a
 * Surrogate objects with lazy, asynchronous resolution
 * Runtime filtering of node properties (in memory and SPARQL)
 * Numeric types in generated code: floating point, fixed-width integers, arbitrary-precision decimals and integers
-* [Zod schema](https://zod.dev/) generation. Zod schemas can be converted to [JSON schemas](https://json-schema.org/) using [zod-to-json-schema](https://github.com/StefanTerdell/zod-to-json-schema).
+* [Zod schema](https://zod.dev/) generation
 * [JSON Forms](https://jsonforms.io/) schema generation
 * GraphQL schema+resolver generation (for [GraphQL.js](https://www.graphql-js.org)-compatible servers)
 * [purify-ts](https://gigobyte.github.io/purify/) [`Maybe`](https://gigobyte.github.io/purify/adts/Maybe) types instead of `null`/`undefined`
@@ -66,13 +64,11 @@ A "kitchen sink" demonstrating the code SHACLmate generates from many different 
 
 To reproduce the generated code to stdout, run:
 
-    npx -y "@shaclmate/cli@latest" generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl
-
-The compiler unit tests in [`packages/compiler/__tests__`](packages/compiler/__tests__) use the kitchen sink examples to test generated code.
+    npx -y "@shaclmate/cli@latest" generate ts examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl
 
 ### HTML forms ([examples/forms](examples/forms))
 
-This directory contains a web application with HTML forms rendered at runtime using JSON Forms schemas generated by SHACLmate.
+A web application with HTML forms rendered at runtime using [JSON Forms](https://jsonforms.io/) schemas generated by SHACLmate.
 
 Run the application with:
 
@@ -82,7 +78,7 @@ then open [http://localhost:3000](http://localhost:3000).
 
 ### GraphQL server ([examples/graphql](examples/graphql))
 
-This directory contains a web application that serves a [GraphQL](https://graphql.org) endpoint with a [GraphiQL](https://github.com/graphql/graphiql) interface.
+A web application that serves a [GraphQL](https://graphql.org) endpoint with a [GraphiQL](https://github.com/graphql/graphiql) interface.
 
 Build the application with:
 
@@ -92,7 +88,7 @@ Run the application with:
 
     npm start
 
-then open [http://localhost:3000/graphql](http://localhost:3000/graphql) to open the Graphiql interface.
+then open [http://localhost:3000/graphql](http://localhost:3000/graphql) to use the Graphiql interface.
 
 ## SHACL support
 
@@ -129,7 +125,7 @@ without having to explicit declare a property shape on `rdf:type` for the node s
 
 #### [`sh:class`](https://www.w3.org/TR/shacl/#ClassConstraintComponent)
 
-SHACLmate tries to resolve `sh:class` to an `rdfs:Class`/`owl:Class` that is also an `sh:NodeShape`.
+SHACLmate treats sh:class as the equivalent of `sh:nodeKind sh:BlankNodeOrIRI`. RDF types are associated with node shapes rather than properties (see "Implicit class targets", above).
 
 #### [`sh:datatype`](https://www.w3.org/TR/shacl/#DatatypeConstraintComponent)
 
@@ -166,14 +162,13 @@ SHACLmate generates built-in TypeScript types from corresponding RDF datatypes:
 | `xsd:unsignedLong` | `bigint` |
 | `xsd:unsignedShort` | `number` |
 
-
 All other datatypes generate an RDF/JS [`Literal`](https://rdf.js.org/data-model-spec/#literal-interface) type.
 
 #### [`sh:nodeKind`](https://www.w3.org/TR/shacl/#NodeKindConstraintComponent)
 
-Every generated class or interface in TypeScript includes an `identifier` property that (uniquely) identifies an instance of the class/interface.
+Every generated class or interface in TypeScript includes an `$identifier` property that (uniquely) identifies an instance of the class/interface.
 
-On a node shape, `sh:nodeKind` determines the type of `identifier`: a blank node, a named node (IRI), or either.
+On a node shape, `sh:nodeKind` determines the type of `$identifier`: a blank node, a named node (IRI), or either.
 
 On a property shape, `sh:nodeKind` determines the type of the property.
 
@@ -181,10 +176,10 @@ On a property shape, `sh:nodeKind` determines the type of the property.
 
 SHACLmate uses [`sh:minCount`](https://www.w3.org/TR/shacl/#MinCountConstraintComponent) and [`sh:maxCount`](https://www.w3.org/TR/shacl/#MaxCountConstraintComponent) on property shapes to generate containers for the underlying property shape type. Consider a property shape with `sh:datatype` `xsd:string`:
 
-* `sh:minCount 1` and `sh:maxCount 1` would generate a required `string` in TypeScript
-* `sh:minCount 0` and `sh:maxCount 0` would generate an [option type](https://en.wikipedia.org/wiki/Option_type) e.g., a `purify-ts` `Maybe<string>`
-* `sh:minCount 1` with `sh:maxCount` greater than 1 would generate a non-empty list type e.g., a `purify-ts` `NonEmptyList<string>`
-* All other combinations generate a possibly empty list e.g., `string[]`.
+* `sh:minCount 1` and `sh:maxCount 1` would generate a required `string` in TypeScript.
+* `sh:minCount 0` and `sh:maxCount 0` would generate an [option type](https://en.wikipedia.org/wiki/Option_type) e.g., a `purify-ts` `Maybe<string>` in TypeScript.
+* `sh:minCount 1` with `sh:maxCount` greater than 1 would generate a non-empty list type e.g., a `purify-ts` `NonEmptyList<string>` in TypeScript.
+* All other combinations generate a possibly empty list e.g., `string[]` in TypeScript.
 
 Note that:
 * A property shape without an `sh:minCount` has an implicit `sh:minCount` of 0.
@@ -209,7 +204,6 @@ Unsupported.
 
 ### [Logical constraint components](https://www.w3.org/TR/shacl/#core-components-logical)
 
-* `sh:and` is recognized by the compiler but not generators.
 * `sh:xone` is (mostly) supported on node shapes and property shapes and used to generate union types in TypeScript. 
 
 ### [Shape-based constraint components](https://www.w3.org/TR/shacl/#core-components-shape)
