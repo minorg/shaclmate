@@ -236,98 +236,6 @@ interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
 
-/**
- * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class $LazyObjectOption<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-> {
-  readonly partial: Maybe<PartialObjectT>;
-  private readonly resolver: (
-    identifier: ObjectIdentifierT,
-  ) => Promise<Either<Error, ResolvedObjectT>>;
-
-  constructor({
-    partial,
-    resolver,
-  }: {
-    partial: Maybe<PartialObjectT>;
-    resolver: (
-      identifier: ObjectIdentifierT,
-    ) => Promise<Either<Error, ResolvedObjectT>>;
-  }) {
-    this.partial = partial;
-    this.resolver = resolver;
-  }
-
-  async resolve(): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
-    if (this.partial.isNothing()) {
-      return Right(Maybe.empty());
-    }
-    return (await this.resolver(this.partial.unsafeCoerce().$identifier)).map(
-      Maybe.of,
-    );
-  }
-}
-
-/**
- * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class $LazyObjectSet<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-> {
-  readonly partials: readonly PartialObjectT[];
-  private readonly resolver: (
-    identifiers: readonly ObjectIdentifierT[],
-  ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
-
-  constructor({
-    partials,
-    resolver,
-  }: {
-    partials: readonly PartialObjectT[];
-    resolver: (
-      identifiers: readonly ObjectIdentifierT[],
-    ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
-  }) {
-    this.partials = partials;
-    this.resolver = resolver;
-  }
-
-  get length(): number {
-    return this.partials.length;
-  }
-
-  async resolve(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
-    if (this.partials.length === 0) {
-      return Right([]);
-    }
-
-    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (limit <= 0) {
-      return Right([]);
-    }
-
-    let offset = options?.offset ?? 0;
-    if (offset < 0) {
-      offset = 0;
-    }
-
-    return await this.resolver(
-      this.partials
-        .slice(offset, offset + limit)
-        .map((partial) => partial.$identifier),
-    );
-  }
-}
-
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
@@ -468,127 +376,7 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
-export class $DefaultPartial {
-  readonly $identifier: $DefaultPartial.$Identifier;
-
-  readonly $type: "$DefaultPartial" = "$DefaultPartial" as const;
-
-  constructor(parameters: {
-    readonly $identifier: (BlankNode | NamedNode) | string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else {
-      this.$identifier = parameters.$identifier satisfies never;
-    }
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(this.$identifier);
-    return resource;
-  }
-}
-
-export namespace $DefaultPartial {
-  export function $filter(
-    filter: $DefaultPartial.$Filter,
-    value: $DefaultPartial,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function is$DefaultPartial(
-    object: $Object,
-  ): object is $DefaultPartial {
-    switch (object.$type) {
-      case "$DefaultPartial":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, $DefaultPartial> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return $DefaultPartial
-      .$propertiesFromRdf({
-        context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      })
-      .map((properties) => new $DefaultPartial(properties));
-  }
-
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $parameters.resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $parameters.resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .map(($identifier) => ({ $identifier }));
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["$DefaultPartial"],
-        }),
-      },
-    },
-  } as const;
-} /**
+type $UnwrapR<T> = T extends Either<any, infer R> ? R : never; /**
  * UnionMember1
  */
 
@@ -1833,20 +1621,12 @@ export class Child extends Parent {
   /**
    * Lazy object set property
    */
-  readonly lazyObjectSetProperty: $LazyObjectSet<
-    Nested.$Identifier,
-    $DefaultPartial,
-    Nested
-  >;
+  readonly lazyObjectSetProperty: readonly Nested[];
 
   /**
    * Optional lazy object property
    */
-  readonly optionalLazyObjectProperty: $LazyObjectOption<
-    Nested.$Identifier,
-    $DefaultPartial,
-    Nested
-  >;
+  readonly optionalLazyObjectProperty: Maybe<Nested>;
 
   /**
    * Optional object property
@@ -1867,13 +1647,8 @@ export class Child extends Parent {
     parameters: {
       readonly $identifier: NamedNode | string;
       readonly childStringProperty?: Maybe<string> | string;
-      readonly lazyObjectSetProperty?:
-        | $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>
-        | readonly Nested[];
-      readonly optionalLazyObjectProperty?:
-        | $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>
-        | Maybe<Nested>
-        | Nested;
+      readonly lazyObjectSetProperty?: readonly Nested[];
+      readonly optionalLazyObjectProperty?: Maybe<Nested> | Nested;
       readonly optionalObjectProperty?: Maybe<Nested> | Nested;
       readonly optionalStringProperty?: Maybe<string> | string;
       readonly requiredStringProperty: string;
@@ -1889,82 +1664,25 @@ export class Child extends Parent {
     } else {
       this.childStringProperty = parameters.childStringProperty satisfies never;
     }
-    if (
-      typeof parameters.lazyObjectSetProperty === "object" &&
-      parameters.lazyObjectSetProperty instanceof $LazyObjectSet
-    ) {
-      this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
+    if (parameters.lazyObjectSetProperty === undefined) {
+      this.lazyObjectSetProperty = [];
     } else if (typeof parameters.lazyObjectSetProperty === "object") {
-      this.lazyObjectSetProperty = new $LazyObjectSet<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partials: parameters.lazyObjectSetProperty.map(
-          (object) => new $DefaultPartial(object),
-        ),
-        resolver: async () =>
-          Right(parameters.lazyObjectSetProperty as readonly Nested[]),
-      });
-    } else if (parameters.lazyObjectSetProperty === undefined) {
-      this.lazyObjectSetProperty = new $LazyObjectSet<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partials: [],
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
+      this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
     } else {
       this.lazyObjectSetProperty =
         parameters.lazyObjectSetProperty satisfies never;
     }
-    if (
-      typeof parameters.optionalLazyObjectProperty === "object" &&
-      parameters.optionalLazyObjectProperty instanceof $LazyObjectOption
-    ) {
+    if (Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
       this.optionalLazyObjectProperty = parameters.optionalLazyObjectProperty;
-    } else if (Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
-      this.optionalLazyObjectProperty = new $LazyObjectOption<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partial: parameters.optionalLazyObjectProperty.map(
-          (object) => new $DefaultPartial(object),
-        ),
-        resolver: async () =>
-          Right(
-            (
-              parameters.optionalLazyObjectProperty as Maybe<Nested>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (typeof parameters.optionalLazyObjectProperty === "object") {
-      this.optionalLazyObjectProperty = new $LazyObjectOption<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partial: Maybe.of(
-          new $DefaultPartial(parameters.optionalLazyObjectProperty),
-        ),
-        resolver: async () =>
-          Right(parameters.optionalLazyObjectProperty as Nested),
-      });
+    } else if (
+      typeof parameters.optionalLazyObjectProperty === "object" &&
+      parameters.optionalLazyObjectProperty instanceof Nested
+    ) {
+      this.optionalLazyObjectProperty = Maybe.of(
+        parameters.optionalLazyObjectProperty,
+      );
     } else if (parameters.optionalLazyObjectProperty === undefined) {
-      this.optionalLazyObjectProperty = new $LazyObjectOption<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partial: Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
+      this.optionalLazyObjectProperty = Maybe.empty();
     } else {
       this.optionalLazyObjectProperty =
         parameters.optionalLazyObjectProperty satisfies never;
@@ -2024,7 +1742,7 @@ export class Child extends Parent {
     );
     resource.add(
       dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
-      this.lazyObjectSetProperty.partials.flatMap((item) => [
+      this.lazyObjectSetProperty.flatMap((item) => [
         item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
           .identifier,
       ]),
@@ -2032,7 +1750,7 @@ export class Child extends Parent {
     );
     resource.add(
       dataFactory.namedNode("http://example.com/optionalLazyObjectProperty"),
-      this.optionalLazyObjectProperty.partial
+      this.optionalLazyObjectProperty
         .toList()
         .flatMap((value) => [
           value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
@@ -2082,13 +1800,7 @@ export namespace Child {
     }
     if (
       filter.lazyObjectSetProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partials))(
+      !$filterArray<Nested, Nested.$Filter>(Nested.$filter)(
         filter.lazyObjectSetProperty,
         value.lazyObjectSetProperty,
       )
@@ -2097,13 +1809,7 @@ export namespace Child {
     }
     if (
       filter.optionalLazyObjectProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
+      !$filterMaybe<Nested, Nested.$Filter>(Nested.$filter)(
         filter.optionalLazyObjectProperty,
         value.optionalLazyObjectProperty,
       )
@@ -2143,8 +1849,8 @@ export namespace Child {
   export type $Filter = {
     readonly $identifier?: $IriFilter;
     readonly childStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly lazyObjectSetProperty?: $CollectionFilter<Nested.$Filter>;
+    readonly optionalLazyObjectProperty?: $MaybeFilter<Nested.$Filter>;
     readonly optionalObjectProperty?: $MaybeFilter<Nested.$Filter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
@@ -2176,13 +1882,10 @@ export namespace Child {
         type: new GraphQLNonNull(GraphQLString),
       },
       lazyObjectSetProperty: {
-        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
+        args: undefined,
         description: '"Lazy object set property"',
         name: "lazyObjectSetProperty",
-        resolve: (source, args) =>
-          source.lazyObjectSetProperty
-            .resolve({ limit: args.limit, offset: args.offset })
-            .then((either) => either.unsafeCoerce()),
+        resolve: (source, _args) => source.lazyObjectSetProperty,
         type: new GraphQLNonNull(
           new GraphQLList(new GraphQLNonNull(Nested.$GraphQL)),
         ),
@@ -2192,9 +1895,7 @@ export namespace Child {
         description: '"Optional lazy object property"',
         name: "optionalLazyObjectProperty",
         resolve: (source, _args) =>
-          source.optionalLazyObjectProperty
-            .resolve()
-            .then((either) => either.unsafeCoerce().extractNullable()),
+          source.optionalLazyObjectProperty.extractNullable(),
         type: new GraphQLNonNull(Nested.$GraphQL),
       },
       optionalObjectProperty: {
@@ -2277,16 +1978,8 @@ export namespace Child {
     {
       $identifier: NamedNode;
       childStringProperty: Maybe<string>;
-      lazyObjectSetProperty: $LazyObjectSet<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >;
-      optionalLazyObjectProperty: $LazyObjectOption<
-        Nested.$Identifier,
-        $DefaultPartial,
-        Nested
-      >;
+      lazyObjectSetProperty: readonly Nested[];
+      optionalLazyObjectProperty: Maybe<Nested>;
       optionalObjectProperty: Maybe<Nested>;
       optionalStringProperty: Maybe<string>;
       requiredStringProperty: string;
@@ -2372,7 +2065,7 @@ export namespace Child {
                     .chain((values) =>
                       values.chainMap((value) =>
                         value.toResource().chain((resource) =>
-                          $DefaultPartial.$fromRdf(resource, {
+                          Nested.$fromRdf(resource, {
                             context: $parameters.context,
                             ignoreRdfType: true,
                             objectSet: $parameters.objectSet,
@@ -2389,20 +2082,6 @@ export namespace Child {
                           Child.$schema.properties.lazyObjectSetProperty.path,
                         value: valuesArray,
                       }),
-                    )
-                    .map((values) =>
-                      values.map(
-                        (partials) =>
-                          new $LazyObjectSet<
-                            Nested.$Identifier,
-                            $DefaultPartial,
-                            Nested
-                          >({
-                            partials,
-                            resolver: (identifiers) =>
-                              $parameters.objectSet.nesteds({ identifiers }),
-                          }),
-                      ),
                     ),
               }).chain((lazyObjectSetProperty) =>
                 $shaclPropertyFromRdf({
@@ -2414,7 +2093,7 @@ export namespace Child {
                       .chain((values) =>
                         values.chainMap((value) =>
                           value.toResource().chain((resource) =>
-                            $DefaultPartial.$fromRdf(resource, {
+                            Nested.$fromRdf(resource, {
                               context: $parameters.context,
                               ignoreRdfType: true,
                               objectSet: $parameters.objectSet,
@@ -2427,27 +2106,13 @@ export namespace Child {
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<$DefaultPartial>>({
+                          : Resource.Values.fromValue<Maybe<Nested>>({
                               focusResource: $parameters.resource,
                               propertyPath:
                                 Child.$schema.properties
                                   .optionalLazyObjectProperty.path,
                               value: Maybe.empty(),
                             }),
-                      )
-                      .map((values) =>
-                        values.map(
-                          (partial) =>
-                            new $LazyObjectOption<
-                              Nested.$Identifier,
-                              $DefaultPartial,
-                              Nested
-                            >({
-                              partial,
-                              resolver: (identifier) =>
-                                $parameters.objectSet.nested(identifier),
-                            }),
-                        ),
                       ),
                 }).chain((optionalLazyObjectProperty) =>
                   $shaclPropertyFromRdf({
@@ -2557,24 +2222,12 @@ export namespace Child {
       },
       lazyObjectSetProperty: {
         kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectSet" as const,
-          partial: () => ({
-            kind: "Set" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
+        type: () => ({ kind: "Set" as const, item: () => Nested.$schema }),
         path: dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
       },
       optionalLazyObjectProperty: {
         kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
+        type: () => ({ kind: "Maybe" as const, item: () => Nested.$schema }),
         path: dataFactory.namedNode(
           "http://example.com/optionalLazyObjectProperty",
         ),
@@ -2700,13 +2353,7 @@ export namespace Union {
     throw new Error("unrecognized type");
   }
 }
-export type $Object =
-  | Child
-  | Parent
-  | Nested
-  | UnionMember1
-  | UnionMember2
-  | $DefaultPartial;
+export type $Object = Child | Parent | Nested | UnionMember1 | UnionMember2;
 
 export namespace $Object {
   export function $filter(filter: $Object.$Filter, value: $Object): boolean {
@@ -2751,16 +2398,6 @@ export namespace $Object {
     ) {
       return false;
     }
-    if (
-      $DefaultPartial.is$DefaultPartial(value) &&
-      filter.on?.$DefaultPartial &&
-      !$DefaultPartial.$filter(
-        filter.on.$DefaultPartial,
-        value as $DefaultPartial,
-      )
-    ) {
-      return false;
-    }
     return true;
   }
 
@@ -2772,7 +2409,6 @@ export namespace $Object {
       readonly Nested?: Omit<Nested.$Filter, "$identifier">;
       readonly UnionMember1?: Omit<UnionMember1.$Filter, "$identifier">;
       readonly UnionMember2?: Omit<UnionMember2.$Filter, "$identifier">;
-      readonly $DefaultPartial?: Omit<$DefaultPartial.$Filter, "$identifier">;
     };
   }
 
@@ -2822,13 +2458,6 @@ export namespace $Object {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          $DefaultPartial.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
       );
   }
 
@@ -2852,9 +2481,6 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
     if (UnionMember2.isUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if ($DefaultPartial.is$DefaultPartial(_object)) {
       return _object.$toRdf(_parameters);
     }
     throw new Error("unrecognized type");
@@ -3480,11 +3106,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: UnionMember2.$fromRdf,
           $fromRdfTypes: [UnionMember2.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: $DefaultPartial.$fromRdf,
-          $fromRdfTypes: [],
         },
       ],
       query,
