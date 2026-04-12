@@ -389,7 +389,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
           private: workspacesDirectoryName === "examples" ? true : undefined,
           repository: {
             type: "git",
-            url: "git+https://github.com/minorg/shaclmate",
+            url: "git+https://github.com/minorg/shaclmate.git",
           },
           scripts: {
             build: `tsc -b${

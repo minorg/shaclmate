@@ -37,7 +37,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/minorg/shaclmate"
+    "url": "git+https://github.com/minorg/shaclmate.git"
   },
   "scripts": {
     "build": "tsc && vite build",
