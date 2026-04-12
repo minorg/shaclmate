@@ -116,12 +116,12 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     );
   }
 
-  override sparqlConstructTriples(): Maybe<Code> {
+  override sparqlConstructTriplesExpression(): Maybe<Code> {
     return Maybe.empty();
   }
 
-  override sparqlWherePatterns(): ReturnType<
-    AbstractProperty<TypeDiscriminantProperty.Type>["sparqlWherePatterns"]
+  override sparqlWherePatternsExpression(): ReturnType<
+    AbstractProperty<TypeDiscriminantProperty.Type>["sparqlWherePatternsExpression"]
   > {
     return Maybe.empty();
   }

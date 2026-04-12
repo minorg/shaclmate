@@ -456,13 +456,15 @@ export class IdentifierProperty extends AbstractProperty<
     );
   }
 
-  override sparqlConstructTriples(): Maybe<Code> {
+  override sparqlConstructTriplesExpression(): Maybe<Code> {
     return Maybe.empty();
   }
 
-  override sparqlWherePatterns({
+  override sparqlWherePatternsExpression({
     variables,
-  }: Parameters<AbstractProperty<IdentifierType>["sparqlWherePatterns"]>[0]) {
+  }: Parameters<
+    AbstractProperty<IdentifierType>["sparqlWherePatternsExpression"]
+  >[0]) {
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{

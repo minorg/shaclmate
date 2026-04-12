@@ -96,12 +96,12 @@ protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} 
     return Maybe.empty();
   }
 
-  override sparqlConstructTriples(): Maybe<Code> {
+  override sparqlConstructTriplesExpression(): Maybe<Code> {
     return Maybe.empty();
   }
 
-  override sparqlWherePatterns(): ReturnType<
-    AbstractProperty<StringType>["sparqlWherePatterns"]
+  override sparqlWherePatternsExpression(): ReturnType<
+    AbstractProperty<StringType>["sparqlWherePatternsExpression"]
   > {
     return Maybe.empty();
   }

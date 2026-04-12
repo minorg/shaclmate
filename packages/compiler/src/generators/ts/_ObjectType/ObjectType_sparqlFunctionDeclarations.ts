@@ -111,7 +111,7 @@ if (!parameters?.ignoreRdfType) {
     }
 
     property
-      .sparqlConstructTriples({
+      .sparqlConstructTriplesExpression({
         variables,
       })
       .ifJust((propertyTriples) => {
@@ -122,7 +122,7 @@ if (!parameters?.ignoreRdfType) {
       });
 
     property
-      .sparqlWherePatterns({ variables })
+      .sparqlWherePatternsExpression({ variables })
       .ifJust(({ condition, patterns }) => {
         const concatStatement = code`patterns = patterns.concat(${patterns});`;
         if (condition) {

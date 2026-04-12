@@ -275,10 +275,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       );
   }
 
-  override sparqlConstructTriples({
+  override sparqlConstructTriplesExpression({
     variables,
   }: Parameters<
-    AbstractProperty<TypeT>["sparqlConstructTriples"]
+    AbstractProperty<TypeT>["sparqlConstructTriplesExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${snippets.shaclPropertySparqlConstructTriples}(${{
@@ -295,11 +295,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  override sparqlWherePatterns({
+  override sparqlWherePatternsExpression({
     variables,
-  }: Parameters<AbstractProperty<TypeT>["sparqlWherePatterns"]>[0]): ReturnType<
-    AbstractProperty<TypeT>["sparqlWherePatterns"]
-  > {
+  }: Parameters<
+    AbstractProperty<TypeT>["sparqlWherePatternsExpression"]
+  >[0]): ReturnType<AbstractProperty<TypeT>["sparqlWherePatternsExpression"]> {
     return Maybe.of({
       patterns: code`${snippets.shaclPropertySparqlWherePatterns}(${{
         filter: this.filterProperty

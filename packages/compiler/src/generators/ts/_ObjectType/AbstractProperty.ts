@@ -192,7 +192,7 @@ export abstract class AbstractProperty<
    *
    * Returns a (runtime) array of sparqljs.Triple.
    */
-  abstract sparqlConstructTriples(parameters: {
+  abstract sparqlConstructTriplesExpression(parameters: {
     variables: { filter: Code; focusIdentifier: Code; variablePrefix: Code };
   }): Maybe<Code>;
 
@@ -210,7 +210,7 @@ export abstract class AbstractProperty<
    *   - condition: optional runtime condition to evaluate in an if statement before including the patterns
    *   - patterns: runtime array of SparqlPattern's.
    */
-  abstract sparqlWherePatterns(parameters: {
+  abstract sparqlWherePatternsExpression(parameters: {
     variables: {
       filter: Code;
       focusIdentifier: Code;
