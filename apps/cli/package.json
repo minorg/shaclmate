@@ -36,7 +36,7 @@
   "license": "Apache-2.0",
   "main": "./dist/index.js",
   "name": "@shaclmate/cli",
-  "packageManager": "npm@10.9.0",
+  "packageManager": "npm@11.11.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minorg/shaclmate.git"
