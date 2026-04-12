@@ -29,13 +29,13 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           file-coverage-mode: all
-          name: shacl-ast
-          json-final-path: ./packages/shacl-ast/coverage/coverage-final.json
-          json-summary-path: ./packages/shacl-ast/coverage/coverage-summary.json
+          name: compiler
+          json-final-path: ./packages/compiler/coverage/coverage-final.json
+          json-summary-path: ./packages/compiler/coverage/coverage-summary.json
       - if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           file-coverage-mode: all
-          name: compiler
-          json-final-path: ./packages/compiler/coverage/coverage-final.json
-          json-summary-path: ./packages/compiler/coverage/coverage-summary.json
+          name: shacl-ast
+          json-final-path: ./packages/shacl-ast/coverage/coverage-final.json
+          json-summary-path: ./packages/shacl-ast/coverage/coverage-summary.json
