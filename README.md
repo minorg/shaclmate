@@ -133,18 +133,41 @@ SHACLmate tries to resolve `sh:class` to an `rdfs:Class`/`owl:Class` that is als
 
 #### [`sh:datatype`](https://www.w3.org/TR/shacl/#DatatypeConstraintComponent)
 
-SHACLmate generates built-in TypeScript types from corresponding XSD datatypes:
+SHACLmate generates built-in TypeScript types from corresponding RDF datatypes:
 
-| XSD datatype | TypeScript type |
-| ------------ | --------------- |
+| Datatype | TypeScript type |
+| -------- | --------------- |
 | `xsd:anyURI` | `string` |
+| `xsd:base64Binary`| `string` |
 | `xsd:boolean`| `boolean` |
+| `xsd:byte` | `number` |
 | `xsd:date`   | `Date` |
 | `xsd:dateTime` | `Date` |
-| Numeric types | `number` |
+| `xsd:dateTimeStamp` | `Date` |
+| `xsd:decimal` | [decimal.js](https://mikemcl.github.io/decimal.js/) `Decimal` |
+| `xsd:duration`| `string` |
+| `xsd:double` | `number` |
+| `xsd:float` | `number` |
+| `xsd:hexBinary`| `string` |
+| `xsd:long` | `bigint` |
+| `xsd:integer` | `bigint` |
+| `xsd:language`| `string` |
+| `xsd:negativeInteger` | `bigint` |
+| `xsd:nonNegativeInteger` | `bigint` |
+| `xsd:nonPositiveInteger` | `bigint` |
+| `xsd:normalizedString` | `string` |
+| `xsd:positiveInteger` | `bigint` |
+| `xsd:QName` | `string` |
+| `xsd:short` | `number` |
 | `xsd:string` | `string` |
+| `xsd:time` | `string` |
+| `xsd:unsignedByte` | `number` |
+| `xsd:unsignedInt` | `number` |
+| `xsd:unsignedLong` | `bigint` |
+| `xsd:unsignedShort` | `number` |
 
-All other datatypes generate an RDF/JS [`Literal`](https://rdf.js.org/data-model-spec/#literal-interface) type
+
+All other datatypes generate an RDF/JS [`Literal`](https://rdf.js.org/data-model-spec/#literal-interface) type.
 
 #### [`sh:nodeKind`](https://www.w3.org/TR/shacl/#NodeKindConstraintComponent)
 
