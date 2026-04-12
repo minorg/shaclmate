@@ -13,6 +13,7 @@
     "pino": "~9.1.0",
     "rdf-validate-shacl": "0.5.8"
   },
+  "description": "Command line program to generate TypeScript code from SHACL shapes",
   "devDependencies": {
     "@tsconfig/node18": "~18.2.4",
     "@tsconfig/strictest": "~2.0.8",
@@ -22,8 +23,15 @@
     "typescript": "5.9.3"
   },
   "files": [
+    "README.md",
     "dist/*.d.ts",
     "dist/*.js"
+  ],
+  "homepage": "https://github.com/minorg/shaclmate",
+  "keywords": [
+    "rdf",
+    "shacl",
+    "typescript"
   ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",

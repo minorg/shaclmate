@@ -26,6 +26,7 @@
     "typescript": "5.9.3"
   },
   "files": [
+    "README.md",
     "dist/*.d.ts",
     "dist/*.js"
   ],

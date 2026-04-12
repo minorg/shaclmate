@@ -78,10 +78,13 @@ interface Workspace {
     external?: readonly (keyof typeof externalDependencies)[];
     internal?: readonly PackageName[];
   };
+  description?: string;
   devDependencies?: {
     external?: readonly (keyof typeof externalDependencies)[];
     internal?: readonly PackageName[];
   };
+  keywords?: readonly string[];
+  homepage?: string;
   scripts?: Record<string, string>;
 }
 
@@ -104,6 +107,10 @@ const workspaces = {
         ],
         internal: ["compiler"],
       },
+      description:
+        "Command line program to generate TypeScript code from SHACL shapes",
+      homepage: "https://github.com/minorg/shaclmate",
+      keywords: ["rdf", "shacl", "typescript"],
     },
   } satisfies Record<string, Workspace>,
   examples: {
@@ -282,6 +289,9 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
     fs.mkdirSync(packageDirectoryPath, { recursive: true });
 
     const files = new Set<string>();
+    if (fs.existsSync(path.join(packageDirectoryPath, "README.md"))) {
+      files.add("README.md");
+    }
     const srcDirectoryPath = path.join(packageDirectoryPath, "src");
     if (workspaceName !== "forms" && fs.existsSync(srcDirectoryPath)) {
       for (const dirent of fs.readdirSync(srcDirectoryPath, {
@@ -332,6 +342,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
               {} as Record<string, string>,
             ),
           },
+          description: workspace.description,
           devDependencies: {
             ...(workspace.devDependencies?.internal ?? []).toSorted().reduce(
               (map, packageName) => {
@@ -369,6 +380,8 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
           //       }
           //     : undefined,
           files: files.size > 0 ? [...files].sort() : undefined,
+          homepage: workspace.homepage,
+          keywords: workspace.keywords,
           license: "Apache-2.0",
           main: files.size > 0 ? "./dist/index.js" : undefined,
           name: `@shaclmate/${workspaceName}${workspacesDirectoryName === "examples" ? "-example" : ""}`,
