@@ -27,9 +27,6 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ]),
       );
 
-      if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
-        return;
-      }
 
       for (const [id, [filter, expected]] of Object.entries({
         present: [{ blankNodeTermProperty: {} }, [identifiers[0]]],
@@ -38,6 +35,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
+      if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
+        return;
+      }
+
           const actual = (
             await objectSet.termPropertiesClassIdentifiers({
               filter,
