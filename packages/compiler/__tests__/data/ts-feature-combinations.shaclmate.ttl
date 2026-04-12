@@ -1,0 +1,62 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:Child
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :Parent ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :childStringProperty
+    ] .
+
+:Nested
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Nested" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :nestedStringProperty
+    ] .
+
+:Parent
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        rdfs:comment "Parent string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
+
+:Union
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:xone (:UnionMember1
+        :UnionMember2
+    ) .
+
+:UnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+    sh:datatype xsd:double ;
+    sh:maxCount 1 ;
+    sh:path :unionMember1Property
+    ] .
+
+:UnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+    sh:datatype xsd:double ;
+    sh:maxCount 1 ;
+    sh:path :unionMember2Property
+    ] .

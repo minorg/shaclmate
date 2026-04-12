@@ -5,11 +5,27 @@ import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import type { DatasetCore } from "@rdfjs/types";
 import { ShapesGraph } from "@shaclmate/compiler";
 import { Parser } from "n3";
-import { type Either, Maybe } from "purify-ts";
+import { Either, Maybe } from "purify-ts";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
+
+function parseDataset(
+  ...filePaths: readonly string[]
+): Either<Error, DatasetCore> {
+  return Either.encase(() => {
+    const dataset = datasetFactory.dataset();
+    const parser = new Parser({ format: "Turtle" });
+    for (const filePath of filePaths) {
+      for (const quad of parser.parse(fs.readFileSync(filePath).toString())) {
+        dataset.add(quad);
+      }
+    }
+    return dataset;
+  });
+}
 
 function parseShapesGraph(...filePaths: readonly string[]): Either<
   Error,
@@ -18,39 +34,42 @@ function parseShapesGraph(...filePaths: readonly string[]): Either<
     shapesGraph: ShapesGraph;
   }
 > {
-  const parser = new Parser({ format: "Turtle" });
-  const dataset = datasetFactory.dataset();
-  const iriPrefixes: PrefixMapInit = [];
-  for (const filePath of filePaths) {
-    for (const quad of parser.parse(
-      fs.readFileSync(filePath).toString(),
-      null,
-      (prefix, prefixNode) => {
-        const existingIriPrefix = iriPrefixes.find(
-          (iriPrefix) =>
-            iriPrefix[0] === prefix || iriPrefix[1].equals(prefixNode),
-        );
-        if (existingIriPrefix) {
-          if (
-            existingIriPrefix[0] !== prefix ||
-            !existingIriPrefix[1].equals(prefixNode)
-          ) {
-            // logger.warn("conflicting prefix %s: %s", prefix, prefixNode.value);
+  return Either.encase(() => {
+    const dataset = datasetFactory.dataset();
+    const iriPrefixes: PrefixMapInit = [];
+    const parser = new Parser({ format: "Turtle" });
+    for (const filePath of filePaths) {
+      for (const quad of parser.parse(
+        fs.readFileSync(filePath).toString(),
+        null,
+        (prefix, prefixNode) => {
+          const existingIriPrefix = iriPrefixes.find(
+            (iriPrefix) =>
+              iriPrefix[0] === prefix || iriPrefix[1].equals(prefixNode),
+          );
+          if (existingIriPrefix) {
+            if (
+              existingIriPrefix[0] !== prefix ||
+              !existingIriPrefix[1].equals(prefixNode)
+            ) {
+              // logger.warn("conflicting prefix %s: %s", prefix, prefixNode.value);
+            }
+            return;
           }
-          return;
-        }
 
-        iriPrefixes.push([prefix, prefixNode]);
-      },
-    )) {
-      dataset.add(quad);
+          iriPrefixes.push([prefix, prefixNode]);
+        },
+      )) {
+        dataset.add(quad);
+      }
     }
-  }
-
-  return ShapesGraph.create({ dataset }).map((shapesGraph) => ({
-    iriPrefixMap: new PrefixMap(iriPrefixes, { factory: dataFactory }),
-    shapesGraph,
-  }));
+    return { dataset, iriPrefixes };
+  }).chain(({ dataset, iriPrefixes }) =>
+    ShapesGraph.create({ dataset }).map((shapesGraph) => ({
+      iriPrefixMap: new PrefixMap(iriPrefixes, { factory: dataFactory }),
+      shapesGraph,
+    })),
+  );
 }
 
 export const testData = {
@@ -192,6 +211,16 @@ export const testData = {
         .filter((filePath) => fs.existsSync(filePath))
         .map(parseShapesGraph)
         .extractNullable();
+    },
+
+    get tsFeatureCombinations() {
+      return parseDataset(
+        path.join(
+          thisDirectoryPath,
+          "data",
+          "ts-feature-combinations.shaclmate.ttl",
+        ),
+      );
     },
   },
 } as const;
