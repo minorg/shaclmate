@@ -20,7 +20,7 @@
     "depcheck": "turbo run depcheck",
     "dev": "turbo run --concurrency 11 dev dev:tests",
     "test": "vitest run",
-    "test:coverage": "vitest run test:coverage",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest watch",
     "typecheck": "turbo run typecheck",
     "typecheck:watch": "turbo run --concurrency 11 dev:noEmit dev:tests"
