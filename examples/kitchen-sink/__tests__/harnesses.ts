@@ -683,7 +683,7 @@ export const harnesses = {
       actualPropertyName2: "actualPropertyValue2",
       actualPropertyName3: "actualPropertyValue3",
       actualPropertyName4: "actualPropertyValue4",
-      // PropertyNamesClass$j$actualPropertyName5: "actualPropertyValue5",
+      actualPropertyName5: "actualPropertyValue5",
     }),
     kitchenSink.PropertyNamesClass,
   ),
