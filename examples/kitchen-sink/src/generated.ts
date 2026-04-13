@@ -14041,12 +14041,12 @@ export class PropertyNamesClass {
   readonly actualPropertyName1: string;
 
   /**
-   * sh:name: overrides sh:path
+   * sh:name: overrides sh:path and rdfs:label
    */
   readonly actualPropertyName2: string;
 
   /**
-   * shaclmate:name: overrides sh:name
+   * shaclmate:name: overrides sh:name, sh:path, and rdfs:label
    */
   readonly actualPropertyName3: string;
 
@@ -14055,12 +14055,27 @@ export class PropertyNamesClass {
    */
   readonly actualPropertyName4: string;
 
+  /**
+   * shape IRI: overrides sh:path if sh:path can't be converted to a CURIE
+   */
+  readonly PropertyNamesClass$j$actualPropertyName5:
+    | BlankNode
+    | NamedNode
+    | Literal;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
     readonly actualPropertyName4: string;
+    readonly PropertyNamesClass$j$actualPropertyName5:
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | (BlankNode | NamedNode | Literal);
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -14074,6 +14089,46 @@ export class PropertyNamesClass {
     this.actualPropertyName2 = parameters.actualPropertyName2;
     this.actualPropertyName3 = parameters.actualPropertyName3;
     this.actualPropertyName4 = parameters.actualPropertyName4;
+    if (
+      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "bigint"
+    ) {
+      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.bigint(
+        parameters.PropertyNamesClass$j$actualPropertyName5,
+      );
+    } else if (
+      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "boolean"
+    ) {
+      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.boolean(
+        parameters.PropertyNamesClass$j$actualPropertyName5,
+      );
+    } else if (
+      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "object" &&
+      parameters.PropertyNamesClass$j$actualPropertyName5 instanceof Date
+    ) {
+      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.date(
+        parameters.PropertyNamesClass$j$actualPropertyName5,
+      );
+    } else if (
+      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "number"
+    ) {
+      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.number(
+        parameters.PropertyNamesClass$j$actualPropertyName5,
+      );
+    } else if (
+      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "string"
+    ) {
+      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.string(
+        parameters.PropertyNamesClass$j$actualPropertyName5,
+      );
+    } else if (
+      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "object"
+    ) {
+      this.PropertyNamesClass$j$actualPropertyName5 =
+        parameters.PropertyNamesClass$j$actualPropertyName5;
+    } else {
+      this.PropertyNamesClass$j$actualPropertyName5 =
+        parameters.PropertyNamesClass$j$actualPropertyName5 satisfies never;
+    }
   }
 
   get $identifier(): PropertyNamesClass.$Identifier {
@@ -14150,6 +14205,18 @@ export class PropertyNamesClass {
           propertyValuesUnequal,
           type: "property" as const,
         })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.PropertyNamesClass$j$actualPropertyName5,
+          other.PropertyNamesClass$j$actualPropertyName5,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "PropertyNamesClass$j$actualPropertyName5",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
       );
   }
 
@@ -14167,6 +14234,8 @@ export class PropertyNamesClass {
     _hasher.update(this.actualPropertyName2);
     _hasher.update(this.actualPropertyName3);
     _hasher.update(this.actualPropertyName4);
+    _hasher.update(this.PropertyNamesClass$j$actualPropertyName5.termType);
+    _hasher.update(this.PropertyNamesClass$j$actualPropertyName5.value);
     return _hasher;
   }
 
@@ -14182,6 +14251,33 @@ export class PropertyNamesClass {
         actualPropertyName2: this.actualPropertyName2,
         actualPropertyName3: this.actualPropertyName3,
         actualPropertyName4: this.actualPropertyName4,
+        PropertyNamesClass$j$actualPropertyName5:
+          this.PropertyNamesClass$j$actualPropertyName5.termType === "Literal"
+            ? {
+                "@language":
+                  this.PropertyNamesClass$j$actualPropertyName5.language
+                    .length > 0
+                    ? this.PropertyNamesClass$j$actualPropertyName5.language
+                    : undefined,
+                "@type":
+                  this.PropertyNamesClass$j$actualPropertyName5.datatype
+                    .value !== "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.PropertyNamesClass$j$actualPropertyName5.datatype
+                        .value
+                    : undefined,
+                "@value": this.PropertyNamesClass$j$actualPropertyName5.value,
+                termType: "Literal" as const,
+              }
+            : this.PropertyNamesClass$j$actualPropertyName5.termType ===
+                "NamedNode"
+              ? {
+                  "@id": this.PropertyNamesClass$j$actualPropertyName5.value,
+                  termType: "NamedNode" as const,
+                }
+              : {
+                  "@id": `_:${this.PropertyNamesClass$j$actualPropertyName5.value}`,
+                  termType: "BlankNode" as const,
+                },
       } satisfies PropertyNamesClass.$Json),
     );
   }
@@ -14220,6 +14316,11 @@ export class PropertyNamesClass {
     resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName4"),
       [$literalFactory.string(this.actualPropertyName4)],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://minorgordon.net/ignorePropertyName5"),
+      [this.PropertyNamesClass$j$actualPropertyName5],
       options?.graph,
     );
     return resource;
@@ -14265,6 +14366,15 @@ export namespace PropertyNamesClass {
     ) {
       return false;
     }
+    if (
+      filter.PropertyNamesClass$j$actualPropertyName5 !== undefined &&
+      !$filterTerm(
+        filter.PropertyNamesClass$j$actualPropertyName5,
+        value.PropertyNamesClass$j$actualPropertyName5,
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 
@@ -14274,6 +14384,7 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName2?: $StringFilter;
     readonly actualPropertyName3?: $StringFilter;
     readonly actualPropertyName4?: $StringFilter;
+    readonly PropertyNamesClass$j$actualPropertyName5?: $TermFilter;
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -14295,6 +14406,7 @@ export namespace PropertyNamesClass {
       actualPropertyName2: string;
       actualPropertyName3: string;
       actualPropertyName4: string;
+      PropertyNamesClass$j$actualPropertyName5: BlankNode | NamedNode | Literal;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -14309,12 +14421,44 @@ export namespace PropertyNamesClass {
     const actualPropertyName2 = $jsonObject["actualPropertyName2"];
     const actualPropertyName3 = $jsonObject["actualPropertyName3"];
     const actualPropertyName4 = $jsonObject["actualPropertyName4"];
+    const PropertyNamesClass$j$actualPropertyName5 =
+      $jsonObject["PropertyNamesClass$j$actualPropertyName5"].termType ===
+      "Literal"
+        ? dataFactory.literal(
+            $jsonObject["PropertyNamesClass$j$actualPropertyName5"]["@value"],
+            $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
+              "@language"
+            ] !== undefined
+              ? $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
+                  "@language"
+                ]
+              : $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
+                    "@type"
+                  ] !== undefined
+                ? dataFactory.namedNode(
+                    $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
+                      "@type"
+                    ],
+                  )
+                : undefined,
+          )
+        : $jsonObject["PropertyNamesClass$j$actualPropertyName5"].termType ===
+            "NamedNode"
+          ? dataFactory.namedNode(
+              $jsonObject["PropertyNamesClass$j$actualPropertyName5"]["@id"],
+            )
+          : dataFactory.blankNode(
+              $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
+                "@id"
+              ].substring(2),
+            );
     return Right({
       $identifier,
       actualPropertyName1,
       actualPropertyName2,
       actualPropertyName3,
       actualPropertyName4,
+      PropertyNamesClass$j$actualPropertyName5,
     });
   }
 
@@ -14355,6 +14499,7 @@ export namespace PropertyNamesClass {
           type: "Control",
         },
         {
+          label: "ignorePropertyName2",
           scope: `${scopePrefix}/properties/actualPropertyName2`,
           type: "Control",
         },
@@ -14365,6 +14510,10 @@ export namespace PropertyNamesClass {
         {
           label: "actualPropertyName4",
           scope: `${scopePrefix}/properties/actualPropertyName4`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/PropertyNamesClass$j$actualPropertyName5`,
           type: "Control",
         },
       ],
@@ -14380,11 +14529,33 @@ export namespace PropertyNamesClass {
       actualPropertyName1: z
         .string()
         .describe("sh:path: overrides property shape identifier"),
-      actualPropertyName2: z.string().describe("sh:name: overrides sh:path"),
+      actualPropertyName2: z
+        .string()
+        .describe("sh:name: overrides sh:path and rdfs:label"),
       actualPropertyName3: z
         .string()
-        .describe("shaclmate:name: overrides sh:name"),
+        .describe("shaclmate:name: overrides sh:name, sh:path, and rdfs:label"),
       actualPropertyName4: z.string().describe("rdfs:label: overrides sh:path"),
+      PropertyNamesClass$j$actualPropertyName5: z
+        .discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("BlankNode"),
+          }),
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ])
+        .describe(
+          "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE",
+        ),
     }) satisfies z.ZodType<$Json>;
   }
 
@@ -14395,6 +14566,17 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
     readonly actualPropertyName4: string;
+    readonly PropertyNamesClass$j$actualPropertyName5:
+      | {
+          readonly "@id": string;
+          readonly termType: "BlankNode" | "NamedNode";
+        }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
   };
 
   export function isPropertyNamesClass(
@@ -14440,6 +14622,7 @@ export namespace PropertyNamesClass {
       actualPropertyName2: string;
       actualPropertyName3: string;
       actualPropertyName4: string;
+      PropertyNamesClass$j$actualPropertyName5: BlankNode | NamedNode | Literal;
     }
   > {
     return (
@@ -14548,13 +14731,26 @@ export namespace PropertyNamesClass {
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
                       ),
-                }).map((actualPropertyName4) => ({
-                  $identifier,
-                  actualPropertyName1,
-                  actualPropertyName2,
-                  actualPropertyName3,
-                  actualPropertyName4,
-                })),
+                }).chain((actualPropertyName4) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema:
+                      $schema.properties
+                        .PropertyNamesClass$j$actualPropertyName5,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues.chain((values) =>
+                        values.chainMap((value) => value.toTerm()),
+                      ),
+                  }).map((PropertyNamesClass$j$actualPropertyName5) => ({
+                    $identifier,
+                    actualPropertyName1,
+                    actualPropertyName2,
+                    actualPropertyName3,
+                    actualPropertyName4,
+                    PropertyNamesClass$j$actualPropertyName5,
+                  })),
+                ),
               ),
             ),
           ),
@@ -14594,6 +14790,13 @@ export namespace PropertyNamesClass {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
         path: dataFactory.namedNode("http://example.com/ignorePropertyName4"),
+      },
+      PropertyNamesClass$j$actualPropertyName5: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Term" as const }),
+        path: dataFactory.namedNode(
+          "http://minorgordon.net/ignorePropertyName5",
+        ),
       },
     },
   } as const;
@@ -14759,6 +14962,22 @@ export namespace PropertyNamesClass {
             : "propertyNamesClass"),
       }),
     );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.PropertyNamesClass$j$actualPropertyName5,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "PropertyNamesClass$j$actualPropertyName5",
+        propertySchema:
+          $schema.properties.PropertyNamesClass$j$actualPropertyName5,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -14898,6 +15117,23 @@ export namespace PropertyNamesClass {
         propertyName: "actualPropertyName4",
         propertySchema: $schema.properties.actualPropertyName4,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.PropertyNamesClass$j$actualPropertyName5,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "PropertyNamesClass$j$actualPropertyName5",
+        propertySchema:
+          $schema.properties.PropertyNamesClass$j$actualPropertyName5,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"

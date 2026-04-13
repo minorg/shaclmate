@@ -1577,29 +1577,11 @@
           "order": 0,
           "path": {
             "prefix": "",
-            "reference": "inDoublesProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inDoublesProperty"
-          },
-          "shapeIdentifier": "_:n3-197",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": {
-            "prefix": "",
             "reference": "inStringsProperty",
             "termType": "NamedNode",
             "value": "http://example.com/inStringsProperty"
           },
-          "shapeIdentifier": "_:n3-200",
+          "shapeIdentifier": "_:n3-197",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1617,7 +1599,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inBooleansProperty"
           },
-          "shapeIdentifier": "_:n3-203",
+          "shapeIdentifier": "_:n3-200",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1635,7 +1617,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDateTimesProperty"
           },
-          "shapeIdentifier": "_:n3-205",
+          "shapeIdentifier": "_:n3-202",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1653,7 +1635,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIntegersProperty"
           },
-          "shapeIdentifier": "_:n3-207",
+          "shapeIdentifier": "_:n3-204",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1671,7 +1653,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIrisProperty"
           },
-          "shapeIdentifier": "_:n3-210",
+          "shapeIdentifier": "_:n3-207",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1679,6 +1661,24 @@
               "nodeKinds": [
                 "IRI"
               ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inDoublesProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inDoublesProperty"
+          },
+          "shapeIdentifier": "_:n3-210",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
             }
           },
           "visibility": "public"
@@ -4790,6 +4790,20 @@
       "shapeIdentifier": "<http://example.com/PropertyNamesClass>",
       "properties": [
         {
+          "comment": "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE",
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "termType": "NamedNode",
+            "value": "http://minorgordon.net/ignorePropertyName5"
+          },
+          "shapeIdentifier": "<http://example.com/PropertyNamesClass-actualPropertyName5>",
+          "type": {
+            "kind": "TermType"
+          },
+          "visibility": "public"
+        },
+        {
           "comment": "sh:path: overrides property shape identifier",
           "mutable": false,
           "order": 0,
@@ -4810,7 +4824,8 @@
           "visibility": "public"
         },
         {
-          "comment": "sh:name: overrides sh:path",
+          "comment": "sh:name: overrides sh:path and rdfs:label",
+          "label": "ignorePropertyName2",
           "mutable": false,
           "name": "actualPropertyName2",
           "order": 0,
@@ -4831,7 +4846,7 @@
           "visibility": "public"
         },
         {
-          "comment": "shaclmate:name: overrides sh:name",
+          "comment": "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
           "mutable": false,
           "name": "actualPropertyName3",
           "order": 0,

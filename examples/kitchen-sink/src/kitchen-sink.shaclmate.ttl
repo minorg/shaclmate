@@ -471,12 +471,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoublesProperty
-    ], [
         sh:in ("text"
             "html"
         ) ;
@@ -504,6 +498,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIrisProperty
+    ], [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoublesProperty
     ] .
 
 :IndirectRecursiveClass
@@ -1214,14 +1214,15 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :PropertyNamesClass
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape that uses different methods to name properties" ;
-    sh:property [
+    sh:property :PropertyNamesClass-actualPropertyName5, [
         rdfs:comment "sh:path: overrides property shape identifier" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :actualPropertyName1
     ], [
-        rdfs:comment "sh:name: overrides sh:path" ;
+        rdfs:comment "sh:name: overrides sh:path and rdfs:label" ;
+        rdfs:label "ignorePropertyName2" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -1229,7 +1230,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :ignorePropertyName2
     ], [
         shaclmate:name "actualPropertyName3" ;
-        rdfs:comment "shaclmate:name: overrides sh:name" ;
+        rdfs:comment "shaclmate:name: overrides sh:name, sh:path, and rdfs:label" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -1243,6 +1244,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :ignorePropertyName4
     ] .
+
+:PropertyNamesClass-actualPropertyName5
+    a sh:PropertyShape ;
+    rdfs:comment "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE (i.e., no corresponding prefix has been declared)" ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path <http://minorgordon.net/ignorePropertyName5> .
 
 :PropertyPathsClass
     a owl:Class, sh:NodeShape ;
