@@ -14027,6 +14027,890 @@ export namespace PropertyPathsClass {
     return patterns;
   }
 } /**
+ * Shape that uses different methods to name properties
+ */
+
+export class PropertyNamesClass {
+  private _$identifier?: PropertyNamesClass.$Identifier;
+
+  readonly $type: "PropertyNamesClass" = "PropertyNamesClass" as const;
+
+  /**
+   * sh:path: overrides property shape identifier
+   */
+  readonly actualPropertyName1: string;
+
+  /**
+   * sh:name: overrides sh:path and rdfs:label
+   */
+  readonly actualPropertyName2: string;
+
+  /**
+   * shaclmate:name: overrides sh:name, sh:path, and rdfs:label
+   */
+  readonly actualPropertyName3: string;
+
+  /**
+   * rdfs:label: overrides sh:path
+   */
+  readonly actualPropertyName4: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly actualPropertyName1: string;
+    readonly actualPropertyName2: string;
+    readonly actualPropertyName3: string;
+    readonly actualPropertyName4: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (parameters.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+    this.actualPropertyName1 = parameters.actualPropertyName1;
+    this.actualPropertyName2 = parameters.actualPropertyName2;
+    this.actualPropertyName3 = parameters.actualPropertyName3;
+    this.actualPropertyName4 = parameters.actualPropertyName4;
+  }
+
+  get $identifier(): PropertyNamesClass.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: PropertyNamesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.actualPropertyName1,
+          other.actualPropertyName1,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "actualPropertyName1",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.actualPropertyName2,
+          other.actualPropertyName2,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "actualPropertyName2",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.actualPropertyName3,
+          other.actualPropertyName3,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "actualPropertyName3",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.actualPropertyName4,
+          other.actualPropertyName4,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "actualPropertyName4",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(this.actualPropertyName1);
+    _hasher.update(this.actualPropertyName2);
+    _hasher.update(this.actualPropertyName3);
+    _hasher.update(this.actualPropertyName4);
+    return _hasher;
+  }
+
+  $toJson(): PropertyNamesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        actualPropertyName1: this.actualPropertyName1,
+        actualPropertyName2: this.actualPropertyName2,
+        actualPropertyName3: this.actualPropertyName3,
+        actualPropertyName4: this.actualPropertyName4,
+      } satisfies PropertyNamesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/PropertyNamesClass"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/actualPropertyName1"),
+      [$literalFactory.string(this.actualPropertyName1)],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/ignorePropertyName2"),
+      [$literalFactory.string(this.actualPropertyName2)],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/ignorePropertyName3"),
+      [$literalFactory.string(this.actualPropertyName3)],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/ignorePropertyName4"),
+      [$literalFactory.string(this.actualPropertyName4)],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace PropertyNamesClass {
+  export function $filter(
+    filter: PropertyNamesClass.$Filter,
+    value: PropertyNamesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName1 !== undefined &&
+      !$filterString(filter.actualPropertyName1, value.actualPropertyName1)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName2 !== undefined &&
+      !$filterString(filter.actualPropertyName2, value.actualPropertyName2)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName3 !== undefined &&
+      !$filterString(filter.actualPropertyName3, value.actualPropertyName3)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName4 !== undefined &&
+      !$filterString(filter.actualPropertyName4, value.actualPropertyName4)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly actualPropertyName1?: $StringFilter;
+    readonly actualPropertyName2?: $StringFilter;
+    readonly actualPropertyName3?: $StringFilter;
+    readonly actualPropertyName4?: $StringFilter;
+  };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/PropertyNamesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      actualPropertyName1: string;
+      actualPropertyName2: string;
+      actualPropertyName3: string;
+      actualPropertyName4: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const actualPropertyName1 = $jsonObject["actualPropertyName1"];
+    const actualPropertyName2 = $jsonObject["actualPropertyName2"];
+    const actualPropertyName3 = $jsonObject["actualPropertyName3"];
+    const actualPropertyName4 = $jsonObject["actualPropertyName4"];
+    return Right({
+      $identifier,
+      actualPropertyName1,
+      actualPropertyName2,
+      actualPropertyName3,
+      actualPropertyName4,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, PropertyNamesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new PropertyNamesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyNamesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/actualPropertyName1`,
+          type: "Control",
+        },
+        {
+          label: "ignorePropertyName2",
+          scope: `${scopePrefix}/properties/actualPropertyName2`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/actualPropertyName3`,
+          type: "Control",
+        },
+        {
+          label: "actualPropertyName4",
+          scope: `${scopePrefix}/properties/actualPropertyName4`,
+          type: "Control",
+        },
+      ],
+      label: "PropertyNamesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("PropertyNamesClass"),
+      actualPropertyName1: z
+        .string()
+        .describe("sh:path: overrides property shape identifier"),
+      actualPropertyName2: z
+        .string()
+        .describe("sh:name: overrides sh:path and rdfs:label"),
+      actualPropertyName3: z
+        .string()
+        .describe("shaclmate:name: overrides sh:name, sh:path, and rdfs:label"),
+      actualPropertyName4: z.string().describe("rdfs:label: overrides sh:path"),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyNamesClass";
+    readonly actualPropertyName1: string;
+    readonly actualPropertyName2: string;
+    readonly actualPropertyName3: string;
+    readonly actualPropertyName4: string;
+  };
+
+  export function isPropertyNamesClass(
+    object: $Object,
+  ): object is PropertyNamesClass {
+    switch (object.$type) {
+      case "PropertyNamesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PropertyNamesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PropertyNamesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyNamesClass(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<
+    Error,
+    {
+      $identifier: BlankNode | NamedNode;
+      actualPropertyName1: string;
+      actualPropertyName2: string;
+      actualPropertyName3: string;
+      actualPropertyName4: string;
+    }
+  > {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/PropertyNamesClass":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  PropertyNamesClass.$fromRdfType,
+                  { graph: $parameters.graph },
+                )
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyNamesClass)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: $parameters.graph,
+            resource: $parameters.resource,
+            propertySchema: $schema.properties.actualPropertyName1,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages(
+                    values,
+                    $parameters.preferredLanguages,
+                  ),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).chain((actualPropertyName1) =>
+            $shaclPropertyFromRdf({
+              graph: $parameters.graph,
+              resource: $parameters.resource,
+              propertySchema: $schema.properties.actualPropertyName2,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      $parameters.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).chain((actualPropertyName2) =>
+              $shaclPropertyFromRdf({
+                graph: $parameters.graph,
+                resource: $parameters.resource,
+                propertySchema: $schema.properties.actualPropertyName3,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        $parameters.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).chain((actualPropertyName3) =>
+                $shaclPropertyFromRdf({
+                  graph: $parameters.graph,
+                  resource: $parameters.resource,
+                  propertySchema: $schema.properties.actualPropertyName4,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages(
+                          values,
+                          $parameters.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
+                      ),
+                }).map((actualPropertyName4) => ({
+                  $identifier,
+                  actualPropertyName1,
+                  actualPropertyName2,
+                  actualPropertyName3,
+                  actualPropertyName4,
+                })),
+              ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PropertyNamesClass"],
+        }),
+      },
+      actualPropertyName1: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/actualPropertyName1"),
+      },
+      actualPropertyName2: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName2"),
+      },
+      actualPropertyName3: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName3"),
+      },
+      actualPropertyName4: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName4"),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: PropertyNamesClass.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyNamesClass.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PropertyNamesClass.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: PropertyNamesClass.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyNamesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: PropertyNamesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("propertyNamesClass");
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "propertyNamesClass")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "propertyNamesClass")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "propertyNamesClass")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.actualPropertyName1,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName1",
+        propertySchema: $schema.properties.actualPropertyName1,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.actualPropertyName2,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName2",
+        propertySchema: $schema.properties.actualPropertyName2,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.actualPropertyName3,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName3",
+        propertySchema: $schema.properties.actualPropertyName3,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.actualPropertyName4,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName4",
+        propertySchema: $schema.properties.actualPropertyName4,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: PropertyNamesClass.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ??
+      dataFactory.variable!("propertyNamesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "propertyNamesClass")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: PropertyNamesClass.$fromRdfType,
+          subject: focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
+                        : "propertyNamesClass")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: PropertyNamesClass.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "propertyNamesClass"),
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.actualPropertyName1,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "actualPropertyName1",
+        propertySchema: $schema.properties.actualPropertyName1,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.actualPropertyName2,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "actualPropertyName2",
+        propertySchema: $schema.properties.actualPropertyName2,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.actualPropertyName3,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "actualPropertyName3",
+        propertySchema: $schema.properties.actualPropertyName3,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.actualPropertyName4,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "actualPropertyName4",
+        propertySchema: $schema.properties.actualPropertyName4,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    return patterns;
+  }
+} /**
  * Shape that has properties with different cardinalities
  */
 
@@ -17272,6 +18156,940 @@ export namespace PartialClassUnionMember1 {
             : "partialClassUnionMember1"),
       }),
     );
+    return patterns;
+  }
+} /**
+ * Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes
+ */
+
+export class NewName2Class {
+  private _$identifier?: NewName2Class.$Identifier;
+
+  readonly $type: "NewName2Class" = "NewName2Class" as const;
+
+  constructor(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+  }
+
+  get $identifier(): NewName2Class.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: NewName2Class): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    return _hasher;
+  }
+
+  $toJson(): NewName2Class.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+      } satisfies NewName2Class.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/OverrideName2Class"),
+        options?.graph,
+      );
+    }
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NewName2Class {
+  export function $filter(
+    filter: NewName2Class.$Filter,
+    value: NewName2Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/OverrideName2Class",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right({ $identifier });
+  }
+
+  export function $fromJson(json: unknown): Either<z.ZodError, NewName2Class> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NewName2Class(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NewName2Class" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+      ],
+      label: "NewName2Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("NewName2Class"),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NewName2Class";
+  };
+
+  export function isNewName2Class(object: $Object): object is NewName2Class {
+    switch (object.$type) {
+      case "NewName2Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NewName2Class> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NewName2Class.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NewName2Class(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/OverrideName2Class":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(NewName2Class.$fromRdfType, {
+                  graph: $parameters.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName2Class)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ $identifier })),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NewName2Class"],
+        }),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: NewName2Class.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NewName2Class.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NewName2Class.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: NewName2Class.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NewName2Class.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: NewName2Class.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("newName2Class");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "newName2Class")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "newName2Class")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "newName2Class")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: NewName2Class.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("newName2Class");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "newName2Class")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NewName2Class.$fromRdfType,
+          subject: focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
+                        : "newName2Class")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: NewName2Class.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "newName2Class"),
+        }),
+      );
+    }
+    return patterns;
+  }
+} /**
+ * Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
+ */
+
+export class NewName1Class {
+  private _$identifier?: NewName1Class.$Identifier;
+
+  readonly $type: "NewName1Class" = "NewName1Class" as const;
+
+  constructor(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+  }
+
+  get $identifier(): NewName1Class.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: NewName1Class): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
+    this.$hashShaclProperties(_hasher);
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<HasherT extends $Hasher>(
+    _hasher: HasherT,
+  ): HasherT {
+    return _hasher;
+  }
+
+  $toJson(): NewName1Class.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+      } satisfies NewName1Class.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    graph?: Exclude<Quad_Graph, Variable>;
+    resourceSet?: ResourceSet;
+  }): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(this.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/OverrideName1Class"),
+        options?.graph,
+      );
+    }
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NewName1Class {
+  export function $filter(
+    filter: NewName1Class.$Filter,
+    value: NewName1Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/OverrideName1Class",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right({ $identifier });
+  }
+
+  export function $fromJson(json: unknown): Either<z.ZodError, NewName1Class> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NewName1Class(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NewName1Class" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+      ],
+      label: "NewName1Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("NewName1Class"),
+    }) satisfies z.ZodType<$Json>;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NewName1Class";
+  };
+
+  export function isNewName1Class(object: $Object): object is NewName1Class {
+    switch (object.$type) {
+      case "NewName1Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NewName1Class> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NewName1Class.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NewName1Class(properties));
+  }
+
+  export function $propertiesFromRdf(
+    $parameters: $PropertiesFromRdfParameters,
+  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/OverrideName1Class":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(NewName1Class.$fromRdfType, {
+                  graph: $parameters.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${Resource.Identifier.toString(
+                    $parameters.resource.identifier,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName1Class)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $parameters.resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $parameters.resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .map(($identifier) => ({ $identifier })),
+    );
+  }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NewName1Class"],
+        }),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: NewName1Class.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NewName1Class.$sparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NewName1Class.$sparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType,
+            preferredLanguages,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: NewName1Class.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: NamedNode | Variable;
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NewName1Class.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    filter?: NewName1Class.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("newName1Class");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "newName1Class")
+            }RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "newName1Class")
+            }RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${
+              parameters?.variablePrefix ??
+              (focusIdentifier.termType === "Variable"
+                ? focusIdentifier.value
+                : "newName1Class")
+            }RdfClass`,
+          ),
+        },
+      );
+    }
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: NewName1Class.$Filter;
+    focusIdentifier?: NamedNode | Variable;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    variablePrefix?: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    const focusIdentifier =
+      parameters?.focusIdentifier ?? dataFactory.variable!("newName1Class");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${
+        parameters?.variablePrefix ??
+        (focusIdentifier.termType === "Variable"
+          ? focusIdentifier.value
+          : "newName1Class")
+      }RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NewName1Class.$fromRdfType,
+          subject: focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${
+                      parameters?.variablePrefix ??
+                      (focusIdentifier.termType === "Variable"
+                        ? focusIdentifier.value
+                        : "newName1Class")
+                    }RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters?.filter?.$identifier,
+          preferredLanguages: parameters?.preferredLanguages,
+          propertyPatterns: [],
+          schema: NewName1Class.$schema.properties.$identifier.type(),
+          valueVariable: focusIdentifier,
+          variablePrefix:
+            parameters?.variablePrefix ??
+            (focusIdentifier.termType === "Variable"
+              ? focusIdentifier.value
+              : "newName1Class"),
+        }),
+      );
+    }
     return patterns;
   }
 } /**
@@ -70131,11 +71949,14 @@ export type $Object =
   | NodeKindsClass
   | NumericPropertiesClass
   | OrderedPropertiesClass
+  | NewName1Class
+  | NewName2Class
   | PartialClassUnionMember1
   | PartialClassUnionMember2
   | PartialInterfaceUnionMember1
   | PartialInterfaceUnionMember2
   | PropertyCardinalitiesClass
+  | PropertyNamesClass
   | PropertyPathsClass
   | PropertyVisibilitiesClass
   | RecursiveClassUnionMember1
@@ -70412,6 +72233,12 @@ export namespace $Object {
       if (OrderedPropertiesClass.isOrderedPropertiesClass(left)) {
         return left.$equals(right as unknown as OrderedPropertiesClass);
       }
+      if (NewName1Class.isNewName1Class(left)) {
+        return left.$equals(right as unknown as NewName1Class);
+      }
+      if (NewName2Class.isNewName2Class(left)) {
+        return left.$equals(right as unknown as NewName2Class);
+      }
       if (PartialClassUnionMember1.isPartialClassUnionMember1(left)) {
         return left.$equals(right as unknown as PartialClassUnionMember1);
       }
@@ -70432,6 +72259,9 @@ export namespace $Object {
       }
       if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(left)) {
         return left.$equals(right as unknown as PropertyCardinalitiesClass);
+      }
+      if (PropertyNamesClass.isPropertyNamesClass(left)) {
+        return left.$equals(right as unknown as PropertyNamesClass);
       }
       if (PropertyPathsClass.isPropertyPathsClass(left)) {
         return left.$equals(right as unknown as PropertyPathsClass);
@@ -71129,6 +72959,20 @@ export namespace $Object {
       return false;
     }
     if (
+      NewName1Class.isNewName1Class(value) &&
+      filter.on?.NewName1Class &&
+      !NewName1Class.$filter(filter.on.NewName1Class, value as NewName1Class)
+    ) {
+      return false;
+    }
+    if (
+      NewName2Class.isNewName2Class(value) &&
+      filter.on?.NewName2Class &&
+      !NewName2Class.$filter(filter.on.NewName2Class, value as NewName2Class)
+    ) {
+      return false;
+    }
+    if (
       PartialClassUnionMember1.isPartialClassUnionMember1(value) &&
       filter.on?.PartialClassUnionMember1 &&
       !PartialClassUnionMember1.$filter(
@@ -71174,6 +73018,16 @@ export namespace $Object {
       !PropertyCardinalitiesClass.$filter(
         filter.on.PropertyCardinalitiesClass,
         value as PropertyCardinalitiesClass,
+      )
+    ) {
+      return false;
+    }
+    if (
+      PropertyNamesClass.isPropertyNamesClass(value) &&
+      filter.on?.PropertyNamesClass &&
+      !PropertyNamesClass.$filter(
+        filter.on.PropertyNamesClass,
+        value as PropertyNamesClass,
       )
     ) {
       return false;
@@ -71531,6 +73385,8 @@ export namespace $Object {
         OrderedPropertiesClass.$Filter,
         "$identifier"
       >;
+      readonly NewName1Class?: Omit<NewName1Class.$Filter, "$identifier">;
+      readonly NewName2Class?: Omit<NewName2Class.$Filter, "$identifier">;
       readonly PartialClassUnionMember1?: Omit<
         PartialClassUnionMember1.$Filter,
         "$identifier"
@@ -71549,6 +73405,10 @@ export namespace $Object {
       >;
       readonly PropertyCardinalitiesClass?: Omit<
         PropertyCardinalitiesClass.$Filter,
+        "$identifier"
+      >;
+      readonly PropertyNamesClass?: Omit<
+        PropertyNamesClass.$Filter,
         "$identifier"
       >;
       readonly PropertyPathsClass?: Omit<
@@ -71814,6 +73674,12 @@ export namespace $Object {
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
       return _object.$hash(_hasher);
     }
+    if (NewName1Class.isNewName1Class(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (NewName2Class.isNewName2Class(_object)) {
+      return _object.$hash(_hasher);
+    }
     if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
       return _object.$hash(_hasher);
     }
@@ -71827,6 +73693,9 @@ export namespace $Object {
       return PartialInterfaceUnionMember2.$hash(_object, _hasher);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$hash(_hasher);
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
       return _object.$hash(_hasher);
     }
     if (PropertyPathsClass.isPropertyPathsClass(_object)) {
@@ -72174,6 +74043,12 @@ export namespace $Object {
           OrderedPropertiesClass.$fromJson(json) as Either<z.ZodError, $Object>,
       )
       .altLazy(
+        () => NewName1Class.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
+      .altLazy(
+        () => NewName2Class.$fromJson(json) as Either<z.ZodError, $Object>,
+      )
+      .altLazy(
         () =>
           PartialClassUnionMember1.$fromJson(json) as Either<
             z.ZodError,
@@ -72207,6 +74082,9 @@ export namespace $Object {
             z.ZodError,
             $Object
           >,
+      )
+      .altLazy(
+        () => PropertyNamesClass.$fromJson(json) as Either<z.ZodError, $Object>,
       )
       .altLazy(
         () => PropertyPathsClass.$fromJson(json) as Either<z.ZodError, $Object>,
@@ -72331,11 +74209,14 @@ export namespace $Object {
       NodeKindsClass.$jsonZodSchema(),
       NumericPropertiesClass.$jsonZodSchema(),
       OrderedPropertiesClass.$jsonZodSchema(),
+      NewName1Class.$jsonZodSchema(),
+      NewName2Class.$jsonZodSchema(),
       PartialClassUnionMember1.$jsonZodSchema(),
       PartialClassUnionMember2.$jsonZodSchema(),
       PartialInterfaceUnionMember1.$jsonZodSchema(),
       PartialInterfaceUnionMember2.$jsonZodSchema(),
       PropertyCardinalitiesClass.$jsonZodSchema(),
+      PropertyNamesClass.$jsonZodSchema(),
       PropertyPathsClass.$jsonZodSchema(),
       PropertyVisibilitiesClass.$jsonZodSchema(),
       RecursiveClassUnionMember1.$jsonZodSchema(),
@@ -72416,11 +74297,14 @@ export namespace $Object {
     | NodeKindsClass.$Json
     | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
+    | NewName1Class.$Json
+    | NewName2Class.$Json
     | PartialClassUnionMember1.$Json
     | PartialClassUnionMember2.$Json
     | PartialInterfaceUnionMember1.$Json
     | PartialInterfaceUnionMember2.$Json
     | PropertyCardinalitiesClass.$Json
+    | PropertyNamesClass.$Json
     | PropertyPathsClass.$Json
     | PropertyVisibilitiesClass.$Json
     | RecursiveClassUnionMember1.$Json
@@ -72644,6 +74528,12 @@ export namespace $Object {
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
       return _object.$toJson();
     }
+    if (NewName1Class.isNewName1Class(_object)) {
+      return _object.$toJson();
+    }
+    if (NewName2Class.isNewName2Class(_object)) {
+      return _object.$toJson();
+    }
     if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
       return _object.$toJson();
     }
@@ -72657,6 +74547,9 @@ export namespace $Object {
       return PartialInterfaceUnionMember2.$toJson(_object);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
       return _object.$toJson();
     }
     if (PropertyPathsClass.isPropertyPathsClass(_object)) {
@@ -72752,11 +74645,14 @@ export namespace $Object {
     | NodeKindsClass.$Json
     | NumericPropertiesClass.$Json
     | OrderedPropertiesClass.$Json
+    | NewName1Class.$Json
+    | NewName2Class.$Json
     | PartialClassUnionMember1.$Json
     | PartialClassUnionMember2.$Json
     | PartialInterfaceUnionMember1.$Json
     | PartialInterfaceUnionMember2.$Json
     | PropertyCardinalitiesClass.$Json
+    | PropertyNamesClass.$Json
     | PropertyPathsClass.$Json
     | PropertyVisibilitiesClass.$Json
     | RecursiveClassUnionMember1.$Json
@@ -73168,6 +75064,20 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          NewName1Class.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NewName2Class.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           PartialClassUnionMember1.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -73197,6 +75107,13 @@ export namespace $Object {
       .altLazy(
         () =>
           PropertyCardinalitiesClass.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyNamesClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -73502,6 +75419,12 @@ export namespace $Object {
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
       return _object.$toRdf(_parameters);
     }
+    if (NewName1Class.isNewName1Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NewName2Class.isNewName2Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
     if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
       return _object.$toRdf(_parameters);
     }
@@ -73515,6 +75438,9 @@ export namespace $Object {
       return PartialInterfaceUnionMember2.$toRdf(_object, _parameters);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
       return _object.$toRdf(_parameters);
     }
     if (PropertyPathsClass.isPropertyPathsClass(_object)) {
@@ -74129,6 +76055,24 @@ export namespace $Object {
           ? `${parameters.variablePrefix}OrderedPropertiesClass`
           : "objectOrderedPropertiesClass",
       }).concat(),
+      ...NewName1Class.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NewName1Class,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectNewName1Class"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NewName1Class`
+          : "objectNewName1Class",
+      }).concat(),
+      ...NewName2Class.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.NewName2Class,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectNewName2Class"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NewName2Class`
+          : "objectNewName2Class",
+      }).concat(),
       ...PartialClassUnionMember1.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PartialClassUnionMember1,
         focusIdentifier:
@@ -74173,6 +76117,15 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
           : "objectPropertyCardinalitiesClass",
+      }).concat(),
+      ...PropertyNamesClass.$sparqlConstructTriples({
+        filter: parameters?.filter?.on?.PropertyNamesClass,
+        focusIdentifier:
+          parameters?.focusIdentifier ??
+          dataFactory.variable!("objectPropertyNamesClass"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}PropertyNamesClass`
+          : "objectPropertyNamesClass",
       }).concat(),
       ...PropertyPathsClass.$sparqlConstructTriples({
         filter: parameters?.filter?.on?.PropertyPathsClass,
@@ -75000,6 +76953,30 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: NewName1Class.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NewName1Class,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectNewName1Class"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NewName1Class`
+              : "objectNewName1Class",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NewName2Class.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NewName2Class,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectNewName2Class"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NewName2Class`
+              : "objectNewName2Class",
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: PartialClassUnionMember1.$sparqlWherePatterns({
             filter: parameters?.filter?.on?.PartialClassUnionMember1,
             focusIdentifier:
@@ -75056,6 +77033,18 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
               : "objectPropertyCardinalitiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyNamesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PropertyNamesClass,
+            focusIdentifier:
+              parameters?.focusIdentifier ??
+              dataFactory.variable!("objectPropertyNamesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PropertyNamesClass`
+              : "objectPropertyNamesClass",
           }).concat(),
           type: "group",
         },
@@ -76585,6 +78574,44 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly MutablePropertiesClass[]>>;
 
+  newName1Class(
+    identifier: NewName1Class.$Identifier,
+  ): Promise<Either<Error, NewName1Class>>;
+
+  newName1ClassCount(
+    query?: Pick<
+      $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  newName1ClassIdentifiers(
+    query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName1Class.$Identifier[]>>;
+
+  newName1Classes(
+    query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName1Class[]>>;
+
+  newName2Class(
+    identifier: NewName2Class.$Identifier,
+  ): Promise<Either<Error, NewName2Class>>;
+
+  newName2ClassCount(
+    query?: Pick<
+      $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  newName2ClassIdentifiers(
+    query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName2Class.$Identifier[]>>;
+
+  newName2Classes(
+    query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName2Class[]>>;
+
   nodeKindsClass(
     identifier: NodeKindsClass.$Identifier,
   ): Promise<Either<Error, NodeKindsClass>>;
@@ -76926,6 +78953,34 @@ export interface $ObjectSet {
       PropertyCardinalitiesClass.$Identifier
     >,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass[]>>;
+
+  propertyNamesClass(
+    identifier: PropertyNamesClass.$Identifier,
+  ): Promise<Either<Error, PropertyNamesClass>>;
+
+  propertyNamesClassCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        PropertyNamesClass.$Filter,
+        PropertyNamesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  propertyNamesClassIdentifiers(
+    query?: $ObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNamesClass.$Identifier[]>>;
+
+  propertyNamesClasses(
+    query?: $ObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNamesClass[]>>;
 
   propertyPathsClass(
     identifier: PropertyPathsClass.$Identifier,
@@ -81812,6 +83867,144 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async newName1Class(
+    identifier: NewName1Class.$Identifier,
+  ): Promise<Either<Error, NewName1Class>> {
+    return this.newName1ClassSync(identifier);
+  }
+
+  newName1ClassSync(
+    identifier: NewName1Class.$Identifier,
+  ): Either<Error, NewName1Class> {
+    return this.newName1ClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async newName1ClassCount(
+    query?: Pick<
+      $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.newName1ClassCountSync(query);
+  }
+
+  newName1ClassCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.newName1ClassesSync(query).map((objects) => objects.length);
+  }
+
+  async newName1ClassIdentifiers(
+    query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName1Class.$Identifier[]>> {
+    return this.newName1ClassIdentifiersSync(query);
+  }
+
+  newName1ClassIdentifiersSync(
+    query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+  ): Either<Error, readonly NewName1Class.$Identifier[]> {
+    return this.newName1ClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async newName1Classes(
+    query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName1Class[]>> {
+    return this.newName1ClassesSync(query);
+  }
+
+  newName1ClassesSync(
+    query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+  ): Either<Error, readonly NewName1Class[]> {
+    return this.$objectsSync<
+      NewName1Class,
+      NewName1Class.$Filter,
+      NewName1Class.$Identifier
+    >(
+      {
+        $filter: NewName1Class.$filter,
+        $fromRdf: NewName1Class.$fromRdf,
+        $fromRdfTypes: [NewName1Class.$fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async newName2Class(
+    identifier: NewName2Class.$Identifier,
+  ): Promise<Either<Error, NewName2Class>> {
+    return this.newName2ClassSync(identifier);
+  }
+
+  newName2ClassSync(
+    identifier: NewName2Class.$Identifier,
+  ): Either<Error, NewName2Class> {
+    return this.newName2ClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async newName2ClassCount(
+    query?: Pick<
+      $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.newName2ClassCountSync(query);
+  }
+
+  newName2ClassCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.newName2ClassesSync(query).map((objects) => objects.length);
+  }
+
+  async newName2ClassIdentifiers(
+    query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName2Class.$Identifier[]>> {
+    return this.newName2ClassIdentifiersSync(query);
+  }
+
+  newName2ClassIdentifiersSync(
+    query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+  ): Either<Error, readonly NewName2Class.$Identifier[]> {
+    return this.newName2ClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async newName2Classes(
+    query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+  ): Promise<Either<Error, readonly NewName2Class[]>> {
+    return this.newName2ClassesSync(query);
+  }
+
+  newName2ClassesSync(
+    query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+  ): Either<Error, readonly NewName2Class[]> {
+    return this.$objectsSync<
+      NewName2Class,
+      NewName2Class.$Filter,
+      NewName2Class.$Identifier
+    >(
+      {
+        $filter: NewName2Class.$filter,
+        $fromRdf: NewName2Class.$fromRdf,
+        $fromRdfTypes: [NewName2Class.$fromRdfType],
+      },
+      query,
+    );
+  }
+
   async nodeKindsClass(
     identifier: NodeKindsClass.$Identifier,
   ): Promise<Either<Error, NodeKindsClass>> {
@@ -82906,6 +85099,95 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $filter: PropertyCardinalitiesClass.$filter,
         $fromRdf: PropertyCardinalitiesClass.$fromRdf,
         $fromRdfTypes: [],
+      },
+      query,
+    );
+  }
+
+  async propertyNamesClass(
+    identifier: PropertyNamesClass.$Identifier,
+  ): Promise<Either<Error, PropertyNamesClass>> {
+    return this.propertyNamesClassSync(identifier);
+  }
+
+  propertyNamesClassSync(
+    identifier: PropertyNamesClass.$Identifier,
+  ): Either<Error, PropertyNamesClass> {
+    return this.propertyNamesClassesSync({ identifiers: [identifier] }).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async propertyNamesClassCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        PropertyNamesClass.$Filter,
+        PropertyNamesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.propertyNamesClassCountSync(query);
+  }
+
+  propertyNamesClassCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        PropertyNamesClass.$Filter,
+        PropertyNamesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.propertyNamesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async propertyNamesClassIdentifiers(
+    query?: $ObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNamesClass.$Identifier[]>> {
+    return this.propertyNamesClassIdentifiersSync(query);
+  }
+
+  propertyNamesClassIdentifiersSync(
+    query?: $ObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Either<Error, readonly PropertyNamesClass.$Identifier[]> {
+    return this.propertyNamesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
+    );
+  }
+
+  async propertyNamesClasses(
+    query?: $ObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNamesClass[]>> {
+    return this.propertyNamesClassesSync(query);
+  }
+
+  propertyNamesClassesSync(
+    query?: $ObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Either<Error, readonly PropertyNamesClass[]> {
+    return this.$objectsSync<
+      PropertyNamesClass,
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >(
+      {
+        $filter: PropertyNamesClass.$filter,
+        $fromRdf: PropertyNamesClass.$fromRdf,
+        $fromRdfTypes: [PropertyNamesClass.$fromRdfType],
       },
       query,
     );
@@ -84920,6 +87202,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
+          $fromRdf: NewName1Class.$fromRdf,
+          $fromRdfTypes: [NewName1Class.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: NewName2Class.$fromRdf,
+          $fromRdfTypes: [NewName2Class.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
           $fromRdf: PartialClassUnionMember1.$fromRdf,
           $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
         },
@@ -84942,6 +87234,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: PropertyCardinalitiesClass.$fromRdf,
           $fromRdfTypes: [],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdf: PropertyNamesClass.$fromRdf,
+          $fromRdfTypes: [PropertyNamesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -87664,6 +89961,96 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(MutablePropertiesClass, query);
   }
 
+  async newName1Class(
+    identifier: NewName1Class.$Identifier,
+  ): Promise<Either<Error, NewName1Class>> {
+    return (await this.newName1Classes({ identifiers: [identifier] })).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async newName1ClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<NewName1Class.$Filter, NewName1Class.$Identifier>(
+      NewName1Class,
+      query,
+    );
+  }
+
+  async newName1ClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NewName1Class.$Filter,
+      NewName1Class.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NewName1Class.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      NewName1Class.$Filter,
+      NewName1Class.$Identifier
+    >(NewName1Class, query);
+  }
+
+  async newName1Classes(
+    query?: $SparqlObjectSet.Query<
+      NewName1Class.$Filter,
+      NewName1Class.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NewName1Class[]>> {
+    return this.$objects<
+      NewName1Class,
+      NewName1Class.$Filter,
+      NewName1Class.$Identifier
+    >(NewName1Class, query);
+  }
+
+  async newName2Class(
+    identifier: NewName2Class.$Identifier,
+  ): Promise<Either<Error, NewName2Class>> {
+    return (await this.newName2Classes({ identifiers: [identifier] })).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async newName2ClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<NewName2Class.$Filter, NewName2Class.$Identifier>(
+      NewName2Class,
+      query,
+    );
+  }
+
+  async newName2ClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NewName2Class.$Filter,
+      NewName2Class.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NewName2Class.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      NewName2Class.$Filter,
+      NewName2Class.$Identifier
+    >(NewName2Class, query);
+  }
+
+  async newName2Classes(
+    query?: $SparqlObjectSet.Query<
+      NewName2Class.$Filter,
+      NewName2Class.$Identifier
+    >,
+  ): Promise<Either<Error, readonly NewName2Class[]>> {
+    return this.$objects<
+      NewName2Class,
+      NewName2Class.$Filter,
+      NewName2Class.$Identifier
+    >(NewName2Class, query);
+  }
+
   async nodeKindsClass(
     identifier: NodeKindsClass.$Identifier,
   ): Promise<Either<Error, NodeKindsClass>> {
@@ -88277,6 +90664,54 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyCardinalitiesClass.$Filter,
       PropertyCardinalitiesClass.$Identifier
     >(PropertyCardinalitiesClass, query);
+  }
+
+  async propertyNamesClass(
+    identifier: PropertyNamesClass.$Identifier,
+  ): Promise<Either<Error, PropertyNamesClass>> {
+    return (await this.propertyNamesClasses({ identifiers: [identifier] })).map(
+      (objects) => objects[0],
+    );
+  }
+
+  async propertyNamesClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        PropertyNamesClass.$Filter,
+        PropertyNamesClass.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >(PropertyNamesClass, query);
+  }
+
+  async propertyNamesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNamesClass.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >(PropertyNamesClass, query);
+  }
+
+  async propertyNamesClasses(
+    query?: $SparqlObjectSet.Query<
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNamesClass[]>> {
+    return this.$objects<
+      PropertyNamesClass,
+      PropertyNamesClass.$Filter,
+      PropertyNamesClass.$Identifier
+    >(PropertyNamesClass, query);
   }
 
   async propertyPathsClass(

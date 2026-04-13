@@ -651,6 +651,20 @@ export const harnesses = {
     }),
     kitchenSink.OrderedPropertiesClass,
   ),
+  overrideName1Class: new ClassHarness(
+    new kitchenSink.NewName1Class({
+      $identifier,
+    }),
+    kitchenSink.NewName1Class,
+    "OverrideName1Class",
+  ),
+  overrideName2Class: new ClassHarness(
+    new kitchenSink.NewName2Class({
+      $identifier,
+    }),
+    kitchenSink.NewName2Class,
+    "OverrideName2Class",
+  ),
   propertyCardinalitiesClass: new ClassHarness(
     new kitchenSink.PropertyCardinalitiesClass({
       $identifier,
@@ -660,6 +674,18 @@ export const harnesses = {
       requiredStringProperty: "test",
     }),
     kitchenSink.PropertyCardinalitiesClass,
+  ),
+  propertyNamesClass: new ClassHarness(
+    new kitchenSink.PropertyNamesClass({
+      $identifier,
+      // Should all be actualProperty*
+      actualPropertyName1: "actualPropertyValue1",
+      actualPropertyName2: "actualPropertyValue2",
+      actualPropertyName3: "actualPropertyValue3",
+      actualPropertyName4: "actualPropertyValue4",
+      // PropertyNamesClass$j$actualPropertyName5: "actualPropertyValue5",
+    }),
+    kitchenSink.PropertyNamesClass,
   ),
   propertyPathsClass: new ClassHarness(
     new kitchenSink.PropertyPathsClass({

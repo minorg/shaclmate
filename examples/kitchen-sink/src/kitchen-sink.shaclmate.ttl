@@ -471,18 +471,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoublesProperty
-    ], [
-        sh:in ("text"
-            "html"
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inStringsProperty
-    ], [
         sh:in (true
         ) ;
         sh:maxCount 1 ;
@@ -504,6 +492,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIrisProperty
+    ], [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoublesProperty
+    ], [
+        sh:in ("text"
+            "html"
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inStringsProperty
     ] .
 
 :IndirectRecursiveClass
@@ -1112,6 +1112,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :orderedPropertyB
     ] .
 
+:OverrideName1Class
+    shaclmate:name "NewName1Class" ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes" .
+
+:OverrideName2Class
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes" ;
+    rdfs:label "NewName2Class" .
+
 :PartialClass
     a sh:NodeShape ;
     rdfs:comment "Node shape used as a partial by LazyPropertiesClass" ;
@@ -1209,6 +1219,40 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:minCount 1 ;
         sh:path :nonEmptyStringSetProperty
+    ] .
+
+:PropertyNamesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Shape that uses different methods to name properties" ;
+    sh:property [
+        rdfs:comment "sh:path: overrides property shape identifier" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :actualPropertyName1
+    ], [
+        rdfs:comment "sh:name: overrides sh:path and rdfs:label" ;
+        rdfs:label "ignorePropertyName2" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "actualPropertyName2" ;
+        sh:path :ignorePropertyName2
+    ], [
+        shaclmate:name "actualPropertyName3" ;
+        rdfs:comment "shaclmate:name: overrides sh:name, sh:path, and rdfs:label" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "ignorePropertyName3" ;
+        sh:path :ignorePropertyName3
+    ], [
+        rdfs:comment "rdfs:label: overrides sh:path" ;
+        rdfs:label "actualPropertyName4" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :ignorePropertyName4
     ] .
 
 :PropertyPathsClass

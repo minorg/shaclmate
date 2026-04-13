@@ -321,6 +321,8 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
       testsDirectoryPath = null;
     }
 
+    const packageName = `@shaclmate/${workspaceName}${workspacesDirectoryName === "examples" ? "-example" : ""}`;
+
     fs.writeFileSync(
       path.join(packageDirectoryPath, "package.json"),
       `${JSON.stringify(
@@ -384,7 +386,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
           keywords: workspace.keywords,
           license: "Apache-2.0",
           main: files.size > 0 ? "./dist/index.js" : undefined,
-          name: `@shaclmate/${workspaceName}${workspacesDirectoryName === "examples" ? "-example" : ""}`,
+          name: packageName,
           packageManager: "npm@11.11.0",
           private: workspacesDirectoryName === "examples" ? true : undefined,
           repository: {
@@ -407,6 +409,9 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
                   "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
                 }
               : {}),
+            test: fs.existsSync(path.join(packageDirectoryPath, "__tests__"))
+              ? `cd ../.. && vitest run --project ${packageName}`
+              : undefined,
             typecheck: "tsc --noEmit",
             "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
             ...workspace.scripts,

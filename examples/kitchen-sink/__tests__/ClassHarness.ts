@@ -15,8 +15,12 @@ export class ClassHarness<
     readonly $type: string;
   },
 > extends Harness<T> {
-  get shapeName(): string {
-    return this.instance.$type;
+  constructor(
+    instance: T,
+    objectType: ConstructorParameters<typeof Harness<T>>[1],
+    shapeName?: string,
+  ) {
+    super(instance, objectType, shapeName ?? instance.$type);
   }
 
   override equals(other: T): $EqualsResult {

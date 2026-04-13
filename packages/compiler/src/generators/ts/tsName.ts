@@ -12,6 +12,9 @@ export function tsName(astConstruct: {
   synthetic?: boolean;
   shapeIdentifier: BlankNode | NamedNode;
 }): string {
+  // The order of checks determines the order of preferences.
+
+  // Explicit shaclmate:name or sh:name
   const name = astConstruct.name.extract();
   if (name) {
     if (astConstruct.synthetic) {
@@ -20,30 +23,48 @@ export function tsName(astConstruct: {
     return stringToValidTsIdentifier(name);
   }
 
+  // Explicit rdfs:label
   const label = astConstruct.label.extract();
   if (label) {
     return stringToValidTsIdentifier(label.replace(" ", "_"));
   }
 
   const path = astConstruct.path;
+
+  // Unique reference part on a CURIE sh:path
+  if (path instanceof ast.Curie && path.hasUniqueReference) {
+    return stringToValidTsIdentifier(path.reference);
+  }
+
+  // Unique reference part on a CURIE shape identifier
+  const shapeIdentifier = astConstruct.shapeIdentifier;
+  if (
+    shapeIdentifier instanceof ast.Curie &&
+    shapeIdentifier.hasUniqueReference
+  ) {
+    return stringToValidTsIdentifier(shapeIdentifier.reference);
+  }
+
+  // CURIE sh:path
   if (path instanceof ast.Curie) {
-    if (path.hasUniqueReference) {
-      return stringToValidTsIdentifier(path.reference);
-    }
     return stringToValidTsIdentifier(`${path.prefix}_${path.reference}`);
   }
 
-  const shapeIdentifier = astConstruct.shapeIdentifier;
-  if (
-    shapeIdentifier.termType === "NamedNode" &&
-    shapeIdentifier instanceof ast.Curie
-  ) {
-    if (shapeIdentifier.hasUniqueReference) {
-      return stringToValidTsIdentifier(shapeIdentifier.reference);
-    }
+  // CURIE shape identifier
+  if (shapeIdentifier instanceof ast.Curie) {
     return stringToValidTsIdentifier(
       `${shapeIdentifier.prefix}_${shapeIdentifier.reference}`,
     );
+  }
+
+  // IRI shape identifier
+  if (shapeIdentifier.termType === "NamedNode") {
+    return stringToValidTsIdentifier(shapeIdentifier.value);
+  }
+
+  // IRI sh:path
+  if (path?.termType === "NamedNode") {
+    return stringToValidTsIdentifier(path.value);
   }
 
   throw new Error(

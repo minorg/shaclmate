@@ -74,6 +74,7 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
+    "test": "cd ../.. && vitest run --project @shaclmate/compiler",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
   },
