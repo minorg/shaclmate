@@ -1,6 +1,4 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { Maybe } from "purify-ts";
-import { type PropertyPath, Resource } from "rdfjs-resource";
+import { Resource } from "rdfjs-resource";
 import * as ast from "../ast/index.js";
 
 /**
@@ -10,19 +8,18 @@ export function codeName(
   sanitize: (unsanitized: string) => string,
   syntheticNamePrefix: string,
 ) {
-  return (astConstruct: {
-    label: Maybe<string>;
-    name: Maybe<string>;
-    path?: ast.Curie | PropertyPath;
-    synthetic?: boolean;
-    shapeIdentifier: BlankNode | NamedNode;
-  }): string => {
-    // The order of checks determines the order of preferences.
+  return (
+    astConstruct:
+      | ast.ObjectType
+      | ast.ObjectUnionType
+      | ast.ObjectType.Property,
+  ): string => {
+    // The order of checks determines the order of preference.
 
     // Explicit shaclmate:name or sh:name
     const name = astConstruct.name.extract();
     if (name) {
-      if (astConstruct.synthetic) {
+      if (astConstruct instanceof ast.ObjectType && astConstruct.synthetic) {
         return `${syntheticNamePrefix}${name}`;
       }
       return sanitize(name);
@@ -34,7 +31,10 @@ export function codeName(
       return sanitize(label.replace(" ", "_"));
     }
 
-    const path = astConstruct.path;
+    const path =
+      astConstruct instanceof ast.ObjectType.Property
+        ? astConstruct.path
+        : undefined;
 
     // Unique reference part on a CURIE sh:path
     if (path instanceof ast.Curie && path.hasUniqueReference) {
