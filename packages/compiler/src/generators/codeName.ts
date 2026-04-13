@@ -31,18 +31,41 @@ export function codeName(
       return sanitize(label.replace(" ", "_"));
     }
 
-    const path =
-      astConstruct instanceof ast.ObjectType.Property
-        ? astConstruct.path
-        : undefined;
+    let propertyPath: ast.ObjectType.Property["path"] | undefined;
+    const shapeIdentifier = astConstruct.shapeIdentifier;
+
+    if (astConstruct instanceof ast.ObjectType.Property) {
+      // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
+      // like ex:NodeShape-property
+      if (
+        astConstruct.objectType.shapeIdentifier.termType === "NamedNode" &&
+        astConstruct.shapeIdentifier.termType === "NamedNode"
+      ) {
+        const propertyShapeIdentifierPrefix = `${astConstruct.objectType.shapeIdentifier.value}-`;
+        if (
+          astConstruct.shapeIdentifier.value.startsWith(
+            propertyShapeIdentifierPrefix,
+          ) &&
+          astConstruct.shapeIdentifier.value.length >
+            propertyShapeIdentifierPrefix.length
+        ) {
+          return sanitize(
+            astConstruct.shapeIdentifier.value.substring(
+              propertyShapeIdentifierPrefix.length,
+            ),
+          );
+        }
+      }
+
+      propertyPath = astConstruct.path;
+    }
 
     // Unique reference part on a CURIE sh:path
-    if (path instanceof ast.Curie && path.hasUniqueReference) {
-      return sanitize(path.reference);
+    if (propertyPath instanceof ast.Curie && propertyPath.hasUniqueReference) {
+      return sanitize(propertyPath.reference);
     }
 
     // Unique reference part on a CURIE shape identifier
-    const shapeIdentifier = astConstruct.shapeIdentifier;
     if (
       shapeIdentifier instanceof ast.Curie &&
       shapeIdentifier.hasUniqueReference
@@ -51,8 +74,8 @@ export function codeName(
     }
 
     // CURIE sh:path
-    if (path instanceof ast.Curie) {
-      return sanitize(`${path.prefix}_${path.reference}`);
+    if (propertyPath instanceof ast.Curie) {
+      return sanitize(`${propertyPath.prefix}_${propertyPath.reference}`);
     }
 
     // CURIE shape identifier
@@ -66,8 +89,8 @@ export function codeName(
     }
 
     // IRI sh:path
-    if (path?.termType === "NamedNode") {
-      return sanitize(path.value);
+    if (propertyPath?.termType === "NamedNode") {
+      return sanitize(propertyPath.value);
     }
 
     throw new Error(
