@@ -471,6 +471,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (:InPropertiesIri1
+            :InPropertiesIri2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIrisProperty
+    ], [
         sh:in (1e0
             2e0
         ) ;
@@ -498,12 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIntegersProperty
-    ], [
-        sh:in (:InPropertiesIri1
-            :InPropertiesIri2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIrisProperty
     ] .
 
 :IndirectRecursiveClass
@@ -1224,7 +1224,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :PropertyNamesClass
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape that uses different methods to name properties" ;
-    sh:property :PropertyNamesClass-actualPropertyName5, [
+    sh:property [
         rdfs:comment "sh:path: overrides property shape identifier" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -1254,13 +1254,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :ignorePropertyName4
     ] .
-
-:PropertyNamesClass-actualPropertyName5
-    a sh:PropertyShape ;
-    rdfs:comment "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE (i.e., no corresponding prefix has been declared)" ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path <http://minorgordon.net/ignorePropertyName5> .
 
 :PropertyPathsClass
     a owl:Class, sh:NodeShape ;

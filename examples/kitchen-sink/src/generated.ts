@@ -14055,27 +14055,12 @@ export class PropertyNamesClass {
    */
   readonly actualPropertyName4: string;
 
-  /**
-   * shape IRI: overrides sh:path if sh:path can't be converted to a CURIE (i.e., no corresponding prefix has been declared)
-   */
-  readonly PropertyNamesClass$j$actualPropertyName5:
-    | BlankNode
-    | NamedNode
-    | Literal;
-
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
     readonly actualPropertyName4: string;
-    readonly PropertyNamesClass$j$actualPropertyName5:
-      | bigint
-      | boolean
-      | Date
-      | number
-      | string
-      | (BlankNode | NamedNode | Literal);
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -14089,46 +14074,6 @@ export class PropertyNamesClass {
     this.actualPropertyName2 = parameters.actualPropertyName2;
     this.actualPropertyName3 = parameters.actualPropertyName3;
     this.actualPropertyName4 = parameters.actualPropertyName4;
-    if (
-      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "bigint"
-    ) {
-      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.bigint(
-        parameters.PropertyNamesClass$j$actualPropertyName5,
-      );
-    } else if (
-      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "boolean"
-    ) {
-      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.boolean(
-        parameters.PropertyNamesClass$j$actualPropertyName5,
-      );
-    } else if (
-      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "object" &&
-      parameters.PropertyNamesClass$j$actualPropertyName5 instanceof Date
-    ) {
-      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.date(
-        parameters.PropertyNamesClass$j$actualPropertyName5,
-      );
-    } else if (
-      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "number"
-    ) {
-      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.number(
-        parameters.PropertyNamesClass$j$actualPropertyName5,
-      );
-    } else if (
-      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "string"
-    ) {
-      this.PropertyNamesClass$j$actualPropertyName5 = $literalFactory.string(
-        parameters.PropertyNamesClass$j$actualPropertyName5,
-      );
-    } else if (
-      typeof parameters.PropertyNamesClass$j$actualPropertyName5 === "object"
-    ) {
-      this.PropertyNamesClass$j$actualPropertyName5 =
-        parameters.PropertyNamesClass$j$actualPropertyName5;
-    } else {
-      this.PropertyNamesClass$j$actualPropertyName5 =
-        parameters.PropertyNamesClass$j$actualPropertyName5 satisfies never;
-    }
   }
 
   get $identifier(): PropertyNamesClass.$Identifier {
@@ -14205,18 +14150,6 @@ export class PropertyNamesClass {
           propertyValuesUnequal,
           type: "property" as const,
         })),
-      )
-      .chain(() =>
-        $booleanEquals(
-          this.PropertyNamesClass$j$actualPropertyName5,
-          other.PropertyNamesClass$j$actualPropertyName5,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "PropertyNamesClass$j$actualPropertyName5",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
       );
   }
 
@@ -14234,8 +14167,6 @@ export class PropertyNamesClass {
     _hasher.update(this.actualPropertyName2);
     _hasher.update(this.actualPropertyName3);
     _hasher.update(this.actualPropertyName4);
-    _hasher.update(this.PropertyNamesClass$j$actualPropertyName5.termType);
-    _hasher.update(this.PropertyNamesClass$j$actualPropertyName5.value);
     return _hasher;
   }
 
@@ -14251,33 +14182,6 @@ export class PropertyNamesClass {
         actualPropertyName2: this.actualPropertyName2,
         actualPropertyName3: this.actualPropertyName3,
         actualPropertyName4: this.actualPropertyName4,
-        PropertyNamesClass$j$actualPropertyName5:
-          this.PropertyNamesClass$j$actualPropertyName5.termType === "Literal"
-            ? {
-                "@language":
-                  this.PropertyNamesClass$j$actualPropertyName5.language
-                    .length > 0
-                    ? this.PropertyNamesClass$j$actualPropertyName5.language
-                    : undefined,
-                "@type":
-                  this.PropertyNamesClass$j$actualPropertyName5.datatype
-                    .value !== "http://www.w3.org/2001/XMLSchema#string"
-                    ? this.PropertyNamesClass$j$actualPropertyName5.datatype
-                        .value
-                    : undefined,
-                "@value": this.PropertyNamesClass$j$actualPropertyName5.value,
-                termType: "Literal" as const,
-              }
-            : this.PropertyNamesClass$j$actualPropertyName5.termType ===
-                "NamedNode"
-              ? {
-                  "@id": this.PropertyNamesClass$j$actualPropertyName5.value,
-                  termType: "NamedNode" as const,
-                }
-              : {
-                  "@id": `_:${this.PropertyNamesClass$j$actualPropertyName5.value}`,
-                  termType: "BlankNode" as const,
-                },
       } satisfies PropertyNamesClass.$Json),
     );
   }
@@ -14316,11 +14220,6 @@ export class PropertyNamesClass {
     resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName4"),
       [$literalFactory.string(this.actualPropertyName4)],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://minorgordon.net/ignorePropertyName5"),
-      [this.PropertyNamesClass$j$actualPropertyName5],
       options?.graph,
     );
     return resource;
@@ -14366,15 +14265,6 @@ export namespace PropertyNamesClass {
     ) {
       return false;
     }
-    if (
-      filter.PropertyNamesClass$j$actualPropertyName5 !== undefined &&
-      !$filterTerm(
-        filter.PropertyNamesClass$j$actualPropertyName5,
-        value.PropertyNamesClass$j$actualPropertyName5,
-      )
-    ) {
-      return false;
-    }
     return true;
   }
 
@@ -14384,7 +14274,6 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName2?: $StringFilter;
     readonly actualPropertyName3?: $StringFilter;
     readonly actualPropertyName4?: $StringFilter;
-    readonly PropertyNamesClass$j$actualPropertyName5?: $TermFilter;
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -14406,7 +14295,6 @@ export namespace PropertyNamesClass {
       actualPropertyName2: string;
       actualPropertyName3: string;
       actualPropertyName4: string;
-      PropertyNamesClass$j$actualPropertyName5: BlankNode | NamedNode | Literal;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -14421,44 +14309,12 @@ export namespace PropertyNamesClass {
     const actualPropertyName2 = $jsonObject["actualPropertyName2"];
     const actualPropertyName3 = $jsonObject["actualPropertyName3"];
     const actualPropertyName4 = $jsonObject["actualPropertyName4"];
-    const PropertyNamesClass$j$actualPropertyName5 =
-      $jsonObject["PropertyNamesClass$j$actualPropertyName5"].termType ===
-      "Literal"
-        ? dataFactory.literal(
-            $jsonObject["PropertyNamesClass$j$actualPropertyName5"]["@value"],
-            $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
-              "@language"
-            ] !== undefined
-              ? $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
-                  "@language"
-                ]
-              : $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
-                    "@type"
-                  ] !== undefined
-                ? dataFactory.namedNode(
-                    $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
-                      "@type"
-                    ],
-                  )
-                : undefined,
-          )
-        : $jsonObject["PropertyNamesClass$j$actualPropertyName5"].termType ===
-            "NamedNode"
-          ? dataFactory.namedNode(
-              $jsonObject["PropertyNamesClass$j$actualPropertyName5"]["@id"],
-            )
-          : dataFactory.blankNode(
-              $jsonObject["PropertyNamesClass$j$actualPropertyName5"][
-                "@id"
-              ].substring(2),
-            );
     return Right({
       $identifier,
       actualPropertyName1,
       actualPropertyName2,
       actualPropertyName3,
       actualPropertyName4,
-      PropertyNamesClass$j$actualPropertyName5,
     });
   }
 
@@ -14512,10 +14368,6 @@ export namespace PropertyNamesClass {
           scope: `${scopePrefix}/properties/actualPropertyName4`,
           type: "Control",
         },
-        {
-          scope: `${scopePrefix}/properties/PropertyNamesClass$j$actualPropertyName5`,
-          type: "Control",
-        },
       ],
       label: "PropertyNamesClass",
       type: "Group",
@@ -14536,26 +14388,6 @@ export namespace PropertyNamesClass {
         .string()
         .describe("shaclmate:name: overrides sh:name, sh:path, and rdfs:label"),
       actualPropertyName4: z.string().describe("rdfs:label: overrides sh:path"),
-      PropertyNamesClass$j$actualPropertyName5: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ])
-        .describe(
-          "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE (i.e., no corresponding prefix has been declared)",
-        ),
     }) satisfies z.ZodType<$Json>;
   }
 
@@ -14566,17 +14398,6 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
     readonly actualPropertyName4: string;
-    readonly PropertyNamesClass$j$actualPropertyName5:
-      | {
-          readonly "@id": string;
-          readonly termType: "BlankNode" | "NamedNode";
-        }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
   };
 
   export function isPropertyNamesClass(
@@ -14622,7 +14443,6 @@ export namespace PropertyNamesClass {
       actualPropertyName2: string;
       actualPropertyName3: string;
       actualPropertyName4: string;
-      PropertyNamesClass$j$actualPropertyName5: BlankNode | NamedNode | Literal;
     }
   > {
     return (
@@ -14731,26 +14551,13 @@ export namespace PropertyNamesClass {
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
                       ),
-                }).chain((actualPropertyName4) =>
-                  $shaclPropertyFromRdf({
-                    graph: $parameters.graph,
-                    resource: $parameters.resource,
-                    propertySchema:
-                      $schema.properties
-                        .PropertyNamesClass$j$actualPropertyName5,
-                    typeFromRdf: (resourceValues) =>
-                      resourceValues.chain((values) =>
-                        values.chainMap((value) => value.toTerm()),
-                      ),
-                  }).map((PropertyNamesClass$j$actualPropertyName5) => ({
-                    $identifier,
-                    actualPropertyName1,
-                    actualPropertyName2,
-                    actualPropertyName3,
-                    actualPropertyName4,
-                    PropertyNamesClass$j$actualPropertyName5,
-                  })),
-                ),
+                }).map((actualPropertyName4) => ({
+                  $identifier,
+                  actualPropertyName1,
+                  actualPropertyName2,
+                  actualPropertyName3,
+                  actualPropertyName4,
+                })),
               ),
             ),
           ),
@@ -14790,13 +14597,6 @@ export namespace PropertyNamesClass {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
         path: dataFactory.namedNode("http://example.com/ignorePropertyName4"),
-      },
-      PropertyNamesClass$j$actualPropertyName5: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Term" as const }),
-        path: dataFactory.namedNode(
-          "http://minorgordon.net/ignorePropertyName5",
-        ),
       },
     },
   } as const;
@@ -14962,22 +14762,6 @@ export namespace PropertyNamesClass {
             : "propertyNamesClass"),
       }),
     );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters?.filter?.PropertyNamesClass$j$actualPropertyName5,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "PropertyNamesClass$j$actualPropertyName5",
-        propertySchema:
-          $schema.properties.PropertyNamesClass$j$actualPropertyName5,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "propertyNamesClass"),
-      }),
-    );
     return triples;
   }
 
@@ -15117,23 +14901,6 @@ export namespace PropertyNamesClass {
         propertyName: "actualPropertyName4",
         propertySchema: $schema.properties.actualPropertyName4,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "propertyNamesClass"),
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters?.filter?.PropertyNamesClass$j$actualPropertyName5,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyName: "PropertyNamesClass$j$actualPropertyName5",
-        propertySchema:
-          $schema.properties.PropertyNamesClass$j$actualPropertyName5,
-        typeSparqlWherePatterns: $termSparqlWherePatterns,
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -18400,11 +18167,8 @@ export class NewName2Class {
 
   readonly $type: "NewName2Class" = "NewName2Class" as const;
 
-  readonly overrideName2Property: Maybe<string>;
-
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly overrideName2Property?: Maybe<string> | string;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -18413,16 +18177,6 @@ export class NewName2Class {
     } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
-    }
-    if (Maybe.isMaybe(parameters?.overrideName2Property)) {
-      this.overrideName2Property = parameters?.overrideName2Property;
-    } else if (typeof parameters?.overrideName2Property === "string") {
-      this.overrideName2Property = Maybe.of(parameters?.overrideName2Property);
-    } else if (parameters?.overrideName2Property === undefined) {
-      this.overrideName2Property = Maybe.empty();
-    } else {
-      this.overrideName2Property =
-        parameters?.overrideName2Property satisfies never;
     }
   }
 
@@ -18452,18 +18206,6 @@ export class NewName2Class {
             type: "property" as const,
           }),
         ),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.overrideName2Property,
-          other.overrideName2Property,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "overrideName2Property",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
       );
   }
 
@@ -18477,9 +18219,6 @@ export class NewName2Class {
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
-    this.overrideName2Property.ifJust((value0) => {
-      _hasher.update(value0);
-    });
     return _hasher;
   }
 
@@ -18491,9 +18230,6 @@ export class NewName2Class {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        overrideName2Property: this.overrideName2Property
-          .map((item) => item)
-          .extract(),
       } satisfies NewName2Class.$Json),
     );
   }
@@ -18514,13 +18250,6 @@ export class NewName2Class {
         options?.graph,
       );
     }
-    resource.add(
-      dataFactory.namedNode("http://example.com/overrideName2Property"),
-      this.overrideName2Property
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
-    );
     return resource;
   }
 
@@ -18540,22 +18269,10 @@ export namespace NewName2Class {
     ) {
       return false;
     }
-    if (
-      filter.overrideName2Property !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.overrideName2Property,
-        value.overrideName2Property,
-      )
-    ) {
-      return false;
-    }
     return true;
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly overrideName2Property?: $MaybeFilter<$StringFilter>;
-  };
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://example.com/OverrideName2Class",
@@ -18570,10 +18287,7 @@ export namespace NewName2Class {
 
   export function $propertiesFromJson(
     _json: unknown,
-  ): Either<
-    z.ZodError,
-    { $identifier: BlankNode | NamedNode; overrideName2Property: Maybe<string> }
-  > {
+  ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
@@ -18582,10 +18296,7 @@ export namespace NewName2Class {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const overrideName2Property = Maybe.fromNullable(
-      $jsonObject["overrideName2Property"],
-    );
-    return Right({ $identifier, overrideName2Property });
+    return Right({ $identifier });
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, NewName2Class> {
@@ -18618,10 +18329,6 @@ export namespace NewName2Class {
           scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
-        {
-          scope: `${scopePrefix}/properties/overrideName2Property`,
-          type: "Control",
-        },
       ],
       label: "NewName2Class",
       type: "Group",
@@ -18632,14 +18339,12 @@ export namespace NewName2Class {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("NewName2Class"),
-      overrideName2Property: z.string().optional(),
     }) satisfies z.ZodType<$Json>;
   }
 
   export type $Json = {
     readonly "@id": string;
     readonly $type: "NewName2Class";
-    readonly overrideName2Property?: string;
   };
 
   export function isNewName2Class(object: $Object): object is NewName2Class {
@@ -18675,10 +18380,7 @@ export namespace NewName2Class {
 
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; overrideName2Property: Maybe<string> }
-  > {
+  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
@@ -18720,36 +18422,7 @@ export namespace NewName2Class {
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
-        .chain(($identifier) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.overrideName2Property,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    $parameters.preferredLanguages,
-                  ),
-                )
-                .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<string>>({
-                        focusResource: $parameters.resource,
-                        propertyPath:
-                          NewName2Class.$schema.properties.overrideName2Property
-                            .path,
-                        value: Maybe.empty(),
-                      }),
-                ),
-          }).map((overrideName2Property) => ({
-            $identifier,
-            overrideName2Property,
-          })),
-        ),
+        .map(($identifier) => ({ $identifier })),
     );
   }
 
@@ -18765,14 +18438,6 @@ export namespace NewName2Class {
           kind: "TypeDiscriminant" as const,
           ownValues: ["NewName2Class"],
         }),
-      },
-      overrideName2Property: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/overrideName2Property"),
       },
     },
   } as const;
@@ -18841,7 +18506,7 @@ export namespace NewName2Class {
   }): readonly sparqljs.Triple[] {
     const focusIdentifier =
       parameters?.focusIdentifier ?? dataFactory.variable!("newName2Class");
-    let triples: sparqljs.Triple[] = [];
+    const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -18877,24 +18542,6 @@ export namespace NewName2Class {
         },
       );
     }
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters?.filter?.overrideName2Property,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "overrideName2Property",
-        propertySchema: $schema.properties.overrideName2Property,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $StringFilter,
-          $StringSchema
-        >((_: object) => []),
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "newName2Class"),
-      }),
-    );
     return triples;
   }
 
@@ -18976,25 +18623,6 @@ export namespace NewName2Class {
         }),
       );
     }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters?.filter?.overrideName2Property,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyName: "overrideName2Property",
-        propertySchema: $schema.properties.overrideName2Property,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $StringFilter,
-          $StringSchema
-        >($stringSparqlWherePatterns),
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "newName2Class"),
-      }),
-    );
     return patterns;
   }
 } /**
@@ -19006,11 +18634,8 @@ export class NewName1Class {
 
   readonly $type: "NewName1Class" = "NewName1Class" as const;
 
-  readonly overrideName1Property: Maybe<string>;
-
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly overrideName1Property?: Maybe<string> | string;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -19019,16 +18644,6 @@ export class NewName1Class {
     } else if (parameters?.$identifier === undefined) {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
-    }
-    if (Maybe.isMaybe(parameters?.overrideName1Property)) {
-      this.overrideName1Property = parameters?.overrideName1Property;
-    } else if (typeof parameters?.overrideName1Property === "string") {
-      this.overrideName1Property = Maybe.of(parameters?.overrideName1Property);
-    } else if (parameters?.overrideName1Property === undefined) {
-      this.overrideName1Property = Maybe.empty();
-    } else {
-      this.overrideName1Property =
-        parameters?.overrideName1Property satisfies never;
     }
   }
 
@@ -19058,18 +18673,6 @@ export class NewName1Class {
             type: "property" as const,
           }),
         ),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.overrideName1Property,
-          other.overrideName1Property,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "overrideName1Property",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
       );
   }
 
@@ -19083,9 +18686,6 @@ export class NewName1Class {
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
-    this.overrideName1Property.ifJust((value0) => {
-      _hasher.update(value0);
-    });
     return _hasher;
   }
 
@@ -19097,9 +18697,6 @@ export class NewName1Class {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        overrideName1Property: this.overrideName1Property
-          .map((item) => item)
-          .extract(),
       } satisfies NewName1Class.$Json),
     );
   }
@@ -19120,13 +18717,6 @@ export class NewName1Class {
         options?.graph,
       );
     }
-    resource.add(
-      dataFactory.namedNode("http://example.com/overrideName1Property"),
-      this.overrideName1Property
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
-    );
     return resource;
   }
 
@@ -19146,22 +18736,10 @@ export namespace NewName1Class {
     ) {
       return false;
     }
-    if (
-      filter.overrideName1Property !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.overrideName1Property,
-        value.overrideName1Property,
-      )
-    ) {
-      return false;
-    }
     return true;
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly overrideName1Property?: $MaybeFilter<$StringFilter>;
-  };
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://example.com/OverrideName1Class",
@@ -19176,10 +18754,7 @@ export namespace NewName1Class {
 
   export function $propertiesFromJson(
     _json: unknown,
-  ): Either<
-    z.ZodError,
-    { $identifier: BlankNode | NamedNode; overrideName1Property: Maybe<string> }
-  > {
+  ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
@@ -19188,10 +18763,7 @@ export namespace NewName1Class {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const overrideName1Property = Maybe.fromNullable(
-      $jsonObject["overrideName1Property"],
-    );
-    return Right({ $identifier, overrideName1Property });
+    return Right({ $identifier });
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, NewName1Class> {
@@ -19224,10 +18796,6 @@ export namespace NewName1Class {
           scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
-        {
-          scope: `${scopePrefix}/properties/overrideName1Property`,
-          type: "Control",
-        },
       ],
       label: "NewName1Class",
       type: "Group",
@@ -19238,14 +18806,12 @@ export namespace NewName1Class {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("NewName1Class"),
-      overrideName1Property: z.string().optional(),
     }) satisfies z.ZodType<$Json>;
   }
 
   export type $Json = {
     readonly "@id": string;
     readonly $type: "NewName1Class";
-    readonly overrideName1Property?: string;
   };
 
   export function isNewName1Class(object: $Object): object is NewName1Class {
@@ -19281,10 +18847,7 @@ export namespace NewName1Class {
 
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; overrideName1Property: Maybe<string> }
-  > {
+  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
     return (
       !$parameters.ignoreRdfType
         ? $parameters.resource
@@ -19326,36 +18889,7 @@ export namespace NewName1Class {
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
-        .chain(($identifier) =>
-          $shaclPropertyFromRdf({
-            graph: $parameters.graph,
-            resource: $parameters.resource,
-            propertySchema: $schema.properties.overrideName1Property,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    $parameters.preferredLanguages,
-                  ),
-                )
-                .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<string>>({
-                        focusResource: $parameters.resource,
-                        propertyPath:
-                          NewName1Class.$schema.properties.overrideName1Property
-                            .path,
-                        value: Maybe.empty(),
-                      }),
-                ),
-          }).map((overrideName1Property) => ({
-            $identifier,
-            overrideName1Property,
-          })),
-        ),
+        .map(($identifier) => ({ $identifier })),
     );
   }
 
@@ -19371,14 +18905,6 @@ export namespace NewName1Class {
           kind: "TypeDiscriminant" as const,
           ownValues: ["NewName1Class"],
         }),
-      },
-      overrideName1Property: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/overrideName1Property"),
       },
     },
   } as const;
@@ -19447,7 +18973,7 @@ export namespace NewName1Class {
   }): readonly sparqljs.Triple[] {
     const focusIdentifier =
       parameters?.focusIdentifier ?? dataFactory.variable!("newName1Class");
-    let triples: sparqljs.Triple[] = [];
+    const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -19483,24 +19009,6 @@ export namespace NewName1Class {
         },
       );
     }
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters?.filter?.overrideName1Property,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "overrideName1Property",
-        propertySchema: $schema.properties.overrideName1Property,
-        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
-          $StringFilter,
-          $StringSchema
-        >((_: object) => []),
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "newName1Class"),
-      }),
-    );
     return triples;
   }
 
@@ -19582,25 +19090,6 @@ export namespace NewName1Class {
         }),
       );
     }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters?.filter?.overrideName1Property,
-        focusIdentifier: focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters?.preferredLanguages,
-        propertyName: "overrideName1Property",
-        propertySchema: $schema.properties.overrideName1Property,
-        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
-          $StringFilter,
-          $StringSchema
-        >($stringSparqlWherePatterns),
-        variablePrefix:
-          parameters?.variablePrefix ??
-          (focusIdentifier.termType === "Variable"
-            ? focusIdentifier.value
-            : "newName1Class"),
-      }),
-    );
     return patterns;
   }
 } /**
