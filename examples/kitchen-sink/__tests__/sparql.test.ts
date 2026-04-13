@@ -1,3 +1,4 @@
+import { fail } from "node:assert";
 import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { NamedNode, Quad } from "@rdfjs/types";
@@ -103,6 +104,7 @@ describe("sparql", () => {
         constructResultString,
       );
       console.log("query:\n", constructQueryString);
+      // fail();
     });
   }
 

@@ -14055,12 +14055,18 @@ export class PropertyNamesClass {
    */
   readonly actualPropertyName4: string;
 
+  /**
+   * IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path
+   */
+  readonly actualPropertyName5: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
     readonly actualPropertyName4: string;
+    readonly actualPropertyName5: string;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -14074,6 +14080,7 @@ export class PropertyNamesClass {
     this.actualPropertyName2 = parameters.actualPropertyName2;
     this.actualPropertyName3 = parameters.actualPropertyName3;
     this.actualPropertyName4 = parameters.actualPropertyName4;
+    this.actualPropertyName5 = parameters.actualPropertyName5;
   }
 
   get $identifier(): PropertyNamesClass.$Identifier {
@@ -14150,6 +14157,18 @@ export class PropertyNamesClass {
           propertyValuesUnequal,
           type: "property" as const,
         })),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.actualPropertyName5,
+          other.actualPropertyName5,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "actualPropertyName5",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
       );
   }
 
@@ -14167,6 +14186,7 @@ export class PropertyNamesClass {
     _hasher.update(this.actualPropertyName2);
     _hasher.update(this.actualPropertyName3);
     _hasher.update(this.actualPropertyName4);
+    _hasher.update(this.actualPropertyName5);
     return _hasher;
   }
 
@@ -14182,6 +14202,7 @@ export class PropertyNamesClass {
         actualPropertyName2: this.actualPropertyName2,
         actualPropertyName3: this.actualPropertyName3,
         actualPropertyName4: this.actualPropertyName4,
+        actualPropertyName5: this.actualPropertyName5,
       } satisfies PropertyNamesClass.$Json),
     );
   }
@@ -14220,6 +14241,11 @@ export class PropertyNamesClass {
     resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName4"),
       [$literalFactory.string(this.actualPropertyName4)],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/ignorePropertyName5"),
+      [$literalFactory.string(this.actualPropertyName5)],
       options?.graph,
     );
     return resource;
@@ -14265,6 +14291,12 @@ export namespace PropertyNamesClass {
     ) {
       return false;
     }
+    if (
+      filter.actualPropertyName5 !== undefined &&
+      !$filterString(filter.actualPropertyName5, value.actualPropertyName5)
+    ) {
+      return false;
+    }
     return true;
   }
 
@@ -14274,6 +14306,7 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName2?: $StringFilter;
     readonly actualPropertyName3?: $StringFilter;
     readonly actualPropertyName4?: $StringFilter;
+    readonly actualPropertyName5?: $StringFilter;
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
@@ -14295,6 +14328,7 @@ export namespace PropertyNamesClass {
       actualPropertyName2: string;
       actualPropertyName3: string;
       actualPropertyName4: string;
+      actualPropertyName5: string;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -14309,12 +14343,14 @@ export namespace PropertyNamesClass {
     const actualPropertyName2 = $jsonObject["actualPropertyName2"];
     const actualPropertyName3 = $jsonObject["actualPropertyName3"];
     const actualPropertyName4 = $jsonObject["actualPropertyName4"];
+    const actualPropertyName5 = $jsonObject["actualPropertyName5"];
     return Right({
       $identifier,
       actualPropertyName1,
       actualPropertyName2,
       actualPropertyName3,
       actualPropertyName4,
+      actualPropertyName5,
     });
   }
 
@@ -14368,6 +14404,10 @@ export namespace PropertyNamesClass {
           scope: `${scopePrefix}/properties/actualPropertyName4`,
           type: "Control",
         },
+        {
+          scope: `${scopePrefix}/properties/actualPropertyName5`,
+          type: "Control",
+        },
       ],
       label: "PropertyNamesClass",
       type: "Group",
@@ -14388,6 +14428,11 @@ export namespace PropertyNamesClass {
         .string()
         .describe("shaclmate:name: overrides sh:name, sh:path, and rdfs:label"),
       actualPropertyName4: z.string().describe("rdfs:label: overrides sh:path"),
+      actualPropertyName5: z
+        .string()
+        .describe(
+          "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
+        ),
     }) satisfies z.ZodType<$Json>;
   }
 
@@ -14398,6 +14443,7 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
     readonly actualPropertyName4: string;
+    readonly actualPropertyName5: string;
   };
 
   export function isPropertyNamesClass(
@@ -14443,6 +14489,7 @@ export namespace PropertyNamesClass {
       actualPropertyName2: string;
       actualPropertyName3: string;
       actualPropertyName4: string;
+      actualPropertyName5: string;
     }
   > {
     return (
@@ -14551,13 +14598,31 @@ export namespace PropertyNamesClass {
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
                       ),
-                }).map((actualPropertyName4) => ({
-                  $identifier,
-                  actualPropertyName1,
-                  actualPropertyName2,
-                  actualPropertyName3,
-                  actualPropertyName4,
-                })),
+                }).chain((actualPropertyName4) =>
+                  $shaclPropertyFromRdf({
+                    graph: $parameters.graph,
+                    resource: $parameters.resource,
+                    propertySchema: $schema.properties.actualPropertyName5,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          $fromRdfPreferredLanguages(
+                            values,
+                            $parameters.preferredLanguages,
+                          ),
+                        )
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
+                        ),
+                  }).map((actualPropertyName5) => ({
+                    $identifier,
+                    actualPropertyName1,
+                    actualPropertyName2,
+                    actualPropertyName3,
+                    actualPropertyName4,
+                    actualPropertyName5,
+                  })),
+                ),
               ),
             ),
           ),
@@ -14597,6 +14662,11 @@ export namespace PropertyNamesClass {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
         path: dataFactory.namedNode("http://example.com/ignorePropertyName4"),
+      },
+      actualPropertyName5: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName5"),
       },
     },
   } as const;
@@ -14762,6 +14832,21 @@ export namespace PropertyNamesClass {
             : "propertyNamesClass"),
       }),
     );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters?.filter?.actualPropertyName5,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName5",
+        propertySchema: $schema.properties.actualPropertyName5,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
     return triples;
   }
 
@@ -14900,6 +14985,22 @@ export namespace PropertyNamesClass {
         preferredLanguages: parameters?.preferredLanguages,
         propertyName: "actualPropertyName4",
         propertySchema: $schema.properties.actualPropertyName4,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix:
+          parameters?.variablePrefix ??
+          (focusIdentifier.termType === "Variable"
+            ? focusIdentifier.value
+            : "propertyNamesClass"),
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters?.filter?.actualPropertyName5,
+        focusIdentifier: focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters?.preferredLanguages,
+        propertyName: "actualPropertyName5",
+        propertySchema: $schema.properties.actualPropertyName5,
         typeSparqlWherePatterns: $stringSparqlWherePatterns,
         variablePrefix:
           parameters?.variablePrefix ??

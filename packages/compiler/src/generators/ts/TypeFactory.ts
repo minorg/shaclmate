@@ -1,14 +1,14 @@
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import base62 from "@sindresorhus/base62";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
-
 import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
+import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
-
 import type * as ast from "../../ast/index.js";
-
 import { logger } from "../../logger.js";
+import { codeName } from "../codeName.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -34,8 +34,24 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
-import { tsName } from "./tsName.js";
 import { UnionType } from "./UnionType.js";
+
+const reservedTsIdentifiers = reservedTsIdentifiers_({
+  includeGlobalProperties: true,
+});
+
+const tsName = codeName((value) => {
+  // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
+  if (reservedTsIdentifiers.has(value)) {
+    // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
+    return `$_${value}$`;
+  }
+
+  return value.replaceAll(
+    /\P{ID_Continue}/gu,
+    (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
+  );
+}, syntheticNamePrefix);
 
 export class TypeFactory {
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
