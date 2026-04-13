@@ -349,7 +349,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/lazilyResolvedStringProperty"
           },
-          "shapeIdentifier": "_:n3-323",
+          "shapeIdentifier": "_:n3-325",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -1577,65 +1577,11 @@
           "order": 0,
           "path": {
             "prefix": "",
-            "reference": "inStringsProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inStringsProperty"
-          },
-          "shapeIdentifier": "_:n3-197",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inBooleansProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inBooleansProperty"
-          },
-          "shapeIdentifier": "_:n3-200",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inDateTimesProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inDateTimesProperty"
-          },
-          "shapeIdentifier": "_:n3-202",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": {
-            "prefix": "",
             "reference": "inIntegersProperty",
             "termType": "NamedNode",
             "value": "http://example.com/inIntegersProperty"
           },
-          "shapeIdentifier": "_:n3-204",
+          "shapeIdentifier": "_:n3-197",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1653,7 +1599,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIrisProperty"
           },
-          "shapeIdentifier": "_:n3-207",
+          "shapeIdentifier": "_:n3-200",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1674,7 +1620,61 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDoublesProperty"
           },
-          "shapeIdentifier": "_:n3-210",
+          "shapeIdentifier": "_:n3-203",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inStringsProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inStringsProperty"
+          },
+          "shapeIdentifier": "_:n3-206",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inBooleansProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inBooleansProperty"
+          },
+          "shapeIdentifier": "_:n3-209",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inDateTimesProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inDateTimesProperty"
+          },
+          "shapeIdentifier": "_:n3-211",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3714,7 +3714,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/lazilyResolvedStringProperty"
           },
-          "shapeIdentifier": "_:n3-328",
+          "shapeIdentifier": "_:n3-330",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4542,6 +4542,82 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
+      "identifierMintingStrategy": "blankNode",
+      "identifierType": {
+        "kind": "IdentifierType",
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "name": "NewName1Class",
+      "shapeIdentifier": "<http://example.com/OverrideName1Class>",
+      "properties": [
+        {
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "overrideName1Property",
+            "termType": "NamedNode",
+            "value": "http://example.com/overrideName1Property"
+          },
+          "shapeIdentifier": "_:n3-323",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#string"
+              }
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "comment": "Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes",
+      "identifierMintingStrategy": "blankNode",
+      "identifierType": {
+        "kind": "IdentifierType",
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "label": "NewName2Class",
+      "shapeIdentifier": "<http://example.com/OverrideName2Class>",
+      "properties": [
+        {
+          "mutable": false,
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "overrideName2Property",
+            "termType": "NamedNode",
+            "value": "http://example.com/overrideName2Property"
+          },
+          "shapeIdentifier": "_:n3-324",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType",
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#string"
+              }
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
       "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
@@ -4561,7 +4637,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/lazilyResolvedStringProperty"
           },
-          "shapeIdentifier": "_:n3-326",
+          "shapeIdentifier": "_:n3-328",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4594,7 +4670,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/lazilyResolvedStringProperty"
           },
-          "shapeIdentifier": "_:n3-327",
+          "shapeIdentifier": "_:n3-329",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4627,7 +4703,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/lazilyResolvedStringProperty"
           },
-          "shapeIdentifier": "_:n3-331",
+          "shapeIdentifier": "_:n3-333",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4660,7 +4736,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/lazilyResolvedStringProperty"
           },
-          "shapeIdentifier": "_:n3-332",
+          "shapeIdentifier": "_:n3-334",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4695,7 +4771,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/requiredStringProperty"
           },
-          "shapeIdentifier": "_:n3-333",
+          "shapeIdentifier": "_:n3-335",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4715,7 +4791,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/optionalStringProperty"
           },
-          "shapeIdentifier": "_:n3-334",
+          "shapeIdentifier": "_:n3-336",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4738,7 +4814,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/emptyStringSetProperty"
           },
-          "shapeIdentifier": "_:n3-335",
+          "shapeIdentifier": "_:n3-337",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -4761,7 +4837,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/nonEmptyStringSetProperty"
           },
-          "shapeIdentifier": "_:n3-336",
+          "shapeIdentifier": "_:n3-338",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -4790,7 +4866,7 @@
       "shapeIdentifier": "<http://example.com/PropertyNamesClass>",
       "properties": [
         {
-          "comment": "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE",
+          "comment": "shape IRI: overrides sh:path if sh:path can't be converted to a CURIE (i.e., no corresponding prefix has been declared)",
           "mutable": false,
           "order": 0,
           "path": {
@@ -4813,7 +4889,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/actualPropertyName1"
           },
-          "shapeIdentifier": "_:n3-337",
+          "shapeIdentifier": "_:n3-339",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4835,7 +4911,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/ignorePropertyName2"
           },
-          "shapeIdentifier": "_:n3-338",
+          "shapeIdentifier": "_:n3-340",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4856,7 +4932,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/ignorePropertyName3"
           },
-          "shapeIdentifier": "_:n3-339",
+          "shapeIdentifier": "_:n3-341",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4877,7 +4953,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/ignorePropertyName4"
           },
-          "shapeIdentifier": "_:n3-340",
+          "shapeIdentifier": "_:n3-342",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4913,7 +4989,7 @@
               "value": "http://example.com/inversePathProperty"
             }
           },
-          "shapeIdentifier": "_:n3-341",
+          "shapeIdentifier": "_:n3-343",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4934,7 +5010,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/predicatePathProperty"
           },
-          "shapeIdentifier": "_:n3-343",
+          "shapeIdentifier": "_:n3-345",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -4971,7 +5047,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/protectedProperty"
           },
-          "shapeIdentifier": "_:n3-344",
+          "shapeIdentifier": "_:n3-346",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -4990,7 +5066,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/privateProperty"
           },
-          "shapeIdentifier": "_:n3-345",
+          "shapeIdentifier": "_:n3-347",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -5009,7 +5085,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/publicProperty"
           },
-          "shapeIdentifier": "_:n3-346",
+          "shapeIdentifier": "_:n3-348",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -5043,7 +5119,7 @@
             "value": "http://example.com/recursiveClassUnionMember1Property"
           },
           "recursive": true,
-          "shapeIdentifier": "_:n3-349",
+          "shapeIdentifier": "_:n3-351",
           "type": {
             "kind": "OptionType",
             "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
@@ -5125,7 +5201,7 @@
             "value": "http://example.com/recursiveClassUnionMember2Property"
           },
           "recursive": true,
-          "shapeIdentifier": "_:n3-350",
+          "shapeIdentifier": "_:n3-352",
           "type": {
             "kind": "OptionType",
             "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
@@ -5206,7 +5282,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/sha256IriProperty"
           },
-          "shapeIdentifier": "_:n3-351",
+          "shapeIdentifier": "_:n3-353",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -5240,7 +5316,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/blankNodeTermProperty"
           },
-          "shapeIdentifier": "_:n3-358",
+          "shapeIdentifier": "_:n3-360",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5261,7 +5337,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/booleanTermProperty"
           },
-          "shapeIdentifier": "_:n3-359",
+          "shapeIdentifier": "_:n3-361",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5283,7 +5359,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/dateTermProperty"
           },
-          "shapeIdentifier": "_:n3-360",
+          "shapeIdentifier": "_:n3-362",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5305,7 +5381,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/dateTimeTermProperty"
           },
-          "shapeIdentifier": "_:n3-361",
+          "shapeIdentifier": "_:n3-363",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5327,7 +5403,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/numberTermProperty"
           },
-          "shapeIdentifier": "_:n3-362",
+          "shapeIdentifier": "_:n3-364",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5349,7 +5425,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/iriTermProperty"
           },
-          "shapeIdentifier": "_:n3-363",
+          "shapeIdentifier": "_:n3-365",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5370,7 +5446,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/literalTermProperty"
           },
-          "shapeIdentifier": "_:n3-364",
+          "shapeIdentifier": "_:n3-366",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5388,7 +5464,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/stringTermProperty"
           },
-          "shapeIdentifier": "_:n3-365",
+          "shapeIdentifier": "_:n3-367",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5410,7 +5486,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/termProperty"
           },
-          "shapeIdentifier": "_:n3-366",
+          "shapeIdentifier": "_:n3-368",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5444,7 +5520,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/optionalClassOrClassOrStringProperty"
           },
-          "shapeIdentifier": "_:n3-367",
+          "shapeIdentifier": "_:n3-369",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5523,7 +5599,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/optionalIriOrLiteralProperty"
           },
-          "shapeIdentifier": "_:n3-374",
+          "shapeIdentifier": "_:n3-376",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5554,7 +5630,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/optionalIriOrStringProperty"
           },
-          "shapeIdentifier": "_:n3-379",
+          "shapeIdentifier": "_:n3-381",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -5589,7 +5665,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/requiredClassOrClassOrStringProperty"
           },
-          "shapeIdentifier": "_:n3-384",
+          "shapeIdentifier": "_:n3-386",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -5665,7 +5741,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/requiredIriOrLiteralProperty"
           },
-          "shapeIdentifier": "_:n3-391",
+          "shapeIdentifier": "_:n3-393",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -5693,7 +5769,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/requiredIriOrStringProperty"
           },
-          "shapeIdentifier": "_:n3-396",
+          "shapeIdentifier": "_:n3-398",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -5725,7 +5801,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/setClassOrClassOrStringProperty"
           },
-          "shapeIdentifier": "_:n3-401",
+          "shapeIdentifier": "_:n3-403",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -5804,7 +5880,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/setIriOrLiteralProperty"
           },
-          "shapeIdentifier": "_:n3-408",
+          "shapeIdentifier": "_:n3-410",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -5835,7 +5911,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/setIriOrStringProperty"
           },
-          "shapeIdentifier": "_:n3-413",
+          "shapeIdentifier": "_:n3-415",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -5883,7 +5959,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/uuidV4IriProperty"
           },
-          "shapeIdentifier": "_:n3-418",
+          "shapeIdentifier": "_:n3-420",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -5916,7 +5992,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/uuidV4IriProperty"
           },
-          "shapeIdentifier": "_:n3-419",
+          "shapeIdentifier": "_:n3-421",
           "type": {
             "kind": "LiteralType",
             "datatype": {

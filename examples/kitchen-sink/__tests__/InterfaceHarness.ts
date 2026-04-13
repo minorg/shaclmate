@@ -10,7 +10,6 @@ export class InterfaceHarness<
   },
 > extends Harness<T> {
   readonly equals: (other: T) => $EqualsResult;
-  readonly shapeName: string;
   readonly toJson: () => any;
   readonly toRdf: (options?: {
     graph?: Exclude<Quad_Graph, Variable>;
@@ -37,9 +36,8 @@ export class InterfaceHarness<
     } & ConstructorParameters<typeof Harness<T>>[1],
     shapeName?: string,
   ) {
-    super(instance, superParameters);
+    super(instance, superParameters, shapeName ?? instance.$type);
     this.equals = (other) => $equals(this.instance, other);
-    this.shapeName = shapeName ?? this.instance.$type;
     this.toJson = () => $toJson(this.instance);
     this.toRdf = (kwds) => $toRdf(this.instance, kwds);
   }

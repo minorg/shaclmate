@@ -23,9 +23,9 @@ export class ClassUnionHarness<
     }: {
       $equals: (left: T, right: T) => $EqualsResult;
     } & ConstructorParameters<typeof Harness<T>>[1],
-    readonly shapeName: string,
+    shapeName: string,
   ) {
-    super(instance, superParameters);
+    super(instance, superParameters, shapeName);
     this.equals = (other) => $equals(this.instance, other);
   }
 

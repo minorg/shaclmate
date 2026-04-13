@@ -14,7 +14,6 @@ export abstract class Harness<
       [_index: string]: any;
     },
   ) => Either<Error, T>;
-  abstract readonly shapeName: string;
   readonly sparqlConstructQueryString: () => string;
 
   constructor(
@@ -28,6 +27,7 @@ export abstract class Harness<
       $fromRdf: Harness<T>["fromRdf"];
       $sparqlConstructQueryString: Harness<T>["sparqlConstructQueryString"];
     },
+    readonly shapeName: string,
   ) {
     this.fromJson = $fromJson;
     this.fromRdf = $fromRdf;
