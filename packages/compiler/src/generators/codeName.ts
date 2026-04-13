@@ -32,7 +32,6 @@ export function codeName(
     }
 
     let propertyPath: ast.ObjectType.Property["path"] | undefined;
-    const shapeIdentifier = astConstruct.shapeIdentifier;
 
     if (astConstruct instanceof ast.ObjectType.Property) {
       // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
@@ -64,6 +63,8 @@ export function codeName(
     if (propertyPath instanceof ast.Curie && propertyPath.hasUniqueReference) {
       return sanitize(propertyPath.reference);
     }
+
+    const shapeIdentifier = astConstruct.shapeIdentifier;
 
     // Unique reference part on a CURIE shape identifier
     if (
