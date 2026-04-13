@@ -1211,6 +1211,39 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :nonEmptyStringSetProperty
     ] .
 
+:PropertyNamesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Shape that uses different methods to name properties" ;
+    sh:property [
+        rdfs:comment "sh:path: overrides property shape identifier" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :actualPropertyName1
+    ], [
+        rdfs:comment "sh:name: overrides sh:path" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "actualPropertyName2" ;
+        sh:path :ignorePropertyName2
+    ], [
+        shaclmate:name "actualPropertyName3" ;
+        rdfs:comment "shaclmate:name: overrides sh:name" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "ignorePropertyName3" ;
+        sh:path :ignorePropertyName3
+    ], [
+        rdfs:comment "rdfs:label: overrides sh:path" ;
+        rdfs:label "actualPropertyName4" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :ignorePropertyName4
+    ] .
+
 :PropertyPathsClass
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape that uses different property path types in its properties" ;

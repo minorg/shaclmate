@@ -661,6 +661,17 @@ export const harnesses = {
     }),
     kitchenSink.PropertyCardinalitiesClass,
   ),
+  propertyNamesClass: new ClassHarness(
+    new kitchenSink.PropertyNamesClass({
+      $identifier,
+      // Should all be actualProperty*
+      actualPropertyName1: "actualPropertyValue1",
+      actualPropertyName2: "actualPropertyValue2",
+      actualPropertyName3: "actualPropertyValue3",
+      actualPropertyName4: "actualPropertyValue4",
+    }),
+    kitchenSink.PropertyNamesClass,
+  ),
   propertyPathsClass: new ClassHarness(
     new kitchenSink.PropertyPathsClass({
       $identifier,
