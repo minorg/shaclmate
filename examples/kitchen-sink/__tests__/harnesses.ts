@@ -403,10 +403,12 @@ export const harnesses = {
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       requiredLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance1"),
           lazilyResolvedStringProperty: "test required empty",
         }),
       requiredPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance2"),
           lazilyResolvedStringProperty: "test required empty",
         }),
     }),
