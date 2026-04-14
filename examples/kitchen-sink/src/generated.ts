@@ -7564,48 +7564,54 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               (({
+                filter,
                 ignoreRdfType,
-                schema,
-                ...otherParameters
+                valueVariable,
+                variablePrefix,
               }: $SparqlConstructTriplesFunctionParameters<
                 ClassUnionMember1.$Filter,
                 typeof ClassUnionMember1.$schema
               >) =>
                 ClassUnionMember1.$sparqlConstructTriples({
+                  filter,
+                  focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               (({
+                filter,
                 ignoreRdfType,
-                schema,
-                ...otherParameters
+                valueVariable,
+                variablePrefix,
               }: $SparqlConstructTriplesFunctionParameters<
                 ClassUnionMember2.$Filter,
                 typeof ClassUnionMember2.$schema
               >) =>
                 ClassUnionMember2.$sparqlConstructTriples({
+                  filter,
+                  focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -7677,18 +7683,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }),
             );
 
@@ -7760,18 +7766,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -7827,48 +7833,54 @@ export namespace UnionDiscriminantsClass {
 
           triples = triples.concat(
             (({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               ClassUnionMember1.$Filter,
               typeof ClassUnionMember1.$schema
             >) =>
               ClassUnionMember1.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }))({
+              ...otherParameters,
               filter: filter?.on?.["0-ClassUnionMember1"],
               ignoreRdfType: false,
               schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             (({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               ClassUnionMember2.$Filter,
               typeof ClassUnionMember2.$schema
             >) =>
               ClassUnionMember2.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }))({
+              ...otherParameters,
               filter: filter?.on?.["1-ClassUnionMember2"],
               ignoreRdfType: false,
               schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["2-string"],
               ignoreRdfType: false,
               schema: schema.members["2-string"].type,
-              ...otherParameters,
             }),
           );
 
@@ -7918,18 +7930,18 @@ export namespace UnionDiscriminantsClass {
 
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["NamedNode"],
               ignoreRdfType: false,
               schema: schema.members["NamedNode"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["Literal"],
               ignoreRdfType: false,
               schema: schema.members["Literal"].type,
-              ...otherParameters,
             }),
           );
 
@@ -7979,18 +7991,18 @@ export namespace UnionDiscriminantsClass {
 
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["object"],
               ignoreRdfType: false,
               schema: schema.members["object"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["string"],
               ignoreRdfType: false,
               schema: schema.members["string"].type,
-              ...otherParameters,
             }),
           );
 
@@ -8071,48 +8083,54 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               (({
+                filter,
                 ignoreRdfType,
-                schema,
-                ...otherParameters
+                valueVariable,
+                variablePrefix,
               }: $SparqlConstructTriplesFunctionParameters<
                 ClassUnionMember1.$Filter,
                 typeof ClassUnionMember1.$schema
               >) =>
                 ClassUnionMember1.$sparqlConstructTriples({
+                  filter,
+                  focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               (({
+                filter,
                 ignoreRdfType,
-                schema,
-                ...otherParameters
+                valueVariable,
+                variablePrefix,
               }: $SparqlConstructTriplesFunctionParameters<
                 ClassUnionMember2.$Filter,
                 typeof ClassUnionMember2.$schema
               >) =>
                 ClassUnionMember2.$sparqlConstructTriples({
+                  filter,
+                  focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -8184,18 +8202,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }),
             );
 
@@ -8267,18 +8285,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -8390,60 +8408,62 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: (({
+                filter,
                 ignoreRdfType,
                 propertyPatterns,
-                schema,
                 valueVariable,
-                ...otherParameters
+                variablePrefix,
               }: $SparqlWherePatternsFunctionParameters<
                 ClassUnionMember1.$Filter,
                 typeof ClassUnionMember1.$schema
               >) =>
                 (propertyPatterns as readonly $SparqlPattern[]).concat(
                   ClassUnionMember1.$sparqlWherePatterns({
+                    filter,
                     focusIdentifier: valueVariable,
                     ignoreRdfType: ignoreRdfType ?? true,
-                    ...otherParameters,
+                    variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: (({
+                filter,
                 ignoreRdfType,
                 propertyPatterns,
-                schema,
                 valueVariable,
-                ...otherParameters
+                variablePrefix,
               }: $SparqlWherePatternsFunctionParameters<
                 ClassUnionMember2.$Filter,
                 typeof ClassUnionMember2.$schema
               >) =>
                 (propertyPatterns as readonly $SparqlPattern[]).concat(
                   ClassUnionMember2.$sparqlWherePatterns({
+                    filter,
                     focusIdentifier: valueVariable,
                     ignoreRdfType: ignoreRdfType ?? true,
-                    ...otherParameters,
+                    variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8516,19 +8536,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $literalSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8601,19 +8621,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8670,60 +8690,62 @@ export namespace UnionDiscriminantsClass {
 
           unionPatterns.push({
             patterns: (({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember1.$Filter,
               typeof ClassUnionMember1.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember1.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ))({
+              ...otherParameters,
               filter: filter?.on?.["0-ClassUnionMember1"],
               ignoreRdfType: false,
               schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: (({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember2.$Filter,
               typeof ClassUnionMember2.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember2.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ))({
+              ...otherParameters,
               filter: filter?.on?.["1-ClassUnionMember2"],
               ignoreRdfType: false,
               schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["2-string"],
               ignoreRdfType: false,
               schema: schema.members["2-string"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8774,19 +8796,19 @@ export namespace UnionDiscriminantsClass {
 
           unionPatterns.push({
             patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["NamedNode"],
               ignoreRdfType: false,
               schema: schema.members["NamedNode"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["Literal"],
               ignoreRdfType: false,
               schema: schema.members["Literal"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8837,19 +8859,19 @@ export namespace UnionDiscriminantsClass {
 
           unionPatterns.push({
             patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["object"],
               ignoreRdfType: false,
               schema: schema.members["object"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["string"],
               ignoreRdfType: false,
               schema: schema.members["string"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8931,60 +8953,62 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: (({
+                filter,
                 ignoreRdfType,
                 propertyPatterns,
-                schema,
                 valueVariable,
-                ...otherParameters
+                variablePrefix,
               }: $SparqlWherePatternsFunctionParameters<
                 ClassUnionMember1.$Filter,
                 typeof ClassUnionMember1.$schema
               >) =>
                 (propertyPatterns as readonly $SparqlPattern[]).concat(
                   ClassUnionMember1.$sparqlWherePatterns({
+                    filter,
                     focusIdentifier: valueVariable,
                     ignoreRdfType: ignoreRdfType ?? true,
-                    ...otherParameters,
+                    variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: (({
+                filter,
                 ignoreRdfType,
                 propertyPatterns,
-                schema,
                 valueVariable,
-                ...otherParameters
+                variablePrefix,
               }: $SparqlWherePatternsFunctionParameters<
                 ClassUnionMember2.$Filter,
                 typeof ClassUnionMember2.$schema
               >) =>
                 (propertyPatterns as readonly $SparqlPattern[]).concat(
                   ClassUnionMember2.$sparqlWherePatterns({
+                    filter,
                     focusIdentifier: valueVariable,
                     ignoreRdfType: ignoreRdfType ?? true,
-                    ...otherParameters,
+                    variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -9057,19 +9081,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $literalSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -9142,19 +9166,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -16003,7 +16027,7 @@ export namespace PartialInterfaceUnionMember2 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialInterfaceUnionMember2",
+    "http://example.com/InterfaceUnionMember2",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -16156,7 +16180,7 @@ export namespace PartialInterfaceUnionMember2 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialInterfaceUnionMember2":
+                case "http://example.com/InterfaceUnionMember2":
                   return Right(true as const);
               }
 
@@ -16174,7 +16198,7 @@ export namespace PartialInterfaceUnionMember2 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember2)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
                 ),
               );
             })
@@ -16236,9 +16260,7 @@ export namespace PartialInterfaceUnionMember2 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/PartialInterfaceUnionMember2",
-        ),
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
         options?.graph,
       );
     }
@@ -16608,7 +16630,7 @@ export namespace PartialInterfaceUnionMember1 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialInterfaceUnionMember1",
+    "http://example.com/InterfaceUnionMember1",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -16761,7 +16783,7 @@ export namespace PartialInterfaceUnionMember1 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialInterfaceUnionMember1":
+                case "http://example.com/InterfaceUnionMember1":
                   return Right(true as const);
               }
 
@@ -16779,7 +16801,7 @@ export namespace PartialInterfaceUnionMember1 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember1)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
                 ),
               );
             })
@@ -16841,9 +16863,7 @@ export namespace PartialInterfaceUnionMember1 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/PartialInterfaceUnionMember1",
-        ),
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
         options?.graph,
       );
     }
@@ -17203,7 +17223,7 @@ export class PartialClassUnionMember2 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/PartialClassUnionMember2"),
+        dataFactory.namedNode("http://example.com/ClassUnionMember2"),
         options?.graph,
       );
     }
@@ -17249,7 +17269,7 @@ export namespace PartialClassUnionMember2 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialClassUnionMember2",
+    "http://example.com/ClassUnionMember2",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -17381,7 +17401,7 @@ export namespace PartialClassUnionMember2 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialClassUnionMember2":
+                case "http://example.com/ClassUnionMember2":
                   return Right(true as const);
               }
 
@@ -17399,7 +17419,7 @@ export namespace PartialClassUnionMember2 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember2)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
                 ),
               );
             })
@@ -17783,7 +17803,7 @@ export class PartialClassUnionMember1 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/PartialClassUnionMember1"),
+        dataFactory.namedNode("http://example.com/ClassUnionMember1"),
         options?.graph,
       );
     }
@@ -17829,7 +17849,7 @@ export namespace PartialClassUnionMember1 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialClassUnionMember1",
+    "http://example.com/ClassUnionMember1",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -17961,7 +17981,7 @@ export namespace PartialClassUnionMember1 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialClassUnionMember1":
+                case "http://example.com/ClassUnionMember1":
                   return Right(true as const);
               }
 
@@ -17979,7 +17999,7 @@ export namespace PartialClassUnionMember1 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember1)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
                 ),
               );
             })
@@ -26818,16 +26838,19 @@ export namespace ListPropertiesClass {
             typeof NonClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               NonClass.$Filter,
               typeof NonClass.$schema
             >) =>
               NonClass.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           ),
         ),
@@ -26979,20 +27002,21 @@ export namespace ListPropertiesClass {
         >(
           $listSparqlWherePatterns<NonClass.$Filter, typeof NonClass.$schema>(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               NonClass.$Filter,
               typeof NonClass.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 NonClass.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           ),
@@ -30178,16 +30202,19 @@ export namespace LazyPropertiesInterface {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               $DefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30212,16 +30239,19 @@ export namespace LazyPropertiesInterface {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               $DefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30248,16 +30278,19 @@ export namespace LazyPropertiesInterface {
             typeof $NamedDefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $NamedDefaultPartial.$Filter,
               typeof $NamedDefaultPartial.$schema
             >) =>
               $NamedDefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30284,16 +30317,19 @@ export namespace LazyPropertiesInterface {
             typeof PartialInterface.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               PartialInterface.$Filter,
               typeof PartialInterface.$schema
             >) =>
               PartialInterface.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30321,16 +30357,19 @@ export namespace LazyPropertiesInterface {
             typeof PartialInterface.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               PartialInterface.$Filter,
               typeof PartialInterface.$schema
             >) =>
               PartialInterface.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30384,20 +30423,20 @@ export namespace LazyPropertiesInterface {
           $schema.properties.requiredLazyToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             $DefaultPartial.$Filter,
             typeof $DefaultPartial.$schema
           >) =>
             $DefaultPartial.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }))({
-            schema: schema.partial(),
-            ...otherParameters,
-          }),
+              variablePrefix,
+            }))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -30418,20 +30457,20 @@ export namespace LazyPropertiesInterface {
             .requiredPartialInterfaceToResolvedInterfaceProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             PartialInterface.$Filter,
             typeof PartialInterface.$schema
           >) =>
             PartialInterface.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }))({
-            schema: schema.partial(),
-            ...otherParameters,
-          }),
+              variablePrefix,
+            }))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -30452,16 +30491,19 @@ export namespace LazyPropertiesInterface {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               $DefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30486,16 +30528,19 @@ export namespace LazyPropertiesInterface {
             typeof PartialInterface.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               PartialInterface.$Filter,
               typeof PartialInterface.$schema
             >) =>
               PartialInterface.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30550,20 +30595,21 @@ export namespace LazyPropertiesInterface {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $DefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -30590,20 +30636,21 @@ export namespace LazyPropertiesInterface {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $DefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -30632,20 +30679,21 @@ export namespace LazyPropertiesInterface {
             typeof $NamedDefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $NamedDefaultPartial.$Filter,
               typeof $NamedDefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $NamedDefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -30674,20 +30722,21 @@ export namespace LazyPropertiesInterface {
             typeof PartialInterface.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               PartialInterface.$Filter,
               typeof PartialInterface.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 PartialInterface.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -30717,20 +30766,21 @@ export namespace LazyPropertiesInterface {
             typeof PartialInterface.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               PartialInterface.$Filter,
               typeof PartialInterface.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 PartialInterface.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -30794,20 +30844,21 @@ export namespace LazyPropertiesInterface {
           $schema.properties.requiredLazyToResolvedInterfaceProperty,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
             typeof $DefaultPartial.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30831,20 +30882,21 @@ export namespace LazyPropertiesInterface {
             .requiredPartialInterfaceToResolvedInterfaceProperty,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             PartialInterface.$Filter,
             typeof PartialInterface.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -30868,20 +30920,21 @@ export namespace LazyPropertiesInterface {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $DefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -30908,20 +30961,21 @@ export namespace LazyPropertiesInterface {
             typeof PartialInterface.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               PartialInterface.$Filter,
               typeof PartialInterface.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 PartialInterface.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -33445,16 +33499,19 @@ export namespace LazyPropertiesClass {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               $DefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33478,16 +33535,19 @@ export namespace LazyPropertiesClass {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               $DefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33512,16 +33572,19 @@ export namespace LazyPropertiesClass {
             typeof $NamedDefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $NamedDefaultPartial.$Filter,
               typeof $NamedDefaultPartial.$schema
             >) =>
               $NamedDefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33545,16 +33608,19 @@ export namespace LazyPropertiesClass {
             typeof PartialClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               PartialClass.$Filter,
               typeof PartialClass.$schema
             >) =>
               PartialClass.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33579,16 +33645,19 @@ export namespace LazyPropertiesClass {
             typeof PartialClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               PartialClass.$Filter,
               typeof PartialClass.$schema
             >) =>
               PartialClass.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33639,20 +33708,20 @@ export namespace LazyPropertiesClass {
         propertySchema: $schema.properties.requiredLazyToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             $DefaultPartial.$Filter,
             typeof $DefaultPartial.$schema
           >) =>
             $DefaultPartial.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }))({
-            schema: schema.partial(),
-            ...otherParameters,
-          }),
+              variablePrefix,
+            }))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -33670,20 +33739,20 @@ export namespace LazyPropertiesClass {
           $schema.properties.requiredPartialClassToResolvedClassProperty,
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             PartialClass.$Filter,
             typeof PartialClass.$schema
           >) =>
             PartialClass.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
-            }))({
-            schema: schema.partial(),
-            ...otherParameters,
-          }),
+              variablePrefix,
+            }))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
           parameters?.variablePrefix ??
           (focusIdentifier.termType === "Variable"
@@ -33704,16 +33773,19 @@ export namespace LazyPropertiesClass {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               $DefaultPartial.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33737,16 +33809,19 @@ export namespace LazyPropertiesClass {
             typeof PartialClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
-              schema,
-              ...otherParameters
+              valueVariable,
+              variablePrefix,
             }: $SparqlConstructTriplesFunctionParameters<
               PartialClass.$Filter,
               typeof PartialClass.$schema
             >) =>
               PartialClass.$sparqlConstructTriples({
+                filter,
+                focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
           )({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -33800,20 +33875,21 @@ export namespace LazyPropertiesClass {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $DefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -33839,20 +33915,21 @@ export namespace LazyPropertiesClass {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $DefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -33879,20 +33956,21 @@ export namespace LazyPropertiesClass {
             typeof $NamedDefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $NamedDefaultPartial.$Filter,
               typeof $NamedDefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $NamedDefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -33918,20 +33996,21 @@ export namespace LazyPropertiesClass {
             typeof PartialClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               PartialClass.$Filter,
               typeof PartialClass.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 PartialClass.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -33958,20 +34037,21 @@ export namespace LazyPropertiesClass {
             typeof PartialClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               PartialClass.$Filter,
               typeof PartialClass.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 PartialClass.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -34033,20 +34113,21 @@ export namespace LazyPropertiesClass {
         propertySchema: $schema.properties.requiredLazyToResolvedClassProperty,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
             typeof $DefaultPartial.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -34067,20 +34148,21 @@ export namespace LazyPropertiesClass {
           $schema.properties.requiredPartialClassToResolvedClassProperty,
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           (({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             PartialClass.$Filter,
             typeof PartialClass.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ))({ schema: schema.partial(), ...otherParameters }),
         variablePrefix:
@@ -34104,20 +34186,21 @@ export namespace LazyPropertiesClass {
             typeof $DefaultPartial.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               $DefaultPartial.$Filter,
               typeof $DefaultPartial.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 $DefaultPartial.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -34143,20 +34226,21 @@ export namespace LazyPropertiesClass {
             typeof PartialClass.$schema
           >(
             ({
+              filter,
               ignoreRdfType,
               propertyPatterns,
-              schema,
               valueVariable,
-              ...otherParameters
+              variablePrefix,
             }: $SparqlWherePatternsFunctionParameters<
               PartialClass.$Filter,
               typeof PartialClass.$schema
             >) =>
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 PartialClass.$sparqlWherePatterns({
+                  filter,
                   focusIdentifier: valueVariable,
                   ignoreRdfType: ignoreRdfType ?? true,
-                  ...otherParameters,
+                  variablePrefix,
                 }),
               ),
           )({ schema: schema.partial(), ...otherParameters }),
@@ -39967,26 +40051,26 @@ export namespace JsPrimitiveUnionPropertyClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["boolean"],
                 ignoreRdfType: false,
                 schema: schema.members["boolean"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["number"],
                 ignoreRdfType: false,
                 schema: schema.members["number"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -40151,28 +40235,28 @@ export namespace JsPrimitiveUnionPropertyClass {
 
             unionPatterns.push({
               patterns: $booleanSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["boolean"],
                 ignoreRdfType: false,
                 schema: schema.members["boolean"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $numericSparqlWherePatterns<number>({
+                ...otherParameters,
                 filter: filter?.on?.["number"],
                 ignoreRdfType: false,
                 schema: schema.members["number"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -50204,16 +50288,19 @@ export namespace ExternClassPropertyClass {
           typeof ExternClass.$schema
         >(
           ({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             ExternClass.$Filter,
             typeof ExternClass.$schema
           >) =>
             ExternClass.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
+              variablePrefix,
             }),
         ),
         variablePrefix:
@@ -50319,20 +50406,21 @@ export namespace ExternClassPropertyClass {
           typeof ExternClass.$schema
         >(
           ({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             ExternClass.$Filter,
             typeof ExternClass.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               ExternClass.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ),
         ),
@@ -55548,18 +55636,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55631,18 +55719,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55714,18 +55802,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55797,18 +55885,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55963,19 +56051,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -56048,19 +56136,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -56133,19 +56221,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -56218,19 +56306,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -66533,16 +66621,19 @@ export namespace ClassPropertiesClass {
           typeof NonClass.$schema
         >(
           ({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             NonClass.$Filter,
             typeof NonClass.$schema
           >) =>
             NonClass.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
+              variablePrefix,
             }),
         ),
         variablePrefix:
@@ -66564,16 +66655,19 @@ export namespace ClassPropertiesClass {
           typeof PartialClass.$schema
         >(
           ({
+            filter,
             ignoreRdfType,
-            schema,
-            ...otherParameters
+            valueVariable,
+            variablePrefix,
           }: $SparqlConstructTriplesFunctionParameters<
             PartialClass.$Filter,
             typeof PartialClass.$schema
           >) =>
             PartialClass.$sparqlConstructTriples({
+              filter,
+              focusIdentifier: valueVariable,
               ignoreRdfType: ignoreRdfType ?? true,
-              ...otherParameters,
+              variablePrefix,
             }),
         ),
         variablePrefix:
@@ -66734,20 +66828,21 @@ export namespace ClassPropertiesClass {
           typeof NonClass.$schema
         >(
           ({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             NonClass.$Filter,
             typeof NonClass.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               NonClass.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ),
         ),
@@ -66771,20 +66866,21 @@ export namespace ClassPropertiesClass {
           typeof PartialClass.$schema
         >(
           ({
+            filter,
             ignoreRdfType,
             propertyPatterns,
-            schema,
             valueVariable,
-            ...otherParameters
+            variablePrefix,
           }: $SparqlWherePatternsFunctionParameters<
             PartialClass.$Filter,
             typeof PartialClass.$schema
           >) =>
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
+                filter,
                 focusIdentifier: valueVariable,
                 ignoreRdfType: ignoreRdfType ?? true,
-                ...otherParameters,
+                variablePrefix,
               }),
             ),
         ),

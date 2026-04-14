@@ -403,10 +403,12 @@ export const harnesses = {
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       requiredLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance1"),
           lazilyResolvedStringProperty: "test required empty",
         }),
       requiredPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance2"),
           lazilyResolvedStringProperty: "test required empty",
         }),
     }),
@@ -419,50 +421,59 @@ export const harnesses = {
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       optionalLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/instance1"),
           lazilyResolvedStringProperty: "optionalLazyToResolvedClassProperty",
         }),
       optionalLazyToResolvedClassUnionProperty:
         new kitchenSink.LazilyResolvedClassUnionMember1({
+          $identifier: dataFactory.namedNode("http://example.com/instance2"),
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedClassUnionProperty",
         }),
       optionalLazyToResolvedIriIdentifierClassProperty:
         new kitchenSink.LazilyResolvedIriIdentifierClass({
-          $identifier: dataFactory.namedNode("http://example.com/resolved"),
+          $identifier: dataFactory.namedNode("http://example.com/instance3"),
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedIriIdentifierClassProperty",
         }),
       optionalPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/instance4"),
           lazilyResolvedStringProperty:
             "optionalPartialClassToResolvedClassProperty",
         }),
       optionalPartialClassToResolvedClassUnionProperty:
         new kitchenSink.LazilyResolvedClassUnionMember1({
+          $identifier: dataFactory.namedNode("http://example.com/instance5"),
           lazilyResolvedStringProperty:
             "optionalPartialClassToResolvedClassUnionProperty",
         }),
       optionalPartialClassUnionToResolvedClassUnionProperty:
         new kitchenSink.LazilyResolvedClassUnionMember1({
+          $identifier: dataFactory.namedNode("http://example.com/instance6"),
           lazilyResolvedStringProperty:
             "optionalPartialClassUnionToResolvedClassUnionProperty",
         }),
       requiredLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/instance7"),
           lazilyResolvedStringProperty: "requiredLazyToResolvedClassProperty",
         }),
       requiredPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/instance8"),
           lazilyResolvedStringProperty:
             "requiredPartialClassToResolvedClassProperty",
         }),
       setLazyToResolvedClassProperty: [
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/instance9"),
           lazilyResolvedStringProperty: "setLazyToResolvedClassProperty",
         }),
       ],
       setPartialClassToResolvedClassProperty: [
         new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+          $identifier: dataFactory.namedNode("http://example.com/instance10"),
           lazilyResolvedStringProperty:
             "setPartialClassToResolvedClassProperty",
         }),
@@ -753,7 +764,7 @@ export const harnesses = {
         type: "0-ClassUnionMember1",
         value: new kitchenSink.ClassUnionMember1({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember1",
+            "http://example.com/classUnionMember1a",
           ),
           classUnionMember1Property: "test",
           classUnionMemberCommonParentProperty: "test",
@@ -765,7 +776,7 @@ export const harnesses = {
         type: "0-ClassUnionMember1",
         value: new kitchenSink.ClassUnionMember1({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember1",
+            "http://example.com/classUnionMember1b",
           ),
           classUnionMember1Property: "test",
           classUnionMemberCommonParentProperty: "test",
@@ -784,7 +795,7 @@ export const harnesses = {
         type: "1-ClassUnionMember2",
         value: new kitchenSink.ClassUnionMember2({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember2",
+            "http://example.com/classUnionMember2a",
           ),
           classUnionMember2Property: "test",
           classUnionMemberCommonParentProperty: "test",
@@ -808,7 +819,7 @@ export const harnesses = {
           type: "1-ClassUnionMember2",
           value: new kitchenSink.ClassUnionMember2({
             $identifier: dataFactory.namedNode(
-              "http://example.com/classUnionMember2",
+              "http://example.com/classUnionMember2b",
             ),
             classUnionMember2Property: "test",
             classUnionMemberCommonParentProperty: "test",
@@ -818,7 +829,7 @@ export const harnesses = {
           type: "0-ClassUnionMember1",
           value: new kitchenSink.ClassUnionMember1({
             $identifier: dataFactory.namedNode(
-              "http://example.com/classUnionMember1",
+              "http://example.com/classUnionMember1b",
             ),
             classUnionMember1Property: "test",
             classUnionMemberCommonParentProperty: "test",

@@ -11,7 +11,7 @@ describe("toJson", () => {
         type: "0-ClassUnionMember1",
         value: {
           $type: "ClassUnionMember1",
-          "@id": "http://example.com/classUnionMember1",
+          "@id": "http://example.com/classUnionMember1a",
           classUnionMember1Property: "test",
           classUnionMemberCommonParentProperty: "test",
         },
@@ -27,7 +27,7 @@ describe("toJson", () => {
         type: "0-ClassUnionMember1",
         value: {
           $type: "ClassUnionMember1",
-          "@id": "http://example.com/classUnionMember1",
+          "@id": "http://example.com/classUnionMember1b",
           classUnionMember1Property: "test",
           classUnionMemberCommonParentProperty: "test",
         },
@@ -51,7 +51,7 @@ describe("toJson", () => {
         type: "1-ClassUnionMember2",
         value: {
           $type: "ClassUnionMember2",
-          "@id": "http://example.com/classUnionMember2",
+          "@id": "http://example.com/classUnionMember2a",
           classUnionMember2Property: "test",
           classUnionMemberCommonParentProperty: "test",
         },
@@ -79,7 +79,7 @@ describe("toJson", () => {
           type: "1-ClassUnionMember2",
           value: {
             $type: "ClassUnionMember2",
-            "@id": "http://example.com/classUnionMember2",
+            "@id": "http://example.com/classUnionMember2b",
             classUnionMember2Property: "test",
             classUnionMemberCommonParentProperty: "test",
           },
@@ -88,7 +88,7 @@ describe("toJson", () => {
           type: "0-ClassUnionMember1",
           value: {
             $type: "ClassUnionMember1",
-            "@id": "http://example.com/classUnionMember1",
+            "@id": "http://example.com/classUnionMember1b",
             classUnionMember1Property: "test",
             classUnionMemberCommonParentProperty: "test",
           },

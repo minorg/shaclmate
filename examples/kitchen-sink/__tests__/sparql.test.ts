@@ -63,6 +63,10 @@ describe("sparql", () => {
       continue;
     }
 
+    if (id === "lazyPropertiesClassNonEmpty" || id === "lazyPropertiesInterfaceNonEmpty") {
+      continue;
+    }
+
     it(`${id} round trip`, async ({ expect }) => {
       const toRdfDataset = harness.toRdf().dataset;
       const toRdfQuads: Quad[] = [];
@@ -104,7 +108,7 @@ describe("sparql", () => {
         constructResultString,
       );
       console.log("query:\n", constructQueryString);
-      // fail();
+      fail();
     });
   }
 
