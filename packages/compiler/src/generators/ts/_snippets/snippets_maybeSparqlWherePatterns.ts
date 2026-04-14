@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
       
     if (filter === null) {
       // Use FILTER NOT EXISTS around the item's patterns
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets_liftSparqlPatterns}(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item() }));
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets_liftSparqlPatterns}(itemSparqlWherePatternsFunction({ ...otherParameters, filter: undefined, schema: schema.item() }));
       return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 

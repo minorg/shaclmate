@@ -10,10 +10,10 @@ export const snippets_shaclPropertySparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}shaclPropertySparqlWherePatterns`,
   code`\
 function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, preferredLanguages, propertyName, propertySchema, typeSparqlWherePatterns, variablePrefix }: {
-  filter?: FilterT;
+  filter: FilterT | undefined;
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
-  ignoreRdfType?: boolean;
-  preferredLanguages?: readonly string[];
+  ignoreRdfType: boolean;
+  preferredLanguages: readonly string[] | undefined;
   propertySchema: ${snippets_ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
   typeSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<FilterT, TypeSchemaT>;

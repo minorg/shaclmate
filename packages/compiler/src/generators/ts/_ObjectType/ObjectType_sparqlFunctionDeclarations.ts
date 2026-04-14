@@ -31,11 +31,11 @@ export function ObjectType_sparqlFunctionDeclarations(
 
   for (const parentObjectType of this.parentObjectTypes) {
     sparqlConstructTriplesStatements.push(
-      code`triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{ focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
+      code`triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
     );
     triplesVariableDeclarationKeyword = "let";
     sparqlWherePatternsStatements.push(code`\
-patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`);
+patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
     patternsVariableDeclarationKeyword = "let";
   }
 

@@ -39,6 +39,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
         },
         ...itemSparqlWherePatternsFunction({
           filter: parameters.filter,
+          ignoreRdfType: parameters.ignoreRdfType,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
           schema: parameters.schema.item(),
@@ -94,6 +95,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
         },
         ...itemSparqlWherePatternsFunction({
           filter: parameters.filter,
+          ignoreRdfType: parameters.ignoreRdfType,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
           schema: parameters.schema.item(),

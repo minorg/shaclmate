@@ -8,9 +8,9 @@ export const snippets_shaclPropertySparqlConstructTriples = conditionalOutput(
   `${syntheticNamePrefix}shaclPropertySparqlConstructTriples`,
   code`\
 function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, propertyName, propertySchema, typeSparqlConstructTriples, variablePrefix }: {
-  filter?: FilterT;
+  filter: FilterT | undefined;
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
-  ignoreRdfType?: boolean;
+  ignoreRdfType: boolean;
   propertySchema: ${snippets_ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
   typeSparqlConstructTriples: ${snippets_SparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;

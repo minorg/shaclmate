@@ -466,6 +466,7 @@ export class IdentifierProperty extends AbstractProperty<
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: code`${variables.filter}?.${this.name}`,
+        ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
         schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,

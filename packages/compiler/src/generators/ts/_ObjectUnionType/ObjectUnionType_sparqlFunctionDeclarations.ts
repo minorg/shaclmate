@@ -47,7 +47,7 @@ if (focusIdentifier.termType === "Variable") {
     this.concreteMemberTypes.map(
       (memberType) =>
         code`${{
-          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),

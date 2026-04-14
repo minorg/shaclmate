@@ -10,7 +10,7 @@ export function ObjectType_sparqlConstructQueryFunctionDeclaration(this: {
   readonly staticModuleName: string;
 }): Code {
   return code`\
-export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfType, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${imports.NamedNode} | ${imports.Variable} } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${imports.sparqljs}.ConstructQuery {
+export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${imports.NamedNode} | ${imports.Variable} } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${imports.sparqljs}.ConstructQuery {
   const variablePrefix = subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}";
 
   return {
