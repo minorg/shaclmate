@@ -7578,10 +7578,10 @@ export namespace UnionDiscriminantsClass {
                   ignoreRdfType: ignoreRdfType ?? true,
                   variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
@@ -7600,18 +7600,18 @@ export namespace UnionDiscriminantsClass {
                   ignoreRdfType: ignoreRdfType ?? true,
                   variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -7683,18 +7683,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }),
             );
 
@@ -7766,18 +7766,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -7847,10 +7847,10 @@ export namespace UnionDiscriminantsClass {
                 ignoreRdfType: ignoreRdfType ?? true,
                 variablePrefix,
               }))({
+              ...otherParameters,
               filter: filter?.on?.["0-ClassUnionMember1"],
               ignoreRdfType: false,
               schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
@@ -7869,18 +7869,18 @@ export namespace UnionDiscriminantsClass {
                 ignoreRdfType: ignoreRdfType ?? true,
                 variablePrefix,
               }))({
+              ...otherParameters,
               filter: filter?.on?.["1-ClassUnionMember2"],
               ignoreRdfType: false,
               schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["2-string"],
               ignoreRdfType: false,
               schema: schema.members["2-string"].type,
-              ...otherParameters,
             }),
           );
 
@@ -7930,18 +7930,18 @@ export namespace UnionDiscriminantsClass {
 
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["NamedNode"],
               ignoreRdfType: false,
               schema: schema.members["NamedNode"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["Literal"],
               ignoreRdfType: false,
               schema: schema.members["Literal"].type,
-              ...otherParameters,
             }),
           );
 
@@ -7991,18 +7991,18 @@ export namespace UnionDiscriminantsClass {
 
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["object"],
               ignoreRdfType: false,
               schema: schema.members["object"].type,
-              ...otherParameters,
             }),
           );
           triples = triples.concat(
             ((_: object) => [])({
+              ...otherParameters,
               filter: filter?.on?.["string"],
               ignoreRdfType: false,
               schema: schema.members["string"].type,
-              ...otherParameters,
             }),
           );
 
@@ -8097,10 +8097,10 @@ export namespace UnionDiscriminantsClass {
                   ignoreRdfType: ignoreRdfType ?? true,
                   variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
@@ -8119,18 +8119,18 @@ export namespace UnionDiscriminantsClass {
                   ignoreRdfType: ignoreRdfType ?? true,
                   variablePrefix,
                 }))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -8202,18 +8202,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }),
             );
 
@@ -8285,18 +8285,18 @@ export namespace UnionDiscriminantsClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -8425,10 +8425,10 @@ export namespace UnionDiscriminantsClass {
                     variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8451,19 +8451,19 @@ export namespace UnionDiscriminantsClass {
                     variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8536,19 +8536,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $literalSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8621,19 +8621,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8707,10 +8707,10 @@ export namespace UnionDiscriminantsClass {
                   variablePrefix,
                 }),
               ))({
+              ...otherParameters,
               filter: filter?.on?.["0-ClassUnionMember1"],
               ignoreRdfType: false,
               schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8733,19 +8733,19 @@ export namespace UnionDiscriminantsClass {
                   variablePrefix,
                 }),
               ))({
+              ...otherParameters,
               filter: filter?.on?.["1-ClassUnionMember2"],
               ignoreRdfType: false,
               schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["2-string"],
               ignoreRdfType: false,
               schema: schema.members["2-string"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8796,19 +8796,19 @@ export namespace UnionDiscriminantsClass {
 
           unionPatterns.push({
             patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["NamedNode"],
               ignoreRdfType: false,
               schema: schema.members["NamedNode"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["Literal"],
               ignoreRdfType: false,
               schema: schema.members["Literal"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8859,19 +8859,19 @@ export namespace UnionDiscriminantsClass {
 
           unionPatterns.push({
             patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["object"],
               ignoreRdfType: false,
               schema: schema.members["object"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
           unionPatterns.push({
             patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
               filter: filter?.on?.["string"],
               ignoreRdfType: false,
               schema: schema.members["string"].type,
-              ...otherParameters,
             }).concat(),
             type: "group",
           });
@@ -8970,10 +8970,10 @@ export namespace UnionDiscriminantsClass {
                     variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["0-ClassUnionMember1"],
                 ignoreRdfType: false,
                 schema: schema.members["0-ClassUnionMember1"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -8996,19 +8996,19 @@ export namespace UnionDiscriminantsClass {
                     variablePrefix,
                   }),
                 ))({
+                ...otherParameters,
                 filter: filter?.on?.["1-ClassUnionMember2"],
                 ignoreRdfType: false,
                 schema: schema.members["1-ClassUnionMember2"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["2-string"],
                 ignoreRdfType: false,
                 schema: schema.members["2-string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -9081,19 +9081,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["NamedNode"],
                 ignoreRdfType: false,
                 schema: schema.members["NamedNode"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $literalSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["Literal"],
                 ignoreRdfType: false,
                 schema: schema.members["Literal"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -9166,19 +9166,19 @@ export namespace UnionDiscriminantsClass {
 
             unionPatterns.push({
               patterns: $iriSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["object"],
                 ignoreRdfType: false,
                 schema: schema.members["object"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -40051,26 +40051,26 @@ export namespace JsPrimitiveUnionPropertyClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["boolean"],
                 ignoreRdfType: false,
                 schema: schema.members["boolean"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["number"],
                 ignoreRdfType: false,
                 schema: schema.members["number"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -40235,28 +40235,28 @@ export namespace JsPrimitiveUnionPropertyClass {
 
             unionPatterns.push({
               patterns: $booleanSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["boolean"],
                 ignoreRdfType: false,
                 schema: schema.members["boolean"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $numericSparqlWherePatterns<number>({
+                ...otherParameters,
                 filter: filter?.on?.["number"],
                 ignoreRdfType: false,
                 schema: schema.members["number"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -55636,18 +55636,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55719,18 +55719,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55802,18 +55802,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
 
@@ -55885,18 +55885,18 @@ export namespace DateUnionPropertiesClass {
 
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }),
             );
             triples = triples.concat(
               ((_: object) => [])({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }),
             );
 
@@ -56051,19 +56051,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -56136,19 +56136,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -56221,19 +56221,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["dateTime"],
                 ignoreRdfType: false,
                 schema: schema.members["dateTime"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
@@ -56306,19 +56306,19 @@ export namespace DateUnionPropertiesClass {
 
             unionPatterns.push({
               patterns: $stringSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["string"],
                 ignoreRdfType: false,
                 schema: schema.members["string"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });
             unionPatterns.push({
               patterns: $dateSparqlWherePatterns({
+                ...otherParameters,
                 filter: filter?.on?.["date"],
                 ignoreRdfType: false,
                 schema: schema.members["date"].type,
-                ...otherParameters,
               }).concat(),
               type: "group",
             });

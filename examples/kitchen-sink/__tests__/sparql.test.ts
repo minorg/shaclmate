@@ -63,7 +63,7 @@ describe("sparql", () => {
       continue;
     }
 
-    if (id !== "unionDiscriminantsClass1") {
+    if (id === "lazyPropertiesClassNonEmpty" || id === "lazyPropertiesInterfaceNonEmpty") {
       continue;
     }
 
