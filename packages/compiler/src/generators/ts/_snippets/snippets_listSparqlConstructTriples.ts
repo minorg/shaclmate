@@ -10,16 +10,16 @@ export const snippets_listSparqlConstructTriples = conditionalOutput(
   `${syntheticNamePrefix}listSparqlConstructTriples`,
   code`\
 function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${snippets_SparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlConstructTriplesFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
-  return ({ filter, schema, valueVariable: listVariable, ...otherParameters }) => {
+  return ({ filter, schema, valueVariable: listVariable, variablePrefix: variablePrefixPrefix }) => {
     let triples: ${imports.sparqljs}.Triple[] = [];
-    const variable = (suffix: string) => ${imports.dataFactory}.variable!(\`\${otherParameters.variablePrefix}\${suffix}\`);
-    const variablePrefix = (suffix: string) => \`\${otherParameters.variablePrefix}\${suffix}\`;
+    const variable = (suffix: string) => ${imports.dataFactory}.variable!(\`\${variablePrefixPrefix}\${suffix}\`);
+    const variablePrefix = (suffix: string) => \`\${variablePrefixPrefix}\${suffix}\`;
 
     {
       // ?list rdf:first ?item0
       const item0Variable = variable("Item0");
       triples.push({ subject: listVariable, predicate: ${snippets_RdfVocabularies}.rdf.first, object: item0Variable });
-      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, schema: schema.item(), valueVariable: item0Variable, variablePrefix: variablePrefix("Item0") }));
+      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, ignoreRdfType: false, schema: schema.item(), valueVariable: item0Variable, variablePrefix: variablePrefix("Item0") }));
     }
 
     {
@@ -34,7 +34,7 @@ function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchem
       // ?rest rdf:first ?itemN
       const itemNVariable = variable("ItemN");
       triples.push({ subject: restNVariable, predicate: ${snippets_RdfVocabularies}.rdf.first, object: itemNVariable });
-      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, schema: schema.item(), valueVariable: itemNVariable, variablePrefix: variablePrefix("ItemN") }));
+      triples = triples.concat(itemSparqlConstructTriplesFunction({ filter, ignoreRdfType: false, schema: schema.item(), valueVariable: itemNVariable, variablePrefix: variablePrefix("ItemN") }));
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT

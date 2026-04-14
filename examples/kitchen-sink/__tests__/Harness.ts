@@ -1,4 +1,4 @@
-import type { Quad_Graph, Variable } from "@rdfjs/types";
+import type { NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 import type { Resource, ResourceSet } from "rdfjs-resource";
@@ -14,7 +14,9 @@ export abstract class Harness<
       [_index: string]: any;
     },
   ) => Either<Error, T>;
-  readonly sparqlConstructQueryString: () => string;
+  readonly sparqlConstructQueryString: (parameters: {
+    subject: NamedNode | Variable;
+  }) => string;
 
   constructor(
     readonly instance: T,

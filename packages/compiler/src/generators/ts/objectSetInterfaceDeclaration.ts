@@ -41,6 +41,7 @@ export namespace ${syntheticNamePrefix}ObjectSet {
     readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;
+    readonly preferredLanguages?: readonly string[];
   }
 }`;
 }

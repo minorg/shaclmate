@@ -7,9 +7,9 @@ export const snippets_SparqlWherePatternsFunctionParameters = conditionalOutput(
   `${syntheticNamePrefix}SparqlWherePatternsFunctionParameters`,
   code`\
 type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
-  filter?: FilterT;
-  ignoreRdfType?: boolean;
-  preferredLanguages?: readonly string[];
+  filter: FilterT | undefined;
+  ignoreRdfType: boolean;
+  preferredLanguages: readonly string[] | undefined;
   propertyPatterns: readonly ${snippets_SparqlPattern}[];
   schema: SchemaT;
   valueVariable: ${imports.Variable};

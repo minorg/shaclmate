@@ -1,4 +1,4 @@
-import { camelCase, pascalCase } from "change-case";
+import { pascalCase } from "change-case";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { imports } from "../imports.js";
@@ -18,37 +18,36 @@ export function ObjectUnionType_sparqlFunctionDeclarations(
     ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
     ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean; variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}sparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.concreteMemberTypes.map(
       (memberType) =>
-        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter: parameters?.filter?.on?.${memberType.name}, focusIdentifier: parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
     ),
     { on: ", " },
   )}];
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
 ${joinCode([
   code`let patterns: ${snippets.SparqlPattern}[] = [];`,
   code`\
-    const focusIdentifier = parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}");
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(${this.identifierType.sparqlWherePatternsFunction}({
-          filter: parameters?.filter?.${syntheticNamePrefix}identifier,
-          ignoreRdfType: false,
-          preferredLanguages: parameters?.preferredLanguages,
-          propertyPatterns: [],
-          schema: ${this.identifierType.schema},
-          valueVariable: focusIdentifier,
-          variablePrefix: focusIdentifier.termType === "Variable" ? focusIdentifier.value : ${literalOf(camelCase(this.name))},
-      }));
-    }`,
+if (focusIdentifier.termType === "Variable") {
+  patterns = patterns.concat(${this.identifierType.sparqlWherePatternsFunction}({
+      filter: filter?.${syntheticNamePrefix}identifier,
+      ignoreRdfType: false,
+      preferredLanguages,
+      propertyPatterns: [],
+      schema: ${this.identifierType.schema},
+      valueVariable: focusIdentifier,
+      variablePrefix,
+  }));
+}`,
   code`patterns.push({ patterns: [${joinCode(
     this.concreteMemberTypes.map(
       (memberType) =>
         code`${{
-          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, focusIdentifier: parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),

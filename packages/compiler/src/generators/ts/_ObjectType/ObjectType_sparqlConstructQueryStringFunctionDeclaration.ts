@@ -7,7 +7,7 @@ export function ObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly staticModuleName: string;
 }): Code {
   return code`\
-export function ${syntheticNamePrefix}sparqlConstructQueryString(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${imports.NamedNode} | ${imports.Variable}; variablePrefix?: string; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions): string {
+export function ${syntheticNamePrefix}sparqlConstructQueryString(parameters: Parameters<typeof ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery>[0] & ${imports.sparqljs}.GeneratorOptions): string {
   return new ${imports.sparqljs}.Generator(parameters).stringify(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery(parameters));
 }`;
 }

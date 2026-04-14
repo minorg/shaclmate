@@ -8,6 +8,6 @@ export const snippets_maybeSparqlConstructTriples = conditionalOutput(
   `${syntheticNamePrefix}maybeSparqlConstructTriples`,
   code`\
 function ${syntheticNamePrefix}maybeSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${snippets_SparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlConstructTriplesFunction}<${snippets_MaybeFilter}<ItemFilterT>, ${snippets_MaybeSchema}<ItemSchemaT>> {  
-  return ({ filter, schema, ...otherParameters }) => itemSparqlConstructTriplesFunction({ filter: filter ?? undefined, schema: schema.item(), ...otherParameters });
+  return ({ filter, schema, ...otherParameters }) => itemSparqlConstructTriplesFunction({ ...otherParameters, filter: filter ?? undefined, schema: schema.item() });
 }`,
 );

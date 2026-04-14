@@ -77,6 +77,6 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatte
       }
     }
 
-    return ${snippets_termSchemaSparqlPatterns}({ filterPatterns, schema, valueVariable, ...otherParameters });
+    return ${snippets_termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, schema, valueVariable });
   }`,
 );

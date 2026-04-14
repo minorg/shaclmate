@@ -45,6 +45,6 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_SparqlWherePat
       }
     }
 
-    return ${snippets_literalSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets_literalSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   }`,
 );

@@ -7,8 +7,8 @@ export const snippets_SparqlConstructTriplesFunctionParameters =
     `${syntheticNamePrefix}SparqlConstructTriplesFunctionParameters`,
     code`\
 type ${syntheticNamePrefix}SparqlConstructTriplesFunctionParameters<FilterT, SchemaT> = Readonly<{
-  filter?: FilterT;
-  ignoreRdfType?: boolean;
+  filter: FilterT | undefined;
+  ignoreRdfType: boolean;
   schema: SchemaT;
   valueVariable: ${imports.Variable};
   variablePrefix: string;

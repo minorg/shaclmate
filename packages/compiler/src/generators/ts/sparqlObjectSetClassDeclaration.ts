@@ -14,12 +14,12 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): Code {
-  const sparqlWherePatternsFunctionType = code`(parameters?: { filter?: ObjectFilterT; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; }) => readonly ${imports.sparqljs}.Pattern[]`;
+  const sparqlWherePatternsFunctionType = code`(parameters: { filter: ObjectFilterT | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string; }) => readonly ${imports.sparqljs}.Pattern[]`;
 
   const parameters = {
     constructObjectType: code`objectType: {\
-  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>; objectSet: ${syntheticNamePrefix}ObjectSet }) => ${imports.Either}<Error, ObjectT>;
-  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${imports.NamedNode} | ${imports.Variable}; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
+  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }) => ${imports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${imports.NamedNode} | ${imports.Variable}; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
     query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
@@ -64,7 +64,7 @@ ${joinCode(
       return [
         code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
-  return (await this.${methodSignatures.objects.name}({ identifiers: [identifier] })).map(objects => objects[0]);
+  return (await this.${methodSignatures.objects.name}({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages })).map(objects => objects[0]);
 }`,
         code`\
 async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
@@ -184,7 +184,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       const dataset = ${imports.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this })));
+        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
       }
       return objects;
     });
@@ -233,7 +233,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       patterns = patterns.concat(query.where(this.${syntheticNamePrefix}objectVariable));
     }
 
-    patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable }));
+    patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.${syntheticNamePrefix}objectVariable.value }));
 
     patterns = ${snippets.normalizeSparqlWherePatterns}(patterns).concat();
 
