@@ -64,7 +64,7 @@ ${joinCode(
       return [
         code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
-  return (await this.${methodSignatures.objects.name}({ identifiers: [identifier] })).map(objects => objects[0]);
+  return (await this.${methodSignatures.objects.name}({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages })).map(objects => objects[0]);
 }`,
         code`\
 async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {

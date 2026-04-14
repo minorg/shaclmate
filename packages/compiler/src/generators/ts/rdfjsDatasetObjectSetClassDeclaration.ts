@@ -72,12 +72,12 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
             // object
             code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
-  return this.${methodSignatures.object.name}Sync(identifier);
+  return this.${methodSignatures.object.name}Sync(identifier, options);
 }`,
             // objectSync
             code`\
 ${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${imports.Either}<Error, ${objectType.name}> {
-  return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier] }).map(objects => objects[0]);
+  return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages }).map(objects => objects[0]);
 }`,
 
             // objectCount

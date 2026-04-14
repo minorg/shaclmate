@@ -73446,6 +73446,7 @@ export namespace $Object {
 export interface $ObjectSet {
   baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BaseInterfaceWithoutProperties>>;
 
   baseInterfaceWithoutPropertiesCount(
@@ -73476,6 +73477,7 @@ export interface $ObjectSet {
 
   baseInterfaceWithProperties(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BaseInterfaceWithProperties>>;
 
   baseInterfaceWithPropertiesCount(
@@ -73506,6 +73508,7 @@ export interface $ObjectSet {
 
   blankNodeIdentifierClass(
     identifier: BlankNodeIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeIdentifierClass>>;
 
   blankNodeIdentifierClassCount(
@@ -73534,6 +73537,7 @@ export interface $ObjectSet {
 
   blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeIdentifierInterface>>;
 
   blankNodeIdentifierInterfaceCount(
@@ -73564,6 +73568,7 @@ export interface $ObjectSet {
 
   blankNodeOrIriIdentifierClass(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeOrIriIdentifierClass>>;
 
   blankNodeOrIriIdentifierClassCount(
@@ -73594,6 +73599,7 @@ export interface $ObjectSet {
 
   blankNodeOrIriIdentifierInterface(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeOrIriIdentifierInterface>>;
 
   blankNodeOrIriIdentifierInterfaceCount(
@@ -73624,6 +73630,7 @@ export interface $ObjectSet {
 
   classPropertiesClass(
     identifier: ClassPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassPropertiesClass>>;
 
   classPropertiesClassCount(
@@ -73652,6 +73659,7 @@ export interface $ObjectSet {
 
   classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnionMember1>>;
 
   classUnionMember1Count(
@@ -73680,6 +73688,7 @@ export interface $ObjectSet {
 
   classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnionMember2>>;
 
   classUnionMember2Count(
@@ -73708,6 +73717,7 @@ export interface $ObjectSet {
 
   concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteChildClass>>;
 
   concreteChildClassCount(
@@ -73736,6 +73746,7 @@ export interface $ObjectSet {
 
   concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteChildInterface>>;
 
   concreteChildInterfaceCount(
@@ -73764,6 +73775,7 @@ export interface $ObjectSet {
 
   concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteParentClass>>;
 
   concreteParentClassCount(
@@ -73792,6 +73804,7 @@ export interface $ObjectSet {
 
   concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteParentInterface>>;
 
   concreteParentInterfaceCount(
@@ -73822,6 +73835,7 @@ export interface $ObjectSet {
 
   convertibleTypePropertiesClass(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConvertibleTypePropertiesClass>>;
 
   convertibleTypePropertiesClassCount(
@@ -73852,6 +73866,7 @@ export interface $ObjectSet {
 
   dateUnionPropertiesClass(
     identifier: DateUnionPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DateUnionPropertiesClass>>;
 
   dateUnionPropertiesClassCount(
@@ -73880,6 +73895,7 @@ export interface $ObjectSet {
 
   defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DefaultValuePropertiesClass>>;
 
   defaultValuePropertiesClassCount(
@@ -73908,6 +73924,7 @@ export interface $ObjectSet {
 
   directRecursiveClass(
     identifier: DirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DirectRecursiveClass>>;
 
   directRecursiveClassCount(
@@ -73936,6 +73953,7 @@ export interface $ObjectSet {
 
   explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExplicitFromToRdfTypesClass>>;
 
   explicitFromToRdfTypesClassCount(
@@ -73964,6 +73982,7 @@ export interface $ObjectSet {
 
   explicitRdfTypeClass(
     identifier: ExplicitRdfTypeClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExplicitRdfTypeClass>>;
 
   explicitRdfTypeClassCount(
@@ -73992,6 +74011,7 @@ export interface $ObjectSet {
 
   externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExternClassPropertyClass>>;
 
   externClassPropertyClassCount(
@@ -74020,6 +74040,7 @@ export interface $ObjectSet {
 
   flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FlattenClassUnionMember3>>;
 
   flattenClassUnionMember3Count(
@@ -74048,6 +74069,7 @@ export interface $ObjectSet {
 
   hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, HasValuePropertiesClass>>;
 
   hasValuePropertiesClassCount(
@@ -74076,6 +74098,7 @@ export interface $ObjectSet {
 
   identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride3Class>>;
 
   identifierOverride3ClassCount(
@@ -74106,6 +74129,7 @@ export interface $ObjectSet {
 
   identifierOverride4Class(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride4Class>>;
 
   identifierOverride4ClassCount(
@@ -74136,6 +74160,7 @@ export interface $ObjectSet {
 
   identifierOverride5Class(
     identifier: IdentifierOverride5Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride5Class>>;
 
   identifierOverride5ClassCount(
@@ -74164,6 +74189,7 @@ export interface $ObjectSet {
 
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IndirectRecursiveClass>>;
 
   indirectRecursiveClassCount(
@@ -74192,6 +74218,7 @@ export interface $ObjectSet {
 
   indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IndirectRecursiveHelperClass>>;
 
   indirectRecursiveHelperClassCount(
@@ -74222,6 +74249,7 @@ export interface $ObjectSet {
 
   inIdentifierClass(
     identifier: InIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InIdentifierClass>>;
 
   inIdentifierClassCount(
@@ -74250,6 +74278,7 @@ export interface $ObjectSet {
 
   inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InPropertiesClass>>;
 
   inPropertiesClassCount(
@@ -74278,6 +74307,7 @@ export interface $ObjectSet {
 
   interface(
     identifier: Interface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Interface>>;
 
   interfaceCount(
@@ -74297,6 +74327,7 @@ export interface $ObjectSet {
 
   interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnionMember1>>;
 
   interfaceUnionMember1Count(
@@ -74325,6 +74356,7 @@ export interface $ObjectSet {
 
   interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnionMember2>>;
 
   interfaceUnionMember2Count(
@@ -74353,6 +74385,7 @@ export interface $ObjectSet {
 
   iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IriIdentifierClass>>;
 
   iriIdentifierClassCount(
@@ -74381,6 +74414,7 @@ export interface $ObjectSet {
 
   iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IriIdentifierInterface>>;
 
   iriIdentifierInterfaceCount(
@@ -74409,6 +74443,7 @@ export interface $ObjectSet {
 
   jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, JsPrimitiveUnionPropertyClass>>;
 
   jsPrimitiveUnionPropertyClassCount(
@@ -74439,6 +74474,7 @@ export interface $ObjectSet {
 
   languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LanguageInPropertiesClass>>;
 
   languageInPropertiesClassCount(
@@ -74467,6 +74503,7 @@ export interface $ObjectSet {
 
   lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>>;
 
   lazilyResolvedBlankNodeOrIriIdentifierClassCount(
@@ -74502,6 +74539,7 @@ export interface $ObjectSet {
 
   lazilyResolvedBlankNodeOrIriIdentifierInterface(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>>;
 
   lazilyResolvedBlankNodeOrIriIdentifierInterfaceCount(
@@ -74537,6 +74575,7 @@ export interface $ObjectSet {
 
   lazilyResolvedClassUnionMember1(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnionMember1>>;
 
   lazilyResolvedClassUnionMember1Count(
@@ -74567,6 +74606,7 @@ export interface $ObjectSet {
 
   lazilyResolvedClassUnionMember2(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnionMember2>>;
 
   lazilyResolvedClassUnionMember2Count(
@@ -74597,6 +74637,7 @@ export interface $ObjectSet {
 
   lazilyResolvedInterfaceUnionMember1(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember1>>;
 
   lazilyResolvedInterfaceUnionMember1Count(
@@ -74627,6 +74668,7 @@ export interface $ObjectSet {
 
   lazilyResolvedInterfaceUnionMember2(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember2>>;
 
   lazilyResolvedInterfaceUnionMember2Count(
@@ -74657,6 +74699,7 @@ export interface $ObjectSet {
 
   lazilyResolvedIriIdentifierClass(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedIriIdentifierClass>>;
 
   lazilyResolvedIriIdentifierClassCount(
@@ -74687,6 +74730,7 @@ export interface $ObjectSet {
 
   lazilyResolvedIriIdentifierInterface(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedIriIdentifierInterface>>;
 
   lazilyResolvedIriIdentifierInterfaceCount(
@@ -74717,6 +74761,7 @@ export interface $ObjectSet {
 
   lazyPropertiesClass(
     identifier: LazyPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazyPropertiesClass>>;
 
   lazyPropertiesClassCount(
@@ -74745,6 +74790,7 @@ export interface $ObjectSet {
 
   lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazyPropertiesInterface>>;
 
   lazyPropertiesInterfaceCount(
@@ -74773,6 +74819,7 @@ export interface $ObjectSet {
 
   listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ListPropertiesClass>>;
 
   listPropertiesClassCount(
@@ -74801,6 +74848,7 @@ export interface $ObjectSet {
 
   mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, MutablePropertiesClass>>;
 
   mutablePropertiesClassCount(
@@ -74829,6 +74877,7 @@ export interface $ObjectSet {
 
   newName1Class(
     identifier: NewName1Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NewName1Class>>;
 
   newName1ClassCount(
@@ -74848,6 +74897,7 @@ export interface $ObjectSet {
 
   newName2Class(
     identifier: NewName2Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NewName2Class>>;
 
   newName2ClassCount(
@@ -74867,6 +74917,7 @@ export interface $ObjectSet {
 
   nodeKindsClass(
     identifier: NodeKindsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NodeKindsClass>>;
 
   nodeKindsClassCount(
@@ -74890,7 +74941,10 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly NodeKindsClass[]>>;
 
-  nonClass(identifier: NonClass.$Identifier): Promise<Either<Error, NonClass>>;
+  nonClass(
+    identifier: NonClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NonClass>>;
 
   nonClassCount(
     query?: Pick<
@@ -74909,6 +74963,7 @@ export interface $ObjectSet {
 
   noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnionMember1>>;
 
   noRdfTypeClassUnionMember1Count(
@@ -74937,6 +74992,7 @@ export interface $ObjectSet {
 
   noRdfTypeClassUnionMember2(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnionMember2>>;
 
   noRdfTypeClassUnionMember2Count(
@@ -74965,6 +75021,7 @@ export interface $ObjectSet {
 
   numericPropertiesClass(
     identifier: NumericPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NumericPropertiesClass>>;
 
   numericPropertiesClassCount(
@@ -74993,6 +75050,7 @@ export interface $ObjectSet {
 
   orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, OrderedPropertiesClass>>;
 
   orderedPropertiesClassCount(
@@ -75021,6 +75079,7 @@ export interface $ObjectSet {
 
   partialClass(
     identifier: PartialClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClass>>;
 
   partialClassCount(
@@ -75040,6 +75099,7 @@ export interface $ObjectSet {
 
   partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnionMember1>>;
 
   partialClassUnionMember1Count(
@@ -75068,6 +75128,7 @@ export interface $ObjectSet {
 
   partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnionMember2>>;
 
   partialClassUnionMember2Count(
@@ -75096,6 +75157,7 @@ export interface $ObjectSet {
 
   partialInterface(
     identifier: PartialInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterface>>;
 
   partialInterfaceCount(
@@ -75121,6 +75183,7 @@ export interface $ObjectSet {
 
   partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnionMember1>>;
 
   partialInterfaceUnionMember1Count(
@@ -75151,6 +75214,7 @@ export interface $ObjectSet {
 
   partialInterfaceUnionMember2(
     identifier: PartialInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnionMember2>>;
 
   partialInterfaceUnionMember2Count(
@@ -75181,6 +75245,7 @@ export interface $ObjectSet {
 
   propertyCardinalitiesClass(
     identifier: PropertyCardinalitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyCardinalitiesClass>>;
 
   propertyCardinalitiesClassCount(
@@ -75209,6 +75274,7 @@ export interface $ObjectSet {
 
   propertyNamesClass(
     identifier: PropertyNamesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyNamesClass>>;
 
   propertyNamesClassCount(
@@ -75237,6 +75303,7 @@ export interface $ObjectSet {
 
   propertyPathsClass(
     identifier: PropertyPathsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyPathsClass>>;
 
   propertyPathsClassCount(
@@ -75265,6 +75332,7 @@ export interface $ObjectSet {
 
   propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyVisibilitiesClass>>;
 
   propertyVisibilitiesClassCount(
@@ -75293,6 +75361,7 @@ export interface $ObjectSet {
 
   recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnionMember1>>;
 
   recursiveClassUnionMember1Count(
@@ -75321,6 +75390,7 @@ export interface $ObjectSet {
 
   recursiveClassUnionMember2(
     identifier: RecursiveClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnionMember2>>;
 
   recursiveClassUnionMember2Count(
@@ -75349,6 +75419,7 @@ export interface $ObjectSet {
 
   sha256IriIdentifierClass(
     identifier: Sha256IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Sha256IriIdentifierClass>>;
 
   sha256IriIdentifierClassCount(
@@ -75377,6 +75448,7 @@ export interface $ObjectSet {
 
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, TermPropertiesClass>>;
 
   termPropertiesClassCount(
@@ -75405,6 +75477,7 @@ export interface $ObjectSet {
 
   unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionDiscriminantsClass>>;
 
   unionDiscriminantsClassCount(
@@ -75433,6 +75506,7 @@ export interface $ObjectSet {
 
   uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UuidV4IriIdentifierClass>>;
 
   uuidV4IriIdentifierClassCount(
@@ -75461,6 +75535,7 @@ export interface $ObjectSet {
 
   uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UuidV4IriIdentifierInterface>>;
 
   uuidV4IriIdentifierInterfaceCount(
@@ -75491,6 +75566,7 @@ export interface $ObjectSet {
 
   classUnion(
     identifier: ClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnion>>;
 
   classUnionCount(
@@ -75510,6 +75586,7 @@ export interface $ObjectSet {
 
   flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FlattenClassUnion>>;
 
   flattenClassUnionCount(
@@ -75538,6 +75615,7 @@ export interface $ObjectSet {
 
   interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnion>>;
 
   interfaceUnionCount(
@@ -75563,6 +75641,7 @@ export interface $ObjectSet {
 
   lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnion>>;
 
   lazilyResolvedClassUnionCount(
@@ -75591,6 +75670,7 @@ export interface $ObjectSet {
 
   lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnion>>;
 
   lazilyResolvedInterfaceUnionCount(
@@ -75621,6 +75701,7 @@ export interface $ObjectSet {
 
   noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnion>>;
 
   noRdfTypeClassUnionCount(
@@ -75649,6 +75730,7 @@ export interface $ObjectSet {
 
   partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnion>>;
 
   partialClassUnionCount(
@@ -75677,6 +75759,7 @@ export interface $ObjectSet {
 
   partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnion>>;
 
   partialInterfaceUnionCount(
@@ -75705,6 +75788,7 @@ export interface $ObjectSet {
 
   recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnion>>;
 
   recursiveClassUnionCount(
@@ -75731,7 +75815,10 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly RecursiveClassUnion[]>>;
 
-  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+  object(
+    identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, $Object>>;
 
   objectCount(
     query?: Pick<
@@ -75787,15 +75874,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BaseInterfaceWithoutProperties>> {
-    return this.baseInterfaceWithoutPropertiesSync(identifier);
+    return this.baseInterfaceWithoutPropertiesSync(identifier, options);
   }
 
   baseInterfaceWithoutPropertiesSync(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, BaseInterfaceWithoutProperties> {
     return this.baseInterfaceWithoutPropertiesesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -75885,15 +75975,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async baseInterfaceWithProperties(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BaseInterfaceWithProperties>> {
-    return this.baseInterfaceWithPropertiesSync(identifier);
+    return this.baseInterfaceWithPropertiesSync(identifier, options);
   }
 
   baseInterfaceWithPropertiesSync(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, BaseInterfaceWithProperties> {
     return this.baseInterfaceWithPropertiesesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -75981,15 +76074,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierClass(
     identifier: BlankNodeIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeIdentifierClass>> {
-    return this.blankNodeIdentifierClassSync(identifier);
+    return this.blankNodeIdentifierClassSync(identifier, options);
   }
 
   blankNodeIdentifierClassSync(
     identifier: BlankNodeIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, BlankNodeIdentifierClass> {
     return this.blankNodeIdentifierClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -76070,15 +76166,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeIdentifierInterface>> {
-    return this.blankNodeIdentifierInterfaceSync(identifier);
+    return this.blankNodeIdentifierInterfaceSync(identifier, options);
   }
 
   blankNodeIdentifierInterfaceSync(
     identifier: BlankNodeIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, BlankNodeIdentifierInterface> {
     return this.blankNodeIdentifierInterfacesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -76161,15 +76260,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierClass(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeOrIriIdentifierClass>> {
-    return this.blankNodeOrIriIdentifierClassSync(identifier);
+    return this.blankNodeOrIriIdentifierClassSync(identifier, options);
   }
 
   blankNodeOrIriIdentifierClassSync(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, BlankNodeOrIriIdentifierClass> {
     return this.blankNodeOrIriIdentifierClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -76252,15 +76354,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierInterface(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeOrIriIdentifierInterface>> {
-    return this.blankNodeOrIriIdentifierInterfaceSync(identifier);
+    return this.blankNodeOrIriIdentifierInterfaceSync(identifier, options);
   }
 
   blankNodeOrIriIdentifierInterfaceSync(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, BlankNodeOrIriIdentifierInterface> {
     return this.blankNodeOrIriIdentifierInterfacesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -76343,16 +76448,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async classPropertiesClass(
     identifier: ClassPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassPropertiesClass>> {
-    return this.classPropertiesClassSync(identifier);
+    return this.classPropertiesClassSync(identifier, options);
   }
 
   classPropertiesClassSync(
     identifier: ClassPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ClassPropertiesClass> {
-    return this.classPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.classPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async classPropertiesClassCount(
@@ -76432,16 +76540,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnionMember1>> {
-    return this.classUnionMember1Sync(identifier);
+    return this.classUnionMember1Sync(identifier, options);
   }
 
   classUnionMember1Sync(
     identifier: ClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ClassUnionMember1> {
-    return this.classUnionMember1sSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.classUnionMember1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async classUnionMember1Count(
@@ -76519,16 +76630,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnionMember2>> {
-    return this.classUnionMember2Sync(identifier);
+    return this.classUnionMember2Sync(identifier, options);
   }
 
   classUnionMember2Sync(
     identifier: ClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ClassUnionMember2> {
-    return this.classUnionMember2sSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.classUnionMember2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async classUnionMember2Count(
@@ -76606,16 +76720,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteChildClass>> {
-    return this.concreteChildClassSync(identifier);
+    return this.concreteChildClassSync(identifier, options);
   }
 
   concreteChildClassSync(
     identifier: ConcreteChildClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ConcreteChildClass> {
-    return this.concreteChildClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.concreteChildClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async concreteChildClassCount(
@@ -76695,16 +76812,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteChildInterface>> {
-    return this.concreteChildInterfaceSync(identifier);
+    return this.concreteChildInterfaceSync(identifier, options);
   }
 
   concreteChildInterfaceSync(
     identifier: ConcreteChildInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ConcreteChildInterface> {
-    return this.concreteChildInterfacesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.concreteChildInterfacesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async concreteChildInterfaceCount(
@@ -76784,16 +76904,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteParentClass>> {
-    return this.concreteParentClassSync(identifier);
+    return this.concreteParentClassSync(identifier, options);
   }
 
   concreteParentClassSync(
     identifier: ConcreteParentClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ConcreteParentClass> {
-    return this.concreteParentClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.concreteParentClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async concreteParentClassCount(
@@ -76876,16 +76999,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteParentInterface>> {
-    return this.concreteParentInterfaceSync(identifier);
+    return this.concreteParentInterfaceSync(identifier, options);
   }
 
   concreteParentInterfaceSync(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ConcreteParentInterface> {
-    return this.concreteParentInterfacesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.concreteParentInterfacesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async concreteParentInterfaceCount(
@@ -76970,15 +77096,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async convertibleTypePropertiesClass(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConvertibleTypePropertiesClass>> {
-    return this.convertibleTypePropertiesClassSync(identifier);
+    return this.convertibleTypePropertiesClassSync(identifier, options);
   }
 
   convertibleTypePropertiesClassSync(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ConvertibleTypePropertiesClass> {
     return this.convertibleTypePropertiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77061,15 +77190,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async dateUnionPropertiesClass(
     identifier: DateUnionPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DateUnionPropertiesClass>> {
-    return this.dateUnionPropertiesClassSync(identifier);
+    return this.dateUnionPropertiesClassSync(identifier, options);
   }
 
   dateUnionPropertiesClassSync(
     identifier: DateUnionPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, DateUnionPropertiesClass> {
     return this.dateUnionPropertiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77150,15 +77282,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DefaultValuePropertiesClass>> {
-    return this.defaultValuePropertiesClassSync(identifier);
+    return this.defaultValuePropertiesClassSync(identifier, options);
   }
 
   defaultValuePropertiesClassSync(
     identifier: DefaultValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, DefaultValuePropertiesClass> {
     return this.defaultValuePropertiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77241,16 +77376,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async directRecursiveClass(
     identifier: DirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DirectRecursiveClass>> {
-    return this.directRecursiveClassSync(identifier);
+    return this.directRecursiveClassSync(identifier, options);
   }
 
   directRecursiveClassSync(
     identifier: DirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, DirectRecursiveClass> {
-    return this.directRecursiveClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.directRecursiveClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async directRecursiveClassCount(
@@ -77330,15 +77468,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExplicitFromToRdfTypesClass>> {
-    return this.explicitFromToRdfTypesClassSync(identifier);
+    return this.explicitFromToRdfTypesClassSync(identifier, options);
   }
 
   explicitFromToRdfTypesClassSync(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ExplicitFromToRdfTypesClass> {
     return this.explicitFromToRdfTypesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77421,16 +77562,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async explicitRdfTypeClass(
     identifier: ExplicitRdfTypeClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExplicitRdfTypeClass>> {
-    return this.explicitRdfTypeClassSync(identifier);
+    return this.explicitRdfTypeClassSync(identifier, options);
   }
 
   explicitRdfTypeClassSync(
     identifier: ExplicitRdfTypeClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ExplicitRdfTypeClass> {
-    return this.explicitRdfTypeClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.explicitRdfTypeClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async explicitRdfTypeClassCount(
@@ -77510,15 +77654,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExternClassPropertyClass>> {
-    return this.externClassPropertyClassSync(identifier);
+    return this.externClassPropertyClassSync(identifier, options);
   }
 
   externClassPropertyClassSync(
     identifier: ExternClassPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ExternClassPropertyClass> {
     return this.externClassPropertyClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77599,15 +77746,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FlattenClassUnionMember3>> {
-    return this.flattenClassUnionMember3Sync(identifier);
+    return this.flattenClassUnionMember3Sync(identifier, options);
   }
 
   flattenClassUnionMember3Sync(
     identifier: FlattenClassUnionMember3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, FlattenClassUnionMember3> {
     return this.flattenClassUnionMember3sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77688,15 +77838,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, HasValuePropertiesClass>> {
-    return this.hasValuePropertiesClassSync(identifier);
+    return this.hasValuePropertiesClassSync(identifier, options);
   }
 
   hasValuePropertiesClassSync(
     identifier: HasValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, HasValuePropertiesClass> {
     return this.hasValuePropertiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77777,15 +77930,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride3Class>> {
-    return this.identifierOverride3ClassSync(identifier);
+    return this.identifierOverride3ClassSync(identifier, options);
   }
 
   identifierOverride3ClassSync(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IdentifierOverride3Class> {
     return this.identifierOverride3ClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77872,15 +78028,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride4Class(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride4Class>> {
-    return this.identifierOverride4ClassSync(identifier);
+    return this.identifierOverride4ClassSync(identifier, options);
   }
 
   identifierOverride4ClassSync(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IdentifierOverride4Class> {
     return this.identifierOverride4ClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -77966,15 +78125,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride5Class(
     identifier: IdentifierOverride5Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride5Class>> {
-    return this.identifierOverride5ClassSync(identifier);
+    return this.identifierOverride5ClassSync(identifier, options);
   }
 
   identifierOverride5ClassSync(
     identifier: IdentifierOverride5Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IdentifierOverride5Class> {
     return this.identifierOverride5ClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -78055,16 +78217,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IndirectRecursiveClass>> {
-    return this.indirectRecursiveClassSync(identifier);
+    return this.indirectRecursiveClassSync(identifier, options);
   }
 
   indirectRecursiveClassSync(
     identifier: IndirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IndirectRecursiveClass> {
-    return this.indirectRecursiveClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.indirectRecursiveClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async indirectRecursiveClassCount(
@@ -78144,15 +78309,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IndirectRecursiveHelperClass>> {
-    return this.indirectRecursiveHelperClassSync(identifier);
+    return this.indirectRecursiveHelperClassSync(identifier, options);
   }
 
   indirectRecursiveHelperClassSync(
     identifier: IndirectRecursiveHelperClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IndirectRecursiveHelperClass> {
     return this.indirectRecursiveHelperClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -78235,16 +78403,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async inIdentifierClass(
     identifier: InIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InIdentifierClass>> {
-    return this.inIdentifierClassSync(identifier);
+    return this.inIdentifierClassSync(identifier, options);
   }
 
   inIdentifierClassSync(
     identifier: InIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, InIdentifierClass> {
-    return this.inIdentifierClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.inIdentifierClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async inIdentifierClassCount(
@@ -78322,16 +78493,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InPropertiesClass>> {
-    return this.inPropertiesClassSync(identifier);
+    return this.inPropertiesClassSync(identifier, options);
   }
 
   inPropertiesClassSync(
     identifier: InPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, InPropertiesClass> {
-    return this.inPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.inPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async inPropertiesClassCount(
@@ -78409,14 +78583,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async interface(
     identifier: Interface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Interface>> {
-    return this.interfaceSync(identifier);
+    return this.interfaceSync(identifier, options);
   }
 
-  interfaceSync(identifier: Interface.$Identifier): Either<Error, Interface> {
-    return this.interfacesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  interfaceSync(
+    identifier: Interface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, Interface> {
+    return this.interfacesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async interfaceCount(
@@ -78476,16 +78655,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnionMember1>> {
-    return this.interfaceUnionMember1Sync(identifier);
+    return this.interfaceUnionMember1Sync(identifier, options);
   }
 
   interfaceUnionMember1Sync(
     identifier: InterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, InterfaceUnionMember1> {
-    return this.interfaceUnionMember1sSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.interfaceUnionMember1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember1Count(
@@ -78565,16 +78747,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnionMember2>> {
-    return this.interfaceUnionMember2Sync(identifier);
+    return this.interfaceUnionMember2Sync(identifier, options);
   }
 
   interfaceUnionMember2Sync(
     identifier: InterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, InterfaceUnionMember2> {
-    return this.interfaceUnionMember2sSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.interfaceUnionMember2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember2Count(
@@ -78654,16 +78839,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IriIdentifierClass>> {
-    return this.iriIdentifierClassSync(identifier);
+    return this.iriIdentifierClassSync(identifier, options);
   }
 
   iriIdentifierClassSync(
     identifier: IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IriIdentifierClass> {
-    return this.iriIdentifierClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.iriIdentifierClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async iriIdentifierClassCount(
@@ -78743,16 +78931,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IriIdentifierInterface>> {
-    return this.iriIdentifierInterfaceSync(identifier);
+    return this.iriIdentifierInterfaceSync(identifier, options);
   }
 
   iriIdentifierInterfaceSync(
     identifier: IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IriIdentifierInterface> {
-    return this.iriIdentifierInterfacesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.iriIdentifierInterfacesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async iriIdentifierInterfaceCount(
@@ -78832,15 +79023,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, JsPrimitiveUnionPropertyClass>> {
-    return this.jsPrimitiveUnionPropertyClassSync(identifier);
+    return this.jsPrimitiveUnionPropertyClassSync(identifier, options);
   }
 
   jsPrimitiveUnionPropertyClassSync(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, JsPrimitiveUnionPropertyClass> {
     return this.jsPrimitiveUnionPropertyClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -78923,15 +79117,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LanguageInPropertiesClass>> {
-    return this.languageInPropertiesClassSync(identifier);
+    return this.languageInPropertiesClassSync(identifier, options);
   }
 
   languageInPropertiesClassSync(
     identifier: LanguageInPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LanguageInPropertiesClass> {
     return this.languageInPropertiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79012,15 +79209,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>> {
-    return this.lazilyResolvedBlankNodeOrIriIdentifierClassSync(identifier);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassSync(
+      identifier,
+      options,
+    );
   }
 
   lazilyResolvedBlankNodeOrIriIdentifierClassSync(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79115,15 +79318,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterface(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>> {
-    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(identifier);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(
+      identifier,
+      options,
+    );
   }
 
   lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79218,15 +79427,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember1(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnionMember1>> {
-    return this.lazilyResolvedClassUnionMember1Sync(identifier);
+    return this.lazilyResolvedClassUnionMember1Sync(identifier, options);
   }
 
   lazilyResolvedClassUnionMember1Sync(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedClassUnionMember1> {
     return this.lazilyResolvedClassUnionMember1sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79309,15 +79521,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember2(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnionMember2>> {
-    return this.lazilyResolvedClassUnionMember2Sync(identifier);
+    return this.lazilyResolvedClassUnionMember2Sync(identifier, options);
   }
 
   lazilyResolvedClassUnionMember2Sync(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedClassUnionMember2> {
     return this.lazilyResolvedClassUnionMember2sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79400,15 +79615,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember1(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember1>> {
-    return this.lazilyResolvedInterfaceUnionMember1Sync(identifier);
+    return this.lazilyResolvedInterfaceUnionMember1Sync(identifier, options);
   }
 
   lazilyResolvedInterfaceUnionMember1Sync(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
     return this.lazilyResolvedInterfaceUnionMember1sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79491,15 +79709,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember2(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember2>> {
-    return this.lazilyResolvedInterfaceUnionMember2Sync(identifier);
+    return this.lazilyResolvedInterfaceUnionMember2Sync(identifier, options);
   }
 
   lazilyResolvedInterfaceUnionMember2Sync(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
     return this.lazilyResolvedInterfaceUnionMember2sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79582,15 +79803,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierClass(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedIriIdentifierClass>> {
-    return this.lazilyResolvedIriIdentifierClassSync(identifier);
+    return this.lazilyResolvedIriIdentifierClassSync(identifier, options);
   }
 
   lazilyResolvedIriIdentifierClassSync(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedIriIdentifierClass> {
     return this.lazilyResolvedIriIdentifierClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79673,15 +79897,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierInterface(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedIriIdentifierInterface>> {
-    return this.lazilyResolvedIriIdentifierInterfaceSync(identifier);
+    return this.lazilyResolvedIriIdentifierInterfaceSync(identifier, options);
   }
 
   lazilyResolvedIriIdentifierInterfaceSync(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedIriIdentifierInterface> {
     return this.lazilyResolvedIriIdentifierInterfacesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -79767,16 +79994,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazyPropertiesClass(
     identifier: LazyPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazyPropertiesClass>> {
-    return this.lazyPropertiesClassSync(identifier);
+    return this.lazyPropertiesClassSync(identifier, options);
   }
 
   lazyPropertiesClassSync(
     identifier: LazyPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazyPropertiesClass> {
-    return this.lazyPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.lazyPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async lazyPropertiesClassCount(
@@ -79856,16 +80086,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazyPropertiesInterface>> {
-    return this.lazyPropertiesInterfaceSync(identifier);
+    return this.lazyPropertiesInterfaceSync(identifier, options);
   }
 
   lazyPropertiesInterfaceSync(
     identifier: LazyPropertiesInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazyPropertiesInterface> {
-    return this.lazyPropertiesInterfacesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.lazyPropertiesInterfacesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async lazyPropertiesInterfaceCount(
@@ -79945,16 +80178,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ListPropertiesClass>> {
-    return this.listPropertiesClassSync(identifier);
+    return this.listPropertiesClassSync(identifier, options);
   }
 
   listPropertiesClassSync(
     identifier: ListPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ListPropertiesClass> {
-    return this.listPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.listPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async listPropertiesClassCount(
@@ -80034,16 +80270,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, MutablePropertiesClass>> {
-    return this.mutablePropertiesClassSync(identifier);
+    return this.mutablePropertiesClassSync(identifier, options);
   }
 
   mutablePropertiesClassSync(
     identifier: MutablePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, MutablePropertiesClass> {
-    return this.mutablePropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.mutablePropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async mutablePropertiesClassCount(
@@ -80123,16 +80362,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async newName1Class(
     identifier: NewName1Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NewName1Class>> {
-    return this.newName1ClassSync(identifier);
+    return this.newName1ClassSync(identifier, options);
   }
 
   newName1ClassSync(
     identifier: NewName1Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NewName1Class> {
-    return this.newName1ClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.newName1ClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async newName1ClassCount(
@@ -80192,16 +80434,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async newName2Class(
     identifier: NewName2Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NewName2Class>> {
-    return this.newName2ClassSync(identifier);
+    return this.newName2ClassSync(identifier, options);
   }
 
   newName2ClassSync(
     identifier: NewName2Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NewName2Class> {
-    return this.newName2ClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.newName2ClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async newName2ClassCount(
@@ -80261,16 +80506,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async nodeKindsClass(
     identifier: NodeKindsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NodeKindsClass>> {
-    return this.nodeKindsClassSync(identifier);
+    return this.nodeKindsClassSync(identifier, options);
   }
 
   nodeKindsClassSync(
     identifier: NodeKindsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NodeKindsClass> {
-    return this.nodeKindsClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.nodeKindsClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async nodeKindsClassCount(
@@ -80342,14 +80590,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async nonClass(
     identifier: NonClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NonClass>> {
-    return this.nonClassSync(identifier);
+    return this.nonClassSync(identifier, options);
   }
 
-  nonClassSync(identifier: NonClass.$Identifier): Either<Error, NonClass> {
-    return this.nonClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  nonClassSync(
+    identifier: NonClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, NonClass> {
+    return this.nonClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async nonClassCount(
@@ -80405,15 +80658,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnionMember1>> {
-    return this.noRdfTypeClassUnionMember1Sync(identifier);
+    return this.noRdfTypeClassUnionMember1Sync(identifier, options);
   }
 
   noRdfTypeClassUnionMember1Sync(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NoRdfTypeClassUnionMember1> {
     return this.noRdfTypeClassUnionMember1sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -80494,15 +80750,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember2(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnionMember2>> {
-    return this.noRdfTypeClassUnionMember2Sync(identifier);
+    return this.noRdfTypeClassUnionMember2Sync(identifier, options);
   }
 
   noRdfTypeClassUnionMember2Sync(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NoRdfTypeClassUnionMember2> {
     return this.noRdfTypeClassUnionMember2sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -80583,16 +80842,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async numericPropertiesClass(
     identifier: NumericPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NumericPropertiesClass>> {
-    return this.numericPropertiesClassSync(identifier);
+    return this.numericPropertiesClassSync(identifier, options);
   }
 
   numericPropertiesClassSync(
     identifier: NumericPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NumericPropertiesClass> {
-    return this.numericPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.numericPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async numericPropertiesClassCount(
@@ -80672,16 +80934,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, OrderedPropertiesClass>> {
-    return this.orderedPropertiesClassSync(identifier);
+    return this.orderedPropertiesClassSync(identifier, options);
   }
 
   orderedPropertiesClassSync(
     identifier: OrderedPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, OrderedPropertiesClass> {
-    return this.orderedPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.orderedPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async orderedPropertiesClassCount(
@@ -80761,16 +81026,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialClass(
     identifier: PartialClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClass>> {
-    return this.partialClassSync(identifier);
+    return this.partialClassSync(identifier, options);
   }
 
   partialClassSync(
     identifier: PartialClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialClass> {
-    return this.partialClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.partialClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async partialClassCount(
@@ -80830,15 +81098,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnionMember1>> {
-    return this.partialClassUnionMember1Sync(identifier);
+    return this.partialClassUnionMember1Sync(identifier, options);
   }
 
   partialClassUnionMember1Sync(
     identifier: PartialClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialClassUnionMember1> {
     return this.partialClassUnionMember1sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -80919,15 +81190,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnionMember2>> {
-    return this.partialClassUnionMember2Sync(identifier);
+    return this.partialClassUnionMember2Sync(identifier, options);
   }
 
   partialClassUnionMember2Sync(
     identifier: PartialClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialClassUnionMember2> {
     return this.partialClassUnionMember2sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81008,16 +81282,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialInterface(
     identifier: PartialInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterface>> {
-    return this.partialInterfaceSync(identifier);
+    return this.partialInterfaceSync(identifier, options);
   }
 
   partialInterfaceSync(
     identifier: PartialInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialInterface> {
-    return this.partialInterfacesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.partialInterfacesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async partialInterfaceCount(
@@ -81089,15 +81366,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnionMember1>> {
-    return this.partialInterfaceUnionMember1Sync(identifier);
+    return this.partialInterfaceUnionMember1Sync(identifier, options);
   }
 
   partialInterfaceUnionMember1Sync(
     identifier: PartialInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialInterfaceUnionMember1> {
     return this.partialInterfaceUnionMember1sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81180,15 +81460,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember2(
     identifier: PartialInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnionMember2>> {
-    return this.partialInterfaceUnionMember2Sync(identifier);
+    return this.partialInterfaceUnionMember2Sync(identifier, options);
   }
 
   partialInterfaceUnionMember2Sync(
     identifier: PartialInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialInterfaceUnionMember2> {
     return this.partialInterfaceUnionMember2sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81271,15 +81554,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async propertyCardinalitiesClass(
     identifier: PropertyCardinalitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyCardinalitiesClass>> {
-    return this.propertyCardinalitiesClassSync(identifier);
+    return this.propertyCardinalitiesClassSync(identifier, options);
   }
 
   propertyCardinalitiesClassSync(
     identifier: PropertyCardinalitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PropertyCardinalitiesClass> {
     return this.propertyCardinalitiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81360,16 +81646,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async propertyNamesClass(
     identifier: PropertyNamesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyNamesClass>> {
-    return this.propertyNamesClassSync(identifier);
+    return this.propertyNamesClassSync(identifier, options);
   }
 
   propertyNamesClassSync(
     identifier: PropertyNamesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PropertyNamesClass> {
-    return this.propertyNamesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.propertyNamesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async propertyNamesClassCount(
@@ -81449,16 +81738,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async propertyPathsClass(
     identifier: PropertyPathsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyPathsClass>> {
-    return this.propertyPathsClassSync(identifier);
+    return this.propertyPathsClassSync(identifier, options);
   }
 
   propertyPathsClassSync(
     identifier: PropertyPathsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PropertyPathsClass> {
-    return this.propertyPathsClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.propertyPathsClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async propertyPathsClassCount(
@@ -81538,15 +81830,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyVisibilitiesClass>> {
-    return this.propertyVisibilitiesClassSync(identifier);
+    return this.propertyVisibilitiesClassSync(identifier, options);
   }
 
   propertyVisibilitiesClassSync(
     identifier: PropertyVisibilitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PropertyVisibilitiesClass> {
     return this.propertyVisibilitiesClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81627,15 +81922,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnionMember1>> {
-    return this.recursiveClassUnionMember1Sync(identifier);
+    return this.recursiveClassUnionMember1Sync(identifier, options);
   }
 
   recursiveClassUnionMember1Sync(
     identifier: RecursiveClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, RecursiveClassUnionMember1> {
     return this.recursiveClassUnionMember1sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81716,15 +82014,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember2(
     identifier: RecursiveClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnionMember2>> {
-    return this.recursiveClassUnionMember2Sync(identifier);
+    return this.recursiveClassUnionMember2Sync(identifier, options);
   }
 
   recursiveClassUnionMember2Sync(
     identifier: RecursiveClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, RecursiveClassUnionMember2> {
     return this.recursiveClassUnionMember2sSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81805,15 +82106,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async sha256IriIdentifierClass(
     identifier: Sha256IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Sha256IriIdentifierClass>> {
-    return this.sha256IriIdentifierClassSync(identifier);
+    return this.sha256IriIdentifierClassSync(identifier, options);
   }
 
   sha256IriIdentifierClassSync(
     identifier: Sha256IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, Sha256IriIdentifierClass> {
     return this.sha256IriIdentifierClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -81894,16 +82198,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, TermPropertiesClass>> {
-    return this.termPropertiesClassSync(identifier);
+    return this.termPropertiesClassSync(identifier, options);
   }
 
   termPropertiesClassSync(
     identifier: TermPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, TermPropertiesClass> {
-    return this.termPropertiesClassesSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.termPropertiesClassesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async termPropertiesClassCount(
@@ -81983,15 +82290,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionDiscriminantsClass>> {
-    return this.unionDiscriminantsClassSync(identifier);
+    return this.unionDiscriminantsClassSync(identifier, options);
   }
 
   unionDiscriminantsClassSync(
     identifier: UnionDiscriminantsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, UnionDiscriminantsClass> {
     return this.unionDiscriminantsClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -82072,15 +82382,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UuidV4IriIdentifierClass>> {
-    return this.uuidV4IriIdentifierClassSync(identifier);
+    return this.uuidV4IriIdentifierClassSync(identifier, options);
   }
 
   uuidV4IriIdentifierClassSync(
     identifier: UuidV4IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, UuidV4IriIdentifierClass> {
     return this.uuidV4IriIdentifierClassesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -82161,15 +82474,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UuidV4IriIdentifierInterface>> {
-    return this.uuidV4IriIdentifierInterfaceSync(identifier);
+    return this.uuidV4IriIdentifierInterfaceSync(identifier, options);
   }
 
   uuidV4IriIdentifierInterfaceSync(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, UuidV4IriIdentifierInterface> {
     return this.uuidV4IriIdentifierInterfacesSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -82252,16 +82568,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async classUnion(
     identifier: ClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnion>> {
-    return this.classUnionSync(identifier);
+    return this.classUnionSync(identifier, options);
   }
 
   classUnionSync(
     identifier: ClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, ClassUnion> {
-    return this.classUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.classUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async classUnionCount(
@@ -82328,16 +82647,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FlattenClassUnion>> {
-    return this.flattenClassUnionSync(identifier);
+    return this.flattenClassUnionSync(identifier, options);
   }
 
   flattenClassUnionSync(
     identifier: FlattenClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, FlattenClassUnion> {
-    return this.flattenClassUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.flattenClassUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async flattenClassUnionCount(
@@ -82427,16 +82749,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnion>> {
-    return this.interfaceUnionSync(identifier);
+    return this.interfaceUnionSync(identifier, options);
   }
 
   interfaceUnionSync(
     identifier: InterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, InterfaceUnion> {
-    return this.interfaceUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.interfaceUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async interfaceUnionCount(
@@ -82515,15 +82840,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnion>> {
-    return this.lazilyResolvedClassUnionSync(identifier);
+    return this.lazilyResolvedClassUnionSync(identifier, options);
   }
 
   lazilyResolvedClassUnionSync(
     identifier: LazilyResolvedClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedClassUnion> {
     return this.lazilyResolvedClassUnionsSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -82611,15 +82939,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnion>> {
-    return this.lazilyResolvedInterfaceUnionSync(identifier);
+    return this.lazilyResolvedInterfaceUnionSync(identifier, options);
   }
 
   lazilyResolvedInterfaceUnionSync(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, LazilyResolvedInterfaceUnion> {
     return this.lazilyResolvedInterfaceUnionsSync({
       identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
@@ -82709,16 +83040,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnion>> {
-    return this.noRdfTypeClassUnionSync(identifier);
+    return this.noRdfTypeClassUnionSync(identifier, options);
   }
 
   noRdfTypeClassUnionSync(
     identifier: NoRdfTypeClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NoRdfTypeClassUnion> {
-    return this.noRdfTypeClassUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.noRdfTypeClassUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async noRdfTypeClassUnionCount(
@@ -82805,16 +83139,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnion>> {
-    return this.partialClassUnionSync(identifier);
+    return this.partialClassUnionSync(identifier, options);
   }
 
   partialClassUnionSync(
     identifier: PartialClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialClassUnion> {
-    return this.partialClassUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.partialClassUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async partialClassUnionCount(
@@ -82899,16 +83236,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnion>> {
-    return this.partialInterfaceUnionSync(identifier);
+    return this.partialInterfaceUnionSync(identifier, options);
   }
 
   partialInterfaceUnionSync(
     identifier: PartialInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, PartialInterfaceUnion> {
-    return this.partialInterfaceUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.partialInterfaceUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async partialInterfaceUnionCount(
@@ -82995,16 +83335,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnion>> {
-    return this.recursiveClassUnionSync(identifier);
+    return this.recursiveClassUnionSync(identifier, options);
   }
 
   recursiveClassUnionSync(
     identifier: RecursiveClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, RecursiveClassUnion> {
-    return this.recursiveClassUnionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.recursiveClassUnionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async recursiveClassUnionCount(
@@ -83091,14 +83434,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async object(
     identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>> {
-    return this.objectSync(identifier);
+    return this.objectSync(identifier, options);
   }
 
-  objectSync(identifier: $Object.$Identifier): Either<Error, $Object> {
-    return this.objectsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  objectSync(
+    identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, $Object> {
+    return this.objectsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async objectCount(
@@ -83849,9 +84197,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BaseInterfaceWithoutProperties>> {
     return (
-      await this.baseInterfaceWithoutPropertieses({ identifiers: [identifier] })
+      await this.baseInterfaceWithoutPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -83899,9 +84251,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async baseInterfaceWithProperties(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BaseInterfaceWithProperties>> {
     return (
-      await this.baseInterfaceWithPropertieses({ identifiers: [identifier] })
+      await this.baseInterfaceWithPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -83949,9 +84305,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierClass(
     identifier: BlankNodeIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeIdentifierClass>> {
     return (
-      await this.blankNodeIdentifierClasses({ identifiers: [identifier] })
+      await this.blankNodeIdentifierClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -83997,9 +84357,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeIdentifierInterface>> {
     return (
-      await this.blankNodeIdentifierInterfaces({ identifiers: [identifier] })
+      await this.blankNodeIdentifierInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84047,9 +84411,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierClass(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeOrIriIdentifierClass>> {
     return (
-      await this.blankNodeOrIriIdentifierClasses({ identifiers: [identifier] })
+      await this.blankNodeOrIriIdentifierClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84097,10 +84465,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierInterface(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, BlankNodeOrIriIdentifierInterface>> {
     return (
       await this.blankNodeOrIriIdentifierInterfaces({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -84149,9 +84519,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async classPropertiesClass(
     identifier: ClassPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassPropertiesClass>> {
     return (
-      await this.classPropertiesClasses({ identifiers: [identifier] })
+      await this.classPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84197,10 +84571,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnionMember1>> {
-    return (await this.classUnionMember1s({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.classUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async classUnionMember1Count(
@@ -84245,10 +84623,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnionMember2>> {
-    return (await this.classUnionMember2s({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.classUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async classUnionMember2Count(
@@ -84293,10 +84675,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteChildClass>> {
-    return (await this.concreteChildClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.concreteChildClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async concreteChildClassCount(
@@ -84341,9 +84727,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteChildInterface>> {
     return (
-      await this.concreteChildInterfaces({ identifiers: [identifier] })
+      await this.concreteChildInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84389,9 +84779,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteParentClass>> {
     return (
-      await this.concreteParentClasses({ identifiers: [identifier] })
+      await this.concreteParentClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84437,9 +84831,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConcreteParentInterface>> {
     return (
-      await this.concreteParentInterfaces({ identifiers: [identifier] })
+      await this.concreteParentInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84487,9 +84885,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async convertibleTypePropertiesClass(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ConvertibleTypePropertiesClass>> {
     return (
-      await this.convertibleTypePropertiesClasses({ identifiers: [identifier] })
+      await this.convertibleTypePropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84537,9 +84939,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async dateUnionPropertiesClass(
     identifier: DateUnionPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DateUnionPropertiesClass>> {
     return (
-      await this.dateUnionPropertiesClasses({ identifiers: [identifier] })
+      await this.dateUnionPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84585,9 +84991,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DefaultValuePropertiesClass>> {
     return (
-      await this.defaultValuePropertiesClasses({ identifiers: [identifier] })
+      await this.defaultValuePropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84635,9 +85045,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async directRecursiveClass(
     identifier: DirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, DirectRecursiveClass>> {
     return (
-      await this.directRecursiveClasses({ identifiers: [identifier] })
+      await this.directRecursiveClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84683,9 +85097,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExplicitFromToRdfTypesClass>> {
     return (
-      await this.explicitFromToRdfTypesClasses({ identifiers: [identifier] })
+      await this.explicitFromToRdfTypesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84733,9 +85151,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async explicitRdfTypeClass(
     identifier: ExplicitRdfTypeClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExplicitRdfTypeClass>> {
     return (
-      await this.explicitRdfTypeClasses({ identifiers: [identifier] })
+      await this.explicitRdfTypeClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84781,9 +85203,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ExternClassPropertyClass>> {
     return (
-      await this.externClassPropertyClasses({ identifiers: [identifier] })
+      await this.externClassPropertyClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84829,9 +85255,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FlattenClassUnionMember3>> {
     return (
-      await this.flattenClassUnionMember3s({ identifiers: [identifier] })
+      await this.flattenClassUnionMember3s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84877,9 +85307,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, HasValuePropertiesClass>> {
     return (
-      await this.hasValuePropertiesClasses({ identifiers: [identifier] })
+      await this.hasValuePropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84925,9 +85359,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride3Class>> {
     return (
-      await this.identifierOverride3Classes({ identifiers: [identifier] })
+      await this.identifierOverride3Classes({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -84975,9 +85413,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async identifierOverride4Class(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride4Class>> {
     return (
-      await this.identifierOverride4Classes({ identifiers: [identifier] })
+      await this.identifierOverride4Classes({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85025,9 +85467,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async identifierOverride5Class(
     identifier: IdentifierOverride5Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride5Class>> {
     return (
-      await this.identifierOverride5Classes({ identifiers: [identifier] })
+      await this.identifierOverride5Classes({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85073,9 +85519,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IndirectRecursiveClass>> {
     return (
-      await this.indirectRecursiveClasses({ identifiers: [identifier] })
+      await this.indirectRecursiveClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85121,9 +85571,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IndirectRecursiveHelperClass>> {
     return (
-      await this.indirectRecursiveHelperClasses({ identifiers: [identifier] })
+      await this.indirectRecursiveHelperClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85171,10 +85625,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async inIdentifierClass(
     identifier: InIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InIdentifierClass>> {
-    return (await this.inIdentifierClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.inIdentifierClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async inIdentifierClassCount(
@@ -85219,10 +85677,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InPropertiesClass>> {
-    return (await this.inPropertiesClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.inPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async inPropertiesClassCount(
@@ -85267,10 +85729,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async interface(
     identifier: Interface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Interface>> {
-    return (await this.interfaces({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.interfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async interfaceCount(
@@ -85305,9 +85771,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnionMember1>> {
     return (
-      await this.interfaceUnionMember1s({ identifiers: [identifier] })
+      await this.interfaceUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85353,9 +85823,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnionMember2>> {
     return (
-      await this.interfaceUnionMember2s({ identifiers: [identifier] })
+      await this.interfaceUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85401,10 +85875,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IriIdentifierClass>> {
-    return (await this.iriIdentifierClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.iriIdentifierClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async iriIdentifierClassCount(
@@ -85449,9 +85927,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IriIdentifierInterface>> {
     return (
-      await this.iriIdentifierInterfaces({ identifiers: [identifier] })
+      await this.iriIdentifierInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85497,9 +85979,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, JsPrimitiveUnionPropertyClass>> {
     return (
-      await this.jsPrimitiveUnionPropertyClasses({ identifiers: [identifier] })
+      await this.jsPrimitiveUnionPropertyClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85547,9 +86033,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LanguageInPropertiesClass>> {
     return (
-      await this.languageInPropertiesClasses({ identifiers: [identifier] })
+      await this.languageInPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85595,10 +86085,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>> {
     return (
       await this.lazilyResolvedBlankNodeOrIriIdentifierClasses({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -85652,10 +86144,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterface(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>> {
     return (
       await this.lazilyResolvedBlankNodeOrIriIdentifierInterfaces({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -85709,9 +86203,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember1(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnionMember1>> {
     return (
-      await this.lazilyResolvedClassUnionMember1s({ identifiers: [identifier] })
+      await this.lazilyResolvedClassUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85759,9 +86257,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember2(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnionMember2>> {
     return (
-      await this.lazilyResolvedClassUnionMember2s({ identifiers: [identifier] })
+      await this.lazilyResolvedClassUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -85809,10 +86311,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember1(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember1>> {
     return (
       await this.lazilyResolvedInterfaceUnionMember1s({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -85861,10 +86365,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember2(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember2>> {
     return (
       await this.lazilyResolvedInterfaceUnionMember2s({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -85913,10 +86419,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierClass(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedIriIdentifierClass>> {
     return (
       await this.lazilyResolvedIriIdentifierClasses({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -85965,10 +86473,12 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierInterface(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedIriIdentifierInterface>> {
     return (
       await this.lazilyResolvedIriIdentifierInterfaces({
         identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
@@ -86017,9 +86527,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazyPropertiesClass(
     identifier: LazyPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazyPropertiesClass>> {
     return (
-      await this.lazyPropertiesClasses({ identifiers: [identifier] })
+      await this.lazyPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86065,9 +86579,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazyPropertiesInterface>> {
     return (
-      await this.lazyPropertiesInterfaces({ identifiers: [identifier] })
+      await this.lazyPropertiesInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86113,9 +86631,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ListPropertiesClass>> {
     return (
-      await this.listPropertiesClasses({ identifiers: [identifier] })
+      await this.listPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86161,9 +86683,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, MutablePropertiesClass>> {
     return (
-      await this.mutablePropertiesClasses({ identifiers: [identifier] })
+      await this.mutablePropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86209,10 +86735,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async newName1Class(
     identifier: NewName1Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NewName1Class>> {
-    return (await this.newName1Classes({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.newName1Classes({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async newName1ClassCount(
@@ -86254,10 +86784,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async newName2Class(
     identifier: NewName2Class.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NewName2Class>> {
-    return (await this.newName2Classes({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.newName2Classes({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async newName2ClassCount(
@@ -86299,10 +86833,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async nodeKindsClass(
     identifier: NodeKindsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NodeKindsClass>> {
-    return (await this.nodeKindsClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.nodeKindsClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async nodeKindsClassCount(
@@ -86347,10 +86885,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async nonClass(
     identifier: NonClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NonClass>> {
-    return (await this.nonClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.nonClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async nonClassCount(
@@ -86385,9 +86927,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnionMember1>> {
     return (
-      await this.noRdfTypeClassUnionMember1s({ identifiers: [identifier] })
+      await this.noRdfTypeClassUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86433,9 +86979,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember2(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnionMember2>> {
     return (
-      await this.noRdfTypeClassUnionMember2s({ identifiers: [identifier] })
+      await this.noRdfTypeClassUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86481,9 +87031,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async numericPropertiesClass(
     identifier: NumericPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NumericPropertiesClass>> {
     return (
-      await this.numericPropertiesClasses({ identifiers: [identifier] })
+      await this.numericPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86529,9 +87083,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, OrderedPropertiesClass>> {
     return (
-      await this.orderedPropertiesClasses({ identifiers: [identifier] })
+      await this.orderedPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86577,10 +87135,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialClass(
     identifier: PartialClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClass>> {
-    return (await this.partialClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.partialClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async partialClassCount(
@@ -86622,9 +87184,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnionMember1>> {
     return (
-      await this.partialClassUnionMember1s({ identifiers: [identifier] })
+      await this.partialClassUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86670,9 +87236,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnionMember2>> {
     return (
-      await this.partialClassUnionMember2s({ identifiers: [identifier] })
+      await this.partialClassUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86718,10 +87288,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterface(
     identifier: PartialInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterface>> {
-    return (await this.partialInterfaces({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.partialInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async partialInterfaceCount(
@@ -86766,9 +87340,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnionMember1>> {
     return (
-      await this.partialInterfaceUnionMember1s({ identifiers: [identifier] })
+      await this.partialInterfaceUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86816,9 +87394,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember2(
     identifier: PartialInterfaceUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnionMember2>> {
     return (
-      await this.partialInterfaceUnionMember2s({ identifiers: [identifier] })
+      await this.partialInterfaceUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86866,9 +87448,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async propertyCardinalitiesClass(
     identifier: PropertyCardinalitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyCardinalitiesClass>> {
     return (
-      await this.propertyCardinalitiesClasses({ identifiers: [identifier] })
+      await this.propertyCardinalitiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -86914,10 +87500,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async propertyNamesClass(
     identifier: PropertyNamesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyNamesClass>> {
-    return (await this.propertyNamesClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.propertyNamesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async propertyNamesClassCount(
@@ -86962,10 +87552,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async propertyPathsClass(
     identifier: PropertyPathsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyPathsClass>> {
-    return (await this.propertyPathsClasses({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.propertyPathsClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async propertyPathsClassCount(
@@ -87010,9 +87604,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PropertyVisibilitiesClass>> {
     return (
-      await this.propertyVisibilitiesClasses({ identifiers: [identifier] })
+      await this.propertyVisibilitiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87058,9 +87656,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnionMember1>> {
     return (
-      await this.recursiveClassUnionMember1s({ identifiers: [identifier] })
+      await this.recursiveClassUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87106,9 +87708,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember2(
     identifier: RecursiveClassUnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnionMember2>> {
     return (
-      await this.recursiveClassUnionMember2s({ identifiers: [identifier] })
+      await this.recursiveClassUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87154,9 +87760,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async sha256IriIdentifierClass(
     identifier: Sha256IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Sha256IriIdentifierClass>> {
     return (
-      await this.sha256IriIdentifierClasses({ identifiers: [identifier] })
+      await this.sha256IriIdentifierClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87202,9 +87812,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, TermPropertiesClass>> {
     return (
-      await this.termPropertiesClasses({ identifiers: [identifier] })
+      await this.termPropertiesClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87250,9 +87864,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionDiscriminantsClass>> {
     return (
-      await this.unionDiscriminantsClasses({ identifiers: [identifier] })
+      await this.unionDiscriminantsClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87298,9 +87916,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UuidV4IriIdentifierClass>> {
     return (
-      await this.uuidV4IriIdentifierClasses({ identifiers: [identifier] })
+      await this.uuidV4IriIdentifierClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87346,9 +87968,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UuidV4IriIdentifierInterface>> {
     return (
-      await this.uuidV4IriIdentifierInterfaces({ identifiers: [identifier] })
+      await this.uuidV4IriIdentifierInterfaces({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87396,10 +88022,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async classUnion(
     identifier: ClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, ClassUnion>> {
-    return (await this.classUnions({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.classUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async classUnionCount(
@@ -87435,10 +88065,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FlattenClassUnion>> {
-    return (await this.flattenClassUnions({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.flattenClassUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async flattenClassUnionCount(
@@ -87483,10 +88117,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, InterfaceUnion>> {
-    return (await this.interfaceUnions({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.interfaceUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async interfaceUnionCount(
@@ -87531,9 +88169,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedClassUnion>> {
     return (
-      await this.lazilyResolvedClassUnions({ identifiers: [identifier] })
+      await this.lazilyResolvedClassUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87579,9 +88221,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, LazilyResolvedInterfaceUnion>> {
     return (
-      await this.lazilyResolvedInterfaceUnions({ identifiers: [identifier] })
+      await this.lazilyResolvedInterfaceUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87629,10 +88275,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NoRdfTypeClassUnion>> {
-    return (await this.noRdfTypeClassUnions({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.noRdfTypeClassUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async noRdfTypeClassUnionCount(
@@ -87677,10 +88327,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialClassUnion>> {
-    return (await this.partialClassUnions({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.partialClassUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async partialClassUnionCount(
@@ -87725,9 +88379,13 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, PartialInterfaceUnion>> {
     return (
-      await this.partialInterfaceUnions({ identifiers: [identifier] })
+      await this.partialInterfaceUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
     ).map((objects) => objects[0]);
   }
 
@@ -87773,10 +88431,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, RecursiveClassUnion>> {
-    return (await this.recursiveClassUnions({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.recursiveClassUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async recursiveClassUnionCount(
@@ -87821,10 +88483,14 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async object(
     identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>> {
-    return (await this.objects({ identifiers: [identifier] })).map(
-      (objects) => objects[0],
-    );
+    return (
+      await this.objects({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
   }
 
   async objectCount(

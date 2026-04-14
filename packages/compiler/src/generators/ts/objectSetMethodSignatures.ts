@@ -30,7 +30,7 @@ export function objectSetMethodSignatures(parameters: {
   return {
     object: {
       name: methodNames.object,
-      parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}`,
+      parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
       returnType: code`Promise<${imports.Either}<Error, ${objectType.name}>>`,
     },
     objectCount: {
