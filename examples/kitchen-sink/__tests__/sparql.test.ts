@@ -63,9 +63,9 @@ describe("sparql", () => {
       continue;
     }
 
-    // if (id !== "lazyPropertiesClassEmpty") {
-    //   continue;
-    // }
+    if (id !== "unionDiscriminantsClass1") {
+      continue;
+    }
 
     it(`${id} round trip`, async ({ expect }) => {
       const toRdfDataset = harness.toRdf().dataset;

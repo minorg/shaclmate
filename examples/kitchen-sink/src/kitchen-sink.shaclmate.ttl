@@ -471,6 +471,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoublesProperty
+    ], [
         sh:in ("text"
             "html"
         ) ;
@@ -498,12 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIrisProperty
-    ], [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoublesProperty
     ] .
 
 :IndirectRecursiveClass
@@ -1140,6 +1140,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :PartialClassUnionMember1
+    shaclmate:rdfType :ClassUnionMember1 ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -1149,6 +1150,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :PartialClassUnionMember2
+    shaclmate:rdfType :ClassUnionMember2 ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -1176,6 +1178,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :PartialInterfaceUnionMember1
+    shaclmate:rdfType :InterfaceUnionMember1 ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     sh:property [
@@ -1186,6 +1189,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :PartialInterfaceUnionMember2
+    shaclmate:rdfType :InterfaceUnionMember2 ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     sh:property [

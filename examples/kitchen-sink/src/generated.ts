@@ -16027,7 +16027,7 @@ export namespace PartialInterfaceUnionMember2 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialInterfaceUnionMember2",
+    "http://example.com/InterfaceUnionMember2",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -16180,7 +16180,7 @@ export namespace PartialInterfaceUnionMember2 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialInterfaceUnionMember2":
+                case "http://example.com/InterfaceUnionMember2":
                   return Right(true as const);
               }
 
@@ -16198,7 +16198,7 @@ export namespace PartialInterfaceUnionMember2 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember2)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
                 ),
               );
             })
@@ -16260,9 +16260,7 @@ export namespace PartialInterfaceUnionMember2 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/PartialInterfaceUnionMember2",
-        ),
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
         options?.graph,
       );
     }
@@ -16632,7 +16630,7 @@ export namespace PartialInterfaceUnionMember1 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialInterfaceUnionMember1",
+    "http://example.com/InterfaceUnionMember1",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -16785,7 +16783,7 @@ export namespace PartialInterfaceUnionMember1 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialInterfaceUnionMember1":
+                case "http://example.com/InterfaceUnionMember1":
                   return Right(true as const);
               }
 
@@ -16803,7 +16801,7 @@ export namespace PartialInterfaceUnionMember1 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember1)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
                 ),
               );
             })
@@ -16865,9 +16863,7 @@ export namespace PartialInterfaceUnionMember1 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/PartialInterfaceUnionMember1",
-        ),
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
         options?.graph,
       );
     }
@@ -17227,7 +17223,7 @@ export class PartialClassUnionMember2 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/PartialClassUnionMember2"),
+        dataFactory.namedNode("http://example.com/ClassUnionMember2"),
         options?.graph,
       );
     }
@@ -17273,7 +17269,7 @@ export namespace PartialClassUnionMember2 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialClassUnionMember2",
+    "http://example.com/ClassUnionMember2",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -17405,7 +17401,7 @@ export namespace PartialClassUnionMember2 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialClassUnionMember2":
+                case "http://example.com/ClassUnionMember2":
                   return Right(true as const);
               }
 
@@ -17423,7 +17419,7 @@ export namespace PartialClassUnionMember2 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember2)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
                 ),
               );
             })
@@ -17807,7 +17803,7 @@ export class PartialClassUnionMember1 {
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/PartialClassUnionMember1"),
+        dataFactory.namedNode("http://example.com/ClassUnionMember1"),
         options?.graph,
       );
     }
@@ -17853,7 +17849,7 @@ export namespace PartialClassUnionMember1 {
   };
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PartialClassUnionMember1",
+    "http://example.com/ClassUnionMember1",
   );
 
   export type $Identifier = BlankNode | NamedNode;
@@ -17985,7 +17981,7 @@ export namespace PartialClassUnionMember1 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/PartialClassUnionMember1":
+                case "http://example.com/ClassUnionMember1":
                   return Right(true as const);
               }
 
@@ -18003,7 +17999,7 @@ export namespace PartialClassUnionMember1 {
                 new Error(
                   `${Resource.Identifier.toString(
                     $parameters.resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember1)`,
+                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
                 ),
               );
             })
