@@ -63,10 +63,6 @@ describe("sparql", () => {
       continue;
     }
 
-    if (id === "lazyPropertiesClassNonEmpty" || id === "lazyPropertiesInterfaceNonEmpty") {
-      continue;
-    }
-
     it(`${id} round trip`, async ({ expect }) => {
       const toRdfDataset = harness.toRdf().dataset;
       const toRdfQuads: Quad[] = [];
@@ -77,7 +73,9 @@ describe("sparql", () => {
         toRdfQuads.push(quad);
       }
 
-      const constructQueryString = harness.sparqlConstructQueryString();
+      const constructQueryString = harness.sparqlConstructQueryString({
+        subject: dataFactory.variable("subject"),
+      });
 
       // Add to a Dataset to deduplicate the quads
       const constructResultDataset = datasetFactory.dataset(
@@ -114,7 +112,9 @@ describe("sparql", () => {
 
   it("preferredLanguages: unspecified", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
+      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+        subject: dataFactory.variable("object"),
+      }),
     );
     expect(actualDataset.size).toStrictEqual(validLanguageInLanguage.length);
   });
@@ -123,6 +123,7 @@ describe("sparql", () => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
         preferredLanguages: [],
+        subject: dataFactory.variable("object"),
       }),
     );
     expect(actualDataset.size).toStrictEqual(validLanguageInLanguage.length);
@@ -132,6 +133,7 @@ describe("sparql", () => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
         preferredLanguages: ["en"],
+        subject: dataFactory.variable("object"),
       }),
     );
     expect(actualDataset.size).toStrictEqual(1);
