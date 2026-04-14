@@ -1,11 +1,10 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
-import { camelCase } from "change-case";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 
@@ -17,10 +16,10 @@ export function ObjectType_sparqlFunctionDeclarations(
   }
 
   const variables = {
-    filter: code`parameters?.filter`,
-    preferredLanguages: code`parameters?.preferredLanguages`,
-    focusIdentifier: code`focusIdentifier`,
-    variablePrefix: code`(parameters?.variablePrefix ?? (focusIdentifier.termType === "Variable" ? focusIdentifier.value : ${literalOf(camelCase(this.name))}))`,
+    filter: code`parameters.filter`,
+    preferredLanguages: code`parameters.preferredLanguages`,
+    focusIdentifier: code`parameters.focusIdentifier`,
+    variablePrefix: code`parameters.variablePrefix`,
   };
   const rdfClassVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
@@ -140,11 +139,10 @@ if (!parameters?.ignoreRdfType) {
     ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
     ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean;  variablePrefix?: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean;  variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
 ${
   sparqlConstructTriplesStatements.length > 0
     ? joinCode([
-        code`const focusIdentifier = parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!(${literalOf(camelCase(this.name))});`,
         code`${triplesVariableDeclarationKeyword} triples: ${imports.sparqljs}.Triple[] = [];`,
         ...sparqlConstructTriplesStatements,
         code`return triples;`,
@@ -153,12 +151,11 @@ ${
 }
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
 ${
   sparqlWherePatternsStatements.length > 0
     ? joinCode([
         code`${patternsVariableDeclarationKeyword} patterns: ${snippets.SparqlPattern}[] = [];`,
-        code`const focusIdentifier = parameters?.focusIdentifier ?? ${imports.dataFactory}.variable!(${literalOf(camelCase(this.name))});`,
         ...sparqlWherePatternsStatements,
         code`return patterns;`,
       ])

@@ -92,11 +92,11 @@ export abstract class AbstractType {
    * A SparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property of this type.
    *
    * The function takes a parameters object (type: SparqlConstructTriplesFunctionParameters) with the following parameters:
-   * - filter?: an instance of filterType
-   * - ignoreRdfType?: boolean
+   * - filter: an instance of filterType | undefined
+   * - ignoreRdfType: boolean
    * - schema: instance of this.schemaType
    * - valueVariable: rdfjs.Variable of the value of this type
-   * - variablePrefix: prefix to use for new variables
+   * - variablePrefix: string prefix to use for new variables
    */
   abstract readonly sparqlConstructTriplesFunction: Code;
 
@@ -104,12 +104,12 @@ export abstract class AbstractType {
    * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
    *
    * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
-   * - filter?: an instance of filterType
-   * - preferredLanguages: array of preferred language code (strings); may be empty
+   * - filter: an instance of filterType | undefined
+   * - preferredLanguages: array of preferred language code (strings) | undefined
    * - propertyPatterns: array of sparqljs.Pattern's for the property; may be empty
    * - schema: instance of this.schemaType
    * - valueVariable: rdfjs.Variable of the value of this type
-   * - variablePrefix: prefix to use for new variables
+   * - variablePrefix: string prefix to use for new variables
    */
   abstract readonly sparqlWherePatternsFunction: Code;
 

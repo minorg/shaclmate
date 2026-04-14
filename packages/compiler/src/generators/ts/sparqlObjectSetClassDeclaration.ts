@@ -14,7 +14,7 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): Code {
-  const sparqlWherePatternsFunctionType = code`(parameters?: { filter?: ObjectFilterT; focusIdentifier?: ${imports.NamedNode} | ${imports.Variable}; }) => readonly ${imports.sparqljs}.Pattern[]`;
+  const sparqlWherePatternsFunctionType = code`(parameters: { filter: ObjectFilterT | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; variablePrefix: string; }) => readonly ${imports.sparqljs}.Pattern[]`;
 
   const parameters = {
     constructObjectType: code`objectType: {\
