@@ -10,11 +10,11 @@ export const snippets_LazyObjectSet = conditionalOutput(
  */
 export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   readonly partials: readonly PartialObjectT[];
-  private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>;
+  private readonly resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>;
 
   constructor({ partials, resolver }: {
     partials: readonly PartialObjectT[]
-    resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>,
+    resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>,
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -24,7 +24,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imp
     return this.partials.length;
   }
 
-  async resolve(options?: { limit?: number; offset?: number }): Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>> {
+  async resolve(options?: { limit?: number; offset?: number; preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
       return ${imports.Right}([]);
     }
@@ -39,7 +39,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imp
       offset = 0;
     }
 
-    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier));
+    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier), { preferredLanguages: options?.preferredLanguages });
   }
 }`,
 );

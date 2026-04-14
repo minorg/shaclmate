@@ -10,18 +10,18 @@ export const snippets_LazyObject = conditionalOutput(
  */
 export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   readonly partial: PartialObjectT;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
+  private readonly resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
 
   constructor({ partial, resolver }: {
     partial: PartialObjectT
-    resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
+    resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  resolve(): Promise<${imports.Either}<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
+  resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ResolvedObjectT>> {
+    return this.resolver(this.partial.${syntheticNamePrefix}identifier, options);
   }
 }`,
 );

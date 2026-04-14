@@ -10,21 +10,21 @@ export const snippets_LazyObjectOption = conditionalOutput(
  */
 export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   readonly partial: ${imports.Maybe}<PartialObjectT>;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
+  private readonly resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
 
   constructor({ partial, resolver }: {
     partial: ${imports.Maybe}<PartialObjectT>
-    resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
+    resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  async resolve(): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedObjectT>>> {
+  async resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
       return ${imports.Right}(${imports.Maybe}.empty());
     }
-    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier)).map(${imports.Maybe}.of);
+    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier, options)).map(${imports.Maybe}.of);
   }
 }`,
 );

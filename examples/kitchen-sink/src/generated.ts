@@ -997,6 +997,7 @@ export class $LazyObject<
   readonly partial: PartialObjectT;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
+    options?: { preferredLanguages?: readonly string[] },
   ) => Promise<Either<Error, ResolvedObjectT>>;
 
   constructor({
@@ -1006,14 +1007,17 @@ export class $LazyObject<
     partial: PartialObjectT;
     resolver: (
       identifier: ObjectIdentifierT,
+      options?: { preferredLanguages?: readonly string[] },
     ) => Promise<Either<Error, ResolvedObjectT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  resolve(): Promise<Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.$identifier);
+  resolve(options?: {
+    preferredLanguages?: readonly string[];
+  }): Promise<Either<Error, ResolvedObjectT>> {
+    return this.resolver(this.partial.$identifier, options);
   }
 }
 
@@ -1028,6 +1032,7 @@ export class $LazyObjectOption<
   readonly partial: Maybe<PartialObjectT>;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
+    options?: { preferredLanguages?: readonly string[] },
   ) => Promise<Either<Error, ResolvedObjectT>>;
 
   constructor({
@@ -1037,19 +1042,22 @@ export class $LazyObjectOption<
     partial: Maybe<PartialObjectT>;
     resolver: (
       identifier: ObjectIdentifierT,
+      options?: { preferredLanguages?: readonly string[] },
     ) => Promise<Either<Error, ResolvedObjectT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  async resolve(): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
+  async resolve(options?: {
+    preferredLanguages?: readonly string[];
+  }): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
       return Right(Maybe.empty());
     }
-    return (await this.resolver(this.partial.unsafeCoerce().$identifier)).map(
-      Maybe.of,
-    );
+    return (
+      await this.resolver(this.partial.unsafeCoerce().$identifier, options)
+    ).map(Maybe.of);
   }
 }
 
@@ -1064,6 +1072,7 @@ export class $LazyObjectSet<
   readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
     identifiers: readonly ObjectIdentifierT[],
+    options?: { preferredLanguages?: readonly string[] },
   ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
 
   constructor({
@@ -1073,6 +1082,7 @@ export class $LazyObjectSet<
     partials: readonly PartialObjectT[];
     resolver: (
       identifiers: readonly ObjectIdentifierT[],
+      options?: { preferredLanguages?: readonly string[] },
     ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
   }) {
     this.partials = partials;
@@ -1086,6 +1096,7 @@ export class $LazyObjectSet<
   async resolve(options?: {
     limit?: number;
     offset?: number;
+    preferredLanguages?: readonly string[];
   }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
       return Right([]);
@@ -1105,6 +1116,9 @@ export class $LazyObjectSet<
       this.partials
         .slice(offset, offset + limit)
         .map((partial) => partial.$identifier),
+      {
+        preferredLanguages: options?.preferredLanguages,
+      },
     );
   }
 }
@@ -28144,9 +28158,10 @@ export namespace LazyPropertiesInterface {
                         LazilyResolvedBlankNodeOrIriIdentifierInterface
                       >({
                         partial,
-                        resolver: (identifier) =>
+                        resolver: (identifier, options) =>
                           $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                             identifier,
+                            options,
                           ),
                       }),
                   ),
@@ -28192,9 +28207,10 @@ export namespace LazyPropertiesInterface {
                           LazilyResolvedInterfaceUnion
                         >({
                           partial,
-                          resolver: (identifier) =>
+                          resolver: (identifier, options) =>
                             $parameters.objectSet.lazilyResolvedInterfaceUnion(
                               identifier,
+                              options,
                             ),
                         }),
                     ),
@@ -28243,9 +28259,10 @@ export namespace LazyPropertiesInterface {
                             LazilyResolvedIriIdentifierInterface
                           >({
                             partial,
-                            resolver: (identifier) =>
+                            resolver: (identifier, options) =>
                               $parameters.objectSet.lazilyResolvedIriIdentifierInterface(
                                 identifier,
+                                options,
                               ),
                           }),
                       ),
@@ -28293,9 +28310,10 @@ export namespace LazyPropertiesInterface {
                               LazilyResolvedBlankNodeOrIriIdentifierInterface
                             >({
                               partial,
-                              resolver: (identifier) =>
+                              resolver: (identifier, options) =>
                                 $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                                   identifier,
+                                  options,
                                 ),
                             }),
                         ),
@@ -28346,9 +28364,10 @@ export namespace LazyPropertiesInterface {
                                   LazilyResolvedInterfaceUnion
                                 >({
                                   partial,
-                                  resolver: (identifier) =>
+                                  resolver: (identifier, options) =>
                                     $parameters.objectSet.lazilyResolvedInterfaceUnion(
                                       identifier,
+                                      options,
                                     ),
                                 }),
                             ),
@@ -28402,9 +28421,10 @@ export namespace LazyPropertiesInterface {
                                       LazilyResolvedInterfaceUnion
                                     >({
                                       partial,
-                                      resolver: (identifier) =>
+                                      resolver: (identifier, options) =>
                                         $parameters.objectSet.lazilyResolvedInterfaceUnion(
                                           identifier,
+                                          options,
                                         ),
                                     }),
                                 ),
@@ -28443,9 +28463,10 @@ export namespace LazyPropertiesInterface {
                                           LazilyResolvedBlankNodeOrIriIdentifierInterface
                                         >({
                                           partial,
-                                          resolver: (identifier) =>
+                                          resolver: (identifier, options) =>
                                             $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                                               identifier,
+                                              options,
                                             ),
                                         }),
                                     ),
@@ -28486,9 +28507,10 @@ export namespace LazyPropertiesInterface {
                                               LazilyResolvedBlankNodeOrIriIdentifierInterface
                                             >({
                                               partial,
-                                              resolver: (identifier) =>
+                                              resolver: (identifier, options) =>
                                                 $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                                                   identifier,
+                                                  options,
                                                 ),
                                             }),
                                         ),
@@ -28547,10 +28569,14 @@ export namespace LazyPropertiesInterface {
                                                   LazilyResolvedBlankNodeOrIriIdentifierInterface
                                                 >({
                                                   partials,
-                                                  resolver: (identifiers) =>
+                                                  resolver: (
+                                                    identifiers,
+                                                    options,
+                                                  ) =>
                                                     $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
                                                       {
                                                         identifiers,
+                                                        ...options,
                                                       },
                                                     ),
                                                 }),
@@ -28608,10 +28634,14 @@ export namespace LazyPropertiesInterface {
                                                       LazilyResolvedBlankNodeOrIriIdentifierInterface
                                                     >({
                                                       partials,
-                                                      resolver: (identifiers) =>
+                                                      resolver: (
+                                                        identifiers,
+                                                        options,
+                                                      ) =>
                                                         $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
                                                           {
                                                             identifiers,
+                                                            ...options,
                                                           },
                                                         ),
                                                     }),
@@ -31572,9 +31602,10 @@ export namespace LazyPropertiesClass {
                       LazilyResolvedBlankNodeOrIriIdentifierClass
                     >({
                       partial,
-                      resolver: (identifier) =>
+                      resolver: (identifier, options) =>
                         $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                           identifier,
+                          options,
                         ),
                     }),
                 ),
@@ -31619,9 +31650,10 @@ export namespace LazyPropertiesClass {
                         LazilyResolvedClassUnion
                       >({
                         partial,
-                        resolver: (identifier) =>
+                        resolver: (identifier, options) =>
                           $parameters.objectSet.lazilyResolvedClassUnion(
                             identifier,
+                            options,
                           ),
                       }),
                   ),
@@ -31668,9 +31700,10 @@ export namespace LazyPropertiesClass {
                           LazilyResolvedIriIdentifierClass
                         >({
                           partial,
-                          resolver: (identifier) =>
+                          resolver: (identifier, options) =>
                             $parameters.objectSet.lazilyResolvedIriIdentifierClass(
                               identifier,
+                              options,
                             ),
                         }),
                     ),
@@ -31717,9 +31750,10 @@ export namespace LazyPropertiesClass {
                             LazilyResolvedBlankNodeOrIriIdentifierClass
                           >({
                             partial,
-                            resolver: (identifier) =>
+                            resolver: (identifier, options) =>
                               $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                                 identifier,
+                                options,
                               ),
                           }),
                       ),
@@ -31767,9 +31801,10 @@ export namespace LazyPropertiesClass {
                               LazilyResolvedClassUnion
                             >({
                               partial,
-                              resolver: (identifier) =>
+                              resolver: (identifier, options) =>
                                 $parameters.objectSet.lazilyResolvedClassUnion(
                                   identifier,
+                                  options,
                                 ),
                             }),
                         ),
@@ -31819,9 +31854,10 @@ export namespace LazyPropertiesClass {
                                 LazilyResolvedClassUnion
                               >({
                                 partial,
-                                resolver: (identifier) =>
+                                resolver: (identifier, options) =>
                                   $parameters.objectSet.lazilyResolvedClassUnion(
                                     identifier,
+                                    options,
                                   ),
                               }),
                           ),
@@ -31858,9 +31894,10 @@ export namespace LazyPropertiesClass {
                                     LazilyResolvedBlankNodeOrIriIdentifierClass
                                   >({
                                     partial,
-                                    resolver: (identifier) =>
+                                    resolver: (identifier, options) =>
                                       $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                                         identifier,
+                                        options,
                                       ),
                                   }),
                               ),
@@ -31896,9 +31933,10 @@ export namespace LazyPropertiesClass {
                                       LazilyResolvedBlankNodeOrIriIdentifierClass
                                     >({
                                       partial,
-                                      resolver: (identifier) =>
+                                      resolver: (identifier, options) =>
                                         $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                                           identifier,
+                                          options,
                                         ),
                                     }),
                                 ),
@@ -31945,10 +31983,11 @@ export namespace LazyPropertiesClass {
                                           LazilyResolvedBlankNodeOrIriIdentifierClass
                                         >({
                                           partials,
-                                          resolver: (identifiers) =>
+                                          resolver: (identifiers, options) =>
                                             $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
                                               {
                                                 identifiers,
+                                                ...options,
                                               },
                                             ),
                                         }),
@@ -31996,10 +32035,11 @@ export namespace LazyPropertiesClass {
                                             LazilyResolvedBlankNodeOrIriIdentifierClass
                                           >({
                                             partials,
-                                            resolver: (identifiers) =>
+                                            resolver: (identifiers, options) =>
                                               $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
                                                 {
                                                   identifiers,
+                                                  ...options,
                                                 },
                                               ),
                                           }),
