@@ -83563,10 +83563,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: Resource,
-        options: {
-          graph?: Exclude<Quad_Graph, Variable>;
-          objectSet: $ObjectSet;
-        },
+        options?: $FromRdfOptions,
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     },
@@ -83583,6 +83580,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     if (offset < 0) {
       offset = 0;
     }
+
+    const fromRdfOptions: $FromRdfOptions = {
+      graph,
+      objectSet: this,
+      preferredLanguages: query?.preferredLanguages,
+    };
 
     let resources: { object?: ObjectT; resource: Resource }[];
     const resourceSet = this.$resourceSet(); // Access once, in case it's instantiated lazily
@@ -83629,11 +83632,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
-        objectType
-          .$fromRdf(resource, { graph, objectSet: this })
-          .ifRight((object) => {
-            resources.push({ object, resource });
-          });
+        objectType.$fromRdf(resource, fromRdfOptions).ifRight((object) => {
+          resources.push({ object, resource });
+        });
       }
     }
 
@@ -83650,10 +83651,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = objectType.$fromRdf(resource, {
-          graph,
-          objectSet: this,
-        });
+        const objectEither = objectType.$fromRdf(resource, fromRdfOptions);
         if (objectEither.isLeft()) {
           return objectEither;
         }
@@ -83683,10 +83681,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: Resource,
-        options: {
-          graph?: Exclude<Quad_Graph, Variable>;
-          objectSet: $ObjectSet;
-        },
+        options?: $FromRdfOptions,
       ) => Either<Error, ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     }[],
@@ -83704,16 +83699,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
+    const fromRdfOptions: $FromRdfOptions = {
+      graph,
+      objectSet: this,
+      preferredLanguages: query?.preferredLanguages,
+    };
+
     let resources: {
       object?: ObjectT;
       objectType?: {
         $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
         $fromRdf: (
           resource: Resource,
-          options: {
-            graph?: Exclude<Quad_Graph, Variable>;
-            objectSet: $ObjectSet;
-          },
+          options?: $FromRdfOptions,
         ) => Either<Error, ObjectT>;
         $fromRdfTypes: readonly NamedNode[];
       };
@@ -83770,7 +83768,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         for (const objectType of objectTypes) {
           if (
             objectType
-              .$fromRdf(resource, { graph, objectSet: this })
+              .$fromRdf(resource, fromRdfOptions)
               .ifRight((object) => {
                 resources.push({ object, objectType, resource });
               })
@@ -83797,17 +83795,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
         if (objectType) {
-          objectEither = objectType.$fromRdf(resource, {
-            graph,
-            objectSet: this,
-          });
+          objectEither = objectType.$fromRdf(resource, fromRdfOptions);
         } else {
           objectEither = Left(new Error("no object types"));
           for (const tryObjectType of objectTypes) {
-            objectEither = tryObjectType.$fromRdf(resource, {
-              graph,
-              objectSet: this,
-            });
+            objectEither = tryObjectType.$fromRdf(resource, fromRdfOptions);
             if (objectEither.isRight()) {
               objectType = tryObjectType;
               break;
