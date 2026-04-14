@@ -47,7 +47,7 @@ patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNameP
     sparqlConstructTriplesStatements.push(code`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
-    { subject: focusIdentifier, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
+    { subject: ${variables.focusIdentifier}, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
     { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
   );
 }`);
@@ -67,13 +67,13 @@ if (!parameters?.ignoreRdfType) {
         return valuePatternRow;
       }),
     },
-    ${snippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject: focusIdentifier }),`
-        : code`${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject: focusIdentifier }),`
+    ${snippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject: ${variables.focusIdentifier} }),`
+        : code`${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject: ${variables.focusIdentifier} }),`
     }
     {
       triples: [
         {
-          subject: focusIdentifier,
+          subject: ${variables.focusIdentifier},
           predicate: ${rdfjsTermExpression(rdf.type)},
           object: rdfTypeVariable
         }

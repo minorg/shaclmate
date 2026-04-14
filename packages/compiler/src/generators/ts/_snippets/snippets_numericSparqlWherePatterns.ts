@@ -69,6 +69,6 @@ function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | num
     }
   }
 
-  return ${snippets_termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
+  return ${snippets_termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
 }`,
 );

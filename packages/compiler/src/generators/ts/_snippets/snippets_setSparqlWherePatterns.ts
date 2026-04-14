@@ -10,7 +10,7 @@ export const snippets_setSparqlWherePatterns = conditionalOutput(
   code`\
 function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlWherePatternsFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
-    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ filter, schema: schema.item(), ...otherParameters });
+    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item() });
 
     const minCount = filter?.${syntheticNamePrefix}minCount ?? schema.minCount ?? 0;
     if (minCount > 0) {

@@ -18,6 +18,6 @@ const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets_SparqlWherePatter
       filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
-    return ${snippets_termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets_termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   };`,
 );
