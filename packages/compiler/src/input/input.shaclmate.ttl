@@ -5,7 +5,8 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-shaclmate:NodeShape sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-export, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-identifierMintingStrategy, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+shaclmate:NodeShape
+    sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-export, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-identifierMintingStrategy, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:NodeShape-abstract
     a sh:PropertyShape ;
@@ -59,7 +60,8 @@ shaclmate:NodeShape-toRdfTypes
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
-shaclmate:Ontology sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+shaclmate:Ontology
+    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-name .
