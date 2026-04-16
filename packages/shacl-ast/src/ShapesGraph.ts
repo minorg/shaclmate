@@ -512,7 +512,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }) {
-      return generated.ShaclCoreNodeShape.$fromRdf(resource, {
+      return generated.NodeShape.$fromRdf(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
@@ -524,7 +524,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, Ontology> {
-      return generated.OwlOntology.$fromRdf(resource, {
+      return generated.Ontology.$fromRdf(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -536,7 +536,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, PropertyGroup> {
-      return generated.ShaclCorePropertyGroup.$fromRdf(resource, {
+      return generated.PropertyGroup.$fromRdf(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((propertyGroup) => new PropertyGroup(propertyGroup));
@@ -549,7 +549,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, DefaultPropertyShape> {
-      return generated.ShaclCorePropertyShape.$fromRdf(resource, {
+      return generated.PropertyShape.$fromRdf(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(

@@ -1,5 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import { NodeShape as ShaclCoreNodeShape } from "@shaclmate/shacl-ast";
+import { NodeShape as ShaclAstNodeShape } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, List, type Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -15,7 +15,7 @@ import type {
 } from "./index.js";
 import type { Shape } from "./Shape.js";
 
-export class NodeShape extends ShaclCoreNodeShape<
+export class NodeShape extends ShaclAstNodeShape<
   any,
   Ontology,
   PropertyGroup,
@@ -25,7 +25,7 @@ export class NodeShape extends ShaclCoreNodeShape<
   private readonly ancestorClassIris: readonly NamedNode[];
   private readonly childClassIris: readonly NamedNode[];
   private readonly descendantClassIris: readonly NamedNode[];
-  private readonly generatedShaclmateNodeShape: generated.ShaclmateNodeShape;
+  private readonly generatedNodeShape: generated.NodeShape;
   private readonly parentClassIris: readonly NamedNode[];
 
   readonly isClass: boolean;
@@ -36,14 +36,14 @@ export class NodeShape extends ShaclCoreNodeShape<
     ancestorClassIris,
     childClassIris,
     descendantClassIris,
-    generatedShaclmateNodeShape,
+    generatedNodeShape,
     isClass,
     isList,
     parentClassIris,
     shapesGraph,
   }: {
     ancestorClassIris: readonly NamedNode[];
-    generatedShaclmateNodeShape: generated.ShaclmateNodeShape;
+    generatedNodeShape: generated.NodeShape;
     childClassIris: readonly NamedNode[];
     descendantClassIris: readonly NamedNode[];
     isClass: boolean;
@@ -51,7 +51,7 @@ export class NodeShape extends ShaclCoreNodeShape<
     parentClassIris: readonly NamedNode[];
     shapesGraph: ShapesGraph;
   }) {
-    super(generatedShaclmateNodeShape, shapesGraph);
+    super(generatedNodeShape, shapesGraph);
 
     if (
       ancestorClassIris.length > 0 ||
@@ -66,14 +66,14 @@ export class NodeShape extends ShaclCoreNodeShape<
     this.ancestorClassIris = ancestorClassIris;
     this.childClassIris = childClassIris;
     this.descendantClassIris = descendantClassIris;
-    this.generatedShaclmateNodeShape = generatedShaclmateNodeShape;
+    this.generatedNodeShape = generatedNodeShape;
     this.isClass = isClass;
     this.isList = isList;
     this.parentClassIris = parentClassIris;
   }
 
   get abstract(): Maybe<boolean> {
-    return this.generatedShaclmateNodeShape.abstract;
+    return this.generatedNodeShape.abstract;
   }
 
   @Memoize()
@@ -109,19 +109,19 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   get discriminantValue(): Maybe<string> {
-    return this.generatedShaclmateNodeShape.discriminantValue;
+    return this.generatedNodeShape.discriminantValue;
   }
 
   get export(): Maybe<boolean> {
-    return this.generatedShaclmateNodeShape.export_;
+    return this.generatedNodeShape.export_;
   }
 
   get extern(): Maybe<boolean> {
-    return this.generatedShaclmateNodeShape.extern;
+    return this.generatedNodeShape.extern;
   }
 
   get fromRdfType(): Maybe<NamedNode> {
-    return this.generatedShaclmateNodeShape.fromRdfType;
+    return this.generatedNodeShape.fromRdfType;
   }
 
   @Memoize()
@@ -133,21 +133,19 @@ export class NodeShape extends ShaclCoreNodeShape<
 
   @Memoize()
   get identifierMintingStrategy(): Maybe<IdentifierMintingStrategy> {
-    return this.generatedShaclmateNodeShape.identifierMintingStrategy.map(
-      (iri) => {
-        switch (iri.value) {
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
-            return "blankNode";
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
-            return "sha256";
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
-            return "uuidv4";
-          default:
-            iri.value satisfies never;
-            throw new RangeError(iri.value);
-        }
-      },
-    );
+    return this.generatedNodeShape.identifierMintingStrategy.map((iri) => {
+      switch (iri.value) {
+        case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
+          return "blankNode";
+        case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
+          return "sha256";
+        case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
+          return "uuidv4";
+        default:
+          iri.value satisfies never;
+          throw new RangeError(iri.value);
+      }
+    });
   }
 
   @Memoize()
@@ -156,7 +154,7 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   get mutable(): Maybe<boolean> {
-    return this.generatedShaclmateNodeShape.mutable;
+    return this.generatedNodeShape.mutable;
   }
 
   @Memoize()
@@ -170,42 +168,40 @@ export class NodeShape extends ShaclCoreNodeShape<
 
   @Memoize()
   get rdfType(): Maybe<NamedNode> {
-    return this.generatedShaclmateNodeShape.rdfType;
+    return this.generatedNodeShape.rdfType;
   }
 
   get shaclmateName(): Maybe<string> {
-    return this.generatedShaclmateNodeShape.name;
+    return this.generatedNodeShape.name;
   }
 
   get toRdfTypes(): readonly NamedNode[] {
-    return this.generatedShaclmateNodeShape.toRdfTypes;
+    return this.generatedNodeShape.toRdfTypes;
   }
 
   get tsFeatureExcludes() {
-    return this.generatedShaclmateNodeShape.tsFeatureExcludes;
+    return this.generatedNodeShape.tsFeatureExcludes;
   }
 
   get tsFeatureIncludes() {
-    return this.generatedShaclmateNodeShape.tsFeatureIncludes;
+    return this.generatedNodeShape.tsFeatureIncludes;
   }
 
   get tsImports(): readonly string[] {
-    return this.generatedShaclmateNodeShape.tsImports;
+    return this.generatedNodeShape.tsImports;
   }
 
   @Memoize()
   get tsObjectDeclarationType(): Maybe<TsObjectDeclarationType> {
-    return this.generatedShaclmateNodeShape.tsObjectDeclarationType.map(
-      (iri) => {
-        switch (iri.value) {
-          case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
-            return "class";
-          case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface":
-            return "interface";
-          default:
-            throw new RangeError(iri.value);
-        }
-      },
-    );
+    return this.generatedNodeShape.tsObjectDeclarationType.map((iri) => {
+      switch (iri.value) {
+        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
+          return "class";
+        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface":
+          return "interface";
+        default:
+          throw new RangeError(iri.value);
+      }
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { PropertyShape as ShaclCorePropertyShape } from "@shaclmate/shacl-ast";
+import { PropertyShape as ShaclAstPropertyShape } from "@shaclmate/shacl-ast";
 
 import { Either, List, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -12,7 +12,7 @@ import type {
 } from "./index.js";
 import type { Shape } from "./Shape.js";
 
-export class PropertyShape extends ShaclCorePropertyShape<
+export class PropertyShape extends ShaclAstPropertyShape<
   NodeShape,
   Ontology,
   PropertyGroup,
@@ -22,11 +22,11 @@ export class PropertyShape extends ShaclCorePropertyShape<
   readonly kind = "PropertyShape";
 
   constructor(
-    private readonly generatedShaclmatePropertyShape: generated.ShaclmatePropertyShape,
+    private readonly _generatedPropertyShape: generated.PropertyShape,
     shapesGraph: ShapesGraph,
   ) {
     super(
-      { ...generatedShaclmatePropertyShape, uniqueLang: Maybe.empty() },
+      { ..._generatedPropertyShape, uniqueLang: Maybe.empty() },
       shapesGraph,
     );
   }
@@ -47,7 +47,7 @@ export class PropertyShape extends ShaclCorePropertyShape<
   }
 
   get mutable(): Maybe<boolean> {
-    return this.generatedShaclmatePropertyShape.mutable;
+    return this._generatedPropertyShape.mutable;
   }
 
   @Memoize()
@@ -57,7 +57,7 @@ export class PropertyShape extends ShaclCorePropertyShape<
 
   @Memoize()
   get resolve(): Either<Error, Maybe<NodeShape>> {
-    const identifier = this.generatedShaclmatePropertyShape.resolve.extract();
+    const identifier = this._generatedPropertyShape.resolve.extract();
     return identifier
       ? this.shapesGraph
           .nodeShapeByIdentifier(identifier)
@@ -66,12 +66,12 @@ export class PropertyShape extends ShaclCorePropertyShape<
   }
 
   get shaclmateName(): Maybe<string> {
-    return this.generatedShaclmatePropertyShape.name;
+    return this._generatedPropertyShape.name;
   }
 
   @Memoize()
   get visibility(): PropertyVisibility {
-    return this.generatedShaclmatePropertyShape.visibility
+    return this._generatedPropertyShape.visibility
       .map((iri) => {
         switch (iri.value) {
           case "http://purl.org/shaclmate/ontology#_Visibility_Private":

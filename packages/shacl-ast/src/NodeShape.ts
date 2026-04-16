@@ -22,7 +22,7 @@ export class NodeShape<
   >;
 
   constructor(
-    generatedShaclCoreNodeShape: Omit<generated.ShaclCoreNodeShape, "$type">,
+    generatedNodeShape: Omit<generated.NodeShape, "$type">,
     shapesGraph: ShapesGraph<
       NodeShapeT,
       OntologyT,
@@ -31,9 +31,9 @@ export class NodeShape<
       ShapeT
     >,
   ) {
-    super(generatedShaclCoreNodeShape, shapesGraph);
+    super(generatedNodeShape, shapesGraph);
     this.constraints = new NodeShape.Constraints(
-      generatedShaclCoreNodeShape,
+      generatedNodeShape,
       shapesGraph,
     );
   }
@@ -59,10 +59,7 @@ export namespace NodeShape {
     ShapeT
   > {
     constructor(
-      private readonly generatedShaclCoreNodeShape: Omit<
-        generated.ShaclCoreNodeShape,
-        "$type"
-      >,
+      private readonly generatedNodeShape: Omit<generated.NodeShape, "$type">,
       shapesGraph: ShapesGraph<
         NodeShapeT,
         OntologyT,
@@ -71,17 +68,17 @@ export namespace NodeShape {
         ShapeT
       >,
     ) {
-      super(generatedShaclCoreNodeShape, shapesGraph);
+      super(generatedNodeShape, shapesGraph);
     }
 
     get closed(): Maybe<boolean> {
-      return this.generatedShaclCoreNodeShape.closed;
+      return this.generatedNodeShape.closed;
     }
 
     @Memoize()
     get properties(): Either<Error, readonly PropertyShapeT[]> {
       return Either.sequence(
-        this.generatedShaclCoreNodeShape.properties.map((identifier) =>
+        this.generatedNodeShape.properties.map((identifier) =>
           this.shapesGraph.propertyShapeByIdentifier(identifier),
         ),
       );

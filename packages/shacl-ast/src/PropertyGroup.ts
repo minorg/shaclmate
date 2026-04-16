@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 
 export class PropertyGroup {
-  constructor(private readonly delegate: generated.ShaclCorePropertyGroup) {}
+  constructor(private readonly delegate: generated.PropertyGroup) {}
 
   get comments(): readonly string[] {
     return this.delegate.comments;
