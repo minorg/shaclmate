@@ -2694,36 +2694,6 @@ export class $NamedDefaultPartial {
 }
 
 export namespace $NamedDefaultPartial {
-  export function $filter(
-    filter: $NamedDefaultPartial.$Filter,
-    value: $NamedDefaultPartial,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IriFilter };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode }> {
@@ -2747,6 +2717,11 @@ export namespace $NamedDefaultPartial {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "$NamedDefaultPartial";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -2781,10 +2756,35 @@ export namespace $NamedDefaultPartial {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "$NamedDefaultPartial";
-  };
+  export function $filter(
+    filter: $NamedDefaultPartial.$Filter,
+    value: $NamedDefaultPartial,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IriFilter };
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function is$NamedDefaultPartial(
     object: $Object,
@@ -3026,28 +3026,6 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
-  export function $filter(
-    filter: $DefaultPartial.$Filter,
-    value: $DefaultPartial,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -3073,6 +3051,11 @@ export namespace $DefaultPartial {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "$DefaultPartial";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -3107,10 +3090,27 @@ export namespace $DefaultPartial {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "$DefaultPartial";
-  };
+  export function $filter(
+    filter: $DefaultPartial.$Filter,
+    value: $DefaultPartial,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function is$DefaultPartial(
     object: $Object,
@@ -3357,45 +3357,6 @@ export namespace UuidV4IriIdentifierInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: UuidV4IriIdentifierInterface.$Filter,
-    value: UuidV4IriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.uuidV4IriProperty !== undefined &&
-      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly uuidV4IriProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -3424,6 +3385,12 @@ export namespace UuidV4IriIdentifierInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "UuidV4IriIdentifierInterface";
+    readonly uuidV4IriProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -3475,11 +3442,44 @@ export namespace UuidV4IriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UuidV4IriIdentifierInterface";
-    readonly uuidV4IriProperty: string;
+  export function $filter(
+    filter: UuidV4IriIdentifierInterface.$Filter,
+    value: UuidV4IriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.uuidV4IriProperty !== undefined &&
+      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly uuidV4IriProperty?: $StringFilter;
   };
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isUuidV4IriIdentifierInterface(
     object: $Object,
@@ -3868,45 +3868,6 @@ export class UuidV4IriIdentifierClass {
 }
 
 export namespace UuidV4IriIdentifierClass {
-  export function $filter(
-    filter: UuidV4IriIdentifierClass.$Filter,
-    value: UuidV4IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.uuidV4IriProperty !== undefined &&
-      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly uuidV4IriProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode; uuidV4IriProperty: string }> {
@@ -3931,6 +3892,12 @@ export namespace UuidV4IriIdentifierClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "UuidV4IriIdentifierClass";
+    readonly uuidV4IriProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -3970,11 +3937,44 @@ export namespace UuidV4IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UuidV4IriIdentifierClass";
-    readonly uuidV4IriProperty: string;
+  export function $filter(
+    filter: UuidV4IriIdentifierClass.$Filter,
+    value: UuidV4IriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.uuidV4IriProperty !== undefined &&
+      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly uuidV4IriProperty?: $StringFilter;
   };
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isUuidV4IriIdentifierClass(
     object: $Object,
@@ -5356,6 +5356,422 @@ export class UnionDiscriminantsClass {
 }
 
 export namespace UnionDiscriminantsClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      optionalClassOrClassOrStringProperty: Maybe<
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | {
+            type: "1-ClassUnionMember2";
+            value: ClassUnionMember2;
+          }
+        | { type: "2-string"; value: string }
+      >;
+      optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
+      optionalIriOrStringProperty: Maybe<NamedNode | string>;
+      requiredClassOrClassOrStringProperty:
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | {
+            type: "1-ClassUnionMember2";
+            value: ClassUnionMember2;
+          }
+        | { type: "2-string"; value: string };
+      requiredIriOrLiteralProperty: NamedNode | Literal;
+      requiredIriOrStringProperty: NamedNode | string;
+      setClassOrClassOrStringProperty: readonly (
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | {
+            type: "1-ClassUnionMember2";
+            value: ClassUnionMember2;
+          }
+        | { type: "2-string"; value: string }
+      )[];
+      setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
+      setIriOrStringProperty: readonly (NamedNode | string)[];
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const optionalClassOrClassOrStringProperty = Maybe.fromNullable(
+      $jsonObject["optionalClassOrClassOrStringProperty"],
+    ).map((item) =>
+      item.type === "2-string"
+        ? { type: "2-string" as const, value: item.value }
+        : item.type === "1-ClassUnionMember2"
+          ? {
+              type: "1-ClassUnionMember2" as const,
+              value: ClassUnionMember2.$fromJson(item.value).unsafeCoerce(),
+            }
+          : {
+              type: "0-ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(item.value).unsafeCoerce(),
+            },
+    );
+    const optionalIriOrLiteralProperty = Maybe.fromNullable(
+      $jsonObject["optionalIriOrLiteralProperty"],
+    ).map((item) =>
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            item["@language"] !== undefined
+              ? item["@language"]
+              : item["@type"] !== undefined
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : dataFactory.namedNode(item["@id"]),
+    );
+    const optionalIriOrStringProperty = Maybe.fromNullable(
+      $jsonObject["optionalIriOrStringProperty"],
+    ).map((item) =>
+      typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
+    );
+    const requiredClassOrClassOrStringProperty =
+      $jsonObject["requiredClassOrClassOrStringProperty"].type === "2-string"
+        ? {
+            type: "2-string" as const,
+            value: $jsonObject["requiredClassOrClassOrStringProperty"].value,
+          }
+        : $jsonObject["requiredClassOrClassOrStringProperty"].type ===
+            "1-ClassUnionMember2"
+          ? {
+              type: "1-ClassUnionMember2" as const,
+              value: ClassUnionMember2.$fromJson(
+                $jsonObject["requiredClassOrClassOrStringProperty"].value,
+              ).unsafeCoerce(),
+            }
+          : {
+              type: "0-ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(
+                $jsonObject["requiredClassOrClassOrStringProperty"].value,
+              ).unsafeCoerce(),
+            };
+    const requiredIriOrLiteralProperty =
+      $jsonObject["requiredIriOrLiteralProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["requiredIriOrLiteralProperty"]["@value"],
+            $jsonObject["requiredIriOrLiteralProperty"]["@language"] !==
+              undefined
+              ? $jsonObject["requiredIriOrLiteralProperty"]["@language"]
+              : $jsonObject["requiredIriOrLiteralProperty"]["@type"] !==
+                  undefined
+                ? dataFactory.namedNode(
+                    $jsonObject["requiredIriOrLiteralProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : dataFactory.namedNode(
+            $jsonObject["requiredIriOrLiteralProperty"]["@id"],
+          );
+    const requiredIriOrStringProperty =
+      typeof $jsonObject["requiredIriOrStringProperty"] === "string"
+        ? $jsonObject["requiredIriOrStringProperty"]
+        : dataFactory.namedNode(
+            $jsonObject["requiredIriOrStringProperty"]["@id"],
+          );
+    const setClassOrClassOrStringProperty = $jsonObject[
+      "setClassOrClassOrStringProperty"
+    ].map((item) =>
+      item.type === "2-string"
+        ? { type: "2-string" as const, value: item.value }
+        : item.type === "1-ClassUnionMember2"
+          ? {
+              type: "1-ClassUnionMember2" as const,
+              value: ClassUnionMember2.$fromJson(item.value).unsafeCoerce(),
+            }
+          : {
+              type: "0-ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(item.value).unsafeCoerce(),
+            },
+    );
+    const setIriOrLiteralProperty = $jsonObject["setIriOrLiteralProperty"].map(
+      (item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : dataFactory.namedNode(item["@id"]),
+    );
+    const setIriOrStringProperty = $jsonObject["setIriOrStringProperty"].map(
+      (item) =>
+        typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
+    );
+    return Right({
+      $identifier,
+      optionalClassOrClassOrStringProperty,
+      optionalIriOrLiteralProperty,
+      optionalIriOrStringProperty,
+      requiredClassOrClassOrStringProperty,
+      requiredIriOrLiteralProperty,
+      requiredIriOrStringProperty,
+      setClassOrClassOrStringProperty,
+      setIriOrLiteralProperty,
+      setIriOrStringProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, UnionDiscriminantsClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new UnionDiscriminantsClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "UnionDiscriminantsClass";
+    readonly optionalClassOrClassOrStringProperty?:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          type: "1-ClassUnionMember2";
+          value: ClassUnionMember2.$Json;
+        }
+      | { type: "2-string"; value: string };
+    readonly optionalIriOrLiteralProperty?:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
+    readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
+    readonly requiredClassOrClassOrStringProperty:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          type: "1-ClassUnionMember2";
+          value: ClassUnionMember2.$Json;
+        }
+      | { type: "2-string"; value: string };
+    readonly requiredIriOrLiteralProperty:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
+    readonly requiredIriOrStringProperty: { readonly "@id": string } | string;
+    readonly setClassOrClassOrStringProperty?: readonly (
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          type: "1-ClassUnionMember2";
+          value: ClassUnionMember2.$Json;
+        }
+      | { type: "2-string"; value: string }
+    )[];
+    readonly setIriOrLiteralProperty?: readonly (
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        }
+    )[];
+    readonly setIriOrStringProperty?: readonly (
+      | { readonly "@id": string }
+      | string
+    )[];
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "UnionDiscriminantsClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredIriOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/setIriOrStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "UnionDiscriminantsClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("UnionDiscriminantsClass"),
+      optionalClassOrClassOrStringProperty: z
+        .discriminatedUnion("type", [
+          z.object({
+            type: z.literal("0-ClassUnionMember1"),
+            value: ClassUnionMember1.$jsonZodSchema(),
+          }),
+          z.object({
+            type: z.literal("1-ClassUnionMember2"),
+            value: ClassUnionMember2.$jsonZodSchema(),
+          }),
+          z.object({ type: z.literal("2-string"), value: z.string() }),
+        ])
+        .optional()
+        .describe(
+          "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+        ),
+      optionalIriOrLiteralProperty: z
+        .discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            termType: z.literal("Literal"),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          }),
+        ])
+        .optional()
+        .describe(
+          "Union that can be discriminated by an inline discriminant property (termType).",
+        ),
+      optionalIriOrStringProperty: z
+        .union([z.object({ "@id": z.string().min(1) }), z.string()])
+        .optional()
+        .describe("Union that can be discriminated by typeof."),
+      requiredClassOrClassOrStringProperty: z
+        .discriminatedUnion("type", [
+          z.object({
+            type: z.literal("0-ClassUnionMember1"),
+            value: ClassUnionMember1.$jsonZodSchema(),
+          }),
+          z.object({
+            type: z.literal("1-ClassUnionMember2"),
+            value: ClassUnionMember2.$jsonZodSchema(),
+          }),
+          z.object({ type: z.literal("2-string"), value: z.string() }),
+        ])
+        .describe(
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+        ),
+      requiredIriOrLiteralProperty: z
+        .discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            termType: z.literal("Literal"),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          }),
+        ])
+        .describe(
+          "Union that can be discriminated by an inline discriminant property (termType).",
+        ),
+      requiredIriOrStringProperty: z
+        .union([z.object({ "@id": z.string().min(1) }), z.string()])
+        .describe("Union that can be discriminated by typeof."),
+      setClassOrClassOrStringProperty: z
+        .discriminatedUnion("type", [
+          z.object({
+            type: z.literal("0-ClassUnionMember1"),
+            value: ClassUnionMember1.$jsonZodSchema(),
+          }),
+          z.object({
+            type: z.literal("1-ClassUnionMember2"),
+            value: ClassUnionMember2.$jsonZodSchema(),
+          }),
+          z.object({ type: z.literal("2-string"), value: z.string() }),
+        ])
+        .array()
+        .default(() => [])
+        .describe(
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+        ),
+      setIriOrLiteralProperty: z
+        .discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            termType: z.literal("Literal"),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          }),
+        ])
+        .array()
+        .default(() => [])
+        .describe(
+          "Union that can be discriminated by an inline discriminant property (termType).",
+        ),
+      setIriOrStringProperty: z
+        .union([z.object({ "@id": z.string().min(1) }), z.string()])
+        .array()
+        .default(() => [])
+        .describe("Union that can be discriminated by typeof."),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: UnionDiscriminantsClass.$Filter,
     value: UnionDiscriminantsClass,
@@ -5913,422 +6329,6 @@ export namespace UnionDiscriminantsClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      optionalClassOrClassOrStringProperty: Maybe<
-        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "1-ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "2-string"; value: string }
-      >;
-      optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
-      optionalIriOrStringProperty: Maybe<NamedNode | string>;
-      requiredClassOrClassOrStringProperty:
-        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "1-ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "2-string"; value: string };
-      requiredIriOrLiteralProperty: NamedNode | Literal;
-      requiredIriOrStringProperty: NamedNode | string;
-      setClassOrClassOrStringProperty: readonly (
-        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "1-ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "2-string"; value: string }
-      )[];
-      setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
-      setIriOrStringProperty: readonly (NamedNode | string)[];
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const optionalClassOrClassOrStringProperty = Maybe.fromNullable(
-      $jsonObject["optionalClassOrClassOrStringProperty"],
-    ).map((item) =>
-      item.type === "2-string"
-        ? { type: "2-string" as const, value: item.value }
-        : item.type === "1-ClassUnionMember2"
-          ? {
-              type: "1-ClassUnionMember2" as const,
-              value: ClassUnionMember2.$fromJson(item.value).unsafeCoerce(),
-            }
-          : {
-              type: "0-ClassUnionMember1" as const,
-              value: ClassUnionMember1.$fromJson(item.value).unsafeCoerce(),
-            },
-    );
-    const optionalIriOrLiteralProperty = Maybe.fromNullable(
-      $jsonObject["optionalIriOrLiteralProperty"],
-    ).map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"])
-                : undefined,
-          )
-        : dataFactory.namedNode(item["@id"]),
-    );
-    const optionalIriOrStringProperty = Maybe.fromNullable(
-      $jsonObject["optionalIriOrStringProperty"],
-    ).map((item) =>
-      typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
-    );
-    const requiredClassOrClassOrStringProperty =
-      $jsonObject["requiredClassOrClassOrStringProperty"].type === "2-string"
-        ? {
-            type: "2-string" as const,
-            value: $jsonObject["requiredClassOrClassOrStringProperty"].value,
-          }
-        : $jsonObject["requiredClassOrClassOrStringProperty"].type ===
-            "1-ClassUnionMember2"
-          ? {
-              type: "1-ClassUnionMember2" as const,
-              value: ClassUnionMember2.$fromJson(
-                $jsonObject["requiredClassOrClassOrStringProperty"].value,
-              ).unsafeCoerce(),
-            }
-          : {
-              type: "0-ClassUnionMember1" as const,
-              value: ClassUnionMember1.$fromJson(
-                $jsonObject["requiredClassOrClassOrStringProperty"].value,
-              ).unsafeCoerce(),
-            };
-    const requiredIriOrLiteralProperty =
-      $jsonObject["requiredIriOrLiteralProperty"].termType === "Literal"
-        ? dataFactory.literal(
-            $jsonObject["requiredIriOrLiteralProperty"]["@value"],
-            $jsonObject["requiredIriOrLiteralProperty"]["@language"] !==
-              undefined
-              ? $jsonObject["requiredIriOrLiteralProperty"]["@language"]
-              : $jsonObject["requiredIriOrLiteralProperty"]["@type"] !==
-                  undefined
-                ? dataFactory.namedNode(
-                    $jsonObject["requiredIriOrLiteralProperty"]["@type"],
-                  )
-                : undefined,
-          )
-        : dataFactory.namedNode(
-            $jsonObject["requiredIriOrLiteralProperty"]["@id"],
-          );
-    const requiredIriOrStringProperty =
-      typeof $jsonObject["requiredIriOrStringProperty"] === "string"
-        ? $jsonObject["requiredIriOrStringProperty"]
-        : dataFactory.namedNode(
-            $jsonObject["requiredIriOrStringProperty"]["@id"],
-          );
-    const setClassOrClassOrStringProperty = $jsonObject[
-      "setClassOrClassOrStringProperty"
-    ].map((item) =>
-      item.type === "2-string"
-        ? { type: "2-string" as const, value: item.value }
-        : item.type === "1-ClassUnionMember2"
-          ? {
-              type: "1-ClassUnionMember2" as const,
-              value: ClassUnionMember2.$fromJson(item.value).unsafeCoerce(),
-            }
-          : {
-              type: "0-ClassUnionMember1" as const,
-              value: ClassUnionMember1.$fromJson(item.value).unsafeCoerce(),
-            },
-    );
-    const setIriOrLiteralProperty = $jsonObject["setIriOrLiteralProperty"].map(
-      (item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"])
-                  : undefined,
-            )
-          : dataFactory.namedNode(item["@id"]),
-    );
-    const setIriOrStringProperty = $jsonObject["setIriOrStringProperty"].map(
-      (item) =>
-        typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
-    );
-    return Right({
-      $identifier,
-      optionalClassOrClassOrStringProperty,
-      optionalIriOrLiteralProperty,
-      optionalIriOrStringProperty,
-      requiredClassOrClassOrStringProperty,
-      requiredIriOrLiteralProperty,
-      requiredIriOrStringProperty,
-      setClassOrClassOrStringProperty,
-      setIriOrLiteralProperty,
-      setIriOrStringProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, UnionDiscriminantsClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new UnionDiscriminantsClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "UnionDiscriminantsClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredIriOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/setIriOrStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "UnionDiscriminantsClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("UnionDiscriminantsClass"),
-      optionalClassOrClassOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({
-            type: z.literal("0-ClassUnionMember1"),
-            value: ClassUnionMember1.$jsonZodSchema(),
-          }),
-          z.object({
-            type: z.literal("1-ClassUnionMember2"),
-            value: ClassUnionMember2.$jsonZodSchema(),
-          }),
-          z.object({ type: z.literal("2-string"), value: z.string() }),
-        ])
-        .optional()
-        .describe(
-          "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
-        ),
-      optionalIriOrLiteralProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            termType: z.literal("Literal"),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          }),
-        ])
-        .optional()
-        .describe(
-          "Union that can be discriminated by an inline discriminant property (termType).",
-        ),
-      optionalIriOrStringProperty: z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .optional()
-        .describe("Union that can be discriminated by typeof."),
-      requiredClassOrClassOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({
-            type: z.literal("0-ClassUnionMember1"),
-            value: ClassUnionMember1.$jsonZodSchema(),
-          }),
-          z.object({
-            type: z.literal("1-ClassUnionMember2"),
-            value: ClassUnionMember2.$jsonZodSchema(),
-          }),
-          z.object({ type: z.literal("2-string"), value: z.string() }),
-        ])
-        .describe(
-          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
-        ),
-      requiredIriOrLiteralProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            termType: z.literal("Literal"),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          }),
-        ])
-        .describe(
-          "Union that can be discriminated by an inline discriminant property (termType).",
-        ),
-      requiredIriOrStringProperty: z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .describe("Union that can be discriminated by typeof."),
-      setClassOrClassOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({
-            type: z.literal("0-ClassUnionMember1"),
-            value: ClassUnionMember1.$jsonZodSchema(),
-          }),
-          z.object({
-            type: z.literal("1-ClassUnionMember2"),
-            value: ClassUnionMember2.$jsonZodSchema(),
-          }),
-          z.object({ type: z.literal("2-string"), value: z.string() }),
-        ])
-        .array()
-        .default(() => [])
-        .describe(
-          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
-        ),
-      setIriOrLiteralProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            termType: z.literal("Literal"),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          }),
-        ])
-        .array()
-        .default(() => [])
-        .describe(
-          "Union that can be discriminated by an inline discriminant property (termType).",
-        ),
-      setIriOrStringProperty: z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .array()
-        .default(() => [])
-        .describe("Union that can be discriminated by typeof."),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UnionDiscriminantsClass";
-    readonly optionalClassOrClassOrStringProperty?:
-      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
-      | {
-          type: "1-ClassUnionMember2";
-          value: ClassUnionMember2.$Json;
-        }
-      | { type: "2-string"; value: string };
-    readonly optionalIriOrLiteralProperty?:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
-    readonly requiredClassOrClassOrStringProperty:
-      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
-      | {
-          type: "1-ClassUnionMember2";
-          value: ClassUnionMember2.$Json;
-        }
-      | { type: "2-string"; value: string };
-    readonly requiredIriOrLiteralProperty:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly requiredIriOrStringProperty: { readonly "@id": string } | string;
-    readonly setClassOrClassOrStringProperty?: readonly (
-      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
-      | {
-          type: "1-ClassUnionMember2";
-          value: ClassUnionMember2.$Json;
-        }
-      | { type: "2-string"; value: string }
-    )[];
-    readonly setIriOrLiteralProperty?: readonly (
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        }
-    )[];
-    readonly setIriOrStringProperty?: readonly (
-      | { readonly "@id": string }
-      | string
-    )[];
-  };
 
   export function isUnionDiscriminantsClass(
     object: $Object,
@@ -9650,6 +9650,223 @@ export class TermPropertiesClass {
 }
 
 export namespace TermPropertiesClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      blankNodeTermProperty: Maybe<BlankNode>;
+      booleanTermProperty: Maybe<boolean>;
+      dateTermProperty: Maybe<Date>;
+      dateTimeTermProperty: Maybe<Date>;
+      iriTermProperty: Maybe<NamedNode>;
+      literalTermProperty: Maybe<Literal>;
+      numberTermProperty: Maybe<number>;
+      stringTermProperty: Maybe<string>;
+      termProperty: Maybe<BlankNode | NamedNode | Literal>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const blankNodeTermProperty = Maybe.fromNullable(
+      $jsonObject["blankNodeTermProperty"],
+    ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
+    const booleanTermProperty = Maybe.fromNullable(
+      $jsonObject["booleanTermProperty"],
+    );
+    const dateTermProperty = Maybe.fromNullable(
+      $jsonObject["dateTermProperty"],
+    ).map((item) => new Date(item));
+    const dateTimeTermProperty = Maybe.fromNullable(
+      $jsonObject["dateTimeTermProperty"],
+    ).map((item) => new Date(item));
+    const iriTermProperty = Maybe.fromNullable(
+      $jsonObject["iriTermProperty"],
+    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const literalTermProperty = Maybe.fromNullable(
+      $jsonObject["literalTermProperty"],
+    ).map((item) =>
+      dataFactory.literal(
+        item["@value"],
+        item["@language"] !== undefined
+          ? item["@language"]
+          : item["@type"] !== undefined
+            ? dataFactory.namedNode(item["@type"])
+            : undefined,
+      ),
+    );
+    const numberTermProperty = Maybe.fromNullable(
+      $jsonObject["numberTermProperty"],
+    );
+    const stringTermProperty = Maybe.fromNullable(
+      $jsonObject["stringTermProperty"],
+    );
+    const termProperty = Maybe.fromNullable($jsonObject["termProperty"]).map(
+      (item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+    );
+    return Right({
+      $identifier,
+      blankNodeTermProperty,
+      booleanTermProperty,
+      dateTermProperty,
+      dateTimeTermProperty,
+      iriTermProperty,
+      literalTermProperty,
+      numberTermProperty,
+      stringTermProperty,
+      termProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, TermPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new TermPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "TermPropertiesClass";
+    readonly blankNodeTermProperty?: { readonly "@id": string };
+    readonly booleanTermProperty?: boolean;
+    readonly dateTermProperty?: string;
+    readonly dateTimeTermProperty?: string;
+    readonly iriTermProperty?: { readonly "@id": string };
+    readonly literalTermProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly numberTermProperty?: number;
+    readonly stringTermProperty?: string;
+    readonly termProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "TermPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/blankNodeTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/booleanTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateTimeTermProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/iriTermProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/literalTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/numberTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/stringTermProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/termProperty`, type: "Control" },
+      ],
+      label: "TermPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("TermPropertiesClass"),
+      blankNodeTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
+      booleanTermProperty: z.boolean().optional(),
+      dateTermProperty: z.iso.date().optional(),
+      dateTimeTermProperty: z.iso.datetime().optional(),
+      iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
+      literalTermProperty: z
+        .object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+        })
+        .optional(),
+      numberTermProperty: z.number().optional(),
+      stringTermProperty: z.string().optional(),
+      termProperty: z
+        .discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("BlankNode"),
+          }),
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ])
+        .optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: TermPropertiesClass.$Filter,
     value: TermPropertiesClass,
@@ -9767,223 +9984,6 @@ export namespace TermPropertiesClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      blankNodeTermProperty: Maybe<BlankNode>;
-      booleanTermProperty: Maybe<boolean>;
-      dateTermProperty: Maybe<Date>;
-      dateTimeTermProperty: Maybe<Date>;
-      iriTermProperty: Maybe<NamedNode>;
-      literalTermProperty: Maybe<Literal>;
-      numberTermProperty: Maybe<number>;
-      stringTermProperty: Maybe<string>;
-      termProperty: Maybe<BlankNode | NamedNode | Literal>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const blankNodeTermProperty = Maybe.fromNullable(
-      $jsonObject["blankNodeTermProperty"],
-    ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
-    const booleanTermProperty = Maybe.fromNullable(
-      $jsonObject["booleanTermProperty"],
-    );
-    const dateTermProperty = Maybe.fromNullable(
-      $jsonObject["dateTermProperty"],
-    ).map((item) => new Date(item));
-    const dateTimeTermProperty = Maybe.fromNullable(
-      $jsonObject["dateTimeTermProperty"],
-    ).map((item) => new Date(item));
-    const iriTermProperty = Maybe.fromNullable(
-      $jsonObject["iriTermProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const literalTermProperty = Maybe.fromNullable(
-      $jsonObject["literalTermProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        item["@language"] !== undefined
-          ? item["@language"]
-          : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"])
-            : undefined,
-      ),
-    );
-    const numberTermProperty = Maybe.fromNullable(
-      $jsonObject["numberTermProperty"],
-    );
-    const stringTermProperty = Maybe.fromNullable(
-      $jsonObject["stringTermProperty"],
-    );
-    const termProperty = Maybe.fromNullable($jsonObject["termProperty"]).map(
-      (item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"])
-                  : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
-    );
-    return Right({
-      $identifier,
-      blankNodeTermProperty,
-      booleanTermProperty,
-      dateTermProperty,
-      dateTimeTermProperty,
-      iriTermProperty,
-      literalTermProperty,
-      numberTermProperty,
-      stringTermProperty,
-      termProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, TermPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new TermPropertiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "TermPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/blankNodeTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/booleanTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTimeTermProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/iriTermProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/literalTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/numberTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/stringTermProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/termProperty`, type: "Control" },
-      ],
-      label: "TermPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("TermPropertiesClass"),
-      blankNodeTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
-      booleanTermProperty: z.boolean().optional(),
-      dateTermProperty: z.iso.date().optional(),
-      dateTimeTermProperty: z.iso.datetime().optional(),
-      iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
-      literalTermProperty: z
-        .object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        })
-        .optional(),
-      numberTermProperty: z.number().optional(),
-      stringTermProperty: z.string().optional(),
-      termProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ])
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "TermPropertiesClass";
-    readonly blankNodeTermProperty?: { readonly "@id": string };
-    readonly booleanTermProperty?: boolean;
-    readonly dateTermProperty?: string;
-    readonly dateTimeTermProperty?: string;
-    readonly iriTermProperty?: { readonly "@id": string };
-    readonly literalTermProperty?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly numberTermProperty?: number;
-    readonly stringTermProperty?: string;
-    readonly termProperty?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-  };
 
   export function isTermPropertiesClass(
     object: $Object,
@@ -10942,45 +10942,6 @@ export class Sha256IriIdentifierClass {
 }
 
 export namespace Sha256IriIdentifierClass {
-  export function $filter(
-    filter: Sha256IriIdentifierClass.$Filter,
-    value: Sha256IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.sha256IriProperty !== undefined &&
-      !$filterString(filter.sha256IriProperty, value.sha256IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly sha256IriProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode; sha256IriProperty: string }> {
@@ -11005,6 +10966,12 @@ export namespace Sha256IriIdentifierClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "Sha256IriIdentifierClass";
+    readonly sha256IriProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -11044,11 +11011,44 @@ export namespace Sha256IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "Sha256IriIdentifierClass";
-    readonly sha256IriProperty: string;
+  export function $filter(
+    filter: Sha256IriIdentifierClass.$Filter,
+    value: Sha256IriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.sha256IriProperty !== undefined &&
+      !$filterString(filter.sha256IriProperty, value.sha256IriProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly sha256IriProperty?: $StringFilter;
   };
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isSha256IriIdentifierClass(
     object: $Object,
@@ -11407,46 +11407,6 @@ export class RecursiveClassUnionMember2 {
 }
 
 export namespace RecursiveClassUnionMember2 {
-  export function $filter(
-    filter: RecursiveClassUnionMember2.$Filter,
-    value: RecursiveClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.recursiveClassUnionMember2Property !== undefined &&
-      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
-        RecursiveClassUnion.$filter,
-      )(
-        filter.recursiveClassUnionMember2Property,
-        value.recursiveClassUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly recursiveClassUnionMember2Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RecursiveClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -11479,6 +11439,14 @@ export namespace RecursiveClassUnionMember2 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "RecursiveClassUnionMember2";
+    readonly recursiveClassUnionMember2Property?:
+      | RecursiveClassUnionMember1.$Json
+      | RecursiveClassUnionMember2.$Json;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -11523,13 +11491,45 @@ export namespace RecursiveClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "RecursiveClassUnionMember2";
-    readonly recursiveClassUnionMember2Property?:
-      | RecursiveClassUnionMember1.$Json
-      | RecursiveClassUnionMember2.$Json;
+  export function $filter(
+    filter: RecursiveClassUnionMember2.$Filter,
+    value: RecursiveClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.recursiveClassUnionMember2Property !== undefined &&
+      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
+        RecursiveClassUnion.$filter,
+      )(
+        filter.recursiveClassUnionMember2Property,
+        value.recursiveClassUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly recursiveClassUnionMember2Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RecursiveClassUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isRecursiveClassUnionMember2(
     object: $Object,
@@ -11981,46 +11981,6 @@ export class RecursiveClassUnionMember1 {
 }
 
 export namespace RecursiveClassUnionMember1 {
-  export function $filter(
-    filter: RecursiveClassUnionMember1.$Filter,
-    value: RecursiveClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.recursiveClassUnionMember1Property !== undefined &&
-      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
-        RecursiveClassUnion.$filter,
-      )(
-        filter.recursiveClassUnionMember1Property,
-        value.recursiveClassUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly recursiveClassUnionMember1Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RecursiveClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -12053,6 +12013,14 @@ export namespace RecursiveClassUnionMember1 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "RecursiveClassUnionMember1";
+    readonly recursiveClassUnionMember1Property?:
+      | RecursiveClassUnionMember1.$Json
+      | RecursiveClassUnionMember2.$Json;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -12097,13 +12065,45 @@ export namespace RecursiveClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "RecursiveClassUnionMember1";
-    readonly recursiveClassUnionMember1Property?:
-      | RecursiveClassUnionMember1.$Json
-      | RecursiveClassUnionMember2.$Json;
+  export function $filter(
+    filter: RecursiveClassUnionMember1.$Filter,
+    value: RecursiveClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.recursiveClassUnionMember1Property !== undefined &&
+      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
+        RecursiveClassUnion.$filter,
+      )(
+        filter.recursiveClassUnionMember1Property,
+        value.recursiveClassUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly recursiveClassUnionMember1Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RecursiveClassUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isRecursiveClassUnionMember1(
     object: $Object,
@@ -12565,37 +12565,6 @@ export class PropertyVisibilitiesClass {
 }
 
 export namespace PropertyVisibilitiesClass {
-  export function $filter(
-    filter: PropertyVisibilitiesClass.$Filter,
-    value: PropertyVisibilitiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.publicProperty !== undefined &&
-      !$filterString(filter.publicProperty, value.publicProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly publicProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -12635,6 +12604,14 @@ export namespace PropertyVisibilitiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyVisibilitiesClass";
+    readonly privateProperty: string;
+    readonly protectedProperty: string;
+    readonly publicProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -12678,13 +12655,36 @@ export namespace PropertyVisibilitiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyVisibilitiesClass";
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
+  export function $filter(
+    filter: PropertyVisibilitiesClass.$Filter,
+    value: PropertyVisibilitiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.publicProperty !== undefined &&
+      !$filterString(filter.publicProperty, value.publicProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly publicProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPropertyVisibilitiesClass(
     object: $Object,
@@ -13174,6 +13174,93 @@ export class PropertyPathsClass {
 }
 
 export namespace PropertyPathsClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      inversePathProperty: Maybe<NamedNode>;
+      predicatePathProperty: Maybe<string>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const inversePathProperty = Maybe.fromNullable(
+      $jsonObject["inversePathProperty"],
+    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const predicatePathProperty = Maybe.fromNullable(
+      $jsonObject["predicatePathProperty"],
+    );
+    return Right({ $identifier, inversePathProperty, predicatePathProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, PropertyPathsClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new PropertyPathsClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyPathsClass";
+    readonly inversePathProperty?: { readonly "@id": string };
+    readonly predicatePathProperty?: string;
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyPathsClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inversePathProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/predicatePathProperty`,
+          type: "Control",
+        },
+      ],
+      label: "PropertyPathsClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("PropertyPathsClass"),
+      inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
+      predicatePathProperty: z.string().optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: PropertyPathsClass.$Filter,
     value: PropertyPathsClass,
@@ -13221,93 +13308,6 @@ export namespace PropertyPathsClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      inversePathProperty: Maybe<NamedNode>;
-      predicatePathProperty: Maybe<string>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const inversePathProperty = Maybe.fromNullable(
-      $jsonObject["inversePathProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const predicatePathProperty = Maybe.fromNullable(
-      $jsonObject["predicatePathProperty"],
-    );
-    return Right({ $identifier, inversePathProperty, predicatePathProperty });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, PropertyPathsClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyPathsClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyPathsClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inversePathProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/predicatePathProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PropertyPathsClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PropertyPathsClass"),
-      inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
-      predicatePathProperty: z.string().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyPathsClass";
-    readonly inversePathProperty?: { readonly "@id": string };
-    readonly predicatePathProperty?: string;
-  };
 
   export function isPropertyPathsClass(
     object: $Object,
@@ -13919,69 +13919,6 @@ export class PropertyNamesClass {
 }
 
 export namespace PropertyNamesClass {
-  export function $filter(
-    filter: PropertyNamesClass.$Filter,
-    value: PropertyNamesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName1 !== undefined &&
-      !$filterString(filter.actualPropertyName1, value.actualPropertyName1)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName2 !== undefined &&
-      !$filterString(filter.actualPropertyName2, value.actualPropertyName2)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName3 !== undefined &&
-      !$filterString(filter.actualPropertyName3, value.actualPropertyName3)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName4 !== undefined &&
-      !$filterString(filter.actualPropertyName4, value.actualPropertyName4)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName5 !== undefined &&
-      !$filterString(filter.actualPropertyName5, value.actualPropertyName5)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly actualPropertyName1?: $StringFilter;
-    readonly actualPropertyName2?: $StringFilter;
-    readonly actualPropertyName3?: $StringFilter;
-    readonly actualPropertyName4?: $StringFilter;
-    readonly actualPropertyName5?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PropertyNamesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -14027,6 +13964,16 @@ export namespace PropertyNamesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyNamesClass";
+    readonly actualPropertyName1: string;
+    readonly actualPropertyName2: string;
+    readonly actualPropertyName3: string;
+    readonly actualPropertyName4: string;
+    readonly actualPropertyName5: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -14098,15 +14045,68 @@ export namespace PropertyNamesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyNamesClass";
-    readonly actualPropertyName1: string;
-    readonly actualPropertyName2: string;
-    readonly actualPropertyName3: string;
-    readonly actualPropertyName4: string;
-    readonly actualPropertyName5: string;
+  export function $filter(
+    filter: PropertyNamesClass.$Filter,
+    value: PropertyNamesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName1 !== undefined &&
+      !$filterString(filter.actualPropertyName1, value.actualPropertyName1)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName2 !== undefined &&
+      !$filterString(filter.actualPropertyName2, value.actualPropertyName2)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName3 !== undefined &&
+      !$filterString(filter.actualPropertyName3, value.actualPropertyName3)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName4 !== undefined &&
+      !$filterString(filter.actualPropertyName4, value.actualPropertyName4)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName5 !== undefined &&
+      !$filterString(filter.actualPropertyName5, value.actualPropertyName5)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly actualPropertyName1?: $StringFilter;
+    readonly actualPropertyName2?: $StringFilter;
+    readonly actualPropertyName3?: $StringFilter;
+    readonly actualPropertyName4?: $StringFilter;
+    readonly actualPropertyName5?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/PropertyNamesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPropertyNamesClass(
     object: $Object,
@@ -14824,70 +14824,6 @@ export class PropertyCardinalitiesClass {
 }
 
 export namespace PropertyCardinalitiesClass {
-  export function $filter(
-    filter: PropertyCardinalitiesClass.$Filter,
-    value: PropertyCardinalitiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.emptyStringSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.emptyStringSetProperty,
-        value.emptyStringSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nonEmptyStringSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.nonEmptyStringSetProperty,
-        value.nonEmptyStringSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -14934,6 +14870,15 @@ export namespace PropertyCardinalitiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyCardinalitiesClass";
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string;
+    readonly requiredStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -15002,14 +14947,69 @@ export namespace PropertyCardinalitiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyCardinalitiesClass";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredStringProperty: string;
+  export function $filter(
+    filter: PropertyCardinalitiesClass.$Filter,
+    value: PropertyCardinalitiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.emptyStringSetProperty !== undefined &&
+      !$filterArray<string, $StringFilter>($filterString)(
+        filter.emptyStringSetProperty,
+        value.emptyStringSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nonEmptyStringSetProperty !== undefined &&
+      !$filterArray<string, $StringFilter>($filterString)(
+        filter.nonEmptyStringSetProperty,
+        value.nonEmptyStringSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredStringProperty !== undefined &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPropertyCardinalitiesClass(
     object: $Object,
@@ -15520,44 +15520,6 @@ export namespace PartialInterfaceUnionMember2 {
     return _hasher;
   }
 
-  export function $filter(
-    filter: PartialInterfaceUnionMember2.$Filter,
-    value: PartialInterfaceUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -15589,6 +15551,12 @@ export namespace PartialInterfaceUnionMember2 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialInterfaceUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -15644,11 +15612,43 @@ export namespace PartialInterfaceUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialInterfaceUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: PartialInterfaceUnionMember2.$Filter,
+    value: PartialInterfaceUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPartialInterfaceUnionMember2(
     object: $Object,
@@ -16079,44 +16079,6 @@ export namespace PartialInterfaceUnionMember1 {
     return _hasher;
   }
 
-  export function $filter(
-    filter: PartialInterfaceUnionMember1.$Filter,
-    value: PartialInterfaceUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -16148,6 +16110,12 @@ export namespace PartialInterfaceUnionMember1 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialInterfaceUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -16203,11 +16171,43 @@ export namespace PartialInterfaceUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialInterfaceUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: PartialInterfaceUnionMember1.$Filter,
+    value: PartialInterfaceUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPartialInterfaceUnionMember1(
     object: $Object,
@@ -16674,44 +16674,6 @@ export class PartialClassUnionMember2 {
 }
 
 export namespace PartialClassUnionMember2 {
-  export function $filter(
-    filter: PartialClassUnionMember2.$Filter,
-    value: PartialClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -16742,6 +16704,12 @@ export namespace PartialClassUnionMember2 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClassUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -16781,11 +16749,43 @@ export namespace PartialClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClassUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: PartialClassUnionMember2.$Filter,
+    value: PartialClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPartialClassUnionMember2(
     object: $Object,
@@ -17210,44 +17210,6 @@ export class PartialClassUnionMember1 {
 }
 
 export namespace PartialClassUnionMember1 {
-  export function $filter(
-    filter: PartialClassUnionMember1.$Filter,
-    value: PartialClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -17278,6 +17240,12 @@ export namespace PartialClassUnionMember1 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClassUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -17317,11 +17285,43 @@ export namespace PartialClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClassUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: PartialClassUnionMember1.$Filter,
+    value: PartialClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPartialClassUnionMember1(
     object: $Object,
@@ -17725,32 +17725,6 @@ export class NewName2Class {
 }
 
 export namespace NewName2Class {
-  export function $filter(
-    filter: NewName2Class.$Filter,
-    value: NewName2Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideName2Class",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -17774,6 +17748,11 @@ export namespace NewName2Class {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NewName2Class";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -17808,10 +17787,31 @@ export namespace NewName2Class {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NewName2Class";
-  };
+  export function $filter(
+    filter: NewName2Class.$Filter,
+    value: NewName2Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/OverrideName2Class",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isNewName2Class(object: $Object): object is NewName2Class {
     switch (object.$type) {
@@ -18154,32 +18154,6 @@ export class NewName1Class {
 }
 
 export namespace NewName1Class {
-  export function $filter(
-    filter: NewName1Class.$Filter,
-    value: NewName1Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideName1Class",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -18203,6 +18177,11 @@ export namespace NewName1Class {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NewName1Class";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -18237,10 +18216,31 @@ export namespace NewName1Class {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NewName1Class";
-  };
+  export function $filter(
+    filter: NewName1Class.$Filter,
+    value: NewName1Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/OverrideName1Class",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isNewName1Class(object: $Object): object is NewName1Class {
     switch (object.$type) {
@@ -18642,51 +18642,6 @@ export class OrderedPropertiesClass {
 }
 
 export namespace OrderedPropertiesClass {
-  export function $filter(
-    filter: OrderedPropertiesClass.$Filter,
-    value: OrderedPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.orderedPropertyC !== undefined &&
-      !$filterString(filter.orderedPropertyC, value.orderedPropertyC)
-    ) {
-      return false;
-    }
-    if (
-      filter.orderedPropertyB !== undefined &&
-      !$filterString(filter.orderedPropertyB, value.orderedPropertyB)
-    ) {
-      return false;
-    }
-    if (
-      filter.orderedPropertyA !== undefined &&
-      !$filterString(filter.orderedPropertyA, value.orderedPropertyA)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly orderedPropertyC?: $StringFilter;
-    readonly orderedPropertyB?: $StringFilter;
-    readonly orderedPropertyA?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -18726,6 +18681,14 @@ export namespace OrderedPropertiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "OrderedPropertiesClass";
+    readonly orderedPropertyC: string;
+    readonly orderedPropertyB: string;
+    readonly orderedPropertyA: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -18775,13 +18738,50 @@ export namespace OrderedPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "OrderedPropertiesClass";
-    readonly orderedPropertyC: string;
-    readonly orderedPropertyB: string;
-    readonly orderedPropertyA: string;
+  export function $filter(
+    filter: OrderedPropertiesClass.$Filter,
+    value: OrderedPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.orderedPropertyC !== undefined &&
+      !$filterString(filter.orderedPropertyC, value.orderedPropertyC)
+    ) {
+      return false;
+    }
+    if (
+      filter.orderedPropertyB !== undefined &&
+      !$filterString(filter.orderedPropertyB, value.orderedPropertyB)
+    ) {
+      return false;
+    }
+    if (
+      filter.orderedPropertyA !== undefined &&
+      !$filterString(filter.orderedPropertyA, value.orderedPropertyA)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly orderedPropertyC?: $StringFilter;
+    readonly orderedPropertyB?: $StringFilter;
+    readonly orderedPropertyA?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isOrderedPropertiesClass(
     object: $Object,
@@ -19872,6 +19872,251 @@ export class NumericPropertiesClass {
 }
 
 export namespace NumericPropertiesClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      byteNumericProperty: Maybe<number>;
+      decimalNumericProperty: Maybe<BigDecimal>;
+      doubleNumericProperty: Maybe<number>;
+      floatNumericProperty: Maybe<number>;
+      integerNumericProperty: Maybe<bigint>;
+      intNumericProperty: Maybe<number>;
+      longNumericProperty: Maybe<bigint>;
+      negativeIntegerNumericProperty: Maybe<bigint>;
+      nonNegativeIntegerNumericProperty: Maybe<bigint>;
+      nonPositiveIntegerNumericProperty: Maybe<bigint>;
+      positiveIntegerNumericProperty: Maybe<bigint>;
+      shortNumericProperty: Maybe<number>;
+      unsignedByteNumericProperty: Maybe<number>;
+      unsignedIntNumericProperty: Maybe<number>;
+      unsignedLongNumericProperty: Maybe<bigint>;
+      unsignedShortNumericProperty: Maybe<number>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const byteNumericProperty = Maybe.fromNullable(
+      $jsonObject["byteNumericProperty"],
+    );
+    const decimalNumericProperty = Maybe.fromNullable(
+      $jsonObject["decimalNumericProperty"],
+    ).map((item) => new BigDecimal(item));
+    const doubleNumericProperty = Maybe.fromNullable(
+      $jsonObject["doubleNumericProperty"],
+    );
+    const floatNumericProperty = Maybe.fromNullable(
+      $jsonObject["floatNumericProperty"],
+    );
+    const integerNumericProperty = Maybe.fromNullable(
+      $jsonObject["integerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const intNumericProperty = Maybe.fromNullable(
+      $jsonObject["intNumericProperty"],
+    );
+    const longNumericProperty = Maybe.fromNullable(
+      $jsonObject["longNumericProperty"],
+    ).map((item) => BigInt(item));
+    const negativeIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["negativeIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["nonNegativeIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["nonPositiveIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const positiveIntegerNumericProperty = Maybe.fromNullable(
+      $jsonObject["positiveIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const shortNumericProperty = Maybe.fromNullable(
+      $jsonObject["shortNumericProperty"],
+    );
+    const unsignedByteNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedByteNumericProperty"],
+    );
+    const unsignedIntNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedIntNumericProperty"],
+    );
+    const unsignedLongNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedLongNumericProperty"],
+    ).map((item) => BigInt(item));
+    const unsignedShortNumericProperty = Maybe.fromNullable(
+      $jsonObject["unsignedShortNumericProperty"],
+    );
+    return Right({
+      $identifier,
+      byteNumericProperty,
+      decimalNumericProperty,
+      doubleNumericProperty,
+      floatNumericProperty,
+      integerNumericProperty,
+      intNumericProperty,
+      longNumericProperty,
+      negativeIntegerNumericProperty,
+      nonNegativeIntegerNumericProperty,
+      nonPositiveIntegerNumericProperty,
+      positiveIntegerNumericProperty,
+      shortNumericProperty,
+      unsignedByteNumericProperty,
+      unsignedIntNumericProperty,
+      unsignedLongNumericProperty,
+      unsignedShortNumericProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, NumericPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NumericPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NumericPropertiesClass";
+    readonly byteNumericProperty?: number;
+    readonly decimalNumericProperty?: string;
+    readonly doubleNumericProperty?: number;
+    readonly floatNumericProperty?: number;
+    readonly integerNumericProperty?: string;
+    readonly intNumericProperty?: number;
+    readonly longNumericProperty?: string;
+    readonly negativeIntegerNumericProperty?: string;
+    readonly nonNegativeIntegerNumericProperty?: string;
+    readonly nonPositiveIntegerNumericProperty?: string;
+    readonly positiveIntegerNumericProperty?: string;
+    readonly shortNumericProperty?: number;
+    readonly unsignedByteNumericProperty?: number;
+    readonly unsignedIntNumericProperty?: number;
+    readonly unsignedLongNumericProperty?: string;
+    readonly unsignedShortNumericProperty?: number;
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NumericPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/byteNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/decimalNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/doubleNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/floatNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/integerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/intNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/longNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/negativeIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonNegativeIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonPositiveIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/positiveIntegerNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/shortNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedByteNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedIntNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedLongNumericProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/unsignedShortNumericProperty`,
+          type: "Control",
+        },
+      ],
+      label: "NumericPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("NumericPropertiesClass"),
+      byteNumericProperty: z.number().optional(),
+      decimalNumericProperty: z.string().optional(),
+      doubleNumericProperty: z.number().optional(),
+      floatNumericProperty: z.number().optional(),
+      integerNumericProperty: z.string().optional(),
+      intNumericProperty: z.number().optional(),
+      longNumericProperty: z.string().optional(),
+      negativeIntegerNumericProperty: z.string().optional(),
+      nonNegativeIntegerNumericProperty: z.string().optional(),
+      nonPositiveIntegerNumericProperty: z.string().optional(),
+      positiveIntegerNumericProperty: z.string().optional(),
+      shortNumericProperty: z.number().optional(),
+      unsignedByteNumericProperty: z.number().optional(),
+      unsignedIntNumericProperty: z.number().optional(),
+      unsignedLongNumericProperty: z.string().optional(),
+      unsignedShortNumericProperty: z.number().optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: NumericPropertiesClass.$Filter,
     value: NumericPropertiesClass,
@@ -20069,251 +20314,6 @@ export namespace NumericPropertiesClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      byteNumericProperty: Maybe<number>;
-      decimalNumericProperty: Maybe<BigDecimal>;
-      doubleNumericProperty: Maybe<number>;
-      floatNumericProperty: Maybe<number>;
-      integerNumericProperty: Maybe<bigint>;
-      intNumericProperty: Maybe<number>;
-      longNumericProperty: Maybe<bigint>;
-      negativeIntegerNumericProperty: Maybe<bigint>;
-      nonNegativeIntegerNumericProperty: Maybe<bigint>;
-      nonPositiveIntegerNumericProperty: Maybe<bigint>;
-      positiveIntegerNumericProperty: Maybe<bigint>;
-      shortNumericProperty: Maybe<number>;
-      unsignedByteNumericProperty: Maybe<number>;
-      unsignedIntNumericProperty: Maybe<number>;
-      unsignedLongNumericProperty: Maybe<bigint>;
-      unsignedShortNumericProperty: Maybe<number>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const byteNumericProperty = Maybe.fromNullable(
-      $jsonObject["byteNumericProperty"],
-    );
-    const decimalNumericProperty = Maybe.fromNullable(
-      $jsonObject["decimalNumericProperty"],
-    ).map((item) => new BigDecimal(item));
-    const doubleNumericProperty = Maybe.fromNullable(
-      $jsonObject["doubleNumericProperty"],
-    );
-    const floatNumericProperty = Maybe.fromNullable(
-      $jsonObject["floatNumericProperty"],
-    );
-    const integerNumericProperty = Maybe.fromNullable(
-      $jsonObject["integerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const intNumericProperty = Maybe.fromNullable(
-      $jsonObject["intNumericProperty"],
-    );
-    const longNumericProperty = Maybe.fromNullable(
-      $jsonObject["longNumericProperty"],
-    ).map((item) => BigInt(item));
-    const negativeIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["negativeIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["nonNegativeIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["nonPositiveIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const positiveIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["positiveIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const shortNumericProperty = Maybe.fromNullable(
-      $jsonObject["shortNumericProperty"],
-    );
-    const unsignedByteNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedByteNumericProperty"],
-    );
-    const unsignedIntNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedIntNumericProperty"],
-    );
-    const unsignedLongNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedLongNumericProperty"],
-    ).map((item) => BigInt(item));
-    const unsignedShortNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedShortNumericProperty"],
-    );
-    return Right({
-      $identifier,
-      byteNumericProperty,
-      decimalNumericProperty,
-      doubleNumericProperty,
-      floatNumericProperty,
-      integerNumericProperty,
-      intNumericProperty,
-      longNumericProperty,
-      negativeIntegerNumericProperty,
-      nonNegativeIntegerNumericProperty,
-      nonPositiveIntegerNumericProperty,
-      positiveIntegerNumericProperty,
-      shortNumericProperty,
-      unsignedByteNumericProperty,
-      unsignedIntNumericProperty,
-      unsignedLongNumericProperty,
-      unsignedShortNumericProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, NumericPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NumericPropertiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NumericPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/byteNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/decimalNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/doubleNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/floatNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/integerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/intNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/longNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/negativeIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonNegativeIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonPositiveIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/positiveIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/shortNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedByteNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedIntNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedLongNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedShortNumericProperty`,
-          type: "Control",
-        },
-      ],
-      label: "NumericPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NumericPropertiesClass"),
-      byteNumericProperty: z.number().optional(),
-      decimalNumericProperty: z.string().optional(),
-      doubleNumericProperty: z.number().optional(),
-      floatNumericProperty: z.number().optional(),
-      integerNumericProperty: z.string().optional(),
-      intNumericProperty: z.number().optional(),
-      longNumericProperty: z.string().optional(),
-      negativeIntegerNumericProperty: z.string().optional(),
-      nonNegativeIntegerNumericProperty: z.string().optional(),
-      nonPositiveIntegerNumericProperty: z.string().optional(),
-      positiveIntegerNumericProperty: z.string().optional(),
-      shortNumericProperty: z.number().optional(),
-      unsignedByteNumericProperty: z.number().optional(),
-      unsignedIntNumericProperty: z.number().optional(),
-      unsignedLongNumericProperty: z.string().optional(),
-      unsignedShortNumericProperty: z.number().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NumericPropertiesClass";
-    readonly byteNumericProperty?: number;
-    readonly decimalNumericProperty?: string;
-    readonly doubleNumericProperty?: number;
-    readonly floatNumericProperty?: number;
-    readonly integerNumericProperty?: string;
-    readonly intNumericProperty?: number;
-    readonly longNumericProperty?: string;
-    readonly negativeIntegerNumericProperty?: string;
-    readonly nonNegativeIntegerNumericProperty?: string;
-    readonly nonPositiveIntegerNumericProperty?: string;
-    readonly positiveIntegerNumericProperty?: string;
-    readonly shortNumericProperty?: number;
-    readonly unsignedByteNumericProperty?: number;
-    readonly unsignedIntNumericProperty?: number;
-    readonly unsignedLongNumericProperty?: string;
-    readonly unsignedShortNumericProperty?: number;
-  };
 
   export function isNumericPropertiesClass(
     object: $Object,
@@ -22081,91 +22081,6 @@ export class NodeKindsClass {
 }
 
 export namespace NodeKindsClass {
-  export function $filter(
-    filter: NodeKindsClass.$Filter,
-    value: NodeKindsClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeKindProperty !== undefined &&
-      !$filterBlankNode(
-        filter.blankNodeKindProperty,
-        value.blankNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeOrIriNodeKindProperty !== undefined &&
-      !$filterIdentifier(
-        filter.blankNodeOrIriNodeKindProperty,
-        value.blankNodeOrIriNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeOrLiteralNodeKindProperty !== undefined &&
-      !$filterTerm(
-        filter.blankNodeOrLiteralNodeKindProperty,
-        value.blankNodeOrLiteralNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.iriNodeKindProperty !== undefined &&
-      !$filterIri(filter.iriNodeKindProperty, value.iriNodeKindProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.iriOrLiteralNodeKindProperty !== undefined &&
-      !$filterTerm(
-        filter.iriOrLiteralNodeKindProperty,
-        value.iriOrLiteralNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.literalNodeKindProperty !== undefined &&
-      !$filterLiteral(
-        filter.literalNodeKindProperty,
-        value.literalNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeKindProperty?: $BlankNodeFilter;
-    readonly blankNodeOrIriNodeKindProperty?: $IdentifierFilter;
-    readonly blankNodeOrLiteralNodeKindProperty?: $TermFilter;
-    readonly iriNodeKindProperty?: $IriFilter;
-    readonly iriOrLiteralNodeKindProperty?: $TermFilter;
-    readonly literalNodeKindProperty?: $LiteralFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NodeKindsClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -22268,6 +22183,35 @@ export namespace NodeKindsClass {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NodeKindsClass";
+    readonly blankNodeKindProperty: { readonly "@id": string };
+    readonly blankNodeOrIriNodeKindProperty: { readonly "@id": string };
+    readonly blankNodeOrLiteralNodeKindProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly iriNodeKindProperty: { readonly "@id": string };
+    readonly iriOrLiteralNodeKindProperty:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly literalNodeKindProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+  };
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -22357,34 +22301,90 @@ export namespace NodeKindsClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NodeKindsClass";
-    readonly blankNodeKindProperty: { readonly "@id": string };
-    readonly blankNodeOrIriNodeKindProperty: { readonly "@id": string };
-    readonly blankNodeOrLiteralNodeKindProperty:
-      | { readonly "@id": string; readonly termType: "BlankNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly iriNodeKindProperty: { readonly "@id": string };
-    readonly iriOrLiteralNodeKindProperty:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly literalNodeKindProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
+  export function $filter(
+    filter: NodeKindsClass.$Filter,
+    value: NodeKindsClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeKindProperty !== undefined &&
+      !$filterBlankNode(
+        filter.blankNodeKindProperty,
+        value.blankNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeOrIriNodeKindProperty !== undefined &&
+      !$filterIdentifier(
+        filter.blankNodeOrIriNodeKindProperty,
+        value.blankNodeOrIriNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeOrLiteralNodeKindProperty !== undefined &&
+      !$filterTerm(
+        filter.blankNodeOrLiteralNodeKindProperty,
+        value.blankNodeOrLiteralNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.iriNodeKindProperty !== undefined &&
+      !$filterIri(filter.iriNodeKindProperty, value.iriNodeKindProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriOrLiteralNodeKindProperty !== undefined &&
+      !$filterTerm(
+        filter.iriOrLiteralNodeKindProperty,
+        value.iriOrLiteralNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.literalNodeKindProperty !== undefined &&
+      !$filterLiteral(
+        filter.literalNodeKindProperty,
+        value.literalNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly blankNodeKindProperty?: $BlankNodeFilter;
+    readonly blankNodeOrIriNodeKindProperty?: $IdentifierFilter;
+    readonly blankNodeOrLiteralNodeKindProperty?: $TermFilter;
+    readonly iriNodeKindProperty?: $IriFilter;
+    readonly iriOrLiteralNodeKindProperty?: $TermFilter;
+    readonly literalNodeKindProperty?: $LiteralFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NodeKindsClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isNodeKindsClass(object: $Object): object is NodeKindsClass {
     switch (object.$type) {
@@ -23050,40 +23050,6 @@ export class NoRdfTypeClassUnionMember2 {
 }
 
 export namespace NoRdfTypeClassUnionMember2 {
-  export function $filter(
-    filter: NoRdfTypeClassUnionMember2.$Filter,
-    value: NoRdfTypeClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.noRdfTypeClassUnionMember2Property !== undefined &&
-      !$filterString(
-        filter.noRdfTypeClassUnionMember2Property,
-        value.noRdfTypeClassUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly noRdfTypeClassUnionMember2Property?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -23115,6 +23081,12 @@ export namespace NoRdfTypeClassUnionMember2 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NoRdfTypeClassUnionMember2";
+    readonly noRdfTypeClassUnionMember2Property: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -23154,11 +23126,39 @@ export namespace NoRdfTypeClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NoRdfTypeClassUnionMember2";
-    readonly noRdfTypeClassUnionMember2Property: string;
+  export function $filter(
+    filter: NoRdfTypeClassUnionMember2.$Filter,
+    value: NoRdfTypeClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.noRdfTypeClassUnionMember2Property !== undefined &&
+      !$filterString(
+        filter.noRdfTypeClassUnionMember2Property,
+        value.noRdfTypeClassUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly noRdfTypeClassUnionMember2Property?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isNoRdfTypeClassUnionMember2(
     object: $Object,
@@ -23492,40 +23492,6 @@ export class NoRdfTypeClassUnionMember1 {
 }
 
 export namespace NoRdfTypeClassUnionMember1 {
-  export function $filter(
-    filter: NoRdfTypeClassUnionMember1.$Filter,
-    value: NoRdfTypeClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.noRdfTypeClassUnionMember1Property !== undefined &&
-      !$filterString(
-        filter.noRdfTypeClassUnionMember1Property,
-        value.noRdfTypeClassUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly noRdfTypeClassUnionMember1Property?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -23557,6 +23523,12 @@ export namespace NoRdfTypeClassUnionMember1 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NoRdfTypeClassUnionMember1";
+    readonly noRdfTypeClassUnionMember1Property: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -23596,11 +23568,39 @@ export namespace NoRdfTypeClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NoRdfTypeClassUnionMember1";
-    readonly noRdfTypeClassUnionMember1Property: string;
+  export function $filter(
+    filter: NoRdfTypeClassUnionMember1.$Filter,
+    value: NoRdfTypeClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.noRdfTypeClassUnionMember1Property !== undefined &&
+      !$filterString(
+        filter.noRdfTypeClassUnionMember1Property,
+        value.noRdfTypeClassUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly noRdfTypeClassUnionMember1Property?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isNoRdfTypeClassUnionMember1(
     object: $Object,
@@ -24107,65 +24107,6 @@ export class MutablePropertiesClass {
 }
 
 export namespace MutablePropertiesClass {
-  export function $filter(
-    filter: MutablePropertiesClass.$Filter,
-    value: MutablePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.mutableListProperty !== undefined &&
-      !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
-      )(filter.mutableListProperty, value.mutableListProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.mutableSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.mutableSetProperty,
-        value.mutableSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.mutableStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.mutableStringProperty,
-        value.mutableStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly mutableListProperty?: $MaybeFilter<
-      $CollectionFilter<$StringFilter>
-    >;
-    readonly mutableSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/MutablePropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -24209,6 +24150,14 @@ export namespace MutablePropertiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "MutablePropertiesClass";
+    readonly mutableListProperty?: readonly string[];
+    readonly mutableSetProperty?: readonly string[];
+    readonly mutableStringProperty?: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -24274,13 +24223,64 @@ export namespace MutablePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "MutablePropertiesClass";
-    readonly mutableListProperty?: readonly string[];
-    readonly mutableSetProperty?: readonly string[];
-    readonly mutableStringProperty?: string;
+  export function $filter(
+    filter: MutablePropertiesClass.$Filter,
+    value: MutablePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.mutableListProperty !== undefined &&
+      !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
+        $filterArray<string, $StringFilter>($filterString),
+      )(filter.mutableListProperty, value.mutableListProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.mutableSetProperty !== undefined &&
+      !$filterArray<string, $StringFilter>($filterString)(
+        filter.mutableSetProperty,
+        value.mutableSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.mutableStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.mutableStringProperty,
+        value.mutableStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly mutableListProperty?: $MaybeFilter<
+      $CollectionFilter<$StringFilter>
+    >;
+    readonly mutableSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/MutablePropertiesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isMutablePropertiesClass(
     object: $Object,
@@ -25149,6 +25149,117 @@ export class ListPropertiesClass {
 }
 
 export namespace ListPropertiesClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      iriListProperty: Maybe<readonly NamedNode[]>;
+      objectListProperty: Maybe<readonly NonClass[]>;
+      stringListProperty: Maybe<readonly string[]>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const iriListProperty = Maybe.fromNullable(
+      $jsonObject["iriListProperty"],
+    ).map((item) => item.map((item) => dataFactory.namedNode(item["@id"])));
+    const objectListProperty = Maybe.fromNullable(
+      $jsonObject["objectListProperty"],
+    ).map((item) =>
+      item.map((item) => NonClass.$fromJson(item).unsafeCoerce()),
+    );
+    const stringListProperty = Maybe.fromNullable(
+      $jsonObject["stringListProperty"],
+    );
+    return Right({
+      $identifier,
+      iriListProperty,
+      objectListProperty,
+      stringListProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, ListPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new ListPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ListPropertiesClass";
+    readonly iriListProperty?: readonly { readonly "@id": string }[];
+    readonly objectListProperty?: readonly NonClass.$Json[];
+    readonly stringListProperty?: readonly string[];
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ListPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/iriListProperty`, type: "Control" },
+        NonClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/objectListProperty`,
+        }),
+        {
+          scope: `${scopePrefix}/properties/stringListProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ListPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("ListPropertiesClass"),
+      iriListProperty: z
+        .object({ "@id": z.string().min(1) })
+        .array()
+        .default(() => [])
+        .optional(),
+      objectListProperty: NonClass.$jsonZodSchema()
+        .array()
+        .default(() => [])
+        .optional(),
+      stringListProperty: z
+        .string()
+        .array()
+        .default(() => [])
+        .optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: ListPropertiesClass.$Filter,
     value: ListPropertiesClass,
@@ -25207,117 +25318,6 @@ export namespace ListPropertiesClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      iriListProperty: Maybe<readonly NamedNode[]>;
-      objectListProperty: Maybe<readonly NonClass[]>;
-      stringListProperty: Maybe<readonly string[]>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const iriListProperty = Maybe.fromNullable(
-      $jsonObject["iriListProperty"],
-    ).map((item) => item.map((item) => dataFactory.namedNode(item["@id"])));
-    const objectListProperty = Maybe.fromNullable(
-      $jsonObject["objectListProperty"],
-    ).map((item) =>
-      item.map((item) => NonClass.$fromJson(item).unsafeCoerce()),
-    );
-    const stringListProperty = Maybe.fromNullable(
-      $jsonObject["stringListProperty"],
-    );
-    return Right({
-      $identifier,
-      iriListProperty,
-      objectListProperty,
-      stringListProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, ListPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ListPropertiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ListPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/iriListProperty`, type: "Control" },
-        NonClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/objectListProperty`,
-        }),
-        {
-          scope: `${scopePrefix}/properties/stringListProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ListPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ListPropertiesClass"),
-      iriListProperty: z
-        .object({ "@id": z.string().min(1) })
-        .array()
-        .default(() => [])
-        .optional(),
-      objectListProperty: NonClass.$jsonZodSchema()
-        .array()
-        .default(() => [])
-        .optional(),
-      stringListProperty: z
-        .string()
-        .array()
-        .default(() => [])
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ListPropertiesClass";
-    readonly iriListProperty?: readonly { readonly "@id": string }[];
-    readonly objectListProperty?: readonly NonClass.$Json[];
-    readonly stringListProperty?: readonly string[];
-  };
 
   export function isListPropertiesClass(
     object: $Object,
@@ -25983,40 +25983,6 @@ export namespace PartialInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: PartialInterface.$Filter,
-    value: PartialInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -26048,6 +26014,12 @@ export namespace PartialInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialInterface";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -26103,11 +26075,39 @@ export namespace PartialInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialInterface";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: PartialInterface.$Filter,
+    value: PartialInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPartialInterface(
     object: $Object,
@@ -27364,229 +27364,6 @@ export namespace LazyPropertiesInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: LazyPropertiesInterface.$Filter,
-    value: LazyPropertiesInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedInterfaceProperty,
-        value.optionalLazyToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedInterfaceUnionProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedInterfaceUnion
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedInterfaceUnionProperty,
-        value.optionalLazyToResolvedInterfaceUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedIriIdentifierInterface.$Identifier,
-          $NamedDefaultPartial,
-          LazilyResolvedIriIdentifierInterface
-        >,
-      ) =>
-        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
-          $NamedDefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedIriIdentifierInterfaceProperty,
-        value.optionalLazyToResolvedIriIdentifierInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialInterface.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          PartialInterface,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
-          PartialInterface.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialInterfaceToResolvedInterfaceProperty,
-        value.optionalPartialInterfaceToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialInterface.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          PartialInterface,
-          LazilyResolvedInterfaceUnion
-        >,
-      ) =>
-        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
-          PartialInterface.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-        value.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialInterfaceUnion.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          PartialInterfaceUnion,
-          LazilyResolvedInterfaceUnion
-        >,
-      ) =>
-        $filterMaybe<PartialInterfaceUnion, PartialInterfaceUnion.$Filter>(
-          PartialInterfaceUnion.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-        value.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredLazyToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $DefaultPartial.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) => $DefaultPartial.$filter(filter, value.partial))(
-        filter.requiredLazyToResolvedInterfaceProperty,
-        value.requiredLazyToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
-        undefined &&
-      !((
-        filter: PartialInterface.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          PartialInterface,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) => PartialInterface.$filter(filter, value.partial))(
-        filter.requiredPartialInterfaceToResolvedInterfaceProperty,
-        value.requiredPartialInterfaceToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setLazyToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partials))(
-        filter.setLazyToResolvedInterfaceProperty,
-        value.setLazyToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setPartialInterfaceToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<PartialInterface.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          PartialInterface,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterArray<PartialInterface, PartialInterface.$Filter>(
-          PartialInterface.$filter,
-        )(filter, value.partials))(
-        filter.setPartialInterfaceToResolvedInterfaceProperty,
-        value.setPartialInterfaceToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalLazyToResolvedInterfaceProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedInterfaceUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
-    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: $MaybeFilter<PartialInterface.$Filter>;
-    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterface.$Filter>;
-    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterfaceUnion.$Filter>;
-    readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
-    readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
-    readonly setLazyToResolvedInterfaceProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
-    readonly setPartialInterfaceToResolvedInterfaceProperty?: $CollectionFilter<PartialInterface.$Filter>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -27853,6 +27630,23 @@ export namespace LazyPropertiesInterface {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazyPropertiesInterface";
+    readonly optionalLazyToResolvedInterfaceProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedInterfaceUnionProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $NamedDefaultPartial.$Json;
+    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Json;
+    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: PartialInterface.$Json;
+    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?:
+      | PartialInterfaceUnionMember1.$Json
+      | PartialInterfaceUnionMember2.$Json;
+    readonly requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json;
+    readonly requiredPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json;
+    readonly setLazyToResolvedInterfaceProperty?: readonly $DefaultPartial.$Json[];
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: readonly PartialInterface.$Json[];
+  };
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -27996,22 +27790,228 @@ export namespace LazyPropertiesInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazyPropertiesInterface";
-    readonly optionalLazyToResolvedInterfaceProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedInterfaceUnionProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $NamedDefaultPartial.$Json;
-    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Json;
-    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: PartialInterface.$Json;
-    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?:
-      | PartialInterfaceUnionMember1.$Json
-      | PartialInterfaceUnionMember2.$Json;
-    readonly requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json;
-    readonly requiredPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json;
-    readonly setLazyToResolvedInterfaceProperty?: readonly $DefaultPartial.$Json[];
-    readonly setPartialInterfaceToResolvedInterfaceProperty?: readonly PartialInterface.$Json[];
+  export function $filter(
+    filter: LazyPropertiesInterface.$Filter,
+    value: LazyPropertiesInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedInterfaceProperty,
+        value.optionalLazyToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedInterfaceUnionProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedInterfaceUnion.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedInterfaceUnion
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedInterfaceUnionProperty,
+        value.optionalLazyToResolvedInterfaceUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedIriIdentifierInterface.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierInterface
+        >,
+      ) =>
+        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
+          $NamedDefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        value.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialInterface.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
+          PartialInterface.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialInterfaceToResolvedInterfaceProperty,
+        value.optionalPartialInterfaceToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialInterface.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedInterfaceUnion.$Identifier,
+          PartialInterface,
+          LazilyResolvedInterfaceUnion
+        >,
+      ) =>
+        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
+          PartialInterface.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        value.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialInterfaceUnion.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedInterfaceUnion.$Identifier,
+          PartialInterfaceUnion,
+          LazilyResolvedInterfaceUnion
+        >,
+      ) =>
+        $filterMaybe<PartialInterfaceUnion, PartialInterfaceUnion.$Filter>(
+          PartialInterfaceUnion.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        value.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredLazyToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $DefaultPartial.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) => $DefaultPartial.$filter(filter, value.partial))(
+        filter.requiredLazyToResolvedInterfaceProperty,
+        value.requiredLazyToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
+        undefined &&
+      !((
+        filter: PartialInterface.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) => PartialInterface.$filter(filter, value.partial))(
+        filter.requiredPartialInterfaceToResolvedInterfaceProperty,
+        value.requiredPartialInterfaceToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setLazyToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partials))(
+        filter.setLazyToResolvedInterfaceProperty,
+        value.setLazyToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setPartialInterfaceToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<PartialInterface.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterArray<PartialInterface, PartialInterface.$Filter>(
+          PartialInterface.$filter,
+        )(filter, value.partials))(
+        filter.setPartialInterfaceToResolvedInterfaceProperty,
+        value.setPartialInterfaceToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalLazyToResolvedInterfaceProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedInterfaceUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
+    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: $MaybeFilter<PartialInterface.$Filter>;
+    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterface.$Filter>;
+    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterfaceUnion.$Filter>;
+    readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
+    readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
+    readonly setLazyToResolvedInterfaceProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: $CollectionFilter<PartialInterface.$Filter>;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazyPropertiesInterface(
     object: $Object,
@@ -30873,228 +30873,6 @@ export class LazyPropertiesClass {
 }
 
 export namespace LazyPropertiesClass {
-  export function $filter(
-    filter: LazyPropertiesClass.$Filter,
-    value: LazyPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedClassProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedClassProperty,
-        value.optionalLazyToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedClassUnionProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedClassUnion.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedClassUnion
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedClassUnionProperty,
-        value.optionalLazyToResolvedClassUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedIriIdentifierClassProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedIriIdentifierClass.$Identifier,
-          $NamedDefaultPartial,
-          LazilyResolvedIriIdentifierClass
-        >,
-      ) =>
-        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
-          $NamedDefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedIriIdentifierClassProperty,
-        value.optionalLazyToResolvedIriIdentifierClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialClassToResolvedClassProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<PartialClass.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          PartialClass,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-          filter,
-          value.partial,
-        ))(
-        filter.optionalPartialClassToResolvedClassProperty,
-        value.optionalPartialClassToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialClassToResolvedClassUnionProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<PartialClass.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedClassUnion.$Identifier,
-          PartialClass,
-          LazilyResolvedClassUnion
-        >,
-      ) =>
-        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-          filter,
-          value.partial,
-        ))(
-        filter.optionalPartialClassToResolvedClassUnionProperty,
-        value.optionalPartialClassToResolvedClassUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialClassUnion.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedClassUnion.$Identifier,
-          PartialClassUnion,
-          LazilyResolvedClassUnion
-        >,
-      ) =>
-        $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(
-          PartialClassUnion.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialClassUnionToResolvedClassUnionProperty,
-        value.optionalPartialClassUnionToResolvedClassUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredLazyToResolvedClassProperty !== undefined &&
-      !((
-        filter: $DefaultPartial.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) => $DefaultPartial.$filter(filter, value.partial))(
-        filter.requiredLazyToResolvedClassProperty,
-        value.requiredLazyToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredPartialClassToResolvedClassProperty !== undefined &&
-      !((
-        filter: PartialClass.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          PartialClass,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) => PartialClass.$filter(filter, value.partial))(
-        filter.requiredPartialClassToResolvedClassProperty,
-        value.requiredPartialClassToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setLazyToResolvedClassProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partials))(
-        filter.setLazyToResolvedClassProperty,
-        value.setLazyToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setPartialClassToResolvedClassProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<PartialClass.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          PartialClass,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterArray<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-          filter,
-          value.partials,
-        ))(
-        filter.setPartialClassToResolvedClassProperty,
-        value.setPartialClassToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalLazyToResolvedClassProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedClassUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
-    readonly optionalPartialClassToResolvedClassProperty?: $MaybeFilter<PartialClass.$Filter>;
-    readonly optionalPartialClassToResolvedClassUnionProperty?: $MaybeFilter<PartialClass.$Filter>;
-    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: $MaybeFilter<PartialClassUnion.$Filter>;
-    readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
-    readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
-    readonly setLazyToResolvedClassProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
-    readonly setPartialClassToResolvedClassProperty?: $CollectionFilter<PartialClass.$Filter>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -31355,6 +31133,23 @@ export namespace LazyPropertiesClass {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazyPropertiesClass";
+    readonly optionalLazyToResolvedClassProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedClassUnionProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $NamedDefaultPartial.$Json;
+    readonly optionalPartialClassToResolvedClassProperty?: PartialClass.$Json;
+    readonly optionalPartialClassToResolvedClassUnionProperty?: PartialClass.$Json;
+    readonly optionalPartialClassUnionToResolvedClassUnionProperty?:
+      | PartialClassUnionMember1.$Json
+      | PartialClassUnionMember2.$Json;
+    readonly requiredLazyToResolvedClassProperty: $DefaultPartial.$Json;
+    readonly requiredPartialClassToResolvedClassProperty: PartialClass.$Json;
+    readonly setLazyToResolvedClassProperty?: readonly $DefaultPartial.$Json[];
+    readonly setPartialClassToResolvedClassProperty?: readonly PartialClass.$Json[];
+  };
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -31444,22 +31239,227 @@ export namespace LazyPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazyPropertiesClass";
-    readonly optionalLazyToResolvedClassProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedClassUnionProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $NamedDefaultPartial.$Json;
-    readonly optionalPartialClassToResolvedClassProperty?: PartialClass.$Json;
-    readonly optionalPartialClassToResolvedClassUnionProperty?: PartialClass.$Json;
-    readonly optionalPartialClassUnionToResolvedClassUnionProperty?:
-      | PartialClassUnionMember1.$Json
-      | PartialClassUnionMember2.$Json;
-    readonly requiredLazyToResolvedClassProperty: $DefaultPartial.$Json;
-    readonly requiredPartialClassToResolvedClassProperty: PartialClass.$Json;
-    readonly setLazyToResolvedClassProperty?: readonly $DefaultPartial.$Json[];
-    readonly setPartialClassToResolvedClassProperty?: readonly PartialClass.$Json[];
+  export function $filter(
+    filter: LazyPropertiesClass.$Filter,
+    value: LazyPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedClassProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedClassProperty,
+        value.optionalLazyToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedClassUnionProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedClassUnion.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedClassUnion
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedClassUnionProperty,
+        value.optionalLazyToResolvedClassUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedIriIdentifierClassProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedIriIdentifierClass.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierClass
+        >,
+      ) =>
+        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
+          $NamedDefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedIriIdentifierClassProperty,
+        value.optionalLazyToResolvedIriIdentifierClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialClassToResolvedClassProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<PartialClass.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+          filter,
+          value.partial,
+        ))(
+        filter.optionalPartialClassToResolvedClassProperty,
+        value.optionalPartialClassToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialClassToResolvedClassUnionProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<PartialClass.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedClassUnion.$Identifier,
+          PartialClass,
+          LazilyResolvedClassUnion
+        >,
+      ) =>
+        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+          filter,
+          value.partial,
+        ))(
+        filter.optionalPartialClassToResolvedClassUnionProperty,
+        value.optionalPartialClassToResolvedClassUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialClassUnion.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedClassUnion.$Identifier,
+          PartialClassUnion,
+          LazilyResolvedClassUnion
+        >,
+      ) =>
+        $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(
+          PartialClassUnion.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialClassUnionToResolvedClassUnionProperty,
+        value.optionalPartialClassUnionToResolvedClassUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredLazyToResolvedClassProperty !== undefined &&
+      !((
+        filter: $DefaultPartial.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) => $DefaultPartial.$filter(filter, value.partial))(
+        filter.requiredLazyToResolvedClassProperty,
+        value.requiredLazyToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredPartialClassToResolvedClassProperty !== undefined &&
+      !((
+        filter: PartialClass.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) => PartialClass.$filter(filter, value.partial))(
+        filter.requiredPartialClassToResolvedClassProperty,
+        value.requiredPartialClassToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setLazyToResolvedClassProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partials))(
+        filter.setLazyToResolvedClassProperty,
+        value.setLazyToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setPartialClassToResolvedClassProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<PartialClass.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterArray<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+          filter,
+          value.partials,
+        ))(
+        filter.setPartialClassToResolvedClassProperty,
+        value.setPartialClassToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalLazyToResolvedClassProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedClassUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
+    readonly optionalPartialClassToResolvedClassProperty?: $MaybeFilter<PartialClass.$Filter>;
+    readonly optionalPartialClassToResolvedClassUnionProperty?: $MaybeFilter<PartialClass.$Filter>;
+    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: $MaybeFilter<PartialClassUnion.$Filter>;
+    readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
+    readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
+    readonly setLazyToResolvedClassProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly setPartialClassToResolvedClassProperty?: $CollectionFilter<PartialClass.$Filter>;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazyPropertiesClass(
     object: $Object,
@@ -33072,48 +33072,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: LazilyResolvedIriIdentifierInterface.$Filter,
-    value: LazilyResolvedIriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -33143,6 +33101,12 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedIriIdentifierInterface";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -33197,11 +33161,47 @@ export namespace LazilyResolvedIriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedIriIdentifierInterface";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedIriIdentifierInterface.$Filter,
+    value: LazilyResolvedIriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedIriIdentifierInterface(
     object: $Object,
@@ -33557,6 +33557,79 @@ export class LazilyResolvedIriIdentifierClass {
 }
 
 export namespace LazilyResolvedIriIdentifierClass {
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): Either<
+    z.ZodError,
+    { $identifier: NamedNode; lazilyResolvedStringProperty: string }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    const lazilyResolvedStringProperty =
+      $jsonObject["lazilyResolvedStringProperty"];
+    return Right({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, LazilyResolvedIriIdentifierClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new LazilyResolvedIriIdentifierClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedIriIdentifierClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "LazilyResolvedIriIdentifierClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "LazilyResolvedIriIdentifierClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("LazilyResolvedIriIdentifierClass"),
+      lazilyResolvedStringProperty: z.string(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: LazilyResolvedIriIdentifierClass.$Filter,
     value: LazilyResolvedIriIdentifierClass,
@@ -33598,79 +33671,6 @@ export namespace LazilyResolvedIriIdentifierClass {
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    z.ZodError,
-    { $identifier: NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, LazilyResolvedIriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LazilyResolvedIriIdentifierClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazilyResolvedIriIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedIriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedIriIdentifierClass"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedIriIdentifierClass";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function isLazilyResolvedIriIdentifierClass(
     object: $Object,
@@ -33970,44 +33970,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return _hasher;
   }
 
-  export function $filter(
-    filter: LazilyResolvedInterfaceUnionMember2.$Filter,
-    value: LazilyResolvedInterfaceUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedInterfaceUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -34039,6 +34001,12 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedInterfaceUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -34095,11 +34063,43 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedInterfaceUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnionMember2.$Filter,
+    value: LazilyResolvedInterfaceUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedInterfaceUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedInterfaceUnionMember2(
     object: $Object,
@@ -34536,44 +34536,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return _hasher;
   }
 
-  export function $filter(
-    filter: LazilyResolvedInterfaceUnionMember1.$Filter,
-    value: LazilyResolvedInterfaceUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedInterfaceUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -34605,6 +34567,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedInterfaceUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -34661,11 +34629,43 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedInterfaceUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnionMember1.$Filter,
+    value: LazilyResolvedInterfaceUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedInterfaceUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedInterfaceUnionMember1(
     object: $Object,
@@ -35138,44 +35138,6 @@ export class LazilyResolvedClassUnionMember2 {
 }
 
 export namespace LazilyResolvedClassUnionMember2 {
-  export function $filter(
-    filter: LazilyResolvedClassUnionMember2.$Filter,
-    value: LazilyResolvedClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -35206,6 +35168,12 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedClassUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -35245,11 +35213,43 @@ export namespace LazilyResolvedClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedClassUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedClassUnionMember2.$Filter,
+    value: LazilyResolvedClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedClassUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedClassUnionMember2(
     object: $Object,
@@ -35678,44 +35678,6 @@ export class LazilyResolvedClassUnionMember1 {
 }
 
 export namespace LazilyResolvedClassUnionMember1 {
-  export function $filter(
-    filter: LazilyResolvedClassUnionMember1.$Filter,
-    value: LazilyResolvedClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -35746,6 +35708,12 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedClassUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -35785,11 +35753,43 @@ export namespace LazilyResolvedClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedClassUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedClassUnionMember1.$Filter,
+    value: LazilyResolvedClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedClassUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedClassUnionMember1(
     object: $Object,
@@ -36187,44 +36187,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
-    value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -36256,6 +36218,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -36316,11 +36284,43 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
+    value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedBlankNodeOrIriIdentifierInterface(
     object: $Object,
@@ -36800,44 +36800,6 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 }
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
-  export function $filter(
-    filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
-    value: LazilyResolvedBlankNodeOrIriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -36869,6 +36831,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -36910,11 +36878,43 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
+    value: LazilyResolvedBlankNodeOrIriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLazilyResolvedBlankNodeOrIriIdentifierClass(
     object: $Object,
@@ -37359,40 +37359,6 @@ export class LanguageInPropertiesClass {
 }
 
 export namespace LanguageInPropertiesClass {
-  export function $filter(
-    filter: LanguageInPropertiesClass.$Filter,
-    value: LanguageInPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.languageInLiteralProperty !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.languageInLiteralProperty,
-        value.languageInLiteralProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly languageInLiteralProperty?: $CollectionFilter<$LiteralFilter>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -37436,6 +37402,16 @@ export namespace LanguageInPropertiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LanguageInPropertiesClass";
+    readonly languageInLiteralProperty: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -37484,15 +37460,39 @@ export namespace LanguageInPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LanguageInPropertiesClass";
-    readonly languageInLiteralProperty: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
+  export function $filter(
+    filter: LanguageInPropertiesClass.$Filter,
+    value: LanguageInPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.languageInLiteralProperty !== undefined &&
+      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+        filter.languageInLiteralProperty,
+        value.languageInLiteralProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly languageInLiteralProperty?: $CollectionFilter<$LiteralFilter>;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isLanguageInPropertiesClass(
     object: $Object,
@@ -37950,6 +37950,84 @@ export class JsPrimitiveUnionPropertyClass {
 }
 
 export namespace JsPrimitiveUnionPropertyClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const jsPrimitiveUnionProperty = $jsonObject["jsPrimitiveUnionProperty"];
+    return Right({ $identifier, jsPrimitiveUnionProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, JsPrimitiveUnionPropertyClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new JsPrimitiveUnionPropertyClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "JsPrimitiveUnionPropertyClass";
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "JsPrimitiveUnionPropertyClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/jsPrimitiveUnionProperty`,
+          type: "Control",
+        },
+      ],
+      label: "JsPrimitiveUnionPropertyClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("JsPrimitiveUnionPropertyClass"),
+      jsPrimitiveUnionProperty: z
+        .union([z.boolean(), z.number(), z.string()])
+        .array()
+        .default(() => []),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: JsPrimitiveUnionPropertyClass.$Filter,
     value: JsPrimitiveUnionPropertyClass,
@@ -38040,84 +38118,6 @@ export namespace JsPrimitiveUnionPropertyClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const jsPrimitiveUnionProperty = $jsonObject["jsPrimitiveUnionProperty"];
-    return Right({ $identifier, jsPrimitiveUnionProperty });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, JsPrimitiveUnionPropertyClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new JsPrimitiveUnionPropertyClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "JsPrimitiveUnionPropertyClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/jsPrimitiveUnionProperty`,
-          type: "Control",
-        },
-      ],
-      label: "JsPrimitiveUnionPropertyClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("JsPrimitiveUnionPropertyClass"),
-      jsPrimitiveUnionProperty: z
-        .union([z.boolean(), z.number(), z.string()])
-        .array()
-        .default(() => []),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "JsPrimitiveUnionPropertyClass";
-    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
-  };
 
   export function isJsPrimitiveUnionPropertyClass(
     object: $Object,
@@ -38726,40 +38726,6 @@ export namespace IriIdentifierInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: IriIdentifierInterface.$Filter,
-    value: IriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IriFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IriIdentifierInterface",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -38785,6 +38751,11 @@ export namespace IriIdentifierInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IriIdentifierInterface";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -38830,10 +38801,39 @@ export namespace IriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IriIdentifierInterface";
-  };
+  export function $filter(
+    filter: IriIdentifierInterface.$Filter,
+    value: IriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IriFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IriIdentifierInterface",
+  );
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIriIdentifierInterface(
     object: $Object,
@@ -39202,40 +39202,6 @@ export class IriIdentifierClass {
 }
 
 export namespace IriIdentifierClass {
-  export function $filter(
-    filter: IriIdentifierClass.$Filter,
-    value: IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IriFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IriIdentifierClass",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode }> {
@@ -39259,6 +39225,11 @@ export namespace IriIdentifierClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IriIdentifierClass";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -39293,10 +39264,39 @@ export namespace IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IriIdentifierClass";
-  };
+  export function $filter(
+    filter: IriIdentifierClass.$Filter,
+    value: IriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IriFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IriIdentifierClass",
+  );
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIriIdentifierClass(
     object: $Object,
@@ -39628,40 +39628,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return _hasher;
   }
 
-  export function $filter(
-    filter: InterfaceUnionMemberCommonParentStatic.$Filter,
-    value: InterfaceUnionMemberCommonParent,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.interfaceUnionMemberCommonParentProperty !== undefined &&
-      !$filterString(
-        filter.interfaceUnionMemberCommonParentProperty,
-        value.interfaceUnionMemberCommonParentProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceUnionMemberCommonParentProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -39685,6 +39651,12 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
+    readonly interfaceUnionMemberCommonParentProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -39740,11 +39712,39 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
-    readonly interfaceUnionMemberCommonParentProperty: string;
+  export function $filter(
+    filter: InterfaceUnionMemberCommonParentStatic.$Filter,
+    value: InterfaceUnionMemberCommonParent,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.interfaceUnionMemberCommonParentProperty !== undefined &&
+      !$filterString(
+        filter.interfaceUnionMemberCommonParentProperty,
+        value.interfaceUnionMemberCommonParentProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMemberCommonParentProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isInterfaceUnionMemberCommonParent(
     object: $Object,
@@ -40044,41 +40044,6 @@ export namespace InterfaceUnionMember2 {
     return _hasher;
   }
 
-  export function $filter(
-    filter: InterfaceUnionMember2.$Filter,
-    value: InterfaceUnionMember2,
-  ): boolean {
-    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.interfaceUnionMember2Property !== undefined &&
-      !$filterString(
-        filter.interfaceUnionMember2Property,
-        value.interfaceUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceUnionMember2Property?: $StringFilter;
-  } & InterfaceUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -40122,6 +40087,10 @@ export namespace InterfaceUnionMember2 {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly interfaceUnionMember2Property: string;
+  } & InterfaceUnionMemberCommonParentStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -40161,9 +40130,40 @@ export namespace InterfaceUnionMember2 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly interfaceUnionMember2Property: string;
-  } & InterfaceUnionMemberCommonParentStatic.$Json;
+  export function $filter(
+    filter: InterfaceUnionMember2.$Filter,
+    value: InterfaceUnionMember2,
+  ): boolean {
+    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.interfaceUnionMember2Property !== undefined &&
+      !$filterString(
+        filter.interfaceUnionMember2Property,
+        value.interfaceUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMember2Property?: $StringFilter;
+  } & InterfaceUnionMemberCommonParentStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isInterfaceUnionMember2(
     object: $Object,
@@ -40589,41 +40589,6 @@ export namespace InterfaceUnionMember1 {
     return _hasher;
   }
 
-  export function $filter(
-    filter: InterfaceUnionMember1.$Filter,
-    value: InterfaceUnionMember1,
-  ): boolean {
-    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.interfaceUnionMember1Property !== undefined &&
-      !$filterString(
-        filter.interfaceUnionMember1Property,
-        value.interfaceUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceUnionMember1Property?: $StringFilter;
-  } & InterfaceUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -40667,6 +40632,10 @@ export namespace InterfaceUnionMember1 {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly interfaceUnionMember1Property: string;
+  } & InterfaceUnionMemberCommonParentStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -40706,9 +40675,40 @@ export namespace InterfaceUnionMember1 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly interfaceUnionMember1Property: string;
-  } & InterfaceUnionMemberCommonParentStatic.$Json;
+  export function $filter(
+    filter: InterfaceUnionMember1.$Filter,
+    value: InterfaceUnionMember1,
+  ): boolean {
+    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.interfaceUnionMember1Property !== undefined &&
+      !$filterString(
+        filter.interfaceUnionMember1Property,
+        value.interfaceUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMember1Property?: $StringFilter;
+  } & InterfaceUnionMemberCommonParentStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isInterfaceUnionMember1(
     object: $Object,
@@ -41140,37 +41140,6 @@ export namespace Interface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: Interface.$Filter,
-    value: Interface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.interfaceProperty !== undefined &&
-      !$filterString(filter.interfaceProperty, value.interfaceProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -41199,6 +41168,12 @@ export namespace Interface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "Interface";
+    readonly interfaceProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -41251,11 +41226,36 @@ export namespace Interface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "Interface";
-    readonly interfaceProperty: string;
+  export function $filter(
+    filter: Interface.$Filter,
+    value: Interface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.interfaceProperty !== undefined &&
+      !$filterString(filter.interfaceProperty, value.interfaceProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isInterface(object: $Object): object is Interface {
     switch (object.$type) {
@@ -41637,43 +41637,6 @@ export class IndirectRecursiveHelperClass {
 }
 
 export namespace IndirectRecursiveHelperClass {
-  export function $filter(
-    filter: IndirectRecursiveHelperClass.$Filter,
-    value: IndirectRecursiveHelperClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.indirectRecursiveProperty !== undefined &&
-      !$filterMaybe<IndirectRecursiveClass, IndirectRecursiveClass.$Filter>(
-        IndirectRecursiveClass.$filter,
-      )(filter.indirectRecursiveProperty, value.indirectRecursiveProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursiveClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IndirectRecursiveHelperClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -41706,6 +41669,12 @@ export namespace IndirectRecursiveHelperClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IndirectRecursiveHelperClass";
+    readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -41749,11 +41718,42 @@ export namespace IndirectRecursiveHelperClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IndirectRecursiveHelperClass";
-    readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
+  export function $filter(
+    filter: IndirectRecursiveHelperClass.$Filter,
+    value: IndirectRecursiveHelperClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.indirectRecursiveProperty !== undefined &&
+      !$filterMaybe<IndirectRecursiveClass, IndirectRecursiveClass.$Filter>(
+        IndirectRecursiveClass.$filter,
+      )(filter.indirectRecursiveProperty, value.indirectRecursiveProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursiveClass.$Filter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IndirectRecursiveHelperClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIndirectRecursiveHelperClass(
     object: $Object,
@@ -42204,47 +42204,6 @@ export class IndirectRecursiveClass {
 }
 
 export namespace IndirectRecursiveClass {
-  export function $filter(
-    filter: IndirectRecursiveClass.$Filter,
-    value: IndirectRecursiveClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.indirectRecursiveHelperProperty !== undefined &&
-      !$filterMaybe<
-        IndirectRecursiveHelperClass,
-        IndirectRecursiveHelperClass.$Filter
-      >(IndirectRecursiveHelperClass.$filter)(
-        filter.indirectRecursiveHelperProperty,
-        value.indirectRecursiveHelperProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelperClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IndirectRecursiveClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -42279,6 +42238,12 @@ export namespace IndirectRecursiveClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IndirectRecursiveClass";
+    readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -42322,11 +42287,46 @@ export namespace IndirectRecursiveClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IndirectRecursiveClass";
-    readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
+  export function $filter(
+    filter: IndirectRecursiveClass.$Filter,
+    value: IndirectRecursiveClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.indirectRecursiveHelperProperty !== undefined &&
+      !$filterMaybe<
+        IndirectRecursiveHelperClass,
+        IndirectRecursiveHelperClass.$Filter
+      >(IndirectRecursiveHelperClass.$filter)(
+        filter.indirectRecursiveHelperProperty,
+        value.indirectRecursiveHelperProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelperClass.$Filter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IndirectRecursiveClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIndirectRecursiveClass(
     object: $Object,
@@ -42978,6 +42978,154 @@ export class InPropertiesClass {
 }
 
 export namespace InPropertiesClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      inBooleansProperty: Maybe<true>;
+      inDateTimesProperty: Maybe<Date>;
+      inDoublesProperty: Maybe<1 | 2>;
+      inIntegersProperty: Maybe<1n | 2n>;
+      inIrisProperty: Maybe<
+        NamedNode<
+          | "http://example.com/InPropertiesIri1"
+          | "http://example.com/InPropertiesIri2"
+        >
+      >;
+      inStringsProperty: Maybe<"text" | "html">;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const inBooleansProperty = Maybe.fromNullable(
+      $jsonObject["inBooleansProperty"],
+    );
+    const inDateTimesProperty = Maybe.fromNullable(
+      $jsonObject["inDateTimesProperty"],
+    ).map((item) => new Date(item));
+    const inDoublesProperty = Maybe.fromNullable(
+      $jsonObject["inDoublesProperty"],
+    );
+    const inIntegersProperty = Maybe.fromNullable(
+      $jsonObject["inIntegersProperty"],
+    ).map((item) => BigInt(item) as 1n | 2n);
+    const inIrisProperty = Maybe.fromNullable(
+      $jsonObject["inIrisProperty"],
+    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const inStringsProperty = Maybe.fromNullable(
+      $jsonObject["inStringsProperty"],
+    );
+    return Right({
+      $identifier,
+      inBooleansProperty,
+      inDateTimesProperty,
+      inDoublesProperty,
+      inIntegersProperty,
+      inIrisProperty,
+      inStringsProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, InPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new InPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "InPropertiesClass";
+    readonly inBooleansProperty?: true;
+    readonly inDateTimesProperty?: string;
+    readonly inDoublesProperty?: 1 | 2;
+    readonly inIntegersProperty?: string;
+    readonly inIrisProperty?: {
+      readonly "@id":
+        | "http://example.com/InPropertiesIri1"
+        | "http://example.com/InPropertiesIri2";
+    };
+    readonly inStringsProperty?: "text" | "html";
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "InPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inBooleansProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inDateTimesProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inDoublesProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inIntegersProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/inStringsProperty`,
+          type: "Control",
+        },
+      ],
+      label: "InPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("InPropertiesClass"),
+      inBooleansProperty: z.literal(true).optional(),
+      inDateTimesProperty: z.iso.datetime().optional(),
+      inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
+      inIntegersProperty: z.enum(["1", "2"]).optional(),
+      inIrisProperty: z
+        .object({
+          "@id": z.enum([
+            "http://example.com/InPropertiesIri1",
+            "http://example.com/InPropertiesIri2",
+          ]),
+        })
+        .optional(),
+      inStringsProperty: z.enum(["text", "html"]).optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: InPropertiesClass.$Filter,
     value: InPropertiesClass,
@@ -43068,154 +43216,6 @@ export namespace InPropertiesClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      inBooleansProperty: Maybe<true>;
-      inDateTimesProperty: Maybe<Date>;
-      inDoublesProperty: Maybe<1 | 2>;
-      inIntegersProperty: Maybe<1n | 2n>;
-      inIrisProperty: Maybe<
-        NamedNode<
-          | "http://example.com/InPropertiesIri1"
-          | "http://example.com/InPropertiesIri2"
-        >
-      >;
-      inStringsProperty: Maybe<"text" | "html">;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const inBooleansProperty = Maybe.fromNullable(
-      $jsonObject["inBooleansProperty"],
-    );
-    const inDateTimesProperty = Maybe.fromNullable(
-      $jsonObject["inDateTimesProperty"],
-    ).map((item) => new Date(item));
-    const inDoublesProperty = Maybe.fromNullable(
-      $jsonObject["inDoublesProperty"],
-    );
-    const inIntegersProperty = Maybe.fromNullable(
-      $jsonObject["inIntegersProperty"],
-    ).map((item) => BigInt(item) as 1n | 2n);
-    const inIrisProperty = Maybe.fromNullable(
-      $jsonObject["inIrisProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const inStringsProperty = Maybe.fromNullable(
-      $jsonObject["inStringsProperty"],
-    );
-    return Right({
-      $identifier,
-      inBooleansProperty,
-      inDateTimesProperty,
-      inDoublesProperty,
-      inIntegersProperty,
-      inIrisProperty,
-      inStringsProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, InPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new InPropertiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inBooleansProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inDateTimesProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inDoublesProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inIntegersProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/inStringsProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("InPropertiesClass"),
-      inBooleansProperty: z.literal(true).optional(),
-      inDateTimesProperty: z.iso.datetime().optional(),
-      inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
-      inIntegersProperty: z.enum(["1", "2"]).optional(),
-      inIrisProperty: z
-        .object({
-          "@id": z.enum([
-            "http://example.com/InPropertiesIri1",
-            "http://example.com/InPropertiesIri2",
-          ]),
-        })
-        .optional(),
-      inStringsProperty: z.enum(["text", "html"]).optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "InPropertiesClass";
-    readonly inBooleansProperty?: true;
-    readonly inDateTimesProperty?: string;
-    readonly inDoublesProperty?: 1 | 2;
-    readonly inIntegersProperty?: string;
-    readonly inIrisProperty?: {
-      readonly "@id":
-        | "http://example.com/InPropertiesIri1"
-        | "http://example.com/InPropertiesIri2";
-    };
-    readonly inStringsProperty?: "text" | "html";
-  };
 
   export function isInPropertiesClass(
     object: $Object,
@@ -44013,6 +44013,87 @@ export class InIdentifierClass {
 }
 
 export namespace InIdentifierClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: NamedNode<
+        | "http://example.com/InIdentifierInstance1"
+        | "http://example.com/InIdentifierInstance2"
+      >;
+      inIdentifierProperty: Maybe<string>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    const inIdentifierProperty = Maybe.fromNullable(
+      $jsonObject["inIdentifierProperty"],
+    );
+    return Right({ $identifier, inIdentifierProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, InIdentifierClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new InIdentifierClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "InIdentifierClass";
+    readonly inIdentifierProperty?: string;
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "InIdentifierClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inIdentifierProperty`,
+          type: "Control",
+        },
+      ],
+      label: "InIdentifierClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.enum([
+        "http://example.com/InIdentifierInstance1",
+        "http://example.com/InIdentifierInstance2",
+      ]),
+      $type: z.literal("InIdentifierClass"),
+      inIdentifierProperty: z.string().optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: InIdentifierClass.$Filter,
     value: InIdentifierClass,
@@ -44094,87 +44175,6 @@ export namespace InIdentifierClass {
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: NamedNode<
-        | "http://example.com/InIdentifierInstance1"
-        | "http://example.com/InIdentifierInstance2"
-      >;
-      inIdentifierProperty: Maybe<string>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const inIdentifierProperty = Maybe.fromNullable(
-      $jsonObject["inIdentifierProperty"],
-    );
-    return Right({ $identifier, inIdentifierProperty });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, InIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new InIdentifierClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inIdentifierProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.enum([
-        "http://example.com/InIdentifierInstance1",
-        "http://example.com/InIdentifierInstance2",
-      ]),
-      $type: z.literal("InIdentifierClass"),
-      inIdentifierProperty: z.string().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "InIdentifierClass";
-    readonly inIdentifierProperty?: string;
-  };
 
   export function isInIdentifierClass(
     object: $Object,
@@ -44627,40 +44627,6 @@ export abstract class IdentifierOverride1Class {
 }
 
 export namespace IdentifierOverride1ClassStatic {
-  export function $filter(
-    filter: IdentifierOverride1ClassStatic.$Filter,
-    value: IdentifierOverride1Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.identifierOverrideProperty !== undefined &&
-      !$filterString(
-        filter.identifierOverrideProperty,
-        value.identifierOverrideProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly identifierOverrideProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -44683,6 +44649,15 @@ export namespace IdentifierOverride1ClassStatic {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "IdentifierOverride3Class"
+      | "IdentifierOverride4Class"
+      | "IdentifierOverride5Class";
+    readonly identifierOverrideProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -44726,14 +44701,39 @@ export namespace IdentifierOverride1ClassStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type:
-      | "IdentifierOverride3Class"
-      | "IdentifierOverride4Class"
-      | "IdentifierOverride5Class";
-    readonly identifierOverrideProperty: string;
+  export function $filter(
+    filter: IdentifierOverride1ClassStatic.$Filter,
+    value: IdentifierOverride1Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.identifierOverrideProperty !== undefined &&
+      !$filterString(
+        filter.identifierOverrideProperty,
+        value.identifierOverrideProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly identifierOverrideProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIdentifierOverride1Class(
     object: $Object,
@@ -44978,6 +44978,56 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
 }
 
 export namespace IdentifierOverride2ClassStatic {
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): Either<
+    z.ZodError,
+    { $identifier: NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride1ClassStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return IdentifierOverride1ClassStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+      }),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = IdentifierOverride1ClassStatic.$Json;
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride1ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride2Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride1ClassStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+      }),
+    ) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: IdentifierOverride2ClassStatic.$Filter,
     value: IdentifierOverride2Class,
@@ -45006,56 +45056,6 @@ export namespace IdentifierOverride2ClassStatic {
     } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    z.ZodError,
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<typeof IdentifierOverride1ClassStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return IdentifierOverride1ClassStatic.$propertiesFromJson($jsonObject).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-      }),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride1ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride2Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride1ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = IdentifierOverride1ClassStatic.$Json;
 
   export function isIdentifierOverride2Class(
     object: $Object,
@@ -45245,39 +45245,6 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
 }
 
 export namespace IdentifierOverride3ClassStatic {
-  export function $filter(
-    filter: IdentifierOverride3ClassStatic.$Filter,
-    value: IdentifierOverride3Class,
-  ): boolean {
-    if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride2ClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride3Class",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -45312,6 +45279,8 @@ export namespace IdentifierOverride3ClassStatic {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = IdentifierOverride2ClassStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -45334,7 +45303,38 @@ export namespace IdentifierOverride3ClassStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = IdentifierOverride2ClassStatic.$Json;
+  export function $filter(
+    filter: IdentifierOverride3ClassStatic.$Filter,
+    value: IdentifierOverride3Class,
+  ): boolean {
+    if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride2ClassStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride3Class",
+  );
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIdentifierOverride3Class(
     object: $Object,
@@ -45675,39 +45675,6 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
 }
 
 export namespace IdentifierOverride4ClassStatic {
-  export function $filter(
-    filter: IdentifierOverride4ClassStatic.$Filter,
-    value: IdentifierOverride4Class,
-  ): boolean {
-    if (!IdentifierOverride3ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride3ClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride4Class",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -45742,6 +45709,8 @@ export namespace IdentifierOverride4ClassStatic {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = IdentifierOverride3ClassStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -45760,7 +45729,38 @@ export namespace IdentifierOverride4ClassStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = IdentifierOverride3ClassStatic.$Json;
+  export function $filter(
+    filter: IdentifierOverride4ClassStatic.$Filter,
+    value: IdentifierOverride4Class,
+  ): boolean {
+    if (!IdentifierOverride3ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride3ClassStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride4Class",
+  );
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIdentifierOverride4Class(
     object: $Object,
@@ -46095,39 +46095,6 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
 }
 
 export namespace IdentifierOverride5Class {
-  export function $filter(
-    filter: IdentifierOverride5Class.$Filter,
-    value: IdentifierOverride5Class,
-  ): boolean {
-    if (!IdentifierOverride4ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride4ClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride5Class",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -46162,6 +46129,8 @@ export namespace IdentifierOverride5Class {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = IdentifierOverride4ClassStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -46180,7 +46149,38 @@ export namespace IdentifierOverride5Class {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = IdentifierOverride4ClassStatic.$Json;
+  export function $filter(
+    filter: IdentifierOverride5Class.$Filter,
+    value: IdentifierOverride5Class,
+  ): boolean {
+    if (!IdentifierOverride4ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride4ClassStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride5Class",
+  );
+
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isIdentifierOverride5Class(
     object: $Object,
@@ -46580,47 +46580,6 @@ export class HasValuePropertiesClass {
 }
 
 export namespace HasValuePropertiesClass {
-  export function $filter(
-    filter: HasValuePropertiesClass.$Filter,
-    value: HasValuePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.hasIriValueProperty !== undefined &&
-      !$filterIri(filter.hasIriValueProperty, value.hasIriValueProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.hasLiteralValueProperty !== undefined &&
-      !$filterString(
-        filter.hasLiteralValueProperty,
-        value.hasLiteralValueProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly hasIriValueProperty?: $IriFilter;
-    readonly hasLiteralValueProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -46655,6 +46614,13 @@ export namespace HasValuePropertiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "HasValuePropertiesClass";
+    readonly hasIriValueProperty: { readonly "@id": string };
+    readonly hasLiteralValueProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -46699,12 +46665,46 @@ export namespace HasValuePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "HasValuePropertiesClass";
-    readonly hasIriValueProperty: { readonly "@id": string };
-    readonly hasLiteralValueProperty: string;
+  export function $filter(
+    filter: HasValuePropertiesClass.$Filter,
+    value: HasValuePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.hasIriValueProperty !== undefined &&
+      !$filterIri(filter.hasIriValueProperty, value.hasIriValueProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.hasLiteralValueProperty !== undefined &&
+      !$filterString(
+        filter.hasLiteralValueProperty,
+        value.hasLiteralValueProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly hasIriValueProperty?: $IriFilter;
+    readonly hasLiteralValueProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isHasValuePropertiesClass(
     object: $Object,
@@ -47102,44 +47102,6 @@ export class FlattenClassUnionMember3 {
 }
 
 export namespace FlattenClassUnionMember3 {
-  export function $filter(
-    filter: FlattenClassUnionMember3.$Filter,
-    value: FlattenClassUnionMember3,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.flattenClassUnionMember3Property !== undefined &&
-      !$filterString(
-        filter.flattenClassUnionMember3Property,
-        value.flattenClassUnionMember3Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly flattenClassUnionMember3Property?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/FlattenClassUnionMember3",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -47171,6 +47133,12 @@ export namespace FlattenClassUnionMember3 {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "FlattenClassUnionMember3";
+    readonly flattenClassUnionMember3Property: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -47210,11 +47178,43 @@ export namespace FlattenClassUnionMember3 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "FlattenClassUnionMember3";
-    readonly flattenClassUnionMember3Property: string;
+  export function $filter(
+    filter: FlattenClassUnionMember3.$Filter,
+    value: FlattenClassUnionMember3,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.flattenClassUnionMember3Property !== undefined &&
+      !$filterString(
+        filter.flattenClassUnionMember3Property,
+        value.flattenClassUnionMember3Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly flattenClassUnionMember3Property?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/FlattenClassUnionMember3",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isFlattenClassUnionMember3(
     object: $Object,
@@ -47667,44 +47667,6 @@ export class ExternClassPropertyClass {
 }
 
 export namespace ExternClassPropertyClass {
-  export function $filter(
-    filter: ExternClassPropertyClass.$Filter,
-    value: ExternClassPropertyClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.externClassProperty !== undefined &&
-      !$filterMaybe<ExternClass, ExternClass.$Filter>(ExternClass.$filter)(
-        filter.externClassProperty,
-        value.externClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly externClassProperty?: $MaybeFilter<ExternClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ExternClassPropertyClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -47737,6 +47699,12 @@ export namespace ExternClassPropertyClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExternClassPropertyClass";
+    readonly externClassProperty?: ExternClass.$Json;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -47775,11 +47743,43 @@ export namespace ExternClassPropertyClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternClassPropertyClass";
-    readonly externClassProperty?: ExternClass.$Json;
+  export function $filter(
+    filter: ExternClassPropertyClass.$Filter,
+    value: ExternClassPropertyClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.externClassProperty !== undefined &&
+      !$filterMaybe<ExternClass, ExternClass.$Filter>(ExternClass.$filter)(
+        filter.externClassProperty,
+        value.externClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly externClassProperty?: $MaybeFilter<ExternClass.$Filter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ExternClassPropertyClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isExternClassPropertyClass(
     object: $Object,
@@ -48264,40 +48264,6 @@ export abstract class AbstractBaseClassForExternClass {
 }
 
 export namespace AbstractBaseClassForExternClassStatic {
-  export function $filter(
-    filter: AbstractBaseClassForExternClassStatic.$Filter,
-    value: AbstractBaseClassForExternClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.abstractBaseClassForExternClassProperty !== undefined &&
-      !$filterString(
-        filter.abstractBaseClassForExternClassProperty,
-        value.abstractBaseClassForExternClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -48321,6 +48287,12 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExternClass";
+    readonly abstractBaseClassForExternClassProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -48360,11 +48332,39 @@ export namespace AbstractBaseClassForExternClassStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternClass";
-    readonly abstractBaseClassForExternClassProperty: string;
+  export function $filter(
+    filter: AbstractBaseClassForExternClassStatic.$Filter,
+    value: AbstractBaseClassForExternClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.abstractBaseClassForExternClassProperty !== undefined &&
+      !$filterString(
+        filter.abstractBaseClassForExternClassProperty,
+        value.abstractBaseClassForExternClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isAbstractBaseClassForExternClass(
     object: $Object,
@@ -48688,44 +48688,6 @@ export class ExplicitRdfTypeClass {
 }
 
 export namespace ExplicitRdfTypeClass {
-  export function $filter(
-    filter: ExplicitRdfTypeClass.$Filter,
-    value: ExplicitRdfTypeClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.explicitRdfTypeProperty !== undefined &&
-      !$filterString(
-        filter.explicitRdfTypeProperty,
-        value.explicitRdfTypeProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly explicitRdfTypeProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RdfType",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -48755,6 +48717,12 @@ export namespace ExplicitRdfTypeClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExplicitRdfTypeClass";
+    readonly explicitRdfTypeProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -48794,11 +48762,43 @@ export namespace ExplicitRdfTypeClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExplicitRdfTypeClass";
-    readonly explicitRdfTypeProperty: string;
+  export function $filter(
+    filter: ExplicitRdfTypeClass.$Filter,
+    value: ExplicitRdfTypeClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.explicitRdfTypeProperty !== undefined &&
+      !$filterString(
+        filter.explicitRdfTypeProperty,
+        value.explicitRdfTypeProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly explicitRdfTypeProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RdfType",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isExplicitRdfTypeClass(
     object: $Object,
@@ -49234,44 +49234,6 @@ export class ExplicitFromToRdfTypesClass {
 }
 
 export namespace ExplicitFromToRdfTypesClass {
-  export function $filter(
-    filter: ExplicitFromToRdfTypesClass.$Filter,
-    value: ExplicitFromToRdfTypesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.explicitFromToRdfTypesProperty !== undefined &&
-      !$filterString(
-        filter.explicitFromToRdfTypesProperty,
-        value.explicitFromToRdfTypesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly explicitFromToRdfTypesProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/FromRdfType",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -49303,6 +49265,12 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExplicitFromToRdfTypesClass";
+    readonly explicitFromToRdfTypesProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -49342,11 +49310,43 @@ export namespace ExplicitFromToRdfTypesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExplicitFromToRdfTypesClass";
-    readonly explicitFromToRdfTypesProperty: string;
+  export function $filter(
+    filter: ExplicitFromToRdfTypesClass.$Filter,
+    value: ExplicitFromToRdfTypesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.explicitFromToRdfTypesProperty !== undefined &&
+      !$filterString(
+        filter.explicitFromToRdfTypesProperty,
+        value.explicitFromToRdfTypesProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly explicitFromToRdfTypesProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/FromRdfType",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isExplicitFromToRdfTypesClass(
     object: $Object,
@@ -49799,43 +49799,6 @@ export class DirectRecursiveClass {
 }
 
 export namespace DirectRecursiveClass {
-  export function $filter(
-    filter: DirectRecursiveClass.$Filter,
-    value: DirectRecursiveClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.directRecursiveProperty !== undefined &&
-      !$filterMaybe<DirectRecursiveClass, DirectRecursiveClass.$Filter>(
-        DirectRecursiveClass.$filter,
-      )(filter.directRecursiveProperty, value.directRecursiveProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly directRecursiveProperty?: $MaybeFilter<DirectRecursiveClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DirectRecursiveClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -49868,6 +49831,12 @@ export namespace DirectRecursiveClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DirectRecursiveClass";
+    readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -49911,11 +49880,42 @@ export namespace DirectRecursiveClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "DirectRecursiveClass";
-    readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
+  export function $filter(
+    filter: DirectRecursiveClass.$Filter,
+    value: DirectRecursiveClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.directRecursiveProperty !== undefined &&
+      !$filterMaybe<DirectRecursiveClass, DirectRecursiveClass.$Filter>(
+        DirectRecursiveClass.$filter,
+      )(filter.directRecursiveProperty, value.directRecursiveProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly directRecursiveProperty?: $MaybeFilter<DirectRecursiveClass.$Filter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DirectRecursiveClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isDirectRecursiveClass(
     object: $Object,
@@ -50576,6 +50576,137 @@ export class DefaultValuePropertiesClass {
 }
 
 export namespace DefaultValuePropertiesClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      dateDefaultValueProperty: Date;
+      dateTimeDefaultValueProperty: Date;
+      falseBooleanDefaultValueProperty: boolean;
+      numberDefaultValueProperty: number;
+      stringDefaultValueProperty: string;
+      trueBooleanDefaultValueProperty: boolean;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const dateDefaultValueProperty = new Date(
+      $jsonObject["dateDefaultValueProperty"],
+    );
+    const dateTimeDefaultValueProperty = new Date(
+      $jsonObject["dateTimeDefaultValueProperty"],
+    );
+    const falseBooleanDefaultValueProperty =
+      $jsonObject["falseBooleanDefaultValueProperty"];
+    const numberDefaultValueProperty =
+      $jsonObject["numberDefaultValueProperty"];
+    const stringDefaultValueProperty =
+      $jsonObject["stringDefaultValueProperty"];
+    const trueBooleanDefaultValueProperty =
+      $jsonObject["trueBooleanDefaultValueProperty"];
+    return Right({
+      $identifier,
+      dateDefaultValueProperty,
+      dateTimeDefaultValueProperty,
+      falseBooleanDefaultValueProperty,
+      numberDefaultValueProperty,
+      stringDefaultValueProperty,
+      trueBooleanDefaultValueProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, DefaultValuePropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new DefaultValuePropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DefaultValuePropertiesClass";
+    readonly dateDefaultValueProperty: string;
+    readonly dateTimeDefaultValueProperty: string;
+    readonly falseBooleanDefaultValueProperty: boolean;
+    readonly numberDefaultValueProperty: number;
+    readonly stringDefaultValueProperty: string;
+    readonly trueBooleanDefaultValueProperty: boolean;
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "DefaultValuePropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateDefaultValueProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateTimeDefaultValueProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/falseBooleanDefaultValueProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/numberDefaultValueProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/stringDefaultValueProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/trueBooleanDefaultValueProperty`,
+          type: "Control",
+        },
+      ],
+      label: "DefaultValuePropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("DefaultValuePropertiesClass"),
+      dateDefaultValueProperty: z.iso.date(),
+      dateTimeDefaultValueProperty: z.iso.datetime(),
+      falseBooleanDefaultValueProperty: z.boolean(),
+      numberDefaultValueProperty: z.number(),
+      stringDefaultValueProperty: z.string(),
+      trueBooleanDefaultValueProperty: z.boolean(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: DefaultValuePropertiesClass.$Filter,
     value: DefaultValuePropertiesClass,
@@ -50663,137 +50794,6 @@ export namespace DefaultValuePropertiesClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      dateDefaultValueProperty: Date;
-      dateTimeDefaultValueProperty: Date;
-      falseBooleanDefaultValueProperty: boolean;
-      numberDefaultValueProperty: number;
-      stringDefaultValueProperty: string;
-      trueBooleanDefaultValueProperty: boolean;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const dateDefaultValueProperty = new Date(
-      $jsonObject["dateDefaultValueProperty"],
-    );
-    const dateTimeDefaultValueProperty = new Date(
-      $jsonObject["dateTimeDefaultValueProperty"],
-    );
-    const falseBooleanDefaultValueProperty =
-      $jsonObject["falseBooleanDefaultValueProperty"];
-    const numberDefaultValueProperty =
-      $jsonObject["numberDefaultValueProperty"];
-    const stringDefaultValueProperty =
-      $jsonObject["stringDefaultValueProperty"];
-    const trueBooleanDefaultValueProperty =
-      $jsonObject["trueBooleanDefaultValueProperty"];
-    return Right({
-      $identifier,
-      dateDefaultValueProperty,
-      dateTimeDefaultValueProperty,
-      falseBooleanDefaultValueProperty,
-      numberDefaultValueProperty,
-      stringDefaultValueProperty,
-      trueBooleanDefaultValueProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, DefaultValuePropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new DefaultValuePropertiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "DefaultValuePropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTimeDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/falseBooleanDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/numberDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/stringDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/trueBooleanDefaultValueProperty`,
-          type: "Control",
-        },
-      ],
-      label: "DefaultValuePropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("DefaultValuePropertiesClass"),
-      dateDefaultValueProperty: z.iso.date(),
-      dateTimeDefaultValueProperty: z.iso.datetime(),
-      falseBooleanDefaultValueProperty: z.boolean(),
-      numberDefaultValueProperty: z.number(),
-      stringDefaultValueProperty: z.string(),
-      trueBooleanDefaultValueProperty: z.boolean(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "DefaultValuePropertiesClass";
-    readonly dateDefaultValueProperty: string;
-    readonly dateTimeDefaultValueProperty: string;
-    readonly falseBooleanDefaultValueProperty: boolean;
-    readonly numberDefaultValueProperty: number;
-    readonly stringDefaultValueProperty: string;
-    readonly trueBooleanDefaultValueProperty: boolean;
-  };
 
   export function isDefaultValuePropertiesClass(
     object: $Object,
@@ -52032,6 +52032,171 @@ export class DateUnionPropertiesClass {
 }
 
 export namespace DateUnionPropertiesClass {
+  export function $propertiesFromJson(_json: unknown): Either<
+    z.ZodError,
+    {
+      $identifier: BlankNode | NamedNode;
+      dateOrDateTimeProperty: Maybe<
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+      >;
+      dateOrStringProperty: Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >;
+      dateTimeOrDateProperty: Maybe<
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+      >;
+      stringOrDateProperty: Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const dateOrDateTimeProperty = Maybe.fromNullable(
+      $jsonObject["dateOrDateTimeProperty"],
+    ).map((item) =>
+      item.type === "dateTime"
+        ? { type: "dateTime" as const, value: new Date(item.value) }
+        : { type: "date" as const, value: new Date(item.value) },
+    );
+    const dateOrStringProperty = Maybe.fromNullable(
+      $jsonObject["dateOrStringProperty"],
+    ).map((item) =>
+      item.type === "string"
+        ? { type: "string" as const, value: item.value }
+        : { type: "date" as const, value: new Date(item.value) },
+    );
+    const dateTimeOrDateProperty = Maybe.fromNullable(
+      $jsonObject["dateTimeOrDateProperty"],
+    ).map((item) =>
+      item.type === "date"
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "dateTime" as const, value: new Date(item.value) },
+    );
+    const stringOrDateProperty = Maybe.fromNullable(
+      $jsonObject["stringOrDateProperty"],
+    ).map((item) =>
+      item.type === "date"
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "string" as const, value: item.value },
+    );
+    return Right({
+      $identifier,
+      dateOrDateTimeProperty,
+      dateOrStringProperty,
+      dateTimeOrDateProperty,
+      stringOrDateProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): Either<z.ZodError, DateUnionPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new DateUnionPropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DateUnionPropertiesClass";
+    readonly dateOrDateTimeProperty?:
+      | { type: "date"; value: string }
+      | { type: "dateTime"; value: string };
+    readonly dateOrStringProperty?:
+      | { type: "date"; value: string }
+      | { type: "string"; value: string };
+    readonly dateTimeOrDateProperty?:
+      | { type: "dateTime"; value: string }
+      | { type: "date"; value: string };
+    readonly stringOrDateProperty?:
+      | { type: "string"; value: string }
+      | { type: "date"; value: string };
+  };
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "DateUnionPropertiesClass" as const },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateOrDateTimeProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateTimeOrDateProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/stringOrDateProperty`,
+          type: "Control",
+        },
+      ],
+      label: "DateUnionPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return z.object({
+      "@id": z.string().min(1),
+      $type: z.literal("DateUnionPropertiesClass"),
+      dateOrDateTimeProperty: z
+        .discriminatedUnion("type", [
+          z.object({ type: z.literal("date"), value: z.iso.date() }),
+          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+        ])
+        .optional(),
+      dateOrStringProperty: z
+        .discriminatedUnion("type", [
+          z.object({ type: z.literal("date"), value: z.iso.date() }),
+          z.object({ type: z.literal("string"), value: z.string() }),
+        ])
+        .optional(),
+      dateTimeOrDateProperty: z
+        .discriminatedUnion("type", [
+          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+          z.object({ type: z.literal("date"), value: z.iso.date() }),
+        ])
+        .optional(),
+      stringOrDateProperty: z
+        .discriminatedUnion("type", [
+          z.object({ type: z.literal("string"), value: z.string() }),
+          z.object({ type: z.literal("date"), value: z.iso.date() }),
+        ])
+        .optional(),
+    }) satisfies z.ZodType<$Json>;
+  }
+
   export function $filter(
     filter: DateUnionPropertiesClass.$Filter,
     value: DateUnionPropertiesClass,
@@ -52271,171 +52436,6 @@ export namespace DateUnionPropertiesClass {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
   }
-
-  export function $propertiesFromJson(_json: unknown): Either<
-    z.ZodError,
-    {
-      $identifier: BlankNode | NamedNode;
-      dateOrDateTimeProperty: Maybe<
-        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-      >;
-      dateOrStringProperty: Maybe<
-        { type: "date"; value: Date } | { type: "string"; value: string }
-      >;
-      dateTimeOrDateProperty: Maybe<
-        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-      >;
-      stringOrDateProperty: Maybe<
-        { type: "string"; value: string } | { type: "date"; value: Date }
-      >;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const dateOrDateTimeProperty = Maybe.fromNullable(
-      $jsonObject["dateOrDateTimeProperty"],
-    ).map((item) =>
-      item.type === "dateTime"
-        ? { type: "dateTime" as const, value: new Date(item.value) }
-        : { type: "date" as const, value: new Date(item.value) },
-    );
-    const dateOrStringProperty = Maybe.fromNullable(
-      $jsonObject["dateOrStringProperty"],
-    ).map((item) =>
-      item.type === "string"
-        ? { type: "string" as const, value: item.value }
-        : { type: "date" as const, value: new Date(item.value) },
-    );
-    const dateTimeOrDateProperty = Maybe.fromNullable(
-      $jsonObject["dateTimeOrDateProperty"],
-    ).map((item) =>
-      item.type === "date"
-        ? { type: "date" as const, value: new Date(item.value) }
-        : { type: "dateTime" as const, value: new Date(item.value) },
-    );
-    const stringOrDateProperty = Maybe.fromNullable(
-      $jsonObject["stringOrDateProperty"],
-    ).map((item) =>
-      item.type === "date"
-        ? { type: "date" as const, value: new Date(item.value) }
-        : { type: "string" as const, value: item.value },
-    );
-    return Right({
-      $identifier,
-      dateOrDateTimeProperty,
-      dateOrStringProperty,
-      dateTimeOrDateProperty,
-      stringOrDateProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): Either<z.ZodError, DateUnionPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new DateUnionPropertiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "DateUnionPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateOrDateTimeProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTimeOrDateProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/stringOrDateProperty`,
-          type: "Control",
-        },
-      ],
-      label: "DateUnionPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("DateUnionPropertiesClass"),
-      dateOrDateTimeProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-        ])
-        .optional(),
-      dateOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-          z.object({ type: z.literal("string"), value: z.string() }),
-        ])
-        .optional(),
-      dateTimeOrDateProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-        ])
-        .optional(),
-      stringOrDateProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("string"), value: z.string() }),
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-        ])
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "DateUnionPropertiesClass";
-    readonly dateOrDateTimeProperty?:
-      | { type: "date"; value: string }
-      | { type: "dateTime"; value: string };
-    readonly dateOrStringProperty?:
-      | { type: "date"; value: string }
-      | { type: "string"; value: string };
-    readonly dateTimeOrDateProperty?:
-      | { type: "dateTime"; value: string }
-      | { type: "date"; value: string };
-    readonly stringOrDateProperty?:
-      | { type: "string"; value: string }
-      | { type: "date"; value: string };
-  };
 
   export function isDateUnionPropertiesClass(
     object: $Object,
@@ -54588,151 +54588,6 @@ export class ConvertibleTypePropertiesClass {
 }
 
 export namespace ConvertibleTypePropertiesClass {
-  export function $filter(
-    filter: ConvertibleTypePropertiesClass.$Filter,
-    value: ConvertibleTypePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriNonEmptySetProperty !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
-        filter.convertibleIriNonEmptySetProperty,
-        value.convertibleIriNonEmptySetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriOptionProperty !== undefined &&
-      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
-        filter.convertibleIriOptionProperty,
-        value.convertibleIriOptionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriProperty !== undefined &&
-      !$filterIri(filter.convertibleIriProperty, value.convertibleIriProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriSetProperty !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
-        filter.convertibleIriSetProperty,
-        value.convertibleIriSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralNonEmptySetProperty !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.convertibleLiteralNonEmptySetProperty,
-        value.convertibleLiteralNonEmptySetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralOptionProperty !== undefined &&
-      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
-        filter.convertibleLiteralOptionProperty,
-        value.convertibleLiteralOptionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralProperty !== undefined &&
-      !$filterLiteral(
-        filter.convertibleLiteralProperty,
-        value.convertibleLiteralProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralSetProperty !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.convertibleLiteralSetProperty,
-        value.convertibleLiteralSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermNonEmptySetProperty !== undefined &&
-      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.convertibleTermNonEmptySetProperty,
-        value.convertibleTermNonEmptySetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermOptionProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.convertibleTermOptionProperty,
-        value.convertibleTermOptionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermProperty !== undefined &&
-      !$filterTerm(
-        filter.convertibleTermProperty,
-        value.convertibleTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermSetProperty !== undefined &&
-      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.convertibleTermSetProperty,
-        value.convertibleTermSetProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$IriFilter>;
-    readonly convertibleIriOptionProperty?: $MaybeFilter<$IriFilter>;
-    readonly convertibleIriProperty?: $IriFilter;
-    readonly convertibleIriSetProperty?: $CollectionFilter<$IriFilter>;
-    readonly convertibleLiteralNonEmptySetProperty?: $CollectionFilter<$LiteralFilter>;
-    readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
-    readonly convertibleLiteralProperty?: $LiteralFilter;
-    readonly convertibleLiteralSetProperty?: $CollectionFilter<$LiteralFilter>;
-    readonly convertibleTermNonEmptySetProperty?: $CollectionFilter<$TermFilter>;
-    readonly convertibleTermOptionProperty?: $MaybeFilter<$TermFilter>;
-    readonly convertibleTermProperty?: $TermFilter;
-    readonly convertibleTermSetProperty?: $CollectionFilter<$TermFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConvertibleTypePropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -54918,6 +54773,71 @@ export namespace ConvertibleTypePropertiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ConvertibleTypePropertiesClass";
+    readonly convertibleIriNonEmptySetProperty: readonly {
+      readonly "@id": string;
+    }[];
+    readonly convertibleIriOptionProperty?: { readonly "@id": string };
+    readonly convertibleIriProperty: { readonly "@id": string };
+    readonly convertibleIriSetProperty?: readonly { readonly "@id": string }[];
+    readonly convertibleLiteralNonEmptySetProperty: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+    readonly convertibleLiteralOptionProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly convertibleLiteralProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly convertibleLiteralSetProperty?: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+    readonly convertibleTermNonEmptySetProperty: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        }
+    )[];
+    readonly convertibleTermOptionProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly convertibleTermProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly convertibleTermSetProperty?: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        }
+    )[];
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -55115,70 +55035,150 @@ export namespace ConvertibleTypePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ConvertibleTypePropertiesClass";
-    readonly convertibleIriNonEmptySetProperty: readonly {
-      readonly "@id": string;
-    }[];
-    readonly convertibleIriOptionProperty?: { readonly "@id": string };
-    readonly convertibleIriProperty: { readonly "@id": string };
-    readonly convertibleIriSetProperty?: readonly { readonly "@id": string }[];
-    readonly convertibleLiteralNonEmptySetProperty: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-    readonly convertibleLiteralOptionProperty?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly convertibleLiteralProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly convertibleLiteralSetProperty?: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-    readonly convertibleTermNonEmptySetProperty: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-    readonly convertibleTermOptionProperty?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly convertibleTermProperty:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly convertibleTermSetProperty?: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
+  export function $filter(
+    filter: ConvertibleTypePropertiesClass.$Filter,
+    value: ConvertibleTypePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriNonEmptySetProperty !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.convertibleIriNonEmptySetProperty,
+        value.convertibleIriNonEmptySetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriOptionProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.convertibleIriOptionProperty,
+        value.convertibleIriOptionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriProperty !== undefined &&
+      !$filterIri(filter.convertibleIriProperty, value.convertibleIriProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriSetProperty !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.convertibleIriSetProperty,
+        value.convertibleIriSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralNonEmptySetProperty !== undefined &&
+      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+        filter.convertibleLiteralNonEmptySetProperty,
+        value.convertibleLiteralNonEmptySetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralOptionProperty !== undefined &&
+      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
+        filter.convertibleLiteralOptionProperty,
+        value.convertibleLiteralOptionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralProperty !== undefined &&
+      !$filterLiteral(
+        filter.convertibleLiteralProperty,
+        value.convertibleLiteralProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralSetProperty !== undefined &&
+      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+        filter.convertibleLiteralSetProperty,
+        value.convertibleLiteralSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermNonEmptySetProperty !== undefined &&
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.convertibleTermNonEmptySetProperty,
+        value.convertibleTermNonEmptySetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermOptionProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.convertibleTermOptionProperty,
+        value.convertibleTermOptionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermProperty !== undefined &&
+      !$filterTerm(
+        filter.convertibleTermProperty,
+        value.convertibleTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermSetProperty !== undefined &&
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.convertibleTermSetProperty,
+        value.convertibleTermSetProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$IriFilter>;
+    readonly convertibleIriOptionProperty?: $MaybeFilter<$IriFilter>;
+    readonly convertibleIriProperty?: $IriFilter;
+    readonly convertibleIriSetProperty?: $CollectionFilter<$IriFilter>;
+    readonly convertibleLiteralNonEmptySetProperty?: $CollectionFilter<$LiteralFilter>;
+    readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly convertibleLiteralProperty?: $LiteralFilter;
+    readonly convertibleLiteralSetProperty?: $CollectionFilter<$LiteralFilter>;
+    readonly convertibleTermNonEmptySetProperty?: $CollectionFilter<$TermFilter>;
+    readonly convertibleTermOptionProperty?: $MaybeFilter<$TermFilter>;
+    readonly convertibleTermProperty?: $TermFilter;
+    readonly convertibleTermSetProperty?: $CollectionFilter<$TermFilter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConvertibleTypePropertiesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isConvertibleTypePropertiesClass(
     object: $Object,
@@ -56290,44 +56290,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return _hasher;
   }
 
-  export function $filter(
-    filter: BaseInterfaceWithPropertiesStatic.$Filter,
-    value: BaseInterfaceWithProperties,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.baseInterfaceWithPropertiesProperty !== undefined &&
-      !$filterString(
-        filter.baseInterfaceWithPropertiesProperty,
-        value.baseInterfaceWithPropertiesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly baseInterfaceWithPropertiesProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseInterfaceWithProperties",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -56363,6 +56325,16 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "BaseInterfaceWithProperties"
+      | "BaseInterfaceWithoutProperties"
+      | "ConcreteChildInterface"
+      | "ConcreteParentInterface";
+    readonly baseInterfaceWithPropertiesProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -56423,15 +56395,43 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type:
-      | "BaseInterfaceWithProperties"
-      | "BaseInterfaceWithoutProperties"
-      | "ConcreteChildInterface"
-      | "ConcreteParentInterface";
-    readonly baseInterfaceWithPropertiesProperty: string;
+  export function $filter(
+    filter: BaseInterfaceWithPropertiesStatic.$Filter,
+    value: BaseInterfaceWithProperties,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.baseInterfaceWithPropertiesProperty !== undefined &&
+      !$filterString(
+        filter.baseInterfaceWithPropertiesProperty,
+        value.baseInterfaceWithPropertiesProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly baseInterfaceWithPropertiesProperty?: $StringFilter;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseInterfaceWithProperties",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isBaseInterfaceWithProperties(
     object: $Object,
@@ -56878,31 +56878,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return _hasher;
   }
 
-  export function $filter(
-    filter: BaseInterfaceWithoutPropertiesStatic.$Filter,
-    value: BaseInterfaceWithoutProperties,
-  ): boolean {
-    if (!BaseInterfaceWithPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-  } & BaseInterfaceWithPropertiesStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseInterfaceWithoutProperties",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -56943,6 +56918,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -56979,7 +56956,30 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
+  export function $filter(
+    filter: BaseInterfaceWithoutPropertiesStatic.$Filter,
+    value: BaseInterfaceWithoutProperties,
+  ): boolean {
+    if (!BaseInterfaceWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & BaseInterfaceWithPropertiesStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseInterfaceWithoutProperties",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isBaseInterfaceWithoutProperties(
     object: $Object,
@@ -57375,41 +57375,6 @@ export namespace ConcreteParentInterfaceStatic {
     return _hasher;
   }
 
-  export function $filter(
-    filter: ConcreteParentInterfaceStatic.$Filter,
-    value: ConcreteParentInterface,
-  ): boolean {
-    if (!BaseInterfaceWithoutPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteParentInterfaceProperty !== undefined &&
-      !$filterString(
-        filter.concreteParentInterfaceProperty,
-        value.concreteParentInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteParentInterfaceProperty?: $StringFilter;
-  } & BaseInterfaceWithoutPropertiesStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParentInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -57453,6 +57418,10 @@ export namespace ConcreteParentInterfaceStatic {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly concreteParentInterfaceProperty: string;
+  } & BaseInterfaceWithoutPropertiesStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -57492,9 +57461,40 @@ export namespace ConcreteParentInterfaceStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly concreteParentInterfaceProperty: string;
-  } & BaseInterfaceWithoutPropertiesStatic.$Json;
+  export function $filter(
+    filter: ConcreteParentInterfaceStatic.$Filter,
+    value: ConcreteParentInterface,
+  ): boolean {
+    if (!BaseInterfaceWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteParentInterfaceProperty !== undefined &&
+      !$filterString(
+        filter.concreteParentInterfaceProperty,
+        value.concreteParentInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteParentInterfaceProperty?: $StringFilter;
+  } & BaseInterfaceWithoutPropertiesStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteParentInterface",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isConcreteParentInterface(
     object: $Object,
@@ -57944,41 +57944,6 @@ export namespace ConcreteChildInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: ConcreteChildInterface.$Filter,
-    value: ConcreteChildInterface,
-  ): boolean {
-    if (!ConcreteParentInterfaceStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteChildInterfaceProperty !== undefined &&
-      !$filterString(
-        filter.concreteChildInterfaceProperty,
-        value.concreteChildInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteChildInterfaceProperty?: $StringFilter;
-  } & ConcreteParentInterfaceStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChildInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -58020,6 +57985,10 @@ export namespace ConcreteChildInterface {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly concreteChildInterfaceProperty: string;
+  } & ConcreteParentInterfaceStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -58057,9 +58026,40 @@ export namespace ConcreteChildInterface {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly concreteChildInterfaceProperty: string;
-  } & ConcreteParentInterfaceStatic.$Json;
+  export function $filter(
+    filter: ConcreteChildInterface.$Filter,
+    value: ConcreteChildInterface,
+  ): boolean {
+    if (!ConcreteParentInterfaceStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteChildInterfaceProperty !== undefined &&
+      !$filterString(
+        filter.concreteChildInterfaceProperty,
+        value.concreteChildInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteChildInterfaceProperty?: $StringFilter;
+  } & ConcreteParentInterfaceStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteChildInterface",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isConcreteChildInterface(
     object: $Object,
@@ -58560,40 +58560,6 @@ export abstract class AbstractBaseClassWithProperties {
 }
 
 export namespace AbstractBaseClassWithPropertiesStatic {
-  export function $filter(
-    filter: AbstractBaseClassWithPropertiesStatic.$Filter,
-    value: AbstractBaseClassWithProperties,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.abstractBaseClassWithPropertiesProperty !== undefined &&
-      !$filterString(
-        filter.abstractBaseClassWithPropertiesProperty,
-        value.abstractBaseClassWithPropertiesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly abstractBaseClassWithPropertiesProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -58617,6 +58583,12 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
+    readonly abstractBaseClassWithPropertiesProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -58656,11 +58628,39 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
-    readonly abstractBaseClassWithPropertiesProperty: string;
+  export function $filter(
+    filter: AbstractBaseClassWithPropertiesStatic.$Filter,
+    value: AbstractBaseClassWithProperties,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.abstractBaseClassWithPropertiesProperty !== undefined &&
+      !$filterString(
+        filter.abstractBaseClassWithPropertiesProperty,
+        value.abstractBaseClassWithPropertiesProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassWithPropertiesProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isAbstractBaseClassWithProperties(
     object: $Object,
@@ -58916,27 +58916,6 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 }
 
 export namespace AbstractBaseClassWithoutPropertiesStatic {
-  export function $filter(
-    filter: AbstractBaseClassWithoutPropertiesStatic.$Filter,
-    value: AbstractBaseClassWithoutProperties,
-  ): boolean {
-    if (!AbstractBaseClassWithPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-  } & AbstractBaseClassWithPropertiesStatic.$Filter;
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -58967,6 +58946,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -58987,7 +58968,26 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
+  export function $filter(
+    filter: AbstractBaseClassWithoutPropertiesStatic.$Filter,
+    value: AbstractBaseClassWithoutProperties,
+  ): boolean {
+    if (!AbstractBaseClassWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & AbstractBaseClassWithPropertiesStatic.$Filter;
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isAbstractBaseClassWithoutProperties(
     object: $Object,
@@ -59239,41 +59239,6 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 }
 
 export namespace ConcreteParentClassStatic {
-  export function $filter(
-    filter: ConcreteParentClassStatic.$Filter,
-    value: ConcreteParentClass,
-  ): boolean {
-    if (!AbstractBaseClassWithoutPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteParentClassProperty !== undefined &&
-      !$filterString(
-        filter.concreteParentClassProperty,
-        value.concreteParentClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteParentClassProperty?: $StringFilter;
-  } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParentClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -59316,6 +59281,10 @@ export namespace ConcreteParentClassStatic {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly concreteParentClassProperty: string;
+  } & AbstractBaseClassWithoutPropertiesStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -59341,9 +59310,40 @@ export namespace ConcreteParentClassStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly concreteParentClassProperty: string;
-  } & AbstractBaseClassWithoutPropertiesStatic.$Json;
+  export function $filter(
+    filter: ConcreteParentClassStatic.$Filter,
+    value: ConcreteParentClass,
+  ): boolean {
+    if (!AbstractBaseClassWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteParentClassProperty !== undefined &&
+      !$filterString(
+        filter.concreteParentClassProperty,
+        value.concreteParentClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteParentClassProperty?: $StringFilter;
+  } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteParentClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isConcreteParentClass(
     object: $Object,
@@ -59771,41 +59771,6 @@ export class ConcreteChildClass extends ConcreteParentClass {
 }
 
 export namespace ConcreteChildClass {
-  export function $filter(
-    filter: ConcreteChildClass.$Filter,
-    value: ConcreteChildClass,
-  ): boolean {
-    if (!ConcreteParentClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteChildClassProperty !== undefined &&
-      !$filterString(
-        filter.concreteChildClassProperty,
-        value.concreteChildClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteChildClassProperty?: $StringFilter;
-  } & ConcreteParentClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChildClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -59846,6 +59811,10 @@ export namespace ConcreteChildClass {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly concreteChildClassProperty: string;
+  } & ConcreteParentClassStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -59871,9 +59840,40 @@ export namespace ConcreteChildClass {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly concreteChildClassProperty: string;
-  } & ConcreteParentClassStatic.$Json;
+  export function $filter(
+    filter: ConcreteChildClass.$Filter,
+    value: ConcreteChildClass,
+  ): boolean {
+    if (!ConcreteParentClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteChildClassProperty !== undefined &&
+      !$filterString(
+        filter.concreteChildClassProperty,
+        value.concreteChildClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteChildClassProperty?: $StringFilter;
+  } & ConcreteParentClassStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteChildClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isConcreteChildClass(
     object: $Object,
@@ -60293,40 +60293,6 @@ export abstract class ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMemberCommonParentStatic {
-  export function $filter(
-    filter: ClassUnionMemberCommonParentStatic.$Filter,
-    value: ClassUnionMemberCommonParent,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.classUnionMemberCommonParentProperty !== undefined &&
-      !$filterString(
-        filter.classUnionMemberCommonParentProperty,
-        value.classUnionMemberCommonParentProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly classUnionMemberCommonParentProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -60350,6 +60316,12 @@ export namespace ClassUnionMemberCommonParentStatic {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
+    readonly classUnionMemberCommonParentProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -60389,11 +60361,39 @@ export namespace ClassUnionMemberCommonParentStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
-    readonly classUnionMemberCommonParentProperty: string;
+  export function $filter(
+    filter: ClassUnionMemberCommonParentStatic.$Filter,
+    value: ClassUnionMemberCommonParent,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.classUnionMemberCommonParentProperty !== undefined &&
+      !$filterString(
+        filter.classUnionMemberCommonParentProperty,
+        value.classUnionMemberCommonParentProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMemberCommonParentProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isClassUnionMemberCommonParent(
     object: $Object,
@@ -60682,41 +60682,6 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember2 {
-  export function $filter(
-    filter: ClassUnionMember2.$Filter,
-    value: ClassUnionMember2,
-  ): boolean {
-    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.classUnionMember2Property !== undefined &&
-      !$filterString(
-        filter.classUnionMember2Property,
-        value.classUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly classUnionMember2Property?: $StringFilter;
-  } & ClassUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -60756,6 +60721,10 @@ export namespace ClassUnionMember2 {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly classUnionMember2Property: string;
+  } & ClassUnionMemberCommonParentStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -60781,9 +60750,40 @@ export namespace ClassUnionMember2 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly classUnionMember2Property: string;
-  } & ClassUnionMemberCommonParentStatic.$Json;
+  export function $filter(
+    filter: ClassUnionMember2.$Filter,
+    value: ClassUnionMember2,
+  ): boolean {
+    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.classUnionMember2Property !== undefined &&
+      !$filterString(
+        filter.classUnionMember2Property,
+        value.classUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMember2Property?: $StringFilter;
+  } & ClassUnionMemberCommonParentStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember2",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isClassUnionMember2(
     object: $Object,
@@ -61179,41 +61179,6 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember1 {
-  export function $filter(
-    filter: ClassUnionMember1.$Filter,
-    value: ClassUnionMember1,
-  ): boolean {
-    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.classUnionMember1Property !== undefined &&
-      !$filterString(
-        filter.classUnionMember1Property,
-        value.classUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly classUnionMember1Property?: $StringFilter;
-  } & ClassUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -61253,6 +61218,10 @@ export namespace ClassUnionMember1 {
     return z.toJSONSchema($jsonZodSchema());
   }
 
+  export type $Json = {
+    readonly classUnionMember1Property: string;
+  } & ClassUnionMemberCommonParentStatic.$Json;
+
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
@@ -61278,9 +61247,40 @@ export namespace ClassUnionMember1 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly classUnionMember1Property: string;
-  } & ClassUnionMemberCommonParentStatic.$Json;
+  export function $filter(
+    filter: ClassUnionMember1.$Filter,
+    value: ClassUnionMember1,
+  ): boolean {
+    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.classUnionMember1Property !== undefined &&
+      !$filterString(
+        filter.classUnionMember1Property,
+        value.classUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMember1Property?: $StringFilter;
+  } & ClassUnionMemberCommonParentStatic.$Filter;
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember1",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isClassUnionMember1(
     object: $Object,
@@ -61698,34 +61698,6 @@ export class NonClass {
 }
 
 export namespace NonClass {
-  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.nonClassProperty !== undefined &&
-      !$filterString(filter.nonClassProperty, value.nonClassProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly nonClassProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -61753,6 +61725,12 @@ export namespace NonClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NonClass";
+    readonly nonClassProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -61792,11 +61770,33 @@ export namespace NonClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NonClass";
-    readonly nonClassProperty: string;
+  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.nonClassProperty !== undefined &&
+      !$filterString(filter.nonClassProperty, value.nonClassProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly nonClassProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isNonClass(object: $Object): object is NonClass {
     switch (object.$type) {
@@ -62113,40 +62113,6 @@ export class PartialClass {
 }
 
 export namespace PartialClass {
-  export function $filter(
-    filter: PartialClass.$Filter,
-    value: PartialClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -62175,6 +62141,12 @@ export namespace PartialClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -62214,11 +62186,39 @@ export namespace PartialClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClass";
-    readonly lazilyResolvedStringProperty: string;
+  export function $filter(
+    filter: PartialClass.$Filter,
+    value: PartialClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isPartialClass(object: $Object): object is PartialClass {
     switch (object.$type) {
@@ -62762,82 +62762,6 @@ export class ClassPropertiesClass {
 }
 
 export namespace ClassPropertiesClass {
-  export function $filter(
-    filter: ClassPropertiesClass.$Filter,
-    value: ClassPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.iriClassProperty !== undefined &&
-      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
-        filter.iriClassProperty,
-        value.iriClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.multiClassProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.multiClassProperty, value.multiClassProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.nodeClassProperty1 !== undefined &&
-      !$filterMaybe<NonClass, NonClass.$Filter>(NonClass.$filter)(
-        filter.nodeClassProperty1,
-        value.nodeClassProperty1,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nodeClassProperty2 !== undefined &&
-      !$filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-        filter.nodeClassProperty2,
-        value.nodeClassProperty2,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.singleClassProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.singleClassProperty, value.singleClassProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly iriClassProperty?: $MaybeFilter<$IriFilter>;
-    readonly multiClassProperty?: $MaybeFilter<$IdentifierFilter>;
-    readonly nodeClassProperty1?: $MaybeFilter<NonClass.$Filter>;
-    readonly nodeClassProperty2?: $MaybeFilter<PartialClass.$Filter>;
-    readonly singleClassProperty?: $MaybeFilter<$IdentifierFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -62901,6 +62825,16 @@ export namespace ClassPropertiesClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ClassPropertiesClass";
+    readonly iriClassProperty?: { readonly "@id": string };
+    readonly multiClassProperty?: { readonly "@id": string };
+    readonly nodeClassProperty1?: NonClass.$Json;
+    readonly nodeClassProperty2?: PartialClass.$Json;
+    readonly singleClassProperty?: { readonly "@id": string };
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -62981,15 +62915,81 @@ export namespace ClassPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ClassPropertiesClass";
-    readonly iriClassProperty?: { readonly "@id": string };
-    readonly multiClassProperty?: { readonly "@id": string };
-    readonly nodeClassProperty1?: NonClass.$Json;
-    readonly nodeClassProperty2?: PartialClass.$Json;
-    readonly singleClassProperty?: { readonly "@id": string };
+  export function $filter(
+    filter: ClassPropertiesClass.$Filter,
+    value: ClassPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriClassProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.iriClassProperty,
+        value.iriClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.multiClassProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.multiClassProperty, value.multiClassProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.nodeClassProperty1 !== undefined &&
+      !$filterMaybe<NonClass, NonClass.$Filter>(NonClass.$filter)(
+        filter.nodeClassProperty1,
+        value.nodeClassProperty1,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nodeClassProperty2 !== undefined &&
+      !$filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+        filter.nodeClassProperty2,
+        value.nodeClassProperty2,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.singleClassProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.singleClassProperty, value.singleClassProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly iriClassProperty?: $MaybeFilter<$IriFilter>;
+    readonly multiClassProperty?: $MaybeFilter<$IdentifierFilter>;
+    readonly nodeClassProperty1?: $MaybeFilter<NonClass.$Filter>;
+    readonly nodeClassProperty2?: $MaybeFilter<PartialClass.$Filter>;
+    readonly singleClassProperty?: $MaybeFilter<$IdentifierFilter>;
   };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassPropertiesClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isClassPropertiesClass(
     object: $Object,
@@ -63712,32 +63712,6 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: BlankNodeOrIriIdentifierInterface.$Filter,
-    value: BlankNodeOrIriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeOrIriIdentifierInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -63766,6 +63740,11 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeOrIriIdentifierInterface";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -63815,10 +63794,31 @@ export namespace BlankNodeOrIriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeOrIriIdentifierInterface";
-  };
+  export function $filter(
+    filter: BlankNodeOrIriIdentifierInterface.$Filter,
+    value: BlankNodeOrIriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeOrIriIdentifierInterface",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isBlankNodeOrIriIdentifierInterface(
     object: $Object,
@@ -64213,32 +64213,6 @@ export class BlankNodeOrIriIdentifierClass {
 }
 
 export namespace BlankNodeOrIriIdentifierClass {
-  export function $filter(
-    filter: BlankNodeOrIriIdentifierClass.$Filter,
-    value: BlankNodeOrIriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeOrIriIdentifierClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -64264,6 +64238,11 @@ export namespace BlankNodeOrIriIdentifierClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeOrIriIdentifierClass";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -64298,10 +64277,31 @@ export namespace BlankNodeOrIriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeOrIriIdentifierClass";
-  };
+  export function $filter(
+    filter: BlankNodeOrIriIdentifierClass.$Filter,
+    value: BlankNodeOrIriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeOrIriIdentifierClass",
+  );
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isBlankNodeOrIriIdentifierClass(
     object: $Object,
@@ -64621,32 +64621,6 @@ export namespace BlankNodeIdentifierInterface {
     return _hasher;
   }
 
-  export function $filter(
-    filter: BlankNodeIdentifierInterface.$Filter,
-    value: BlankNodeIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeIdentifierInterface",
-  );
-
-  export type $Identifier = BlankNode;
-
-  export namespace $Identifier {
-    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -64672,6 +64646,11 @@ export namespace BlankNodeIdentifierInterface {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeIdentifierInterface";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -64717,10 +64696,31 @@ export namespace BlankNodeIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeIdentifierInterface";
-  };
+  export function $filter(
+    filter: BlankNodeIdentifierInterface.$Filter,
+    value: BlankNodeIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterBlankNode(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeIdentifierInterface",
+  );
+
+  export type $Identifier = BlankNode;
+
+  export namespace $Identifier {
+    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isBlankNodeIdentifierInterface(
     object: $Object,
@@ -65106,32 +65106,6 @@ export class BlankNodeIdentifierClass {
 }
 
 export namespace BlankNodeIdentifierClass {
-  export function $filter(
-    filter: BlankNodeIdentifierClass.$Filter,
-    value: BlankNodeIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeIdentifierClass",
-  );
-
-  export type $Identifier = BlankNode;
-
-  export namespace $Identifier {
-    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode }> {
@@ -65155,6 +65129,11 @@ export namespace BlankNodeIdentifierClass {
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeIdentifierClass";
+  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -65189,10 +65168,31 @@ export namespace BlankNodeIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeIdentifierClass";
-  };
+  export function $filter(
+    filter: BlankNodeIdentifierClass.$Filter,
+    value: BlankNodeIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterBlankNode(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeIdentifierClass",
+  );
+
+  export type $Identifier = BlankNode;
+
+  export namespace $Identifier {
+    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
 
   export function isBlankNodeIdentifierClass(
     object: $Object,
