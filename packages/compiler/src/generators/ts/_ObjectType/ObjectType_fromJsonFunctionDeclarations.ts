@@ -1,12 +1,14 @@
-import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
-import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./ObjectType_toJsonFunctionOrMethodDeclaration.js";
 
-function ObjectType_fromJsonFunctionDeclarations(
+const variables = {
+  jsonObject: code`${syntheticNamePrefix}jsonObject`,
+};
+
+export function ObjectType_fromJsonFunctionDeclarations(
   this: ObjectType,
 ): readonly Code[] {
   const initializers: string[] = [];
@@ -93,94 +95,3 @@ export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}
 
   return functionDeclarations;
 }
-
-function ObjectType_jsonSchemaFunctionDeclaration(this: ObjectType): Code {
-  return code`\
-export function ${syntheticNamePrefix}jsonSchema() {
-  return ${imports.z}.toJSONSchema(${syntheticNamePrefix}jsonZodSchema());
-}`;
-}
-
-function ObjectType_jsonUiSchemaFunctionDeclaration(this: ObjectType): Code {
-  const variables = { scopePrefix: code`scopePrefix` };
-  const elements: Code[] = this.parentObjectTypes
-    .map(
-      (parentObjectType) =>
-        code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix })`,
-    )
-    .concat(
-      this.ownProperties.flatMap((property) =>
-        property.jsonUiSchemaElement({ variables }).toList(),
-      ),
-    );
-
-  return code`\
-export function ${syntheticNamePrefix}jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-  const scopePrefix = parameters?.scopePrefix ?? "#";
-  return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.name)}", type: "Group" };
-}`;
-}
-
-function ObjectType_jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
-  const mergeZodObjectSchemas: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    mergeZodObjectSchemas.push(
-      parentObjectType.jsonZodSchema({ context: "type" }),
-    );
-  }
-  if (this.properties.length > 0) {
-    mergeZodObjectSchemas.push(
-      code`${imports.z}.object({ ${joinCode(
-        this.properties
-          .flatMap((property) => property.jsonZodSchema.toList())
-          .map(({ key, schema }) => code`"${key}": ${schema}`),
-        { on: "," },
-      )} })`,
-    );
-  }
-
-  return code`\
-export function ${syntheticNamePrefix}jsonZodSchema() {
-  return ${
-    mergeZodObjectSchemas.length > 0
-      ? mergeZodObjectSchemas.reduce(
-          (merged, zodObjectSchema) => {
-            if (merged === null) {
-              return zodObjectSchema;
-            }
-            return code`${merged}.merge(${zodObjectSchema})`;
-          },
-          null as Code | null,
-        )
-      : `${imports.z}.object()`
-  } satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
-}`;
-}
-
-function ObjectType_toJsonFunctionDeclaration(this: ObjectType): Maybe<Code> {
-  if (this.declarationType !== "interface") {
-    return Maybe.empty();
-  }
-
-  return ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)();
-}
-
-export function ObjectType_jsonFunctionDeclarations(
-  this: ObjectType,
-): readonly Code[] {
-  if (!this.features.has("json")) {
-    return [];
-  }
-
-  return [
-    ...ObjectType_fromJsonFunctionDeclarations.bind(this)(),
-    ObjectType_jsonSchemaFunctionDeclaration.bind(this)(),
-    ObjectType_jsonUiSchemaFunctionDeclaration.bind(this)(),
-    ...ObjectType_toJsonFunctionDeclaration.bind(this)().toList(),
-    ObjectType_jsonZodSchemaFunctionDeclaration.bind(this)(),
-  ];
-}
-
-const variables = {
-  jsonObject: code`${syntheticNamePrefix}jsonObject`,
-};
