@@ -1,36 +1,12 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
-import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./ObjectType_toRdfFunctionOrMethodDeclaration.js";
 
-function ObjectType_fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
-  if (this.abstract) {
-    return Maybe.empty();
-  }
-
-  const statements: Code[] = [
-    code`let { context, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});`,
-    code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,
-  ];
-
-  let propertiesFromRdfExpression = code`${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ context, ignoreRdfType, objectSet, preferredLanguages, resource })`;
-  if (this.declarationType === "class") {
-    propertiesFromRdfExpression = code`${propertiesFromRdfExpression}.map(properties => new ${this.name}(properties))`;
-  }
-  statements.push(code`return ${propertiesFromRdfExpression};`);
-
-  return Maybe.of(code`\
-export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${snippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
-${joinCode(statements)}
-}`);
-}
-
-function ObjectType_propertiesFromRdfFunctionDeclaration(
+export function ObjectType_propertiesFromRdfFunctionDeclaration(
   this: ObjectType,
 ): Code {
   const chains: { expression: Code; variable: string }[] = [];
@@ -138,26 +114,4 @@ function ObjectType_propertiesFromRdfFunctionDeclaration(
 export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${snippets.PropertiesFromRdfParameters}): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
 ${joinCode(statements)}
 }`;
-}
-
-export function ObjectType_rdfFunctionDeclarations(
-  this: ObjectType,
-): readonly Code[] {
-  if (!this.features.has("rdf")) {
-    return [];
-  }
-
-  return [
-    ...ObjectType_fromRdfFunctionDeclaration.bind(this)().toList(),
-    ObjectType_propertiesFromRdfFunctionDeclaration.bind(this)(),
-    ...ObjectType_toRdfFunctionDeclaration.bind(this)().toList(),
-  ];
-}
-
-function ObjectType_toRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
-  if (this.declarationType !== "interface") {
-    return Maybe.empty();
-  }
-
-  return ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)();
 }

@@ -15,6 +15,7 @@ import { ObjectType_equalsFunctionOrMethodDeclaration } from "./_ObjectType/Obje
 import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
 import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
 import { ObjectType_fromJsonFunctionDeclarations } from "./_ObjectType/ObjectType_fromJsonFunctionDeclarations.js";
+import { ObjectType_fromRdfFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfFunctionDeclaration.js";
 import { ObjectType_fromRdfTypeVariableStatement } from "./_ObjectType/ObjectType_fromRdfTypeVariableStatement.js";
 import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
 import { ObjectType_hashFunctionOrMethodDeclarations } from "./_ObjectType/ObjectType_hashFunctionOrMethodDeclarations.js";
@@ -25,13 +26,14 @@ import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_js
 import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
 import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonZodSchemaFunctionDeclaration.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
-import { ObjectType_rdfFunctionDeclarations } from "./_ObjectType/ObjectType_rdfFunctionDeclarations.js";
+import { ObjectType_propertiesFromRdfFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromRdfFunctionDeclaration.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_sparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_sparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlWherePatternsFunctionDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfFunctionOrMethodDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_ObjectType/TypeDiscriminantProperty.js";
@@ -192,6 +194,16 @@ export class ObjectType extends AbstractDeclaredType {
         );
       }
 
+      if (this.features.has("rdf")) {
+        staticModuleDeclarations.push(
+          ...ObjectType_fromRdfFunctionDeclaration.bind(this)().toList(),
+          ObjectType_propertiesFromRdfFunctionDeclaration.bind(this)(),
+          ...(this.declarationType === "interface"
+            ? ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList()
+            : []),
+        );
+      }
+
       if (this.features.has("sparql")) {
         staticModuleDeclarations.push(
           ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
@@ -208,7 +220,6 @@ export class ObjectType extends AbstractDeclaredType {
         ...ObjectType_graphqlTypeVariableStatement.bind(this)().toList(),
         ...identifierTypeDeclarations.bind(this)(),
         ObjectType_isTypeFunctionDeclaration.bind(this)(),
-        ...ObjectType_rdfFunctionDeclarations.bind(this)(),
         ObjectType_schemaVariableStatement.bind(this)(),
       );
 
