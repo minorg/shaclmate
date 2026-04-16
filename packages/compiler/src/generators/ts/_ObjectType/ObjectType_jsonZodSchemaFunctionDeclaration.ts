@@ -28,7 +28,7 @@ export function ObjectType_jsonZodSchemaFunctionDeclaration(
     );
   }
 
-  return code`\
+  return Maybe.of(code`\
 export function ${syntheticNamePrefix}jsonZodSchema() {
   return ${
     mergeZodObjectSchemas.length > 0
@@ -43,5 +43,5 @@ export function ${syntheticNamePrefix}jsonZodSchema() {
         )
       : `${imports.z}.object()`
   } satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
-}`;
+}`);
 }

@@ -2694,6 +2694,41 @@ export class $NamedDefaultPartial {
 }
 
 export namespace $NamedDefaultPartial {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "$NamedDefaultPartial";
+  };
+
+  export function $filter(
+    filter: $NamedDefaultPartial.$Filter,
+    value: $NamedDefaultPartial,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IriFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode }> {
@@ -2714,14 +2749,44 @@ export namespace $NamedDefaultPartial {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, $NamedDefaultPartial> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return $NamedDefaultPartial
+      .$propertiesFromRdf({
+        context,
+        ignoreRdfType,
+        objectSet,
+        preferredLanguages,
+        resource,
+      })
+      .map((properties) => new $NamedDefaultPartial(properties));
+  }
+
+  export function is$NamedDefaultPartial(
+    object: $Object,
+  ): object is $NamedDefaultPartial {
+    switch (object.$type) {
+      case "$NamedDefaultPartial":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "$NamedDefaultPartial";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -2756,30 +2821,6 @@ export namespace $NamedDefaultPartial {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, $NamedDefaultPartial> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return $NamedDefaultPartial
-      .$propertiesFromRdf({
-        context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      })
-      .map((properties) => new $NamedDefaultPartial(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: NamedNode }> {
@@ -2795,6 +2836,22 @@ export namespace $NamedDefaultPartial {
       .chain((values) => values.head())
       .map(($identifier) => ({ $identifier }));
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["$NamedDefaultPartial"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -2886,63 +2943,6 @@ export namespace $NamedDefaultPartial {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: $NamedDefaultPartial.$Filter,
-    value: $NamedDefaultPartial,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IriFilter };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function is$NamedDefaultPartial(
-    object: $Object,
-  ): object is $NamedDefaultPartial {
-    switch (object.$type) {
-      case "$NamedDefaultPartial":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["$NamedDefaultPartial"],
-        }),
-      },
-    },
-  } as const;
 }
 export class $DefaultPartial {
   readonly $identifier: $DefaultPartial.$Identifier;
@@ -3026,6 +3026,33 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "$DefaultPartial";
+  };
+
+  export function $filter(
+    filter: $DefaultPartial.$Filter,
+    value: $DefaultPartial,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -3048,14 +3075,44 @@ export namespace $DefaultPartial {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, $DefaultPartial> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return $DefaultPartial
+      .$propertiesFromRdf({
+        context,
+        ignoreRdfType,
+        objectSet,
+        preferredLanguages,
+        resource,
+      })
+      .map((properties) => new $DefaultPartial(properties));
+  }
+
+  export function is$DefaultPartial(
+    object: $Object,
+  ): object is $DefaultPartial {
+    switch (object.$type) {
+      case "$DefaultPartial":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "$DefaultPartial";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -3090,30 +3147,6 @@ export namespace $DefaultPartial {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, $DefaultPartial> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return $DefaultPartial
-      .$propertiesFromRdf({
-        context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      })
-      .map((properties) => new $DefaultPartial(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: BlankNode | NamedNode }> {
@@ -3129,6 +3162,22 @@ export namespace $DefaultPartial {
       .chain((values) => values.head())
       .map(($identifier) => ({ $identifier }));
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["$DefaultPartial"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -3218,55 +3267,6 @@ export namespace $DefaultPartial {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: $DefaultPartial.$Filter,
-    value: $DefaultPartial,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function is$DefaultPartial(
-    object: $Object,
-  ): object is $DefaultPartial {
-    switch (object.$type) {
-      case "$DefaultPartial":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["$DefaultPartial"],
-        }),
-      },
-    },
-  } as const;
 } /**
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
@@ -3357,6 +3357,51 @@ export namespace UuidV4IriIdentifierInterface {
     return _hasher;
   }
 
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "UuidV4IriIdentifierInterface";
+    readonly uuidV4IriProperty: string;
+  };
+
+  export function $filter(
+    filter: UuidV4IriIdentifierInterface.$Filter,
+    value: UuidV4IriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.uuidV4IriProperty !== undefined &&
+      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly uuidV4IriProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -3382,15 +3427,42 @@ export namespace UuidV4IriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, UuidV4IriIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return UuidV4IriIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function isUuidV4IriIdentifierInterface(
+    object: $Object,
+  ): object is UuidV4IriIdentifierInterface {
+    switch (object.$type) {
+      case "UuidV4IriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UuidV4IriIdentifierInterface";
-    readonly uuidV4IriProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -3422,46 +3494,12 @@ export namespace UuidV4IriIdentifierInterface {
     };
   }
 
-  export function $toJson(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-  ): UuidV4IriIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": _uuidV4IriIdentifierInterface.$identifier.value,
-        $type: _uuidV4IriIdentifierInterface.$type,
-        uuidV4IriProperty: _uuidV4IriIdentifierInterface.uuidV4IriProperty,
-      } satisfies UuidV4IriIdentifierInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("UuidV4IriIdentifierInterface"),
       uuidV4IriProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, UuidV4IriIdentifierInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return UuidV4IriIdentifierInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -3512,27 +3550,30 @@ export namespace UuidV4IriIdentifierInterface {
       );
   }
 
-  export function $toRdf(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefix" as const,
+        type: () => ({ kind: "String" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["UuidV4IriIdentifierInterface"],
+        }),
+      },
+      uuidV4IriProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
+      },
     },
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _uuidV4IriIdentifierInterface.$identifier,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      [$literalFactory.string(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -3652,80 +3693,39 @@ export namespace UuidV4IriIdentifierInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: UuidV4IriIdentifierInterface.$Filter,
-    value: UuidV4IriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.uuidV4IriProperty !== undefined &&
-      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+  ): UuidV4IriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id": _uuidV4IriIdentifierInterface.$identifier.value,
+        $type: _uuidV4IriIdentifierInterface.$type,
+        uuidV4IriProperty: _uuidV4IriIdentifierInterface.uuidV4IriProperty,
+      } satisfies UuidV4IriIdentifierInterface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly uuidV4IriProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isUuidV4IriIdentifierInterface(
-    object: $Object,
-  ): object is UuidV4IriIdentifierInterface {
-    switch (object.$type) {
-      case "UuidV4IriIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UuidV4IriIdentifierInterface"],
-        }),
-      },
-      uuidV4IriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      },
+  export function $toRdf(
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource<NamedNode> {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _uuidV4IriIdentifierInterface.$identifier,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
+      [$literalFactory.string(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
@@ -3868,6 +3868,51 @@ export class UuidV4IriIdentifierClass {
 }
 
 export namespace UuidV4IriIdentifierClass {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "UuidV4IriIdentifierClass";
+    readonly uuidV4IriProperty: string;
+  };
+
+  export function $filter(
+    filter: UuidV4IriIdentifierClass.$Filter,
+    value: UuidV4IriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.uuidV4IriProperty !== undefined &&
+      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly uuidV4IriProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode; uuidV4IriProperty: string }> {
@@ -3889,15 +3934,42 @@ export namespace UuidV4IriIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, UuidV4IriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return UuidV4IriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new UuidV4IriIdentifierClass(properties));
+  }
+
+  export function isUuidV4IriIdentifierClass(
+    object: $Object,
+  ): object is UuidV4IriIdentifierClass {
+    switch (object.$type) {
+      case "UuidV4IriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UuidV4IriIdentifierClass";
-    readonly uuidV4IriProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -3937,28 +4009,6 @@ export namespace UuidV4IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, UuidV4IriIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return UuidV4IriIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new UuidV4IriIdentifierClass(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: NamedNode; uuidV4IriProperty: string }> {
@@ -3989,6 +4039,31 @@ export namespace UuidV4IriIdentifierClass {
         }).map((uuidV4IriProperty) => ({ $identifier, uuidV4IriProperty })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefix" as const,
+        type: () => ({ kind: "String" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["UuidV4IriIdentifierClass"],
+        }),
+      },
+      uuidV4IriProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -4107,81 +4182,6 @@ export namespace UuidV4IriIdentifierClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: UuidV4IriIdentifierClass.$Filter,
-    value: UuidV4IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.uuidV4IriProperty !== undefined &&
-      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly uuidV4IriProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isUuidV4IriIdentifierClass(
-    object: $Object,
-  ): object is UuidV4IriIdentifierClass {
-    switch (object.$type) {
-      case "UuidV4IriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UuidV4IriIdentifierClass"],
-        }),
-      },
-      uuidV4IriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      },
-    },
-  } as const;
 } /**
  * Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality.
  */
@@ -5356,6 +5356,622 @@ export class UnionDiscriminantsClass {
 }
 
 export namespace UnionDiscriminantsClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "UnionDiscriminantsClass";
+    readonly optionalClassOrClassOrStringProperty?:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          type: "1-ClassUnionMember2";
+          value: ClassUnionMember2.$Json;
+        }
+      | { type: "2-string"; value: string };
+    readonly optionalIriOrLiteralProperty?:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
+    readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
+    readonly requiredClassOrClassOrStringProperty:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          type: "1-ClassUnionMember2";
+          value: ClassUnionMember2.$Json;
+        }
+      | { type: "2-string"; value: string };
+    readonly requiredIriOrLiteralProperty:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
+    readonly requiredIriOrStringProperty: { readonly "@id": string } | string;
+    readonly setClassOrClassOrStringProperty?: readonly (
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          type: "1-ClassUnionMember2";
+          value: ClassUnionMember2.$Json;
+        }
+      | { type: "2-string"; value: string }
+    )[];
+    readonly setIriOrLiteralProperty?: readonly (
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        }
+    )[];
+    readonly setIriOrStringProperty?: readonly (
+      | { readonly "@id": string }
+      | string
+    )[];
+  };
+
+  export function $filter(
+    filter: UnionDiscriminantsClass.$Filter,
+    value: UnionDiscriminantsClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalClassOrClassOrStringProperty !== undefined &&
+      !$filterMaybe<
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | {
+            type: "1-ClassUnionMember2";
+            value: ClassUnionMember2;
+          }
+        | { type: "2-string"; value: string },
+        {
+          readonly on?: {
+            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+            readonly "2-string"?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          },
+          value:
+            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+            | {
+                type: "1-ClassUnionMember2";
+                value: ClassUnionMember2;
+              }
+            | { type: "2-string"; value: string },
+        ) => {
+          if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
+            switch (value.type) {
+              case "0-ClassUnionMember1":
+                if (
+                  !ClassUnionMember1.$filter(
+                    filter.on["0-ClassUnionMember1"],
+                    value.value,
+                  )
+                ) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
+            switch (value.type) {
+              case "1-ClassUnionMember2":
+                if (
+                  !ClassUnionMember2.$filter(
+                    filter.on["1-ClassUnionMember2"],
+                    value.value,
+                  )
+                ) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["2-string"] !== undefined) {
+            switch (value.type) {
+              case "2-string":
+                if (!$filterString(filter.on["2-string"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(
+        filter.optionalClassOrClassOrStringProperty,
+        value.optionalClassOrClassOrStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalIriOrLiteralProperty !== undefined &&
+      !$filterMaybe<
+        NamedNode | Literal,
+        {
+          readonly on?: {
+            readonly NamedNode?: $IriFilter;
+            readonly Literal?: $LiteralFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value: NamedNode | Literal,
+        ) => {
+          if (filter.on?.["NamedNode"] !== undefined) {
+            switch (value.termType) {
+              case "NamedNode":
+                if (!$filterIri(filter.on["NamedNode"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["Literal"] !== undefined) {
+            switch (value.termType) {
+              case "Literal":
+                if (!$filterLiteral(filter.on["Literal"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.optionalIriOrLiteralProperty, value.optionalIriOrLiteralProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalIriOrStringProperty !== undefined &&
+      !$filterMaybe<
+        NamedNode | string,
+        {
+          readonly on?: {
+            readonly object?: $IriFilter;
+            readonly string?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          value: NamedNode | string,
+        ) => {
+          if (filter.on?.["object"] !== undefined) {
+            switch (typeof value) {
+              case "object":
+                if (!$filterIri(filter.on["object"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["string"] !== undefined) {
+            switch (typeof value) {
+              case "string":
+                if (!$filterString(filter.on["string"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.optionalIriOrStringProperty, value.optionalIriOrStringProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredClassOrClassOrStringProperty !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+            readonly "2-string"?: $StringFilter;
+          };
+        },
+        value:
+          | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+          | {
+              type: "1-ClassUnionMember2";
+              value: ClassUnionMember2;
+            }
+          | { type: "2-string"; value: string },
+      ) => {
+        if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
+          switch (value.type) {
+            case "0-ClassUnionMember1":
+              if (
+                !ClassUnionMember1.$filter(
+                  filter.on["0-ClassUnionMember1"],
+                  value.value,
+                )
+              ) {
+                return false;
+              }
+              break;
+          }
+        }
+        if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
+          switch (value.type) {
+            case "1-ClassUnionMember2":
+              if (
+                !ClassUnionMember2.$filter(
+                  filter.on["1-ClassUnionMember2"],
+                  value.value,
+                )
+              ) {
+                return false;
+              }
+              break;
+          }
+        }
+        if (filter.on?.["2-string"] !== undefined) {
+          switch (value.type) {
+            case "2-string":
+              if (!$filterString(filter.on["2-string"], value.value)) {
+                return false;
+              }
+              break;
+          }
+        }
+
+        return true;
+      })(
+        filter.requiredClassOrClassOrStringProperty,
+        value.requiredClassOrClassOrStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredIriOrLiteralProperty !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly NamedNode?: $IriFilter;
+            readonly Literal?: $LiteralFilter;
+          };
+        },
+        value: NamedNode | Literal,
+      ) => {
+        if (filter.on?.["NamedNode"] !== undefined) {
+          switch (value.termType) {
+            case "NamedNode":
+              if (!$filterIri(filter.on["NamedNode"], value)) {
+                return false;
+              }
+              break;
+          }
+        }
+        if (filter.on?.["Literal"] !== undefined) {
+          switch (value.termType) {
+            case "Literal":
+              if (!$filterLiteral(filter.on["Literal"], value)) {
+                return false;
+              }
+              break;
+          }
+        }
+
+        return true;
+      })(
+        filter.requiredIriOrLiteralProperty,
+        value.requiredIriOrLiteralProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredIriOrStringProperty !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly object?: $IriFilter;
+            readonly string?: $StringFilter;
+          };
+        },
+        value: NamedNode | string,
+      ) => {
+        if (filter.on?.["object"] !== undefined) {
+          switch (typeof value) {
+            case "object":
+              if (!$filterIri(filter.on["object"], value)) {
+                return false;
+              }
+              break;
+          }
+        }
+        if (filter.on?.["string"] !== undefined) {
+          switch (typeof value) {
+            case "string":
+              if (!$filterString(filter.on["string"], value)) {
+                return false;
+              }
+              break;
+          }
+        }
+
+        return true;
+      })(filter.requiredIriOrStringProperty, value.requiredIriOrStringProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.setClassOrClassOrStringProperty !== undefined &&
+      !$filterArray<
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | {
+            type: "1-ClassUnionMember2";
+            value: ClassUnionMember2;
+          }
+        | { type: "2-string"; value: string },
+        {
+          readonly on?: {
+            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+            readonly "2-string"?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          },
+          value:
+            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+            | {
+                type: "1-ClassUnionMember2";
+                value: ClassUnionMember2;
+              }
+            | { type: "2-string"; value: string },
+        ) => {
+          if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
+            switch (value.type) {
+              case "0-ClassUnionMember1":
+                if (
+                  !ClassUnionMember1.$filter(
+                    filter.on["0-ClassUnionMember1"],
+                    value.value,
+                  )
+                ) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
+            switch (value.type) {
+              case "1-ClassUnionMember2":
+                if (
+                  !ClassUnionMember2.$filter(
+                    filter.on["1-ClassUnionMember2"],
+                    value.value,
+                  )
+                ) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["2-string"] !== undefined) {
+            switch (value.type) {
+              case "2-string":
+                if (!$filterString(filter.on["2-string"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(
+        filter.setClassOrClassOrStringProperty,
+        value.setClassOrClassOrStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setIriOrLiteralProperty !== undefined &&
+      !$filterArray<
+        NamedNode | Literal,
+        {
+          readonly on?: {
+            readonly NamedNode?: $IriFilter;
+            readonly Literal?: $LiteralFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value: NamedNode | Literal,
+        ) => {
+          if (filter.on?.["NamedNode"] !== undefined) {
+            switch (value.termType) {
+              case "NamedNode":
+                if (!$filterIri(filter.on["NamedNode"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["Literal"] !== undefined) {
+            switch (value.termType) {
+              case "Literal":
+                if (!$filterLiteral(filter.on["Literal"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.setIriOrLiteralProperty, value.setIriOrLiteralProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.setIriOrStringProperty !== undefined &&
+      !$filterArray<
+        NamedNode | string,
+        {
+          readonly on?: {
+            readonly object?: $IriFilter;
+            readonly string?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          value: NamedNode | string,
+        ) => {
+          if (filter.on?.["object"] !== undefined) {
+            switch (typeof value) {
+              case "object":
+                if (!$filterIri(filter.on["object"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["string"] !== undefined) {
+            switch (typeof value) {
+              case "string":
+                if (!$filterString(filter.on["string"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.setIriOrStringProperty, value.setIriOrStringProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalClassOrClassOrStringProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: $StringFilter;
+      };
+    }>;
+    readonly optionalIriOrLiteralProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly NamedNode?: $IriFilter;
+        readonly Literal?: $LiteralFilter;
+      };
+    }>;
+    readonly optionalIriOrStringProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly object?: $IriFilter;
+        readonly string?: $StringFilter;
+      };
+    }>;
+    readonly requiredClassOrClassOrStringProperty?: {
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: $StringFilter;
+      };
+    };
+    readonly requiredIriOrLiteralProperty?: {
+      readonly on?: {
+        readonly NamedNode?: $IriFilter;
+        readonly Literal?: $LiteralFilter;
+      };
+    };
+    readonly requiredIriOrStringProperty?: {
+      readonly on?: {
+        readonly object?: $IriFilter;
+        readonly string?: $StringFilter;
+      };
+    };
+    readonly setClassOrClassOrStringProperty?: $CollectionFilter<{
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: $StringFilter;
+      };
+    }>;
+    readonly setIriOrLiteralProperty?: $CollectionFilter<{
+      readonly on?: {
+        readonly NamedNode?: $IriFilter;
+        readonly Literal?: $LiteralFilter;
+      };
+    }>;
+    readonly setIriOrStringProperty?: $CollectionFilter<{
+      readonly on?: {
+        readonly object?: $IriFilter;
+        readonly string?: $StringFilter;
+      };
+    }>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -5530,67 +6146,42 @@ export namespace UnionDiscriminantsClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, UnionDiscriminantsClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return UnionDiscriminantsClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new UnionDiscriminantsClass(properties));
+  }
+
+  export function isUnionDiscriminantsClass(
+    object: $Object,
+  ): object is UnionDiscriminantsClass {
+    switch (object.$type) {
+      case "UnionDiscriminantsClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UnionDiscriminantsClass";
-    readonly optionalClassOrClassOrStringProperty?:
-      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
-      | {
-          type: "1-ClassUnionMember2";
-          value: ClassUnionMember2.$Json;
-        }
-      | { type: "2-string"; value: string };
-    readonly optionalIriOrLiteralProperty?:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
-    readonly requiredClassOrClassOrStringProperty:
-      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
-      | {
-          type: "1-ClassUnionMember2";
-          value: ClassUnionMember2.$Json;
-        }
-      | { type: "2-string"; value: string };
-    readonly requiredIriOrLiteralProperty:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        };
-    readonly requiredIriOrStringProperty: { readonly "@id": string } | string;
-    readonly setClassOrClassOrStringProperty?: readonly (
-      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
-      | {
-          type: "1-ClassUnionMember2";
-          value: ClassUnionMember2.$Json;
-        }
-      | { type: "2-string"; value: string }
-    )[];
-    readonly setIriOrLiteralProperty?: readonly (
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly termType: "Literal";
-          readonly "@type"?: string;
-          readonly "@value": string;
-        }
-    )[];
-    readonly setIriOrStringProperty?: readonly (
-      | { readonly "@id": string }
-      | string
-    )[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -5770,28 +6361,6 @@ export namespace UnionDiscriminantsClass {
         .default(() => [])
         .describe("Union that can be discriminated by typeof."),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, UnionDiscriminantsClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return UnionDiscriminantsClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new UnionDiscriminantsClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -6626,6 +7195,223 @@ export namespace UnionDiscriminantsClass {
         ),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["UnionDiscriminantsClass"],
+        }),
+      },
+      optionalClassOrClassOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              "0-ClassUnionMember1": {
+                discriminantValues: ["0-ClassUnionMember1"],
+                type: ClassUnionMember1.$schema,
+              },
+              "1-ClassUnionMember2": {
+                discriminantValues: ["1-ClassUnionMember2"],
+                type: ClassUnionMember2.$schema,
+              },
+              "2-string": {
+                discriminantValues: ["2-string"],
+                type: { kind: "String" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalClassOrClassOrStringProperty",
+        ),
+      },
+      optionalIriOrLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              NamedNode: {
+                discriminantValues: ["NamedNode"],
+                type: { kind: "Iri" as const },
+              },
+              Literal: {
+                discriminantValues: ["Literal"],
+                type: { kind: "Literal" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalIriOrLiteralProperty",
+        ),
+      },
+      optionalIriOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              object: {
+                discriminantValues: ["object"],
+                type: { kind: "Iri" as const },
+              },
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalIriOrStringProperty",
+        ),
+      },
+      requiredClassOrClassOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Union" as const,
+          members: {
+            "0-ClassUnionMember1": {
+              discriminantValues: ["0-ClassUnionMember1"],
+              type: ClassUnionMember1.$schema,
+            },
+            "1-ClassUnionMember2": {
+              discriminantValues: ["1-ClassUnionMember2"],
+              type: ClassUnionMember2.$schema,
+            },
+            "2-string": {
+              discriminantValues: ["2-string"],
+              type: { kind: "String" as const },
+            },
+          },
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredClassOrClassOrStringProperty",
+        ),
+      },
+      requiredIriOrLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Union" as const,
+          members: {
+            NamedNode: {
+              discriminantValues: ["NamedNode"],
+              type: { kind: "Iri" as const },
+            },
+            Literal: {
+              discriminantValues: ["Literal"],
+              type: { kind: "Literal" as const },
+            },
+          },
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredIriOrLiteralProperty",
+        ),
+      },
+      requiredIriOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Union" as const,
+          members: {
+            object: {
+              discriminantValues: ["object"],
+              type: { kind: "Iri" as const },
+            },
+            string: {
+              discriminantValues: ["string"],
+              type: { kind: "String" as const },
+            },
+          },
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredIriOrStringProperty",
+        ),
+      },
+      setClassOrClassOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              "0-ClassUnionMember1": {
+                discriminantValues: ["0-ClassUnionMember1"],
+                type: ClassUnionMember1.$schema,
+              },
+              "1-ClassUnionMember2": {
+                discriminantValues: ["1-ClassUnionMember2"],
+                type: ClassUnionMember2.$schema,
+              },
+              "2-string": {
+                discriminantValues: ["2-string"],
+                type: { kind: "String" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setClassOrClassOrStringProperty",
+        ),
+      },
+      setIriOrLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              NamedNode: {
+                discriminantValues: ["NamedNode"],
+                type: { kind: "Iri" as const },
+              },
+              Literal: {
+                discriminantValues: ["Literal"],
+                type: { kind: "Literal" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setIriOrLiteralProperty",
+        ),
+      },
+      setIriOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              object: {
+                discriminantValues: ["object"],
+                type: { kind: "Iri" as const },
+              },
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setIriOrStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -8327,792 +9113,6 @@ export namespace UnionDiscriminantsClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: UnionDiscriminantsClass.$Filter,
-    value: UnionDiscriminantsClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalClassOrClassOrStringProperty !== undefined &&
-      !$filterMaybe<
-        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "1-ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "2-string"; value: string },
-        {
-          readonly on?: {
-            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-            readonly "2-string"?: $StringFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-              readonly "2-string"?: $StringFilter;
-            };
-          },
-          value:
-            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-            | {
-                type: "1-ClassUnionMember2";
-                value: ClassUnionMember2;
-              }
-            | { type: "2-string"; value: string },
-        ) => {
-          if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
-            switch (value.type) {
-              case "0-ClassUnionMember1":
-                if (
-                  !ClassUnionMember1.$filter(
-                    filter.on["0-ClassUnionMember1"],
-                    value.value,
-                  )
-                ) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
-            switch (value.type) {
-              case "1-ClassUnionMember2":
-                if (
-                  !ClassUnionMember2.$filter(
-                    filter.on["1-ClassUnionMember2"],
-                    value.value,
-                  )
-                ) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["2-string"] !== undefined) {
-            switch (value.type) {
-              case "2-string":
-                if (!$filterString(filter.on["2-string"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(
-        filter.optionalClassOrClassOrStringProperty,
-        value.optionalClassOrClassOrStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalIriOrLiteralProperty !== undefined &&
-      !$filterMaybe<
-        NamedNode | Literal,
-        {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          value: NamedNode | Literal,
-        ) => {
-          if (filter.on?.["NamedNode"] !== undefined) {
-            switch (value.termType) {
-              case "NamedNode":
-                if (!$filterIri(filter.on["NamedNode"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["Literal"] !== undefined) {
-            switch (value.termType) {
-              case "Literal":
-                if (!$filterLiteral(filter.on["Literal"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.optionalIriOrLiteralProperty, value.optionalIriOrLiteralProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalIriOrStringProperty !== undefined &&
-      !$filterMaybe<
-        NamedNode | string,
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          value: NamedNode | string,
-        ) => {
-          if (filter.on?.["object"] !== undefined) {
-            switch (typeof value) {
-              case "object":
-                if (!$filterIri(filter.on["object"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["string"] !== undefined) {
-            switch (typeof value) {
-              case "string":
-                if (!$filterString(filter.on["string"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.optionalIriOrStringProperty, value.optionalIriOrStringProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredClassOrClassOrStringProperty !== undefined &&
-      !((
-        filter: {
-          readonly on?: {
-            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-            readonly "2-string"?: $StringFilter;
-          };
-        },
-        value:
-          | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-          | {
-              type: "1-ClassUnionMember2";
-              value: ClassUnionMember2;
-            }
-          | { type: "2-string"; value: string },
-      ) => {
-        if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
-          switch (value.type) {
-            case "0-ClassUnionMember1":
-              if (
-                !ClassUnionMember1.$filter(
-                  filter.on["0-ClassUnionMember1"],
-                  value.value,
-                )
-              ) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
-          switch (value.type) {
-            case "1-ClassUnionMember2":
-              if (
-                !ClassUnionMember2.$filter(
-                  filter.on["1-ClassUnionMember2"],
-                  value.value,
-                )
-              ) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["2-string"] !== undefined) {
-          switch (value.type) {
-            case "2-string":
-              if (!$filterString(filter.on["2-string"], value.value)) {
-                return false;
-              }
-              break;
-          }
-        }
-
-        return true;
-      })(
-        filter.requiredClassOrClassOrStringProperty,
-        value.requiredClassOrClassOrStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredIriOrLiteralProperty !== undefined &&
-      !((
-        filter: {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        },
-        value: NamedNode | Literal,
-      ) => {
-        if (filter.on?.["NamedNode"] !== undefined) {
-          switch (value.termType) {
-            case "NamedNode":
-              if (!$filterIri(filter.on["NamedNode"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["Literal"] !== undefined) {
-          switch (value.termType) {
-            case "Literal":
-              if (!$filterLiteral(filter.on["Literal"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-
-        return true;
-      })(
-        filter.requiredIriOrLiteralProperty,
-        value.requiredIriOrLiteralProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredIriOrStringProperty !== undefined &&
-      !((
-        filter: {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        value: NamedNode | string,
-      ) => {
-        if (filter.on?.["object"] !== undefined) {
-          switch (typeof value) {
-            case "object":
-              if (!$filterIri(filter.on["object"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["string"] !== undefined) {
-          switch (typeof value) {
-            case "string":
-              if (!$filterString(filter.on["string"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-
-        return true;
-      })(filter.requiredIriOrStringProperty, value.requiredIriOrStringProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.setClassOrClassOrStringProperty !== undefined &&
-      !$filterArray<
-        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "1-ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "2-string"; value: string },
-        {
-          readonly on?: {
-            readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-            readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-            readonly "2-string"?: $StringFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-              readonly "2-string"?: $StringFilter;
-            };
-          },
-          value:
-            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
-            | {
-                type: "1-ClassUnionMember2";
-                value: ClassUnionMember2;
-              }
-            | { type: "2-string"; value: string },
-        ) => {
-          if (filter.on?.["0-ClassUnionMember1"] !== undefined) {
-            switch (value.type) {
-              case "0-ClassUnionMember1":
-                if (
-                  !ClassUnionMember1.$filter(
-                    filter.on["0-ClassUnionMember1"],
-                    value.value,
-                  )
-                ) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["1-ClassUnionMember2"] !== undefined) {
-            switch (value.type) {
-              case "1-ClassUnionMember2":
-                if (
-                  !ClassUnionMember2.$filter(
-                    filter.on["1-ClassUnionMember2"],
-                    value.value,
-                  )
-                ) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["2-string"] !== undefined) {
-            switch (value.type) {
-              case "2-string":
-                if (!$filterString(filter.on["2-string"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(
-        filter.setClassOrClassOrStringProperty,
-        value.setClassOrClassOrStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setIriOrLiteralProperty !== undefined &&
-      !$filterArray<
-        NamedNode | Literal,
-        {
-          readonly on?: {
-            readonly NamedNode?: $IriFilter;
-            readonly Literal?: $LiteralFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly NamedNode?: $IriFilter;
-              readonly Literal?: $LiteralFilter;
-            };
-          },
-          value: NamedNode | Literal,
-        ) => {
-          if (filter.on?.["NamedNode"] !== undefined) {
-            switch (value.termType) {
-              case "NamedNode":
-                if (!$filterIri(filter.on["NamedNode"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["Literal"] !== undefined) {
-            switch (value.termType) {
-              case "Literal":
-                if (!$filterLiteral(filter.on["Literal"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.setIriOrLiteralProperty, value.setIriOrLiteralProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.setIriOrStringProperty !== undefined &&
-      !$filterArray<
-        NamedNode | string,
-        {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          value: NamedNode | string,
-        ) => {
-          if (filter.on?.["object"] !== undefined) {
-            switch (typeof value) {
-              case "object":
-                if (!$filterIri(filter.on["object"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["string"] !== undefined) {
-            switch (typeof value) {
-              case "string":
-                if (!$filterString(filter.on["string"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.setIriOrStringProperty, value.setIriOrStringProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalClassOrClassOrStringProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-        readonly "2-string"?: $StringFilter;
-      };
-    }>;
-    readonly optionalIriOrLiteralProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly NamedNode?: $IriFilter;
-        readonly Literal?: $LiteralFilter;
-      };
-    }>;
-    readonly optionalIriOrStringProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly object?: $IriFilter;
-        readonly string?: $StringFilter;
-      };
-    }>;
-    readonly requiredClassOrClassOrStringProperty?: {
-      readonly on?: {
-        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-        readonly "2-string"?: $StringFilter;
-      };
-    };
-    readonly requiredIriOrLiteralProperty?: {
-      readonly on?: {
-        readonly NamedNode?: $IriFilter;
-        readonly Literal?: $LiteralFilter;
-      };
-    };
-    readonly requiredIriOrStringProperty?: {
-      readonly on?: {
-        readonly object?: $IriFilter;
-        readonly string?: $StringFilter;
-      };
-    };
-    readonly setClassOrClassOrStringProperty?: $CollectionFilter<{
-      readonly on?: {
-        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-        readonly "2-string"?: $StringFilter;
-      };
-    }>;
-    readonly setIriOrLiteralProperty?: $CollectionFilter<{
-      readonly on?: {
-        readonly NamedNode?: $IriFilter;
-        readonly Literal?: $LiteralFilter;
-      };
-    }>;
-    readonly setIriOrStringProperty?: $CollectionFilter<{
-      readonly on?: {
-        readonly object?: $IriFilter;
-        readonly string?: $StringFilter;
-      };
-    }>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isUnionDiscriminantsClass(
-    object: $Object,
-  ): object is UnionDiscriminantsClass {
-    switch (object.$type) {
-      case "UnionDiscriminantsClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UnionDiscriminantsClass"],
-        }),
-      },
-      optionalClassOrClassOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              "0-ClassUnionMember1": {
-                discriminantValues: ["0-ClassUnionMember1"],
-                type: ClassUnionMember1.$schema,
-              },
-              "1-ClassUnionMember2": {
-                discriminantValues: ["1-ClassUnionMember2"],
-                type: ClassUnionMember2.$schema,
-              },
-              "2-string": {
-                discriminantValues: ["2-string"],
-                type: { kind: "String" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalClassOrClassOrStringProperty",
-        ),
-      },
-      optionalIriOrLiteralProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              NamedNode: {
-                discriminantValues: ["NamedNode"],
-                type: { kind: "Iri" as const },
-              },
-              Literal: {
-                discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalIriOrLiteralProperty",
-        ),
-      },
-      optionalIriOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              object: {
-                discriminantValues: ["object"],
-                type: { kind: "Iri" as const },
-              },
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalIriOrStringProperty",
-        ),
-      },
-      requiredClassOrClassOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Union" as const,
-          members: {
-            "0-ClassUnionMember1": {
-              discriminantValues: ["0-ClassUnionMember1"],
-              type: ClassUnionMember1.$schema,
-            },
-            "1-ClassUnionMember2": {
-              discriminantValues: ["1-ClassUnionMember2"],
-              type: ClassUnionMember2.$schema,
-            },
-            "2-string": {
-              discriminantValues: ["2-string"],
-              type: { kind: "String" as const },
-            },
-          },
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredClassOrClassOrStringProperty",
-        ),
-      },
-      requiredIriOrLiteralProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Union" as const,
-          members: {
-            NamedNode: {
-              discriminantValues: ["NamedNode"],
-              type: { kind: "Iri" as const },
-            },
-            Literal: {
-              discriminantValues: ["Literal"],
-              type: { kind: "Literal" as const },
-            },
-          },
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredIriOrLiteralProperty",
-        ),
-      },
-      requiredIriOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Union" as const,
-          members: {
-            object: {
-              discriminantValues: ["object"],
-              type: { kind: "Iri" as const },
-            },
-            string: {
-              discriminantValues: ["string"],
-              type: { kind: "String" as const },
-            },
-          },
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredIriOrStringProperty",
-        ),
-      },
-      setClassOrClassOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              "0-ClassUnionMember1": {
-                discriminantValues: ["0-ClassUnionMember1"],
-                type: ClassUnionMember1.$schema,
-              },
-              "1-ClassUnionMember2": {
-                discriminantValues: ["1-ClassUnionMember2"],
-                type: ClassUnionMember2.$schema,
-              },
-              "2-string": {
-                discriminantValues: ["2-string"],
-                type: { kind: "String" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setClassOrClassOrStringProperty",
-        ),
-      },
-      setIriOrLiteralProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              NamedNode: {
-                discriminantValues: ["NamedNode"],
-                type: { kind: "Iri" as const },
-              },
-              Literal: {
-                discriminantValues: ["Literal"],
-                type: { kind: "Literal" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setIriOrLiteralProperty",
-        ),
-      },
-      setIriOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              object: {
-                discriminantValues: ["object"],
-                type: { kind: "Iri" as const },
-              },
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setIriOrStringProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with properties that are not nested objects
  */
@@ -9650,6 +9650,145 @@ export class TermPropertiesClass {
 }
 
 export namespace TermPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "TermPropertiesClass";
+    readonly blankNodeTermProperty?: { readonly "@id": string };
+    readonly booleanTermProperty?: boolean;
+    readonly dateTermProperty?: string;
+    readonly dateTimeTermProperty?: string;
+    readonly iriTermProperty?: { readonly "@id": string };
+    readonly literalTermProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly numberTermProperty?: number;
+    readonly stringTermProperty?: string;
+    readonly termProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+  };
+
+  export function $filter(
+    filter: TermPropertiesClass.$Filter,
+    value: TermPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeTermProperty !== undefined &&
+      !$filterMaybe<BlankNode, $BlankNodeFilter>($filterBlankNode)(
+        filter.blankNodeTermProperty,
+        value.blankNodeTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.booleanTermProperty !== undefined &&
+      !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
+        filter.booleanTermProperty,
+        value.booleanTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.dateTermProperty !== undefined &&
+      !$filterMaybe<Date, $DateFilter>($filterDate)(
+        filter.dateTermProperty,
+        value.dateTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.dateTimeTermProperty !== undefined &&
+      !$filterMaybe<Date, $DateFilter>($filterDate)(
+        filter.dateTimeTermProperty,
+        value.dateTimeTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.iriTermProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.iriTermProperty,
+        value.iriTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.literalTermProperty !== undefined &&
+      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
+        filter.literalTermProperty,
+        value.literalTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.numberTermProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.numberTermProperty,
+        value.numberTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.stringTermProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.stringTermProperty,
+        value.stringTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.termProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.termProperty,
+        value.termProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly blankNodeTermProperty?: $MaybeFilter<$BlankNodeFilter>;
+    readonly booleanTermProperty?: $MaybeFilter<$BooleanFilter>;
+    readonly dateTermProperty?: $MaybeFilter<$DateFilter>;
+    readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
+    readonly iriTermProperty?: $MaybeFilter<$IriFilter>;
+    readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly numberTermProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
+    readonly termProperty?: $MaybeFilter<$TermFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -9743,34 +9882,46 @@ export namespace TermPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, TermPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return TermPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new TermPropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/TermPropertiesClass",
+  );
+
+  export function isTermPropertiesClass(
+    object: $Object,
+  ): object is TermPropertiesClass {
+    switch (object.$type) {
+      case "TermPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "TermPropertiesClass";
-    readonly blankNodeTermProperty?: { readonly "@id": string };
-    readonly booleanTermProperty?: boolean;
-    readonly dateTermProperty?: string;
-    readonly dateTimeTermProperty?: string;
-    readonly iriTermProperty?: { readonly "@id": string };
-    readonly literalTermProperty?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly numberTermProperty?: number;
-    readonly stringTermProperty?: string;
-    readonly termProperty?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -9865,28 +10016,6 @@ export namespace TermPropertiesClass {
         ])
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, TermPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return TermPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new TermPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -10174,6 +10303,94 @@ export namespace TermPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["TermPropertiesClass"],
+        }),
+      },
+      blankNodeTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BlankNode" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/blankNodeTermProperty"),
+      },
+      booleanTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Boolean" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/booleanTermProperty"),
+      },
+      dateTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Date" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/dateTermProperty"),
+      },
+      dateTimeTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "DateTime" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
+      },
+      iriTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/iriTermProperty"),
+      },
+      literalTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Literal" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/literalTermProperty"),
+      },
+      numberTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/numberTermProperty"),
+      },
+      stringTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/stringTermProperty"),
+      },
+      termProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Term" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/termProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -10583,223 +10800,6 @@ export namespace TermPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: TermPropertiesClass.$Filter,
-    value: TermPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeTermProperty !== undefined &&
-      !$filterMaybe<BlankNode, $BlankNodeFilter>($filterBlankNode)(
-        filter.blankNodeTermProperty,
-        value.blankNodeTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.booleanTermProperty !== undefined &&
-      !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
-        filter.booleanTermProperty,
-        value.booleanTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.dateTermProperty !== undefined &&
-      !$filterMaybe<Date, $DateFilter>($filterDate)(
-        filter.dateTermProperty,
-        value.dateTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.dateTimeTermProperty !== undefined &&
-      !$filterMaybe<Date, $DateFilter>($filterDate)(
-        filter.dateTimeTermProperty,
-        value.dateTimeTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.iriTermProperty !== undefined &&
-      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
-        filter.iriTermProperty,
-        value.iriTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.literalTermProperty !== undefined &&
-      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
-        filter.literalTermProperty,
-        value.literalTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.numberTermProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.numberTermProperty,
-        value.numberTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.stringTermProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.stringTermProperty,
-        value.stringTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.termProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.termProperty,
-        value.termProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeTermProperty?: $MaybeFilter<$BlankNodeFilter>;
-    readonly booleanTermProperty?: $MaybeFilter<$BooleanFilter>;
-    readonly dateTermProperty?: $MaybeFilter<$DateFilter>;
-    readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
-    readonly iriTermProperty?: $MaybeFilter<$IriFilter>;
-    readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
-    readonly numberTermProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
-    readonly termProperty?: $MaybeFilter<$TermFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/TermPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isTermPropertiesClass(
-    object: $Object,
-  ): object is TermPropertiesClass {
-    switch (object.$type) {
-      case "TermPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["TermPropertiesClass"],
-        }),
-      },
-      blankNodeTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BlankNode" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/blankNodeTermProperty"),
-      },
-      booleanTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Boolean" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/booleanTermProperty"),
-      },
-      dateTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Date" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/dateTermProperty"),
-      },
-      dateTimeTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "DateTime" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
-      },
-      iriTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Iri" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/iriTermProperty"),
-      },
-      literalTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Literal" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/literalTermProperty"),
-      },
-      numberTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/numberTermProperty"),
-      },
-      stringTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/stringTermProperty"),
-      },
-      termProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Term" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/termProperty"),
-      },
-    },
-  } as const;
 } /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
  */
@@ -10942,6 +10942,51 @@ export class Sha256IriIdentifierClass {
 }
 
 export namespace Sha256IriIdentifierClass {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "Sha256IriIdentifierClass";
+    readonly sha256IriProperty: string;
+  };
+
+  export function $filter(
+    filter: Sha256IriIdentifierClass.$Filter,
+    value: Sha256IriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.sha256IriProperty !== undefined &&
+      !$filterString(filter.sha256IriProperty, value.sha256IriProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly sha256IriProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode; sha256IriProperty: string }> {
@@ -10963,15 +11008,42 @@ export namespace Sha256IriIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, Sha256IriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return Sha256IriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new Sha256IriIdentifierClass(properties));
+  }
+
+  export function isSha256IriIdentifierClass(
+    object: $Object,
+  ): object is Sha256IriIdentifierClass {
+    switch (object.$type) {
+      case "Sha256IriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "Sha256IriIdentifierClass";
-    readonly sha256IriProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -11011,28 +11083,6 @@ export namespace Sha256IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, Sha256IriIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return Sha256IriIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new Sha256IriIdentifierClass(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<Error, { $identifier: NamedNode; sha256IriProperty: string }> {
@@ -11063,6 +11113,31 @@ export namespace Sha256IriIdentifierClass {
         }).map((sha256IriProperty) => ({ $identifier, sha256IriProperty })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefix" as const,
+        type: () => ({ kind: "String" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["Sha256IriIdentifierClass"],
+        }),
+      },
+      sha256IriProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/sha256IriProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -11181,81 +11256,6 @@ export namespace Sha256IriIdentifierClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: Sha256IriIdentifierClass.$Filter,
-    value: Sha256IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.sha256IriProperty !== undefined &&
-      !$filterString(filter.sha256IriProperty, value.sha256IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly sha256IriProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isSha256IriIdentifierClass(
-    object: $Object,
-  ): object is Sha256IriIdentifierClass {
-    switch (object.$type) {
-      case "Sha256IriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["Sha256IriIdentifierClass"],
-        }),
-      },
-      sha256IriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/sha256IriProperty"),
-      },
-    },
-  } as const;
 }
 export class RecursiveClassUnionMember2 {
   private _$identifier?: RecursiveClassUnionMember2.$Identifier;
@@ -11407,6 +11407,50 @@ export class RecursiveClassUnionMember2 {
 }
 
 export namespace RecursiveClassUnionMember2 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "RecursiveClassUnionMember2";
+    readonly recursiveClassUnionMember2Property?:
+      | RecursiveClassUnionMember1.$Json
+      | RecursiveClassUnionMember2.$Json;
+  };
+
+  export function $filter(
+    filter: RecursiveClassUnionMember2.$Filter,
+    value: RecursiveClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.recursiveClassUnionMember2Property !== undefined &&
+      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
+        RecursiveClassUnion.$filter,
+      )(
+        filter.recursiveClassUnionMember2Property,
+        value.recursiveClassUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly recursiveClassUnionMember2Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -11436,17 +11480,46 @@ export namespace RecursiveClassUnionMember2 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, RecursiveClassUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return RecursiveClassUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new RecursiveClassUnionMember2(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RecursiveClassUnionMember2",
+  );
+
+  export function isRecursiveClassUnionMember2(
+    object: $Object,
+  ): object is RecursiveClassUnionMember2 {
+    switch (object.$type) {
+      case "RecursiveClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "RecursiveClassUnionMember2";
-    readonly recursiveClassUnionMember2Property?:
-      | RecursiveClassUnionMember1.$Json
-      | RecursiveClassUnionMember2.$Json;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -11489,28 +11562,6 @@ export namespace RecursiveClassUnionMember2 {
         )
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, RecursiveClassUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return RecursiveClassUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new RecursiveClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf(
@@ -11602,6 +11653,32 @@ export namespace RecursiveClassUnionMember2 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["RecursiveClassUnionMember2"],
+        }),
+      },
+      recursiveClassUnionMember2Property: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => RecursiveClassUnion.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/recursiveClassUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -11753,83 +11830,6 @@ export namespace RecursiveClassUnionMember2 {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: RecursiveClassUnionMember2.$Filter,
-    value: RecursiveClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.recursiveClassUnionMember2Property !== undefined &&
-      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
-        RecursiveClassUnion.$filter,
-      )(
-        filter.recursiveClassUnionMember2Property,
-        value.recursiveClassUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly recursiveClassUnionMember2Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RecursiveClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isRecursiveClassUnionMember2(
-    object: $Object,
-  ): object is RecursiveClassUnionMember2 {
-    switch (object.$type) {
-      case "RecursiveClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["RecursiveClassUnionMember2"],
-        }),
-      },
-      recursiveClassUnionMember2Property: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => RecursiveClassUnion.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/recursiveClassUnionMember2Property",
-        ),
-      },
-    },
-  } as const;
 }
 export class RecursiveClassUnionMember1 {
   private _$identifier?: RecursiveClassUnionMember1.$Identifier;
@@ -11981,6 +11981,50 @@ export class RecursiveClassUnionMember1 {
 }
 
 export namespace RecursiveClassUnionMember1 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "RecursiveClassUnionMember1";
+    readonly recursiveClassUnionMember1Property?:
+      | RecursiveClassUnionMember1.$Json
+      | RecursiveClassUnionMember2.$Json;
+  };
+
+  export function $filter(
+    filter: RecursiveClassUnionMember1.$Filter,
+    value: RecursiveClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.recursiveClassUnionMember1Property !== undefined &&
+      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
+        RecursiveClassUnion.$filter,
+      )(
+        filter.recursiveClassUnionMember1Property,
+        value.recursiveClassUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly recursiveClassUnionMember1Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -12010,17 +12054,46 @@ export namespace RecursiveClassUnionMember1 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, RecursiveClassUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return RecursiveClassUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new RecursiveClassUnionMember1(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RecursiveClassUnionMember1",
+  );
+
+  export function isRecursiveClassUnionMember1(
+    object: $Object,
+  ): object is RecursiveClassUnionMember1 {
+    switch (object.$type) {
+      case "RecursiveClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "RecursiveClassUnionMember1";
-    readonly recursiveClassUnionMember1Property?:
-      | RecursiveClassUnionMember1.$Json
-      | RecursiveClassUnionMember2.$Json;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -12063,28 +12136,6 @@ export namespace RecursiveClassUnionMember1 {
         )
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, RecursiveClassUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return RecursiveClassUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new RecursiveClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf(
@@ -12176,6 +12227,32 @@ export namespace RecursiveClassUnionMember1 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["RecursiveClassUnionMember1"],
+        }),
+      },
+      recursiveClassUnionMember1Property: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => RecursiveClassUnion.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/recursiveClassUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -12327,83 +12404,6 @@ export namespace RecursiveClassUnionMember1 {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: RecursiveClassUnionMember1.$Filter,
-    value: RecursiveClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.recursiveClassUnionMember1Property !== undefined &&
-      !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
-        RecursiveClassUnion.$filter,
-      )(
-        filter.recursiveClassUnionMember1Property,
-        value.recursiveClassUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly recursiveClassUnionMember1Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RecursiveClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isRecursiveClassUnionMember1(
-    object: $Object,
-  ): object is RecursiveClassUnionMember1 {
-    switch (object.$type) {
-      case "RecursiveClassUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["RecursiveClassUnionMember1"],
-        }),
-      },
-      recursiveClassUnionMember1Property: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => RecursiveClassUnion.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/recursiveClassUnionMember1Property",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with properties that have visibility modifiers (private, protected, public)
  */
@@ -12565,6 +12565,45 @@ export class PropertyVisibilitiesClass {
 }
 
 export namespace PropertyVisibilitiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyVisibilitiesClass";
+    readonly privateProperty: string;
+    readonly protectedProperty: string;
+    readonly publicProperty: string;
+  };
+
+  export function $filter(
+    filter: PropertyVisibilitiesClass.$Filter,
+    value: PropertyVisibilitiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.publicProperty !== undefined &&
+      !$filterString(filter.publicProperty, value.publicProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly publicProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -12601,17 +12640,42 @@ export namespace PropertyVisibilitiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PropertyVisibilitiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PropertyVisibilitiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyVisibilitiesClass(properties));
+  }
+
+  export function isPropertyVisibilitiesClass(
+    object: $Object,
+  ): object is PropertyVisibilitiesClass {
+    switch (object.$type) {
+      case "PropertyVisibilitiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyVisibilitiesClass";
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -12653,28 +12717,6 @@ export namespace PropertyVisibilitiesClass {
       protectedProperty: z.string(),
       publicProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PropertyVisibilitiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PropertyVisibilitiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PropertyVisibilitiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -12754,6 +12796,37 @@ export namespace PropertyVisibilitiesClass {
         ),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PropertyVisibilitiesClass"],
+        }),
+      },
+      privateProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/privateProperty"),
+      },
+      protectedProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/protectedProperty"),
+      },
+      publicProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/publicProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -12918,79 +12991,6 @@ export namespace PropertyVisibilitiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PropertyVisibilitiesClass.$Filter,
-    value: PropertyVisibilitiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.publicProperty !== undefined &&
-      !$filterString(filter.publicProperty, value.publicProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly publicProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPropertyVisibilitiesClass(
-    object: $Object,
-  ): object is PropertyVisibilitiesClass {
-    switch (object.$type) {
-      case "PropertyVisibilitiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PropertyVisibilitiesClass"],
-        }),
-      },
-      privateProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/privateProperty"),
-      },
-      protectedProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/protectedProperty"),
-      },
-      publicProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/publicProperty"),
-      },
-    },
-  } as const;
 } /**
  * Shape that uses different property path types in its properties
  */
@@ -13174,6 +13174,57 @@ export class PropertyPathsClass {
 }
 
 export namespace PropertyPathsClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyPathsClass";
+    readonly inversePathProperty?: { readonly "@id": string };
+    readonly predicatePathProperty?: string;
+  };
+
+  export function $filter(
+    filter: PropertyPathsClass.$Filter,
+    value: PropertyPathsClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.inversePathProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.inversePathProperty,
+        value.inversePathProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.predicatePathProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.predicatePathProperty,
+        value.predicatePathProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly inversePathProperty?: $MaybeFilter<$IriFilter>;
+    readonly predicatePathProperty?: $MaybeFilter<$StringFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -13207,16 +13258,46 @@ export namespace PropertyPathsClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PropertyPathsClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PropertyPathsClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyPathsClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/PropertyPathsClass",
+  );
+
+  export function isPropertyPathsClass(
+    object: $Object,
+  ): object is PropertyPathsClass {
+    switch (object.$type) {
+      case "PropertyPathsClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyPathsClass";
-    readonly inversePathProperty?: { readonly "@id": string };
-    readonly predicatePathProperty?: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -13259,28 +13340,6 @@ export namespace PropertyPathsClass {
       inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
       predicatePathProperty: z.string().optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PropertyPathsClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PropertyPathsClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PropertyPathsClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -13390,6 +13449,41 @@ export namespace PropertyPathsClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PropertyPathsClass"],
+        }),
+      },
+      inversePathProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: {
+          path: dataFactory.namedNode("http://example.com/inversePathProperty"),
+          termType: "InversePath" as const,
+        },
+      },
+      predicatePathProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/predicatePathProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -13594,100 +13688,6 @@ export namespace PropertyPathsClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PropertyPathsClass.$Filter,
-    value: PropertyPathsClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.inversePathProperty !== undefined &&
-      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
-        filter.inversePathProperty,
-        value.inversePathProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.predicatePathProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.predicatePathProperty,
-        value.predicatePathProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly inversePathProperty?: $MaybeFilter<$IriFilter>;
-    readonly predicatePathProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PropertyPathsClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPropertyPathsClass(
-    object: $Object,
-  ): object is PropertyPathsClass {
-    switch (object.$type) {
-      case "PropertyPathsClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PropertyPathsClass"],
-        }),
-      },
-      inversePathProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Iri" as const }),
-        }),
-        path: {
-          path: dataFactory.namedNode("http://example.com/inversePathProperty"),
-          termType: "InversePath" as const,
-        },
-      },
-      predicatePathProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/predicatePathProperty"),
-      },
-    },
-  } as const;
 } /**
  * Shape that uses different methods to name properties
  */
@@ -13919,6 +13919,75 @@ export class PropertyNamesClass {
 }
 
 export namespace PropertyNamesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyNamesClass";
+    readonly actualPropertyName1: string;
+    readonly actualPropertyName2: string;
+    readonly actualPropertyName3: string;
+    readonly actualPropertyName4: string;
+    readonly actualPropertyName5: string;
+  };
+
+  export function $filter(
+    filter: PropertyNamesClass.$Filter,
+    value: PropertyNamesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName1 !== undefined &&
+      !$filterString(filter.actualPropertyName1, value.actualPropertyName1)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName2 !== undefined &&
+      !$filterString(filter.actualPropertyName2, value.actualPropertyName2)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName3 !== undefined &&
+      !$filterString(filter.actualPropertyName3, value.actualPropertyName3)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName4 !== undefined &&
+      !$filterString(filter.actualPropertyName4, value.actualPropertyName4)
+    ) {
+      return false;
+    }
+    if (
+      filter.actualPropertyName5 !== undefined &&
+      !$filterString(filter.actualPropertyName5, value.actualPropertyName5)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly actualPropertyName1?: $StringFilter;
+    readonly actualPropertyName2?: $StringFilter;
+    readonly actualPropertyName3?: $StringFilter;
+    readonly actualPropertyName4?: $StringFilter;
+    readonly actualPropertyName5?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -13961,19 +14030,46 @@ export namespace PropertyNamesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PropertyNamesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PropertyNamesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyNamesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/PropertyNamesClass",
+  );
+
+  export function isPropertyNamesClass(
+    object: $Object,
+  ): object is PropertyNamesClass {
+    switch (object.$type) {
+      case "PropertyNamesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyNamesClass";
-    readonly actualPropertyName1: string;
-    readonly actualPropertyName2: string;
-    readonly actualPropertyName3: string;
-    readonly actualPropertyName4: string;
-    readonly actualPropertyName5: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -14043,28 +14139,6 @@ export namespace PropertyNamesClass {
           "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
         ),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PropertyNamesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PropertyNamesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PropertyNamesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -14217,6 +14291,47 @@ export namespace PropertyNamesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PropertyNamesClass"],
+        }),
+      },
+      actualPropertyName1: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/actualPropertyName1"),
+      },
+      actualPropertyName2: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName2"),
+      },
+      actualPropertyName3: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName3"),
+      },
+      actualPropertyName4: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName4"),
+      },
+      actualPropertyName5: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/ignorePropertyName5"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -14478,121 +14593,6 @@ export namespace PropertyNamesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PropertyNamesClass.$Filter,
-    value: PropertyNamesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName1 !== undefined &&
-      !$filterString(filter.actualPropertyName1, value.actualPropertyName1)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName2 !== undefined &&
-      !$filterString(filter.actualPropertyName2, value.actualPropertyName2)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName3 !== undefined &&
-      !$filterString(filter.actualPropertyName3, value.actualPropertyName3)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName4 !== undefined &&
-      !$filterString(filter.actualPropertyName4, value.actualPropertyName4)
-    ) {
-      return false;
-    }
-    if (
-      filter.actualPropertyName5 !== undefined &&
-      !$filterString(filter.actualPropertyName5, value.actualPropertyName5)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly actualPropertyName1?: $StringFilter;
-    readonly actualPropertyName2?: $StringFilter;
-    readonly actualPropertyName3?: $StringFilter;
-    readonly actualPropertyName4?: $StringFilter;
-    readonly actualPropertyName5?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/PropertyNamesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPropertyNamesClass(
-    object: $Object,
-  ): object is PropertyNamesClass {
-    switch (object.$type) {
-      case "PropertyNamesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PropertyNamesClass"],
-        }),
-      },
-      actualPropertyName1: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/actualPropertyName1"),
-      },
-      actualPropertyName2: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/ignorePropertyName2"),
-      },
-      actualPropertyName3: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/ignorePropertyName3"),
-      },
-      actualPropertyName4: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/ignorePropertyName4"),
-      },
-      actualPropertyName5: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/ignorePropertyName5"),
-      },
-    },
-  } as const;
 } /**
  * Shape that has properties with different cardinalities
  */
@@ -14824,6 +14824,79 @@ export class PropertyCardinalitiesClass {
 }
 
 export namespace PropertyCardinalitiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyCardinalitiesClass";
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string;
+    readonly requiredStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PropertyCardinalitiesClass.$Filter,
+    value: PropertyCardinalitiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.emptyStringSetProperty !== undefined &&
+      !$filterArray<string, $StringFilter>($filterString)(
+        filter.emptyStringSetProperty,
+        value.emptyStringSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nonEmptyStringSetProperty !== undefined &&
+      !$filterArray<string, $StringFilter>($filterString)(
+        filter.nonEmptyStringSetProperty,
+        value.nonEmptyStringSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredStringProperty !== undefined &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -14867,18 +14940,42 @@ export namespace PropertyCardinalitiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PropertyCardinalitiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PropertyCardinalitiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyCardinalitiesClass(properties));
+  }
+
+  export function isPropertyCardinalitiesClass(
+    object: $Object,
+  ): object is PropertyCardinalitiesClass {
+    switch (object.$type) {
+      case "PropertyCardinalitiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyCardinalitiesClass";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -14945,28 +15042,6 @@ export namespace PropertyCardinalitiesClass {
         .string()
         .describe("Required: maxCount=minCount=1"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PropertyCardinalitiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PropertyCardinalitiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PropertyCardinalitiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -15100,6 +15175,60 @@ export namespace PropertyCardinalitiesClass {
         ),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PropertyCardinalitiesClass"],
+        }),
+      },
+      emptyStringSetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/emptyStringSetProperty",
+        ),
+      },
+      nonEmptyStringSetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "String" as const }),
+          minCount: 1,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/nonEmptyStringSetProperty",
+        ),
+      },
+      optionalStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalStringProperty",
+        ),
+      },
+      requiredStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -15305,135 +15434,6 @@ export namespace PropertyCardinalitiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PropertyCardinalitiesClass.$Filter,
-    value: PropertyCardinalitiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.emptyStringSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.emptyStringSetProperty,
-        value.emptyStringSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nonEmptyStringSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.nonEmptyStringSetProperty,
-        value.nonEmptyStringSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPropertyCardinalitiesClass(
-    object: $Object,
-  ): object is PropertyCardinalitiesClass {
-    switch (object.$type) {
-      case "PropertyCardinalitiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PropertyCardinalitiesClass"],
-        }),
-      },
-      emptyStringSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/emptyStringSetProperty",
-        ),
-      },
-      nonEmptyStringSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-          minCount: 1,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/nonEmptyStringSetProperty",
-        ),
-      },
-      optionalStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
-      },
-      requiredStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export interface PartialInterfaceUnionMember2 {
   readonly $identifier: PartialInterfaceUnionMember2.$Identifier;
@@ -15520,6 +15520,46 @@ export namespace PartialInterfaceUnionMember2 {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialInterfaceUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PartialInterfaceUnionMember2.$Filter,
+    value: PartialInterfaceUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -15548,15 +15588,46 @@ export namespace PartialInterfaceUnionMember2 {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialInterfaceUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialInterfaceUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember2",
+  );
+
+  export function isPartialInterfaceUnionMember2(
+    object: $Object,
+  ): object is PartialInterfaceUnionMember2 {
+    switch (object.$type) {
+      case "PartialInterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialInterfaceUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -15588,50 +15659,12 @@ export namespace PartialInterfaceUnionMember2 {
     };
   }
 
-  export function $toJson(
-    _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
-  ): PartialInterfaceUnionMember2.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _partialInterfaceUnionMember2.$identifier.termType === "BlankNode"
-            ? `_:${_partialInterfaceUnionMember2.$identifier.value}`
-            : _partialInterfaceUnionMember2.$identifier.value,
-        $type: _partialInterfaceUnionMember2.$type,
-        lazilyResolvedStringProperty:
-          _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
-      } satisfies PartialInterfaceUnionMember2.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("PartialInterfaceUnionMember2"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialInterfaceUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialInterfaceUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -15715,38 +15748,28 @@ export namespace PartialInterfaceUnionMember2 {
     );
   }
 
-  export function $toRdf(
-    _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _partialInterfaceUnionMember2.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialInterfaceUnionMember2"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -15922,77 +15945,54 @@ export namespace PartialInterfaceUnionMember2 {
     return patterns;
   }
 
-  export function $filter(
-    filter: PartialInterfaceUnionMember2.$Filter,
-    value: PartialInterfaceUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
+  ): PartialInterfaceUnionMember2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _partialInterfaceUnionMember2.$identifier.termType === "BlankNode"
+            ? `_:${_partialInterfaceUnionMember2.$identifier.value}`
+            : _partialInterfaceUnionMember2.$identifier.value,
+        $type: _partialInterfaceUnionMember2.$type,
+        lazilyResolvedStringProperty:
+          _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
+      } satisfies PartialInterfaceUnionMember2.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPartialInterfaceUnionMember2(
-    object: $Object,
-  ): object is PartialInterfaceUnionMember2 {
-    switch (object.$type) {
-      case "PartialInterfaceUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialInterfaceUnionMember2"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _partialInterfaceUnionMember2.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [
+        $literalFactory.string(
+          _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export interface PartialInterfaceUnionMember1 {
   readonly $identifier: PartialInterfaceUnionMember1.$Identifier;
@@ -16079,6 +16079,46 @@ export namespace PartialInterfaceUnionMember1 {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialInterfaceUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PartialInterfaceUnionMember1.$Filter,
+    value: PartialInterfaceUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -16107,15 +16147,46 @@ export namespace PartialInterfaceUnionMember1 {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialInterfaceUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialInterfaceUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember1",
+  );
+
+  export function isPartialInterfaceUnionMember1(
+    object: $Object,
+  ): object is PartialInterfaceUnionMember1 {
+    switch (object.$type) {
+      case "PartialInterfaceUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialInterfaceUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -16147,50 +16218,12 @@ export namespace PartialInterfaceUnionMember1 {
     };
   }
 
-  export function $toJson(
-    _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
-  ): PartialInterfaceUnionMember1.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _partialInterfaceUnionMember1.$identifier.termType === "BlankNode"
-            ? `_:${_partialInterfaceUnionMember1.$identifier.value}`
-            : _partialInterfaceUnionMember1.$identifier.value,
-        $type: _partialInterfaceUnionMember1.$type,
-        lazilyResolvedStringProperty:
-          _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
-      } satisfies PartialInterfaceUnionMember1.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("PartialInterfaceUnionMember1"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialInterfaceUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialInterfaceUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -16274,38 +16307,28 @@ export namespace PartialInterfaceUnionMember1 {
     );
   }
 
-  export function $toRdf(
-    _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _partialInterfaceUnionMember1.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialInterfaceUnionMember1"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -16481,77 +16504,54 @@ export namespace PartialInterfaceUnionMember1 {
     return patterns;
   }
 
-  export function $filter(
-    filter: PartialInterfaceUnionMember1.$Filter,
-    value: PartialInterfaceUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
+  ): PartialInterfaceUnionMember1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _partialInterfaceUnionMember1.$identifier.termType === "BlankNode"
+            ? `_:${_partialInterfaceUnionMember1.$identifier.value}`
+            : _partialInterfaceUnionMember1.$identifier.value,
+        $type: _partialInterfaceUnionMember1.$type,
+        lazilyResolvedStringProperty:
+          _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
+      } satisfies PartialInterfaceUnionMember1.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPartialInterfaceUnionMember1(
-    object: $Object,
-  ): object is PartialInterfaceUnionMember1 {
-    switch (object.$type) {
-      case "PartialInterfaceUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialInterfaceUnionMember1"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _partialInterfaceUnionMember1.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [
+        $literalFactory.string(
+          _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export class PartialClassUnionMember2 {
   private _$identifier?: PartialClassUnionMember2.$Identifier;
@@ -16674,6 +16674,46 @@ export class PartialClassUnionMember2 {
 }
 
 export namespace PartialClassUnionMember2 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClassUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PartialClassUnionMember2.$Filter,
+    value: PartialClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -16701,15 +16741,46 @@ export namespace PartialClassUnionMember2 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialClassUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialClassUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PartialClassUnionMember2(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember2",
+  );
+
+  export function isPartialClassUnionMember2(
+    object: $Object,
+  ): object is PartialClassUnionMember2 {
+    switch (object.$type) {
+      case "PartialClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClassUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -16747,28 +16818,6 @@ export namespace PartialClassUnionMember2 {
       $type: z.literal("PartialClassUnionMember2"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialClassUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialClassUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PartialClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf(
@@ -16842,6 +16891,29 @@ export namespace PartialClassUnionMember2 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialClassUnionMember2"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -17016,78 +17088,6 @@ export namespace PartialClassUnionMember2 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PartialClassUnionMember2.$Filter,
-    value: PartialClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPartialClassUnionMember2(
-    object: $Object,
-  ): object is PartialClassUnionMember2 {
-    switch (object.$type) {
-      case "PartialClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialClassUnionMember2"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class PartialClassUnionMember1 {
   private _$identifier?: PartialClassUnionMember1.$Identifier;
@@ -17210,6 +17210,46 @@ export class PartialClassUnionMember1 {
 }
 
 export namespace PartialClassUnionMember1 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClassUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PartialClassUnionMember1.$Filter,
+    value: PartialClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -17237,15 +17277,46 @@ export namespace PartialClassUnionMember1 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialClassUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialClassUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PartialClassUnionMember1(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember1",
+  );
+
+  export function isPartialClassUnionMember1(
+    object: $Object,
+  ): object is PartialClassUnionMember1 {
+    switch (object.$type) {
+      case "PartialClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClassUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -17283,28 +17354,6 @@ export namespace PartialClassUnionMember1 {
       $type: z.literal("PartialClassUnionMember1"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialClassUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialClassUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PartialClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf(
@@ -17378,6 +17427,29 @@ export namespace PartialClassUnionMember1 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialClassUnionMember1"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -17552,78 +17624,6 @@ export namespace PartialClassUnionMember1 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PartialClassUnionMember1.$Filter,
-    value: PartialClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPartialClassUnionMember1(
-    object: $Object,
-  ): object is PartialClassUnionMember1 {
-    switch (object.$type) {
-      case "PartialClassUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialClassUnionMember1"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes
  */
@@ -17725,6 +17725,33 @@ export class NewName2Class {
 }
 
 export namespace NewName2Class {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NewName2Class";
+  };
+
+  export function $filter(
+    filter: NewName2Class.$Filter,
+    value: NewName2Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -17745,14 +17772,44 @@ export namespace NewName2Class {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NewName2Class> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NewName2Class.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NewName2Class(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/OverrideName2Class",
+  );
+
+  export function isNewName2Class(object: $Object): object is NewName2Class {
+    switch (object.$type) {
+      case "NewName2Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NewName2Class";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -17785,28 +17842,6 @@ export namespace NewName2Class {
       "@id": z.string().min(1),
       $type: z.literal("NewName2Class"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NewName2Class> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NewName2Class.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NewName2Class(properties));
   }
 
   export function $propertiesFromRdf(
@@ -17856,6 +17891,22 @@ export namespace NewName2Class {
         .map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NewName2Class"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -18002,57 +18053,6 @@ export namespace NewName2Class {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: NewName2Class.$Filter,
-    value: NewName2Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideName2Class",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNewName2Class(object: $Object): object is NewName2Class {
-    switch (object.$type) {
-      case "NewName2Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NewName2Class"],
-        }),
-      },
-    },
-  } as const;
 } /**
  * Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
@@ -18154,6 +18154,33 @@ export class NewName1Class {
 }
 
 export namespace NewName1Class {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NewName1Class";
+  };
+
+  export function $filter(
+    filter: NewName1Class.$Filter,
+    value: NewName1Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -18174,14 +18201,44 @@ export namespace NewName1Class {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NewName1Class> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NewName1Class.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NewName1Class(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/OverrideName1Class",
+  );
+
+  export function isNewName1Class(object: $Object): object is NewName1Class {
+    switch (object.$type) {
+      case "NewName1Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NewName1Class";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -18214,28 +18271,6 @@ export namespace NewName1Class {
       "@id": z.string().min(1),
       $type: z.literal("NewName1Class"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NewName1Class> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NewName1Class.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NewName1Class(properties));
   }
 
   export function $propertiesFromRdf(
@@ -18285,6 +18320,22 @@ export namespace NewName1Class {
         .map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NewName1Class"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -18431,57 +18482,6 @@ export namespace NewName1Class {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: NewName1Class.$Filter,
-    value: NewName1Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideName1Class",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNewName1Class(object: $Object): object is NewName1Class {
-    switch (object.$type) {
-      case "NewName1Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NewName1Class"],
-        }),
-      },
-    },
-  } as const;
 } /**
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
@@ -18642,6 +18642,59 @@ export class OrderedPropertiesClass {
 }
 
 export namespace OrderedPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "OrderedPropertiesClass";
+    readonly orderedPropertyC: string;
+    readonly orderedPropertyB: string;
+    readonly orderedPropertyA: string;
+  };
+
+  export function $filter(
+    filter: OrderedPropertiesClass.$Filter,
+    value: OrderedPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.orderedPropertyC !== undefined &&
+      !$filterString(filter.orderedPropertyC, value.orderedPropertyC)
+    ) {
+      return false;
+    }
+    if (
+      filter.orderedPropertyB !== undefined &&
+      !$filterString(filter.orderedPropertyB, value.orderedPropertyB)
+    ) {
+      return false;
+    }
+    if (
+      filter.orderedPropertyA !== undefined &&
+      !$filterString(filter.orderedPropertyA, value.orderedPropertyA)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly orderedPropertyC?: $StringFilter;
+    readonly orderedPropertyB?: $StringFilter;
+    readonly orderedPropertyA?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -18678,17 +18731,42 @@ export namespace OrderedPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, OrderedPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return OrderedPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new OrderedPropertiesClass(properties));
+  }
+
+  export function isOrderedPropertiesClass(
+    object: $Object,
+  ): object is OrderedPropertiesClass {
+    switch (object.$type) {
+      case "OrderedPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "OrderedPropertiesClass";
-    readonly orderedPropertyC: string;
-    readonly orderedPropertyB: string;
-    readonly orderedPropertyA: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -18736,28 +18814,6 @@ export namespace OrderedPropertiesClass {
       orderedPropertyB: z.string(),
       orderedPropertyA: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, OrderedPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return OrderedPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new OrderedPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -18837,6 +18893,37 @@ export namespace OrderedPropertiesClass {
         ),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["OrderedPropertiesClass"],
+        }),
+      },
+      orderedPropertyC: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/orderedPropertyC"),
+      },
+      orderedPropertyB: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/orderedPropertyB"),
+      },
+      orderedPropertyA: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/orderedPropertyA"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -19000,93 +19087,6 @@ export namespace OrderedPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: OrderedPropertiesClass.$Filter,
-    value: OrderedPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.orderedPropertyC !== undefined &&
-      !$filterString(filter.orderedPropertyC, value.orderedPropertyC)
-    ) {
-      return false;
-    }
-    if (
-      filter.orderedPropertyB !== undefined &&
-      !$filterString(filter.orderedPropertyB, value.orderedPropertyB)
-    ) {
-      return false;
-    }
-    if (
-      filter.orderedPropertyA !== undefined &&
-      !$filterString(filter.orderedPropertyA, value.orderedPropertyA)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly orderedPropertyC?: $StringFilter;
-    readonly orderedPropertyB?: $StringFilter;
-    readonly orderedPropertyA?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isOrderedPropertiesClass(
-    object: $Object,
-  ): object is OrderedPropertiesClass {
-    switch (object.$type) {
-      case "OrderedPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["OrderedPropertiesClass"],
-        }),
-      },
-      orderedPropertyC: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/orderedPropertyC"),
-      },
-      orderedPropertyB: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/orderedPropertyB"),
-      },
-      orderedPropertyA: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/orderedPropertyA"),
-      },
-    },
-  } as const;
 } /**
  * Shape with properties that have numeric sh:datatype's
  */
@@ -19872,6 +19872,221 @@ export class NumericPropertiesClass {
 }
 
 export namespace NumericPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NumericPropertiesClass";
+    readonly byteNumericProperty?: number;
+    readonly decimalNumericProperty?: string;
+    readonly doubleNumericProperty?: number;
+    readonly floatNumericProperty?: number;
+    readonly integerNumericProperty?: string;
+    readonly intNumericProperty?: number;
+    readonly longNumericProperty?: string;
+    readonly negativeIntegerNumericProperty?: string;
+    readonly nonNegativeIntegerNumericProperty?: string;
+    readonly nonPositiveIntegerNumericProperty?: string;
+    readonly positiveIntegerNumericProperty?: string;
+    readonly shortNumericProperty?: number;
+    readonly unsignedByteNumericProperty?: number;
+    readonly unsignedIntNumericProperty?: number;
+    readonly unsignedLongNumericProperty?: string;
+    readonly unsignedShortNumericProperty?: number;
+  };
+
+  export function $filter(
+    filter: NumericPropertiesClass.$Filter,
+    value: NumericPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.byteNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.byteNumericProperty,
+        value.byteNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.decimalNumericProperty !== undefined &&
+      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($filterBigDecimal)(
+        filter.decimalNumericProperty,
+        value.decimalNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.doubleNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.doubleNumericProperty,
+        value.doubleNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.floatNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.floatNumericProperty,
+        value.floatNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.integerNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.integerNumericProperty,
+        value.integerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.intNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.intNumericProperty,
+        value.intNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.longNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.longNumericProperty,
+        value.longNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.negativeIntegerNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.negativeIntegerNumericProperty,
+        value.negativeIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nonNegativeIntegerNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.nonNegativeIntegerNumericProperty,
+        value.nonNegativeIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nonPositiveIntegerNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.nonPositiveIntegerNumericProperty,
+        value.nonPositiveIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.positiveIntegerNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.positiveIntegerNumericProperty,
+        value.positiveIntegerNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.shortNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.shortNumericProperty,
+        value.shortNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.unsignedByteNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.unsignedByteNumericProperty,
+        value.unsignedByteNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.unsignedIntNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.unsignedIntNumericProperty,
+        value.unsignedIntNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.unsignedLongNumericProperty !== undefined &&
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.unsignedLongNumericProperty,
+        value.unsignedLongNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.unsignedShortNumericProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.unsignedShortNumericProperty,
+        value.unsignedShortNumericProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly byteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly decimalNumericProperty?: $MaybeFilter<$NumericFilter<BigDecimal>>;
+    readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly floatNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly intNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly longNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly negativeIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly nonNegativeIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly nonPositiveIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly positiveIntegerNumericProperty?: $MaybeFilter<
+      $NumericFilter<bigint>
+    >;
+    readonly shortNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedByteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedIntNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly unsignedShortNumericProperty?: $MaybeFilter<
+      $NumericFilter<number>
+    >;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -19979,30 +20194,46 @@ export namespace NumericPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NumericPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NumericPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NumericPropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NumericPropertiesClass",
+  );
+
+  export function isNumericPropertiesClass(
+    object: $Object,
+  ): object is NumericPropertiesClass {
+    switch (object.$type) {
+      case "NumericPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NumericPropertiesClass";
-    readonly byteNumericProperty?: number;
-    readonly decimalNumericProperty?: string;
-    readonly doubleNumericProperty?: number;
-    readonly floatNumericProperty?: number;
-    readonly integerNumericProperty?: string;
-    readonly intNumericProperty?: number;
-    readonly longNumericProperty?: string;
-    readonly negativeIntegerNumericProperty?: string;
-    readonly nonNegativeIntegerNumericProperty?: string;
-    readonly nonPositiveIntegerNumericProperty?: string;
-    readonly positiveIntegerNumericProperty?: string;
-    readonly shortNumericProperty?: number;
-    readonly unsignedByteNumericProperty?: number;
-    readonly unsignedIntNumericProperty?: number;
-    readonly unsignedLongNumericProperty?: string;
-    readonly unsignedShortNumericProperty?: number;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -20115,28 +20346,6 @@ export namespace NumericPropertiesClass {
       unsignedLongNumericProperty: z.string().optional(),
       unsignedShortNumericProperty: z.number().optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NumericPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NumericPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NumericPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -20661,6 +20870,170 @@ export namespace NumericPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NumericPropertiesClass"],
+        }),
+      },
+      byteNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/byteNumericProperty"),
+      },
+      decimalNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigDecimal" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/decimalNumericProperty",
+        ),
+      },
+      doubleNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/doubleNumericProperty"),
+      },
+      floatNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/floatNumericProperty"),
+      },
+      integerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/integerNumericProperty",
+        ),
+      },
+      intNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/intNumericProperty"),
+      },
+      longNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/longNumericProperty"),
+      },
+      negativeIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/negativeIntegerNumericProperty",
+        ),
+      },
+      nonNegativeIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/nonNegativeIntegerNumericProperty",
+        ),
+      },
+      nonPositiveIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/nonPositiveIntegerNumericProperty",
+        ),
+      },
+      positiveIntegerNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/positiveIntegerNumericProperty",
+        ),
+      },
+      shortNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/shortNumericProperty"),
+      },
+      unsignedByteNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/unsignedByteNumericProperty",
+        ),
+      },
+      unsignedIntNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/unsignedIntNumericProperty",
+        ),
+      },
+      unsignedLongNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/unsignedLongNumericProperty",
+        ),
+      },
+      unsignedShortNumericProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Int" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/unsignedShortNumericProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -21275,379 +21648,6 @@ export namespace NumericPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: NumericPropertiesClass.$Filter,
-    value: NumericPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.byteNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.byteNumericProperty,
-        value.byteNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.decimalNumericProperty !== undefined &&
-      !$filterMaybe<BigDecimal, $NumericFilter<BigDecimal>>($filterBigDecimal)(
-        filter.decimalNumericProperty,
-        value.decimalNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.doubleNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.doubleNumericProperty,
-        value.doubleNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.floatNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.floatNumericProperty,
-        value.floatNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.integerNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.integerNumericProperty,
-        value.integerNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.intNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.intNumericProperty,
-        value.intNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.longNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.longNumericProperty,
-        value.longNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.negativeIntegerNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.negativeIntegerNumericProperty,
-        value.negativeIntegerNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nonNegativeIntegerNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.nonNegativeIntegerNumericProperty,
-        value.nonNegativeIntegerNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nonPositiveIntegerNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.nonPositiveIntegerNumericProperty,
-        value.nonPositiveIntegerNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.positiveIntegerNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.positiveIntegerNumericProperty,
-        value.positiveIntegerNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.shortNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.shortNumericProperty,
-        value.shortNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.unsignedByteNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.unsignedByteNumericProperty,
-        value.unsignedByteNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.unsignedIntNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.unsignedIntNumericProperty,
-        value.unsignedIntNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.unsignedLongNumericProperty !== undefined &&
-      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.unsignedLongNumericProperty,
-        value.unsignedLongNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.unsignedShortNumericProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.unsignedShortNumericProperty,
-        value.unsignedShortNumericProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly byteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly decimalNumericProperty?: $MaybeFilter<$NumericFilter<BigDecimal>>;
-    readonly doubleNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly floatNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly integerNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
-    readonly intNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly longNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
-    readonly negativeIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<bigint>
-    >;
-    readonly nonNegativeIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<bigint>
-    >;
-    readonly nonPositiveIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<bigint>
-    >;
-    readonly positiveIntegerNumericProperty?: $MaybeFilter<
-      $NumericFilter<bigint>
-    >;
-    readonly shortNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly unsignedByteNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly unsignedIntNumericProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly unsignedLongNumericProperty?: $MaybeFilter<$NumericFilter<bigint>>;
-    readonly unsignedShortNumericProperty?: $MaybeFilter<
-      $NumericFilter<number>
-    >;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NumericPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNumericPropertiesClass(
-    object: $Object,
-  ): object is NumericPropertiesClass {
-    switch (object.$type) {
-      case "NumericPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NumericPropertiesClass"],
-        }),
-      },
-      byteNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/byteNumericProperty"),
-      },
-      decimalNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigDecimal" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/decimalNumericProperty",
-        ),
-      },
-      doubleNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/doubleNumericProperty"),
-      },
-      floatNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/floatNumericProperty"),
-      },
-      integerNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/integerNumericProperty",
-        ),
-      },
-      intNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/intNumericProperty"),
-      },
-      longNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/longNumericProperty"),
-      },
-      negativeIntegerNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/negativeIntegerNumericProperty",
-        ),
-      },
-      nonNegativeIntegerNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/nonNegativeIntegerNumericProperty",
-        ),
-      },
-      nonPositiveIntegerNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/nonPositiveIntegerNumericProperty",
-        ),
-      },
-      positiveIntegerNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/positiveIntegerNumericProperty",
-        ),
-      },
-      shortNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/shortNumericProperty"),
-      },
-      unsignedByteNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/unsignedByteNumericProperty",
-        ),
-      },
-      unsignedIntNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/unsignedIntNumericProperty",
-        ),
-      },
-      unsignedLongNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/unsignedLongNumericProperty",
-        ),
-      },
-      unsignedShortNumericProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/unsignedShortNumericProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape that has properties with different sh:nodeKind combinations
  */
@@ -22081,6 +22081,116 @@ export class NodeKindsClass {
 }
 
 export namespace NodeKindsClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NodeKindsClass";
+    readonly blankNodeKindProperty: { readonly "@id": string };
+    readonly blankNodeOrIriNodeKindProperty: { readonly "@id": string };
+    readonly blankNodeOrLiteralNodeKindProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly iriNodeKindProperty: { readonly "@id": string };
+    readonly iriOrLiteralNodeKindProperty:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly literalNodeKindProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+  };
+
+  export function $filter(
+    filter: NodeKindsClass.$Filter,
+    value: NodeKindsClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeKindProperty !== undefined &&
+      !$filterBlankNode(
+        filter.blankNodeKindProperty,
+        value.blankNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeOrIriNodeKindProperty !== undefined &&
+      !$filterIdentifier(
+        filter.blankNodeOrIriNodeKindProperty,
+        value.blankNodeOrIriNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.blankNodeOrLiteralNodeKindProperty !== undefined &&
+      !$filterTerm(
+        filter.blankNodeOrLiteralNodeKindProperty,
+        value.blankNodeOrLiteralNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.iriNodeKindProperty !== undefined &&
+      !$filterIri(filter.iriNodeKindProperty, value.iriNodeKindProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriOrLiteralNodeKindProperty !== undefined &&
+      !$filterTerm(
+        filter.iriOrLiteralNodeKindProperty,
+        value.iriOrLiteralNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.literalNodeKindProperty !== undefined &&
+      !$filterLiteral(
+        filter.literalNodeKindProperty,
+        value.literalNodeKindProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly blankNodeKindProperty?: $BlankNodeFilter;
+    readonly blankNodeOrIriNodeKindProperty?: $IdentifierFilter;
+    readonly blankNodeOrLiteralNodeKindProperty?: $TermFilter;
+    readonly iriNodeKindProperty?: $IriFilter;
+    readonly iriOrLiteralNodeKindProperty?: $TermFilter;
+    readonly literalNodeKindProperty?: $LiteralFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -22179,38 +22289,44 @@ export namespace NodeKindsClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NodeKindsClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NodeKindsClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NodeKindsClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NodeKindsClass",
+  );
+
+  export function isNodeKindsClass(object: $Object): object is NodeKindsClass {
+    switch (object.$type) {
+      case "NodeKindsClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NodeKindsClass";
-    readonly blankNodeKindProperty: { readonly "@id": string };
-    readonly blankNodeOrIriNodeKindProperty: { readonly "@id": string };
-    readonly blankNodeOrLiteralNodeKindProperty:
-      | { readonly "@id": string; readonly termType: "BlankNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly iriNodeKindProperty: { readonly "@id": string };
-    readonly iriOrLiteralNodeKindProperty:
-      | { readonly "@id": string; readonly termType: "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly literalNodeKindProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -22299,28 +22415,6 @@ export namespace NodeKindsClass {
         "@value": z.string(),
       }),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NodeKindsClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NodeKindsClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NodeKindsClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -22499,6 +22593,60 @@ export namespace NodeKindsClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NodeKindsClass"],
+        }),
+      },
+      blankNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "BlankNode" as const }),
+        path: dataFactory.namedNode("http://example.com/blankNodeKindProperty"),
+      },
+      blankNodeOrIriNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Identifier" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/blankNodeOrIriNodeKindProperty",
+        ),
+      },
+      blankNodeOrLiteralNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Term" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/blankNodeOrLiteralNodeKindProperty",
+        ),
+      },
+      iriNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Iri" as const }),
+        path: dataFactory.namedNode("http://example.com/iriNodeKindProperty"),
+      },
+      iriOrLiteralNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Term" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/iriOrLiteralNodeKindProperty",
+        ),
+      },
+      literalNodeKindProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Literal" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/literalNodeKindProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -22783,154 +22931,6 @@ export namespace NodeKindsClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: NodeKindsClass.$Filter,
-    value: NodeKindsClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeKindProperty !== undefined &&
-      !$filterBlankNode(
-        filter.blankNodeKindProperty,
-        value.blankNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeOrIriNodeKindProperty !== undefined &&
-      !$filterIdentifier(
-        filter.blankNodeOrIriNodeKindProperty,
-        value.blankNodeOrIriNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.blankNodeOrLiteralNodeKindProperty !== undefined &&
-      !$filterTerm(
-        filter.blankNodeOrLiteralNodeKindProperty,
-        value.blankNodeOrLiteralNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.iriNodeKindProperty !== undefined &&
-      !$filterIri(filter.iriNodeKindProperty, value.iriNodeKindProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.iriOrLiteralNodeKindProperty !== undefined &&
-      !$filterTerm(
-        filter.iriOrLiteralNodeKindProperty,
-        value.iriOrLiteralNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.literalNodeKindProperty !== undefined &&
-      !$filterLiteral(
-        filter.literalNodeKindProperty,
-        value.literalNodeKindProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly blankNodeKindProperty?: $BlankNodeFilter;
-    readonly blankNodeOrIriNodeKindProperty?: $IdentifierFilter;
-    readonly blankNodeOrLiteralNodeKindProperty?: $TermFilter;
-    readonly iriNodeKindProperty?: $IriFilter;
-    readonly iriOrLiteralNodeKindProperty?: $TermFilter;
-    readonly literalNodeKindProperty?: $LiteralFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NodeKindsClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNodeKindsClass(object: $Object): object is NodeKindsClass {
-    switch (object.$type) {
-      case "NodeKindsClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NodeKindsClass"],
-        }),
-      },
-      blankNodeKindProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "BlankNode" as const }),
-        path: dataFactory.namedNode("http://example.com/blankNodeKindProperty"),
-      },
-      blankNodeOrIriNodeKindProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Identifier" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/blankNodeOrIriNodeKindProperty",
-        ),
-      },
-      blankNodeOrLiteralNodeKindProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Term" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/blankNodeOrLiteralNodeKindProperty",
-        ),
-      },
-      iriNodeKindProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Iri" as const }),
-        path: dataFactory.namedNode("http://example.com/iriNodeKindProperty"),
-      },
-      iriOrLiteralNodeKindProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Term" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/iriOrLiteralNodeKindProperty",
-        ),
-      },
-      literalNodeKindProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Literal" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/literalNodeKindProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class NoRdfTypeClassUnionMember2 {
   private _$identifier?: NoRdfTypeClassUnionMember2.$Identifier;
@@ -23050,6 +23050,46 @@ export class NoRdfTypeClassUnionMember2 {
 }
 
 export namespace NoRdfTypeClassUnionMember2 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NoRdfTypeClassUnionMember2";
+    readonly noRdfTypeClassUnionMember2Property: string;
+  };
+
+  export function $filter(
+    filter: NoRdfTypeClassUnionMember2.$Filter,
+    value: NoRdfTypeClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.noRdfTypeClassUnionMember2Property !== undefined &&
+      !$filterString(
+        filter.noRdfTypeClassUnionMember2Property,
+        value.noRdfTypeClassUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly noRdfTypeClassUnionMember2Property?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -23078,15 +23118,42 @@ export namespace NoRdfTypeClassUnionMember2 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NoRdfTypeClassUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NoRdfTypeClassUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NoRdfTypeClassUnionMember2(properties));
+  }
+
+  export function isNoRdfTypeClassUnionMember2(
+    object: $Object,
+  ): object is NoRdfTypeClassUnionMember2 {
+    switch (object.$type) {
+      case "NoRdfTypeClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NoRdfTypeClassUnionMember2";
-    readonly noRdfTypeClassUnionMember2Property: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -23124,28 +23191,6 @@ export namespace NoRdfTypeClassUnionMember2 {
       $type: z.literal("NoRdfTypeClassUnionMember2"),
       noRdfTypeClassUnionMember2Property: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NoRdfTypeClassUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NoRdfTypeClassUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NoRdfTypeClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf(
@@ -23187,6 +23232,29 @@ export namespace NoRdfTypeClassUnionMember2 {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NoRdfTypeClassUnionMember2"],
+        }),
+      },
+      noRdfTypeClassUnionMember2Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/noRdfTypeClassUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -23305,74 +23373,6 @@ export namespace NoRdfTypeClassUnionMember2 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: NoRdfTypeClassUnionMember2.$Filter,
-    value: NoRdfTypeClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.noRdfTypeClassUnionMember2Property !== undefined &&
-      !$filterString(
-        filter.noRdfTypeClassUnionMember2Property,
-        value.noRdfTypeClassUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly noRdfTypeClassUnionMember2Property?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNoRdfTypeClassUnionMember2(
-    object: $Object,
-  ): object is NoRdfTypeClassUnionMember2 {
-    switch (object.$type) {
-      case "NoRdfTypeClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NoRdfTypeClassUnionMember2"],
-        }),
-      },
-      noRdfTypeClassUnionMember2Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/noRdfTypeClassUnionMember2Property",
-        ),
-      },
-    },
-  } as const;
 }
 export class NoRdfTypeClassUnionMember1 {
   private _$identifier?: NoRdfTypeClassUnionMember1.$Identifier;
@@ -23492,6 +23492,46 @@ export class NoRdfTypeClassUnionMember1 {
 }
 
 export namespace NoRdfTypeClassUnionMember1 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NoRdfTypeClassUnionMember1";
+    readonly noRdfTypeClassUnionMember1Property: string;
+  };
+
+  export function $filter(
+    filter: NoRdfTypeClassUnionMember1.$Filter,
+    value: NoRdfTypeClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.noRdfTypeClassUnionMember1Property !== undefined &&
+      !$filterString(
+        filter.noRdfTypeClassUnionMember1Property,
+        value.noRdfTypeClassUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly noRdfTypeClassUnionMember1Property?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -23520,15 +23560,42 @@ export namespace NoRdfTypeClassUnionMember1 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NoRdfTypeClassUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NoRdfTypeClassUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NoRdfTypeClassUnionMember1(properties));
+  }
+
+  export function isNoRdfTypeClassUnionMember1(
+    object: $Object,
+  ): object is NoRdfTypeClassUnionMember1 {
+    switch (object.$type) {
+      case "NoRdfTypeClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NoRdfTypeClassUnionMember1";
-    readonly noRdfTypeClassUnionMember1Property: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -23566,28 +23633,6 @@ export namespace NoRdfTypeClassUnionMember1 {
       $type: z.literal("NoRdfTypeClassUnionMember1"),
       noRdfTypeClassUnionMember1Property: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NoRdfTypeClassUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NoRdfTypeClassUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NoRdfTypeClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf(
@@ -23629,6 +23674,29 @@ export namespace NoRdfTypeClassUnionMember1 {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NoRdfTypeClassUnionMember1"],
+        }),
+      },
+      noRdfTypeClassUnionMember1Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/noRdfTypeClassUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -23747,74 +23815,6 @@ export namespace NoRdfTypeClassUnionMember1 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: NoRdfTypeClassUnionMember1.$Filter,
-    value: NoRdfTypeClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.noRdfTypeClassUnionMember1Property !== undefined &&
-      !$filterString(
-        filter.noRdfTypeClassUnionMember1Property,
-        value.noRdfTypeClassUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly noRdfTypeClassUnionMember1Property?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNoRdfTypeClassUnionMember1(
-    object: $Object,
-  ): object is NoRdfTypeClassUnionMember1 {
-    switch (object.$type) {
-      case "NoRdfTypeClassUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NoRdfTypeClassUnionMember1"],
-        }),
-      },
-      noRdfTypeClassUnionMember1Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/noRdfTypeClassUnionMember1Property",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with shaclmate:mutable properties.
  */
@@ -24107,6 +24107,69 @@ export class MutablePropertiesClass {
 }
 
 export namespace MutablePropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "MutablePropertiesClass";
+    readonly mutableListProperty?: readonly string[];
+    readonly mutableSetProperty?: readonly string[];
+    readonly mutableStringProperty?: string;
+  };
+
+  export function $filter(
+    filter: MutablePropertiesClass.$Filter,
+    value: MutablePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.mutableListProperty !== undefined &&
+      !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
+        $filterArray<string, $StringFilter>($filterString),
+      )(filter.mutableListProperty, value.mutableListProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.mutableSetProperty !== undefined &&
+      !$filterArray<string, $StringFilter>($filterString)(
+        filter.mutableSetProperty,
+        value.mutableSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.mutableStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.mutableStringProperty,
+        value.mutableStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly mutableListProperty?: $MaybeFilter<
+      $CollectionFilter<$StringFilter>
+    >;
+    readonly mutableSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -24147,17 +24210,46 @@ export namespace MutablePropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, MutablePropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return MutablePropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new MutablePropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/MutablePropertiesClass",
+  );
+
+  export function isMutablePropertiesClass(
+    object: $Object,
+  ): object is MutablePropertiesClass {
+    switch (object.$type) {
+      case "MutablePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "MutablePropertiesClass";
-    readonly mutableListProperty?: readonly string[];
-    readonly mutableSetProperty?: readonly string[];
-    readonly mutableStringProperty?: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -24221,28 +24313,6 @@ export namespace MutablePropertiesClass {
         .optional()
         .describe("String-valued property that can be re-assigned"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, MutablePropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return MutablePropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new MutablePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -24410,6 +24480,53 @@ export namespace MutablePropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefix" as const,
+        type: () => ({ kind: "String" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["MutablePropertiesClass"],
+        }),
+      },
+      mutableListProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "List" as const,
+            item: () => ({ kind: "String" as const }),
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/mutableListProperty"),
+      },
+      mutableSetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/mutableSetProperty"),
+      },
+      mutableStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/mutableStringProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -24655,123 +24772,6 @@ export namespace MutablePropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: MutablePropertiesClass.$Filter,
-    value: MutablePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.mutableListProperty !== undefined &&
-      !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
-      )(filter.mutableListProperty, value.mutableListProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.mutableSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.mutableSetProperty,
-        value.mutableSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.mutableStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.mutableStringProperty,
-        value.mutableStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly mutableListProperty?: $MaybeFilter<
-      $CollectionFilter<$StringFilter>
-    >;
-    readonly mutableSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/MutablePropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isMutablePropertiesClass(
-    object: $Object,
-  ): object is MutablePropertiesClass {
-    switch (object.$type) {
-      case "MutablePropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["MutablePropertiesClass"],
-        }),
-      },
-      mutableListProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "List" as const,
-            item: () => ({ kind: "String" as const }),
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/mutableListProperty"),
-      },
-      mutableSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/mutableSetProperty"),
-      },
-      mutableStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/mutableStringProperty"),
-      },
-    },
-  } as const;
 } /**
  * Shape that uses the list shapes in properties.
  */
@@ -25149,6 +25149,69 @@ export class ListPropertiesClass {
 }
 
 export namespace ListPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ListPropertiesClass";
+    readonly iriListProperty?: readonly { readonly "@id": string }[];
+    readonly objectListProperty?: readonly NonClass.$Json[];
+    readonly stringListProperty?: readonly string[];
+  };
+
+  export function $filter(
+    filter: ListPropertiesClass.$Filter,
+    value: ListPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriListProperty !== undefined &&
+      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
+        $filterArray<NamedNode, $IriFilter>($filterIri),
+      )(filter.iriListProperty, value.iriListProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.objectListProperty !== undefined &&
+      !$filterMaybe<readonly NonClass[], $CollectionFilter<NonClass.$Filter>>(
+        $filterArray<NonClass, NonClass.$Filter>(NonClass.$filter),
+      )(filter.objectListProperty, value.objectListProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringListProperty !== undefined &&
+      !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
+        $filterArray<string, $StringFilter>($filterString),
+      )(filter.stringListProperty, value.stringListProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly iriListProperty?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
+    readonly objectListProperty?: $MaybeFilter<
+      $CollectionFilter<NonClass.$Filter>
+    >;
+    readonly stringListProperty?: $MaybeFilter<
+      $CollectionFilter<$StringFilter>
+    >;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -25193,17 +25256,46 @@ export namespace ListPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ListPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ListPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ListPropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ListPropertiesClass",
+  );
+
+  export function isListPropertiesClass(
+    object: $Object,
+  ): object is ListPropertiesClass {
+    switch (object.$type) {
+      case "ListPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ListPropertiesClass";
-    readonly iriListProperty?: readonly { readonly "@id": string }[];
-    readonly objectListProperty?: readonly NonClass.$Json[];
-    readonly stringListProperty?: readonly string[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -25258,28 +25350,6 @@ export namespace ListPropertiesClass {
         .default(() => [])
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ListPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ListPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ListPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -25486,6 +25556,52 @@ export namespace ListPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ListPropertiesClass"],
+        }),
+      },
+      iriListProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "List" as const,
+            item: () => ({ kind: "Iri" as const }),
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/iriListProperty"),
+      },
+      objectListProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "List" as const, item: () => NonClass.$schema }),
+        }),
+        path: dataFactory.namedNode("http://example.com/objectListProperty"),
+      },
+      stringListProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "List" as const,
+            item: () => ({ kind: "String" as const }),
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/stringListProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -25781,122 +25897,6 @@ export namespace ListPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ListPropertiesClass.$Filter,
-    value: ListPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.iriListProperty !== undefined &&
-      !$filterMaybe<readonly NamedNode[], $CollectionFilter<$IriFilter>>(
-        $filterArray<NamedNode, $IriFilter>($filterIri),
-      )(filter.iriListProperty, value.iriListProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.objectListProperty !== undefined &&
-      !$filterMaybe<readonly NonClass[], $CollectionFilter<NonClass.$Filter>>(
-        $filterArray<NonClass, NonClass.$Filter>(NonClass.$filter),
-      )(filter.objectListProperty, value.objectListProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.stringListProperty !== undefined &&
-      !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
-        $filterArray<string, $StringFilter>($filterString),
-      )(filter.stringListProperty, value.stringListProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly iriListProperty?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
-    readonly objectListProperty?: $MaybeFilter<
-      $CollectionFilter<NonClass.$Filter>
-    >;
-    readonly stringListProperty?: $MaybeFilter<
-      $CollectionFilter<$StringFilter>
-    >;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ListPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isListPropertiesClass(
-    object: $Object,
-  ): object is ListPropertiesClass {
-    switch (object.$type) {
-      case "ListPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ListPropertiesClass"],
-        }),
-      },
-      iriListProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "List" as const,
-            item: () => ({ kind: "Iri" as const }),
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/iriListProperty"),
-      },
-      objectListProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "List" as const, item: () => NonClass.$schema }),
-        }),
-        path: dataFactory.namedNode("http://example.com/objectListProperty"),
-      },
-      stringListProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "List" as const,
-            item: () => ({ kind: "String" as const }),
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/stringListProperty"),
-      },
-    },
-  } as const;
 } /**
  * Node shape used as a partial by LazyPropertiesInterface
  */
@@ -25983,6 +25983,46 @@ export namespace PartialInterface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialInterface";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PartialInterface.$Filter,
+    value: PartialInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -26011,15 +26051,42 @@ export namespace PartialInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function isPartialInterface(
+    object: $Object,
+  ): object is PartialInterface {
+    switch (object.$type) {
+      case "PartialInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialInterface";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -26051,50 +26118,12 @@ export namespace PartialInterface {
     };
   }
 
-  export function $toJson(
-    _partialInterface: PartialInterface,
-  ): PartialInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _partialInterface.$identifier.termType === "BlankNode"
-            ? `_:${_partialInterface.$identifier.value}`
-            : _partialInterface.$identifier.value,
-        $type: _partialInterface.$type,
-        lazilyResolvedStringProperty:
-          _partialInterface.lazilyResolvedStringProperty,
-      } satisfies PartialInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("PartialInterface"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -26143,25 +26172,28 @@ export namespace PartialInterface {
       );
   }
 
-  export function $toRdf(
-    _partialInterface: PartialInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialInterface"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_partialInterface.$identifier);
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [$literalFactory.string(_partialInterface.lazilyResolvedStringProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -26276,73 +26308,41 @@ export namespace PartialInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: PartialInterface.$Filter,
-    value: PartialInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _partialInterface: PartialInterface,
+  ): PartialInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _partialInterface.$identifier.termType === "BlankNode"
+            ? `_:${_partialInterface.$identifier.value}`
+            : _partialInterface.$identifier.value,
+        $type: _partialInterface.$type,
+        lazilyResolvedStringProperty:
+          _partialInterface.lazilyResolvedStringProperty,
+      } satisfies PartialInterface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPartialInterface(
-    object: $Object,
-  ): object is PartialInterface {
-    switch (object.$type) {
-      case "PartialInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialInterface"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _partialInterface: PartialInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(_partialInterface.$identifier);
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [$literalFactory.string(_partialInterface.lazilyResolvedStringProperty)],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Node shape that has lazy properties.
  */
@@ -27364,6 +27364,246 @@ export namespace LazyPropertiesInterface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazyPropertiesInterface";
+    readonly optionalLazyToResolvedInterfaceProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedInterfaceUnionProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $NamedDefaultPartial.$Json;
+    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Json;
+    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: PartialInterface.$Json;
+    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?:
+      | PartialInterfaceUnionMember1.$Json
+      | PartialInterfaceUnionMember2.$Json;
+    readonly requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json;
+    readonly requiredPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json;
+    readonly setLazyToResolvedInterfaceProperty?: readonly $DefaultPartial.$Json[];
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: readonly PartialInterface.$Json[];
+  };
+
+  export function $filter(
+    filter: LazyPropertiesInterface.$Filter,
+    value: LazyPropertiesInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedInterfaceProperty,
+        value.optionalLazyToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedInterfaceUnionProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedInterfaceUnion.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedInterfaceUnion
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedInterfaceUnionProperty,
+        value.optionalLazyToResolvedInterfaceUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedIriIdentifierInterface.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierInterface
+        >,
+      ) =>
+        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
+          $NamedDefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        value.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialInterface.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
+          PartialInterface.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialInterfaceToResolvedInterfaceProperty,
+        value.optionalPartialInterfaceToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialInterface.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedInterfaceUnion.$Identifier,
+          PartialInterface,
+          LazilyResolvedInterfaceUnion
+        >,
+      ) =>
+        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
+          PartialInterface.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        value.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialInterfaceUnion.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedInterfaceUnion.$Identifier,
+          PartialInterfaceUnion,
+          LazilyResolvedInterfaceUnion
+        >,
+      ) =>
+        $filterMaybe<PartialInterfaceUnion, PartialInterfaceUnion.$Filter>(
+          PartialInterfaceUnion.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        value.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredLazyToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $DefaultPartial.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) => $DefaultPartial.$filter(filter, value.partial))(
+        filter.requiredLazyToResolvedInterfaceProperty,
+        value.requiredLazyToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
+        undefined &&
+      !((
+        filter: PartialInterface.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) => PartialInterface.$filter(filter, value.partial))(
+        filter.requiredPartialInterfaceToResolvedInterfaceProperty,
+        value.requiredPartialInterfaceToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setLazyToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partials))(
+        filter.setLazyToResolvedInterfaceProperty,
+        value.setLazyToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setPartialInterfaceToResolvedInterfaceProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<PartialInterface.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
+        >,
+      ) =>
+        $filterArray<PartialInterface, PartialInterface.$Filter>(
+          PartialInterface.$filter,
+        )(filter, value.partials))(
+        filter.setPartialInterfaceToResolvedInterfaceProperty,
+        value.setPartialInterfaceToResolvedInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalLazyToResolvedInterfaceProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedInterfaceUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
+    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: $MaybeFilter<PartialInterface.$Filter>;
+    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterface.$Filter>;
+    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterfaceUnion.$Filter>;
+    readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
+    readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
+    readonly setLazyToResolvedInterfaceProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: $CollectionFilter<PartialInterface.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -27626,26 +27866,42 @@ export namespace LazyPropertiesInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazyPropertiesInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazyPropertiesInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function isLazyPropertiesInterface(
+    object: $Object,
+  ): object is LazyPropertiesInterface {
+    switch (object.$type) {
+      case "LazyPropertiesInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazyPropertiesInterface";
-    readonly optionalLazyToResolvedInterfaceProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedInterfaceUnionProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $NamedDefaultPartial.$Json;
-    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Json;
-    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: PartialInterface.$Json;
-    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?:
-      | PartialInterfaceUnionMember1.$Json
-      | PartialInterfaceUnionMember2.$Json;
-    readonly requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json;
-    readonly requiredPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json;
-    readonly setLazyToResolvedInterfaceProperty?: readonly $DefaultPartial.$Json[];
-    readonly setPartialInterfaceToResolvedInterfaceProperty?: readonly PartialInterface.$Json[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -27704,59 +27960,6 @@ export namespace LazyPropertiesInterface {
     };
   }
 
-  export function $toJson(
-    _lazyPropertiesInterface: LazyPropertiesInterface,
-  ): LazyPropertiesInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _lazyPropertiesInterface.$identifier.termType === "BlankNode"
-            ? `_:${_lazyPropertiesInterface.$identifier.value}`
-            : _lazyPropertiesInterface.$identifier.value,
-        $type: _lazyPropertiesInterface.$type,
-        optionalLazyToResolvedInterfaceProperty:
-          _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
-            .map((item) => item.$toJson())
-            .extract(),
-        optionalLazyToResolvedInterfaceUnionProperty:
-          _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
-            .map((item) => item.$toJson())
-            .extract(),
-        optionalLazyToResolvedIriIdentifierInterfaceProperty:
-          _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
-            .map((item) => item.$toJson())
-            .extract(),
-        optionalPartialInterfaceToResolvedInterfaceProperty:
-          _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
-            .map((item) => PartialInterface.$toJson(item))
-            .extract(),
-        optionalPartialInterfaceToResolvedInterfaceUnionProperty:
-          _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
-            .map((item) => PartialInterface.$toJson(item))
-            .extract(),
-        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
-          _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
-            .map((item) => PartialInterfaceUnion.$toJson(item))
-            .extract(),
-        requiredLazyToResolvedInterfaceProperty:
-          _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toJson(),
-        requiredPartialInterfaceToResolvedInterfaceProperty:
-          PartialInterface.$toJson(
-            _lazyPropertiesInterface
-              .requiredPartialInterfaceToResolvedInterfaceProperty.partial,
-          ),
-        setLazyToResolvedInterfaceProperty:
-          _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.map(
-            (item) => item.$toJson(),
-          ),
-        setPartialInterfaceToResolvedInterfaceProperty:
-          _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.map(
-            (item) => PartialInterface.$toJson(item),
-          ),
-      } satisfies LazyPropertiesInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
@@ -27788,28 +27991,6 @@ export namespace LazyPropertiesInterface {
           .array()
           .default(() => []),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazyPropertiesInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazyPropertiesInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -28444,154 +28625,145 @@ export namespace LazyPropertiesInterface {
       );
   }
 
-  export function $toRdf(
-    _lazyPropertiesInterface: LazyPropertiesInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazyPropertiesInterface"],
+        }),
+      },
+      optionalLazyToResolvedInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => $DefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedInterfaceProperty",
+        ),
+      },
+      optionalLazyToResolvedInterfaceUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => $DefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
+        ),
+      },
+      optionalLazyToResolvedIriIdentifierInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => $NamedDefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
+        ),
+      },
+      optionalPartialInterfaceToResolvedInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => PartialInterface.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
+        ),
+      },
+      optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => PartialInterface.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+        ),
+      },
+      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => PartialInterfaceUnion.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+        ),
+      },
+      requiredLazyToResolvedInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObject" as const,
+          partial: () => $DefaultPartial.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredLazyToResolvedInterfaceProperty",
+        ),
+      },
+      requiredPartialInterfaceToResolvedInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObject" as const,
+          partial: () => PartialInterface.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
+        ),
+      },
+      setLazyToResolvedInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectSet" as const,
+          partial: () => ({
+            kind: "Set" as const,
+            item: () => $DefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setLazyToResolvedInterfaceProperty",
+        ),
+      },
+      setPartialInterfaceToResolvedInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectSet" as const,
+          partial: () => ({
+            kind: "Set" as const,
+            item: () => PartialInterface.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
+        ),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_lazyPropertiesInterface.$identifier);
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedInterfaceProperty",
-      ),
-      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
-        .toList()
-        .flatMap((value) => [
-          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
-            .identifier,
-        ]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
-      ),
-      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
-        .toList()
-        .flatMap((value) => [
-          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
-            .identifier,
-        ]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
-      ),
-      _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
-        .toList()
-        .flatMap((value) => [
-          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
-            .identifier,
-        ]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
-      ),
-      _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
-        .toList()
-        .flatMap((value) => [
-          PartialInterface.$toRdf(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          }).identifier,
-        ]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
-      ),
-      _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
-        .toList()
-        .flatMap((value) => [
-          PartialInterface.$toRdf(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          }).identifier,
-        ]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
-      ),
-      _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
-        .toList()
-        .flatMap((value) => [
-          PartialInterfaceUnion.$toRdf(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          }).identifier,
-        ]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/requiredLazyToResolvedInterfaceProperty",
-      ),
-      [
-        _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toRdf(
-          {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          },
-        ).identifier,
-      ],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
-      ),
-      [
-        PartialInterface.$toRdf(
-          _lazyPropertiesInterface
-            .requiredPartialInterfaceToResolvedInterfaceProperty.partial,
-          {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          },
-        ).identifier,
-      ],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/setLazyToResolvedInterfaceProperty",
-      ),
-      _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.flatMap(
-        (item) => [
-          item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
-            .identifier,
-        ],
-      ),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
-      ),
-      _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.flatMap(
-        (item) => [
-          PartialInterface.$toRdf(item, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          }).identifier,
-        ],
-      ),
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -29397,379 +29569,207 @@ export namespace LazyPropertiesInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: LazyPropertiesInterface.$Filter,
-    value: LazyPropertiesInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedInterfaceProperty,
-        value.optionalLazyToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedInterfaceUnionProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedInterfaceUnion
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedInterfaceUnionProperty,
-        value.optionalLazyToResolvedInterfaceUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedIriIdentifierInterface.$Identifier,
-          $NamedDefaultPartial,
-          LazilyResolvedIriIdentifierInterface
-        >,
-      ) =>
-        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
-          $NamedDefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedIriIdentifierInterfaceProperty,
-        value.optionalLazyToResolvedIriIdentifierInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialInterface.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          PartialInterface,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
-          PartialInterface.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialInterfaceToResolvedInterfaceProperty,
-        value.optionalPartialInterfaceToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialInterface.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          PartialInterface,
-          LazilyResolvedInterfaceUnion
-        >,
-      ) =>
-        $filterMaybe<PartialInterface, PartialInterface.$Filter>(
-          PartialInterface.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-        value.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialInterfaceUnion.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          PartialInterfaceUnion,
-          LazilyResolvedInterfaceUnion
-        >,
-      ) =>
-        $filterMaybe<PartialInterfaceUnion, PartialInterfaceUnion.$Filter>(
-          PartialInterfaceUnion.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-        value.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredLazyToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $DefaultPartial.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) => $DefaultPartial.$filter(filter, value.partial))(
-        filter.requiredLazyToResolvedInterfaceProperty,
-        value.requiredLazyToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
-        undefined &&
-      !((
-        filter: PartialInterface.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          PartialInterface,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) => PartialInterface.$filter(filter, value.partial))(
-        filter.requiredPartialInterfaceToResolvedInterfaceProperty,
-        value.requiredPartialInterfaceToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setLazyToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partials))(
-        filter.setLazyToResolvedInterfaceProperty,
-        value.setLazyToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setPartialInterfaceToResolvedInterfaceProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<PartialInterface.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-          PartialInterface,
-          LazilyResolvedBlankNodeOrIriIdentifierInterface
-        >,
-      ) =>
-        $filterArray<PartialInterface, PartialInterface.$Filter>(
-          PartialInterface.$filter,
-        )(filter, value.partials))(
-        filter.setPartialInterfaceToResolvedInterfaceProperty,
-        value.setPartialInterfaceToResolvedInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+  ): LazyPropertiesInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _lazyPropertiesInterface.$identifier.termType === "BlankNode"
+            ? `_:${_lazyPropertiesInterface.$identifier.value}`
+            : _lazyPropertiesInterface.$identifier.value,
+        $type: _lazyPropertiesInterface.$type,
+        optionalLazyToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalLazyToResolvedInterfaceUnionProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalLazyToResolvedIriIdentifierInterfaceProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalPartialInterfaceToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
+            .map((item) => PartialInterface.$toJson(item))
+            .extract(),
+        optionalPartialInterfaceToResolvedInterfaceUnionProperty:
+          _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
+            .map((item) => PartialInterface.$toJson(item))
+            .extract(),
+        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
+          _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
+            .map((item) => PartialInterfaceUnion.$toJson(item))
+            .extract(),
+        requiredLazyToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toJson(),
+        requiredPartialInterfaceToResolvedInterfaceProperty:
+          PartialInterface.$toJson(
+            _lazyPropertiesInterface
+              .requiredPartialInterfaceToResolvedInterfaceProperty.partial,
+          ),
+        setLazyToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.map(
+            (item) => item.$toJson(),
+          ),
+        setPartialInterfaceToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.map(
+            (item) => PartialInterface.$toJson(item),
+          ),
+      } satisfies LazyPropertiesInterface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalLazyToResolvedInterfaceProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedInterfaceUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
-    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: $MaybeFilter<PartialInterface.$Filter>;
-    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterface.$Filter>;
-    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterfaceUnion.$Filter>;
-    readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
-    readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
-    readonly setLazyToResolvedInterfaceProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
-    readonly setPartialInterfaceToResolvedInterfaceProperty?: $CollectionFilter<PartialInterface.$Filter>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazyPropertiesInterface(
-    object: $Object,
-  ): object is LazyPropertiesInterface {
-    switch (object.$type) {
-      case "LazyPropertiesInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazyPropertiesInterface"],
-        }),
-      },
-      optionalLazyToResolvedInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyToResolvedInterfaceProperty",
-        ),
-      },
-      optionalLazyToResolvedInterfaceUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
-        ),
-      },
-      optionalLazyToResolvedIriIdentifierInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $NamedDefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
-        ),
-      },
-      optionalPartialInterfaceToResolvedInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => PartialInterface.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
-        ),
-      },
-      optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => PartialInterface.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
-        ),
-      },
-      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => PartialInterfaceUnion.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
-        ),
-      },
-      requiredLazyToResolvedInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObject" as const,
-          partial: () => $DefaultPartial.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredLazyToResolvedInterfaceProperty",
-        ),
-      },
-      requiredPartialInterfaceToResolvedInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObject" as const,
-          partial: () => PartialInterface.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
-        ),
-      },
-      setLazyToResolvedInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectSet" as const,
-          partial: () => ({
-            kind: "Set" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setLazyToResolvedInterfaceProperty",
-        ),
-      },
-      setPartialInterfaceToResolvedInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectSet" as const,
-          partial: () => ({
-            kind: "Set" as const,
-            item: () => PartialInterface.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
-        ),
-      },
+  export function $toRdf(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(_lazyPropertiesInterface.$identifier);
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedInterfaceProperty",
+      ),
+      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
+      ),
+      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
+      ),
+      _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
+      ),
+      _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
+        .toList()
+        .flatMap((value) => [
+          PartialInterface.$toRdf(value, {
+            graph: options?.graph,
+            resourceSet: resourceSet,
+          }).identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+      ),
+      _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
+        .toList()
+        .flatMap((value) => [
+          PartialInterface.$toRdf(value, {
+            graph: options?.graph,
+            resourceSet: resourceSet,
+          }).identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+      ),
+      _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
+        .toList()
+        .flatMap((value) => [
+          PartialInterfaceUnion.$toRdf(value, {
+            graph: options?.graph,
+            resourceSet: resourceSet,
+          }).identifier,
+        ]),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/requiredLazyToResolvedInterfaceProperty",
+      ),
+      [
+        _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toRdf(
+          {
+            graph: options?.graph,
+            resourceSet: resourceSet,
+          },
+        ).identifier,
+      ],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
+      ),
+      [
+        PartialInterface.$toRdf(
+          _lazyPropertiesInterface
+            .requiredPartialInterfaceToResolvedInterfaceProperty.partial,
+          {
+            graph: options?.graph,
+            resourceSet: resourceSet,
+          },
+        ).identifier,
+      ],
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/setLazyToResolvedInterfaceProperty",
+      ),
+      _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.flatMap(
+        (item) => [
+          item.$toRdf({ graph: options?.graph, resourceSet: resourceSet })
+            .identifier,
+        ],
+      ),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
+      ),
+      _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.flatMap(
+        (item) => [
+          PartialInterface.$toRdf(item, {
+            graph: options?.graph,
+            resourceSet: resourceSet,
+          }).identifier,
+        ],
+      ),
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Node shape that has lazy properties.
  */
@@ -30873,6 +30873,245 @@ export class LazyPropertiesClass {
 }
 
 export namespace LazyPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazyPropertiesClass";
+    readonly optionalLazyToResolvedClassProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedClassUnionProperty?: $DefaultPartial.$Json;
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $NamedDefaultPartial.$Json;
+    readonly optionalPartialClassToResolvedClassProperty?: PartialClass.$Json;
+    readonly optionalPartialClassToResolvedClassUnionProperty?: PartialClass.$Json;
+    readonly optionalPartialClassUnionToResolvedClassUnionProperty?:
+      | PartialClassUnionMember1.$Json
+      | PartialClassUnionMember2.$Json;
+    readonly requiredLazyToResolvedClassProperty: $DefaultPartial.$Json;
+    readonly requiredPartialClassToResolvedClassProperty: PartialClass.$Json;
+    readonly setLazyToResolvedClassProperty?: readonly $DefaultPartial.$Json[];
+    readonly setPartialClassToResolvedClassProperty?: readonly PartialClass.$Json[];
+  };
+
+  export function $filter(
+    filter: LazyPropertiesClass.$Filter,
+    value: LazyPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedClassProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedClassProperty,
+        value.optionalLazyToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedClassUnionProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedClassUnion.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedClassUnion
+        >,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedClassUnionProperty,
+        value.optionalLazyToResolvedClassUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyToResolvedIriIdentifierClassProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedIriIdentifierClass.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierClass
+        >,
+      ) =>
+        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
+          $NamedDefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyToResolvedIriIdentifierClassProperty,
+        value.optionalLazyToResolvedIriIdentifierClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialClassToResolvedClassProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<PartialClass.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+          filter,
+          value.partial,
+        ))(
+        filter.optionalPartialClassToResolvedClassProperty,
+        value.optionalPartialClassToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialClassToResolvedClassUnionProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<PartialClass.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedClassUnion.$Identifier,
+          PartialClass,
+          LazilyResolvedClassUnion
+        >,
+      ) =>
+        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+          filter,
+          value.partial,
+        ))(
+        filter.optionalPartialClassToResolvedClassUnionProperty,
+        value.optionalPartialClassToResolvedClassUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
+        undefined &&
+      !((
+        filter: $MaybeFilter<PartialClassUnion.$Filter>,
+        value: $LazyObjectOption<
+          LazilyResolvedClassUnion.$Identifier,
+          PartialClassUnion,
+          LazilyResolvedClassUnion
+        >,
+      ) =>
+        $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(
+          PartialClassUnion.$filter,
+        )(filter, value.partial))(
+        filter.optionalPartialClassUnionToResolvedClassUnionProperty,
+        value.optionalPartialClassUnionToResolvedClassUnionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredLazyToResolvedClassProperty !== undefined &&
+      !((
+        filter: $DefaultPartial.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) => $DefaultPartial.$filter(filter, value.partial))(
+        filter.requiredLazyToResolvedClassProperty,
+        value.requiredLazyToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredPartialClassToResolvedClassProperty !== undefined &&
+      !((
+        filter: PartialClass.$Filter,
+        value: $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) => PartialClass.$filter(filter, value.partial))(
+        filter.requiredPartialClassToResolvedClassProperty,
+        value.requiredPartialClassToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setLazyToResolvedClassProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partials))(
+        filter.setLazyToResolvedClassProperty,
+        value.setLazyToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.setPartialClassToResolvedClassProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<PartialClass.$Filter>,
+        value: $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriIdentifierClass
+        >,
+      ) =>
+        $filterArray<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+          filter,
+          value.partials,
+        ))(
+        filter.setPartialClassToResolvedClassProperty,
+        value.setPartialClassToResolvedClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalLazyToResolvedClassProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedClassUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
+    readonly optionalPartialClassToResolvedClassProperty?: $MaybeFilter<PartialClass.$Filter>;
+    readonly optionalPartialClassToResolvedClassUnionProperty?: $MaybeFilter<PartialClass.$Filter>;
+    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: $MaybeFilter<PartialClassUnion.$Filter>;
+    readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
+    readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
+    readonly setLazyToResolvedClassProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly setPartialClassToResolvedClassProperty?: $CollectionFilter<PartialClass.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -31129,26 +31368,42 @@ export namespace LazyPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazyPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazyPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new LazyPropertiesClass(properties));
+  }
+
+  export function isLazyPropertiesClass(
+    object: $Object,
+  ): object is LazyPropertiesClass {
+    switch (object.$type) {
+      case "LazyPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazyPropertiesClass";
-    readonly optionalLazyToResolvedClassProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedClassUnionProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $NamedDefaultPartial.$Json;
-    readonly optionalPartialClassToResolvedClassProperty?: PartialClass.$Json;
-    readonly optionalPartialClassToResolvedClassUnionProperty?: PartialClass.$Json;
-    readonly optionalPartialClassUnionToResolvedClassUnionProperty?:
-      | PartialClassUnionMember1.$Json
-      | PartialClassUnionMember2.$Json;
-    readonly requiredLazyToResolvedClassProperty: $DefaultPartial.$Json;
-    readonly requiredPartialClassToResolvedClassProperty: PartialClass.$Json;
-    readonly setLazyToResolvedClassProperty?: readonly $DefaultPartial.$Json[];
-    readonly setPartialClassToResolvedClassProperty?: readonly PartialClass.$Json[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -31237,28 +31492,6 @@ export namespace LazyPropertiesClass {
         .array()
         .default(() => []),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazyPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazyPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new LazyPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -31838,6 +32071,146 @@ export namespace LazyPropertiesClass {
         ),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazyPropertiesClass"],
+        }),
+      },
+      optionalLazyToResolvedClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => $DefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedClassProperty",
+        ),
+      },
+      optionalLazyToResolvedClassUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => $DefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedClassUnionProperty",
+        ),
+      },
+      optionalLazyToResolvedIriIdentifierClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => $NamedDefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
+        ),
+      },
+      optionalPartialClassToResolvedClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => PartialClass.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalPartialClassToResolvedClassProperty",
+        ),
+      },
+      optionalPartialClassToResolvedClassUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => PartialClass.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
+        ),
+      },
+      optionalPartialClassUnionToResolvedClassUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectOption" as const,
+          partial: () => ({
+            kind: "Maybe" as const,
+            item: () => PartialClassUnion.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
+        ),
+      },
+      requiredLazyToResolvedClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObject" as const,
+          partial: () => $DefaultPartial.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredLazyToResolvedClassProperty",
+        ),
+      },
+      requiredPartialClassToResolvedClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObject" as const,
+          partial: () => PartialClass.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredPartialClassToResolvedClassProperty",
+        ),
+      },
+      setLazyToResolvedClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectSet" as const,
+          partial: () => ({
+            kind: "Set" as const,
+            item: () => $DefaultPartial.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setLazyToResolvedClassProperty",
+        ),
+      },
+      setPartialClassToResolvedClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "LazyObjectSet" as const,
+          partial: () => ({
+            kind: "Set" as const,
+            item: () => PartialClass.$schema,
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setPartialClassToResolvedClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -32610,379 +32983,6 @@ export namespace LazyPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: LazyPropertiesClass.$Filter,
-    value: LazyPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedClassProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedClassProperty,
-        value.optionalLazyToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedClassUnionProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedClassUnion.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedClassUnion
-        >,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedClassUnionProperty,
-        value.optionalLazyToResolvedClassUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyToResolvedIriIdentifierClassProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedIriIdentifierClass.$Identifier,
-          $NamedDefaultPartial,
-          LazilyResolvedIriIdentifierClass
-        >,
-      ) =>
-        $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
-          $NamedDefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyToResolvedIriIdentifierClassProperty,
-        value.optionalLazyToResolvedIriIdentifierClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialClassToResolvedClassProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<PartialClass.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          PartialClass,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-          filter,
-          value.partial,
-        ))(
-        filter.optionalPartialClassToResolvedClassProperty,
-        value.optionalPartialClassToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialClassToResolvedClassUnionProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<PartialClass.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedClassUnion.$Identifier,
-          PartialClass,
-          LazilyResolvedClassUnion
-        >,
-      ) =>
-        $filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-          filter,
-          value.partial,
-        ))(
-        filter.optionalPartialClassToResolvedClassUnionProperty,
-        value.optionalPartialClassToResolvedClassUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
-        undefined &&
-      !((
-        filter: $MaybeFilter<PartialClassUnion.$Filter>,
-        value: $LazyObjectOption<
-          LazilyResolvedClassUnion.$Identifier,
-          PartialClassUnion,
-          LazilyResolvedClassUnion
-        >,
-      ) =>
-        $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(
-          PartialClassUnion.$filter,
-        )(filter, value.partial))(
-        filter.optionalPartialClassUnionToResolvedClassUnionProperty,
-        value.optionalPartialClassUnionToResolvedClassUnionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredLazyToResolvedClassProperty !== undefined &&
-      !((
-        filter: $DefaultPartial.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) => $DefaultPartial.$filter(filter, value.partial))(
-        filter.requiredLazyToResolvedClassProperty,
-        value.requiredLazyToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredPartialClassToResolvedClassProperty !== undefined &&
-      !((
-        filter: PartialClass.$Filter,
-        value: $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          PartialClass,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) => PartialClass.$filter(filter, value.partial))(
-        filter.requiredPartialClassToResolvedClassProperty,
-        value.requiredPartialClassToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setLazyToResolvedClassProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partials))(
-        filter.setLazyToResolvedClassProperty,
-        value.setLazyToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.setPartialClassToResolvedClassProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<PartialClass.$Filter>,
-        value: $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-          PartialClass,
-          LazilyResolvedBlankNodeOrIriIdentifierClass
-        >,
-      ) =>
-        $filterArray<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-          filter,
-          value.partials,
-        ))(
-        filter.setPartialClassToResolvedClassProperty,
-        value.setPartialClassToResolvedClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalLazyToResolvedClassProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedClassUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
-    readonly optionalPartialClassToResolvedClassProperty?: $MaybeFilter<PartialClass.$Filter>;
-    readonly optionalPartialClassToResolvedClassUnionProperty?: $MaybeFilter<PartialClass.$Filter>;
-    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: $MaybeFilter<PartialClassUnion.$Filter>;
-    readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
-    readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
-    readonly setLazyToResolvedClassProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
-    readonly setPartialClassToResolvedClassProperty?: $CollectionFilter<PartialClass.$Filter>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazyPropertiesClass(
-    object: $Object,
-  ): object is LazyPropertiesClass {
-    switch (object.$type) {
-      case "LazyPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazyPropertiesClass"],
-        }),
-      },
-      optionalLazyToResolvedClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyToResolvedClassProperty",
-        ),
-      },
-      optionalLazyToResolvedClassUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyToResolvedClassUnionProperty",
-        ),
-      },
-      optionalLazyToResolvedIriIdentifierClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => $NamedDefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
-        ),
-      },
-      optionalPartialClassToResolvedClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => PartialClass.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalPartialClassToResolvedClassProperty",
-        ),
-      },
-      optionalPartialClassToResolvedClassUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => PartialClass.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
-        ),
-      },
-      optionalPartialClassUnionToResolvedClassUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectOption" as const,
-          partial: () => ({
-            kind: "Maybe" as const,
-            item: () => PartialClassUnion.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
-        ),
-      },
-      requiredLazyToResolvedClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObject" as const,
-          partial: () => $DefaultPartial.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredLazyToResolvedClassProperty",
-        ),
-      },
-      requiredPartialClassToResolvedClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObject" as const,
-          partial: () => PartialClass.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/requiredPartialClassToResolvedClassProperty",
-        ),
-      },
-      setLazyToResolvedClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectSet" as const,
-          partial: () => ({
-            kind: "Set" as const,
-            item: () => $DefaultPartial.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setLazyToResolvedClassProperty",
-        ),
-      },
-      setPartialClassToResolvedClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "LazyObjectSet" as const,
-          partial: () => ({
-            kind: "Set" as const,
-            item: () => PartialClass.$schema,
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/setPartialClassToResolvedClassProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Node shape resolved by LazyPropertiesInterface
  */
@@ -33072,6 +33072,54 @@ export namespace LazilyResolvedIriIdentifierInterface {
     return _hasher;
   }
 
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedIriIdentifierInterface";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedIriIdentifierInterface.$Filter,
+    value: LazilyResolvedIriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -33098,15 +33146,42 @@ export namespace LazilyResolvedIriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedIriIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedIriIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function isLazilyResolvedIriIdentifierInterface(
+    object: $Object,
+  ): object is LazilyResolvedIriIdentifierInterface {
+    switch (object.$type) {
+      case "LazilyResolvedIriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedIriIdentifierInterface";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -33140,47 +33215,12 @@ export namespace LazilyResolvedIriIdentifierInterface {
     };
   }
 
-  export function $toJson(
-    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
-  ): LazilyResolvedIriIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": _lazilyResolvedIriIdentifierInterface.$identifier.value,
-        $type: _lazilyResolvedIriIdentifierInterface.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedIriIdentifierInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("LazilyResolvedIriIdentifierInterface"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedIriIdentifierInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedIriIdentifierInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -33231,31 +33271,28 @@ export namespace LazilyResolvedIriIdentifierInterface {
       );
   }
 
-  export function $toRdf(
-    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _lazilyResolvedIriIdentifierInterface.$identifier,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedIriIdentifierInterface"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -33375,81 +33412,44 @@ export namespace LazilyResolvedIriIdentifierInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: LazilyResolvedIriIdentifierInterface.$Filter,
-    value: LazilyResolvedIriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
+  ): LazilyResolvedIriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id": _lazilyResolvedIriIdentifierInterface.$identifier.value,
+        $type: _lazilyResolvedIriIdentifierInterface.$type,
+        lazilyResolvedStringProperty:
+          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+      } satisfies LazilyResolvedIriIdentifierInterface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedIriIdentifierInterface(
-    object: $Object,
-  ): object is LazilyResolvedIriIdentifierInterface {
-    switch (object.$type) {
-      case "LazilyResolvedIriIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedIriIdentifierInterface"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource<NamedNode> {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _lazilyResolvedIriIdentifierInterface.$identifier,
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [
+        $literalFactory.string(
+          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Node shape resolved by LazyPropertiesClass
  */
@@ -33557,6 +33557,54 @@ export class LazilyResolvedIriIdentifierClass {
 }
 
 export namespace LazilyResolvedIriIdentifierClass {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedIriIdentifierClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedIriIdentifierClass.$Filter,
+    value: LazilyResolvedIriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -33582,15 +33630,42 @@ export namespace LazilyResolvedIriIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedIriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedIriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new LazilyResolvedIriIdentifierClass(properties));
+  }
+
+  export function isLazilyResolvedIriIdentifierClass(
+    object: $Object,
+  ): object is LazilyResolvedIriIdentifierClass {
+    switch (object.$type) {
+      case "LazilyResolvedIriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedIriIdentifierClass";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -33630,28 +33705,6 @@ export namespace LazilyResolvedIriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedIriIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedIriIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new LazilyResolvedIriIdentifierClass(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<
@@ -33688,6 +33741,29 @@ export namespace LazilyResolvedIriIdentifierClass {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedIriIdentifierClass"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -33806,82 +33882,6 @@ export namespace LazilyResolvedIriIdentifierClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: LazilyResolvedIriIdentifierClass.$Filter,
-    value: LazilyResolvedIriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedIriIdentifierClass(
-    object: $Object,
-  ): object is LazilyResolvedIriIdentifierClass {
-    switch (object.$type) {
-      case "LazilyResolvedIriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedIriIdentifierClass"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export interface LazilyResolvedInterfaceUnionMember2 {
   readonly $identifier: LazilyResolvedInterfaceUnionMember2.$Identifier;
@@ -33970,6 +33970,46 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedInterfaceUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnionMember2.$Filter,
+    value: LazilyResolvedInterfaceUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -33998,15 +34038,46 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedInterfaceUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedInterfaceUnionMember2",
+  );
+
+  export function isLazilyResolvedInterfaceUnionMember2(
+    object: $Object,
+  ): object is LazilyResolvedInterfaceUnionMember2 {
+    switch (object.$type) {
+      case "LazilyResolvedInterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedInterfaceUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -34038,51 +34109,12 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     };
   }
 
-  export function $toJson(
-    _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
-  ): LazilyResolvedInterfaceUnionMember2.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _lazilyResolvedInterfaceUnionMember2.$identifier.termType ===
-          "BlankNode"
-            ? `_:${_lazilyResolvedInterfaceUnionMember2.$identifier.value}`
-            : _lazilyResolvedInterfaceUnionMember2.$identifier.value,
-        $type: _lazilyResolvedInterfaceUnionMember2.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedInterfaceUnionMember2.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedInterfaceUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -34168,40 +34200,28 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     );
   }
 
-  export function $toRdf(
-    _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedInterfaceUnionMember2"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _lazilyResolvedInterfaceUnionMember2.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/LazilyResolvedInterfaceUnionMember2",
-        ),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -34377,77 +34397,57 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return patterns;
   }
 
-  export function $filter(
-    filter: LazilyResolvedInterfaceUnionMember2.$Filter,
-    value: LazilyResolvedInterfaceUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
+  ): LazilyResolvedInterfaceUnionMember2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _lazilyResolvedInterfaceUnionMember2.$identifier.termType ===
+          "BlankNode"
+            ? `_:${_lazilyResolvedInterfaceUnionMember2.$identifier.value}`
+            : _lazilyResolvedInterfaceUnionMember2.$identifier.value,
+        $type: _lazilyResolvedInterfaceUnionMember2.$type,
+        lazilyResolvedStringProperty:
+          _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
+      } satisfies LazilyResolvedInterfaceUnionMember2.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedInterfaceUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedInterfaceUnionMember2(
-    object: $Object,
-  ): object is LazilyResolvedInterfaceUnionMember2 {
-    switch (object.$type) {
-      case "LazilyResolvedInterfaceUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedInterfaceUnionMember2"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _lazilyResolvedInterfaceUnionMember2.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/LazilyResolvedInterfaceUnionMember2",
+        ),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [
+        $literalFactory.string(
+          _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export interface LazilyResolvedInterfaceUnionMember1 {
   readonly $identifier: LazilyResolvedInterfaceUnionMember1.$Identifier;
@@ -34536,6 +34536,46 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedInterfaceUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnionMember1.$Filter,
+    value: LazilyResolvedInterfaceUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -34564,15 +34604,46 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedInterfaceUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedInterfaceUnionMember1",
+  );
+
+  export function isLazilyResolvedInterfaceUnionMember1(
+    object: $Object,
+  ): object is LazilyResolvedInterfaceUnionMember1 {
+    switch (object.$type) {
+      case "LazilyResolvedInterfaceUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedInterfaceUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -34604,51 +34675,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     };
   }
 
-  export function $toJson(
-    _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
-  ): LazilyResolvedInterfaceUnionMember1.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _lazilyResolvedInterfaceUnionMember1.$identifier.termType ===
-          "BlankNode"
-            ? `_:${_lazilyResolvedInterfaceUnionMember1.$identifier.value}`
-            : _lazilyResolvedInterfaceUnionMember1.$identifier.value,
-        $type: _lazilyResolvedInterfaceUnionMember1.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedInterfaceUnionMember1.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedInterfaceUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -34734,40 +34766,28 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     );
   }
 
-  export function $toRdf(
-    _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedInterfaceUnionMember1"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _lazilyResolvedInterfaceUnionMember1.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/LazilyResolvedInterfaceUnionMember1",
-        ),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -34943,77 +34963,57 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return patterns;
   }
 
-  export function $filter(
-    filter: LazilyResolvedInterfaceUnionMember1.$Filter,
-    value: LazilyResolvedInterfaceUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
+  ): LazilyResolvedInterfaceUnionMember1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _lazilyResolvedInterfaceUnionMember1.$identifier.termType ===
+          "BlankNode"
+            ? `_:${_lazilyResolvedInterfaceUnionMember1.$identifier.value}`
+            : _lazilyResolvedInterfaceUnionMember1.$identifier.value,
+        $type: _lazilyResolvedInterfaceUnionMember1.$type,
+        lazilyResolvedStringProperty:
+          _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
+      } satisfies LazilyResolvedInterfaceUnionMember1.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedInterfaceUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedInterfaceUnionMember1(
-    object: $Object,
-  ): object is LazilyResolvedInterfaceUnionMember1 {
-    switch (object.$type) {
-      case "LazilyResolvedInterfaceUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedInterfaceUnionMember1"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _lazilyResolvedInterfaceUnionMember1.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/LazilyResolvedInterfaceUnionMember1",
+        ),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [
+        $literalFactory.string(
+          _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export class LazilyResolvedClassUnionMember2 {
   private _$identifier?: LazilyResolvedClassUnionMember2.$Identifier;
@@ -35138,6 +35138,46 @@ export class LazilyResolvedClassUnionMember2 {
 }
 
 export namespace LazilyResolvedClassUnionMember2 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedClassUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedClassUnionMember2.$Filter,
+    value: LazilyResolvedClassUnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -35165,15 +35205,46 @@ export namespace LazilyResolvedClassUnionMember2 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedClassUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedClassUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new LazilyResolvedClassUnionMember2(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedClassUnionMember2",
+  );
+
+  export function isLazilyResolvedClassUnionMember2(
+    object: $Object,
+  ): object is LazilyResolvedClassUnionMember2 {
+    switch (object.$type) {
+      case "LazilyResolvedClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedClassUnionMember2";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -35211,28 +35282,6 @@ export namespace LazilyResolvedClassUnionMember2 {
       $type: z.literal("LazilyResolvedClassUnionMember2"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedClassUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedClassUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new LazilyResolvedClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf(
@@ -35308,6 +35357,29 @@ export namespace LazilyResolvedClassUnionMember2 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedClassUnionMember2"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -35482,78 +35554,6 @@ export namespace LazilyResolvedClassUnionMember2 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: LazilyResolvedClassUnionMember2.$Filter,
-    value: LazilyResolvedClassUnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedClassUnionMember2(
-    object: $Object,
-  ): object is LazilyResolvedClassUnionMember2 {
-    switch (object.$type) {
-      case "LazilyResolvedClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedClassUnionMember2"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class LazilyResolvedClassUnionMember1 {
   private _$identifier?: LazilyResolvedClassUnionMember1.$Identifier;
@@ -35678,6 +35678,46 @@ export class LazilyResolvedClassUnionMember1 {
 }
 
 export namespace LazilyResolvedClassUnionMember1 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedClassUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedClassUnionMember1.$Filter,
+    value: LazilyResolvedClassUnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -35705,15 +35745,46 @@ export namespace LazilyResolvedClassUnionMember1 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedClassUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedClassUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new LazilyResolvedClassUnionMember1(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedClassUnionMember1",
+  );
+
+  export function isLazilyResolvedClassUnionMember1(
+    object: $Object,
+  ): object is LazilyResolvedClassUnionMember1 {
+    switch (object.$type) {
+      case "LazilyResolvedClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedClassUnionMember1";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -35751,28 +35822,6 @@ export namespace LazilyResolvedClassUnionMember1 {
       $type: z.literal("LazilyResolvedClassUnionMember1"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedClassUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedClassUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new LazilyResolvedClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf(
@@ -35848,6 +35897,29 @@ export namespace LazilyResolvedClassUnionMember1 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedClassUnionMember1"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -36022,78 +36094,6 @@ export namespace LazilyResolvedClassUnionMember1 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: LazilyResolvedClassUnionMember1.$Filter,
-    value: LazilyResolvedClassUnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedClassUnionMember1(
-    object: $Object,
-  ): object is LazilyResolvedClassUnionMember1 {
-    switch (object.$type) {
-      case "LazilyResolvedClassUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedClassUnionMember1"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Node shape resolved by LazyPropertiesInterface
  */
@@ -36187,6 +36187,46 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
+    value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -36215,15 +36255,46 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedBlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
+  );
+
+  export function isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+    object: $Object,
+  ): object is LazilyResolvedBlankNodeOrIriIdentifierInterface {
+    switch (object.$type) {
+      case "LazilyResolvedBlankNodeOrIriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -36258,52 +36329,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     };
   }
 
-  export function $toJson(
-    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
-  ): LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
-            .termType === "BlankNode"
-            ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.value}`
-            : _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
-                .value,
-        $type: _lazilyResolvedBlankNodeOrIriIdentifierInterface.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedBlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -36389,40 +36420,28 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     );
   }
 
-  export function $toRdf(
-    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierInterface"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
-        ),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -36602,77 +36621,58 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
-    value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
+            .termType === "BlankNode"
+            ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.value}`
+            : _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
+                .value,
+        $type: _lazilyResolvedBlankNodeOrIriIdentifierInterface.$type,
+        lazilyResolvedStringProperty:
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+      } satisfies LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-    object: $Object,
-  ): object is LazilyResolvedBlankNodeOrIriIdentifierInterface {
-    switch (object.$type) {
-      case "LazilyResolvedBlankNodeOrIriIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierInterface"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
+  export function $toRdf(
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
+        ),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
+      [
+        $literalFactory.string(
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Node shape resolved by LazyPropertiesClass
  */
@@ -36800,6 +36800,46 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 }
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
+    value: LazilyResolvedBlankNodeOrIriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -36828,15 +36868,49 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazilyResolvedBlankNodeOrIriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map(
+      (properties) =>
+        new LazilyResolvedBlankNodeOrIriIdentifierClass(properties),
+    );
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
+  );
+
+  export function isLazilyResolvedBlankNodeOrIriIdentifierClass(
+    object: $Object,
+  ): object is LazilyResolvedBlankNodeOrIriIdentifierClass {
+    switch (object.$type) {
+      case "LazilyResolvedBlankNodeOrIriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -36876,31 +36950,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
       lazilyResolvedStringProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazilyResolvedBlankNodeOrIriIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map(
-      (properties) =>
-        new LazilyResolvedBlankNodeOrIriIdentifierClass(properties),
-    );
   }
 
   export function $propertiesFromRdf(
@@ -36976,6 +37025,29 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierClass"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -37152,78 +37224,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
-    value: LazilyResolvedBlankNodeOrIriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLazilyResolvedBlankNodeOrIriIdentifierClass(
-    object: $Object,
-  ): object is LazilyResolvedBlankNodeOrIriIdentifierClass {
-    switch (object.$type) {
-      case "LazilyResolvedBlankNodeOrIriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierClass"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape that uses the StringList in a property.
  */
@@ -37359,6 +37359,50 @@ export class LanguageInPropertiesClass {
 }
 
 export namespace LanguageInPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "LanguageInPropertiesClass";
+    readonly languageInLiteralProperty: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+  };
+
+  export function $filter(
+    filter: LanguageInPropertiesClass.$Filter,
+    value: LanguageInPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.languageInLiteralProperty !== undefined &&
+      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+        filter.languageInLiteralProperty,
+        value.languageInLiteralProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly languageInLiteralProperty?: $CollectionFilter<$LiteralFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -37399,19 +37443,42 @@ export namespace LanguageInPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, LanguageInPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LanguageInPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new LanguageInPropertiesClass(properties));
+  }
+
+  export function isLanguageInPropertiesClass(
+    object: $Object,
+  ): object is LanguageInPropertiesClass {
+    switch (object.$type) {
+      case "LanguageInPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "LanguageInPropertiesClass";
-    readonly languageInLiteralProperty: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -37458,28 +37525,6 @@ export namespace LanguageInPropertiesClass {
         .min(1)
         .describe("literal property for testing languageIn"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, LanguageInPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LanguageInPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new LanguageInPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -37538,6 +37583,33 @@ export namespace LanguageInPropertiesClass {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["LanguageInPropertiesClass"],
+        }),
+      },
+      languageInLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Literal" as const, languageIn: ["en", "fr"] }),
+          minCount: 1,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/languageInLiteralProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -37662,78 +37734,6 @@ export namespace LanguageInPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: LanguageInPropertiesClass.$Filter,
-    value: LanguageInPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.languageInLiteralProperty !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.languageInLiteralProperty,
-        value.languageInLiteralProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly languageInLiteralProperty?: $CollectionFilter<$LiteralFilter>;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isLanguageInPropertiesClass(
-    object: $Object,
-  ): object is LanguageInPropertiesClass {
-    switch (object.$type) {
-      case "LanguageInPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["LanguageInPropertiesClass"],
-        }),
-      },
-      languageInLiteralProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Literal" as const, languageIn: ["en", "fr"] }),
-          minCount: 1,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/languageInLiteralProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.
  */
@@ -37950,6 +37950,99 @@ export class JsPrimitiveUnionPropertyClass {
 }
 
 export namespace JsPrimitiveUnionPropertyClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "JsPrimitiveUnionPropertyClass";
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+  };
+
+  export function $filter(
+    filter: JsPrimitiveUnionPropertyClass.$Filter,
+    value: JsPrimitiveUnionPropertyClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.jsPrimitiveUnionProperty !== undefined &&
+      !$filterArray<
+        boolean | number | string,
+        {
+          readonly on?: {
+            readonly boolean?: $BooleanFilter;
+            readonly number?: $NumericFilter<number>;
+            readonly string?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly string?: $StringFilter;
+            };
+          },
+          value: boolean | number | string,
+        ) => {
+          if (filter.on?.["boolean"] !== undefined) {
+            switch (typeof value) {
+              case "boolean":
+                if (!$filterBoolean(filter.on["boolean"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["number"] !== undefined) {
+            switch (typeof value) {
+              case "number":
+                if (!$filterNumeric<number>(filter.on["number"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["string"] !== undefined) {
+            switch (typeof value) {
+              case "string":
+                if (!$filterString(filter.on["string"], value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.jsPrimitiveUnionProperty, value.jsPrimitiveUnionProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly jsPrimitiveUnionProperty?: $CollectionFilter<{
+      readonly on?: {
+        readonly boolean?: $BooleanFilter;
+        readonly number?: $NumericFilter<number>;
+        readonly string?: $StringFilter;
+      };
+    }>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -37977,15 +38070,46 @@ export namespace JsPrimitiveUnionPropertyClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, JsPrimitiveUnionPropertyClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return JsPrimitiveUnionPropertyClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new JsPrimitiveUnionPropertyClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/JsPrimitiveUnionPropertyClass",
+  );
+
+  export function isJsPrimitiveUnionPropertyClass(
+    object: $Object,
+  ): object is JsPrimitiveUnionPropertyClass {
+    switch (object.$type) {
+      case "JsPrimitiveUnionPropertyClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "JsPrimitiveUnionPropertyClass";
-    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -38026,28 +38150,6 @@ export namespace JsPrimitiveUnionPropertyClass {
         .array()
         .default(() => []),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, JsPrimitiveUnionPropertyClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return JsPrimitiveUnionPropertyClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new JsPrimitiveUnionPropertyClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -38164,6 +38266,48 @@ export namespace JsPrimitiveUnionPropertyClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["JsPrimitiveUnionPropertyClass"],
+        }),
+      },
+      jsPrimitiveUnionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              boolean: {
+                discriminantValues: ["boolean"],
+                type: { kind: "Boolean" as const },
+              },
+              number: {
+                discriminantValues: ["number"],
+                type: { kind: "Float" as const },
+              },
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/jsPrimitiveUnionProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -38512,150 +38656,6 @@ export namespace JsPrimitiveUnionPropertyClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: JsPrimitiveUnionPropertyClass.$Filter,
-    value: JsPrimitiveUnionPropertyClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.jsPrimitiveUnionProperty !== undefined &&
-      !$filterArray<
-        boolean | number | string,
-        {
-          readonly on?: {
-            readonly boolean?: $BooleanFilter;
-            readonly number?: $NumericFilter<number>;
-            readonly string?: $StringFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly boolean?: $BooleanFilter;
-              readonly number?: $NumericFilter<number>;
-              readonly string?: $StringFilter;
-            };
-          },
-          value: boolean | number | string,
-        ) => {
-          if (filter.on?.["boolean"] !== undefined) {
-            switch (typeof value) {
-              case "boolean":
-                if (!$filterBoolean(filter.on["boolean"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["number"] !== undefined) {
-            switch (typeof value) {
-              case "number":
-                if (!$filterNumeric<number>(filter.on["number"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["string"] !== undefined) {
-            switch (typeof value) {
-              case "string":
-                if (!$filterString(filter.on["string"], value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.jsPrimitiveUnionProperty, value.jsPrimitiveUnionProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly jsPrimitiveUnionProperty?: $CollectionFilter<{
-      readonly on?: {
-        readonly boolean?: $BooleanFilter;
-        readonly number?: $NumericFilter<number>;
-        readonly string?: $StringFilter;
-      };
-    }>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/JsPrimitiveUnionPropertyClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isJsPrimitiveUnionPropertyClass(
-    object: $Object,
-  ): object is JsPrimitiveUnionPropertyClass {
-    switch (object.$type) {
-      case "JsPrimitiveUnionPropertyClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["JsPrimitiveUnionPropertyClass"],
-        }),
-      },
-      jsPrimitiveUnionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              boolean: {
-                discriminantValues: ["boolean"],
-                type: { kind: "Boolean" as const },
-              },
-              number: {
-                discriminantValues: ["number"],
-                type: { kind: "Float" as const },
-              },
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/jsPrimitiveUnionProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * A node shape that only allows IRI identifiers.
  */
@@ -38726,6 +38726,41 @@ export namespace IriIdentifierInterface {
     return _hasher;
   }
 
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IriIdentifierInterface";
+  };
+
+  export function $filter(
+    filter: IriIdentifierInterface.$Filter,
+    value: IriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IriFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -38748,14 +38783,46 @@ export namespace IriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, IriIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return IriIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IriIdentifierInterface",
+  );
+
+  export function isIriIdentifierInterface(
+    object: $Object,
+  ): object is IriIdentifierInterface {
+    switch (object.$type) {
+      case "IriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IriIdentifierInterface";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -38783,44 +38850,11 @@ export namespace IriIdentifierInterface {
     };
   }
 
-  export function $toJson(
-    _iriIdentifierInterface: IriIdentifierInterface,
-  ): IriIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": _iriIdentifierInterface.$identifier.value,
-        $type: _iriIdentifierInterface.$type,
-      } satisfies IriIdentifierInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("IriIdentifierInterface"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, IriIdentifierInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IriIdentifierInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -38882,27 +38916,21 @@ export namespace IriIdentifierInterface {
     );
   }
 
-  export function $toRdf(
-    _iriIdentifierInterface: IriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["IriIdentifierInterface"],
+        }),
+      },
     },
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_iriIdentifierInterface.$identifier);
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/IriIdentifierInterface"),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -39054,66 +39082,38 @@ export namespace IriIdentifierInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: IriIdentifierInterface.$Filter,
-    value: IriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _iriIdentifierInterface: IriIdentifierInterface,
+  ): IriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id": _iriIdentifierInterface.$identifier.value,
+        $type: _iriIdentifierInterface.$type,
+      } satisfies IriIdentifierInterface.$Json),
+    );
   }
 
-  export type $Filter = { readonly $identifier?: $IriFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IriIdentifierInterface",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIriIdentifierInterface(
-    object: $Object,
-  ): object is IriIdentifierInterface {
-    switch (object.$type) {
-      case "IriIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["IriIdentifierInterface"],
-        }),
-      },
+  export function $toRdf(
+    _iriIdentifierInterface: IriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource<NamedNode> {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(_iriIdentifierInterface.$identifier);
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/IriIdentifierInterface"),
+        options?.graph,
+      );
+    }
+    return resource;
+  }
 } /**
  * A node shape that only allows IRI identifiers.
  */
@@ -39202,6 +39202,41 @@ export class IriIdentifierClass {
 }
 
 export namespace IriIdentifierClass {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IriIdentifierClass";
+  };
+
+  export function $filter(
+    filter: IriIdentifierClass.$Filter,
+    value: IriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IriFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: NamedNode }> {
@@ -39222,14 +39257,46 @@ export namespace IriIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, IriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return IriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IriIdentifierClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IriIdentifierClass",
+  );
+
+  export function isIriIdentifierClass(
+    object: $Object,
+  ): object is IriIdentifierClass {
+    switch (object.$type) {
+      case "IriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IriIdentifierClass";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -39262,28 +39329,6 @@ export namespace IriIdentifierClass {
       "@id": z.string().min(1),
       $type: z.literal("IriIdentifierClass"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, IriIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IriIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new IriIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -39334,6 +39379,22 @@ export namespace IriIdentifierClass {
         .map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["IriIdentifierClass"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -39480,67 +39541,6 @@ export namespace IriIdentifierClass {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: IriIdentifierClass.$Filter,
-    value: IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IriFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IriIdentifierClass",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIriIdentifierClass(
-    object: $Object,
-  ): object is IriIdentifierClass {
-    switch (object.$type) {
-      case "IriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["IriIdentifierClass"],
-        }),
-      },
-    },
-  } as const;
 }
 export interface InterfaceUnionMemberCommonParent {
   readonly $identifier: InterfaceUnionMemberCommonParentStatic.$Identifier;
@@ -39628,6 +39628,46 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
+    readonly interfaceUnionMemberCommonParentProperty: string;
+  };
+
+  export function $filter(
+    filter: InterfaceUnionMemberCommonParentStatic.$Filter,
+    value: InterfaceUnionMemberCommonParent,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.interfaceUnionMemberCommonParentProperty !== undefined &&
+      !$filterString(
+        filter.interfaceUnionMemberCommonParentProperty,
+        value.interfaceUnionMemberCommonParentProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMemberCommonParentProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -39648,15 +39688,21 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return Right({ $identifier, interfaceUnionMemberCommonParentProperty });
   }
 
+  export function isInterfaceUnionMemberCommonParent(
+    object: $Object,
+  ): object is InterfaceUnionMemberCommonParent {
+    switch (object.$type) {
+      case "InterfaceUnionMember1":
+      case "InterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
-    readonly interfaceUnionMemberCommonParentProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -39686,22 +39732,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       label: "InterfaceUnionMemberCommonParent",
       type: "Group",
     };
-  }
-
-  export function $toJson(
-    _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
-  ): InterfaceUnionMemberCommonParentStatic.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _interfaceUnionMemberCommonParent.$identifier.termType === "BlankNode"
-            ? `_:${_interfaceUnionMemberCommonParent.$identifier.value}`
-            : _interfaceUnionMemberCommonParent.$identifier.value,
-        $type: _interfaceUnionMemberCommonParent.$type,
-        interfaceUnionMemberCommonParentProperty:
-          _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
-      } satisfies InterfaceUnionMemberCommonParentStatic.$Json),
-    );
   }
 
   export function $jsonZodSchema() {
@@ -39753,33 +39783,28 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       );
   }
 
-  export function $toRdf(
-    _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _interfaceUnionMemberCommonParent.$identifier,
-    );
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/interfaceUnionMemberCommonParentProperty",
-      ),
-      [
-        $literalFactory.string(
-          _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          descendantValues: ["InterfaceUnionMember1", "InterfaceUnionMember2"],
+          kind: "TypeDiscriminant" as const,
+        }),
+      },
+      interfaceUnionMemberCommonParentProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -39901,74 +39926,49 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return patterns;
   }
 
-  export function $filter(
-    filter: InterfaceUnionMemberCommonParentStatic.$Filter,
-    value: InterfaceUnionMemberCommonParent,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.interfaceUnionMemberCommonParentProperty !== undefined &&
-      !$filterString(
-        filter.interfaceUnionMemberCommonParentProperty,
-        value.interfaceUnionMemberCommonParentProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
+  ): InterfaceUnionMemberCommonParentStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _interfaceUnionMemberCommonParent.$identifier.termType === "BlankNode"
+            ? `_:${_interfaceUnionMemberCommonParent.$identifier.value}`
+            : _interfaceUnionMemberCommonParent.$identifier.value,
+        $type: _interfaceUnionMemberCommonParent.$type,
+        interfaceUnionMemberCommonParentProperty:
+          _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+      } satisfies InterfaceUnionMemberCommonParentStatic.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceUnionMemberCommonParentProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isInterfaceUnionMemberCommonParent(
-    object: $Object,
-  ): object is InterfaceUnionMemberCommonParent {
-    switch (object.$type) {
-      case "InterfaceUnionMember1":
-      case "InterfaceUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          descendantValues: ["InterfaceUnionMember1", "InterfaceUnionMember2"],
-          kind: "TypeDiscriminant" as const,
-        }),
-      },
-      interfaceUnionMemberCommonParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMemberCommonParentProperty",
-        ),
-      },
+  export function $toRdf(
+    _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _interfaceUnionMemberCommonParent.$identifier,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/interfaceUnionMemberCommonParentProperty",
+      ),
+      [
+        $literalFactory.string(
+          _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export interface InterfaceUnionMember2
   extends InterfaceUnionMemberCommonParent {
@@ -40044,6 +40044,41 @@ export namespace InterfaceUnionMember2 {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly interfaceUnionMember2Property: string;
+  } & InterfaceUnionMemberCommonParentStatic.$Json;
+
+  export function $filter(
+    filter: InterfaceUnionMember2.$Filter,
+    value: InterfaceUnionMember2,
+  ): boolean {
+    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.interfaceUnionMember2Property !== undefined &&
+      !$filterString(
+        filter.interfaceUnionMember2Property,
+        value.interfaceUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMember2Property?: $StringFilter;
+  } & InterfaceUnionMemberCommonParentStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -40083,53 +40118,6 @@ export namespace InterfaceUnionMember2 {
     return $propertiesFromJson(json);
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = {
-    readonly interfaceUnionMember2Property: string;
-  } & InterfaceUnionMemberCommonParentStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/interfaceUnionMember2Property`,
-          type: "Control",
-        },
-      ],
-      label: "InterfaceUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $toJson(
-    _interfaceUnionMember2: InterfaceUnionMember2,
-  ): InterfaceUnionMember2.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...InterfaceUnionMemberCommonParentStatic.$toJson(
-          _interfaceUnionMember2,
-        ),
-        interfaceUnionMember2Property:
-          _interfaceUnionMember2.interfaceUnionMember2Property,
-      } satisfies InterfaceUnionMember2.$Json),
-    );
-  }
-
-  export function $jsonZodSchema() {
-    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("InterfaceUnionMember2"),
-        interfaceUnionMember2Property: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -40150,6 +40138,50 @@ export namespace InterfaceUnionMember2 {
       preferredLanguages,
       resource,
     });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember2",
+  );
+
+  export function isInterfaceUnionMember2(
+    object: $Object,
+  ): object is InterfaceUnionMember2 {
+    switch (object.$type) {
+      case "InterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/interfaceUnionMember2Property`,
+          type: "Control",
+        },
+      ],
+      label: "InterfaceUnionMember2",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("InterfaceUnionMember2"),
+        interfaceUnionMember2Property: z.string(),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -40243,43 +40275,18 @@ export namespace InterfaceUnionMember2 {
     );
   }
 
-  export function $toRdf(
-    _interfaceUnionMember2: InterfaceUnionMember2,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = InterfaceUnionMemberCommonParentStatic.$toRdf(
-      _interfaceUnionMember2,
-      {
-        ignoreRdfType: true,
-        graph: options?.graph,
-        resourceSet,
-      },
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/interfaceUnionMember2Property"),
-      [
-        $literalFactory.string(
-          _interfaceUnionMember2.interfaceUnionMember2Property,
+  export const $schema = {
+    properties: {
+      ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
+      interfaceUnionMember2Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMember2Property",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -40456,64 +40463,57 @@ export namespace InterfaceUnionMember2 {
     return patterns;
   }
 
-  export function $filter(
-    filter: InterfaceUnionMember2.$Filter,
-    value: InterfaceUnionMember2,
-  ): boolean {
-    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.interfaceUnionMember2Property !== undefined &&
-      !$filterString(
-        filter.interfaceUnionMember2Property,
-        value.interfaceUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceUnionMember2Property?: $StringFilter;
-  } & InterfaceUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isInterfaceUnionMember2(
-    object: $Object,
-  ): object is InterfaceUnionMember2 {
-    switch (object.$type) {
-      case "InterfaceUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
-      interfaceUnionMember2Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember2Property",
+  export function $toJson(
+    _interfaceUnionMember2: InterfaceUnionMember2,
+  ): InterfaceUnionMember2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...InterfaceUnionMemberCommonParentStatic.$toJson(
+          _interfaceUnionMember2,
         ),
-      },
+        interfaceUnionMember2Property:
+          _interfaceUnionMember2.interfaceUnionMember2Property,
+      } satisfies InterfaceUnionMember2.$Json),
+    );
+  }
+
+  export function $toRdf(
+    _interfaceUnionMember2: InterfaceUnionMember2,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = InterfaceUnionMemberCommonParentStatic.$toRdf(
+      _interfaceUnionMember2,
+      {
+        ignoreRdfType: true,
+        graph: options?.graph,
+        resourceSet,
+      },
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember2"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/interfaceUnionMember2Property"),
+      [
+        $literalFactory.string(
+          _interfaceUnionMember2.interfaceUnionMember2Property,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export interface InterfaceUnionMember1
   extends InterfaceUnionMemberCommonParent {
@@ -40589,6 +40589,41 @@ export namespace InterfaceUnionMember1 {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly interfaceUnionMember1Property: string;
+  } & InterfaceUnionMemberCommonParentStatic.$Json;
+
+  export function $filter(
+    filter: InterfaceUnionMember1.$Filter,
+    value: InterfaceUnionMember1,
+  ): boolean {
+    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.interfaceUnionMember1Property !== undefined &&
+      !$filterString(
+        filter.interfaceUnionMember1Property,
+        value.interfaceUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMember1Property?: $StringFilter;
+  } & InterfaceUnionMemberCommonParentStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -40628,53 +40663,6 @@ export namespace InterfaceUnionMember1 {
     return $propertiesFromJson(json);
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = {
-    readonly interfaceUnionMember1Property: string;
-  } & InterfaceUnionMemberCommonParentStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/interfaceUnionMember1Property`,
-          type: "Control",
-        },
-      ],
-      label: "InterfaceUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $toJson(
-    _interfaceUnionMember1: InterfaceUnionMember1,
-  ): InterfaceUnionMember1.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...InterfaceUnionMemberCommonParentStatic.$toJson(
-          _interfaceUnionMember1,
-        ),
-        interfaceUnionMember1Property:
-          _interfaceUnionMember1.interfaceUnionMember1Property,
-      } satisfies InterfaceUnionMember1.$Json),
-    );
-  }
-
-  export function $jsonZodSchema() {
-    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("InterfaceUnionMember1"),
-        interfaceUnionMember1Property: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -40695,6 +40683,50 @@ export namespace InterfaceUnionMember1 {
       preferredLanguages,
       resource,
     });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InterfaceUnionMember1",
+  );
+
+  export function isInterfaceUnionMember1(
+    object: $Object,
+  ): object is InterfaceUnionMember1 {
+    switch (object.$type) {
+      case "InterfaceUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/interfaceUnionMember1Property`,
+          type: "Control",
+        },
+      ],
+      label: "InterfaceUnionMember1",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("InterfaceUnionMember1"),
+        interfaceUnionMember1Property: z.string(),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -40788,43 +40820,18 @@ export namespace InterfaceUnionMember1 {
     );
   }
 
-  export function $toRdf(
-    _interfaceUnionMember1: InterfaceUnionMember1,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = InterfaceUnionMemberCommonParentStatic.$toRdf(
-      _interfaceUnionMember1,
-      {
-        ignoreRdfType: true,
-        graph: options?.graph,
-        resourceSet,
-      },
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/interfaceUnionMember1Property"),
-      [
-        $literalFactory.string(
-          _interfaceUnionMember1.interfaceUnionMember1Property,
+  export const $schema = {
+    properties: {
+      ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
+      interfaceUnionMember1Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMember1Property",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -41001,64 +41008,57 @@ export namespace InterfaceUnionMember1 {
     return patterns;
   }
 
-  export function $filter(
-    filter: InterfaceUnionMember1.$Filter,
-    value: InterfaceUnionMember1,
-  ): boolean {
-    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.interfaceUnionMember1Property !== undefined &&
-      !$filterString(
-        filter.interfaceUnionMember1Property,
-        value.interfaceUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceUnionMember1Property?: $StringFilter;
-  } & InterfaceUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isInterfaceUnionMember1(
-    object: $Object,
-  ): object is InterfaceUnionMember1 {
-    switch (object.$type) {
-      case "InterfaceUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
-      interfaceUnionMember1Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember1Property",
+  export function $toJson(
+    _interfaceUnionMember1: InterfaceUnionMember1,
+  ): InterfaceUnionMember1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...InterfaceUnionMemberCommonParentStatic.$toJson(
+          _interfaceUnionMember1,
         ),
-      },
+        interfaceUnionMember1Property:
+          _interfaceUnionMember1.interfaceUnionMember1Property,
+      } satisfies InterfaceUnionMember1.$Json),
+    );
+  }
+
+  export function $toRdf(
+    _interfaceUnionMember1: InterfaceUnionMember1,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = InterfaceUnionMemberCommonParentStatic.$toRdf(
+      _interfaceUnionMember1,
+      {
+        ignoreRdfType: true,
+        graph: options?.graph,
+        resourceSet,
+      },
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/InterfaceUnionMember1"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/interfaceUnionMember1Property"),
+      [
+        $literalFactory.string(
+          _interfaceUnionMember1.interfaceUnionMember1Property,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * A node shape that's generated as a TypeScript interface instead of a class.
  */
@@ -41140,6 +41140,43 @@ export namespace Interface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "Interface";
+    readonly interfaceProperty: string;
+  };
+
+  export function $filter(
+    filter: Interface.$Filter,
+    value: Interface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.interfaceProperty !== undefined &&
+      !$filterString(filter.interfaceProperty, value.interfaceProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -41165,15 +41202,40 @@ export namespace Interface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, Interface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return Interface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function isInterface(object: $Object): object is Interface {
+    switch (object.$type) {
+      case "Interface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "Interface";
-    readonly interfaceProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -41205,47 +41267,12 @@ export namespace Interface {
     };
   }
 
-  export function $toJson(_interface: Interface): Interface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _interface.$identifier.termType === "BlankNode"
-            ? `_:${_interface.$identifier.value}`
-            : _interface.$identifier.value,
-        $type: _interface.$type,
-        interfaceProperty: _interface.interfaceProperty,
-      } satisfies Interface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("Interface"),
       interfaceProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, Interface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return Interface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -41294,25 +41321,26 @@ export namespace Interface {
       );
   }
 
-  export function $toRdf(
-    _interface: Interface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["Interface"],
+        }),
+      },
+      interfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/interfaceProperty"),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(_interface.$identifier);
-    resource.add(
-      dataFactory.namedNode("http://example.com/interfaceProperty"),
-      [$literalFactory.string(_interface.interfaceProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -41427,66 +41455,38 @@ export namespace Interface {
     return patterns;
   }
 
-  export function $filter(
-    filter: Interface.$Filter,
-    value: Interface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.interfaceProperty !== undefined &&
-      !$filterString(filter.interfaceProperty, value.interfaceProperty)
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(_interface: Interface): Interface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _interface.$identifier.termType === "BlankNode"
+            ? `_:${_interface.$identifier.value}`
+            : _interface.$identifier.value,
+        $type: _interface.$type,
+        interfaceProperty: _interface.interfaceProperty,
+      } satisfies Interface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly interfaceProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isInterface(object: $Object): object is Interface {
-    switch (object.$type) {
-      case "Interface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["Interface"],
-        }),
-      },
-      interfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/interfaceProperty"),
-      },
+  export function $toRdf(
+    _interface: Interface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(_interface.$identifier);
+    resource.add(
+      dataFactory.namedNode("http://example.com/interfaceProperty"),
+      [$literalFactory.string(_interface.interfaceProperty)],
+      options?.graph,
+    );
+    return resource;
+  }
 }
 export class IndirectRecursiveHelperClass {
   private _$identifier?: IndirectRecursiveHelperClass.$Identifier;
@@ -41637,6 +41637,45 @@ export class IndirectRecursiveHelperClass {
 }
 
 export namespace IndirectRecursiveHelperClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IndirectRecursiveHelperClass";
+    readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
+  };
+
+  export function $filter(
+    filter: IndirectRecursiveHelperClass.$Filter,
+    value: IndirectRecursiveHelperClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.indirectRecursiveProperty !== undefined &&
+      !$filterMaybe<IndirectRecursiveClass, IndirectRecursiveClass.$Filter>(
+        IndirectRecursiveClass.$filter,
+      )(filter.indirectRecursiveProperty, value.indirectRecursiveProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursiveClass.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -41666,15 +41705,46 @@ export namespace IndirectRecursiveHelperClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, IndirectRecursiveHelperClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return IndirectRecursiveHelperClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IndirectRecursiveHelperClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IndirectRecursiveHelperClass",
+  );
+
+  export function isIndirectRecursiveHelperClass(
+    object: $Object,
+  ): object is IndirectRecursiveHelperClass {
+    switch (object.$type) {
+      case "IndirectRecursiveHelperClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IndirectRecursiveHelperClass";
-    readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -41716,28 +41786,6 @@ export namespace IndirectRecursiveHelperClass {
         )
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, IndirectRecursiveHelperClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IndirectRecursiveHelperClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new IndirectRecursiveHelperClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -41828,6 +41876,32 @@ export namespace IndirectRecursiveHelperClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["IndirectRecursiveHelperClass"],
+        }),
+      },
+      indirectRecursiveProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => IndirectRecursiveClass.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/indirectRecursiveProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -41979,80 +42053,6 @@ export namespace IndirectRecursiveHelperClass {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: IndirectRecursiveHelperClass.$Filter,
-    value: IndirectRecursiveHelperClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.indirectRecursiveProperty !== undefined &&
-      !$filterMaybe<IndirectRecursiveClass, IndirectRecursiveClass.$Filter>(
-        IndirectRecursiveClass.$filter,
-      )(filter.indirectRecursiveProperty, value.indirectRecursiveProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursiveClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IndirectRecursiveHelperClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIndirectRecursiveHelperClass(
-    object: $Object,
-  ): object is IndirectRecursiveHelperClass {
-    switch (object.$type) {
-      case "IndirectRecursiveHelperClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["IndirectRecursiveHelperClass"],
-        }),
-      },
-      indirectRecursiveProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => IndirectRecursiveClass.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/indirectRecursiveProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class IndirectRecursiveClass {
   private _$identifier?: IndirectRecursiveClass.$Identifier;
@@ -42204,6 +42204,49 @@ export class IndirectRecursiveClass {
 }
 
 export namespace IndirectRecursiveClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IndirectRecursiveClass";
+    readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
+  };
+
+  export function $filter(
+    filter: IndirectRecursiveClass.$Filter,
+    value: IndirectRecursiveClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.indirectRecursiveHelperProperty !== undefined &&
+      !$filterMaybe<
+        IndirectRecursiveHelperClass,
+        IndirectRecursiveHelperClass.$Filter
+      >(IndirectRecursiveHelperClass.$filter)(
+        filter.indirectRecursiveHelperProperty,
+        value.indirectRecursiveHelperProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelperClass.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -42235,15 +42278,46 @@ export namespace IndirectRecursiveClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, IndirectRecursiveClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return IndirectRecursiveClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IndirectRecursiveClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IndirectRecursiveClass",
+  );
+
+  export function isIndirectRecursiveClass(
+    object: $Object,
+  ): object is IndirectRecursiveClass {
+    switch (object.$type) {
+      case "IndirectRecursiveClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IndirectRecursiveClass";
-    readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -42285,28 +42359,6 @@ export namespace IndirectRecursiveClass {
         )
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, IndirectRecursiveClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IndirectRecursiveClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new IndirectRecursiveClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -42399,6 +42451,32 @@ export namespace IndirectRecursiveClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["IndirectRecursiveClass"],
+        }),
+      },
+      indirectRecursiveHelperProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => IndirectRecursiveHelperClass.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/indirectRecursiveHelperProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -42549,84 +42627,6 @@ export namespace IndirectRecursiveClass {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: IndirectRecursiveClass.$Filter,
-    value: IndirectRecursiveClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.indirectRecursiveHelperProperty !== undefined &&
-      !$filterMaybe<
-        IndirectRecursiveHelperClass,
-        IndirectRecursiveHelperClass.$Filter
-      >(IndirectRecursiveHelperClass.$filter)(
-        filter.indirectRecursiveHelperProperty,
-        value.indirectRecursiveHelperProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelperClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IndirectRecursiveClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIndirectRecursiveClass(
-    object: $Object,
-  ): object is IndirectRecursiveClass {
-    switch (object.$type) {
-      case "IndirectRecursiveClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["IndirectRecursiveClass"],
-        }),
-      },
-      indirectRecursiveHelperProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => IndirectRecursiveHelperClass.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/indirectRecursiveHelperProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with sh:in properties.
  */
@@ -42978,6 +42978,108 @@ export class InPropertiesClass {
 }
 
 export namespace InPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "InPropertiesClass";
+    readonly inBooleansProperty?: true;
+    readonly inDateTimesProperty?: string;
+    readonly inDoublesProperty?: 1 | 2;
+    readonly inIntegersProperty?: string;
+    readonly inIrisProperty?: {
+      readonly "@id":
+        | "http://example.com/InPropertiesIri1"
+        | "http://example.com/InPropertiesIri2";
+    };
+    readonly inStringsProperty?: "text" | "html";
+  };
+
+  export function $filter(
+    filter: InPropertiesClass.$Filter,
+    value: InPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.inBooleansProperty !== undefined &&
+      !$filterMaybe<true, $BooleanFilter>($filterBoolean)(
+        filter.inBooleansProperty,
+        value.inBooleansProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.inDateTimesProperty !== undefined &&
+      !$filterMaybe<Date, $DateFilter>($filterDate)(
+        filter.inDateTimesProperty,
+        value.inDateTimesProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.inDoublesProperty !== undefined &&
+      !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.inDoublesProperty,
+        value.inDoublesProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.inIntegersProperty !== undefined &&
+      !$filterMaybe<1n | 2n, $NumericFilter<bigint>>($filterNumeric<bigint>)(
+        filter.inIntegersProperty,
+        value.inIntegersProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.inIrisProperty !== undefined &&
+      !$filterMaybe<
+        NamedNode<
+          | "http://example.com/InPropertiesIri1"
+          | "http://example.com/InPropertiesIri2"
+        >,
+        $IriFilter
+      >($filterIri)(filter.inIrisProperty, value.inIrisProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.inStringsProperty !== undefined &&
+      !$filterMaybe<"text" | "html", $StringFilter>($filterString)(
+        filter.inStringsProperty,
+        value.inStringsProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
+    readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
+    readonly inDoublesProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly inIntegersProperty?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly inIrisProperty?: $MaybeFilter<$IriFilter>;
+    readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -43040,24 +43142,46 @@ export namespace InPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, InPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return InPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new InPropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InPropertiesClass",
+  );
+
+  export function isInPropertiesClass(
+    object: $Object,
+  ): object is InPropertiesClass {
+    switch (object.$type) {
+      case "InPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "InPropertiesClass";
-    readonly inBooleansProperty?: true;
-    readonly inDateTimesProperty?: string;
-    readonly inDoublesProperty?: 1 | 2;
-    readonly inIntegersProperty?: string;
-    readonly inIrisProperty?: {
-      readonly "@id":
-        | "http://example.com/InPropertiesIri1"
-        | "http://example.com/InPropertiesIri2";
-    };
-    readonly inStringsProperty?: "text" | "html";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -43124,28 +43248,6 @@ export namespace InPropertiesClass {
         .optional(),
       inStringsProperty: z.enum(["text", "html"]).optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, InPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return InPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new InPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -43384,6 +43486,79 @@ export namespace InPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["InPropertiesClass"],
+        }),
+      },
+      inBooleansProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Boolean" as const, in: [true] }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inBooleansProperty"),
+      },
+      inDateTimesProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "DateTime" as const,
+            in: [new Date("2018-04-09T10:00:00.000Z")],
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inDateTimesProperty"),
+      },
+      inDoublesProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Float" as const, in: [1, 2] }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inDoublesProperty"),
+      },
+      inIntegersProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "BigInt" as const, in: [1n, 2n] }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inIntegersProperty"),
+      },
+      inIrisProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Iri" as const,
+            in: [
+              dataFactory.namedNode("http://example.com/InPropertiesIri1"),
+              dataFactory.namedNode("http://example.com/InPropertiesIri2"),
+            ],
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inIrisProperty"),
+      },
+      inStringsProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const, in: ["text", "html"] }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inStringsProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -43704,181 +43879,6 @@ export namespace InPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: InPropertiesClass.$Filter,
-    value: InPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.inBooleansProperty !== undefined &&
-      !$filterMaybe<true, $BooleanFilter>($filterBoolean)(
-        filter.inBooleansProperty,
-        value.inBooleansProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.inDateTimesProperty !== undefined &&
-      !$filterMaybe<Date, $DateFilter>($filterDate)(
-        filter.inDateTimesProperty,
-        value.inDateTimesProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.inDoublesProperty !== undefined &&
-      !$filterMaybe<1 | 2, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.inDoublesProperty,
-        value.inDoublesProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.inIntegersProperty !== undefined &&
-      !$filterMaybe<1n | 2n, $NumericFilter<bigint>>($filterNumeric<bigint>)(
-        filter.inIntegersProperty,
-        value.inIntegersProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.inIrisProperty !== undefined &&
-      !$filterMaybe<
-        NamedNode<
-          | "http://example.com/InPropertiesIri1"
-          | "http://example.com/InPropertiesIri2"
-        >,
-        $IriFilter
-      >($filterIri)(filter.inIrisProperty, value.inIrisProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.inStringsProperty !== undefined &&
-      !$filterMaybe<"text" | "html", $StringFilter>($filterString)(
-        filter.inStringsProperty,
-        value.inStringsProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
-    readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
-    readonly inDoublesProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly inIntegersProperty?: $MaybeFilter<$NumericFilter<bigint>>;
-    readonly inIrisProperty?: $MaybeFilter<$IriFilter>;
-    readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isInPropertiesClass(
-    object: $Object,
-  ): object is InPropertiesClass {
-    switch (object.$type) {
-      case "InPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["InPropertiesClass"],
-        }),
-      },
-      inBooleansProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Boolean" as const, in: [true] }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inBooleansProperty"),
-      },
-      inDateTimesProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "DateTime" as const,
-            in: [new Date("2018-04-09T10:00:00.000Z")],
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inDateTimesProperty"),
-      },
-      inDoublesProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const, in: [1, 2] }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inDoublesProperty"),
-      },
-      inIntegersProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const, in: [1n, 2n] }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inIntegersProperty"),
-      },
-      inIrisProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode("http://example.com/InPropertiesIri1"),
-              dataFactory.namedNode("http://example.com/InPropertiesIri2"),
-            ],
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inIrisProperty"),
-      },
-      inStringsProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const, in: ["text", "html"] }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inStringsProperty"),
-      },
-    },
-  } as const;
 } /**
  * Shape with sh:in constraining its identifier.
  */
@@ -44013,6 +44013,90 @@ export class InIdentifierClass {
 }
 
 export namespace InIdentifierClass {
+  export type $Identifier = NamedNode<
+    | "http://example.com/InIdentifierInstance1"
+    | "http://example.com/InIdentifierInstance2"
+  >;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): Either<
+      Error,
+      NamedNode<
+        | "http://example.com/InIdentifierInstance1"
+        | "http://example.com/InIdentifierInstance2"
+      >
+    > {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      )
+        .chain((identifier) =>
+          identifier.termType === "NamedNode"
+            ? Right(identifier)
+            : Left(new Error("expected identifier to be NamedNode")),
+        )
+        .chain((identifier) => {
+          switch (identifier.value) {
+            case "http://example.com/InIdentifierInstance1":
+              return Right(
+                identifier as NamedNode<"http://example.com/InIdentifierInstance1">,
+              );
+            case "http://example.com/InIdentifierInstance2":
+              return Right(
+                identifier as NamedNode<"http://example.com/InIdentifierInstance2">,
+              );
+            default:
+              return Left(
+                new Error(
+                  "expected NamedNode identifier to be one of http://example.com/InIdentifierInstance1 http://example.com/InIdentifierInstance2",
+                ),
+              );
+          }
+        }) as Either<
+        Error,
+        NamedNode<
+          | "http://example.com/InIdentifierInstance1"
+          | "http://example.com/InIdentifierInstance2"
+        >
+      >;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "InIdentifierClass";
+    readonly inIdentifierProperty?: string;
+  };
+
+  export function $filter(
+    filter: InIdentifierClass.$Filter,
+    value: InIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.inIdentifierProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.inIdentifierProperty,
+        value.inIdentifierProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly inIdentifierProperty?: $MaybeFilter<$StringFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -44043,15 +44127,46 @@ export namespace InIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, InIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return InIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new InIdentifierClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InIdentifierClass",
+  );
+
+  export function isInIdentifierClass(
+    object: $Object,
+  ): object is InIdentifierClass {
+    switch (object.$type) {
+      case "InIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "InIdentifierClass";
-    readonly inIdentifierProperty?: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -44092,28 +44207,6 @@ export namespace InIdentifierClass {
       $type: z.literal("InIdentifierClass"),
       inIdentifierProperty: z.string().optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, InIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return InIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new InIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -44209,6 +44302,36 @@ export namespace InIdentifierClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({
+          kind: "Iri" as const,
+          in: [
+            dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
+            dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
+          ],
+        }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["InIdentifierClass"],
+        }),
+      },
+      inIdentifierProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/inIdentifierProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -44384,129 +44507,6 @@ export namespace InIdentifierClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: InIdentifierClass.$Filter,
-    value: InIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.inIdentifierProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.inIdentifierProperty,
-        value.inIdentifierProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly inIdentifierProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InIdentifierClass",
-  );
-
-  export type $Identifier = NamedNode<
-    | "http://example.com/InIdentifierInstance1"
-    | "http://example.com/InIdentifierInstance2"
-  >;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): Either<
-      Error,
-      NamedNode<
-        | "http://example.com/InIdentifierInstance1"
-        | "http://example.com/InIdentifierInstance2"
-      >
-    > {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      )
-        .chain((identifier) =>
-          identifier.termType === "NamedNode"
-            ? Right(identifier)
-            : Left(new Error("expected identifier to be NamedNode")),
-        )
-        .chain((identifier) => {
-          switch (identifier.value) {
-            case "http://example.com/InIdentifierInstance1":
-              return Right(
-                identifier as NamedNode<"http://example.com/InIdentifierInstance1">,
-              );
-            case "http://example.com/InIdentifierInstance2":
-              return Right(
-                identifier as NamedNode<"http://example.com/InIdentifierInstance2">,
-              );
-            default:
-              return Left(
-                new Error(
-                  "expected NamedNode identifier to be one of http://example.com/InIdentifierInstance1 http://example.com/InIdentifierInstance2",
-                ),
-              );
-          }
-        }) as Either<
-        Error,
-        NamedNode<
-          | "http://example.com/InIdentifierInstance1"
-          | "http://example.com/InIdentifierInstance2"
-        >
-      >;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isInIdentifierClass(
-    object: $Object,
-  ): object is InIdentifierClass {
-    switch (object.$type) {
-      case "InIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({
-          kind: "Iri" as const,
-          in: [
-            dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
-            dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
-          ],
-        }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["InIdentifierClass"],
-        }),
-      },
-      inIdentifierProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/inIdentifierProperty"),
-      },
-    },
-  } as const;
 } /**
  * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
  */
@@ -44627,6 +44627,49 @@ export abstract class IdentifierOverride1Class {
 }
 
 export namespace IdentifierOverride1ClassStatic {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "IdentifierOverride3Class"
+      | "IdentifierOverride4Class"
+      | "IdentifierOverride5Class";
+    readonly identifierOverrideProperty: string;
+  };
+
+  export function $filter(
+    filter: IdentifierOverride1ClassStatic.$Filter,
+    value: IdentifierOverride1Class,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.identifierOverrideProperty !== undefined &&
+      !$filterString(
+        filter.identifierOverrideProperty,
+        value.identifierOverrideProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly identifierOverrideProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -44646,18 +44689,22 @@ export namespace IdentifierOverride1ClassStatic {
     return Right({ $identifier, identifierOverrideProperty });
   }
 
+  export function isIdentifierOverride1Class(
+    object: $Object,
+  ): object is IdentifierOverride1Class {
+    switch (object.$type) {
+      case "IdentifierOverride3Class":
+      case "IdentifierOverride4Class":
+      case "IdentifierOverride5Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type:
-      | "IdentifierOverride3Class"
-      | "IdentifierOverride4Class"
-      | "IdentifierOverride5Class";
-    readonly identifierOverrideProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -44737,6 +44784,33 @@ export namespace IdentifierOverride1ClassStatic {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          descendantValues: [
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ],
+          kind: "TypeDiscriminant" as const,
+        }),
+      },
+      identifierOverrideProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/identifierOverrideProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -44855,80 +44929,6 @@ export namespace IdentifierOverride1ClassStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: IdentifierOverride1ClassStatic.$Filter,
-    value: IdentifierOverride1Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.identifierOverrideProperty !== undefined &&
-      !$filterString(
-        filter.identifierOverrideProperty,
-        value.identifierOverrideProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly identifierOverrideProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIdentifierOverride1Class(
-    object: $Object,
-  ): object is IdentifierOverride1Class {
-    switch (object.$type) {
-      case "IdentifierOverride3Class":
-      case "IdentifierOverride4Class":
-      case "IdentifierOverride5Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          descendantValues: [
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ],
-          kind: "TypeDiscriminant" as const,
-        }),
-      },
-      identifierOverrideProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/identifierOverrideProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
  */
@@ -44978,6 +44978,37 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
 }
 
 export namespace IdentifierOverride2ClassStatic {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = IdentifierOverride1ClassStatic.$Json;
+
+  export function $filter(
+    filter: IdentifierOverride2ClassStatic.$Filter,
+    value: IdentifierOverride2Class,
+  ): boolean {
+    if (!IdentifierOverride1ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride1ClassStatic.$Filter;
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -45000,11 +45031,22 @@ export namespace IdentifierOverride2ClassStatic {
     );
   }
 
+  export function isIdentifierOverride2Class(
+    object: $Object,
+  ): object is IdentifierOverride2Class {
+    switch (object.$type) {
+      case "IdentifierOverride3Class":
+      case "IdentifierOverride4Class":
+      case "IdentifierOverride5Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = IdentifierOverride1ClassStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -45053,6 +45095,10 @@ export namespace IdentifierOverride2ClassStatic {
         .map(($identifier) => ({ ...$super0, $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride1ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -45151,52 +45197,6 @@ export namespace IdentifierOverride2ClassStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: IdentifierOverride2ClassStatic.$Filter,
-    value: IdentifierOverride2Class,
-  ): boolean {
-    if (!IdentifierOverride1ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride1ClassStatic.$Filter;
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIdentifierOverride2Class(
-    object: $Object,
-  ): object is IdentifierOverride2Class {
-    switch (object.$type) {
-      case "IdentifierOverride3Class":
-      case "IdentifierOverride4Class":
-      case "IdentifierOverride5Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: { ...IdentifierOverride1ClassStatic.$schema.properties },
-  } as const;
 } /**
  * Node shape for testing identifier type overriding: IRI identifier, concrete
  */
@@ -45245,6 +45245,37 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
 }
 
 export namespace IdentifierOverride3ClassStatic {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = IdentifierOverride2ClassStatic.$Json;
+
+  export function $filter(
+    filter: IdentifierOverride3ClassStatic.$Filter,
+    value: IdentifierOverride3Class,
+  ): boolean {
+    if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride2ClassStatic.$Filter;
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -45275,11 +45306,48 @@ export namespace IdentifierOverride3ClassStatic {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, IdentifierOverride3Class> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return IdentifierOverride3ClassStatic.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IdentifierOverride3Class(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride3Class",
+  );
+
+  export function isIdentifierOverride3Class(
+    object: $Object,
+  ): object is IdentifierOverride3Class {
+    switch (object.$type) {
+      case "IdentifierOverride4Class":
+      case "IdentifierOverride5Class":
+      case "IdentifierOverride3Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = IdentifierOverride2ClassStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -45301,28 +45369,6 @@ export namespace IdentifierOverride3ClassStatic {
         ]),
       }),
     ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, IdentifierOverride3Class> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IdentifierOverride3ClassStatic.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new IdentifierOverride3Class(properties));
   }
 
   export function $propertiesFromRdf(
@@ -45386,6 +45432,10 @@ export namespace IdentifierOverride3ClassStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride2ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -45555,56 +45605,6 @@ export namespace IdentifierOverride3ClassStatic {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: IdentifierOverride3ClassStatic.$Filter,
-    value: IdentifierOverride3Class,
-  ): boolean {
-    if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride2ClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride3Class",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIdentifierOverride3Class(
-    object: $Object,
-  ): object is IdentifierOverride3Class {
-    switch (object.$type) {
-      case "IdentifierOverride4Class":
-      case "IdentifierOverride5Class":
-      case "IdentifierOverride3Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: { ...IdentifierOverride2ClassStatic.$schema.properties },
-  } as const;
 } /**
  * Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting
  */
@@ -45675,6 +45675,37 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
 }
 
 export namespace IdentifierOverride4ClassStatic {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = IdentifierOverride3ClassStatic.$Json;
+
+  export function $filter(
+    filter: IdentifierOverride4ClassStatic.$Filter,
+    value: IdentifierOverride4Class,
+  ): boolean {
+    if (!IdentifierOverride3ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride3ClassStatic.$Filter;
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -45705,30 +45736,6 @@ export namespace IdentifierOverride4ClassStatic {
     );
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = IdentifierOverride3ClassStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride3ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride4Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride3ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["IdentifierOverride4Class", "IdentifierOverride5Class"]),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -45749,6 +45756,44 @@ export namespace IdentifierOverride4ClassStatic {
       preferredLanguages,
       resource,
     }).map((properties) => new IdentifierOverride4Class(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride4Class",
+  );
+
+  export function isIdentifierOverride4Class(
+    object: $Object,
+  ): object is IdentifierOverride4Class {
+    switch (object.$type) {
+      case "IdentifierOverride5Class":
+      case "IdentifierOverride4Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride3ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride4Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride3ClassStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["IdentifierOverride4Class", "IdentifierOverride5Class"]),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -45811,6 +45856,10 @@ export namespace IdentifierOverride4ClassStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride3ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -45979,55 +46028,6 @@ export namespace IdentifierOverride4ClassStatic {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: IdentifierOverride4ClassStatic.$Filter,
-    value: IdentifierOverride4Class,
-  ): boolean {
-    if (!IdentifierOverride3ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride3ClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride4Class",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIdentifierOverride4Class(
-    object: $Object,
-  ): object is IdentifierOverride4Class {
-    switch (object.$type) {
-      case "IdentifierOverride5Class":
-      case "IdentifierOverride4Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: { ...IdentifierOverride3ClassStatic.$schema.properties },
-  } as const;
 } /**
  * Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting
  */
@@ -46095,6 +46095,37 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
 }
 
 export namespace IdentifierOverride5Class {
+  export type $Identifier = NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(identifier: string): Either<Error, NamedNode> {
+      return Either.encase(() =>
+        Resource.Identifier.fromString({ dataFactory, identifier }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? Right(identifier)
+          : Left(new Error("expected identifier to be NamedNode")),
+      ) as Either<Error, NamedNode>;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = IdentifierOverride4ClassStatic.$Json;
+
+  export function $filter(
+    filter: IdentifierOverride5Class.$Filter,
+    value: IdentifierOverride5Class,
+  ): boolean {
+    if (!IdentifierOverride4ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+  } & IdentifierOverride4ClassStatic.$Filter;
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -46125,30 +46156,6 @@ export namespace IdentifierOverride5Class {
     );
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = IdentifierOverride4ClassStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride4ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride5Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride4ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IdentifierOverride5Class"),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -46169,6 +46176,43 @@ export namespace IdentifierOverride5Class {
       preferredLanguages,
       resource,
     }).map((properties) => new IdentifierOverride5Class(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride5Class",
+  );
+
+  export function isIdentifierOverride5Class(
+    object: $Object,
+  ): object is IdentifierOverride5Class {
+    switch (object.$type) {
+      case "IdentifierOverride5Class":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride4ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride5Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride4ClassStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IdentifierOverride5Class"),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -46228,6 +46272,10 @@ export namespace IdentifierOverride5Class {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride4ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -46382,54 +46430,6 @@ export namespace IdentifierOverride5Class {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: IdentifierOverride5Class.$Filter,
-    value: IdentifierOverride5Class,
-  ): boolean {
-    if (!IdentifierOverride4ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride4ClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride5Class",
-  );
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isIdentifierOverride5Class(
-    object: $Object,
-  ): object is IdentifierOverride5Class {
-    switch (object.$type) {
-      case "IdentifierOverride5Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: { ...IdentifierOverride4ClassStatic.$schema.properties },
-  } as const;
 } /**
  * Shape with sh:hasValue properties.
  */
@@ -46580,6 +46580,54 @@ export class HasValuePropertiesClass {
 }
 
 export namespace HasValuePropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "HasValuePropertiesClass";
+    readonly hasIriValueProperty: { readonly "@id": string };
+    readonly hasLiteralValueProperty: string;
+  };
+
+  export function $filter(
+    filter: HasValuePropertiesClass.$Filter,
+    value: HasValuePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.hasIriValueProperty !== undefined &&
+      !$filterIri(filter.hasIriValueProperty, value.hasIriValueProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.hasLiteralValueProperty !== undefined &&
+      !$filterString(
+        filter.hasLiteralValueProperty,
+        value.hasLiteralValueProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly hasIriValueProperty?: $IriFilter;
+    readonly hasLiteralValueProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -46611,16 +46659,42 @@ export namespace HasValuePropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, HasValuePropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return HasValuePropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new HasValuePropertiesClass(properties));
+  }
+
+  export function isHasValuePropertiesClass(
+    object: $Object,
+  ): object is HasValuePropertiesClass {
+    switch (object.$type) {
+      case "HasValuePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "HasValuePropertiesClass";
-    readonly hasIriValueProperty: { readonly "@id": string };
-    readonly hasLiteralValueProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -46663,28 +46737,6 @@ export namespace HasValuePropertiesClass {
       hasIriValueProperty: z.object({ "@id": z.string().min(1) }),
       hasLiteralValueProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, HasValuePropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return HasValuePropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new HasValuePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -46757,6 +46809,34 @@ export namespace HasValuePropertiesClass {
         ),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["HasValuePropertiesClass"],
+        }),
+      },
+      hasIriValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Iri" as const }),
+        path: dataFactory.namedNode("http://example.com/hasIriValueProperty"),
+      },
+      hasLiteralValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/hasLiteralValueProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -46897,86 +46977,6 @@ export namespace HasValuePropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: HasValuePropertiesClass.$Filter,
-    value: HasValuePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.hasIriValueProperty !== undefined &&
-      !$filterIri(filter.hasIriValueProperty, value.hasIriValueProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.hasLiteralValueProperty !== undefined &&
-      !$filterString(
-        filter.hasLiteralValueProperty,
-        value.hasLiteralValueProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly hasIriValueProperty?: $IriFilter;
-    readonly hasLiteralValueProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isHasValuePropertiesClass(
-    object: $Object,
-  ): object is HasValuePropertiesClass {
-    switch (object.$type) {
-      case "HasValuePropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["HasValuePropertiesClass"],
-        }),
-      },
-      hasIriValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Iri" as const }),
-        path: dataFactory.namedNode("http://example.com/hasIriValueProperty"),
-      },
-      hasLiteralValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/hasLiteralValueProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class FlattenClassUnionMember3 {
   private _$identifier?: FlattenClassUnionMember3.$Identifier;
@@ -47102,6 +47102,46 @@ export class FlattenClassUnionMember3 {
 }
 
 export namespace FlattenClassUnionMember3 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "FlattenClassUnionMember3";
+    readonly flattenClassUnionMember3Property: string;
+  };
+
+  export function $filter(
+    filter: FlattenClassUnionMember3.$Filter,
+    value: FlattenClassUnionMember3,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.flattenClassUnionMember3Property !== undefined &&
+      !$filterString(
+        filter.flattenClassUnionMember3Property,
+        value.flattenClassUnionMember3Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly flattenClassUnionMember3Property?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -47130,15 +47170,46 @@ export namespace FlattenClassUnionMember3 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, FlattenClassUnionMember3> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return FlattenClassUnionMember3.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new FlattenClassUnionMember3(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/FlattenClassUnionMember3",
+  );
+
+  export function isFlattenClassUnionMember3(
+    object: $Object,
+  ): object is FlattenClassUnionMember3 {
+    switch (object.$type) {
+      case "FlattenClassUnionMember3":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "FlattenClassUnionMember3";
-    readonly flattenClassUnionMember3Property: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -47176,28 +47247,6 @@ export namespace FlattenClassUnionMember3 {
       $type: z.literal("FlattenClassUnionMember3"),
       flattenClassUnionMember3Property: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, FlattenClassUnionMember3> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return FlattenClassUnionMember3.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new FlattenClassUnionMember3(properties));
   }
 
   export function $propertiesFromRdf(
@@ -47274,6 +47323,29 @@ export namespace FlattenClassUnionMember3 {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["FlattenClassUnionMember3"],
+        }),
+      },
+      flattenClassUnionMember3Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/flattenClassUnionMember3Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -47448,78 +47520,6 @@ export namespace FlattenClassUnionMember3 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: FlattenClassUnionMember3.$Filter,
-    value: FlattenClassUnionMember3,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.flattenClassUnionMember3Property !== undefined &&
-      !$filterString(
-        filter.flattenClassUnionMember3Property,
-        value.flattenClassUnionMember3Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly flattenClassUnionMember3Property?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/FlattenClassUnionMember3",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isFlattenClassUnionMember3(
-    object: $Object,
-  ): object is FlattenClassUnionMember3 {
-    switch (object.$type) {
-      case "FlattenClassUnionMember3":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["FlattenClassUnionMember3"],
-        }),
-      },
-      flattenClassUnionMember3Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/flattenClassUnionMember3Property",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Node shape that references the ExternClass in a property.
  */
@@ -47667,6 +47667,46 @@ export class ExternClassPropertyClass {
 }
 
 export namespace ExternClassPropertyClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExternClassPropertyClass";
+    readonly externClassProperty?: ExternClass.$Json;
+  };
+
+  export function $filter(
+    filter: ExternClassPropertyClass.$Filter,
+    value: ExternClassPropertyClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.externClassProperty !== undefined &&
+      !$filterMaybe<ExternClass, ExternClass.$Filter>(ExternClass.$filter)(
+        filter.externClassProperty,
+        value.externClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly externClassProperty?: $MaybeFilter<ExternClass.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -47696,15 +47736,46 @@ export namespace ExternClassPropertyClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ExternClassPropertyClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ExternClassPropertyClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ExternClassPropertyClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ExternClassPropertyClass",
+  );
+
+  export function isExternClassPropertyClass(
+    object: $Object,
+  ): object is ExternClassPropertyClass {
+    switch (object.$type) {
+      case "ExternClassPropertyClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternClassPropertyClass";
-    readonly externClassProperty?: ExternClass.$Json;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -47741,28 +47812,6 @@ export namespace ExternClassPropertyClass {
       $type: z.literal("ExternClassPropertyClass"),
       externClassProperty: ExternClass.$jsonZodSchema().optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ExternClassPropertyClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ExternClassPropertyClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ExternClassPropertyClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -47853,6 +47902,30 @@ export namespace ExternClassPropertyClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ExternClassPropertyClass"],
+        }),
+      },
+      externClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ExternClass.$schema,
+        }),
+        path: dataFactory.namedNode("http://example.com/externClassProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -48070,79 +48143,6 @@ export namespace ExternClassPropertyClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ExternClassPropertyClass.$Filter,
-    value: ExternClassPropertyClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.externClassProperty !== undefined &&
-      !$filterMaybe<ExternClass, ExternClass.$Filter>(ExternClass.$filter)(
-        filter.externClassProperty,
-        value.externClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly externClassProperty?: $MaybeFilter<ExternClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ExternClassPropertyClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isExternClassPropertyClass(
-    object: $Object,
-  ): object is ExternClassPropertyClass {
-    switch (object.$type) {
-      case "ExternClassPropertyClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ExternClassPropertyClass"],
-        }),
-      },
-      externClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ExternClass.$schema,
-        }),
-        path: dataFactory.namedNode("http://example.com/externClassProperty"),
-      },
-    },
-  } as const;
 } /**
  * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
  */
@@ -48264,6 +48264,46 @@ export abstract class AbstractBaseClassForExternClass {
 }
 
 export namespace AbstractBaseClassForExternClassStatic {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExternClass";
+    readonly abstractBaseClassForExternClassProperty: string;
+  };
+
+  export function $filter(
+    filter: AbstractBaseClassForExternClassStatic.$Filter,
+    value: AbstractBaseClassForExternClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.abstractBaseClassForExternClassProperty !== undefined &&
+      !$filterString(
+        filter.abstractBaseClassForExternClassProperty,
+        value.abstractBaseClassForExternClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -48284,15 +48324,20 @@ export namespace AbstractBaseClassForExternClassStatic {
     return Right({ $identifier, abstractBaseClassForExternClassProperty });
   }
 
+  export function isAbstractBaseClassForExternClass(
+    object: $Object,
+  ): object is AbstractBaseClassForExternClass {
+    switch (object.$type) {
+      case "ExternClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternClass";
-    readonly abstractBaseClassForExternClassProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -48372,6 +48417,29 @@ export namespace AbstractBaseClassForExternClassStatic {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          descendantValues: ["ExternClass"],
+          kind: "TypeDiscriminant" as const,
+        }),
+      },
+      abstractBaseClassForExternClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/abstractBaseClassForExternClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -48492,74 +48560,6 @@ export namespace AbstractBaseClassForExternClassStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: AbstractBaseClassForExternClassStatic.$Filter,
-    value: AbstractBaseClassForExternClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.abstractBaseClassForExternClassProperty !== undefined &&
-      !$filterString(
-        filter.abstractBaseClassForExternClassProperty,
-        value.abstractBaseClassForExternClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isAbstractBaseClassForExternClass(
-    object: $Object,
-  ): object is AbstractBaseClassForExternClass {
-    switch (object.$type) {
-      case "ExternClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          descendantValues: ["ExternClass"],
-          kind: "TypeDiscriminant" as const,
-        }),
-      },
-      abstractBaseClassForExternClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/abstractBaseClassForExternClassProperty",
-        ),
-      },
-    },
-  } as const;
 }
 
 import { ExternClass } from "./ExternClass.js"; /**
@@ -48688,6 +48688,46 @@ export class ExplicitRdfTypeClass {
 }
 
 export namespace ExplicitRdfTypeClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExplicitRdfTypeClass";
+    readonly explicitRdfTypeProperty: string;
+  };
+
+  export function $filter(
+    filter: ExplicitRdfTypeClass.$Filter,
+    value: ExplicitRdfTypeClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.explicitRdfTypeProperty !== undefined &&
+      !$filterString(
+        filter.explicitRdfTypeProperty,
+        value.explicitRdfTypeProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly explicitRdfTypeProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -48714,15 +48754,46 @@ export namespace ExplicitRdfTypeClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ExplicitRdfTypeClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ExplicitRdfTypeClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ExplicitRdfTypeClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RdfType",
+  );
+
+  export function isExplicitRdfTypeClass(
+    object: $Object,
+  ): object is ExplicitRdfTypeClass {
+    switch (object.$type) {
+      case "ExplicitRdfTypeClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExplicitRdfTypeClass";
-    readonly explicitRdfTypeProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -48760,28 +48831,6 @@ export namespace ExplicitRdfTypeClass {
       $type: z.literal("ExplicitRdfTypeClass"),
       explicitRdfTypeProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ExplicitRdfTypeClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ExplicitRdfTypeClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ExplicitRdfTypeClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -48855,6 +48904,29 @@ export namespace ExplicitRdfTypeClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ExplicitRdfTypeClass"],
+        }),
+      },
+      explicitRdfTypeProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/explicitRdfTypeProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -49026,78 +49098,6 @@ export namespace ExplicitRdfTypeClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ExplicitRdfTypeClass.$Filter,
-    value: ExplicitRdfTypeClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.explicitRdfTypeProperty !== undefined &&
-      !$filterString(
-        filter.explicitRdfTypeProperty,
-        value.explicitRdfTypeProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly explicitRdfTypeProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/RdfType",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isExplicitRdfTypeClass(
-    object: $Object,
-  ): object is ExplicitRdfTypeClass {
-    switch (object.$type) {
-      case "ExplicitRdfTypeClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ExplicitRdfTypeClass"],
-        }),
-      },
-      explicitRdfTypeProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/explicitRdfTypeProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with custom rdf:type's.
  *
@@ -49234,6 +49234,46 @@ export class ExplicitFromToRdfTypesClass {
 }
 
 export namespace ExplicitFromToRdfTypesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExplicitFromToRdfTypesClass";
+    readonly explicitFromToRdfTypesProperty: string;
+  };
+
+  export function $filter(
+    filter: ExplicitFromToRdfTypesClass.$Filter,
+    value: ExplicitFromToRdfTypesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.explicitFromToRdfTypesProperty !== undefined &&
+      !$filterString(
+        filter.explicitFromToRdfTypesProperty,
+        value.explicitFromToRdfTypesProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly explicitFromToRdfTypesProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -49262,15 +49302,46 @@ export namespace ExplicitFromToRdfTypesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ExplicitFromToRdfTypesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ExplicitFromToRdfTypesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ExplicitFromToRdfTypesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/FromRdfType",
+  );
+
+  export function isExplicitFromToRdfTypesClass(
+    object: $Object,
+  ): object is ExplicitFromToRdfTypesClass {
+    switch (object.$type) {
+      case "ExplicitFromToRdfTypesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExplicitFromToRdfTypesClass";
-    readonly explicitFromToRdfTypesProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -49308,28 +49379,6 @@ export namespace ExplicitFromToRdfTypesClass {
       $type: z.literal("ExplicitFromToRdfTypesClass"),
       explicitFromToRdfTypesProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ExplicitFromToRdfTypesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ExplicitFromToRdfTypesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ExplicitFromToRdfTypesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -49406,6 +49455,29 @@ export namespace ExplicitFromToRdfTypesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ExplicitFromToRdfTypesClass"],
+        }),
+      },
+      explicitFromToRdfTypesProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/explicitFromToRdfTypesProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -49580,78 +49652,6 @@ export namespace ExplicitFromToRdfTypesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ExplicitFromToRdfTypesClass.$Filter,
-    value: ExplicitFromToRdfTypesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.explicitFromToRdfTypesProperty !== undefined &&
-      !$filterString(
-        filter.explicitFromToRdfTypesProperty,
-        value.explicitFromToRdfTypesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly explicitFromToRdfTypesProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/FromRdfType",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isExplicitFromToRdfTypesClass(
-    object: $Object,
-  ): object is ExplicitFromToRdfTypesClass {
-    switch (object.$type) {
-      case "ExplicitFromToRdfTypesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ExplicitFromToRdfTypesClass"],
-        }),
-      },
-      explicitFromToRdfTypesProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/explicitFromToRdfTypesProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class DirectRecursiveClass {
   private _$identifier?: DirectRecursiveClass.$Identifier;
@@ -49799,6 +49799,45 @@ export class DirectRecursiveClass {
 }
 
 export namespace DirectRecursiveClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DirectRecursiveClass";
+    readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
+  };
+
+  export function $filter(
+    filter: DirectRecursiveClass.$Filter,
+    value: DirectRecursiveClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.directRecursiveProperty !== undefined &&
+      !$filterMaybe<DirectRecursiveClass, DirectRecursiveClass.$Filter>(
+        DirectRecursiveClass.$filter,
+      )(filter.directRecursiveProperty, value.directRecursiveProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly directRecursiveProperty?: $MaybeFilter<DirectRecursiveClass.$Filter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -49828,15 +49867,46 @@ export namespace DirectRecursiveClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, DirectRecursiveClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return DirectRecursiveClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new DirectRecursiveClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DirectRecursiveClass",
+  );
+
+  export function isDirectRecursiveClass(
+    object: $Object,
+  ): object is DirectRecursiveClass {
+    switch (object.$type) {
+      case "DirectRecursiveClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "DirectRecursiveClass";
-    readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -49878,28 +49948,6 @@ export namespace DirectRecursiveClass {
         )
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, DirectRecursiveClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return DirectRecursiveClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new DirectRecursiveClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -49990,6 +50038,32 @@ export namespace DirectRecursiveClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["DirectRecursiveClass"],
+        }),
+      },
+      directRecursiveProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => DirectRecursiveClass.$schema,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/directRecursiveProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -50138,80 +50212,6 @@ export namespace DirectRecursiveClass {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: DirectRecursiveClass.$Filter,
-    value: DirectRecursiveClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.directRecursiveProperty !== undefined &&
-      !$filterMaybe<DirectRecursiveClass, DirectRecursiveClass.$Filter>(
-        DirectRecursiveClass.$filter,
-      )(filter.directRecursiveProperty, value.directRecursiveProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly directRecursiveProperty?: $MaybeFilter<DirectRecursiveClass.$Filter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DirectRecursiveClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isDirectRecursiveClass(
-    object: $Object,
-  ): object is DirectRecursiveClass {
-    switch (object.$type) {
-      case "DirectRecursiveClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["DirectRecursiveClass"],
-        }),
-      },
-      directRecursiveProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => DirectRecursiveClass.$schema,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/directRecursiveProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with sh:defaultValue properties.
  */
@@ -50576,6 +50576,101 @@ export class DefaultValuePropertiesClass {
 }
 
 export namespace DefaultValuePropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DefaultValuePropertiesClass";
+    readonly dateDefaultValueProperty: string;
+    readonly dateTimeDefaultValueProperty: string;
+    readonly falseBooleanDefaultValueProperty: boolean;
+    readonly numberDefaultValueProperty: number;
+    readonly stringDefaultValueProperty: string;
+    readonly trueBooleanDefaultValueProperty: boolean;
+  };
+
+  export function $filter(
+    filter: DefaultValuePropertiesClass.$Filter,
+    value: DefaultValuePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.dateDefaultValueProperty !== undefined &&
+      !$filterDate(
+        filter.dateDefaultValueProperty,
+        value.dateDefaultValueProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.dateTimeDefaultValueProperty !== undefined &&
+      !$filterDate(
+        filter.dateTimeDefaultValueProperty,
+        value.dateTimeDefaultValueProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.falseBooleanDefaultValueProperty !== undefined &&
+      !$filterBoolean(
+        filter.falseBooleanDefaultValueProperty,
+        value.falseBooleanDefaultValueProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.numberDefaultValueProperty !== undefined &&
+      !$filterNumeric<number>(
+        filter.numberDefaultValueProperty,
+        value.numberDefaultValueProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.stringDefaultValueProperty !== undefined &&
+      !$filterString(
+        filter.stringDefaultValueProperty,
+        value.stringDefaultValueProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.trueBooleanDefaultValueProperty !== undefined &&
+      !$filterBoolean(
+        filter.trueBooleanDefaultValueProperty,
+        value.trueBooleanDefaultValueProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly dateDefaultValueProperty?: $DateFilter;
+    readonly dateTimeDefaultValueProperty?: $DateFilter;
+    readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
+    readonly numberDefaultValueProperty?: $NumericFilter<number>;
+    readonly stringDefaultValueProperty?: $StringFilter;
+    readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -50629,20 +50724,46 @@ export namespace DefaultValuePropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, DefaultValuePropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return DefaultValuePropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new DefaultValuePropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DefaultValuePropertiesClass",
+  );
+
+  export function isDefaultValuePropertiesClass(
+    object: $Object,
+  ): object is DefaultValuePropertiesClass {
+    switch (object.$type) {
+      case "DefaultValuePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "DefaultValuePropertiesClass";
-    readonly dateDefaultValueProperty: string;
-    readonly dateTimeDefaultValueProperty: string;
-    readonly falseBooleanDefaultValueProperty: boolean;
-    readonly numberDefaultValueProperty: number;
-    readonly stringDefaultValueProperty: string;
-    readonly trueBooleanDefaultValueProperty: boolean;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -50705,28 +50826,6 @@ export namespace DefaultValuePropertiesClass {
       stringDefaultValueProperty: z.string(),
       trueBooleanDefaultValueProperty: z.boolean(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, DefaultValuePropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return DefaultValuePropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new DefaultValuePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -50957,6 +51056,107 @@ export namespace DefaultValuePropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefix" as const,
+        type: () => ({ kind: "String" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["DefaultValuePropertiesClass"],
+        }),
+      },
+      dateDefaultValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "DefaultValue" as const,
+          item: () => ({ kind: "Date" as const }),
+          defaultValue: dataFactory.literal(
+            "2018-04-09",
+            $RdfVocabularies.xsd.date,
+          ),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/dateDefaultValueProperty",
+        ),
+      },
+      dateTimeDefaultValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "DefaultValue" as const,
+          item: () => ({ kind: "DateTime" as const }),
+          defaultValue: dataFactory.literal(
+            "2018-04-09T10:00:00Z",
+            $RdfVocabularies.xsd.dateTime,
+          ),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/dateTimeDefaultValueProperty",
+        ),
+      },
+      falseBooleanDefaultValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "DefaultValue" as const,
+          item: () => ({ kind: "Boolean" as const }),
+          defaultValue: dataFactory.literal(
+            "false",
+            $RdfVocabularies.xsd.boolean,
+          ),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/falseBooleanDefaultValueProperty",
+        ),
+      },
+      numberDefaultValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "DefaultValue" as const,
+          item: () => ({ kind: "Float" as const }),
+          defaultValue: dataFactory.literal(
+            "0.0e0",
+            $RdfVocabularies.xsd.double,
+          ),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/numberDefaultValueProperty",
+        ),
+      },
+      stringDefaultValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "DefaultValue" as const,
+          item: () => ({ kind: "String" as const }),
+          defaultValue: dataFactory.literal(""),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/stringDefaultValueProperty",
+        ),
+      },
+      trueBooleanDefaultValueProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "DefaultValue" as const,
+          item: () => ({ kind: "Boolean" as const }),
+          defaultValue: dataFactory.literal(
+            "true",
+            $RdfVocabularies.xsd.boolean,
+          ),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/trueBooleanDefaultValueProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -51264,206 +51464,6 @@ export namespace DefaultValuePropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: DefaultValuePropertiesClass.$Filter,
-    value: DefaultValuePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.dateDefaultValueProperty !== undefined &&
-      !$filterDate(
-        filter.dateDefaultValueProperty,
-        value.dateDefaultValueProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.dateTimeDefaultValueProperty !== undefined &&
-      !$filterDate(
-        filter.dateTimeDefaultValueProperty,
-        value.dateTimeDefaultValueProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.falseBooleanDefaultValueProperty !== undefined &&
-      !$filterBoolean(
-        filter.falseBooleanDefaultValueProperty,
-        value.falseBooleanDefaultValueProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.numberDefaultValueProperty !== undefined &&
-      !$filterNumeric<number>(
-        filter.numberDefaultValueProperty,
-        value.numberDefaultValueProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.stringDefaultValueProperty !== undefined &&
-      !$filterString(
-        filter.stringDefaultValueProperty,
-        value.stringDefaultValueProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.trueBooleanDefaultValueProperty !== undefined &&
-      !$filterBoolean(
-        filter.trueBooleanDefaultValueProperty,
-        value.trueBooleanDefaultValueProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly dateDefaultValueProperty?: $DateFilter;
-    readonly dateTimeDefaultValueProperty?: $DateFilter;
-    readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
-    readonly numberDefaultValueProperty?: $NumericFilter<number>;
-    readonly stringDefaultValueProperty?: $StringFilter;
-    readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DefaultValuePropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isDefaultValuePropertiesClass(
-    object: $Object,
-  ): object is DefaultValuePropertiesClass {
-    switch (object.$type) {
-      case "DefaultValuePropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["DefaultValuePropertiesClass"],
-        }),
-      },
-      dateDefaultValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "DefaultValue" as const,
-          item: () => ({ kind: "Date" as const }),
-          defaultValue: dataFactory.literal(
-            "2018-04-09",
-            $RdfVocabularies.xsd.date,
-          ),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/dateDefaultValueProperty",
-        ),
-      },
-      dateTimeDefaultValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "DefaultValue" as const,
-          item: () => ({ kind: "DateTime" as const }),
-          defaultValue: dataFactory.literal(
-            "2018-04-09T10:00:00Z",
-            $RdfVocabularies.xsd.dateTime,
-          ),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/dateTimeDefaultValueProperty",
-        ),
-      },
-      falseBooleanDefaultValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "DefaultValue" as const,
-          item: () => ({ kind: "Boolean" as const }),
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/falseBooleanDefaultValueProperty",
-        ),
-      },
-      numberDefaultValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "DefaultValue" as const,
-          item: () => ({ kind: "Float" as const }),
-          defaultValue: dataFactory.literal(
-            "0.0e0",
-            $RdfVocabularies.xsd.double,
-          ),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/numberDefaultValueProperty",
-        ),
-      },
-      stringDefaultValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "DefaultValue" as const,
-          item: () => ({ kind: "String" as const }),
-          defaultValue: dataFactory.literal(""),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/stringDefaultValueProperty",
-        ),
-      },
-      trueBooleanDefaultValueProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "DefaultValue" as const,
-          item: () => ({ kind: "Boolean" as const }),
-          defaultValue: dataFactory.literal(
-            "true",
-            $RdfVocabularies.xsd.boolean,
-          ),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/trueBooleanDefaultValueProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.
  */
@@ -52032,6 +52032,259 @@ export class DateUnionPropertiesClass {
 }
 
 export namespace DateUnionPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DateUnionPropertiesClass";
+    readonly dateOrDateTimeProperty?:
+      | { type: "date"; value: string }
+      | { type: "dateTime"; value: string };
+    readonly dateOrStringProperty?:
+      | { type: "date"; value: string }
+      | { type: "string"; value: string };
+    readonly dateTimeOrDateProperty?:
+      | { type: "dateTime"; value: string }
+      | { type: "date"; value: string };
+    readonly stringOrDateProperty?:
+      | { type: "string"; value: string }
+      | { type: "date"; value: string };
+  };
+
+  export function $filter(
+    filter: DateUnionPropertiesClass.$Filter,
+    value: DateUnionPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.dateOrDateTimeProperty !== undefined &&
+      !$filterMaybe<
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date },
+        {
+          readonly on?: {
+            readonly date?: $DateFilter;
+            readonly dateTime?: $DateFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          value:
+            | { type: "date"; value: Date }
+            | { type: "dateTime"; value: Date },
+        ) => {
+          if (filter.on?.["date"] !== undefined) {
+            switch (value.type) {
+              case "date":
+                if (!$filterDate(filter.on["date"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["dateTime"] !== undefined) {
+            switch (value.type) {
+              case "dateTime":
+                if (!$filterDate(filter.on["dateTime"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.dateOrDateTimeProperty, value.dateOrDateTimeProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.dateOrStringProperty !== undefined &&
+      !$filterMaybe<
+        { type: "date"; value: Date } | { type: "string"; value: string },
+        {
+          readonly on?: {
+            readonly date?: $DateFilter;
+            readonly string?: $StringFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          value:
+            | { type: "date"; value: Date }
+            | { type: "string"; value: string },
+        ) => {
+          if (filter.on?.["date"] !== undefined) {
+            switch (value.type) {
+              case "date":
+                if (!$filterDate(filter.on["date"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["string"] !== undefined) {
+            switch (value.type) {
+              case "string":
+                if (!$filterString(filter.on["string"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.dateOrStringProperty, value.dateOrStringProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.dateTimeOrDateProperty !== undefined &&
+      !$filterMaybe<
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date },
+        {
+          readonly on?: {
+            readonly dateTime?: $DateFilter;
+            readonly date?: $DateFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          value:
+            | { type: "dateTime"; value: Date }
+            | { type: "date"; value: Date },
+        ) => {
+          if (filter.on?.["dateTime"] !== undefined) {
+            switch (value.type) {
+              case "dateTime":
+                if (!$filterDate(filter.on["dateTime"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["date"] !== undefined) {
+            switch (value.type) {
+              case "date":
+                if (!$filterDate(filter.on["date"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.dateTimeOrDateProperty, value.dateTimeOrDateProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.stringOrDateProperty !== undefined &&
+      !$filterMaybe<
+        { type: "string"; value: string } | { type: "date"; value: Date },
+        {
+          readonly on?: {
+            readonly string?: $StringFilter;
+            readonly date?: $DateFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          value:
+            | { type: "string"; value: string }
+            | { type: "date"; value: Date },
+        ) => {
+          if (filter.on?.["string"] !== undefined) {
+            switch (value.type) {
+              case "string":
+                if (!$filterString(filter.on["string"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+          if (filter.on?.["date"] !== undefined) {
+            switch (value.type) {
+              case "date":
+                if (!$filterDate(filter.on["date"], value.value)) {
+                  return false;
+                }
+                break;
+            }
+          }
+
+          return true;
+        },
+      )(filter.stringOrDateProperty, value.stringOrDateProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly dateOrDateTimeProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly date?: $DateFilter;
+        readonly dateTime?: $DateFilter;
+      };
+    }>;
+    readonly dateOrStringProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly date?: $DateFilter;
+        readonly string?: $StringFilter;
+      };
+    }>;
+    readonly dateTimeOrDateProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly dateTime?: $DateFilter;
+        readonly date?: $DateFilter;
+      };
+    }>;
+    readonly stringOrDateProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly string?: $StringFilter;
+        readonly date?: $DateFilter;
+      };
+    }>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -52103,26 +52356,46 @@ export namespace DateUnionPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, DateUnionPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return DateUnionPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new DateUnionPropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DateUnionPropertiesClass",
+  );
+
+  export function isDateUnionPropertiesClass(
+    object: $Object,
+  ): object is DateUnionPropertiesClass {
+    switch (object.$type) {
+      case "DateUnionPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "DateUnionPropertiesClass";
-    readonly dateOrDateTimeProperty?:
-      | { type: "date"; value: string }
-      | { type: "dateTime"; value: string };
-    readonly dateOrStringProperty?:
-      | { type: "date"; value: string }
-      | { type: "string"; value: string };
-    readonly dateTimeOrDateProperty?:
-      | { type: "dateTime"; value: string }
-      | { type: "date"; value: string };
-    readonly stringOrDateProperty?:
-      | { type: "string"; value: string }
-      | { type: "date"; value: string };
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -52195,28 +52468,6 @@ export namespace DateUnionPropertiesClass {
         ])
         .optional(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, DateUnionPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return DateUnionPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new DateUnionPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -52610,6 +52861,106 @@ export namespace DateUnionPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["DateUnionPropertiesClass"],
+        }),
+      },
+      dateOrDateTimeProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              date: {
+                discriminantValues: ["date"],
+                type: { kind: "Date" as const },
+              },
+              dateTime: {
+                discriminantValues: ["dateTime"],
+                type: { kind: "DateTime" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/dateOrDateTimeProperty",
+        ),
+      },
+      dateOrStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              date: {
+                discriminantValues: ["date"],
+                type: { kind: "Date" as const },
+              },
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/dateOrStringProperty"),
+      },
+      dateTimeOrDateProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              dateTime: {
+                discriminantValues: ["dateTime"],
+                type: { kind: "DateTime" as const },
+              },
+              date: {
+                discriminantValues: ["date"],
+                type: { kind: "Date" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/dateTimeOrDateProperty",
+        ),
+      },
+      stringOrDateProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "Union" as const,
+            members: {
+              string: {
+                discriminantValues: ["string"],
+                type: { kind: "String" as const },
+              },
+              date: {
+                discriminantValues: ["date"],
+                type: { kind: "Date" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode("http://example.com/stringOrDateProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -53401,357 +53752,6 @@ export namespace DateUnionPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: DateUnionPropertiesClass.$Filter,
-    value: DateUnionPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.dateOrDateTimeProperty !== undefined &&
-      !$filterMaybe<
-        { type: "date"; value: Date } | { type: "dateTime"; value: Date },
-        {
-          readonly on?: {
-            readonly date?: $DateFilter;
-            readonly dateTime?: $DateFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          value:
-            | { type: "date"; value: Date }
-            | { type: "dateTime"; value: Date },
-        ) => {
-          if (filter.on?.["date"] !== undefined) {
-            switch (value.type) {
-              case "date":
-                if (!$filterDate(filter.on["date"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["dateTime"] !== undefined) {
-            switch (value.type) {
-              case "dateTime":
-                if (!$filterDate(filter.on["dateTime"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.dateOrDateTimeProperty, value.dateOrDateTimeProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.dateOrStringProperty !== undefined &&
-      !$filterMaybe<
-        { type: "date"; value: Date } | { type: "string"; value: string },
-        {
-          readonly on?: {
-            readonly date?: $DateFilter;
-            readonly string?: $StringFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          value:
-            | { type: "date"; value: Date }
-            | { type: "string"; value: string },
-        ) => {
-          if (filter.on?.["date"] !== undefined) {
-            switch (value.type) {
-              case "date":
-                if (!$filterDate(filter.on["date"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["string"] !== undefined) {
-            switch (value.type) {
-              case "string":
-                if (!$filterString(filter.on["string"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.dateOrStringProperty, value.dateOrStringProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.dateTimeOrDateProperty !== undefined &&
-      !$filterMaybe<
-        { type: "dateTime"; value: Date } | { type: "date"; value: Date },
-        {
-          readonly on?: {
-            readonly dateTime?: $DateFilter;
-            readonly date?: $DateFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly dateTime?: $DateFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          value:
-            | { type: "dateTime"; value: Date }
-            | { type: "date"; value: Date },
-        ) => {
-          if (filter.on?.["dateTime"] !== undefined) {
-            switch (value.type) {
-              case "dateTime":
-                if (!$filterDate(filter.on["dateTime"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["date"] !== undefined) {
-            switch (value.type) {
-              case "date":
-                if (!$filterDate(filter.on["date"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.dateTimeOrDateProperty, value.dateTimeOrDateProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.stringOrDateProperty !== undefined &&
-      !$filterMaybe<
-        { type: "string"; value: string } | { type: "date"; value: Date },
-        {
-          readonly on?: {
-            readonly string?: $StringFilter;
-            readonly date?: $DateFilter;
-          };
-        }
-      >(
-        (
-          filter: {
-            readonly on?: {
-              readonly string?: $StringFilter;
-              readonly date?: $DateFilter;
-            };
-          },
-          value:
-            | { type: "string"; value: string }
-            | { type: "date"; value: Date },
-        ) => {
-          if (filter.on?.["string"] !== undefined) {
-            switch (value.type) {
-              case "string":
-                if (!$filterString(filter.on["string"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-          if (filter.on?.["date"] !== undefined) {
-            switch (value.type) {
-              case "date":
-                if (!$filterDate(filter.on["date"], value.value)) {
-                  return false;
-                }
-                break;
-            }
-          }
-
-          return true;
-        },
-      )(filter.stringOrDateProperty, value.stringOrDateProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly dateOrDateTimeProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly date?: $DateFilter;
-        readonly dateTime?: $DateFilter;
-      };
-    }>;
-    readonly dateOrStringProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly date?: $DateFilter;
-        readonly string?: $StringFilter;
-      };
-    }>;
-    readonly dateTimeOrDateProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly dateTime?: $DateFilter;
-        readonly date?: $DateFilter;
-      };
-    }>;
-    readonly stringOrDateProperty?: $MaybeFilter<{
-      readonly on?: {
-        readonly string?: $StringFilter;
-        readonly date?: $DateFilter;
-      };
-    }>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DateUnionPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isDateUnionPropertiesClass(
-    object: $Object,
-  ): object is DateUnionPropertiesClass {
-    switch (object.$type) {
-      case "DateUnionPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["DateUnionPropertiesClass"],
-        }),
-      },
-      dateOrDateTimeProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
-              dateTime: {
-                discriminantValues: ["dateTime"],
-                type: { kind: "DateTime" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/dateOrDateTimeProperty",
-        ),
-      },
-      dateOrStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/dateOrStringProperty"),
-      },
-      dateTimeOrDateProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              dateTime: {
-                discriminantValues: ["dateTime"],
-                type: { kind: "DateTime" as const },
-              },
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/dateTimeOrDateProperty",
-        ),
-      },
-      stringOrDateProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({
-            kind: "Union" as const,
-            members: {
-              string: {
-                discriminantValues: ["string"],
-                type: { kind: "String" as const },
-              },
-              date: {
-                discriminantValues: ["date"],
-                type: { kind: "Date" as const },
-              },
-            },
-          }),
-        }),
-        path: dataFactory.namedNode("http://example.com/stringOrDateProperty"),
-      },
-    },
-  } as const;
 } /**
  * Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
  */
@@ -54588,6 +54588,212 @@ export class ConvertibleTypePropertiesClass {
 }
 
 export namespace ConvertibleTypePropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ConvertibleTypePropertiesClass";
+    readonly convertibleIriNonEmptySetProperty: readonly {
+      readonly "@id": string;
+    }[];
+    readonly convertibleIriOptionProperty?: { readonly "@id": string };
+    readonly convertibleIriProperty: { readonly "@id": string };
+    readonly convertibleIriSetProperty?: readonly { readonly "@id": string }[];
+    readonly convertibleLiteralNonEmptySetProperty: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+    readonly convertibleLiteralOptionProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly convertibleLiteralProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly convertibleLiteralSetProperty?: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+    readonly convertibleTermNonEmptySetProperty: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        }
+    )[];
+    readonly convertibleTermOptionProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly convertibleTermProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly convertibleTermSetProperty?: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        }
+    )[];
+  };
+
+  export function $filter(
+    filter: ConvertibleTypePropertiesClass.$Filter,
+    value: ConvertibleTypePropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriNonEmptySetProperty !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.convertibleIriNonEmptySetProperty,
+        value.convertibleIriNonEmptySetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriOptionProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.convertibleIriOptionProperty,
+        value.convertibleIriOptionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriProperty !== undefined &&
+      !$filterIri(filter.convertibleIriProperty, value.convertibleIriProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleIriSetProperty !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.convertibleIriSetProperty,
+        value.convertibleIriSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralNonEmptySetProperty !== undefined &&
+      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+        filter.convertibleLiteralNonEmptySetProperty,
+        value.convertibleLiteralNonEmptySetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralOptionProperty !== undefined &&
+      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
+        filter.convertibleLiteralOptionProperty,
+        value.convertibleLiteralOptionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralProperty !== undefined &&
+      !$filterLiteral(
+        filter.convertibleLiteralProperty,
+        value.convertibleLiteralProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleLiteralSetProperty !== undefined &&
+      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
+        filter.convertibleLiteralSetProperty,
+        value.convertibleLiteralSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermNonEmptySetProperty !== undefined &&
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.convertibleTermNonEmptySetProperty,
+        value.convertibleTermNonEmptySetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermOptionProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.convertibleTermOptionProperty,
+        value.convertibleTermOptionProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermProperty !== undefined &&
+      !$filterTerm(
+        filter.convertibleTermProperty,
+        value.convertibleTermProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.convertibleTermSetProperty !== undefined &&
+      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
+        filter.convertibleTermSetProperty,
+        value.convertibleTermSetProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$IriFilter>;
+    readonly convertibleIriOptionProperty?: $MaybeFilter<$IriFilter>;
+    readonly convertibleIriProperty?: $IriFilter;
+    readonly convertibleIriSetProperty?: $CollectionFilter<$IriFilter>;
+    readonly convertibleLiteralNonEmptySetProperty?: $CollectionFilter<$LiteralFilter>;
+    readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly convertibleLiteralProperty?: $LiteralFilter;
+    readonly convertibleLiteralSetProperty?: $CollectionFilter<$LiteralFilter>;
+    readonly convertibleTermNonEmptySetProperty?: $CollectionFilter<$TermFilter>;
+    readonly convertibleTermOptionProperty?: $MaybeFilter<$TermFilter>;
+    readonly convertibleTermProperty?: $TermFilter;
+    readonly convertibleTermSetProperty?: $CollectionFilter<$TermFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -54770,74 +54976,46 @@ export namespace ConvertibleTypePropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ConvertibleTypePropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ConvertibleTypePropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ConvertibleTypePropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConvertibleTypePropertiesClass",
+  );
+
+  export function isConvertibleTypePropertiesClass(
+    object: $Object,
+  ): object is ConvertibleTypePropertiesClass {
+    switch (object.$type) {
+      case "ConvertibleTypePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ConvertibleTypePropertiesClass";
-    readonly convertibleIriNonEmptySetProperty: readonly {
-      readonly "@id": string;
-    }[];
-    readonly convertibleIriOptionProperty?: { readonly "@id": string };
-    readonly convertibleIriProperty: { readonly "@id": string };
-    readonly convertibleIriSetProperty?: readonly { readonly "@id": string }[];
-    readonly convertibleLiteralNonEmptySetProperty: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-    readonly convertibleLiteralOptionProperty?: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly convertibleLiteralProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly convertibleLiteralSetProperty?: readonly {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    }[];
-    readonly convertibleTermNonEmptySetProperty: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-    readonly convertibleTermOptionProperty?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly convertibleTermProperty:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        };
-    readonly convertibleTermSetProperty?: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@language"?: string;
-          readonly "@type"?: string;
-          readonly "@value": string;
-          readonly termType: "Literal";
-        }
-    )[];
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -55033,28 +55211,6 @@ export namespace ConvertibleTypePropertiesClass {
         .array()
         .default(() => []),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ConvertibleTypePropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ConvertibleTypePropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ConvertibleTypePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -55426,6 +55582,136 @@ export namespace ConvertibleTypePropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ConvertibleTypePropertiesClass"],
+        }),
+      },
+      convertibleIriNonEmptySetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Iri" as const }),
+          minCount: 1,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleIriNonEmptySetProperty",
+        ),
+      },
+      convertibleIriOptionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleIriOptionProperty",
+        ),
+      },
+      convertibleIriProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Iri" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleIriProperty",
+        ),
+      },
+      convertibleIriSetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleIriSetProperty",
+        ),
+      },
+      convertibleLiteralNonEmptySetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Literal" as const }),
+          minCount: 1,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralNonEmptySetProperty",
+        ),
+      },
+      convertibleLiteralOptionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Literal" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralOptionProperty",
+        ),
+      },
+      convertibleLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Literal" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralProperty",
+        ),
+      },
+      convertibleLiteralSetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Literal" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralSetProperty",
+        ),
+      },
+      convertibleTermNonEmptySetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Term" as const }),
+          minCount: 1,
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleTermNonEmptySetProperty",
+        ),
+      },
+      convertibleTermOptionProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Term" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleTermOptionProperty",
+        ),
+      },
+      convertibleTermProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Term" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleTermProperty",
+        ),
+      },
+      convertibleTermSetProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Term" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/convertibleTermSetProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -55909,292 +56195,6 @@ export namespace ConvertibleTypePropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ConvertibleTypePropertiesClass.$Filter,
-    value: ConvertibleTypePropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriNonEmptySetProperty !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
-        filter.convertibleIriNonEmptySetProperty,
-        value.convertibleIriNonEmptySetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriOptionProperty !== undefined &&
-      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
-        filter.convertibleIriOptionProperty,
-        value.convertibleIriOptionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriProperty !== undefined &&
-      !$filterIri(filter.convertibleIriProperty, value.convertibleIriProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleIriSetProperty !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(
-        filter.convertibleIriSetProperty,
-        value.convertibleIriSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralNonEmptySetProperty !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.convertibleLiteralNonEmptySetProperty,
-        value.convertibleLiteralNonEmptySetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralOptionProperty !== undefined &&
-      !$filterMaybe<Literal, $LiteralFilter>($filterLiteral)(
-        filter.convertibleLiteralOptionProperty,
-        value.convertibleLiteralOptionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralProperty !== undefined &&
-      !$filterLiteral(
-        filter.convertibleLiteralProperty,
-        value.convertibleLiteralProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleLiteralSetProperty !== undefined &&
-      !$filterArray<Literal, $LiteralFilter>($filterLiteral)(
-        filter.convertibleLiteralSetProperty,
-        value.convertibleLiteralSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermNonEmptySetProperty !== undefined &&
-      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.convertibleTermNonEmptySetProperty,
-        value.convertibleTermNonEmptySetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermOptionProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.convertibleTermOptionProperty,
-        value.convertibleTermOptionProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermProperty !== undefined &&
-      !$filterTerm(
-        filter.convertibleTermProperty,
-        value.convertibleTermProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.convertibleTermSetProperty !== undefined &&
-      !$filterArray<BlankNode | NamedNode | Literal, $TermFilter>($filterTerm)(
-        filter.convertibleTermSetProperty,
-        value.convertibleTermSetProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$IriFilter>;
-    readonly convertibleIriOptionProperty?: $MaybeFilter<$IriFilter>;
-    readonly convertibleIriProperty?: $IriFilter;
-    readonly convertibleIriSetProperty?: $CollectionFilter<$IriFilter>;
-    readonly convertibleLiteralNonEmptySetProperty?: $CollectionFilter<$LiteralFilter>;
-    readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
-    readonly convertibleLiteralProperty?: $LiteralFilter;
-    readonly convertibleLiteralSetProperty?: $CollectionFilter<$LiteralFilter>;
-    readonly convertibleTermNonEmptySetProperty?: $CollectionFilter<$TermFilter>;
-    readonly convertibleTermOptionProperty?: $MaybeFilter<$TermFilter>;
-    readonly convertibleTermProperty?: $TermFilter;
-    readonly convertibleTermSetProperty?: $CollectionFilter<$TermFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConvertibleTypePropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isConvertibleTypePropertiesClass(
-    object: $Object,
-  ): object is ConvertibleTypePropertiesClass {
-    switch (object.$type) {
-      case "ConvertibleTypePropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ConvertibleTypePropertiesClass"],
-        }),
-      },
-      convertibleIriNonEmptySetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Iri" as const }),
-          minCount: 1,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleIriNonEmptySetProperty",
-        ),
-      },
-      convertibleIriOptionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Iri" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleIriOptionProperty",
-        ),
-      },
-      convertibleIriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Iri" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleIriProperty",
-        ),
-      },
-      convertibleIriSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Iri" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleIriSetProperty",
-        ),
-      },
-      convertibleLiteralNonEmptySetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Literal" as const }),
-          minCount: 1,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleLiteralNonEmptySetProperty",
-        ),
-      },
-      convertibleLiteralOptionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Literal" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleLiteralOptionProperty",
-        ),
-      },
-      convertibleLiteralProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Literal" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleLiteralProperty",
-        ),
-      },
-      convertibleLiteralSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Literal" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleLiteralSetProperty",
-        ),
-      },
-      convertibleTermNonEmptySetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Term" as const }),
-          minCount: 1,
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleTermNonEmptySetProperty",
-        ),
-      },
-      convertibleTermOptionProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Term" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleTermOptionProperty",
-        ),
-      },
-      convertibleTermProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Term" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleTermProperty",
-        ),
-      },
-      convertibleTermSetProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "Term" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://example.com/convertibleTermSetProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Base interface for other node shapes.
  */
@@ -56290,6 +56290,50 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "BaseInterfaceWithProperties"
+      | "BaseInterfaceWithoutProperties"
+      | "ConcreteChildInterface"
+      | "ConcreteParentInterface";
+    readonly baseInterfaceWithPropertiesProperty: string;
+  };
+
+  export function $filter(
+    filter: BaseInterfaceWithPropertiesStatic.$Filter,
+    value: BaseInterfaceWithProperties,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.baseInterfaceWithPropertiesProperty !== undefined &&
+      !$filterString(
+        filter.baseInterfaceWithPropertiesProperty,
+        value.baseInterfaceWithPropertiesProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly baseInterfaceWithPropertiesProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -56322,19 +56366,49 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, BaseInterfaceWithProperties> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseInterfaceWithProperties",
+  );
+
+  export function isBaseInterfaceWithProperties(
+    object: $Object,
+  ): object is BaseInterfaceWithProperties {
+    switch (object.$type) {
+      case "BaseInterfaceWithoutProperties":
+      case "ConcreteChildInterface":
+      case "ConcreteParentInterface":
+      case "BaseInterfaceWithProperties":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type:
-      | "BaseInterfaceWithProperties"
-      | "BaseInterfaceWithoutProperties"
-      | "ConcreteChildInterface"
-      | "ConcreteParentInterface";
-    readonly baseInterfaceWithPropertiesProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -56366,22 +56440,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
     };
   }
 
-  export function $toJson(
-    _baseInterfaceWithProperties: BaseInterfaceWithProperties,
-  ): BaseInterfaceWithPropertiesStatic.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _baseInterfaceWithProperties.$identifier.termType === "BlankNode"
-            ? `_:${_baseInterfaceWithProperties.$identifier.value}`
-            : _baseInterfaceWithProperties.$identifier.value,
-        $type: _baseInterfaceWithProperties.$type,
-        baseInterfaceWithPropertiesProperty:
-          _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
-      } satisfies BaseInterfaceWithPropertiesStatic.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
@@ -56393,28 +56451,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ]),
       baseInterfaceWithPropertiesProperty: z.string(),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, BaseInterfaceWithProperties> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -56508,40 +56544,33 @@ export namespace BaseInterfaceWithPropertiesStatic {
     );
   }
 
-  export function $toRdf(
-    _baseInterfaceWithProperties: BaseInterfaceWithProperties,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _baseInterfaceWithProperties.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/BaseInterfaceWithProperties"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/baseInterfaceWithPropertiesProperty",
-      ),
-      [
-        $literalFactory.string(
-          _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          descendantValues: [
+            "BaseInterfaceWithoutProperties",
+            "ConcreteChildInterface",
+            "ConcreteParentInterface",
+          ],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["BaseInterfaceWithProperties"],
+        }),
+      },
+      baseInterfaceWithPropertiesProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/baseInterfaceWithPropertiesProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -56733,85 +56762,56 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return patterns;
   }
 
-  export function $filter(
-    filter: BaseInterfaceWithPropertiesStatic.$Filter,
-    value: BaseInterfaceWithProperties,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.baseInterfaceWithPropertiesProperty !== undefined &&
-      !$filterString(
-        filter.baseInterfaceWithPropertiesProperty,
-        value.baseInterfaceWithPropertiesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _baseInterfaceWithProperties: BaseInterfaceWithProperties,
+  ): BaseInterfaceWithPropertiesStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _baseInterfaceWithProperties.$identifier.termType === "BlankNode"
+            ? `_:${_baseInterfaceWithProperties.$identifier.value}`
+            : _baseInterfaceWithProperties.$identifier.value,
+        $type: _baseInterfaceWithProperties.$type,
+        baseInterfaceWithPropertiesProperty:
+          _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
+      } satisfies BaseInterfaceWithPropertiesStatic.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly baseInterfaceWithPropertiesProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseInterfaceWithProperties",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isBaseInterfaceWithProperties(
-    object: $Object,
-  ): object is BaseInterfaceWithProperties {
-    switch (object.$type) {
-      case "BaseInterfaceWithoutProperties":
-      case "ConcreteChildInterface":
-      case "ConcreteParentInterface":
-      case "BaseInterfaceWithProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          descendantValues: [
-            "BaseInterfaceWithoutProperties",
-            "ConcreteChildInterface",
-            "ConcreteParentInterface",
-          ],
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BaseInterfaceWithProperties"],
-        }),
-      },
-      baseInterfaceWithPropertiesProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/baseInterfaceWithPropertiesProperty",
-        ),
-      },
+  export function $toRdf(
+    _baseInterfaceWithProperties: BaseInterfaceWithProperties,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _baseInterfaceWithProperties.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/BaseInterfaceWithProperties"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/baseInterfaceWithPropertiesProperty",
+      ),
+      [
+        $literalFactory.string(
+          _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Base interface for other node shapes. Put the base interface with properties above the base interface without.
  */
@@ -56878,6 +56878,29 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
+
+  export function $filter(
+    filter: BaseInterfaceWithoutPropertiesStatic.$Filter,
+    value: BaseInterfaceWithoutProperties,
+  ): boolean {
+    if (!BaseInterfaceWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & BaseInterfaceWithPropertiesStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -56914,48 +56937,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return $propertiesFromJson(json);
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BaseInterfaceWithPropertiesStatic.$jsonUiSchema({ scopePrefix }),
-      ],
-      label: "BaseInterfaceWithoutProperties",
-      type: "Group",
-    };
-  }
-
-  export function $toJson(
-    _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
-  ): BaseInterfaceWithoutPropertiesStatic.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...BaseInterfaceWithPropertiesStatic.$toJson(
-          _baseInterfaceWithoutProperties,
-        ),
-      } satisfies BaseInterfaceWithoutPropertiesStatic.$Json),
-    );
-  }
-
-  export function $jsonZodSchema() {
-    return BaseInterfaceWithPropertiesStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "BaseInterfaceWithoutProperties",
-          "ConcreteChildInterface",
-          "ConcreteParentInterface",
-        ]),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -56976,6 +56957,51 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       preferredLanguages,
       resource,
     });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseInterfaceWithoutProperties",
+  );
+
+  export function isBaseInterfaceWithoutProperties(
+    object: $Object,
+  ): object is BaseInterfaceWithoutProperties {
+    switch (object.$type) {
+      case "ConcreteChildInterface":
+      case "ConcreteParentInterface":
+      case "BaseInterfaceWithoutProperties":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        BaseInterfaceWithPropertiesStatic.$jsonUiSchema({ scopePrefix }),
+      ],
+      label: "BaseInterfaceWithoutProperties",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return BaseInterfaceWithPropertiesStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "BaseInterfaceWithoutProperties",
+          "ConcreteChildInterface",
+          "ConcreteParentInterface",
+        ]),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -57054,36 +57080,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     );
   }
 
-  export function $toRdf(
-    _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = BaseInterfaceWithPropertiesStatic.$toRdf(
-      _baseInterfaceWithoutProperties,
-      {
-        ignoreRdfType: true,
-        graph: options?.graph,
-        resourceSet,
-      },
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/BaseInterfaceWithoutProperties",
-        ),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
+  export const $schema = {
+    properties: { ...BaseInterfaceWithPropertiesStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -57254,47 +57253,48 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return patterns;
   }
 
-  export function $filter(
-    filter: BaseInterfaceWithoutPropertiesStatic.$Filter,
-    value: BaseInterfaceWithoutProperties,
-  ): boolean {
-    if (!BaseInterfaceWithPropertiesStatic.$filter(filter, value)) {
-      return false;
+  export function $toJson(
+    _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
+  ): BaseInterfaceWithoutPropertiesStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...BaseInterfaceWithPropertiesStatic.$toJson(
+          _baseInterfaceWithoutProperties,
+        ),
+      } satisfies BaseInterfaceWithoutPropertiesStatic.$Json),
+    );
+  }
+
+  export function $toRdf(
+    _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = BaseInterfaceWithPropertiesStatic.$toRdf(
+      _baseInterfaceWithoutProperties,
+      {
+        ignoreRdfType: true,
+        graph: options?.graph,
+        resourceSet,
+      },
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/BaseInterfaceWithoutProperties",
+        ),
+        options?.graph,
+      );
     }
-    return true;
+    return resource;
   }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-  } & BaseInterfaceWithPropertiesStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseInterfaceWithoutProperties",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isBaseInterfaceWithoutProperties(
-    object: $Object,
-  ): object is BaseInterfaceWithoutProperties {
-    switch (object.$type) {
-      case "ConcreteChildInterface":
-      case "ConcreteParentInterface":
-      case "BaseInterfaceWithoutProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: { ...BaseInterfaceWithPropertiesStatic.$schema.properties },
-  } as const;
 } /**
  * Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterface.
  */
@@ -57375,6 +57375,41 @@ export namespace ConcreteParentInterfaceStatic {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly concreteParentInterfaceProperty: string;
+  } & BaseInterfaceWithoutPropertiesStatic.$Json;
+
+  export function $filter(
+    filter: ConcreteParentInterfaceStatic.$Filter,
+    value: ConcreteParentInterface,
+  ): boolean {
+    if (!BaseInterfaceWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteParentInterfaceProperty !== undefined &&
+      !$filterString(
+        filter.concreteParentInterfaceProperty,
+        value.concreteParentInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteParentInterfaceProperty?: $StringFilter;
+  } & BaseInterfaceWithoutPropertiesStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -57414,53 +57449,6 @@ export namespace ConcreteParentInterfaceStatic {
     return $propertiesFromJson(json);
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = {
-    readonly concreteParentInterfaceProperty: string;
-  } & BaseInterfaceWithoutPropertiesStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BaseInterfaceWithoutPropertiesStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/concreteParentInterfaceProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteParentInterface",
-      type: "Group",
-    };
-  }
-
-  export function $toJson(
-    _concreteParentInterface: ConcreteParentInterface,
-  ): ConcreteParentInterfaceStatic.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...BaseInterfaceWithoutPropertiesStatic.$toJson(
-          _concreteParentInterface,
-        ),
-        concreteParentInterfaceProperty:
-          _concreteParentInterface.concreteParentInterfaceProperty,
-      } satisfies ConcreteParentInterfaceStatic.$Json),
-    );
-  }
-
-  export function $jsonZodSchema() {
-    return BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
-        concreteParentInterfaceProperty: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -57481,6 +57469,51 @@ export namespace ConcreteParentInterfaceStatic {
       preferredLanguages,
       resource,
     });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteParentInterface",
+  );
+
+  export function isConcreteParentInterface(
+    object: $Object,
+  ): object is ConcreteParentInterface {
+    switch (object.$type) {
+      case "ConcreteChildInterface":
+      case "ConcreteParentInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        BaseInterfaceWithoutPropertiesStatic.$jsonUiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/concreteParentInterfaceProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConcreteParentInterface",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
+        concreteParentInterfaceProperty: z.string(),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -57575,45 +57608,18 @@ export namespace ConcreteParentInterfaceStatic {
     );
   }
 
-  export function $toRdf(
-    _concreteParentInterface: ConcreteParentInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = BaseInterfaceWithoutPropertiesStatic.$toRdf(
-      _concreteParentInterface,
-      {
-        ignoreRdfType: true,
-        graph: options?.graph,
-        resourceSet,
-      },
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ConcreteParentInterface"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/concreteParentInterfaceProperty",
-      ),
-      [
-        $literalFactory.string(
-          _concreteParentInterface.concreteParentInterfaceProperty,
+  export const $schema = {
+    properties: {
+      ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
+      concreteParentInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/concreteParentInterfaceProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -57806,65 +57812,59 @@ export namespace ConcreteParentInterfaceStatic {
     return patterns;
   }
 
-  export function $filter(
-    filter: ConcreteParentInterfaceStatic.$Filter,
-    value: ConcreteParentInterface,
-  ): boolean {
-    if (!BaseInterfaceWithoutPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteParentInterfaceProperty !== undefined &&
-      !$filterString(
-        filter.concreteParentInterfaceProperty,
-        value.concreteParentInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteParentInterfaceProperty?: $StringFilter;
-  } & BaseInterfaceWithoutPropertiesStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParentInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isConcreteParentInterface(
-    object: $Object,
-  ): object is ConcreteParentInterface {
-    switch (object.$type) {
-      case "ConcreteChildInterface":
-      case "ConcreteParentInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
-      concreteParentInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/concreteParentInterfaceProperty",
+  export function $toJson(
+    _concreteParentInterface: ConcreteParentInterface,
+  ): ConcreteParentInterfaceStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...BaseInterfaceWithoutPropertiesStatic.$toJson(
+          _concreteParentInterface,
         ),
-      },
+        concreteParentInterfaceProperty:
+          _concreteParentInterface.concreteParentInterfaceProperty,
+      } satisfies ConcreteParentInterfaceStatic.$Json),
+    );
+  }
+
+  export function $toRdf(
+    _concreteParentInterface: ConcreteParentInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = BaseInterfaceWithoutPropertiesStatic.$toRdf(
+      _concreteParentInterface,
+      {
+        ignoreRdfType: true,
+        graph: options?.graph,
+        resourceSet,
+      },
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ConcreteParentInterface"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/concreteParentInterfaceProperty",
+      ),
+      [
+        $literalFactory.string(
+          _concreteParentInterface.concreteParentInterfaceProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Child interface of ConcreteParentInterface. Should inherit properties and node kinds.
  */
@@ -57944,6 +57944,41 @@ export namespace ConcreteChildInterface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly concreteChildInterfaceProperty: string;
+  } & ConcreteParentInterfaceStatic.$Json;
+
+  export function $filter(
+    filter: ConcreteChildInterface.$Filter,
+    value: ConcreteChildInterface,
+  ): boolean {
+    if (!ConcreteParentInterfaceStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteChildInterfaceProperty !== undefined &&
+      !$filterString(
+        filter.concreteChildInterfaceProperty,
+        value.concreteChildInterfaceProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteChildInterfaceProperty?: $StringFilter;
+  } & ConcreteParentInterfaceStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -57981,51 +58016,6 @@ export namespace ConcreteChildInterface {
     return $propertiesFromJson(json);
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export type $Json = {
-    readonly concreteChildInterfaceProperty: string;
-  } & ConcreteParentInterfaceStatic.$Json;
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ConcreteParentInterfaceStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/concreteChildInterfaceProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteChildInterface",
-      type: "Group",
-    };
-  }
-
-  export function $toJson(
-    _concreteChildInterface: ConcreteChildInterface,
-  ): ConcreteChildInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...ConcreteParentInterfaceStatic.$toJson(_concreteChildInterface),
-        concreteChildInterfaceProperty:
-          _concreteChildInterface.concreteChildInterfaceProperty,
-      } satisfies ConcreteChildInterface.$Json),
-    );
-  }
-
-  export function $jsonZodSchema() {
-    return ConcreteParentInterfaceStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ConcreteChildInterface"),
-        concreteChildInterfaceProperty: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -58046,6 +58036,50 @@ export namespace ConcreteChildInterface {
       preferredLanguages,
       resource,
     });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteChildInterface",
+  );
+
+  export function isConcreteChildInterface(
+    object: $Object,
+  ): object is ConcreteChildInterface {
+    switch (object.$type) {
+      case "ConcreteChildInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $jsonSchema() {
+    return z.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ConcreteParentInterfaceStatic.$jsonUiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/concreteChildInterfaceProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConcreteChildInterface",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return ConcreteParentInterfaceStatic.$jsonZodSchema().merge(
+      z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ConcreteChildInterface"),
+        concreteChildInterfaceProperty: z.string(),
+      }),
+    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf(
@@ -58137,45 +58171,18 @@ export namespace ConcreteChildInterface {
     );
   }
 
-  export function $toRdf(
-    _concreteChildInterface: ConcreteChildInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = ConcreteParentInterfaceStatic.$toRdf(
-      _concreteChildInterface,
-      {
-        ignoreRdfType: true,
-        graph: options?.graph,
-        resourceSet,
-      },
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ConcreteChildInterface"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode(
-        "http://example.com/concreteChildInterfaceProperty",
-      ),
-      [
-        $literalFactory.string(
-          _concreteChildInterface.concreteChildInterfaceProperty,
+  export const $schema = {
+    properties: {
+      ...ConcreteParentInterfaceStatic.$schema.properties,
+      concreteChildInterfaceProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/concreteChildInterfaceProperty",
         ),
-      ],
-      options?.graph,
-    );
-    return resource;
-  }
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -58354,64 +58361,57 @@ export namespace ConcreteChildInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: ConcreteChildInterface.$Filter,
-    value: ConcreteChildInterface,
-  ): boolean {
-    if (!ConcreteParentInterfaceStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteChildInterfaceProperty !== undefined &&
-      !$filterString(
-        filter.concreteChildInterfaceProperty,
-        value.concreteChildInterfaceProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _concreteChildInterface: ConcreteChildInterface,
+  ): ConcreteChildInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...ConcreteParentInterfaceStatic.$toJson(_concreteChildInterface),
+        concreteChildInterfaceProperty:
+          _concreteChildInterface.concreteChildInterfaceProperty,
+      } satisfies ConcreteChildInterface.$Json),
+    );
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteChildInterfaceProperty?: $StringFilter;
-  } & ConcreteParentInterfaceStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChildInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isConcreteChildInterface(
-    object: $Object,
-  ): object is ConcreteChildInterface {
-    switch (object.$type) {
-      case "ConcreteChildInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...ConcreteParentInterfaceStatic.$schema.properties,
-      concreteChildInterfaceProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/concreteChildInterfaceProperty",
-        ),
-      },
+  export function $toRdf(
+    _concreteChildInterface: ConcreteChildInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = ConcreteParentInterfaceStatic.$toRdf(
+      _concreteChildInterface,
+      {
+        ignoreRdfType: true,
+        graph: options?.graph,
+        resourceSet,
+      },
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ConcreteChildInterface"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/concreteChildInterfaceProperty",
+      ),
+      [
+        $literalFactory.string(
+          _concreteChildInterface.concreteChildInterfaceProperty,
+        ),
+      ],
+      options?.graph,
+    );
+    return resource;
+  }
 } /**
  * Node shape that serves as an abstract base class for child node shapes.
  *
@@ -58560,6 +58560,46 @@ export abstract class AbstractBaseClassWithProperties {
 }
 
 export namespace AbstractBaseClassWithPropertiesStatic {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
+    readonly abstractBaseClassWithPropertiesProperty: string;
+  };
+
+  export function $filter(
+    filter: AbstractBaseClassWithPropertiesStatic.$Filter,
+    value: AbstractBaseClassWithProperties,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.abstractBaseClassWithPropertiesProperty !== undefined &&
+      !$filterString(
+        filter.abstractBaseClassWithPropertiesProperty,
+        value.abstractBaseClassWithPropertiesProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassWithPropertiesProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -58580,15 +58620,21 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     return Right({ $identifier, abstractBaseClassWithPropertiesProperty });
   }
 
+  export function isAbstractBaseClassWithProperties(
+    object: $Object,
+  ): object is AbstractBaseClassWithProperties {
+    switch (object.$type) {
+      case "ConcreteChildClass":
+      case "ConcreteParentClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
-    readonly abstractBaseClassWithPropertiesProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -58668,6 +58714,33 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefix" as const,
+        type: () => ({ kind: "String" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          descendantValues: ["ConcreteChildClass", "ConcreteParentClass"],
+          kind: "TypeDiscriminant" as const,
+        }),
+      },
+      abstractBaseClassWithPropertiesProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/abstractBaseClassWithPropertiesProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -58788,79 +58861,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: AbstractBaseClassWithPropertiesStatic.$Filter,
-    value: AbstractBaseClassWithProperties,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.abstractBaseClassWithPropertiesProperty !== undefined &&
-      !$filterString(
-        filter.abstractBaseClassWithPropertiesProperty,
-        value.abstractBaseClassWithPropertiesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly abstractBaseClassWithPropertiesProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isAbstractBaseClassWithProperties(
-    object: $Object,
-  ): object is AbstractBaseClassWithProperties {
-    switch (object.$type) {
-      case "ConcreteChildClass":
-      case "ConcreteParentClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          descendantValues: ["ConcreteChildClass", "ConcreteParentClass"],
-          kind: "TypeDiscriminant" as const,
-        }),
-      },
-      abstractBaseClassWithPropertiesProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/abstractBaseClassWithPropertiesProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
  */
@@ -58916,6 +58916,29 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 }
 
 export namespace AbstractBaseClassWithoutPropertiesStatic {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
+
+  export function $filter(
+    filter: AbstractBaseClassWithoutPropertiesStatic.$Filter,
+    value: AbstractBaseClassWithoutProperties,
+  ): boolean {
+    if (!AbstractBaseClassWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & AbstractBaseClassWithPropertiesStatic.$Filter;
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -58942,11 +58965,21 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     }));
   }
 
+  export function isAbstractBaseClassWithoutProperties(
+    object: $Object,
+  ): object is AbstractBaseClassWithoutProperties {
+    switch (object.$type) {
+      case "ConcreteChildClass":
+      case "ConcreteParentClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -58995,6 +59028,10 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         .map(($identifier) => ({ ...$super0, $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: { ...AbstractBaseClassWithPropertiesStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -59095,43 +59132,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: AbstractBaseClassWithoutPropertiesStatic.$Filter,
-    value: AbstractBaseClassWithoutProperties,
-  ): boolean {
-    if (!AbstractBaseClassWithPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-  } & AbstractBaseClassWithPropertiesStatic.$Filter;
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isAbstractBaseClassWithoutProperties(
-    object: $Object,
-  ): object is AbstractBaseClassWithoutProperties {
-    switch (object.$type) {
-      case "ConcreteChildClass":
-      case "ConcreteParentClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: { ...AbstractBaseClassWithPropertiesStatic.$schema.properties },
-  } as const;
 } /**
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.
  */
@@ -59239,6 +59239,41 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 }
 
 export namespace ConcreteParentClassStatic {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly concreteParentClassProperty: string;
+  } & AbstractBaseClassWithoutPropertiesStatic.$Json;
+
+  export function $filter(
+    filter: ConcreteParentClassStatic.$Filter,
+    value: ConcreteParentClass,
+  ): boolean {
+    if (!AbstractBaseClassWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteParentClassProperty !== undefined &&
+      !$filterString(
+        filter.concreteParentClassProperty,
+        value.concreteParentClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteParentClassProperty?: $StringFilter;
+  } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -59277,13 +59312,47 @@ export namespace ConcreteParentClassStatic {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ConcreteParentClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ConcreteParentClassStatic.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ConcreteParentClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteParentClass",
+  );
+
+  export function isConcreteParentClass(
+    object: $Object,
+  ): object is ConcreteParentClass {
+    switch (object.$type) {
+      case "ConcreteChildClass":
+      case "ConcreteParentClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly concreteParentClassProperty: string;
-  } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -59308,28 +59377,6 @@ export namespace ConcreteParentClassStatic {
         concreteParentClassProperty: z.string(),
       }),
     ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ConcreteParentClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ConcreteParentClassStatic.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ConcreteParentClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -59416,6 +59463,19 @@ export namespace ConcreteParentClassStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
+      concreteParentClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/concreteParentClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -59605,66 +59665,6 @@ export namespace ConcreteParentClassStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ConcreteParentClassStatic.$Filter,
-    value: ConcreteParentClass,
-  ): boolean {
-    if (!AbstractBaseClassWithoutPropertiesStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteParentClassProperty !== undefined &&
-      !$filterString(
-        filter.concreteParentClassProperty,
-        value.concreteParentClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteParentClassProperty?: $StringFilter;
-  } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParentClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isConcreteParentClass(
-    object: $Object,
-  ): object is ConcreteParentClass {
-    switch (object.$type) {
-      case "ConcreteChildClass":
-      case "ConcreteParentClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
-      concreteParentClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/concreteParentClassProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.
  */
@@ -59771,6 +59771,41 @@ export class ConcreteChildClass extends ConcreteParentClass {
 }
 
 export namespace ConcreteChildClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly concreteChildClassProperty: string;
+  } & ConcreteParentClassStatic.$Json;
+
+  export function $filter(
+    filter: ConcreteChildClass.$Filter,
+    value: ConcreteChildClass,
+  ): boolean {
+    if (!ConcreteParentClassStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.concreteChildClassProperty !== undefined &&
+      !$filterString(
+        filter.concreteChildClassProperty,
+        value.concreteChildClassProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly concreteChildClassProperty?: $StringFilter;
+  } & ConcreteParentClassStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -59807,13 +59842,46 @@ export namespace ConcreteChildClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ConcreteChildClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ConcreteChildClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ConcreteChildClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteChildClass",
+  );
+
+  export function isConcreteChildClass(
+    object: $Object,
+  ): object is ConcreteChildClass {
+    switch (object.$type) {
+      case "ConcreteChildClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly concreteChildClassProperty: string;
-  } & ConcreteParentClassStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -59838,28 +59906,6 @@ export namespace ConcreteChildClass {
         concreteChildClassProperty: z.string(),
       }),
     ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ConcreteChildClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ConcreteChildClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ConcreteChildClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -59943,6 +59989,19 @@ export namespace ConcreteChildClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ConcreteParentClassStatic.$schema.properties,
+      concreteChildClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/concreteChildClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -60116,65 +60175,6 @@ export namespace ConcreteChildClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ConcreteChildClass.$Filter,
-    value: ConcreteChildClass,
-  ): boolean {
-    if (!ConcreteParentClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.concreteChildClassProperty !== undefined &&
-      !$filterString(
-        filter.concreteChildClassProperty,
-        value.concreteChildClassProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteChildClassProperty?: $StringFilter;
-  } & ConcreteParentClassStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChildClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isConcreteChildClass(
-    object: $Object,
-  ): object is ConcreteChildClass {
-    switch (object.$type) {
-      case "ConcreteChildClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...ConcreteParentClassStatic.$schema.properties,
-      concreteChildClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/concreteChildClassProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export abstract class ClassUnionMemberCommonParent {
   protected _$identifier?: ClassUnionMemberCommonParentStatic.$Identifier;
@@ -60293,6 +60293,46 @@ export abstract class ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMemberCommonParentStatic {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
+    readonly classUnionMemberCommonParentProperty: string;
+  };
+
+  export function $filter(
+    filter: ClassUnionMemberCommonParentStatic.$Filter,
+    value: ClassUnionMemberCommonParent,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.classUnionMemberCommonParentProperty !== undefined &&
+      !$filterString(
+        filter.classUnionMemberCommonParentProperty,
+        value.classUnionMemberCommonParentProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMemberCommonParentProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -60313,15 +60353,21 @@ export namespace ClassUnionMemberCommonParentStatic {
     return Right({ $identifier, classUnionMemberCommonParentProperty });
   }
 
+  export function isClassUnionMemberCommonParent(
+    object: $Object,
+  ): object is ClassUnionMemberCommonParent {
+    switch (object.$type) {
+      case "ClassUnionMember1":
+      case "ClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
-    readonly classUnionMemberCommonParentProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -60401,6 +60447,29 @@ export namespace ClassUnionMemberCommonParentStatic {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          descendantValues: ["ClassUnionMember1", "ClassUnionMember2"],
+          kind: "TypeDiscriminant" as const,
+        }),
+      },
+      classUnionMemberCommonParentProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -60519,75 +60588,6 @@ export namespace ClassUnionMemberCommonParentStatic {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ClassUnionMemberCommonParentStatic.$Filter,
-    value: ClassUnionMemberCommonParent,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.classUnionMemberCommonParentProperty !== undefined &&
-      !$filterString(
-        filter.classUnionMemberCommonParentProperty,
-        value.classUnionMemberCommonParentProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly classUnionMemberCommonParentProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isClassUnionMemberCommonParent(
-    object: $Object,
-  ): object is ClassUnionMemberCommonParent {
-    switch (object.$type) {
-      case "ClassUnionMember1":
-      case "ClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          descendantValues: ["ClassUnionMember1", "ClassUnionMember2"],
-          kind: "TypeDiscriminant" as const,
-        }),
-      },
-      classUnionMemberCommonParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/classUnionMemberCommonParentProperty",
-        ),
-      },
-    },
-  } as const;
 }
 export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
   override readonly $type: "ClassUnionMember2" = "ClassUnionMember2" as const;
@@ -60682,6 +60682,41 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember2 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly classUnionMember2Property: string;
+  } & ClassUnionMemberCommonParentStatic.$Json;
+
+  export function $filter(
+    filter: ClassUnionMember2.$Filter,
+    value: ClassUnionMember2,
+  ): boolean {
+    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.classUnionMember2Property !== undefined &&
+      !$filterString(
+        filter.classUnionMember2Property,
+        value.classUnionMember2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMember2Property?: $StringFilter;
+  } & ClassUnionMemberCommonParentStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -60717,13 +60752,46 @@ export namespace ClassUnionMember2 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ClassUnionMember2> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassUnionMember2.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ClassUnionMember2(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember2",
+  );
+
+  export function isClassUnionMember2(
+    object: $Object,
+  ): object is ClassUnionMember2 {
+    switch (object.$type) {
+      case "ClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly classUnionMember2Property: string;
-  } & ClassUnionMemberCommonParentStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -60748,28 +60816,6 @@ export namespace ClassUnionMember2 {
         classUnionMember2Property: z.string(),
       }),
     ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ClassUnionMember2> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ClassUnionMember2.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf(
@@ -60853,6 +60899,19 @@ export namespace ClassUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ClassUnionMemberCommonParentStatic.$schema.properties,
+      classUnionMember2Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -61026,65 +61085,6 @@ export namespace ClassUnionMember2 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ClassUnionMember2.$Filter,
-    value: ClassUnionMember2,
-  ): boolean {
-    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.classUnionMember2Property !== undefined &&
-      !$filterString(
-        filter.classUnionMember2Property,
-        value.classUnionMember2Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly classUnionMember2Property?: $StringFilter;
-  } & ClassUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember2",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isClassUnionMember2(
-    object: $Object,
-  ): object is ClassUnionMember2 {
-    switch (object.$type) {
-      case "ClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...ClassUnionMemberCommonParentStatic.$schema.properties,
-      classUnionMember2Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/classUnionMember2Property",
-        ),
-      },
-    },
-  } as const;
 }
 export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
   override readonly $type: "ClassUnionMember1" = "ClassUnionMember1" as const;
@@ -61179,6 +61179,41 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember1 {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly classUnionMember1Property: string;
+  } & ClassUnionMemberCommonParentStatic.$Json;
+
+  export function $filter(
+    filter: ClassUnionMember1.$Filter,
+    value: ClassUnionMember1,
+  ): boolean {
+    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.classUnionMember1Property !== undefined &&
+      !$filterString(
+        filter.classUnionMember1Property,
+        value.classUnionMember1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMember1Property?: $StringFilter;
+  } & ClassUnionMemberCommonParentStatic.$Filter;
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -61214,13 +61249,46 @@ export namespace ClassUnionMember1 {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ClassUnionMember1> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassUnionMember1.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ClassUnionMember1(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassUnionMember1",
+  );
+
+  export function isClassUnionMember1(
+    object: $Object,
+  ): object is ClassUnionMember1 {
+    switch (object.$type) {
+      case "ClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly classUnionMember1Property: string;
-  } & ClassUnionMemberCommonParentStatic.$Json;
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -61245,28 +61313,6 @@ export namespace ClassUnionMember1 {
         classUnionMember1Property: z.string(),
       }),
     ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ClassUnionMember1> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ClassUnionMember1.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf(
@@ -61350,6 +61396,19 @@ export namespace ClassUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ClassUnionMemberCommonParentStatic.$schema.properties,
+      classUnionMember1Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -61523,65 +61582,6 @@ export namespace ClassUnionMember1 {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ClassUnionMember1.$Filter,
-    value: ClassUnionMember1,
-  ): boolean {
-    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.classUnionMember1Property !== undefined &&
-      !$filterString(
-        filter.classUnionMember1Property,
-        value.classUnionMember1Property,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly classUnionMember1Property?: $StringFilter;
-  } & ClassUnionMemberCommonParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassUnionMember1",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isClassUnionMember1(
-    object: $Object,
-  ): object is ClassUnionMember1 {
-    switch (object.$type) {
-      case "ClassUnionMember1":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      ...ClassUnionMemberCommonParentStatic.$schema.properties,
-      classUnionMember1Property: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/classUnionMember1Property",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Node shape that isn't an rdfs:Class.
  */
@@ -61698,6 +61698,40 @@ export class NonClass {
 }
 
 export namespace NonClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NonClass";
+    readonly nonClassProperty: string;
+  };
+
+  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.nonClassProperty !== undefined &&
+      !$filterString(filter.nonClassProperty, value.nonClassProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly nonClassProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -61722,15 +61756,40 @@ export namespace NonClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, NonClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NonClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NonClass(properties));
+  }
+
+  export function isNonClass(object: $Object): object is NonClass {
+    switch (object.$type) {
+      case "NonClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "NonClass";
-    readonly nonClassProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -61770,28 +61829,6 @@ export namespace NonClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NonClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NonClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new NonClass(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<
@@ -61825,6 +61862,27 @@ export namespace NonClass {
         }).map((nonClassProperty) => ({ $identifier, nonClassProperty })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["NonClass"],
+        }),
+      },
+      nonClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode("http://example.com/nonClassProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -61938,64 +61996,6 @@ export namespace NonClass {
     );
     return patterns;
   }
-
-  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.nonClassProperty !== undefined &&
-      !$filterString(filter.nonClassProperty, value.nonClassProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly nonClassProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isNonClass(object: $Object): object is NonClass {
-    switch (object.$type) {
-      case "NonClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NonClass"],
-        }),
-      },
-      nonClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/nonClassProperty"),
-      },
-    },
-  } as const;
 } /**
  * Node shape used as a partial by LazyPropertiesClass
  */
@@ -62113,6 +62113,46 @@ export class PartialClass {
 }
 
 export namespace PartialClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PartialClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $filter(
+    filter: PartialClass.$Filter,
+    value: PartialClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.lazilyResolvedStringProperty !== undefined &&
+      !$filterString(
+        filter.lazilyResolvedStringProperty,
+        value.lazilyResolvedStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
+  };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -62138,15 +62178,40 @@ export namespace PartialClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, PartialClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return PartialClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PartialClass(properties));
+  }
+
+  export function isPartialClass(object: $Object): object is PartialClass {
+    switch (object.$type) {
+      case "PartialClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PartialClass";
-    readonly lazilyResolvedStringProperty: string;
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -62186,28 +62251,6 @@ export namespace PartialClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PartialClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PartialClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PartialClass(properties));
-  }
-
   export function $propertiesFromRdf(
     $parameters: $PropertiesFromRdfParameters,
   ): Either<
@@ -62244,6 +62287,29 @@ export namespace PartialClass {
         })),
       );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["PartialClass"],
+        }),
+      },
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -62357,72 +62423,6 @@ export namespace PartialClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: PartialClass.$Filter,
-    value: PartialClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.lazilyResolvedStringProperty !== undefined &&
-      !$filterString(
-        filter.lazilyResolvedStringProperty,
-        value.lazilyResolvedStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly lazilyResolvedStringProperty?: $StringFilter;
-  };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isPartialClass(object: $Object): object is PartialClass {
-    switch (object.$type) {
-      case "PartialClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PartialClass"],
-        }),
-      },
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 } /**
  * Shape with properties that are not nested objects
  */
@@ -62762,6 +62762,88 @@ export class ClassPropertiesClass {
 }
 
 export namespace ClassPropertiesClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ClassPropertiesClass";
+    readonly iriClassProperty?: { readonly "@id": string };
+    readonly multiClassProperty?: { readonly "@id": string };
+    readonly nodeClassProperty1?: NonClass.$Json;
+    readonly nodeClassProperty2?: PartialClass.$Json;
+    readonly singleClassProperty?: { readonly "@id": string };
+  };
+
+  export function $filter(
+    filter: ClassPropertiesClass.$Filter,
+    value: ClassPropertiesClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    if (
+      filter.iriClassProperty !== undefined &&
+      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
+        filter.iriClassProperty,
+        value.iriClassProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.multiClassProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.multiClassProperty, value.multiClassProperty)
+    ) {
+      return false;
+    }
+    if (
+      filter.nodeClassProperty1 !== undefined &&
+      !$filterMaybe<NonClass, NonClass.$Filter>(NonClass.$filter)(
+        filter.nodeClassProperty1,
+        value.nodeClassProperty1,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.nodeClassProperty2 !== undefined &&
+      !$filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
+        filter.nodeClassProperty2,
+        value.nodeClassProperty2,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.singleClassProperty !== undefined &&
+      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
+        $filterIdentifier,
+      )(filter.singleClassProperty, value.singleClassProperty)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly iriClassProperty?: $MaybeFilter<$IriFilter>;
+    readonly multiClassProperty?: $MaybeFilter<$IdentifierFilter>;
+    readonly nodeClassProperty1?: $MaybeFilter<NonClass.$Filter>;
+    readonly nodeClassProperty2?: $MaybeFilter<PartialClass.$Filter>;
+    readonly singleClassProperty?: $MaybeFilter<$IdentifierFilter>;
+  };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -62822,19 +62904,46 @@ export namespace ClassPropertiesClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, ClassPropertiesClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassPropertiesClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ClassPropertiesClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassPropertiesClass",
+  );
+
+  export function isClassPropertiesClass(
+    object: $Object,
+  ): object is ClassPropertiesClass {
+    switch (object.$type) {
+      case "ClassPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ClassPropertiesClass";
-    readonly iriClassProperty?: { readonly "@id": string };
-    readonly multiClassProperty?: { readonly "@id": string };
-    readonly nodeClassProperty1?: NonClass.$Json;
-    readonly nodeClassProperty2?: PartialClass.$Json;
-    readonly singleClassProperty?: { readonly "@id": string };
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -62913,28 +63022,6 @@ export namespace ClassPropertiesClass {
           "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
         ),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, ClassPropertiesClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ClassPropertiesClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new ClassPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -63133,6 +63220,59 @@ export namespace ClassPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassPropertiesClass"],
+        }),
+      },
+      iriClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/iriClassProperty"),
+      },
+      multiClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Identifier" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/multiClassProperty"),
+      },
+      nodeClassProperty1: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "Maybe" as const, item: () => NonClass.$schema }),
+        path: dataFactory.namedNode("http://example.com/nodeClassProperty1"),
+      },
+      nodeClassProperty2: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => PartialClass.$schema,
+        }),
+        path: dataFactory.namedNode("http://example.com/nodeClassProperty2"),
+      },
+      singleClassProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "Identifier" as const }),
+        }),
+        path: dataFactory.namedNode("http://example.com/singleClassProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -63500,146 +63640,6 @@ export namespace ClassPropertiesClass {
     );
     return patterns;
   }
-
-  export function $filter(
-    filter: ClassPropertiesClass.$Filter,
-    value: ClassPropertiesClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.iriClassProperty !== undefined &&
-      !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
-        filter.iriClassProperty,
-        value.iriClassProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.multiClassProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.multiClassProperty, value.multiClassProperty)
-    ) {
-      return false;
-    }
-    if (
-      filter.nodeClassProperty1 !== undefined &&
-      !$filterMaybe<NonClass, NonClass.$Filter>(NonClass.$filter)(
-        filter.nodeClassProperty1,
-        value.nodeClassProperty1,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nodeClassProperty2 !== undefined &&
-      !$filterMaybe<PartialClass, PartialClass.$Filter>(PartialClass.$filter)(
-        filter.nodeClassProperty2,
-        value.nodeClassProperty2,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.singleClassProperty !== undefined &&
-      !$filterMaybe<BlankNode | NamedNode, $IdentifierFilter>(
-        $filterIdentifier,
-      )(filter.singleClassProperty, value.singleClassProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly iriClassProperty?: $MaybeFilter<$IriFilter>;
-    readonly multiClassProperty?: $MaybeFilter<$IdentifierFilter>;
-    readonly nodeClassProperty1?: $MaybeFilter<NonClass.$Filter>;
-    readonly nodeClassProperty2?: $MaybeFilter<PartialClass.$Filter>;
-    readonly singleClassProperty?: $MaybeFilter<$IdentifierFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ClassPropertiesClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isClassPropertiesClass(
-    object: $Object,
-  ): object is ClassPropertiesClass {
-    switch (object.$type) {
-      case "ClassPropertiesClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ClassPropertiesClass"],
-        }),
-      },
-      iriClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Iri" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/iriClassProperty"),
-      },
-      multiClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Identifier" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/multiClassProperty"),
-      },
-      nodeClassProperty1: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "Maybe" as const, item: () => NonClass.$schema }),
-        path: dataFactory.namedNode("http://example.com/nodeClassProperty1"),
-      },
-      nodeClassProperty2: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => PartialClass.$schema,
-        }),
-        path: dataFactory.namedNode("http://example.com/nodeClassProperty2"),
-      },
-      singleClassProperty: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "Identifier" as const }),
-        }),
-        path: dataFactory.namedNode("http://example.com/singleClassProperty"),
-      },
-    },
-  } as const;
 } /**
  * Node shape that can have a blank node or IRI as an identifier
  */
@@ -63712,6 +63712,33 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeOrIriIdentifierInterface";
+  };
+
+  export function $filter(
+    filter: BlankNodeOrIriIdentifierInterface.$Filter,
+    value: BlankNodeOrIriIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
@@ -63737,14 +63764,46 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, BlankNodeOrIriIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeOrIriIdentifierInterface",
+  );
+
+  export function isBlankNodeOrIriIdentifierInterface(
+    object: $Object,
+  ): object is BlankNodeOrIriIdentifierInterface {
+    switch (object.$type) {
+      case "BlankNodeOrIriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeOrIriIdentifierInterface";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -63772,48 +63831,11 @@ export namespace BlankNodeOrIriIdentifierInterface {
     };
   }
 
-  export function $toJson(
-    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
-  ): BlankNodeOrIriIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _blankNodeOrIriIdentifierInterface.$identifier.termType ===
-          "BlankNode"
-            ? `_:${_blankNodeOrIriIdentifierInterface.$identifier.value}`
-            : _blankNodeOrIriIdentifierInterface.$identifier.value,
-        $type: _blankNodeOrIriIdentifierInterface.$type,
-      } satisfies BlankNodeOrIriIdentifierInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("BlankNodeOrIriIdentifierInterface"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, BlankNodeOrIriIdentifierInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -63880,31 +63902,21 @@ export namespace BlankNodeOrIriIdentifierInterface {
     );
   }
 
-  export function $toRdf(
-    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["BlankNodeOrIriIdentifierInterface"],
+        }),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _blankNodeOrIriIdentifierInterface.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/BlankNodeOrIriIdentifierInterface",
-        ),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -64057,58 +64069,46 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: BlankNodeOrIriIdentifierInterface.$Filter,
-    value: BlankNodeOrIriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+  ): BlankNodeOrIriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _blankNodeOrIriIdentifierInterface.$identifier.termType ===
+          "BlankNode"
+            ? `_:${_blankNodeOrIriIdentifierInterface.$identifier.value}`
+            : _blankNodeOrIriIdentifierInterface.$identifier.value,
+        $type: _blankNodeOrIriIdentifierInterface.$type,
+      } satisfies BlankNodeOrIriIdentifierInterface.$Json),
+    );
   }
 
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeOrIriIdentifierInterface",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isBlankNodeOrIriIdentifierInterface(
-    object: $Object,
-  ): object is BlankNodeOrIriIdentifierInterface {
-    switch (object.$type) {
-      case "BlankNodeOrIriIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BlankNodeOrIriIdentifierInterface"],
-        }),
-      },
+  export function $toRdf(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _blankNodeOrIriIdentifierInterface.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/BlankNodeOrIriIdentifierInterface",
+        ),
+        options?.graph,
+      );
+    }
+    return resource;
+  }
 } /**
  * Node shape that can have a blank node or IRI as an identifier
  */
@@ -64213,6 +64213,33 @@ export class BlankNodeOrIriIdentifierClass {
 }
 
 export namespace BlankNodeOrIriIdentifierClass {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeOrIriIdentifierClass";
+  };
+
+  export function $filter(
+    filter: BlankNodeOrIriIdentifierClass.$Filter,
+    value: BlankNodeOrIriIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode | NamedNode }> {
@@ -64235,14 +64262,46 @@ export namespace BlankNodeOrIriIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, BlankNodeOrIriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BlankNodeOrIriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new BlankNodeOrIriIdentifierClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeOrIriIdentifierClass",
+  );
+
+  export function isBlankNodeOrIriIdentifierClass(
+    object: $Object,
+  ): object is BlankNodeOrIriIdentifierClass {
+    switch (object.$type) {
+      case "BlankNodeOrIriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeOrIriIdentifierClass";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -64275,28 +64334,6 @@ export namespace BlankNodeOrIriIdentifierClass {
       "@id": z.string().min(1),
       $type: z.literal("BlankNodeOrIriIdentifierClass"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, BlankNodeOrIriIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BlankNodeOrIriIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new BlankNodeOrIriIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -64347,6 +64384,22 @@ export namespace BlankNodeOrIriIdentifierClass {
         .map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["BlankNodeOrIriIdentifierClass"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -64498,59 +64551,6 @@ export namespace BlankNodeOrIriIdentifierClass {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: BlankNodeOrIriIdentifierClass.$Filter,
-    value: BlankNodeOrIriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeOrIriIdentifierClass",
-  );
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isBlankNodeOrIriIdentifierClass(
-    object: $Object,
-  ): object is BlankNodeOrIriIdentifierClass {
-    switch (object.$type) {
-      case "BlankNodeOrIriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BlankNodeOrIriIdentifierClass"],
-        }),
-      },
-    },
-  } as const;
 } /**
  * Node shape that can only have a blank node as an identifier
  */
@@ -64621,6 +64621,33 @@ export namespace BlankNodeIdentifierInterface {
     return _hasher;
   }
 
+  export type $Identifier = BlankNode;
+
+  export namespace $Identifier {
+    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeIdentifierInterface";
+  };
+
+  export function $filter(
+    filter: BlankNodeIdentifierInterface.$Filter,
+    value: BlankNodeIdentifierInterface,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterBlankNode(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<
@@ -64643,14 +64670,46 @@ export namespace BlankNodeIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, BlankNodeIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BlankNodeIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeIdentifierInterface",
+  );
+
+  export function isBlankNodeIdentifierInterface(
+    object: $Object,
+  ): object is BlankNodeIdentifierInterface {
+    switch (object.$type) {
+      case "BlankNodeIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeIdentifierInterface";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -64678,44 +64737,11 @@ export namespace BlankNodeIdentifierInterface {
     };
   }
 
-  export function $toJson(
-    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
-  ): BlankNodeIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": `_:${_blankNodeIdentifierInterface.$identifier.value}`,
-        $type: _blankNodeIdentifierInterface.$type,
-      } satisfies BlankNodeIdentifierInterface.$Json),
-    );
-  }
-
   export function $jsonZodSchema() {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("BlankNodeIdentifierInterface"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, BlankNodeIdentifierInterface> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BlankNodeIdentifierInterface.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
   }
 
   export function $propertiesFromRdf(
@@ -64777,31 +64803,21 @@ export namespace BlankNodeIdentifierInterface {
     );
   }
 
-  export function $toRdf(
-    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "BlankNode" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["BlankNodeIdentifierInterface"],
+        }),
+      },
     },
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
-    const resource = resourceSet.resource(
-      _blankNodeIdentifierInterface.$identifier,
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode(
-          "http://example.com/BlankNodeIdentifierInterface",
-        ),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -64954,58 +64970,42 @@ export namespace BlankNodeIdentifierInterface {
     return patterns;
   }
 
-  export function $filter(
-    filter: BlankNodeIdentifierInterface.$Filter,
-    value: BlankNodeIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
+  export function $toJson(
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+  ): BlankNodeIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id": `_:${_blankNodeIdentifierInterface.$identifier.value}`,
+        $type: _blankNodeIdentifierInterface.$type,
+      } satisfies BlankNodeIdentifierInterface.$Json),
+    );
   }
 
-  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeIdentifierInterface",
-  );
-
-  export type $Identifier = BlankNode;
-
-  export namespace $Identifier {
-    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isBlankNodeIdentifierInterface(
-    object: $Object,
-  ): object is BlankNodeIdentifierInterface {
-    switch (object.$type) {
-      case "BlankNodeIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "BlankNode" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BlankNodeIdentifierInterface"],
-        }),
-      },
+  export function $toRdf(
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
     },
-  } as const;
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+    const resource = resourceSet.resource(
+      _blankNodeIdentifierInterface.$identifier,
+    );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/BlankNodeIdentifierInterface",
+        ),
+        options?.graph,
+      );
+    }
+    return resource;
+  }
 } /**
  * Node shape that can only have a blank node as an identifier
  */
@@ -65106,6 +65106,33 @@ export class BlankNodeIdentifierClass {
 }
 
 export namespace BlankNodeIdentifierClass {
+  export type $Identifier = BlankNode;
+
+  export namespace $Identifier {
+    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeIdentifierClass";
+  };
+
+  export function $filter(
+    filter: BlankNodeIdentifierClass.$Filter,
+    value: BlankNodeIdentifierClass,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterBlankNode(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
+
   export function $propertiesFromJson(
     _json: unknown,
   ): Either<z.ZodError, { $identifier: BlankNode }> {
@@ -65126,14 +65153,46 @@ export namespace BlankNodeIdentifierClass {
     );
   }
 
+  export function $fromRdf(
+    resource: Resource,
+    options?: $FromRdfOptions,
+  ): Either<Error, BlankNodeIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BlankNodeIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new BlankNodeIdentifierClass(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeIdentifierClass",
+  );
+
+  export function isBlankNodeIdentifierClass(
+    object: $Object,
+  ): object is BlankNodeIdentifierClass {
+    switch (object.$type) {
+      case "BlankNodeIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+
   export function $jsonSchema() {
     return z.toJSONSchema($jsonZodSchema());
   }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "BlankNodeIdentifierClass";
-  };
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
@@ -65166,28 +65225,6 @@ export namespace BlankNodeIdentifierClass {
       "@id": z.string().min(1),
       $type: z.literal("BlankNodeIdentifierClass"),
     }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, BlankNodeIdentifierClass> {
-    let {
-      context,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BlankNodeIdentifierClass.$propertiesFromRdf({
-      context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new BlankNodeIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf(
@@ -65238,6 +65275,22 @@ export namespace BlankNodeIdentifierClass {
         .map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "BlankNode" as const }),
+      },
+      $type: {
+        kind: "TypeDiscriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["BlankNodeIdentifierClass"],
+        }),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -65389,59 +65442,6 @@ export namespace BlankNodeIdentifierClass {
     }
     return patterns;
   }
-
-  export function $filter(
-    filter: BlankNodeIdentifierClass.$Filter,
-    value: BlankNodeIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankNodeIdentifierClass",
-  );
-
-  export type $Identifier = BlankNode;
-
-  export namespace $Identifier {
-    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isBlankNodeIdentifierClass(
-    object: $Object,
-  ): object is BlankNodeIdentifierClass {
-    switch (object.$type) {
-      case "BlankNodeIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "BlankNode" as const }),
-      },
-      $type: {
-        kind: "TypeDiscriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BlankNodeIdentifierClass"],
-        }),
-      },
-    },
-  } as const;
 } /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
@@ -65449,6 +65449,15 @@ export namespace BlankNodeIdentifierClass {
 export type ClassUnion = ClassUnionMember1 | ClassUnionMember2;
 
 export namespace ClassUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
+
   export function $equals(left: ClassUnion, right: ClassUnion): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (ClassUnionMember1.isClassUnionMember1(left)) {
@@ -65521,13 +65530,6 @@ export namespace ClassUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(json: unknown): Either<z.ZodError, ClassUnion> {
     return (
       ClassUnionMember1.$fromJson(json) as Either<z.ZodError, ClassUnion>
@@ -65535,46 +65537,6 @@ export namespace ClassUnion {
       () => ClassUnionMember2.$fromJson(json) as Either<z.ZodError, ClassUnion>,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _classUnion: ClassUnion,
-  ): ClassUnionMember1.$Json | ClassUnionMember2.$Json {
-    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
-      return _classUnion.$toJson();
-    }
-    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
-      return _classUnion.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
-
-  export function isClassUnion(object: $Object): object is ClassUnion {
-    return (
-      ClassUnionMember1.isClassUnionMember1(object) ||
-      ClassUnionMember2.isClassUnionMember2(object)
-    );
-  }
-
-  export const $schema = {
-    properties: {
-      classUnionMemberCommonParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/classUnionMemberCommonParentProperty",
-        ),
-      },
-    },
-  } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -65594,21 +65556,31 @@ export namespace ClassUnion {
     );
   }
 
-  export function $toRdf(
-    _classUnion: ClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
-      return _classUnion.$toRdf(_parameters);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
-      return _classUnion.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+  export function isClassUnion(object: $Object): object is ClassUnion {
+    return (
+      ClassUnionMember1.isClassUnionMember1(object) ||
+      ClassUnionMember2.isClassUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = {
+    properties: {
+      classUnionMemberCommonParentProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -65745,6 +65717,34 @@ export namespace ClassUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _classUnion: ClassUnion,
+  ): ClassUnionMember1.$Json | ClassUnionMember2.$Json {
+    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
+      return _classUnion.$toJson();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
+      return _classUnion.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _classUnion: ClassUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
+      return _classUnion.$toRdf(_parameters);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
+      return _classUnion.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
  */
@@ -65755,6 +65755,18 @@ export type FlattenClassUnion =
   | FlattenClassUnionMember3;
 
 export namespace FlattenClassUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json;
+
   export function $equals(
     left: FlattenClassUnion,
     right: FlattenClassUnion,
@@ -65852,13 +65864,6 @@ export namespace FlattenClassUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, FlattenClassUnion> {
@@ -65880,51 +65885,6 @@ export namespace FlattenClassUnion {
           >,
       );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _flattenClassUnion: FlattenClassUnion,
-  ):
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | FlattenClassUnionMember3.$Json {
-    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
-      return _flattenClassUnion.$toJson();
-    }
-    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
-      return _flattenClassUnion.$toJson();
-    }
-    if (
-      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
-    ) {
-      return _flattenClassUnion.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | FlattenClassUnionMember3.$Json;
-
-  export function isFlattenClassUnion(
-    object: $Object,
-  ): object is FlattenClassUnion {
-    return (
-      ClassUnionMember1.isClassUnionMember1(object) ||
-      ClassUnionMember2.isClassUnionMember2(object) ||
-      FlattenClassUnionMember3.isFlattenClassUnionMember3(object)
-    );
-  }
-
-  export const $schema = { properties: {} } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -65952,26 +65912,25 @@ export namespace FlattenClassUnion {
       );
   }
 
-  export function $toRdf(
-    _flattenClassUnion: FlattenClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
-      return _flattenClassUnion.$toRdf(_parameters);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
-      return _flattenClassUnion.$toRdf(_parameters);
-    }
-    if (
-      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
-    ) {
-      return _flattenClassUnion.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+  export function isFlattenClassUnion(
+    object: $Object,
+  ): object is FlattenClassUnion {
+    return (
+      ClassUnionMember1.isClassUnionMember1(object) ||
+      ClassUnionMember2.isClassUnionMember2(object) ||
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+      FlattenClassUnionMember3.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -66124,6 +66083,47 @@ export namespace FlattenClassUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _flattenClassUnion: FlattenClassUnion,
+  ):
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json {
+    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
+      return _flattenClassUnion.$toJson();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
+      return _flattenClassUnion.$toJson();
+    }
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
+    ) {
+      return _flattenClassUnion.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _flattenClassUnion: FlattenClassUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
+      return _flattenClassUnion.$toRdf(_parameters);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
+      return _flattenClassUnion.$toRdf(_parameters);
+    }
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
+    ) {
+      return _flattenClassUnion.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
@@ -66131,6 +66131,15 @@ export namespace FlattenClassUnion {
 export type InterfaceUnion = InterfaceUnionMember1 | InterfaceUnionMember2;
 
 export namespace InterfaceUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
+
   export function $equals(
     left: InterfaceUnion,
     right: InterfaceUnion,
@@ -66212,13 +66221,6 @@ export namespace InterfaceUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(json: unknown): Either<z.ZodError, InterfaceUnion> {
     return (
       InterfaceUnionMember1.$fromJson(json) as Either<
@@ -66233,46 +66235,6 @@ export namespace InterfaceUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _interfaceUnion: InterfaceUnion,
-  ): InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json {
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
-      return InterfaceUnionMember1.$toJson(_interfaceUnion);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
-      return InterfaceUnionMember2.$toJson(_interfaceUnion);
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
-
-  export function isInterfaceUnion(object: $Object): object is InterfaceUnion {
-    return (
-      InterfaceUnionMember1.isInterfaceUnionMember1(object) ||
-      InterfaceUnionMember2.isInterfaceUnionMember2(object)
-    );
-  }
-
-  export const $schema = {
-    properties: {
-      interfaceUnionMemberCommonParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMemberCommonParentProperty",
-        ),
-      },
-    },
-  } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -66292,21 +66254,31 @@ export namespace InterfaceUnion {
     );
   }
 
-  export function $toRdf(
-    _interfaceUnion: InterfaceUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
-      return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
-      return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
-    }
-    throw new Error("unrecognized type");
+  export function isInterfaceUnion(object: $Object): object is InterfaceUnion {
+    return (
+      InterfaceUnionMember1.isInterfaceUnionMember1(object) ||
+      InterfaceUnionMember2.isInterfaceUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      InterfaceUnionMember1.$jsonZodSchema(),
+      InterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = {
+    properties: {
+      interfaceUnionMemberCommonParentProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -66443,6 +66415,34 @@ export namespace InterfaceUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _interfaceUnion: InterfaceUnion,
+  ): InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
+      return InterfaceUnionMember1.$toJson(_interfaceUnion);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
+      return InterfaceUnionMember2.$toJson(_interfaceUnion);
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _interfaceUnion: InterfaceUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
+      return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
+      return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
@@ -66452,6 +66452,17 @@ export type LazilyResolvedClassUnion =
   | LazilyResolvedClassUnionMember2;
 
 export namespace LazilyResolvedClassUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json;
+
   export function $equals(
     left: LazilyResolvedClassUnion,
     right: LazilyResolvedClassUnion,
@@ -66547,13 +66558,6 @@ export namespace LazilyResolvedClassUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, LazilyResolvedClassUnion> {
@@ -66570,62 +66574,6 @@ export namespace LazilyResolvedClassUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-  ):
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json {
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
-        _lazilyResolvedClassUnion,
-      )
-    ) {
-      return _lazilyResolvedClassUnion.$toJson();
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
-        _lazilyResolvedClassUnion,
-      )
-    ) {
-      return _lazilyResolvedClassUnion.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json;
-
-  export function isLazilyResolvedClassUnion(
-    object: $Object,
-  ): object is LazilyResolvedClassUnion {
-    return (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
-        object,
-      ) ||
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(object)
-    );
-  }
-
-  export const $schema = {
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -66645,29 +66593,35 @@ export namespace LazilyResolvedClassUnion {
     );
   }
 
-  export function $toRdf(
-    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (
+  export function isLazilyResolvedClassUnion(
+    object: $Object,
+  ): object is LazilyResolvedClassUnion {
+    return (
       LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
-        _lazilyResolvedClassUnion,
-      )
-    ) {
-      return _lazilyResolvedClassUnion.$toRdf(_parameters);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
-        _lazilyResolvedClassUnion,
-      )
-    ) {
-      return _lazilyResolvedClassUnion.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+        object,
+      ) ||
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -66808,6 +66762,52 @@ export namespace LazilyResolvedClassUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
+  ):
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toJson();
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toRdf(_parameters);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
@@ -66817,6 +66817,17 @@ export type LazilyResolvedInterfaceUnion =
   | LazilyResolvedInterfaceUnionMember2;
 
 export namespace LazilyResolvedInterfaceUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json;
+
   export function $equals(
     left: LazilyResolvedInterfaceUnion,
     right: LazilyResolvedInterfaceUnion,
@@ -66924,13 +66935,6 @@ export namespace LazilyResolvedInterfaceUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, LazilyResolvedInterfaceUnion> {
@@ -66947,68 +66951,6 @@ export namespace LazilyResolvedInterfaceUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
-  ):
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json {
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        _lazilyResolvedInterfaceUnion,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toJson(
-        _lazilyResolvedInterfaceUnion,
-      );
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        _lazilyResolvedInterfaceUnion,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toJson(
-        _lazilyResolvedInterfaceUnion,
-      );
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json;
-
-  export function isLazilyResolvedInterfaceUnion(
-    object: $Object,
-  ): object is LazilyResolvedInterfaceUnion {
-    return (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        object,
-      ) ||
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        object,
-      )
-    );
-  }
-
-  export const $schema = {
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -67028,35 +66970,37 @@ export namespace LazilyResolvedInterfaceUnion {
     );
   }
 
-  export function $toRdf(
-    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (
+  export function isLazilyResolvedInterfaceUnion(
+    object: $Object,
+  ): object is LazilyResolvedInterfaceUnion {
+    return (
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        _lazilyResolvedInterfaceUnion,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdf(
-        _lazilyResolvedInterfaceUnion,
-        _parameters,
-      );
-    }
-    if (
+        object,
+      ) ||
       LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        _lazilyResolvedInterfaceUnion,
+        object,
       )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdf(
-        _lazilyResolvedInterfaceUnion,
-        _parameters,
-      );
-    }
-    throw new Error("unrecognized type");
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -67197,6 +67141,62 @@ export namespace LazilyResolvedInterfaceUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
+  ):
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toJson(
+        _lazilyResolvedInterfaceUnion,
+      );
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toJson(
+        _lazilyResolvedInterfaceUnion,
+      );
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdf(
+        _lazilyResolvedInterfaceUnion,
+        _parameters,
+      );
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdf(
+        _lazilyResolvedInterfaceUnion,
+        _parameters,
+      );
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
  */
@@ -67206,6 +67206,17 @@ export type PartialClassUnion =
   | PartialClassUnionMember2;
 
 export namespace PartialClassUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | PartialClassUnionMember1.$Json
+    | PartialClassUnionMember2.$Json;
+
   export function $equals(
     left: PartialClassUnion,
     right: PartialClassUnion,
@@ -67285,13 +67296,6 @@ export namespace PartialClassUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, PartialClassUnion> {
@@ -67308,54 +67312,6 @@ export namespace PartialClassUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _partialClassUnion: PartialClassUnion,
-  ): PartialClassUnionMember1.$Json | PartialClassUnionMember2.$Json {
-    if (
-      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
-    ) {
-      return _partialClassUnion.$toJson();
-    }
-    if (
-      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
-    ) {
-      return _partialClassUnion.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | PartialClassUnionMember1.$Json
-    | PartialClassUnionMember2.$Json;
-
-  export function isPartialClassUnion(
-    object: $Object,
-  ): object is PartialClassUnion {
-    return (
-      PartialClassUnionMember1.isPartialClassUnionMember1(object) ||
-      PartialClassUnionMember2.isPartialClassUnionMember2(object)
-    );
-  }
-
-  export const $schema = {
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -67375,25 +67331,33 @@ export namespace PartialClassUnion {
     );
   }
 
-  export function $toRdf(
-    _partialClassUnion: PartialClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (
-      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
-    ) {
-      return _partialClassUnion.$toRdf(_parameters);
-    }
-    if (
-      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
-    ) {
-      return _partialClassUnion.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+  export function isPartialClassUnion(
+    object: $Object,
+  ): object is PartialClassUnion {
+    return (
+      PartialClassUnionMember1.isPartialClassUnionMember1(object) ||
+      PartialClassUnionMember2.isPartialClassUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      PartialClassUnionMember1.$jsonZodSchema(),
+      PartialClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -67530,6 +67494,42 @@ export namespace PartialClassUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _partialClassUnion: PartialClassUnion,
+  ): PartialClassUnionMember1.$Json | PartialClassUnionMember2.$Json {
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toJson();
+    }
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _partialClassUnion: PartialClassUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toRdf(_parameters);
+    }
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
  */
@@ -67539,6 +67539,17 @@ export type PartialInterfaceUnion =
   | PartialInterfaceUnionMember2;
 
 export namespace PartialInterfaceUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | PartialInterfaceUnionMember1.$Json
+    | PartialInterfaceUnionMember2.$Json;
+
   export function $equals(
     left: PartialInterfaceUnion,
     right: PartialInterfaceUnion,
@@ -67634,13 +67645,6 @@ export namespace PartialInterfaceUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, PartialInterfaceUnion> {
@@ -67657,58 +67661,6 @@ export namespace PartialInterfaceUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _partialInterfaceUnion: PartialInterfaceUnion,
-  ): PartialInterfaceUnionMember1.$Json | PartialInterfaceUnionMember2.$Json {
-    if (
-      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
-        _partialInterfaceUnion,
-      )
-    ) {
-      return PartialInterfaceUnionMember1.$toJson(_partialInterfaceUnion);
-    }
-    if (
-      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
-        _partialInterfaceUnion,
-      )
-    ) {
-      return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | PartialInterfaceUnionMember1.$Json
-    | PartialInterfaceUnionMember2.$Json;
-
-  export function isPartialInterfaceUnion(
-    object: $Object,
-  ): object is PartialInterfaceUnion {
-    return (
-      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(object) ||
-      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(object)
-    );
-  }
-
-  export const $schema = {
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -67728,35 +67680,33 @@ export namespace PartialInterfaceUnion {
     );
   }
 
-  export function $toRdf(
-    _partialInterfaceUnion: PartialInterfaceUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (
-      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
-        _partialInterfaceUnion,
-      )
-    ) {
-      return PartialInterfaceUnionMember1.$toRdf(
-        _partialInterfaceUnion,
-        _parameters,
-      );
-    }
-    if (
-      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
-        _partialInterfaceUnion,
-      )
-    ) {
-      return PartialInterfaceUnionMember2.$toRdf(
-        _partialInterfaceUnion,
-        _parameters,
-      );
-    }
-    throw new Error("unrecognized type");
+  export function isPartialInterfaceUnion(
+    object: $Object,
+  ): object is PartialInterfaceUnion {
+    return (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(object) ||
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      PartialInterfaceUnionMember1.$jsonZodSchema(),
+      PartialInterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -67895,6 +67845,56 @@ export namespace PartialInterfaceUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _partialInterfaceUnion: PartialInterfaceUnion,
+  ): PartialInterfaceUnionMember1.$Json | PartialInterfaceUnionMember2.$Json {
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember1.$toJson(_partialInterfaceUnion);
+    }
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _partialInterfaceUnion: PartialInterfaceUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember1.$toRdf(
+        _partialInterfaceUnion,
+        _parameters,
+      );
+    }
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember2.$toRdf(
+        _partialInterfaceUnion,
+        _parameters,
+      );
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's
  */
@@ -67904,6 +67904,17 @@ export type NoRdfTypeClassUnion =
   | NoRdfTypeClassUnionMember2;
 
 export namespace NoRdfTypeClassUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | NoRdfTypeClassUnionMember1.$Json
+    | NoRdfTypeClassUnionMember2.$Json;
+
   export function $equals(
     left: NoRdfTypeClassUnion,
     right: NoRdfTypeClassUnion,
@@ -67987,13 +67998,6 @@ export namespace NoRdfTypeClassUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, NoRdfTypeClassUnion> {
@@ -68010,48 +68014,6 @@ export namespace NoRdfTypeClassUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _noRdfTypeClassUnion: NoRdfTypeClassUnion,
-  ): NoRdfTypeClassUnionMember1.$Json | NoRdfTypeClassUnionMember2.$Json {
-    if (
-      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
-        _noRdfTypeClassUnion,
-      )
-    ) {
-      return _noRdfTypeClassUnion.$toJson();
-    }
-    if (
-      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
-        _noRdfTypeClassUnion,
-      )
-    ) {
-      return _noRdfTypeClassUnion.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | NoRdfTypeClassUnionMember1.$Json
-    | NoRdfTypeClassUnionMember2.$Json;
-
-  export function isNoRdfTypeClassUnion(
-    object: $Object,
-  ): object is NoRdfTypeClassUnion {
-    return (
-      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(object) ||
-      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(object)
-    );
-  }
-
-  export const $schema = { properties: {} } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -68071,29 +68033,23 @@ export namespace NoRdfTypeClassUnion {
     );
   }
 
-  export function $toRdf(
-    _noRdfTypeClassUnion: NoRdfTypeClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (
-      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
-        _noRdfTypeClassUnion,
-      )
-    ) {
-      return _noRdfTypeClassUnion.$toRdf(_parameters);
-    }
-    if (
-      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
-        _noRdfTypeClassUnion,
-      )
-    ) {
-      return _noRdfTypeClassUnion.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+  export function isNoRdfTypeClassUnion(
+    object: $Object,
+  ): object is NoRdfTypeClassUnion {
+    return (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(object) ||
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -68232,6 +68188,50 @@ export namespace NoRdfTypeClassUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _noRdfTypeClassUnion: NoRdfTypeClassUnion,
+  ): NoRdfTypeClassUnionMember1.$Json | NoRdfTypeClassUnionMember2.$Json {
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toJson();
+    }
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _noRdfTypeClassUnion: NoRdfTypeClassUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toRdf(_parameters);
+    }
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 } /**
  * Node shape sh:xone's node shapes that have properties with the union's type
  */
@@ -68241,6 +68241,17 @@ export type RecursiveClassUnion =
   | RecursiveClassUnionMember2;
 
 export namespace RecursiveClassUnion {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json;
+
   export function $equals(
     left: RecursiveClassUnion,
     right: RecursiveClassUnion,
@@ -68324,13 +68335,6 @@ export namespace RecursiveClassUnion {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(
     json: unknown,
   ): Either<z.ZodError, RecursiveClassUnion> {
@@ -68347,48 +68351,6 @@ export namespace RecursiveClassUnion {
         >,
     );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _recursiveClassUnion: RecursiveClassUnion,
-  ): RecursiveClassUnionMember1.$Json | RecursiveClassUnionMember2.$Json {
-    if (
-      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
-        _recursiveClassUnion,
-      )
-    ) {
-      return _recursiveClassUnion.$toJson();
-    }
-    if (
-      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
-        _recursiveClassUnion,
-      )
-    ) {
-      return _recursiveClassUnion.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | RecursiveClassUnionMember1.$Json
-    | RecursiveClassUnionMember2.$Json;
-
-  export function isRecursiveClassUnion(
-    object: $Object,
-  ): object is RecursiveClassUnion {
-    return (
-      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(object) ||
-      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(object)
-    );
-  }
-
-  export const $schema = { properties: {} } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -68408,29 +68370,23 @@ export namespace RecursiveClassUnion {
     );
   }
 
-  export function $toRdf(
-    _recursiveClassUnion: RecursiveClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (
-      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
-        _recursiveClassUnion,
-      )
-    ) {
-      return _recursiveClassUnion.$toRdf(_parameters);
-    }
-    if (
-      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
-        _recursiveClassUnion,
-      )
-    ) {
-      return _recursiveClassUnion.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+  export function isRecursiveClassUnion(
+    object: $Object,
+  ): object is RecursiveClassUnion {
+    return (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(object) ||
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(object)
+    );
   }
+
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      RecursiveClassUnionMember1.$jsonZodSchema(),
+      RecursiveClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -68569,6 +68525,50 @@ export namespace RecursiveClassUnion {
     });
     return patterns;
   }
+
+  export function $toJson(
+    _recursiveClassUnion: RecursiveClassUnion,
+  ): RecursiveClassUnionMember1.$Json | RecursiveClassUnionMember2.$Json {
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toJson();
+    }
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _recursiveClassUnion: RecursiveClassUnion,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toRdf(_parameters);
+    }
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
+  }
 }
 export type $Object =
   | BlankNodeIdentifierClass
@@ -68655,6 +68655,90 @@ export type $Object =
   | $NamedDefaultPartial;
 
 export namespace $Object {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | BlankNodeIdentifierClass.$Json
+    | BlankNodeIdentifierInterface.$Json
+    | BlankNodeOrIriIdentifierClass.$Json
+    | BlankNodeOrIriIdentifierInterface.$Json
+    | ClassPropertiesClass.$Json
+    | PartialClass.$Json
+    | NonClass.$Json
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | ConcreteChildClass.$Json
+    | ConcreteParentClassStatic.$Json
+    | ConcreteChildInterface.$Json
+    | ConcreteParentInterfaceStatic.$Json
+    | BaseInterfaceWithoutPropertiesStatic.$Json
+    | BaseInterfaceWithPropertiesStatic.$Json
+    | ConvertibleTypePropertiesClass.$Json
+    | DateUnionPropertiesClass.$Json
+    | DefaultValuePropertiesClass.$Json
+    | DirectRecursiveClass.$Json
+    | ExplicitFromToRdfTypesClass.$Json
+    | ExplicitRdfTypeClass.$Json
+    | ExternClassPropertyClass.$Json
+    | FlattenClassUnionMember3.$Json
+    | HasValuePropertiesClass.$Json
+    | IdentifierOverride5Class.$Json
+    | IdentifierOverride4ClassStatic.$Json
+    | IdentifierOverride3ClassStatic.$Json
+    | InIdentifierClass.$Json
+    | InPropertiesClass.$Json
+    | IndirectRecursiveClass.$Json
+    | IndirectRecursiveHelperClass.$Json
+    | Interface.$Json
+    | InterfaceUnionMember1.$Json
+    | InterfaceUnionMember2.$Json
+    | IriIdentifierClass.$Json
+    | IriIdentifierInterface.$Json
+    | JsPrimitiveUnionPropertyClass.$Json
+    | LanguageInPropertiesClass.$Json
+    | LazilyResolvedBlankNodeOrIriIdentifierClass.$Json
+    | LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json
+    | LazilyResolvedIriIdentifierClass.$Json
+    | LazilyResolvedIriIdentifierInterface.$Json
+    | LazyPropertiesClass.$Json
+    | LazyPropertiesInterface.$Json
+    | PartialInterface.$Json
+    | ListPropertiesClass.$Json
+    | MutablePropertiesClass.$Json
+    | NoRdfTypeClassUnionMember1.$Json
+    | NoRdfTypeClassUnionMember2.$Json
+    | NodeKindsClass.$Json
+    | NumericPropertiesClass.$Json
+    | OrderedPropertiesClass.$Json
+    | NewName1Class.$Json
+    | NewName2Class.$Json
+    | PartialClassUnionMember1.$Json
+    | PartialClassUnionMember2.$Json
+    | PartialInterfaceUnionMember1.$Json
+    | PartialInterfaceUnionMember2.$Json
+    | PropertyCardinalitiesClass.$Json
+    | PropertyNamesClass.$Json
+    | PropertyPathsClass.$Json
+    | PropertyVisibilitiesClass.$Json
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json
+    | Sha256IriIdentifierClass.$Json
+    | TermPropertiesClass.$Json
+    | UnionDiscriminantsClass.$Json
+    | UuidV4IriIdentifierClass.$Json
+    | UuidV4IriIdentifierInterface.$Json
+    | $DefaultPartial.$Json
+    | $NamedDefaultPartial.$Json;
+
   export function $equals(left: $Object, right: $Object): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(left)) {
@@ -70419,13 +70503,6 @@ export namespace $Object {
     throw new Error("unrecognized type");
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $fromJson(json: unknown): Either<z.ZodError, $Object> {
     return (
       BlankNodeIdentifierClass.$fromJson(json) as Either<z.ZodError, $Object>
@@ -70835,522 +70912,6 @@ export namespace $Object {
           $NamedDefaultPartial.$fromJson(json) as Either<z.ZodError, $Object>,
       );
   }
-
-  export function $jsonZodSchema() {
-    return z.discriminatedUnion("$type", [
-      BlankNodeIdentifierClass.$jsonZodSchema(),
-      BlankNodeIdentifierInterface.$jsonZodSchema(),
-      BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
-      BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
-      ClassPropertiesClass.$jsonZodSchema(),
-      PartialClass.$jsonZodSchema(),
-      NonClass.$jsonZodSchema(),
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      ConcreteChildClass.$jsonZodSchema(),
-      ConcreteParentClassStatic.$jsonZodSchema(),
-      ConcreteChildInterface.$jsonZodSchema(),
-      ConcreteParentInterfaceStatic.$jsonZodSchema(),
-      BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema(),
-      BaseInterfaceWithPropertiesStatic.$jsonZodSchema(),
-      ConvertibleTypePropertiesClass.$jsonZodSchema(),
-      DateUnionPropertiesClass.$jsonZodSchema(),
-      DefaultValuePropertiesClass.$jsonZodSchema(),
-      DirectRecursiveClass.$jsonZodSchema(),
-      ExplicitFromToRdfTypesClass.$jsonZodSchema(),
-      ExplicitRdfTypeClass.$jsonZodSchema(),
-      ExternClassPropertyClass.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
-      HasValuePropertiesClass.$jsonZodSchema(),
-      IdentifierOverride5Class.$jsonZodSchema(),
-      IdentifierOverride4ClassStatic.$jsonZodSchema(),
-      IdentifierOverride3ClassStatic.$jsonZodSchema(),
-      InIdentifierClass.$jsonZodSchema(),
-      InPropertiesClass.$jsonZodSchema(),
-      IndirectRecursiveClass.$jsonZodSchema(),
-      IndirectRecursiveHelperClass.$jsonZodSchema(),
-      Interface.$jsonZodSchema(),
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2.$jsonZodSchema(),
-      IriIdentifierClass.$jsonZodSchema(),
-      IriIdentifierInterface.$jsonZodSchema(),
-      JsPrimitiveUnionPropertyClass.$jsonZodSchema(),
-      LanguageInPropertiesClass.$jsonZodSchema(),
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$jsonZodSchema(),
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
-      LazilyResolvedIriIdentifierClass.$jsonZodSchema(),
-      LazilyResolvedIriIdentifierInterface.$jsonZodSchema(),
-      LazyPropertiesClass.$jsonZodSchema(),
-      LazyPropertiesInterface.$jsonZodSchema(),
-      PartialInterface.$jsonZodSchema(),
-      ListPropertiesClass.$jsonZodSchema(),
-      MutablePropertiesClass.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
-      NodeKindsClass.$jsonZodSchema(),
-      NumericPropertiesClass.$jsonZodSchema(),
-      OrderedPropertiesClass.$jsonZodSchema(),
-      NewName1Class.$jsonZodSchema(),
-      NewName2Class.$jsonZodSchema(),
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
-      PropertyCardinalitiesClass.$jsonZodSchema(),
-      PropertyNamesClass.$jsonZodSchema(),
-      PropertyPathsClass.$jsonZodSchema(),
-      PropertyVisibilitiesClass.$jsonZodSchema(),
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
-      Sha256IriIdentifierClass.$jsonZodSchema(),
-      TermPropertiesClass.$jsonZodSchema(),
-      UnionDiscriminantsClass.$jsonZodSchema(),
-      UuidV4IriIdentifierClass.$jsonZodSchema(),
-      UuidV4IriIdentifierInterface.$jsonZodSchema(),
-      $DefaultPartial.$jsonZodSchema(),
-      $NamedDefaultPartial.$jsonZodSchema(),
-    ]);
-  }
-
-  export function $toJson(
-    _object: $Object,
-  ):
-    | BlankNodeIdentifierClass.$Json
-    | BlankNodeIdentifierInterface.$Json
-    | BlankNodeOrIriIdentifierClass.$Json
-    | BlankNodeOrIriIdentifierInterface.$Json
-    | ClassPropertiesClass.$Json
-    | PartialClass.$Json
-    | NonClass.$Json
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | ClassUnionMemberCommonParentStatic.$Json
-    | ConcreteChildClass.$Json
-    | ConcreteParentClassStatic.$Json
-    | AbstractBaseClassWithoutPropertiesStatic.$Json
-    | AbstractBaseClassWithPropertiesStatic.$Json
-    | ConcreteChildInterface.$Json
-    | ConcreteParentInterfaceStatic.$Json
-    | BaseInterfaceWithoutPropertiesStatic.$Json
-    | BaseInterfaceWithPropertiesStatic.$Json
-    | ConvertibleTypePropertiesClass.$Json
-    | DateUnionPropertiesClass.$Json
-    | DefaultValuePropertiesClass.$Json
-    | DirectRecursiveClass.$Json
-    | ExplicitFromToRdfTypesClass.$Json
-    | ExplicitRdfTypeClass.$Json
-    | AbstractBaseClassForExternClassStatic.$Json
-    | ExternClassPropertyClass.$Json
-    | FlattenClassUnionMember3.$Json
-    | HasValuePropertiesClass.$Json
-    | IdentifierOverride5Class.$Json
-    | IdentifierOverride4ClassStatic.$Json
-    | IdentifierOverride3ClassStatic.$Json
-    | IdentifierOverride2ClassStatic.$Json
-    | IdentifierOverride1ClassStatic.$Json
-    | InIdentifierClass.$Json
-    | InPropertiesClass.$Json
-    | IndirectRecursiveClass.$Json
-    | IndirectRecursiveHelperClass.$Json
-    | Interface.$Json
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2.$Json
-    | InterfaceUnionMemberCommonParentStatic.$Json
-    | IriIdentifierClass.$Json
-    | IriIdentifierInterface.$Json
-    | JsPrimitiveUnionPropertyClass.$Json
-    | LanguageInPropertiesClass.$Json
-    | LazilyResolvedBlankNodeOrIriIdentifierClass.$Json
-    | LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json
-    | LazilyResolvedIriIdentifierClass.$Json
-    | LazilyResolvedIriIdentifierInterface.$Json
-    | LazyPropertiesClass.$Json
-    | LazyPropertiesInterface.$Json
-    | PartialInterface.$Json
-    | ListPropertiesClass.$Json
-    | MutablePropertiesClass.$Json
-    | NoRdfTypeClassUnionMember1.$Json
-    | NoRdfTypeClassUnionMember2.$Json
-    | NodeKindsClass.$Json
-    | NumericPropertiesClass.$Json
-    | OrderedPropertiesClass.$Json
-    | NewName1Class.$Json
-    | NewName2Class.$Json
-    | PartialClassUnionMember1.$Json
-    | PartialClassUnionMember2.$Json
-    | PartialInterfaceUnionMember1.$Json
-    | PartialInterfaceUnionMember2.$Json
-    | PropertyCardinalitiesClass.$Json
-    | PropertyNamesClass.$Json
-    | PropertyPathsClass.$Json
-    | PropertyVisibilitiesClass.$Json
-    | RecursiveClassUnionMember1.$Json
-    | RecursiveClassUnionMember2.$Json
-    | Sha256IriIdentifierClass.$Json
-    | TermPropertiesClass.$Json
-    | UnionDiscriminantsClass.$Json
-    | UuidV4IriIdentifierClass.$Json
-    | UuidV4IriIdentifierInterface.$Json
-    | $DefaultPartial.$Json
-    | $NamedDefaultPartial.$Json {
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
-      return _object.$toJson();
-    }
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(_object)) {
-      return BlankNodeIdentifierInterface.$toJson(_object);
-    }
-    if (
-      BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(_object)
-    ) {
-      return _object.$toJson();
-    }
-    if (
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        _object,
-      )
-    ) {
-      return BlankNodeOrIriIdentifierInterface.$toJson(_object);
-    }
-    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (PartialClass.isPartialClass(_object)) {
-      return _object.$toJson();
-    }
-    if (NonClass.isNonClass(_object)) {
-      return _object.$toJson();
-    }
-    if (ClassUnionMember1.isClassUnionMember1(_object)) {
-      return _object.$toJson();
-    }
-    if (ClassUnionMember2.isClassUnionMember2(_object)) {
-      return _object.$toJson();
-    }
-    if (ConcreteChildClass.isConcreteChildClass(_object)) {
-      return _object.$toJson();
-    }
-    if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
-      return _object.$toJson();
-    }
-    if (ConcreteChildInterface.isConcreteChildInterface(_object)) {
-      return ConcreteChildInterface.$toJson(_object);
-    }
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(_object)) {
-      return ConcreteParentInterfaceStatic.$toJson(_object);
-    }
-    if (
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        _object,
-      )
-    ) {
-      return BaseInterfaceWithoutPropertiesStatic.$toJson(_object);
-    }
-    if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(_object)
-    ) {
-      return BaseInterfaceWithPropertiesStatic.$toJson(_object);
-    }
-    if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(_object)
-    ) {
-      return _object.$toJson();
-    }
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (DirectRecursiveClass.isDirectRecursiveClass(_object)) {
-      return _object.$toJson();
-    }
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
-      return _object.$toJson();
-    }
-    if (ExternClassPropertyClass.isExternClassPropertyClass(_object)) {
-      return _object.$toJson();
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(_object)) {
-      return _object.$toJson();
-    }
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(_object)) {
-      return _object.$toJson();
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(_object)) {
-      return _object.$toJson();
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(_object)) {
-      return _object.$toJson();
-    }
-    if (InIdentifierClass.isInIdentifierClass(_object)) {
-      return _object.$toJson();
-    }
-    if (InPropertiesClass.isInPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(_object)) {
-      return _object.$toJson();
-    }
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(_object)) {
-      return _object.$toJson();
-    }
-    if (Interface.isInterface(_object)) {
-      return Interface.$toJson(_object);
-    }
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(_object)) {
-      return InterfaceUnionMember1.$toJson(_object);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
-      return InterfaceUnionMember2.$toJson(_object);
-    }
-    if (IriIdentifierClass.isIriIdentifierClass(_object)) {
-      return _object.$toJson();
-    }
-    if (IriIdentifierInterface.isIriIdentifierInterface(_object)) {
-      return IriIdentifierInterface.$toJson(_object);
-    }
-    if (
-      JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(_object)
-    ) {
-      return _object.$toJson();
-    }
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        _object,
-      )
-    ) {
-      return _object.$toJson();
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        _object,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toJson(_object);
-    }
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(_object)
-    ) {
-      return _object.$toJson();
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(_object)
-    ) {
-      return _object.$toJson();
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        _object,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toJson(_object);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        _object,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toJson(_object);
-    }
-    if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
-        _object,
-      )
-    ) {
-      return _object.$toJson();
-    }
-    if (
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        _object,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierInterface.$toJson(_object);
-    }
-    if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
-      return LazyPropertiesInterface.$toJson(_object);
-    }
-    if (PartialInterface.isPartialInterface(_object)) {
-      return PartialInterface.$toJson(_object);
-    }
-    if (ListPropertiesClass.isListPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (MutablePropertiesClass.isMutablePropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(_object)) {
-      return _object.$toJson();
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
-      return _object.$toJson();
-    }
-    if (NodeKindsClass.isNodeKindsClass(_object)) {
-      return _object.$toJson();
-    }
-    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (NewName1Class.isNewName1Class(_object)) {
-      return _object.$toJson();
-    }
-    if (NewName2Class.isNewName2Class(_object)) {
-      return _object.$toJson();
-    }
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
-      return _object.$toJson();
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(_object)) {
-      return _object.$toJson();
-    }
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(_object)) {
-      return PartialInterfaceUnionMember1.$toJson(_object);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(_object)) {
-      return PartialInterfaceUnionMember2.$toJson(_object);
-    }
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
-      return _object.$toJson();
-    }
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(_object)) {
-      return _object.$toJson();
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(_object)) {
-      return _object.$toJson();
-    }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(_object)) {
-      return _object.$toJson();
-    }
-    if (TermPropertiesClass.isTermPropertiesClass(_object)) {
-      return _object.$toJson();
-    }
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(_object)) {
-      return _object.$toJson();
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(_object)) {
-      return _object.$toJson();
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(_object)) {
-      return UuidV4IriIdentifierInterface.$toJson(_object);
-    }
-    if ($DefaultPartial.is$DefaultPartial(_object)) {
-      return _object.$toJson();
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(_object)) {
-      return _object.$toJson();
-    }
-    throw new Error("unrecognized type");
-  }
-
-  export type $Json =
-    | BlankNodeIdentifierClass.$Json
-    | BlankNodeIdentifierInterface.$Json
-    | BlankNodeOrIriIdentifierClass.$Json
-    | BlankNodeOrIriIdentifierInterface.$Json
-    | ClassPropertiesClass.$Json
-    | PartialClass.$Json
-    | NonClass.$Json
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | ConcreteChildClass.$Json
-    | ConcreteParentClassStatic.$Json
-    | ConcreteChildInterface.$Json
-    | ConcreteParentInterfaceStatic.$Json
-    | BaseInterfaceWithoutPropertiesStatic.$Json
-    | BaseInterfaceWithPropertiesStatic.$Json
-    | ConvertibleTypePropertiesClass.$Json
-    | DateUnionPropertiesClass.$Json
-    | DefaultValuePropertiesClass.$Json
-    | DirectRecursiveClass.$Json
-    | ExplicitFromToRdfTypesClass.$Json
-    | ExplicitRdfTypeClass.$Json
-    | ExternClassPropertyClass.$Json
-    | FlattenClassUnionMember3.$Json
-    | HasValuePropertiesClass.$Json
-    | IdentifierOverride5Class.$Json
-    | IdentifierOverride4ClassStatic.$Json
-    | IdentifierOverride3ClassStatic.$Json
-    | InIdentifierClass.$Json
-    | InPropertiesClass.$Json
-    | IndirectRecursiveClass.$Json
-    | IndirectRecursiveHelperClass.$Json
-    | Interface.$Json
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2.$Json
-    | IriIdentifierClass.$Json
-    | IriIdentifierInterface.$Json
-    | JsPrimitiveUnionPropertyClass.$Json
-    | LanguageInPropertiesClass.$Json
-    | LazilyResolvedBlankNodeOrIriIdentifierClass.$Json
-    | LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json
-    | LazilyResolvedIriIdentifierClass.$Json
-    | LazilyResolvedIriIdentifierInterface.$Json
-    | LazyPropertiesClass.$Json
-    | LazyPropertiesInterface.$Json
-    | PartialInterface.$Json
-    | ListPropertiesClass.$Json
-    | MutablePropertiesClass.$Json
-    | NoRdfTypeClassUnionMember1.$Json
-    | NoRdfTypeClassUnionMember2.$Json
-    | NodeKindsClass.$Json
-    | NumericPropertiesClass.$Json
-    | OrderedPropertiesClass.$Json
-    | NewName1Class.$Json
-    | NewName2Class.$Json
-    | PartialClassUnionMember1.$Json
-    | PartialClassUnionMember2.$Json
-    | PartialInterfaceUnionMember1.$Json
-    | PartialInterfaceUnionMember2.$Json
-    | PropertyCardinalitiesClass.$Json
-    | PropertyNamesClass.$Json
-    | PropertyPathsClass.$Json
-    | PropertyVisibilitiesClass.$Json
-    | RecursiveClassUnionMember1.$Json
-    | RecursiveClassUnionMember2.$Json
-    | Sha256IriIdentifierClass.$Json
-    | TermPropertiesClass.$Json
-    | UnionDiscriminantsClass.$Json
-    | UuidV4IriIdentifierClass.$Json
-    | UuidV4IriIdentifierInterface.$Json
-    | $DefaultPartial.$Json
-    | $NamedDefaultPartial.$Json;
-
-  export const $schema = { properties: {} } as const;
 
   export function $fromRdf(
     resource: Resource,
@@ -71882,287 +71443,87 @@ export namespace $Object {
       );
   }
 
-  export function $toRdf(
-    _object: $Object,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(_object)) {
-      return BlankNodeIdentifierInterface.$toRdf(_object, _parameters);
-    }
-    if (
-      BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(_object)
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        _object,
-      )
-    ) {
-      return BlankNodeOrIriIdentifierInterface.$toRdf(_object, _parameters);
-    }
-    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PartialClass.isPartialClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NonClass.isNonClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ClassUnionMember1.isClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ConcreteChildClass.isConcreteChildClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ConcreteChildInterface.isConcreteChildInterface(_object)) {
-      return ConcreteChildInterface.$toRdf(_object, _parameters);
-    }
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(_object)) {
-      return ConcreteParentInterfaceStatic.$toRdf(_object, _parameters);
-    }
-    if (
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        _object,
-      )
-    ) {
-      return BaseInterfaceWithoutPropertiesStatic.$toRdf(_object, _parameters);
-    }
-    if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(_object)
-    ) {
-      return BaseInterfaceWithPropertiesStatic.$toRdf(_object, _parameters);
-    }
-    if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(_object)
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (DirectRecursiveClass.isDirectRecursiveClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (ExternClassPropertyClass.isExternClassPropertyClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (InIdentifierClass.isInIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (InPropertiesClass.isInPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (Interface.isInterface(_object)) {
-      return Interface.$toRdf(_object, _parameters);
-    }
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(_object)) {
-      return InterfaceUnionMember1.$toRdf(_object, _parameters);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
-      return InterfaceUnionMember2.$toRdf(_object, _parameters);
-    }
-    if (IriIdentifierClass.isIriIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (IriIdentifierInterface.isIriIdentifierInterface(_object)) {
-      return IriIdentifierInterface.$toRdf(_object, _parameters);
-    }
-    if (
-      JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(_object)
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        _object,
-      )
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        _object,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdf(
-        _object,
-        _parameters,
-      );
-    }
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(_object)
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(_object)
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        _object,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdf(_object, _parameters);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        _object,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdf(_object, _parameters);
-    }
-    if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
-        _object,
-      )
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-    if (
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        _object,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierInterface.$toRdf(_object, _parameters);
-    }
-    if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
-      return LazyPropertiesInterface.$toRdf(_object, _parameters);
-    }
-    if (PartialInterface.isPartialInterface(_object)) {
-      return PartialInterface.$toRdf(_object, _parameters);
-    }
-    if (ListPropertiesClass.isListPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (MutablePropertiesClass.isMutablePropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NodeKindsClass.isNodeKindsClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NewName1Class.isNewName1Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (NewName2Class.isNewName2Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(_object)) {
-      return PartialInterfaceUnionMember1.$toRdf(_object, _parameters);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(_object)) {
-      return PartialInterfaceUnionMember2.$toRdf(_object, _parameters);
-    }
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (TermPropertiesClass.isTermPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(_object)) {
-      return UuidV4IriIdentifierInterface.$toRdf(_object, _parameters);
-    }
-    if ($DefaultPartial.is$DefaultPartial(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-    throw new Error("unrecognized type");
+  export function $jsonZodSchema() {
+    return z.discriminatedUnion("$type", [
+      BlankNodeIdentifierClass.$jsonZodSchema(),
+      BlankNodeIdentifierInterface.$jsonZodSchema(),
+      BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
+      BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
+      ClassPropertiesClass.$jsonZodSchema(),
+      PartialClass.$jsonZodSchema(),
+      NonClass.$jsonZodSchema(),
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+      ConcreteChildClass.$jsonZodSchema(),
+      ConcreteParentClassStatic.$jsonZodSchema(),
+      ConcreteChildInterface.$jsonZodSchema(),
+      ConcreteParentInterfaceStatic.$jsonZodSchema(),
+      BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema(),
+      BaseInterfaceWithPropertiesStatic.$jsonZodSchema(),
+      ConvertibleTypePropertiesClass.$jsonZodSchema(),
+      DateUnionPropertiesClass.$jsonZodSchema(),
+      DefaultValuePropertiesClass.$jsonZodSchema(),
+      DirectRecursiveClass.$jsonZodSchema(),
+      ExplicitFromToRdfTypesClass.$jsonZodSchema(),
+      ExplicitRdfTypeClass.$jsonZodSchema(),
+      ExternClassPropertyClass.$jsonZodSchema(),
+      FlattenClassUnionMember3.$jsonZodSchema(),
+      HasValuePropertiesClass.$jsonZodSchema(),
+      IdentifierOverride5Class.$jsonZodSchema(),
+      IdentifierOverride4ClassStatic.$jsonZodSchema(),
+      IdentifierOverride3ClassStatic.$jsonZodSchema(),
+      InIdentifierClass.$jsonZodSchema(),
+      InPropertiesClass.$jsonZodSchema(),
+      IndirectRecursiveClass.$jsonZodSchema(),
+      IndirectRecursiveHelperClass.$jsonZodSchema(),
+      Interface.$jsonZodSchema(),
+      InterfaceUnionMember1.$jsonZodSchema(),
+      InterfaceUnionMember2.$jsonZodSchema(),
+      IriIdentifierClass.$jsonZodSchema(),
+      IriIdentifierInterface.$jsonZodSchema(),
+      JsPrimitiveUnionPropertyClass.$jsonZodSchema(),
+      LanguageInPropertiesClass.$jsonZodSchema(),
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$jsonZodSchema(),
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
+      LazilyResolvedIriIdentifierClass.$jsonZodSchema(),
+      LazilyResolvedIriIdentifierInterface.$jsonZodSchema(),
+      LazyPropertiesClass.$jsonZodSchema(),
+      LazyPropertiesInterface.$jsonZodSchema(),
+      PartialInterface.$jsonZodSchema(),
+      ListPropertiesClass.$jsonZodSchema(),
+      MutablePropertiesClass.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+      NodeKindsClass.$jsonZodSchema(),
+      NumericPropertiesClass.$jsonZodSchema(),
+      OrderedPropertiesClass.$jsonZodSchema(),
+      NewName1Class.$jsonZodSchema(),
+      NewName2Class.$jsonZodSchema(),
+      PartialClassUnionMember1.$jsonZodSchema(),
+      PartialClassUnionMember2.$jsonZodSchema(),
+      PartialInterfaceUnionMember1.$jsonZodSchema(),
+      PartialInterfaceUnionMember2.$jsonZodSchema(),
+      PropertyCardinalitiesClass.$jsonZodSchema(),
+      PropertyNamesClass.$jsonZodSchema(),
+      PropertyPathsClass.$jsonZodSchema(),
+      PropertyVisibilitiesClass.$jsonZodSchema(),
+      RecursiveClassUnionMember1.$jsonZodSchema(),
+      RecursiveClassUnionMember2.$jsonZodSchema(),
+      Sha256IriIdentifierClass.$jsonZodSchema(),
+      TermPropertiesClass.$jsonZodSchema(),
+      UnionDiscriminantsClass.$jsonZodSchema(),
+      UuidV4IriIdentifierClass.$jsonZodSchema(),
+      UuidV4IriIdentifierInterface.$jsonZodSchema(),
+      $DefaultPartial.$jsonZodSchema(),
+      $NamedDefaultPartial.$jsonZodSchema(),
+    ]);
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery({
     filter,
@@ -73481,6 +72842,645 @@ export namespace $Object {
       type: "union",
     });
     return patterns;
+  }
+
+  export function $toJson(
+    _object: $Object,
+  ):
+    | BlankNodeIdentifierClass.$Json
+    | BlankNodeIdentifierInterface.$Json
+    | BlankNodeOrIriIdentifierClass.$Json
+    | BlankNodeOrIriIdentifierInterface.$Json
+    | ClassPropertiesClass.$Json
+    | PartialClass.$Json
+    | NonClass.$Json
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | ClassUnionMemberCommonParentStatic.$Json
+    | ConcreteChildClass.$Json
+    | ConcreteParentClassStatic.$Json
+    | AbstractBaseClassWithoutPropertiesStatic.$Json
+    | AbstractBaseClassWithPropertiesStatic.$Json
+    | ConcreteChildInterface.$Json
+    | ConcreteParentInterfaceStatic.$Json
+    | BaseInterfaceWithoutPropertiesStatic.$Json
+    | BaseInterfaceWithPropertiesStatic.$Json
+    | ConvertibleTypePropertiesClass.$Json
+    | DateUnionPropertiesClass.$Json
+    | DefaultValuePropertiesClass.$Json
+    | DirectRecursiveClass.$Json
+    | ExplicitFromToRdfTypesClass.$Json
+    | ExplicitRdfTypeClass.$Json
+    | AbstractBaseClassForExternClassStatic.$Json
+    | ExternClassPropertyClass.$Json
+    | FlattenClassUnionMember3.$Json
+    | HasValuePropertiesClass.$Json
+    | IdentifierOverride5Class.$Json
+    | IdentifierOverride4ClassStatic.$Json
+    | IdentifierOverride3ClassStatic.$Json
+    | IdentifierOverride2ClassStatic.$Json
+    | IdentifierOverride1ClassStatic.$Json
+    | InIdentifierClass.$Json
+    | InPropertiesClass.$Json
+    | IndirectRecursiveClass.$Json
+    | IndirectRecursiveHelperClass.$Json
+    | Interface.$Json
+    | InterfaceUnionMember1.$Json
+    | InterfaceUnionMember2.$Json
+    | InterfaceUnionMemberCommonParentStatic.$Json
+    | IriIdentifierClass.$Json
+    | IriIdentifierInterface.$Json
+    | JsPrimitiveUnionPropertyClass.$Json
+    | LanguageInPropertiesClass.$Json
+    | LazilyResolvedBlankNodeOrIriIdentifierClass.$Json
+    | LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json
+    | LazilyResolvedIriIdentifierClass.$Json
+    | LazilyResolvedIriIdentifierInterface.$Json
+    | LazyPropertiesClass.$Json
+    | LazyPropertiesInterface.$Json
+    | PartialInterface.$Json
+    | ListPropertiesClass.$Json
+    | MutablePropertiesClass.$Json
+    | NoRdfTypeClassUnionMember1.$Json
+    | NoRdfTypeClassUnionMember2.$Json
+    | NodeKindsClass.$Json
+    | NumericPropertiesClass.$Json
+    | OrderedPropertiesClass.$Json
+    | NewName1Class.$Json
+    | NewName2Class.$Json
+    | PartialClassUnionMember1.$Json
+    | PartialClassUnionMember2.$Json
+    | PartialInterfaceUnionMember1.$Json
+    | PartialInterfaceUnionMember2.$Json
+    | PropertyCardinalitiesClass.$Json
+    | PropertyNamesClass.$Json
+    | PropertyPathsClass.$Json
+    | PropertyVisibilitiesClass.$Json
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json
+    | Sha256IriIdentifierClass.$Json
+    | TermPropertiesClass.$Json
+    | UnionDiscriminantsClass.$Json
+    | UuidV4IriIdentifierClass.$Json
+    | UuidV4IriIdentifierInterface.$Json
+    | $DefaultPartial.$Json
+    | $NamedDefaultPartial.$Json {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
+      return _object.$toJson();
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(_object)) {
+      return BlankNodeIdentifierInterface.$toJson(_object);
+    }
+    if (
+      BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(_object)
+    ) {
+      return _object.$toJson();
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        _object,
+      )
+    ) {
+      return BlankNodeOrIriIdentifierInterface.$toJson(_object);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (PartialClass.isPartialClass(_object)) {
+      return _object.$toJson();
+    }
+    if (NonClass.isNonClass(_object)) {
+      return _object.$toJson();
+    }
+    if (ClassUnionMember1.isClassUnionMember1(_object)) {
+      return _object.$toJson();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(_object)) {
+      return _object.$toJson();
+    }
+    if (ConcreteChildClass.isConcreteChildClass(_object)) {
+      return _object.$toJson();
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
+      return _object.$toJson();
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(_object)) {
+      return ConcreteChildInterface.$toJson(_object);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(_object)) {
+      return ConcreteParentInterfaceStatic.$toJson(_object);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        _object,
+      )
+    ) {
+      return BaseInterfaceWithoutPropertiesStatic.$toJson(_object);
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(_object)
+    ) {
+      return BaseInterfaceWithPropertiesStatic.$toJson(_object);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(_object)
+    ) {
+      return _object.$toJson();
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(_object)) {
+      return _object.$toJson();
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
+      return _object.$toJson();
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(_object)) {
+      return _object.$toJson();
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(_object)) {
+      return _object.$toJson();
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(_object)) {
+      return _object.$toJson();
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(_object)) {
+      return _object.$toJson();
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(_object)) {
+      return _object.$toJson();
+    }
+    if (InIdentifierClass.isInIdentifierClass(_object)) {
+      return _object.$toJson();
+    }
+    if (InPropertiesClass.isInPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(_object)) {
+      return _object.$toJson();
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(_object)) {
+      return _object.$toJson();
+    }
+    if (Interface.isInterface(_object)) {
+      return Interface.$toJson(_object);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_object)) {
+      return InterfaceUnionMember1.$toJson(_object);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
+      return InterfaceUnionMember2.$toJson(_object);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(_object)) {
+      return _object.$toJson();
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(_object)) {
+      return IriIdentifierInterface.$toJson(_object);
+    }
+    if (
+      JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(_object)
+    ) {
+      return _object.$toJson();
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        _object,
+      )
+    ) {
+      return _object.$toJson();
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        _object,
+      )
+    ) {
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toJson(_object);
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(_object)
+    ) {
+      return _object.$toJson();
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(_object)
+    ) {
+      return _object.$toJson();
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _object,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toJson(_object);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _object,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toJson(_object);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
+        _object,
+      )
+    ) {
+      return _object.$toJson();
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        _object,
+      )
+    ) {
+      return LazilyResolvedIriIdentifierInterface.$toJson(_object);
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
+      return LazyPropertiesInterface.$toJson(_object);
+    }
+    if (PartialInterface.isPartialInterface(_object)) {
+      return PartialInterface.$toJson(_object);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(_object)) {
+      return _object.$toJson();
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
+      return _object.$toJson();
+    }
+    if (NodeKindsClass.isNodeKindsClass(_object)) {
+      return _object.$toJson();
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (NewName1Class.isNewName1Class(_object)) {
+      return _object.$toJson();
+    }
+    if (NewName2Class.isNewName2Class(_object)) {
+      return _object.$toJson();
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
+      return _object.$toJson();
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(_object)) {
+      return _object.$toJson();
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(_object)) {
+      return PartialInterfaceUnionMember1.$toJson(_object);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(_object)) {
+      return PartialInterfaceUnionMember2.$toJson(_object);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
+      return _object.$toJson();
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(_object)) {
+      return _object.$toJson();
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(_object)) {
+      return _object.$toJson();
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(_object)) {
+      return _object.$toJson();
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(_object)) {
+      return _object.$toJson();
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(_object)) {
+      return _object.$toJson();
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(_object)) {
+      return _object.$toJson();
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(_object)) {
+      return UuidV4IriIdentifierInterface.$toJson(_object);
+    }
+    if ($DefaultPartial.is$DefaultPartial(_object)) {
+      return _object.$toJson();
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(_object)) {
+      return _object.$toJson();
+    }
+    throw new Error("unrecognized type");
+  }
+
+  export function $toRdf(
+    _object: $Object,
+    _parameters?: {
+      graph?: Exclude<Quad_Graph, Variable>;
+      resourceSet?: ResourceSet;
+    },
+  ): Resource {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(_object)) {
+      return BlankNodeIdentifierInterface.$toRdf(_object, _parameters);
+    }
+    if (
+      BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(_object)
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        _object,
+      )
+    ) {
+      return BlankNodeOrIriIdentifierInterface.$toRdf(_object, _parameters);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PartialClass.isPartialClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NonClass.isNonClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ClassUnionMember1.isClassUnionMember1(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ConcreteChildClass.isConcreteChildClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(_object)) {
+      return ConcreteChildInterface.$toRdf(_object, _parameters);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(_object)) {
+      return ConcreteParentInterfaceStatic.$toRdf(_object, _parameters);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        _object,
+      )
+    ) {
+      return BaseInterfaceWithoutPropertiesStatic.$toRdf(_object, _parameters);
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(_object)
+    ) {
+      return BaseInterfaceWithPropertiesStatic.$toRdf(_object, _parameters);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(_object)
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (InIdentifierClass.isInIdentifierClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (InPropertiesClass.isInPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (Interface.isInterface(_object)) {
+      return Interface.$toRdf(_object, _parameters);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_object)) {
+      return InterfaceUnionMember1.$toRdf(_object, _parameters);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
+      return InterfaceUnionMember2.$toRdf(_object, _parameters);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(_object)) {
+      return IriIdentifierInterface.$toRdf(_object, _parameters);
+    }
+    if (
+      JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(_object)
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        _object,
+      )
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        _object,
+      )
+    ) {
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdf(
+        _object,
+        _parameters,
+      );
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(_object)
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(_object)
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _object,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdf(_object, _parameters);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _object,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdf(_object, _parameters);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
+        _object,
+      )
+    ) {
+      return _object.$toRdf(_parameters);
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        _object,
+      )
+    ) {
+      return LazilyResolvedIriIdentifierInterface.$toRdf(_object, _parameters);
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
+      return LazyPropertiesInterface.$toRdf(_object, _parameters);
+    }
+    if (PartialInterface.isPartialInterface(_object)) {
+      return PartialInterface.$toRdf(_object, _parameters);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NodeKindsClass.isNodeKindsClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NewName1Class.isNewName1Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (NewName2Class.isNewName2Class(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(_object)) {
+      return PartialInterfaceUnionMember1.$toRdf(_object, _parameters);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(_object)) {
+      return PartialInterfaceUnionMember2.$toRdf(_object, _parameters);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(_object)) {
+      return UuidV4IriIdentifierInterface.$toRdf(_object, _parameters);
+    }
+    if ($DefaultPartial.is$DefaultPartial(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(_object)) {
+      return _object.$toRdf(_parameters);
+    }
+    throw new Error("unrecognized type");
   }
 }
 export interface $ObjectSet {
