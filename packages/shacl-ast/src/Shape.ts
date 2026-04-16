@@ -23,10 +23,7 @@ export abstract class Shape<
   >;
 
   constructor(
-    private readonly generatedShaclCoreShape: Omit<
-      generated.ShaclCoreShape,
-      "$type"
-    >,
+    private readonly generatedShape: Omit<generated.Shape, "$type">,
     protected readonly shapesGraph: ShapesGraph<
       NodeShapeT,
       OntologyT,
@@ -37,21 +34,19 @@ export abstract class Shape<
   ) {}
 
   get comments(): readonly string[] {
-    return this.generatedShaclCoreShape.comments;
+    return this.generatedShape.comments;
   }
 
   get identifier(): BlankNode | NamedNode {
-    return this.generatedShaclCoreShape.$identifier;
+    return this.generatedShape.$identifier;
   }
 
   @Memoize()
   get isDefinedBy(): Either<Error, Maybe<OntologyT>> {
-    if (this.generatedShaclCoreShape.isDefinedBy.isJust()) {
+    if (this.generatedShape.isDefinedBy.isJust()) {
       // If there's an rdfs:isDefinedBy statement on the shape then don't fall back to anything else
       return this.shapesGraph
-        .ontologyByIdentifier(
-          this.generatedShaclCoreShape.isDefinedBy.unsafeCoerce(),
-        )
+        .ontologyByIdentifier(this.generatedShape.isDefinedBy.unsafeCoerce())
         .map(Maybe.of);
     }
 
@@ -79,7 +74,7 @@ export abstract class Shape<
   }
 
   get labels(): readonly string[] {
-    return this.generatedShaclCoreShape.labels;
+    return this.generatedShape.labels;
   }
 }
 
@@ -92,10 +87,7 @@ export namespace Shape {
     ShapeT,
   > {
     constructor(
-      private readonly generatedShaclCoreShape: Omit<
-        generated.ShaclCoreShape,
-        "$type"
-      >,
+      private readonly generatedShape: Omit<generated.Shape, "$type">,
       protected readonly shapesGraph: ShapesGraph<
         NodeShapeT,
         OntologyT,
@@ -107,56 +99,56 @@ export namespace Shape {
 
     @Memoize()
     get and(): Either<Error, readonly ShapeT[]> {
-      return this.shapeListTakingConstraint(this.generatedShaclCoreShape.and);
+      return this.shapeListTakingConstraint(this.generatedShape.and);
     }
 
     get classes(): readonly NamedNode[] {
-      return this.generatedShaclCoreShape.classes;
+      return this.generatedShape.classes;
     }
 
     get datatype(): Maybe<NamedNode> {
-      return this.generatedShaclCoreShape.datatype;
+      return this.generatedShape.datatype;
     }
 
     get hasValues(): readonly (Literal | NamedNode)[] {
-      return this.generatedShaclCoreShape.hasValues;
+      return this.generatedShape.hasValues;
     }
 
     get in_(): readonly (Literal | NamedNode)[] {
-      return this.generatedShaclCoreShape.in_.orDefault([]);
+      return this.generatedShape.in_.orDefault([]);
     }
 
     get languageIn(): readonly string[] {
-      return this.generatedShaclCoreShape.languageIn.orDefault([]);
+      return this.generatedShape.languageIn.orDefault([]);
     }
 
     get maxCount(): Maybe<number> {
-      return this.generatedShaclCoreShape.maxCount;
+      return this.generatedShape.maxCount;
     }
 
     get maxExclusive(): Maybe<Literal> {
-      return this.generatedShaclCoreShape.maxExclusive;
+      return this.generatedShape.maxExclusive;
     }
 
     get maxInclusive(): Maybe<Literal> {
-      return this.generatedShaclCoreShape.maxInclusive;
+      return this.generatedShape.maxInclusive;
     }
 
     get minCount(): Maybe<number> {
-      return this.generatedShaclCoreShape.minCount;
+      return this.generatedShape.minCount;
     }
 
     get minExclusive(): Maybe<Literal> {
-      return this.generatedShaclCoreShape.minExclusive;
+      return this.generatedShape.minExclusive;
     }
 
     get minInclusive(): Maybe<Literal> {
-      return this.generatedShaclCoreShape.minInclusive;
+      return this.generatedShape.minInclusive;
     }
 
     @Memoize()
     get nodeKinds(): ReadonlySet<NodeKind> {
-      return this.generatedShaclCoreShape.nodeKind
+      return this.generatedShape.nodeKind
         .map((iri) => {
           const nodeKinds = new Set<NodeKind>();
           switch (iri.value) {
@@ -190,7 +182,7 @@ export namespace Shape {
     @Memoize()
     get nodes(): Either<Error, readonly NodeShapeT[]> {
       return Either.sequence(
-        this.generatedShaclCoreShape.nodes.map((identifier) =>
+        this.generatedShape.nodes.map((identifier) =>
           this.shapesGraph.nodeShapeByIdentifier(identifier),
         ),
       );
@@ -199,7 +191,7 @@ export namespace Shape {
     @Memoize()
     get not(): Either<Error, readonly ShapeT[]> {
       return Either.sequence(
-        this.generatedShaclCoreShape.not.map((identifier) =>
+        this.generatedShape.not.map((identifier) =>
           this.shapesGraph.shapeByIdentifier(identifier),
         ),
       );
@@ -207,12 +199,12 @@ export namespace Shape {
 
     @Memoize()
     get or(): Either<Error, readonly ShapeT[]> {
-      return this.shapeListTakingConstraint(this.generatedShaclCoreShape.or);
+      return this.shapeListTakingConstraint(this.generatedShape.or);
     }
 
     @Memoize()
     get xone(): Either<Error, readonly ShapeT[]> {
-      return this.shapeListTakingConstraint(this.generatedShaclCoreShape.xone);
+      return this.shapeListTakingConstraint(this.generatedShape.xone);
     }
 
     private shapeListTakingConstraint(

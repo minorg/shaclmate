@@ -23,8 +23,8 @@ export class PropertyShape<
   >;
 
   constructor(
-    private readonly generatedShaclCorePropertyShape: Omit<
-      generated.ShaclCorePropertyShape,
+    private readonly generatedPropertyShape: Omit<
+      generated.PropertyShape,
       "$type"
     >,
     shapesGraph: ShapesGraph<
@@ -35,40 +35,40 @@ export class PropertyShape<
       ShapeT
     >,
   ) {
-    super(generatedShaclCorePropertyShape, shapesGraph);
+    super(generatedPropertyShape, shapesGraph);
     this.constraints = new Shape.Constraints(
-      generatedShaclCorePropertyShape,
+      generatedPropertyShape,
       shapesGraph,
     );
   }
 
   get defaultValue(): Maybe<Literal | NamedNode> {
-    return this.generatedShaclCorePropertyShape.defaultValue;
+    return this.generatedPropertyShape.defaultValue;
   }
 
   get descriptions(): readonly string[] {
-    return this.generatedShaclCorePropertyShape.descriptions;
+    return this.generatedPropertyShape.descriptions;
   }
 
   @Memoize()
   get groups(): Either<Error, readonly PropertyGroupT[]> {
     return Either.sequence(
-      this.generatedShaclCorePropertyShape.groups.map((identifier) =>
+      this.generatedPropertyShape.groups.map((identifier) =>
         this.shapesGraph.propertyGroupByIdentifier(identifier),
       ),
     );
   }
 
   get names(): readonly string[] {
-    return this.generatedShaclCorePropertyShape.names;
+    return this.generatedPropertyShape.names;
   }
 
   get order(): Maybe<number> {
-    return this.generatedShaclCorePropertyShape.order;
+    return this.generatedPropertyShape.order;
   }
 
   get path(): PropertyPath {
-    return this.generatedShaclCorePropertyShape.path;
+    return this.generatedPropertyShape.path;
   }
 
   @Memoize()
