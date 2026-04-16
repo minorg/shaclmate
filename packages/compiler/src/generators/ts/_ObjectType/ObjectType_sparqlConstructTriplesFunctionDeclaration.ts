@@ -1,4 +1,5 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
+import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -13,7 +14,11 @@ const variables = {
 
 export function ObjectType_sparqlConstructTriplesFunctionDeclaration(
   this: ObjectType,
-): Code {
+): Maybe<Code> {
+  if (!this.features.has("sparql")) {
+    return Maybe.empty();
+  }
+
   const rdfClassVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
@@ -52,7 +57,7 @@ if (!parameters?.ignoreRdfType) {
       });
   }
 
-  return code`\
+  return Maybe.of(code`\
 export function ${syntheticNamePrefix}sparqlConstructTriples(${statements.length === 0 ? "_" : ""}parameters: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean;  variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
 ${
   statements.length > 0
@@ -63,5 +68,5 @@ ${
       ])
     : "return [];"
 }
-}`;
+}`);
 }

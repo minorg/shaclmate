@@ -181,46 +181,41 @@ export class ObjectType extends AbstractDeclaredType {
         }
       }
 
-      if (this.features.has("json")) {
-        staticModuleDeclarations.push(
-          ...ObjectType_fromJsonFunctionDeclarations.bind(this)(),
-          ObjectType_jsonSchemaFunctionDeclaration.bind(this)(),
-          ...ObjectType_jsonTypeAliasDeclaration.bind(this)().toList(),
-          ObjectType_jsonUiSchemaFunctionDeclaration.bind(this)(),
-          ...(this.declarationType === "interface"
-            ? ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)().toList()
-            : []),
-          ObjectType_jsonZodSchemaFunctionDeclaration.bind(this)(),
-        );
-      }
-
-      if (this.features.has("rdf")) {
-        staticModuleDeclarations.push(
-          ...ObjectType_fromRdfFunctionDeclaration.bind(this)().toList(),
-          ObjectType_propertiesFromRdfFunctionDeclaration.bind(this)(),
-          ...(this.declarationType === "interface"
-            ? ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList()
-            : []),
-        );
-      }
-
-      if (this.features.has("sparql")) {
-        staticModuleDeclarations.push(
-          ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
-          ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
-          ObjectType_sparqlConstructTriplesFunctionDeclaration.bind(this)(),
-          ObjectType_sparqlWherePatternsFunctionDeclaration.bind(this)(),
-        );
-      }
-
       staticModuleDeclarations.push(
-        ObjectType_filterFunctionDeclaration.bind(this)(),
-        ObjectType_filterTypeDeclaration.bind(this)(),
-        ...ObjectType_fromRdfTypeVariableStatement.bind(this)().toList(),
         ...ObjectType_graphqlTypeVariableStatement.bind(this)().toList(),
         ...identifierTypeDeclarations.bind(this)(),
+        ...ObjectType_jsonTypeAliasDeclaration.bind(this)().toList(),
+        ObjectType_filterFunctionDeclaration.bind(this)(),
+        ObjectType_filterTypeDeclaration.bind(this)(),
+        ...ObjectType_fromJsonFunctionDeclarations.bind(this)(),
+        ...ObjectType_fromRdfFunctionDeclaration.bind(this)().toList(),
+        ...ObjectType_fromRdfTypeVariableStatement.bind(this)().toList(),
         ObjectType_isTypeFunctionDeclaration.bind(this)(),
+        ...ObjectType_jsonSchemaFunctionDeclaration.bind(this)().toList(),
+        ...ObjectType_jsonUiSchemaFunctionDeclaration.bind(this)().toList(),
+        ...ObjectType_jsonZodSchemaFunctionDeclaration.bind(this)().toList(),
+        ...ObjectType_propertiesFromRdfFunctionDeclaration.bind(
+          this,
+        )().toList(),
         ObjectType_schemaVariableStatement.bind(this)(),
+        ...ObjectType_sparqlConstructQueryFunctionDeclaration.bind(
+          this,
+        )().toList(),
+        ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
+          this,
+        )().toList(),
+        ...ObjectType_sparqlConstructTriplesFunctionDeclaration.bind(
+          this,
+        )().toList(),
+        ...ObjectType_sparqlWherePatternsFunctionDeclaration.bind(
+          this,
+        )().toList(),
+        ...(this.declarationType === "interface"
+          ? ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)().toList()
+          : []),
+        ...(this.declarationType === "interface"
+          ? ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList()
+          : []),
       );
 
       if (staticModuleDeclarations.length > 0) {

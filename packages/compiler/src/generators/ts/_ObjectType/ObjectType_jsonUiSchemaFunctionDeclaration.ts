@@ -1,10 +1,15 @@
+import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_jsonUiSchemaFunctionDeclaration(
   this: ObjectType,
-): Code {
+): Maybe<Code> {
+  if (!this.features.has("json")) {
+    return Maybe.empty();
+  }
+
   const variables = { scopePrefix: code`scopePrefix` };
   const elements: Code[] = this.parentObjectTypes
     .map(
@@ -17,9 +22,9 @@ export function ObjectType_jsonUiSchemaFunctionDeclaration(
       ),
     );
 
-  return code`\
+  return Maybe.of(code`\
 export function ${syntheticNamePrefix}jsonUiSchema(parameters?: { scopePrefix?: string }): any {
   const scopePrefix = parameters?.scopePrefix ?? "#";
   return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.name)}", type: "Group" };
-}`;
+}`);
 }

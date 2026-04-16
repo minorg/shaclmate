@@ -8,6 +8,10 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 export function ObjectType_fromRdfFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
+  if (!this.features.has("rdf")) {
+    return Maybe.empty();
+  }
+
   if (this.abstract) {
     return Maybe.empty();
   }

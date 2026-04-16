@@ -1,4 +1,5 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -8,7 +9,11 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_propertiesFromRdfFunctionDeclaration(
   this: ObjectType,
-): Code {
+): Maybe<Code> {
+  if (!this.features.has("rdf")) {
+    return Maybe.empty();
+  }
+
   const chains: { expression: Code; variable: string }[] = [];
   const initializers: Code[] = [];
   const propertySignatures: Code[] = [];
@@ -110,8 +115,8 @@ export function ObjectType_propertiesFromRdfFunctionDeclaration(
     );
   }
 
-  return code`\
+  return Maybe.of(code`\
 export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${snippets.PropertiesFromRdfParameters}): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
 ${joinCode(statements)}
-}`;
+}`);
 }

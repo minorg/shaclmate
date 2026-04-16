@@ -11,6 +11,10 @@ const variables = {
 export function ObjectType_fromJsonFunctionDeclarations(
   this: ObjectType,
 ): readonly Code[] {
+  if (!this.features.has("json")) {
+    return [];
+  }
+
   const initializers: string[] = [];
   const propertiesFromJsonReturnType: Code[] = [];
   const propertiesFromJsonStatements: Code[] = [];
