@@ -5,44 +5,40 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-shaclmate:ShaclmateNodeShape
-    shaclmate:rdfType sh:NodeShape ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf shaclmate:ShaclCoreNodeShape ;
-    sh:property shaclmate:ShaclmateNodeShape-abstract, shaclmate:ShaclmateNodeShape-discriminantValue, shaclmate:ShaclmateNodeShape-export, shaclmate:ShaclmateNodeShape-extern, shaclmate:ShaclmateNodeShape-fromRdfType, shaclmate:ShaclmateNodeShape-identifierMintingStrategy, shaclmate:ShaclmateNodeShape-rdfType, shaclmate:ShaclmateNodeShape-toRdfTypes, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+shaclmate:NodeShape sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-export, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-identifierMintingStrategy, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
-shaclmate:ShaclmateNodeShape-abstract
+shaclmate:NodeShape-abstract
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:abstract .
 
-shaclmate:ShaclmateNodeShape-discriminantValue
+shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:path shaclmate:discriminantValue .
 
-shaclmate:ShaclmateNodeShape-export
+shaclmate:NodeShape-export
     shaclmate:name "export_" ;
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:export .
 
-shaclmate:ShaclmateNodeShape-extern
+shaclmate:NodeShape-extern
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:extern .
 
-shaclmate:ShaclmateNodeShape-fromRdfType
+shaclmate:NodeShape-fromRdfType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:fromRdfType .
 
-shaclmate:ShaclmateNodeShape-identifierMintingStrategy
+shaclmate:NodeShape-identifierMintingStrategy
     a sh:PropertyShape ;
     sh:in (shaclmate:_IdentifierMintingStrategy_BlankNode
         shaclmate:_IdentifierMintingStrategy_SHA256
@@ -51,38 +47,31 @@ shaclmate:ShaclmateNodeShape-identifierMintingStrategy
     sh:maxCount 1 ;
     sh:path shaclmate:identifierMintingStrategy .
 
-shaclmate:ShaclmateNodeShape-rdfType
+shaclmate:NodeShape-rdfType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:rdfType .
 
-shaclmate:ShaclmateNodeShape-toRdfTypes
+shaclmate:NodeShape-toRdfTypes
     a sh:PropertyShape ;
     sh:name "toRdfTypes" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
-shaclmate:ShaclmateOntology
-    shaclmate:rdfType owl:Ontology ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf shaclmate:OwlOntology ;
-    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+shaclmate:Ontology sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
-shaclmate:ShaclmatePropertyShape
-    shaclmate:rdfType sh:PropertyShape ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf shaclmate:ShaclCorePropertyShape ;
-    sh:property shaclmate:ShaclmatePropertyShape-resolve, shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
+shaclmate:PropertyShape
+    sh:property shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-name .
 
-shaclmate:ShaclmatePropertyShape-resolve
+shaclmate:PropertyShape-resolve
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "resolve" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
 
-shaclmate:ShaclmatePropertyShape-visibility
+shaclmate:PropertyShape-visibility
     a sh:PropertyShape ;
     sh:in (shaclmate:_Visibility_Private
         shaclmate:_Visibility_Protected
@@ -91,19 +80,13 @@ shaclmate:ShaclmatePropertyShape-visibility
     sh:maxCount 1 ;
     sh:path shaclmate:visibility .
 
-shaclmate:ShaclmateShape
-    a sh:NodeShape ;
-    sh:xone (shaclmate:ShaclmateNodeShape
-        shaclmate:ShaclCorePropertyShape
-    ) .
-
-shaclmate:ShaclmateShape-mutable
+shaclmate:Shape-mutable
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:mutable .
 
-shaclmate:ShaclmateShape-name
+shaclmate:Shape-name
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;

@@ -13,125 +13,120 @@
     rdfs:label "SHACL for shacl-ast" ;
     rdfs:seeAlso <https://www.w3.org/TR/shacl/#shacl-shacl> .
 
-shaclmate:BaseShaclCoreShape
-    shaclmate:abstract true ;
-    a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:BaseShaclCoreShape-and, shaclmate:BaseShaclCoreShape-classes, shaclmate:BaseShaclCoreShape-comments, shaclmate:BaseShaclCoreShape-datatype, shaclmate:BaseShaclCoreShape-deactivated, shaclmate:BaseShaclCoreShape-flags, shaclmate:BaseShaclCoreShape-hasValues, shaclmate:BaseShaclCoreShape-in, shaclmate:BaseShaclCoreShape-isDefinedBy, shaclmate:BaseShaclCoreShape-labels, shaclmate:BaseShaclCoreShape-languageIn, shaclmate:BaseShaclCoreShape-maxCount, shaclmate:BaseShaclCoreShape-maxExclusive, shaclmate:BaseShaclCoreShape-maxInclusive, shaclmate:BaseShaclCoreShape-maxLength, shaclmate:BaseShaclCoreShape-minCount, shaclmate:BaseShaclCoreShape-minExclusive, shaclmate:BaseShaclCoreShape-minInclusive, shaclmate:BaseShaclCoreShape-minLength, shaclmate:BaseShaclCoreShape-nodeKind, shaclmate:BaseShaclCoreShape-nodes, shaclmate:BaseShaclCoreShape-not, shaclmate:BaseShaclCoreShape-or, shaclmate:BaseShaclCoreShape-patterns, shaclmate:BaseShaclCoreShape-xone .
-
-shaclmate:BaseShaclCoreShape-and
+shaclmate:Shape-and
     a sh:PropertyShape ;
     sh:node shaclmate:IdentifierList ;
     sh:path sh:and .
 
-shaclmate:BaseShaclCoreShape-classes
+shaclmate:Shape-classes
     a sh:PropertyShape ;
     sh:name "classes" ;
     sh:nodeKind sh:IRI ;
     sh:path sh:class .
 
-shaclmate:BaseShaclCoreShape-comments
+shaclmate:Shape-comments
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "comments" ;
     sh:path rdfs:comment .
 
-shaclmate:BaseShaclCoreShape-datatype
+shaclmate:Shape-datatype
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:IRI ;
     sh:path sh:datatype .
 
-shaclmate:BaseShaclCoreShape-deactivated
+shaclmate:Shape-deactivated
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path sh:deactivated .
 
-shaclmate:BaseShaclCoreShape-flags
+shaclmate:Shape-flags
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:path sh:flags .
 
-shaclmate:BaseShaclCoreShape-hasValues
+shaclmate:Shape-hasValues
     a sh:PropertyShape ;
     sh:name "hasValues" ;
     sh:nodeKind sh:IRIOrLiteral ;
     sh:path sh:hasValue .
 
-shaclmate:BaseShaclCoreShape-in
+shaclmate:Shape-in
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "in_" ;
     sh:node shaclmate:InList ;
     sh:path sh:in .
 
-shaclmate:BaseShaclCoreShape-isDefinedBy
+shaclmate:Shape-isDefinedBy
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path rdfs:isDefinedBy .
 
-shaclmate:BaseShaclCoreShape-labels
+shaclmate:Shape-labels
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "labels" ;
     sh:path rdfs:label .
 
-shaclmate:BaseShaclCoreShape-languageIn
+shaclmate:Shape-languageIn
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:node shaclmate:StringList ;
     sh:path sh:languageIn .
 
-shaclmate:BaseShaclCoreShape-maxCount
+shaclmate:Shape-maxCount
     a sh:PropertyShape ;
     sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:maxCount .
 
-shaclmate:BaseShaclCoreShape-maxExclusive
+shaclmate:Shape-maxExclusive
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:Literal ;
     sh:path sh:maxExclusive .
 
-shaclmate:BaseShaclCoreShape-maxInclusive
+shaclmate:Shape-maxInclusive
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:Literal ;
     sh:path sh:maxInclusive .
 
-shaclmate:BaseShaclCoreShape-maxLength
+shaclmate:Shape-maxLength
     a sh:PropertyShape ;
     sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:maxLength .
 
-shaclmate:BaseShaclCoreShape-minCount
+shaclmate:Shape-minCount
     a sh:PropertyShape ;
     sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:minCount .
 
-shaclmate:BaseShaclCoreShape-minExclusive
+shaclmate:Shape-minExclusive
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:Literal ;
     sh:path sh:minExclusive .
 
-shaclmate:BaseShaclCoreShape-minInclusive
+shaclmate:Shape-minInclusive
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:Literal ;
     sh:path sh:minInclusive .
 
-shaclmate:BaseShaclCoreShape-minLength
+shaclmate:Shape-minLength
     a sh:PropertyShape ;
     sh:datatype xsd:unsignedInt ;
     sh:maxCount 1 ;
     sh:path sh:minLength .
 
-shaclmate:BaseShaclCoreShape-nodeKind
+shaclmate:Shape-nodeKind
     a sh:PropertyShape ;
     sh:in (sh:BlankNode
         sh:BlankNodeOrIRI
@@ -143,29 +138,29 @@ shaclmate:BaseShaclCoreShape-nodeKind
     sh:maxCount 1 ;
     sh:path sh:nodeKind .
 
-shaclmate:BaseShaclCoreShape-nodes
+shaclmate:Shape-nodes
     a sh:PropertyShape ;
     sh:name "nodes" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path sh:node .
 
-shaclmate:BaseShaclCoreShape-not
+shaclmate:Shape-not
     a sh:PropertyShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path sh:not .
 
-shaclmate:BaseShaclCoreShape-or
+shaclmate:Shape-or
     a sh:PropertyShape ;
     sh:node shaclmate:IdentifierList ;
     sh:path sh:or .
 
-shaclmate:BaseShaclCoreShape-patterns
+shaclmate:Shape-patterns
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "patterns" ;
     sh:path sh:pattern .
 
-shaclmate:BaseShaclCoreShape-xone
+shaclmate:Shape-xone
     a sh:PropertyShape ;
     sh:node shaclmate:IdentifierList ;
     sh:path sh:xone .
@@ -233,117 +228,115 @@ shaclmate:IriList
         ]
     ) .
 
-shaclmate:OwlOntology
+shaclmate:Ontology
     shaclmate:fromRdfType owl:Ontology ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:OwlOntology-labels .
+    sh:property shaclmate:Ontology-labels .
 
-shaclmate:OwlOntology-labels
+shaclmate:Ontology-labels
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "labels" ;
     sh:path rdfs:label .
 
-shaclmate:ShaclCoreNodeShape
+shaclmate:NodeShape
     shaclmate:fromRdfType sh:NodeShape ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf shaclmate:BaseShaclCoreShape ;
-    sh:property shaclmate:ShaclCoreNodeShape-closed, shaclmate:ShaclCoreNodeShape-ignoredProperties, shaclmate:ShaclCoreNodeShape-properties .
+    sh:property shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-comments, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-labels, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-nodeKind, shaclmate:Shape-nodes, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties .
 
-shaclmate:ShaclCoreNodeShape-closed
+shaclmate:NodeShape-closed
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path sh:closed .
 
-shaclmate:ShaclCoreNodeShape-ignoredProperties
+shaclmate:NodeShape-ignoredProperties
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:node shaclmate:IriList ;
     sh:path sh:ignoredProperties .
 
-shaclmate:ShaclCoreNodeShape-properties
+shaclmate:NodeShape-properties
     a sh:PropertyShape ;
     sh:name "properties" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path sh:property .
 
-shaclmate:ShaclCorePropertyGroup
+shaclmate:PropertyGroup
     shaclmate:fromRdfType sh:PropertyGroup ;
     a sh:NodeShape ;
-    sh:property shaclmate:ShaclCorePropertyGroup-comments, shaclmate:ShaclCorePropertyGroup-labels .
+    sh:property shaclmate:PropertyGroup-comments, shaclmate:PropertyGroup-labels .
 
-shaclmate:ShaclCorePropertyGroup-comments
+shaclmate:PropertyGroup-comments
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "comments" ;
     sh:path rdfs:comment .
 
-shaclmate:ShaclCorePropertyGroup-labels
+shaclmate:PropertyGroup-labels
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "labels" ;
     sh:path rdfs:label .
 
-shaclmate:ShaclCorePropertyPath
+shaclmate:PropertyPath
     shaclmate:extern true ;
     shaclmate:name "PropertyPath" ;
     a sh:NodeShape ;
     rdfs:comment "Extern PropertyPath since shaclmate is not sophisticated enough to deal with all property path variants yet" .
 
-shaclmate:ShaclCorePropertyShape
+shaclmate:PropertyShape
     shaclmate:fromRdfType sh:PropertyShape ;
     a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf shaclmate:BaseShaclCoreShape ;
-    sh:property shaclmate:ShaclCorePropertyShape-defaultValue, shaclmate:ShaclCorePropertyShape-descriptions, shaclmate:ShaclCorePropertyShape-groups, shaclmate:ShaclCorePropertyShape-names, shaclmate:ShaclCorePropertyShape-order, shaclmate:ShaclCorePropertyShape-path, shaclmate:ShaclCorePropertyShape-uniqueLang .
+    sh:property shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-comments, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-labels, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-nodeKind, shaclmate:Shape-nodes, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-descriptions, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-names, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-uniqueLang .
 
-shaclmate:ShaclCorePropertyShape-defaultValue
+shaclmate:PropertyShape-defaultValue
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:nodeKind sh:IRIOrLiteral ;
     sh:path sh:defaultValue .
 
-shaclmate:ShaclCorePropertyShape-descriptions
+shaclmate:PropertyShape-descriptions
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "descriptions" ;
     sh:path sh:description .
 
-shaclmate:ShaclCorePropertyShape-groups
+shaclmate:PropertyShape-groups
     a sh:PropertyShape ;
     sh:name "groups" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path sh:group .
 
-shaclmate:ShaclCorePropertyShape-names
+shaclmate:PropertyShape-names
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:name "names" ;
     sh:path sh:name .
 
-shaclmate:ShaclCorePropertyShape-order
+shaclmate:PropertyShape-order
     a sh:PropertyShape ;
     sh:datatype xsd:double ;
     sh:maxCount 1 ;
     sh:path sh:order .
 
-shaclmate:ShaclCorePropertyShape-path
+shaclmate:PropertyShape-path
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:node shaclmate:ShaclCorePropertyPath ;
+    sh:node shaclmate:PropertyPath ;
     sh:path sh:path .
 
-shaclmate:ShaclCorePropertyShape-uniqueLang
+shaclmate:PropertyShape-uniqueLang
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path sh:uniqueLang .
 
-shaclmate:ShaclCoreShape
+shaclmate:Shape
     a sh:NodeShape ;
-    sh:xone (shaclmate:ShaclCoreNodeShape
-        shaclmate:ShaclCorePropertyShape
+    sh:xone (shaclmate:NodeShape
+        shaclmate:PropertyShape
     ) .
 
 shaclmate:StringList
