@@ -27,7 +27,10 @@ import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/Objec
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { ObjectType_rdfFunctionDeclarations } from "./_ObjectType/ObjectType_rdfFunctionDeclarations.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
-import { ObjectType_sparqlFunctionDeclarations } from "./_ObjectType/ObjectType_sparqlFunctionDeclarations.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_sparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructTriplesFunctionDeclaration.js";
+import { ObjectType_sparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlWherePatternsFunctionDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionOrMethodDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
@@ -189,6 +192,15 @@ export class ObjectType extends AbstractDeclaredType {
         );
       }
 
+      if (this.features.has("sparql")) {
+        staticModuleDeclarations.push(
+          ObjectType_sparqlConstructQueryFunctionDeclaration.bind(this)(),
+          ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
+          ObjectType_sparqlConstructTriplesFunctionDeclaration.bind(this)(),
+          ObjectType_sparqlWherePatternsFunctionDeclaration.bind(this)(),
+        );
+      }
+
       staticModuleDeclarations.push(
         ObjectType_filterFunctionDeclaration.bind(this)(),
         ObjectType_filterTypeDeclaration.bind(this)(),
@@ -198,7 +210,6 @@ export class ObjectType extends AbstractDeclaredType {
         ObjectType_isTypeFunctionDeclaration.bind(this)(),
         ...ObjectType_rdfFunctionDeclarations.bind(this)(),
         ObjectType_schemaVariableStatement.bind(this)(),
-        ...ObjectType_sparqlFunctionDeclarations.bind(this)(),
       );
 
       if (staticModuleDeclarations.length > 0) {
