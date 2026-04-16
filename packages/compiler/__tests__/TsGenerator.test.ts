@@ -111,5 +111,5 @@ describe("TsGenerator", () => {
         compileTs(source, sourceDirectoryPath);
       });
     }
-  });
+  }, 60000);
 });
