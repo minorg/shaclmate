@@ -6,7 +6,6 @@ import {
   ShapesGraphToAstTransformer,
   TsGenerator,
 } from "@shaclmate/compiler";
-import ts from "typescript";
 import { describe, expect, it } from "vitest";
 import { compileTs } from "./compileTs.js";
 import { testData } from "./testData.js";
@@ -109,7 +108,7 @@ describe("TsGenerator", () => {
             .transform()
             .unsafeCoerce(),
         );
-        compile(source, sourceDirectoryPath);
+        compileTs(source, sourceDirectoryPath);
       });
     }
   });
