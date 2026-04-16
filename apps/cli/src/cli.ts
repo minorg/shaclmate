@@ -8,6 +8,7 @@ import {
   Compiler,
   ShapesGraph,
   TsGenerator,
+  ZodGenerator,
 } from "@shaclmate/compiler";
 import {
   command,
@@ -142,7 +143,7 @@ run(
         cmds: {
           "ast-json": command({
             name: "ast-json",
-            description: "generate AST JSON for the SHACL Shapes Graph AST",
+            description: "generate AST JSON for the SHACL shapes graph",
             args: {
               inputFilePaths,
               outputFilePath,
@@ -157,7 +158,7 @@ run(
           }),
           ts: command({
             name: "ts",
-            description: "generate TypeScript for the SHACL Shapes Graph AST",
+            description: "generate TypeScript for the SHACL shapes graph",
             args: {
               inputFilePaths,
               outputFilePath,
@@ -165,6 +166,21 @@ run(
             handler: async ({ inputFilePaths, outputFilePath }) => {
               generate({
                 generator: new TsGenerator(),
+                inputFilePaths,
+                outputFilePath,
+              });
+            },
+          }),
+          zod: command({
+            name: "zod",
+            description: "generate Zod schemas for the SHACL shapes graph",
+            args: {
+              inputFilePaths,
+              outputFilePath,
+            },
+            handler: async ({ inputFilePaths, outputFilePath }) => {
+              generate({
+                generator: new ZodGenerator(),
                 inputFilePaths,
                 outputFilePath,
               });
