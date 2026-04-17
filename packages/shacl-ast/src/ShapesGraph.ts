@@ -9,6 +9,7 @@ import type {
 } from "@rdfjs/types";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
+
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import * as generated from "./generated.js";
@@ -19,6 +20,7 @@ import { PropertyGroup } from "./PropertyGroup.js";
 import { PropertyShape } from "./PropertyShape.js";
 import type { Shape } from "./Shape.js";
 
+// Stub types for compiler integration (avoid circular runtime dependency)
 export class ShapesGraph<
   NodeShapeT extends ShapeT,
   OntologyT extends OntologyLike,
@@ -131,6 +133,61 @@ export class ShapesGraph<
     return (
       this.nodeShapeByIdentifier(identifier) as Either<Error, ShapeT>
     ).alt(this.propertyShapeByIdentifier(identifier));
+  }
+
+  /**
+   * Transforms this shapes graph to an intermediate AST using the compiler's
+   * {@link ShapesGraphToAstTransformer}.
+   *
+   * Uses a dynamic import to avoid a circular dependency between the shacl-ast
+   * and compiler packages.
+   */
+  async toAst(options?: {
+    iriPrefixMap?: unknown;
+    tsFeaturesDefault?: ReadonlySet<unknown>;
+  }): Promise<Either<Error, unknown>> {
+    // @ts-expect-error - @shaclmate/compiler is a workspace package not in shacl-ast deps
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const transformerMod: any = await import("@shaclmate/compiler/ShapesGraphToAstTransformer.js");
+    const ShapesGraphToAstTransformer = transformerMod.ShapesGraphToAstTransformer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const prefixMapMod: any = await import("@rdfjs/prefix-map");
+    const PrefixMap = prefixMapMod.default;
+    const iriPrefixMap = options?.iriPrefixMap ?? new PrefixMap();
+    return new ShapesGraphToAstTransformer({
+      iriPrefixMap,
+      shapesGraph: this,
+      tsFeaturesDefault: options?.tsFeaturesDefault,
+    }).transform();
+  }
+
+  /**
+   * Compiles this shapes graph to generated code using the provided generator
+   * via the compiler's {@link Compiler}.
+   *
+   * Uses a dynamic import to avoid a circular dependency between the shacl-ast
+   * and compiler packages.
+   *
+   * @example
+   * ```ts
+   * import { ShapesGraph } from "@shaclmate/shacl-ast";
+   * import { TsGenerator } from "@shaclmate/compiler";
+   *
+   * const shapesGraph = ShapesGraph.create({ dataset });
+   * const code = await shapesGraph.compile({ generator: new TsGenerator() });
+   * ```
+   */
+  async compile(options: {
+    generator: unknown;
+    iriPrefixMap?: unknown;
+  }): Promise<Either<Error, string>> {
+    // @ts-expect-error - @shaclmate/compiler is a peer dependency resolved at runtime
+    const { Compiler } = await import("@shaclmate/compiler/Compiler.js");
+    const compiler = new Compiler({
+      generator: options.generator,
+      iriPrefixMap: options.iriPrefixMap,
+    });
+    return compiler.compile(this);
   }
 }
 
