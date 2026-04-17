@@ -6,7 +6,6 @@ import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -67,7 +66,6 @@ export namespace AbstractContainerType {
     | ListType
     | LiteralType
     | ObjectType
-    | PlaceholderType
     | TermType
     | UnionType;
 
@@ -90,8 +88,6 @@ export namespace AbstractContainerType {
       case "OptionType":
       case "SetType":
         return false;
-      case "PlaceholderType":
-        throw new Error("should never happen");
     }
   }
 }

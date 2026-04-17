@@ -16,13 +16,13 @@ export function transformShapeToAstType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, Exclude<ast.Type, ast.PlaceholderType>> {
+): Either<Error, ast.Type> {
   // Try to transform the property shape into an AST type without cardinality constraints
   return transformShapeToAstCompoundType
     .call(this, shape, shapeStack)
     .chain((astType) =>
       astType
-        .map((_) => Either.of<Error, Exclude<ast.Type, ast.PlaceholderType>>(_))
+        .map((_) => Either.of<Error, ast.Type>(_))
         .orDefaultLazy(() =>
           transformShapeToAstTermType.call(this, shape, shapeStack),
         ),

@@ -11,7 +11,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -86,7 +85,6 @@ export namespace ListType {
     | ObjectIntersectionType
     | ObjectType
     | ObjectUnionType
-    | PlaceholderType
     | TermType
     | UnionType;
 
@@ -100,7 +98,6 @@ export namespace ListType {
       case "ObjectIntersectionType":
       case "ObjectType":
       case "ObjectUnionType":
-      case "PlaceholderType":
       case "TermType":
       case "UnionType":
         return true;

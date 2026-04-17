@@ -414,7 +414,6 @@ export namespace ObjectType {
           case "IdentifierType":
           case "IriType":
           case "LiteralType":
-          case "PlaceholderType":
           case "TermType":
             return false;
           case "LazyObjectOptionType":

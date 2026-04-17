@@ -279,8 +279,6 @@ export class TypeFactory {
         return this.createObjectType(astType);
       case "OptionType":
         return this.createOptionType(astType);
-      case "PlaceholderType":
-        throw new Error(astType.kind);
       case "SetType":
         return this.createSetType(astType);
       case "TermType":

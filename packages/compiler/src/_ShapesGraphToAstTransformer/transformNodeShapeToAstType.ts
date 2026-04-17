@@ -45,7 +45,6 @@ function isObjectTypePropertyRequired(property: {
     case "ListType":
     case "LiteralType":
     case "ObjectType":
-    case "PlaceholderType":
     case "TermType":
       return true;
     case "IntersectionType":
@@ -77,6 +76,13 @@ const listPropertiesObjectType = new ast.ObjectType({
   tsImports: [],
 });
 
+const astListTypePlaceholderItemType = new ast.BlankNodeType({
+  comment: Maybe.empty(),
+  label: Maybe.empty(),
+  name: Maybe.empty(),
+  shapeIdentifier: dataFactory.blankNode(),
+});
+
 /**
  * Is an ast.ObjectType actually the shape of an RDF list?
  * If so, return the type of its rdf:first.
@@ -97,7 +103,7 @@ function transformNodeShapeToAstListType(
     const listType = new ast.ListType({
       comment: nodeShape.comment,
       identifierNodeKind: nodeKinds.has("BlankNode") ? "BlankNode" : "IRI",
-      itemType: ast.PlaceholderType.instance as ast.ListType.ItemType,
+      itemType: astListTypePlaceholderItemType,
       label: nodeShape.label,
       mutable: nodeShape.mutable.orDefault(false),
       name: Maybe.empty(),

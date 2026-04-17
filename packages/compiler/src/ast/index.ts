@@ -15,7 +15,6 @@ export * from "./ObjectIntersectionType.js";
 export * from "./ObjectType.js";
 export * from "./ObjectUnionType.js";
 export * from "./OptionType.js";
-export * from "./PlaceholderType.js";
 export * from "./SetType.js";
 export * from "./TermType.js";
 export * from "./Type.js";

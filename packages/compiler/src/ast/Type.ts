@@ -10,7 +10,6 @@ import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 import type { SetType } from "./SetType.js";
 import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
@@ -28,7 +27,6 @@ export type Type =
   | LiteralType
   | ObjectType
   | OptionType
-  | PlaceholderType
   | SetType
   | TermType
   | UnionType;
@@ -64,8 +62,6 @@ export namespace Type {
         return left.equals(right as ObjectType);
       case "OptionType":
         return left.equals(right as OptionType);
-      case "PlaceholderType":
-        return left.equals(right as PlaceholderType);
       case "TermType":
         return left.equals(right as TermType);
       case "UnionType":

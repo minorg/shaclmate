@@ -134,8 +134,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
         ...common,
         itemType: typeToJson(type.itemType),
       };
-    case "PlaceholderType":
-      throw new Error(type.kind);
     case "SetType":
       return {
         ...common,

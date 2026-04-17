@@ -8,7 +8,6 @@ import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -125,7 +124,6 @@ export namespace AbstractCompoundType {
     | IriType
     | LiteralType
     | ObjectType
-    | PlaceholderType
     | TermType
     | UnionType;
 
@@ -137,7 +135,6 @@ export namespace AbstractCompoundType {
       case "IriType":
       case "LiteralType":
       case "ObjectType":
-      case "PlaceholderType":
       case "TermType":
       case "UnionType":
         return true;

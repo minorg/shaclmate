@@ -156,13 +156,6 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         .call(this, propertyShapeResolve.unsafeCoerce())
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
-            case "ListType":
-            case "IntersectionType":
-              return Left(
-                new Error(
-                  `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
-                ),
-              );
             case "ObjectType":
               return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
                 astResolveType,
@@ -177,6 +170,12 @@ export function transformPropertyShapeToAstObjectTypeProperty(
               }
               return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
                 astResolveType,
+              );
+            default:
+              return Left(
+                new Error(
+                  `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
+                ),
               );
           }
         });

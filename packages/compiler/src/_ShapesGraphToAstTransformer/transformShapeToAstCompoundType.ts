@@ -18,7 +18,7 @@ export function transformShapeToAstCompoundType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, Maybe<Exclude<ast.Type, ast.PlaceholderType>>> {
+): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
   try {
     return Eithers.chain4(
@@ -87,10 +87,7 @@ export function transformShapeToAstCompoundType(
         }
 
         if (memberShapes.length === 0) {
-          return transformMemberShape(memberShapes[0]).chain((memberType) => {
-            invariant(memberType.kind !== "PlaceholderType");
-            return Either.of(Maybe.of(memberType));
-          });
+          return transformMemberShape(memberShapes[0]).map(Maybe.of);
         }
 
         return Either.sequence(memberShapes.map(transformMemberShape))
