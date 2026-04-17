@@ -19,7 +19,9 @@ import type { UnionType } from "./UnionType.js";
  * Compound = combining types at the type level e.g., functions, intersections, unions
  * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
-export abstract class AbstractCompoundType extends AbstractType {
+export abstract class AbstractCompoundType<
+  MemberTypeT extends AbstractCompoundType.MemberType,
+> extends AbstractType {
   /**
    * Type discriminant
    */
@@ -30,39 +32,25 @@ export abstract class AbstractCompoundType extends AbstractType {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #memberTypes: AbstractCompoundType.MemberType[];
-
-  /**
-   * Name of this type, from shaclmate:name.
-   */
-  readonly name: Maybe<string>;
-
-  /**
-   * Identifier of the shape this type was derived from.
-   */
-  readonly shapeIdentifier: BlankNode | NamedNode;
+  readonly #memberTypes: MemberTypeT[];
 
   constructor({
     memberTypes,
-    name,
-    shapeIdentifier,
     ...superParameters
   }: {
-    memberTypes?: readonly AbstractCompoundType.MemberType[];
+    memberTypes?: readonly MemberTypeT[];
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.#memberTypes = memberTypes?.concat() ?? [];
-    this.name = name;
-    this.shapeIdentifier = shapeIdentifier;
   }
 
-  addMemberType(memberType: AbstractCompoundType.MemberType): void {
+  addMemberType(memberType: MemberTypeT): void {
     this.#memberTypes.push(memberType);
   }
 
-  override equals(other: AbstractCompoundType): boolean {
+  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
     // return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);

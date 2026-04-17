@@ -3,7 +3,9 @@ import { AbstractCompoundType } from "./AbstractCompoundType.js";
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
  */
-export class UnionType extends AbstractCompoundType {
+export class UnionType<
+  MemberTypeT extends UnionType.MemberType = UnionType.MemberType,
+> extends AbstractCompoundType<MemberTypeT> {
   override readonly kind = "UnionType";
   readonly memberDiscriminantValues: readonly string[];
 
@@ -12,7 +14,7 @@ export class UnionType extends AbstractCompoundType {
     ...superParameters
   }: {
     memberDiscriminantValues: readonly string[];
-  } & ConstructorParameters<typeof AbstractCompoundType>[0]) {
+  } & ConstructorParameters<typeof AbstractCompoundType<MemberTypeT>>[0]) {
     super(superParameters);
     this.memberDiscriminantValues = memberDiscriminantValues;
   }
