@@ -272,10 +272,10 @@ export function transformNodeShapeToAstObjectCompoundType(
     }
 
     // Put a placeholder in the cache to deal with cyclic references
-    const compoundType: ast.ObjectIntersectionType | ast.ObjectUnionType = new (
-      compoundTypeKind === "ObjectIntersectionType"
-        ? ast.ObjectIntersectionType
-        : ast.ObjectUnionType
+    const compoundType: ast.IntersectionType | ast.UnionType = new (
+      compoundTypeKind === "IntersectionType"
+        ? ast.IntersectionType
+        : ast.UnionType
     )({
       comment: nodeShape.comment,
       export_,

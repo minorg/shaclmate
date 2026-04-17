@@ -6,3 +6,8 @@ import { AbstractCompoundType } from "./AbstractCompoundType.js";
 export class IntersectionType extends AbstractCompoundType {
   override readonly kind = "IntersectionType";
 }
+
+export namespace IntersectionType {
+  export type MemberType = AbstractCompoundType.MemberType;
+  export const isMemberType = AbstractCompoundType.isMemberType;
+}

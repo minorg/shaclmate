@@ -1,5 +1,4 @@
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import type { Type } from "./Type.js";
 
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
@@ -13,8 +12,13 @@ export class UnionType extends AbstractCompoundType {
     ...superParameters
   }: {
     memberDiscriminantValues: readonly string[];
-  } & ConstructorParameters<typeof AbstractCompoundType<Type>>[0]) {
+  } & ConstructorParameters<typeof AbstractCompoundType>[0]) {
     super(superParameters);
     this.memberDiscriminantValues = memberDiscriminantValues;
   }
+}
+
+export namespace UnionType {
+  export type MemberType = AbstractCompoundType.MemberType;
+  export const isMemberType = AbstractCompoundType.isMemberType;
 }

@@ -9,10 +9,7 @@ export function codeName(
   syntheticNamePrefix: string,
 ) {
   return (
-    astConstruct:
-      | ast.ObjectType
-      | ast.UnionType<ast.ObjectType>
-      | ast.ObjectType.Property,
+    astConstruct: ast.ObjectType | ast.UnionType | ast.ObjectType.Property,
   ): string => {
     // The order of checks determines the order of preference.
 

@@ -2,7 +2,7 @@ import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import type * as input from "../input/index.js";
+import * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
@@ -43,7 +43,7 @@ export function transformShapeToAstCompoundType(
         }
 
         const memberDiscriminantValues: string[] = [];
-        const memberTypes: Exclude<ast.Type, ast.PlaceholderType>[] = [];
+        const memberTypes: ast.IntersectionType.MemberType[] = [];
         if (memberNodeShapes) {
           invariant(memberNodeShapes.length > 0);
           invariant(!memberShapes);
@@ -53,7 +53,15 @@ export function transformShapeToAstCompoundType(
             if (memberTypeEither.isLeft()) {
               return memberTypeEither;
             }
-            memberTypes.push(memberTypeEither.unsafeCoerce());
+            const memberType = memberTypeEither.unsafeCoerce();
+            if (!ast.IntersectionType.isMemberType(memberType)) {
+              return Left(
+                new Error(
+                  `${shape} has an invalid member type kind "${memberType.kind}"`,
+                ),
+              );
+            }
+            memberTypes.push(memberType);
 
             if (compoundTypeKind === "UnionType") {
               const memberDiscriminantValue =
@@ -79,7 +87,15 @@ export function transformShapeToAstCompoundType(
             if (memberTypeEither.isLeft()) {
               return memberTypeEither;
             }
-            memberTypes.push(memberTypeEither.unsafeCoerce());
+            const memberType = memberTypeEither.unsafeCoerce();
+            if (!ast.IntersectionType.isMemberType(memberType)) {
+              return Left(
+                new Error(
+                  `${shape} has an invalid member type kind "${memberType.kind}"`,
+                ),
+              );
+            }
+            memberTypes.push(memberType);
 
             if (compoundTypeKind === "UnionType") {
               let memberDiscriminantValue: string | undefined;
@@ -112,45 +128,16 @@ export function transformShapeToAstCompoundType(
         }
 
         if (memberTypes.length === 1) {
+          invariant(memberTypes[0].kind !== "PlaceholderType");
           return Either.of(Maybe.of(memberTypes[0]));
         }
 
         return transformShapeToAstAbstractTypeProperties(shape).chain(
           (astAbstractTypeProperties) => {
-            // If every member type is an ObjectType, ObjectIntersectionType, or ObjectUnionType (the latter of which can be flattened to ObjectTypes),
-            // produce a different AST type (ObjectIntersectionType or ObjectUnionType).
-            if (
-              memberTypes.every((memberType) => {
-                switch (memberType.kind) {
-                  case "ObjectType":
-                  case "ObjectIntersectionType":
-                  case "ObjectUnionType":
-                    return true;
-                  default:
-                    return false;
-                }
-              })
-            ) {
-              const compoundType = new (
-                compoundTypeKind === "IntersectionType"
-                  ? ast.ObjectIntersectionType
-                  : ast.ObjectUnionType
-              )({
-                ...astAbstractTypeProperties,
-                export_: true,
-                name: shape.shaclmateName,
-                shapeIdentifier: this.shapeIdentifier(shape),
-                tsFeatures: this.tsFeaturesDefault,
-              });
-
-              for (const memberType of memberTypes) {
-                const addMemberTypeResult =
-                  compoundType.addMemberType(memberType);
-                if (addMemberTypeResult.isLeft()) {
-                  return addMemberTypeResult;
-                }
-              }
-            }
+            const name =
+              shape instanceof input.PropertyShape
+                ? shape.name.alt(shape.shaclmateName)
+                : shape.shaclmateName;
 
             // Compound type doesn't solely consist of ObjectTypes
             switch (compoundTypeKind) {
@@ -160,6 +147,8 @@ export function transformShapeToAstCompoundType(
                     new ast.IntersectionType({
                       ...astAbstractTypeProperties,
                       memberTypes,
+                      name,
+                      shapeIdentifier: shape.identifier,
                     }),
                   ),
                 );
@@ -181,6 +170,8 @@ export function transformShapeToAstCompoundType(
                       ...astAbstractTypeProperties,
                       memberDiscriminantValues,
                       memberTypes,
+                      name,
+                      shapeIdentifier: shape.identifier,
                     }),
                   ),
                 );
