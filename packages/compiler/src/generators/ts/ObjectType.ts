@@ -165,39 +165,39 @@ export class ObjectType extends AbstractDeclaredType {
 
       switch (this.declarationType) {
         case "class": {
-          declarations.push(ObjectType_classDeclaration.bind(this)());
+          declarations.push(ObjectType_classDeclaration.call(this));
           break;
         }
         case "interface": {
-          declarations.push(ObjectType_interfaceDeclaration.bind(this)());
+          declarations.push(ObjectType_interfaceDeclaration.call(this));
           staticModuleDeclarations.push(
-            ...ObjectType_createFunctionDeclaration.bind(this)().toList(),
+            ...ObjectType_createFunctionDeclaration.call(this).toList(),
             ...ObjectType_equalsFunctionOrMethodDeclaration.bind(
               this,
             )().toList(),
-            ...ObjectType_hashFunctionOrMethodDeclarations.bind(this)(),
+            ...ObjectType_hashFunctionOrMethodDeclarations.call(this),
           );
           break;
         }
       }
 
       staticModuleDeclarations.push(
-        ...ObjectType_graphqlTypeVariableStatement.bind(this)().toList(),
-        ...identifierTypeDeclarations.bind(this)(),
-        ...ObjectType_jsonTypeAliasDeclaration.bind(this)().toList(),
-        ObjectType_filterFunctionDeclaration.bind(this)(),
-        ObjectType_filterTypeDeclaration.bind(this)(),
-        ...ObjectType_fromJsonFunctionDeclarations.bind(this)(),
-        ...ObjectType_fromRdfFunctionDeclaration.bind(this)().toList(),
-        ...ObjectType_fromRdfTypeVariableStatement.bind(this)().toList(),
-        ObjectType_isTypeFunctionDeclaration.bind(this)(),
-        ...ObjectType_jsonSchemaFunctionDeclaration.bind(this)().toList(),
-        ...ObjectType_jsonUiSchemaFunctionDeclaration.bind(this)().toList(),
-        ...ObjectType_jsonZodSchemaFunctionDeclaration.bind(this)().toList(),
+        ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
+        ...identifierTypeDeclarations.call(this),
+        ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
+        ObjectType_filterFunctionDeclaration.call(this),
+        ObjectType_filterTypeDeclaration.call(this),
+        ...ObjectType_fromJsonFunctionDeclarations.call(this),
+        ...ObjectType_fromRdfFunctionDeclaration.call(this).toList(),
+        ...ObjectType_fromRdfTypeVariableStatement.call(this).toList(),
+        ObjectType_isTypeFunctionDeclaration.call(this),
+        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonZodSchemaFunctionDeclaration.call(this).toList(),
         ...ObjectType_propertiesFromRdfFunctionDeclaration.bind(
           this,
         )().toList(),
-        ObjectType_schemaVariableStatement.bind(this)(),
+        ObjectType_schemaVariableStatement.call(this),
         ...ObjectType_sparqlConstructQueryFunctionDeclaration.bind(
           this,
         )().toList(),
@@ -211,10 +211,10 @@ export class ObjectType extends AbstractDeclaredType {
           this,
         )().toList(),
         ...(this.declarationType === "interface"
-          ? ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)().toList()
+          ? ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList()
           : []),
         ...(this.declarationType === "interface"
-          ? ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList()
+          ? ObjectType_toRdfFunctionOrMethodDeclaration.call(this).toList()
           : []),
       );
 
@@ -315,7 +315,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return ObjectType_objectSetMethodNames.bind(this)();
+    return ObjectType_objectSetMethodNames.call(this);
   }
 
   @Memoize()

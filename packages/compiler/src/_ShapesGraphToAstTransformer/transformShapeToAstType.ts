@@ -19,12 +19,12 @@ export function transformShapeToAstType(
 ): Either<Error, Exclude<ast.Type, ast.PlaceholderType>> {
   // Try to transform the property shape into an AST type without cardinality constraints
   return transformShapeToAstCompoundType
-    .bind(this)(shape, shapeStack)
+    .call(this, shape, shapeStack)
     .chain((astType) =>
       astType
         .map((_) => Either.of<Error, Exclude<ast.Type, ast.PlaceholderType>>(_))
         .orDefaultLazy(() =>
-          transformShapeToAstTermType.bind(this)(shape, shapeStack),
+          transformShapeToAstTermType.call(this, shape, shapeStack),
         ),
     );
 }

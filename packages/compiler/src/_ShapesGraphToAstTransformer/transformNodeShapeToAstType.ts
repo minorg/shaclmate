@@ -14,6 +14,7 @@ import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMinting
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { shapeName } from "./shapeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
+import { transformShapeToAstCompoundType } from "./transformShapeToAstCompoundType.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
@@ -226,84 +227,10 @@ function transformNodeShapeToAstListType(
   });
 }
 
-function transformNodeShapeToAstCompoundType(
-  this: ShapesGraphToAstTransformer,
-  {
-    export_,
-    nodeShape,
-  }: {
-    export_: boolean;
-    nodeShape: input.NodeShape;
-  },
-): Either<Error, ast.ObjectIntersectionType | ast.ObjectUnionType> {
-  return Eithers.chain3(
-    nodeShape.constraints.and,
-    nodeShapeTsFeatures.bind(this)(nodeShape),
-    nodeShape.constraints.xone,
-  ).chain(([andShapes, tsFeatures, xoneShapes]) => {
-    let compoundTypeShapes: readonly input.Shape[];
-    let compoundTypeKind:
-      | ast.ObjectIntersectionType["kind"]
-      | ast.ObjectUnionType["kind"];
-
-    if (andShapes.length > 0) {
-      compoundTypeShapes = andShapes;
-      compoundTypeKind = "IntersectionType";
-    } else if (xoneShapes.length > 0) {
-      compoundTypeShapes = xoneShapes;
-      compoundTypeKind = "UnionType";
-    } else {
-      throw new Error("should never be reached");
-    }
-
-    const compoundTypeNodeShapes: input.NodeShape[] = [];
-    for (const compoundTypeShape of compoundTypeShapes) {
-      if (compoundTypeShape.kind !== "NodeShape") {
-        return Left(
-          new Error(`${nodeShape} has non-NodeShape in its logical constraint`),
-        );
-      }
-      compoundTypeNodeShapes.push(compoundTypeShape);
-    }
-    if (compoundTypeNodeShapes.length === 0) {
-      return Left(
-        new Error(`${nodeShape} has no NodeShapes in its logical constraint`),
-      );
-    }
-
-    // Put a placeholder in the cache to deal with cyclic references
-    const compoundType: ast.IntersectionType | ast.UnionType = new (
-      compoundTypeKind === "IntersectionType"
-        ? ast.IntersectionType
-        : ast.UnionType
-    )({
-      comment: nodeShape.comment,
-      export_,
-      label: nodeShape.label,
-      name: shapeName(nodeShape),
-      shapeIdentifier: this.shapeIdentifier(nodeShape),
-      tsFeatures,
-    });
-
-    this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compoundType);
-    return Either.sequence(
-      compoundTypeNodeShapes.map((memberNodeShape) =>
-        this.transformNodeShapeToAstType(memberNodeShape).chain((memberType) =>
-          compoundType.addMemberType(memberType),
-        ),
-      ),
-    )
-      .map(() => compoundType)
-      .ifLeft(() => {
-        this.nodeShapeAstTypesByIdentifier.delete(nodeShape.identifier);
-      });
-  });
-}
-
 export function transformNodeShapeToAstType(
   this: ShapesGraphToAstTransformer,
   nodeShape: input.NodeShape,
-): Either<Error, NodeShapeAstType> {
+): Either<Error, ast.Type> {
   {
     const type = this.nodeShapeAstTypesByIdentifier.get(nodeShape.identifier);
     if (type) {
@@ -312,7 +239,7 @@ export function transformNodeShapeToAstType(
   }
 
   if (nodeShape.isList) {
-    return transformNodeShapeToAstListType.bind(this)(nodeShape);
+    return transformNodeShapeToAstListType.call(this, nodeShape);
   }
 
   return Eithers.chain11(
@@ -324,7 +251,7 @@ export function transformNodeShapeToAstType(
     nodeShapeIdentifierMintingStrategy(nodeShape),
     shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
     nodeShape.constraints.properties,
-    nodeShapeTsFeatures.bind(this)(nodeShape),
+    this.nodeShapeTsFeatures(nodeShape),
     nodeShape.tsObjectDeclarationType.isJust()
       ? Either.of(nodeShape.tsObjectDeclarationType)
       : nodeShape.isDefinedBy.map((ontology) =>
@@ -350,7 +277,7 @@ export function transformNodeShapeToAstType(
       const export_ = nodeShape.export.orDefault(true);
 
       if (andShapes.length > 0 || xoneShapes.length > 0) {
-        return transformNodeShapeToAstCompoundType.bind(this)({
+        return this.transformShapeToAstCompoundType({
           export_,
           nodeShape,
         });

@@ -9,6 +9,7 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeName } from "./shapeName.js";
+import { transformNodeShapeToAstType } from "./transformNodeShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -146,39 +147,39 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 ): Either<Error, ast.ObjectType.Property> {
   return Eithers.chain2(
     propertyShape.resolve,
-    transformPropertyShapeToAstType.bind(this)(propertyShape),
+    transformPropertyShapeToAstType.call(this, propertyShape),
   ).chain(([propertyShapeResolve, astType]) => {
     let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
-      const astResolveTypeEither = this.transformNodeShapeToAstType(
-        propertyShapeResolve.unsafeCoerce(),
-      ).chain((astResolveType) => {
-        switch (astResolveType.kind) {
-          case "ListType":
-          case "IntersectionType":
-            return Left(
-              new Error(
-                `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
-              ),
-            );
-          case "ObjectType":
-            return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-              astResolveType,
-            );
-          case "UnionType":
-            if (!astResolveType.isObjectUnionType()) {
+      const astResolveTypeEither = transformNodeShapeToAstType
+        .call(this, propertyShapeResolve.unsafeCoerce())
+        .chain((astResolveType) => {
+          switch (astResolveType.kind) {
+            case "ListType":
+            case "IntersectionType":
               return Left(
                 new Error(
-                  `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-ObjectType members`,
+                  `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
                 ),
               );
-            }
-            return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-              astResolveType,
-            );
-        }
-      });
+            case "ObjectType":
+              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+                astResolveType,
+              );
+            case "UnionType":
+              if (!astResolveType.isObjectUnionType()) {
+                return Left(
+                  new Error(
+                    `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-ObjectType members`,
+                  ),
+                );
+              }
+              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+                astResolveType,
+              );
+          }
+        });
       if (astResolveTypeEither.isLeft()) {
         return astResolveTypeEither;
       }

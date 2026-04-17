@@ -71,15 +71,15 @@ ${this.comment
 ${joinCode(
   [
     ...this.properties.flatMap((property) => property.declaration.toList()),
-    ObjectType_constructorDeclaration.bind(this)(),
+    ObjectType_constructorDeclaration.call(this),
     ...this.properties.flatMap((property) =>
       property.getAccessorDeclaration.toList(),
     ),
-    ...ObjectType_equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...ObjectType_hashFunctionOrMethodDeclarations.bind(this)(),
-    ...ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...ObjectType_toStringMethodDeclaration.bind(this)().toList(),
+    ...ObjectType_equalsFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_hashFunctionOrMethodDeclarations.call(this),
+    ...ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_toRdfFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_toStringMethodDeclaration.call(this).toList(),
   ],
   { on: "\n\n" },
 )}

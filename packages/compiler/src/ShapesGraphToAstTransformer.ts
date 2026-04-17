@@ -4,7 +4,9 @@ import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
-import * as _ShapesGraphToAstTransformer from "./_ShapesGraphToAstTransformer/index.js";
+import { nodeShapeTsFeatures } from "./_ShapesGraphToAstTransformer/nodeShapeTsFeatures.js";
+import { shapeIdentifier } from "./_ShapesGraphToAstTransformer/shapeIdentifier.js";
+import { transformNodeShapeToAstType } from "./_ShapesGraphToAstTransformer/transformNodeShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
@@ -14,16 +16,11 @@ export class ShapesGraphToAstTransformer {
   protected readonly curieFactory: CurieFactory;
   protected readonly nodeShapeAstTypesByIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
-    _ShapesGraphToAstTransformer.NodeShapeAstType
+    ast.Type
   > = new TermMap();
+  protected nodeShapeTsFeatures = nodeShapeTsFeatures;
+  protected shapeIdentifier = shapeIdentifier;
   protected readonly shapesGraph: input.ShapesGraph;
-  protected shapeIdentifier = _ShapesGraphToAstTransformer.shapeIdentifier;
-  protected transformNodeShapeToAstType =
-    _ShapesGraphToAstTransformer.transformNodeShapeToAstType;
-  protected transformPropertyShapeToAstObjectTypeProperty =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstObjectTypeProperty;
-  protected transformShapeToAstType =
-    _ShapesGraphToAstTransformer.transformShapeToAstType;
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
@@ -65,8 +62,6 @@ export class ShapesGraphToAstTransformer {
       const nodeShapeAstType = nodeShapeAstTypeEither.unsafeCoerce();
 
       switch (nodeShapeAstType.kind) {
-        case "ListType":
-          break; // Ignore
         case "IntersectionType":
           if (nodeShapeAstType.isNamed) {
             astNamedIntersectionTypes.push(nodeShapeAstType);
@@ -108,7 +103,7 @@ export class ShapesGraphToAstTransformer {
           }
           break;
         default:
-          nodeShapeAstType satisfies never;
+          break;
       }
     }
 

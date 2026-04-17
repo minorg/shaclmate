@@ -7,6 +7,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeName } from "./shapeName.js";
+import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
  * Try to convert a shape to a compound type (intersection or union) using some heuristics.
@@ -22,7 +23,7 @@ export function transformShapeToAstCompoundType(
       shape.constraints.and,
       shape.constraints.nodes,
       shape.kind === "NodeShape"
-        ? nodeShapeTsFeatures.bind(this)(shape)
+        ? nodeShapeTsFeatures.call(this, shape)
         : Either.of(new Set<TsFeature>()),
       shape.constraints.xone,
     ).chain(
@@ -40,7 +41,7 @@ export function transformShapeToAstCompoundType(
           memberShape: input.Shape,
         ) => Either<Error, Exclude<ast.Type, ast.PlaceholderType>> = (
           memberShape,
-        ) => this.transformShapeToAstType(memberShape, shapeStack);
+        ) => transformShapeToAstType.call(this, memberShape, shapeStack);
 
         if (andConstraintShapes.length > 0) {
           memberShapes = andConstraintShapes;

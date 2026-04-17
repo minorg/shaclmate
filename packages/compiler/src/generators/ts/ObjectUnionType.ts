@@ -90,22 +90,22 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override get declaration(): Code {
     const declarations: Code[] = [
-      ObjectUnionType_typeAliasDeclaration.bind(this)(),
+      ObjectUnionType_typeAliasDeclaration.call(this),
     ];
 
     const staticModuleDeclarations: Code[] = [
-      ...ObjectUnionType_graphqlTypeVariableStatement.bind(this)().toList(),
-      ...ObjectUnionType_identifierTypeDeclarations.bind(this)(),
-      ...ObjectUnionType_jsonTypeAliasDeclaration.bind(this)().toList(),
-      ...ObjectUnionType_equalsFunctionDeclaration.bind(this)().toList(),
-      ObjectUnionType_filterFunctionDeclaration.bind(this)(),
-      ObjectUnionType_filterTypeDeclaration.bind(this)(),
-      ...ObjectUnionType_hashFunctionDeclaration.bind(this)().toList(),
-      ...ObjectUnionType_fromJsonFunctionDeclaration.bind(this)().toList(),
-      ...ObjectUnionType_fromRdfFunctionDeclaration.bind(this)().toList(),
-      ...ObjectUnionType_isTypeFunctionDeclaration.bind(this)().toList(),
-      ...ObjectUnionType_jsonZodSchemaFunctionDeclaration.bind(this)().toList(),
-      ObjectUnionType_schemaVariableStatement.bind(this)(),
+      ...ObjectUnionType_graphqlTypeVariableStatement.call(this).toList(),
+      ...ObjectUnionType_identifierTypeDeclarations.call(this),
+      ...ObjectUnionType_jsonTypeAliasDeclaration.call(this).toList(),
+      ...ObjectUnionType_equalsFunctionDeclaration.call(this).toList(),
+      ObjectUnionType_filterFunctionDeclaration.call(this),
+      ObjectUnionType_filterTypeDeclaration.call(this),
+      ...ObjectUnionType_hashFunctionDeclaration.call(this).toList(),
+      ...ObjectUnionType_fromJsonFunctionDeclaration.call(this).toList(),
+      ...ObjectUnionType_fromRdfFunctionDeclaration.call(this).toList(),
+      ...ObjectUnionType_isTypeFunctionDeclaration.call(this).toList(),
+      ...ObjectUnionType_jsonZodSchemaFunctionDeclaration.call(this).toList(),
+      ObjectUnionType_schemaVariableStatement.call(this),
       ...ObjectType_sparqlConstructQueryFunctionDeclaration.bind(
         this,
       )().toList(),
@@ -118,8 +118,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
       ...ObjectUnionType_sparqlWherePatternsFunctionDeclaration.bind(
         this,
       )().toList(),
-      ...ObjectUnionType_toJsonFunctionDeclaration.bind(this)().toList(),
-      ...ObjectUnionType_toRdfFunctionDeclaration.bind(this)().toList(),
+      ...ObjectUnionType_toJsonFunctionDeclaration.call(this).toList(),
+      ...ObjectUnionType_toRdfFunctionDeclaration.call(this).toList(),
     ];
 
     if (staticModuleDeclarations.length > 0) {
@@ -171,7 +171,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return ObjectType_objectSetMethodNames.bind(this)();
+    return ObjectType_objectSetMethodNames.call(this);
   }
 
   @Memoize()
