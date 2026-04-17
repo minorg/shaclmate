@@ -157,14 +157,24 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       ).chain((astResolveType) => {
         switch (astResolveType.kind) {
           case "ListType":
-          case "ObjectIntersectionType":
+          case "IntersectionType":
             return Left(
               new Error(
                 `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
               ),
             );
           case "ObjectType":
-          case "ObjectUnionType":
+            return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+              astResolveType,
+            );
+          case "UnionType":
+            if (!astResolveType.isObjectUnionType()) {
+              return Left(
+                new Error(
+                  `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-ObjectType members`,
+                ),
+              );
+            }
             return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
               astResolveType,
             );
@@ -208,7 +218,16 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           });
           break;
         case "ObjectType":
-        case "ObjectUnionType":
+          astPartialItemType = astItemType;
+          break;
+        case "UnionType":
+          if (!astItemType.isObjectUnionType()) {
+            return Left(
+              new Error(
+                `${propertyShape} partial type cannot be a ${astItemType.kind} with non-ObjectType members`,
+              ),
+            );
+          }
           astPartialItemType = astItemType;
           break;
         default:
@@ -224,7 +243,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         case "IdentifierType":
         case "IriType":
         case "ObjectType":
-        case "ObjectUnionType":
+        case "UnionType":
           astType = new ast.LazyObjectType({
             ...astAbstractTypeProperties,
             partialType: astPartialItemType,

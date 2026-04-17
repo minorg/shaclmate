@@ -5,9 +5,7 @@ import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { PlaceholderType } from "./PlaceholderType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -68,9 +66,7 @@ export namespace AbstractContainerType {
     | IriType
     | ListType
     | LiteralType
-    | ObjectIntersectionType
     | ObjectType
-    | ObjectUnionType
     | PlaceholderType
     | TermType
     | UnionType;
@@ -83,9 +79,7 @@ export namespace AbstractContainerType {
       case "IriType":
       case "ListType":
       case "LiteralType":
-      case "ObjectIntersectionType":
       case "ObjectType":
-      case "ObjectUnionType":
       case "TermType":
       case "UnionType":
         return true;

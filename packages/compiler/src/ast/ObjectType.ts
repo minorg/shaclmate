@@ -83,11 +83,6 @@ export class ObjectType extends AbstractType {
   readonly kind = "ObjectType";
 
   /**
-   * Name of this type, from shaclmate:name.
-   */
-  readonly name: Maybe<string>;
-
-  /**
    * Immediate parent ObjectTypes of this Object types.
    *
    * Mutable to support cycle-handling logic in the compiler.
@@ -100,11 +95,6 @@ export class ObjectType extends AbstractType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #properties: ObjectType.Property[] = [];
-
-  /**
-   * Identifier of the shape this ObjectType was derived from.
-   */
-  readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -141,13 +131,10 @@ export class ObjectType extends AbstractType {
 
   constructor({
     abstract,
-    export_,
     extern,
     fromRdfType,
     identifierMintingStrategy,
     identifierType,
-    name,
-    shapeIdentifier,
     synthetic,
     toRdfTypes,
     tsFeatures,
@@ -156,13 +143,10 @@ export class ObjectType extends AbstractType {
     ...superParameters
   }: {
     abstract: boolean;
-    export_: boolean;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: BlankNodeType | IdentifierType | IriType;
-    name: Maybe<string>;
-    shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
     tsFeatures: ReadonlySet<TsFeature>;
@@ -171,13 +155,10 @@ export class ObjectType extends AbstractType {
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.abstract = abstract;
-    this.export = export_;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierType = identifierType;
-    this.name = name;
-    this.shapeIdentifier = shapeIdentifier;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
     this.tsFeatures = tsFeatures;

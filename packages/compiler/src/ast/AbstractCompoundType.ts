@@ -1,6 +1,6 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { Memoize } from "typescript-memoize";
+import type { TsFeature } from "../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -34,16 +34,22 @@ export abstract class AbstractCompoundType<
    */
   readonly #memberTypes: MemberTypeT[];
 
+  /**
+   * TypeScript features to generate.
+   */
+  readonly #tsFeatures: ReadonlySet<TsFeature>;
+
   constructor({
     memberTypes,
+    tsFeatures,
     ...superParameters
   }: {
     memberTypes?: readonly MemberTypeT[];
-    name: Maybe<string>;
-    shapeIdentifier: BlankNode | NamedNode;
+    tsFeatures: ReadonlySet<TsFeature>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.#memberTypes = memberTypes?.concat() ?? [];
+    this.#tsFeatures = tsFeatures;
   }
 
   addMemberType(memberType: MemberTypeT): void {
@@ -56,9 +62,54 @@ export abstract class AbstractCompoundType<
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
-  get memberTypes(): readonly AbstractCompoundType.MemberType[] {
+  get memberTypes(): readonly MemberTypeT[] {
     invariant(this.#memberTypes.length > 0);
     return this.#memberTypes;
+  }
+
+  @Memoize()
+  get tsFeatures(): ReadonlySet<TsFeature> {
+    // Members of the compound type must have the same tsFeatures.
+    // They must also have distinct RDF types or no RDF types at all.
+    const mergedMemberTsFeatures = new Set<TsFeature>();
+    for (
+      let memberTypeI = 0;
+      memberTypeI < this.memberTypes.length;
+      memberTypeI++
+    ) {
+      const memberType = this.memberTypes[memberTypeI];
+
+      switch (memberType.kind) {
+        case "IntersectionType":
+        case "ObjectType":
+        case "UnionType":
+          break;
+        default:
+          continue;
+      }
+
+      if (memberTypeI === 0) {
+        for (const tsFeature of memberType.tsFeatures) {
+          mergedMemberTsFeatures.add(tsFeature);
+        }
+      }
+
+      if (memberType.tsFeatures.size !== mergedMemberTsFeatures.size) {
+        throw new Error(
+          `${this} has a member (${memberType}) with different tsFeatures than the other members`,
+        );
+      }
+
+      for (const tsFeature of memberType.tsFeatures) {
+        if (!mergedMemberTsFeatures.has(tsFeature)) {
+          throw new Error(
+            `${this} has a member (${memberType}) with different tsFeatures than the other members`,
+          );
+        }
+      }
+    }
+
+    return this.#tsFeatures;
   }
 
   toString(): string {

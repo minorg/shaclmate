@@ -68,7 +68,7 @@ export class ShapesGraphToAstTransformer {
         case "ListType":
           break; // Ignore
         case "IntersectionType":
-          if (nodeShapeAstType.name.isJust()) {
+          if (nodeShapeAstType.isNamed) {
             astNamedIntersectionTypes.push(nodeShapeAstType);
           }
           break;
@@ -81,7 +81,7 @@ export class ShapesGraphToAstTransformer {
               case "LazyObjectType": {
                 const partialItemType =
                   property.type.partialType.kind === "ObjectType" ||
-                  property.type.partialType.kind === "ObjectUnionType"
+                  property.type.partialType.kind === "UnionType"
                     ? property.type.partialType
                     : property.type.partialType.itemType;
 
@@ -103,7 +103,7 @@ export class ShapesGraphToAstTransformer {
           break;
         }
         case "UnionType":
-          if (nodeShapeAstType.name.isJust()) {
+          if (nodeShapeAstType.isNamed) {
             astNamedUnionTypes.push(nodeShapeAstType);
           }
           break;

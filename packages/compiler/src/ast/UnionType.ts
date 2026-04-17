@@ -1,4 +1,5 @@
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
@@ -17,6 +18,14 @@ export class UnionType<
   } & ConstructorParameters<typeof AbstractCompoundType<MemberTypeT>>[0]) {
     super(superParameters);
     this.memberDiscriminantValues = memberDiscriminantValues;
+  }
+
+  isObjectUnionType(): this is ObjectUnionType {
+    return this.memberTypes.every(
+      (memberType) =>
+        memberType.kind === "ObjectType" ||
+        (memberType.kind === "UnionType" && memberType.isObjectUnionType),
+    );
   }
 }
 

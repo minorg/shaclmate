@@ -44,12 +44,10 @@ function isObjectTypePropertyRequired(property: {
     case "ListType":
     case "LiteralType":
     case "ObjectType":
-    case "ObjectUnionType":
     case "PlaceholderType":
     case "TermType":
       return true;
     case "IntersectionType":
-    case "ObjectIntersectionType":
       throw new Error("unsupported");
     default:
       property.type satisfies never;
@@ -101,6 +99,7 @@ function transformNodeShapeToAstListType(
       itemType: ast.PlaceholderType.instance as ast.ListType.ItemType,
       label: nodeShape.label,
       mutable: nodeShape.mutable.orDefault(false),
+      name: Maybe.empty(),
       identifierMintingStrategy,
       shapeIdentifier: this.shapeIdentifier(nodeShape),
       toRdfTypes: nodeShape.toRdfTypes,
@@ -226,7 +225,7 @@ function transformNodeShapeToAstListType(
   });
 }
 
-export function transformNodeShapeToAstObjectCompoundType(
+function transformNodeShapeToAstCompoundType(
   this: ShapesGraphToAstTransformer,
   {
     export_,
@@ -248,10 +247,10 @@ export function transformNodeShapeToAstObjectCompoundType(
 
     if (andShapes.length > 0) {
       compoundTypeShapes = andShapes;
-      compoundTypeKind = "ObjectIntersectionType";
+      compoundTypeKind = "IntersectionType";
     } else if (xoneShapes.length > 0) {
       compoundTypeShapes = xoneShapes;
-      compoundTypeKind = "ObjectUnionType";
+      compoundTypeKind = "UnionType";
     } else {
       throw new Error("should never be reached");
     }
@@ -350,7 +349,7 @@ export function transformNodeShapeToAstType(
       const export_ = nodeShape.export.orDefault(true);
 
       if (andShapes.length > 0 || xoneShapes.length > 0) {
-        return transformNodeShapeToAstObjectCompoundType.bind(this)({
+        return transformNodeShapeToAstCompoundType.bind(this)({
           export_,
           nodeShape,
         });
@@ -409,6 +408,8 @@ export function transformNodeShapeToAstType(
               hasValues: [],
               in_: nodeShape.identifierIn,
               label: Maybe.empty(),
+              name: Maybe.empty(),
+              shapeIdentifier: nodeShape.identifier,
             });
             break;
           case "Literal":
@@ -423,7 +424,7 @@ export function transformNodeShapeToAstType(
       const objectType = new ast.ObjectType({
         abstract,
         comment: nodeShape.comment,
-        export_: export_,
+        export_,
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
         label: nodeShape.label,

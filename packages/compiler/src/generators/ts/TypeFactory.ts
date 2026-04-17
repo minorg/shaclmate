@@ -6,7 +6,7 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
-import type * as ast from "../../ast/index.js";
+import * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
 import { codeName } from "../codeName.js";
 import { BigDecimalType } from "./BigDecimalType.js";
@@ -233,10 +233,12 @@ export class TypeFactory {
       comment: astType.comment,
       export_: astType.export,
       features: astType.tsFeatures,
-      identifierType: this.createIdentifierType(astType.identifierType),
+      identifierType: this.createIdentifierType(
+        ast.ObjectCompoundType.identifierType(astType),
+      ),
       label: astType.label,
-      memberTypes: astType.memberObjectTypes.map((objectType) =>
-        this.createObjectType(objectType),
+      memberTypes: ast.ObjectCompoundType.memberObjectTypes(astType).map(
+        (objectType) => this.createObjectType(objectType),
       ),
       name: tsName(astType as ast.ObjectUnionType),
     });
@@ -273,12 +275,8 @@ export class TypeFactory {
         return this.createListType(astType);
       case "LiteralType":
         return this.createLiteralType(astType, parameters);
-      case "ObjectIntersectionType":
-        throw new Error("not implemented");
       case "ObjectType":
         return this.createObjectType(astType);
-      case "ObjectUnionType":
-        return this.createObjectUnionType(astType);
       case "OptionType":
         return this.createOptionType(astType);
       case "PlaceholderType":

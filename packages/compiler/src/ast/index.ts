@@ -10,6 +10,7 @@ export * from "./LazyObjectSetType.js";
 export * from "./LazyObjectType.js";
 export * from "./ListType.js";
 export * from "./LiteralType.js";
+export * from "./ObjectCompoundType.js";
 export * from "./ObjectIntersectionType.js";
 export * from "./ObjectType.js";
 export * from "./ObjectUnionType.js";
