@@ -76,6 +76,8 @@ function typeToJson(type: ast.Type): AstJson.Type {
         memberDiscriminantValues:
           type.kind === "UnionType" ? type.memberDiscriminantValues : undefined,
         memberTypes: type.memberTypes.map((type) => typeToJson(type)),
+        name: type.name.extract(),
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
       };
     case "LazyObjectOptionType":
     case "LazyObjectSetType":
@@ -106,14 +108,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
         minInclusive: type.minInclusive.map(termToJson).extract(),
       } satisfies AstJson.Type;
     }
-    case "ObjectIntersectionType":
-    case "ObjectUnionType":
-      return {
-        ...common,
-        name: type.name.extract(),
-        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
-        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
-      };
     case "ObjectType":
       return {
         ...common,
