@@ -1,4 +1,5 @@
 import { Either, Left, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -7,6 +8,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeName } from "./shapeName.js";
+import { transformNodeShapeToAstType } from "./transformNodeShapeToAstType.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -39,9 +41,8 @@ export function transformShapeToAstCompoundType(
         let memberShapes: readonly input.Shape[];
         let transformMemberShape: (
           memberShape: input.Shape,
-        ) => Either<Error, Exclude<ast.Type, ast.PlaceholderType>> = (
-          memberShape,
-        ) => transformShapeToAstType.call(this, memberShape, shapeStack);
+        ) => Either<Error, ast.Type> = (memberShape) =>
+          transformShapeToAstType.call(this, memberShape, shapeStack);
 
         if (andConstraintShapes.length > 0) {
           memberShapes = andConstraintShapes;
@@ -50,7 +51,10 @@ export function transformShapeToAstCompoundType(
           memberShapes = nodeConstraintShapes;
           compoundTypeKind = "IntersectionType";
           transformMemberShape = (memberShape) =>
-            this.transformNodeShapeToAstType(memberShape as input.NodeShape);
+            transformNodeShapeToAstType.call(
+              this,
+              memberShape as input.NodeShape,
+            );
         } else if (xoneConstraintShapes.length > 0) {
           memberShapes = xoneConstraintShapes;
           compoundTypeKind = "UnionType";
@@ -83,7 +87,10 @@ export function transformShapeToAstCompoundType(
         }
 
         if (memberShapes.length === 0) {
-          return transformMemberShape(memberShapes[0]).map(Maybe.of);
+          return transformMemberShape(memberShapes[0]).chain((memberType) => {
+            invariant(memberType.kind !== "PlaceholderType");
+            return Either.of(Maybe.of(memberType));
+          });
         }
 
         return Either.sequence(memberShapes.map(transformMemberShape))

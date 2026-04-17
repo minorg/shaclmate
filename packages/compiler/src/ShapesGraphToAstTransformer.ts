@@ -54,8 +54,10 @@ export class ShapesGraphToAstTransformer {
         continue;
       }
 
-      const nodeShapeAstTypeEither =
-        this.transformNodeShapeToAstType(nodeShape);
+      const nodeShapeAstTypeEither = transformNodeShapeToAstType.call(
+        this,
+        nodeShape,
+      );
       if (nodeShapeAstTypeEither.isLeft()) {
         return nodeShapeAstTypeEither;
       }

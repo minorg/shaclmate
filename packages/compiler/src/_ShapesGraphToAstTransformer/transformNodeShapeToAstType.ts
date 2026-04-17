@@ -9,11 +9,10 @@ import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
-import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { shapeName } from "./shapeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
+import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 import { transformShapeToAstCompoundType } from "./transformShapeToAstCompoundType.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
@@ -185,40 +184,46 @@ function transformNodeShapeToAstListType(
             );
           }
 
-          return this.transformPropertyShapeToAstObjectTypeProperty({
-            // Just need a dummy ast.ObjectType here to get the properties transformed.
-            objectType: listPropertiesObjectType,
-            propertyShape: firstPropertyShape,
-          }).chain((firstProperty) => {
-            if (!ast.ListType.isItemType(firstProperty.type)) {
-              return Left(
-                new Error(
-                  `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
-                ),
-              );
-            }
-
-            listType.itemType = firstProperty.type;
-
-            return this.transformPropertyShapeToAstObjectTypeProperty({
+          return transformPropertyShapeToAstObjectTypeProperty
+            .call(this, {
               // Just need a dummy ast.ObjectType here to get the properties transformed.
               objectType: listPropertiesObjectType,
-              propertyShape: restPropertyShape,
-            }).chain((restProperty) => {
-              if (
-                restProperty.type.kind !== "ListType" ||
-                !restProperty.type.shapeIdentifier.equals(nodeShape.identifier)
-              ) {
+              propertyShape: firstPropertyShape,
+            })
+            .chain((firstProperty) => {
+              if (!ast.ListType.isItemType(firstProperty.type)) {
                 return Left(
                   new Error(
-                    `${nodeShape} rdf:rest property is not recursive into the node shape`,
+                    `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
                   ),
                 );
               }
 
-              return Either.of<Error, ast.ListType>(listType);
+              listType.itemType = firstProperty.type;
+
+              return transformPropertyShapeToAstObjectTypeProperty
+                .call(this, {
+                  // Just need a dummy ast.ObjectType here to get the properties transformed.
+                  objectType: listPropertiesObjectType,
+                  propertyShape: restPropertyShape,
+                })
+                .chain((restProperty) => {
+                  if (
+                    restProperty.type.kind !== "ListType" ||
+                    !restProperty.type.shapeIdentifier.equals(
+                      nodeShape.identifier,
+                    )
+                  ) {
+                    return Left(
+                      new Error(
+                        `${nodeShape} rdf:rest property is not recursive into the node shape`,
+                      ),
+                    );
+                  }
+
+                  return Either.of<Error, ast.ListType>(listType);
+                });
             });
-          });
         },
       );
     })().ifLeft(() => {
@@ -258,7 +263,7 @@ export function transformNodeShapeToAstType(
           ontology.chain((ontology) => ontology.tsObjectDeclarationType),
         ),
     nodeShape.constraints.xone,
-  ).chain<Error, NodeShapeAstType>(
+  ).chain<Error, ast.Type>(
     ([
       ancestorNodeShapes,
       childNodeShapes,
@@ -277,7 +282,7 @@ export function transformNodeShapeToAstType(
       const export_ = nodeShape.export.orDefault(true);
 
       if (andShapes.length > 0 || xoneShapes.length > 0) {
-        return this.transformShapeToAstCompoundType({
+        return transformShapeToAstCompoundType.call(this, {
           export_,
           nodeShape,
         });
@@ -372,7 +377,8 @@ export function transformNodeShapeToAstType(
           relatedNodeShapes: readonly input.NodeShape[],
         ): readonly ast.ObjectType[] => {
           return relatedNodeShapes.flatMap((relatedNodeShape) =>
-            this.transformNodeShapeToAstType(relatedNodeShape)
+            transformNodeShapeToAstType
+              .call(this, relatedNodeShape)
               .toMaybe()
               .filter((astType) => astType.kind === "ObjectType")
               .toList(),
@@ -392,7 +398,7 @@ export function transformNodeShapeToAstType(
         // Populate properties
         for (const propertyShape of propertyShapes) {
           const propertyEither =
-            this.transformPropertyShapeToAstObjectTypeProperty({
+            transformPropertyShapeToAstObjectTypeProperty.call(this, {
               objectType,
               propertyShape,
             });

@@ -61,8 +61,9 @@ function transformPropertyShapeToAstType(
   // ) {
   // }
 
-  return this.transformShapeToAstType(propertyShape, new ShapeStack()).chain(
-    (propertyShapeAstType) => {
+  return transformShapeToAstType
+    .call(this, propertyShape, new ShapeStack())
+    .chain((propertyShapeAstType) => {
       let maxCount = propertyShape.constraints.maxCount.orDefault(
         Number.MAX_SAFE_INTEGER,
       );
@@ -131,8 +132,7 @@ function transformPropertyShapeToAstType(
           mutable: propertyShape.mutable.orDefault(false),
         }),
       );
-    },
-  );
+    });
 }
 
 export function transformPropertyShapeToAstObjectTypeProperty(
