@@ -598,6 +598,10 @@ export class TypeFactory {
   }
 
   private createUnionType(astType: ast.UnionType) {
+    if (astType.isObjectUnionType()) {
+      return this.createObjectUnionType(astType);
+    }
+
     return new UnionType({
       comment: astType.comment,
       label: astType.label,

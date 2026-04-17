@@ -8,7 +8,7 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
-import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
+import { shapeName } from "./shapeName.js";
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -144,11 +144,10 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     propertyShape: input.PropertyShape;
   },
 ): Either<Error, ast.ObjectType.Property> {
-  return Eithers.chain3(
-    transformShapeToAstAbstractTypeProperties(propertyShape),
+  return Eithers.chain2(
     propertyShape.resolve,
     transformPropertyShapeToAstType.bind(this)(propertyShape),
-  ).chain(([astAbstractTypeProperties, propertyShapeResolve, astType]) => {
+  ).chain(([propertyShapeResolve, astType]) => {
     let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
@@ -238,6 +237,13 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           );
       }
 
+      const astAbstractTypeProperties = {
+        comment: Maybe.empty(),
+        label: Maybe.empty(),
+        name: Maybe.empty(),
+        shapeIdentifier: this.shapeIdentifier(propertyShape),
+      };
+
       switch (astType.kind) {
         case "BlankNodeType":
         case "IdentifierType":
@@ -287,7 +293,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         description: propertyShape.description,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
-        name: propertyShape.shaclmateName.alt(propertyShape.name),
+        name: shapeName(propertyShape),
         objectType,
         order: propertyShape.order.orDefault(0),
         path:

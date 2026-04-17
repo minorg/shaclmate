@@ -1,12 +1,10 @@
-import { Either, Left } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
-import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 type AstTermType =
   | ast.BlankNodeType
@@ -28,12 +26,16 @@ export function transformShapeToAstTermType(
 ): Either<Error, AstTermType> {
   shapeStack.push(shape);
   try {
-    return Eithers.chain2(
-      transformShapeToAstAbstractTypeProperties(shape),
-      shapeNodeKinds(shape),
-    ).chain(([astAbstractTypeProperties, nodeKinds]) => {
+    return shapeNodeKinds(shape).chain((nodeKinds) => {
       const hasValues = shapeStack.constraints.hasValues;
       const in_ = shapeStack.constraints.in_;
+
+      const astAbstractTypeProperties = {
+        comment: Maybe.empty(),
+        name: Maybe.empty(),
+        label: Maybe.empty(),
+        shapeIdentifier: this.shapeIdentifier(shape),
+      };
 
       let termType:
         | ast.BlankNodeType
@@ -47,9 +49,7 @@ export function transformShapeToAstTermType(
         switch (nodeKind) {
           case "BlankNode":
             invariant(in_.length === 0);
-            termType = new ast.BlankNodeType({
-              ...astAbstractTypeProperties,
-            });
+            termType = new ast.BlankNodeType(astAbstractTypeProperties);
             break;
           case "IRI":
             termType = new ast.IriType({

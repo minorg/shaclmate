@@ -12,6 +12,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
+import { shapeName } from "./shapeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
@@ -279,7 +280,7 @@ function transformNodeShapeToAstCompoundType(
       comment: nodeShape.comment,
       export_,
       label: nodeShape.label,
-      name: nodeShape.shaclmateName,
+      name: shapeName(nodeShape),
       shapeIdentifier: this.shapeIdentifier(nodeShape),
       tsFeatures,
     });
@@ -387,29 +388,26 @@ export function transformNodeShapeToAstType(
       }
 
       let identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
+      const identifierTypeProperties = {
+        comment: Maybe.empty(),
+        label: Maybe.empty(),
+        name: Maybe.empty(),
+        shapeIdentifier: this.shapeIdentifier(nodeShape),
+      };
       if (nodeKinds.size === 2) {
         invariant(nodeShape.identifierIn.length === 0);
-        identifierType = new ast.IdentifierType({
-          comment: Maybe.empty(),
-          label: Maybe.empty(),
-        });
+        identifierType = new ast.IdentifierType(identifierTypeProperties);
       } else {
         switch ([...nodeKinds][0]) {
           case "BlankNode":
             invariant(nodeShape.identifierIn.length === 0);
-            identifierType = new ast.BlankNodeType({
-              comment: Maybe.empty(),
-              label: Maybe.empty(),
-            });
+            identifierType = new ast.BlankNodeType(identifierTypeProperties);
             break;
           case "IRI":
             identifierType = new ast.IriType({
-              comment: Maybe.empty(),
+              ...identifierTypeProperties,
               hasValues: [],
               in_: nodeShape.identifierIn,
-              label: Maybe.empty(),
-              name: Maybe.empty(),
-              shapeIdentifier: nodeShape.identifier,
             });
             break;
           case "Literal":
@@ -430,7 +428,7 @@ export function transformNodeShapeToAstType(
         label: nodeShape.label,
         identifierType,
         identifierMintingStrategy,
-        name: nodeShape.shaclmateName,
+        name: shapeName(nodeShape),
         shapeIdentifier: this.shapeIdentifier(nodeShape),
         synthetic: false,
         toRdfTypes,
