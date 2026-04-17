@@ -1,9 +1,8 @@
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
-import type { Type } from "./Type.js";
 
 /**
  * A conjunction ("and") of types, corresponding to an sh:and.
  */
-export class IntersectionType extends AbstractCompoundType<Type> {
+export class IntersectionType extends AbstractCompoundType {
   override readonly kind = "IntersectionType";
 }

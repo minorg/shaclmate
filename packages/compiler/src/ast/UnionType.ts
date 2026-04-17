@@ -4,7 +4,7 @@ import type { Type } from "./Type.js";
 /**
  * A disjunction/union of types, corresponding to an sh:xone.
  */
-export class UnionType extends AbstractCompoundType<Type> {
+export class UnionType extends AbstractCompoundType {
   override readonly kind = "UnionType";
   readonly memberDiscriminantValues: readonly string[];
 

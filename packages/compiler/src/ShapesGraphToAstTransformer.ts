@@ -43,11 +43,10 @@ export class ShapesGraphToAstTransformer {
   }
 
   transform(): Either<Error, ast.Ast> {
-    const nodeShapeAstObjectIntersectionTypes: ast.ObjectIntersectionType[] =
-      [];
-    const nodeShapeAstObjectTypes: ast.ObjectType[] = [];
+    const astNamedIntersectionTypes: ast.IntersectionType[] = [];
+    const astObjectTypes: ast.ObjectType[] = [];
     const syntheticAstObjectTypesByName: Record<string, ast.ObjectType> = {};
-    const nodeShapeAstObjectUnionTypes: ast.ObjectUnionType[] = [];
+    const astNamedUnionTypes: ast.UnionType[] = [];
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
       if (nodeShape.identifier.termType !== "NamedNode") {
@@ -68,11 +67,13 @@ export class ShapesGraphToAstTransformer {
       switch (nodeShapeAstType.kind) {
         case "ListType":
           break; // Ignore
-        case "ObjectIntersectionType":
-          nodeShapeAstObjectIntersectionTypes.push(nodeShapeAstType);
+        case "IntersectionType":
+          if (nodeShapeAstType.name.isJust()) {
+            astNamedIntersectionTypes.push(nodeShapeAstType);
+          }
           break;
         case "ObjectType": {
-          nodeShapeAstObjectTypes.push(nodeShapeAstType);
+          astObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {
               case "LazyObjectOptionType":
@@ -101,8 +102,10 @@ export class ShapesGraphToAstTransformer {
 
           break;
         }
-        case "ObjectUnionType":
-          nodeShapeAstObjectUnionTypes.push(nodeShapeAstType);
+        case "UnionType":
+          if (nodeShapeAstType.name.isJust()) {
+            astNamedUnionTypes.push(nodeShapeAstType);
+          }
           break;
         default:
           nodeShapeAstType satisfies never;
@@ -110,11 +113,11 @@ export class ShapesGraphToAstTransformer {
     }
 
     return Either.of({
-      objectIntersectionTypes: nodeShapeAstObjectIntersectionTypes,
-      objectTypes: nodeShapeAstObjectTypes.concat(
+      objectIntersectionTypes: astNamedIntersectionTypes,
+      objectTypes: astObjectTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
       ),
-      objectUnionTypes: nodeShapeAstObjectUnionTypes,
+      objectUnionTypes: astNamedUnionTypes,
     });
   }
 }

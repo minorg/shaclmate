@@ -8,9 +8,7 @@ import type { LazyObjectSetType } from "./LazyObjectSetType.js";
 import type { LazyObjectType } from "./LazyObjectType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { PlaceholderType } from "./PlaceholderType.js";
 import type { SetType } from "./SetType.js";
@@ -28,9 +26,7 @@ export type Type =
   | LazyObjectType
   | ListType
   | LiteralType
-  | ObjectIntersectionType
   | ObjectType
-  | ObjectUnionType
   | OptionType
   | PlaceholderType
   | SetType
@@ -64,12 +60,8 @@ export namespace Type {
         return left.equals(right as LazyObjectType);
       case "ListType":
         return left.equals(right as ListType);
-      case "ObjectIntersectionType":
-        return left.equals(right as ObjectIntersectionType);
       case "ObjectType":
         return left.equals(right as ObjectType);
-      case "ObjectUnionType":
-        return left.equals(right as ObjectUnionType);
       case "OptionType":
         return left.equals(right as OptionType);
       case "PlaceholderType":

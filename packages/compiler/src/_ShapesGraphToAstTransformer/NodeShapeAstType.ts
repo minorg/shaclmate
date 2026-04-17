@@ -2,6 +2,6 @@ import type * as ast from "../ast/index.js";
 
 export type NodeShapeAstType =
   | ast.ListType
-  | ast.ObjectIntersectionType
+  | ast.IntersectionType<ast.ObjectType>
   | ast.ObjectType
-  | ast.ObjectUnionType;
+  | ast.UnionType<ast.ObjectType>;

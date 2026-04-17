@@ -11,7 +11,7 @@ export function codeName(
   return (
     astConstruct:
       | ast.ObjectType
-      | ast.ObjectUnionType
+      | ast.UnionType<ast.ObjectType>
       | ast.ObjectType.Property,
   ): string => {
     // The order of checks determines the order of preference.
