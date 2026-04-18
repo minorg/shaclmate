@@ -95,6 +95,7 @@ export function transformShapeToAstCompoundType(
               for (let memberI = 0; memberI < memberShapes.length; memberI++) {
                 const memberShape = memberShapes[memberI];
                 const memberType = memberShapeTypes[memberI];
+
                 if (!ast.IntersectionType.isMemberType(memberType)) {
                   return Left(
                     new Error(
@@ -102,6 +103,20 @@ export function transformShapeToAstCompoundType(
                     ),
                   );
                 }
+
+                if (
+                  memberI > 0 &&
+                  compoundType.memberTypes.some((existingMemberType) =>
+                    ast.Type.equals(memberType, existingMemberType),
+                  )
+                ) {
+                  return Left(
+                    new Error(
+                      `${shape} has duplicate ${compoundTypeKind} member type: ${memberType}`,
+                    ),
+                  );
+                }
+
                 compoundType.addMemberType(memberType);
 
                 if (compoundTypeKind === "UnionType") {

@@ -3,7 +3,7 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
-import invariant from "ts-invariant";
+import { invariant } from "ts-invariant";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";

@@ -59,7 +59,7 @@ export abstract class AbstractCompoundType<
   }
 
   get memberTypes(): readonly MemberTypeT[] {
-    // invariant(this.#memberTypes.length > 0);
+    invariant(this.#memberTypes.length > 0);
     return this.#memberTypes;
   }
 

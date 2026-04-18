@@ -522,7 +522,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
               },
             })
             .concat(),
-        )}; break; }`,
+        )} break; }`,
       );
     }
     caseBlocks.push(

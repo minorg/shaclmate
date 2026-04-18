@@ -3,6 +3,12 @@ import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import {
+  arrayEquals,
+  maybeEquals,
+  strictEquals,
+  termEquals,
+} from "./equals.js";
 
 export class LiteralType extends AbstractTermType<Literal, Literal> {
   readonly datatype: Maybe<NamedNode>;
@@ -40,6 +46,49 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
     this.maxInclusive = maxInclusive;
     this.minExclusive = minExclusive;
     this.minInclusive = minInclusive;
+  }
+
+  override equals(other: AbstractTermType<Literal, Literal>): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+    const otherLiteralType = other as LiteralType;
+
+    if (!maybeEquals(termEquals)(this.datatype, otherLiteralType.datatype)) {
+      return false;
+    }
+
+    if (
+      !arrayEquals(strictEquals)(this.languageIn, otherLiteralType.languageIn)
+    ) {
+      return false;
+    }
+
+    if (
+      !maybeEquals(termEquals)(this.maxExclusive, otherLiteralType.maxExclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      !maybeEquals(termEquals)(this.maxInclusive, otherLiteralType.maxInclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      !maybeEquals(termEquals)(this.minExclusive, otherLiteralType.minExclusive)
+    ) {
+      return false;
+    }
+
+    if (
+      !maybeEquals(termEquals)(this.minInclusive, otherLiteralType.minInclusive)
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   override toString(): string {
