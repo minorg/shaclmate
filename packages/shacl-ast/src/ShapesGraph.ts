@@ -253,6 +253,7 @@ export namespace ShapesGraph {
             continue;
           }
           this.createOntology({
+            curieFactory,
             resource: curieResource(ontologyResource.identifier),
             shapesGraph,
           }).ifRight((ontology) =>
@@ -276,6 +277,7 @@ export namespace ShapesGraph {
           }
 
           this.createPropertyGroup({
+            curieFactory,
             resource: curieResource(propertyGroupResource.identifier),
             shapesGraph,
           }).ifRight((propertyGroup) =>
@@ -421,6 +423,7 @@ export namespace ShapesGraph {
             propertyShapesByIdentifier.set(
               shapeNode,
               this.createPropertyShape({
+                curieFactory,
                 resource: curieResource(shapeNode),
                 shapesGraph,
               }).unsafeCoerce(),
@@ -430,6 +433,7 @@ export namespace ShapesGraph {
             nodeShapesByIdentifier.set(
               shapeNode,
               this.createNodeShape({
+                curieFactory,
                 resource: curieResource(shapeNode),
                 shapesGraph,
               }).unsafeCoerce(),
@@ -442,6 +446,7 @@ export namespace ShapesGraph {
     }
 
     protected abstract createNodeShape(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -453,6 +458,7 @@ export namespace ShapesGraph {
     }): Either<Error, NodeShapeT>;
 
     protected abstract createOntology(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -464,6 +470,7 @@ export namespace ShapesGraph {
     }): Either<Error, OntologyT>;
 
     protected abstract createPropertyGroup(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -475,6 +482,7 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyGroupT>;
 
     protected abstract createPropertyShape(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
