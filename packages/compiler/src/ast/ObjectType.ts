@@ -250,14 +250,14 @@ export namespace ObjectType {
     readonly mutable: boolean;
 
     /**
+     * Name of this property, derived from sh:name or shaclmate:name.
+     */
+    readonly name: string;
+
+    /**
      * Object type this property belongs to.
      */
     readonly objectType: ObjectType;
-
-    /**
-     * Name of this property, derived from sh:name or shaclmate:name.
-     */
-    readonly name: Maybe<string>;
 
     /**
      * Relative order of this property, derived from sh:order.
@@ -301,7 +301,7 @@ export namespace ObjectType {
       description: Maybe<string>;
       label: Maybe<string>;
       mutable: boolean;
-      name: Maybe<string>;
+      name: string;
       objectType: ObjectType;
       order: number;
       path: Curie | PropertyPath;

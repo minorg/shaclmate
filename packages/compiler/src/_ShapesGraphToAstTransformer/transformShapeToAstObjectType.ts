@@ -9,8 +9,8 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
+import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeIdentifier } from "./shapeIdentifier.js";
-import { shapeName } from "./shapeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
@@ -184,7 +184,7 @@ export function transformShapeToAstObjectType(
             label: nodeShape.label,
             identifierType,
             identifierMintingStrategy,
-            name: shapeName(nodeShape),
+            name: shapeAstTypeName(nodeShape),
             shapeIdentifier: shapeIdentifier.call(this, nodeShape),
             synthetic: false,
             toRdfTypes,

@@ -7,8 +7,8 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeIdentifier } from "./shapeIdentifier.js";
-import { shapeName } from "./shapeName.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -65,7 +65,7 @@ export function transformShapeToAstCompoundType(
           export_:
             shape.kind === "NodeShape" ? shape.export.extract() : undefined,
           label: shape.label,
-          name: shapeName(shape),
+          name: shapeAstTypeName(shape),
           memberDiscriminantValues,
           shapeIdentifier: shapeIdentifier.call(this, shape),
           tsFeatures,

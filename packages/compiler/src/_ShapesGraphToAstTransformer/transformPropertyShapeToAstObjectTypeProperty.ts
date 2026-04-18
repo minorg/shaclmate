@@ -9,7 +9,6 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeIdentifier } from "./shapeIdentifier.js";
-import { shapeName } from "./shapeName.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
@@ -50,6 +49,73 @@ function synthesizePartialAstObjectType({
     tsImports: [],
     tsObjectDeclarationType: "class",
   });
+}
+
+function propertyName(
+  this: ShapesGraphToAstTransformer,
+  objectType: ast.ObjectType,
+  propertyShape: input.PropertyShape,
+): string {
+  // Explicit shaclmate:name or sh:name
+  const name = propertyShape.shaclmateName.alt(propertyShape.name).extract();
+  if (name) {
+    return name;
+  }
+
+  // Explicit rdfs:label
+  const label = propertyShape.label.extract();
+  if (label) {
+    return label;
+  }
+
+  // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
+  // like ex:NodeShape-property
+  if (propertyShape.identifier.termType === "NamedNode") {
+    const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
+    if (
+      propertyShape.identifier.value.startsWith(
+        propertyShapeIdentifierPrefix,
+      ) &&
+      propertyShape.identifier.value.length >
+        propertyShapeIdentifierPrefix.length
+    ) {
+      propertyShape.identifier.value.substring(
+        propertyShapeIdentifierPrefix.length,
+      );
+    }
+  }
+
+  // sh:path CURIE reference
+  if (propertyShape.path.termType === "NamedNode") {
+    const propertyPathCurie = this.curieFactory
+      .create(propertyShape.path)
+      .extract();
+    if (propertyPathCurie) {
+      return propertyPathCurie.reference;
+    }
+  }
+
+  // Shape identifier CURIE reference
+  if (propertyShape.identifier.termType === "NamedNode") {
+    const propertyShapeIdentifierCurie = this.curieFactory
+      .create(propertyShape.identifier)
+      .extract();
+    if (propertyShapeIdentifierCurie) {
+      return propertyShapeIdentifierCurie.reference;
+    }
+  }
+
+  // Shape identifier IRI
+  if (propertyShape.identifier.termType === "NamedNode") {
+    return propertyShape.identifier.value;
+  }
+
+  // sh:path IRI
+  if (propertyShape.path.termType === "NamedNode") {
+    return propertyShape.path.value;
+  }
+
+  throw new Error(`${propertyShape}: unable to infer name`);
 }
 
 function transformPropertyShapeToAstType(
@@ -296,17 +362,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         description: propertyShape.description,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
-        name: shapeName(propertyShape),
+        name: propertyName.call(this, objectType, propertyShape),
         objectType,
         order: propertyShape.order.orDefault(0),
-        path:
-          (propertyShape.path.termType === "NamedNode"
-            ? this.curieFactory.create(propertyShape.path).extract()
-            : undefined) ?? propertyShape.path,
-        shapeIdentifier:
-          (propertyShape.identifier.termType === "NamedNode"
-            ? this.curieFactory.create(propertyShape.identifier).extract()
-            : undefined) ?? propertyShape.identifier,
+        path: propertyShape.path,
+        shapeIdentifier: shapeIdentifier.call(this, propertyShape),
         type: astType,
         visibility: propertyShape.visibility,
       }),
