@@ -8,6 +8,12 @@ import { transformShapeToAstListType } from "./transformShapeToAstListType.js";
 import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.js";
 import { transformShapeToAstTermType } from "./transformShapeToAstTermType.js";
 
+const tryTransformShapeToAstTypeMethods = [
+  transformShapeToAstCompoundType,
+  transformShapeToAstListType,
+  transformShapeToAstObjectType,
+];
+
 /**
  * Try to convert a shape to a type using some heuristics. All shape -> AST type transformation calls should go through this function,
  * not the other transformShapeToAst*Type functions directly.
@@ -27,18 +33,24 @@ export function transformShapeToAstType(
   //   * Right+Nothing = the shape wasn't the expected type
   //   * Right+Some = the shape was the expected type and the transformation succeeded
 
-  return transformShapeToAstCompoundType
+  for (const tryTransformAstTypeToShapeMethod of tryTransformShapeToAstTypeMethods) {
+    const either = tryTransformAstTypeToShapeMethod.call(
+      this,
+      shape,
+      shapeStack,
+    );
+    if (either.isLeft()) {
+      return either;
+    }
+    const astType = either.unsafeCoerce().extract();
+    if (astType) {
+      this.cachedAstTypesByShapeIdentifier.set(shape.identifier, astType);
+      return Either.of(astType);
+    }
+  }
+
+  return transformShapeToAstTermType
     .call(this, shape, shapeStack)
-    .altLazy(() => transformShapeToAstListType.call(this, shape, shapeStack))
-    .altLazy(() => transformShapeToAstObjectType.call(this, shape, shapeStack))
-    .chain((astType) =>
-      astType
-        .map((_) => Either.of<Error, ast.Type>(_))
-        .orDefaultLazy(() =>
-          // Always succeeds
-          transformShapeToAstTermType.call(this, shape, shapeStack),
-        ),
-    )
     .ifRight((astType) => {
       this.cachedAstTypesByShapeIdentifier.set(shape.identifier, astType);
     });
