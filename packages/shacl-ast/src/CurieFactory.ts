@@ -2,8 +2,7 @@ import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { Curie } from "../ast/Curie.js";
-import { logger } from "../logger.js";
+import { Curie } from "./Curie.js";
 
 /**
  * Factory for Compact URIs (CURIEs). Tracks whether the reference part of the CURIE is unique.
@@ -39,9 +38,9 @@ export class CurieFactory {
             if (Object.entries(referenceCounts).length === 1) {
               return true;
             }
-            logger.debug(
-              `duplicate local part ${reference} in ${JSON.stringify(referenceCounts)}`,
-            );
+            // logger.debug(
+            //   `duplicate local part ${reference} in ${JSON.stringify(referenceCounts)}`,
+            // );
             return false;
           },
           prefix: split[0],

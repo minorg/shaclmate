@@ -29,6 +29,10 @@ export function shapeAstTypeName(
   // CURIE shape identifier
   const shapeIdentifier_ = shapeIdentifier.call(this, shape);
   if (shapeIdentifier_ instanceof ast.Curie) {
+    if (shapeIdentifier_.hasUniqueReference) {
+      return Maybe.of();
+    }
+
     return Maybe.of(`${shapeIdentifier_.prefix}_${shapeIdentifier_.reference}`);
   }
 }

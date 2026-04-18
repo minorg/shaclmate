@@ -1,3 +1,5 @@
+export * from "./Curie.js";
+export * from "./CurieFactory.js";
 export * from "./IdentifierNodeKind.js";
 export * from "./NodeKind.js";
 export * from "./NodeShape.js";

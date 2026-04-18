@@ -1,3 +1,4 @@
+import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type {
@@ -11,6 +12,7 @@ import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
+import { CurieFactory } from "./CurieFactory.js";
 import * as generated from "./generated.js";
 import { NodeShape } from "./NodeShape.js";
 import { Ontology } from "./Ontology.js";
@@ -150,9 +152,11 @@ export namespace ShapesGraph {
 
     createShapesGraph({
       dataset,
+      prefixMap,
       ignoreUndefinedShapes,
     }: {
       dataset: DatasetCore;
+      prefixMap: PrefixMap;
       ignoreUndefinedShapes?: boolean;
     }): Either<
       Error,
@@ -170,7 +174,17 @@ export namespace ShapesGraph {
         return false;
       }
 
+      const curieFactory = new CurieFactory({ prefixMap });
       const resourceSet = new ResourceSet(dataset);
+      const curieResource = (identifier: Resource.Identifier) => {
+        if (identifier.termType === "NamedNode") {
+          const curie = curieFactory.create(identifier).extract();
+          if (curie) {
+            return resourceSet.resource(curie);
+          }
+        }
+        return resourceSet.resource(identifier);
+      };
 
       const nodeShapesByIdentifier = new TermMap<
         BlankNode | NamedNode,
@@ -235,7 +249,7 @@ export namespace ShapesGraph {
             continue;
           }
           this.createOntology({
-            resource: ontologyResource,
+            resource: curieResource(ontologyResource.identifier),
             shapesGraph,
           }).ifRight((ontology) =>
             ontologiesByIdentifier.set(ontologyResource.identifier, ontology),
@@ -250,13 +264,15 @@ export namespace ShapesGraph {
           if (propertyGroupResource.identifier.termType !== "NamedNode") {
             continue;
           }
+
           if (
             propertyGroupsByIdentifier.has(propertyGroupResource.identifier)
           ) {
             continue;
           }
+
           this.createPropertyGroup({
-            resource: propertyGroupResource,
+            resource: curieResource(propertyGroupResource.identifier),
             shapesGraph,
           }).ifRight((propertyGroup) =>
             propertyGroupsByIdentifier.set(
@@ -401,7 +417,7 @@ export namespace ShapesGraph {
             propertyShapesByIdentifier.set(
               shapeNode,
               this.createPropertyShape({
-                resource: resourceSet.resource(shapeNode),
+                resource: curieResource(shapeNode),
                 shapesGraph,
               }).unsafeCoerce(),
             );
@@ -410,7 +426,7 @@ export namespace ShapesGraph {
             nodeShapesByIdentifier.set(
               shapeNode,
               this.createNodeShape({
-                resource: resourceSet.resource(shapeNode),
+                resource: curieResource(shapeNode),
                 shapesGraph,
               }).unsafeCoerce(),
             );

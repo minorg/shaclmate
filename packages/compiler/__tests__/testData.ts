@@ -11,13 +11,9 @@ import { Either, Maybe } from "purify-ts";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function parseShapesGraph(...filePaths: readonly string[]): Either<
-  Error,
-  {
-    iriPrefixMap: PrefixMap;
-    shapesGraph: ShapesGraph;
-  }
-> {
+function parseShapesGraph(
+  ...filePaths: readonly string[]
+): Either<Error, ShapesGraph> {
   return Either.encase(() => {
     const dataset = datasetFactory.dataset();
     const iriPrefixes: PrefixMapInit = [];
@@ -49,10 +45,10 @@ function parseShapesGraph(...filePaths: readonly string[]): Either<
     }
     return { dataset, iriPrefixes };
   }).chain(({ dataset, iriPrefixes }) =>
-    ShapesGraph.create({ dataset }).map((shapesGraph) => ({
-      iriPrefixMap: new PrefixMap(iriPrefixes, { factory: dataFactory }),
-      shapesGraph,
-    })),
+    ShapesGraph.create({
+      dataset,
+      prefixMap: new PrefixMap(iriPrefixes, { factory: dataFactory }),
+    }),
   );
 }
 

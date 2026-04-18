@@ -1,6 +1,5 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import {
   type ShapesGraph,
   ShapesGraphToAstTransformer,
@@ -12,10 +11,7 @@ import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function generate(parameters: {
-  iriPrefixMap: PrefixMap;
-  shapesGraph: ShapesGraph;
-}): string {
+function generate(parameters: { shapesGraph: ShapesGraph }): string {
   const source = new ZodGenerator().generate(
     new ShapesGraphToAstTransformer(parameters).transform().unsafeCoerce(),
   );

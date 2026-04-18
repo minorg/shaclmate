@@ -3,7 +3,7 @@ import TermMap from "@rdfjs/term-map";
 import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
-import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
+import type { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
@@ -21,15 +21,12 @@ export class ShapesGraphToAstTransformer {
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
-    iriPrefixMap,
     shapesGraph,
     tsFeaturesDefault,
   }: {
-    iriPrefixMap: PrefixMap;
     shapesGraph: input.ShapesGraph;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }) {
-    this.curieFactory = new CurieFactory({ prefixMap: iriPrefixMap });
     this.shapesGraph = shapesGraph;
     this.tsFeaturesDefault =
       tsFeaturesDefault ??

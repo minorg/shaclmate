@@ -1,6 +1,5 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import {
   type ShapesGraph,
   ShapesGraphToAstTransformer,
@@ -12,10 +11,7 @@ import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function generate(parameters: {
-  iriPrefixMap: PrefixMap;
-  shapesGraph: ShapesGraph;
-}): string {
+function generate(parameters: { shapesGraph: ShapesGraph }): string {
   const source = new TsGenerator().generate(
     new ShapesGraphToAstTransformer(parameters).transform().unsafeCoerce(),
   );
@@ -77,7 +73,7 @@ describe("TsGenerator", () => {
   }
 
   describe("TsFeature combinations", () => {
-    const { iriPrefixMap, shapesGraph } =
+    const { shapesGraph } =
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
     const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);
 
@@ -101,7 +97,6 @@ describe("TsGenerator", () => {
       it(tsFeatureCombination.join("+"), () => {
         const source = new TsGenerator().generate(
           new ShapesGraphToAstTransformer({
-            iriPrefixMap,
             shapesGraph,
             tsFeaturesDefault: new Set(tsFeatureCombination),
           })
