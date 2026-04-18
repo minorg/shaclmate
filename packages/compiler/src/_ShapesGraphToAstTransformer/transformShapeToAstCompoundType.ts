@@ -1,4 +1,5 @@
 import { Either, Left, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -61,6 +62,8 @@ export function transformShapeToAstCompoundType(
           return Either.of(Maybe.empty());
         }
 
+        invariant(memberShapes.length > 0);
+
         const memberDiscriminantValues: string[] = [];
         const compoundType: ast.IntersectionType | ast.UnionType = new (
           compoundTypeKind === "IntersectionType"
@@ -85,7 +88,7 @@ export function transformShapeToAstCompoundType(
           );
         }
 
-        if (memberShapes.length === 0) {
+        if (memberShapes.length === 1) {
           return transformMemberShape(memberShapes[0]).map(Maybe.of);
         }
 
