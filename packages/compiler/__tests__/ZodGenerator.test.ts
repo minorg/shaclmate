@@ -11,9 +11,9 @@ import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function generate(parameters: { shapesGraph: ShapesGraph }): string {
+function generate(shapesGraph: ShapesGraph): string {
   const source = new ZodGenerator().generate(
-    new ShapesGraphToAstTransformer(parameters).transform().unsafeCoerce(),
+    new ShapesGraphToAstTransformer({ shapesGraph }).transform().unsafeCoerce(),
   );
   expect(source).not.toHaveLength(0);
   return source;

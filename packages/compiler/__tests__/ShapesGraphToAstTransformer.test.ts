@@ -21,7 +21,9 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
         {};
 
       beforeAll(() => {
-        ast = new ShapesGraphToAstTransformer(shapesGraphEither.unsafeCoerce())
+        ast = new ShapesGraphToAstTransformer({
+          shapesGraph: shapesGraphEither.unsafeCoerce(),
+        })
           .transform()
           .unsafeCoerce();
         for (const astObjectType of ast.objectTypes) {
@@ -47,12 +49,12 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
       });
 
       it("should transform object intersection types", ({ expect }) => {
-        expect(ast.objectIntersectionTypes).toHaveLength(0);
+        expect(ast.namedIntersectionTypes).toHaveLength(0);
       });
 
       it("should transform object union types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.objectUnionTypes).toHaveLength(9);
+          expect(ast.namedUnionTypes).toHaveLength(9);
         }
       });
 
@@ -96,9 +98,10 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
 describe("ShapesGraphToAstTransformer: illFormed", () => {
   it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer(
-      testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
-    )
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
+    })
       .transform()
       .extract();
     expect(error).toBeInstanceOf(Error);
@@ -108,9 +111,10 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
   });
 
   it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer(
-      testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
-    )
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
+    })
       .transform()
       .extract();
     expect(error).toBeInstanceOf(Error);
@@ -120,9 +124,10 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
   });
 
   it("sh:defaultValue and sh:in conflict", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer(
-      testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
-    )
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
+    })
       .transform()
       .extract();
     expect(error).toBeInstanceOf(Error);
@@ -132,9 +137,10 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
   });
 
   it("incompatible node shape identifiers", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer(
-      testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
-    )
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
+    })
       .transform()
       .extract();
     expect(error).toBeInstanceOf(Error);
@@ -142,9 +148,10 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
   });
 
   it("no required property property", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer(
-      testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
-    )
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
+    })
       .transform()
       .extract();
     expect(error).toBeInstanceOf(Error);
@@ -153,9 +160,10 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
   });
 
   it("undefined parent class", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer(
-      testData.shapesGraphs.illFormed.undefinedParentClass.unsafeCoerce(),
-    )
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.undefinedParentClass.unsafeCoerce(),
+    })
       .transform()
       .extract();
     expect(error).toBeInstanceOf(Error);

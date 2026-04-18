@@ -1,4 +1,4 @@
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type {
@@ -146,7 +146,9 @@ export namespace ShapesGraph {
   > {
     protected preferredLanguages: readonly string[];
 
-    constructor(parameters?: { preferredLanguages?: readonly string[] }) {
+    constructor(parameters?: {
+      preferredLanguages?: readonly string[];
+    }) {
       this.preferredLanguages = parameters?.preferredLanguages ?? ["en", ""];
     }
 
@@ -156,7 +158,7 @@ export namespace ShapesGraph {
       ignoreUndefinedShapes,
     }: {
       dataset: DatasetCore;
-      prefixMap: PrefixMap;
+      prefixMap?: PrefixMap;
       ignoreUndefinedShapes?: boolean;
     }): Either<
       Error,
@@ -174,7 +176,9 @@ export namespace ShapesGraph {
         return false;
       }
 
-      const curieFactory = new CurieFactory({ prefixMap });
+      const curieFactory = new CurieFactory({
+        prefixMap: prefixMap ?? new PrefixMap(),
+      });
       const resourceSet = new ResourceSet(dataset);
       const curieResource = (identifier: Resource.Identifier) => {
         if (identifier.termType === "NamedNode") {
@@ -537,6 +541,7 @@ export namespace ShapesGraph {
     protected override createOntology({
       resource,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, Ontology> {
@@ -549,6 +554,7 @@ export namespace ShapesGraph {
     protected override createPropertyGroup({
       resource,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, PropertyGroup> {
@@ -559,9 +565,11 @@ export namespace ShapesGraph {
     }
 
     protected override createPropertyShape({
+      curieFactory,
       resource,
       shapesGraph,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, DefaultPropertyShape> {
@@ -569,7 +577,17 @@ export namespace ShapesGraph {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
-        (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
+        (generatedShape) =>
+          new PropertyShape(
+            {
+              ...generatedShape,
+              path:
+                (generatedShape.path.termType === "NamedNode"
+                  ? curieFactory.create(generatedShape.path).extract()
+                  : undefined) ?? generatedShape.path,
+            },
+            shapesGraph,
+          ),
       );
     }
   }
