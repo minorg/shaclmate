@@ -9,8 +9,8 @@ import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.j
 import { transformShapeToAstTermType } from "./transformShapeToAstTermType.js";
 
 const tryTransformShapeToAstTypeMethods = [
+  transformShapeToAstListType, // List type must be before compound type since a list shape uses sh:xone
   transformShapeToAstCompoundType,
-  transformShapeToAstListType,
   transformShapeToAstObjectType,
 ];
 
