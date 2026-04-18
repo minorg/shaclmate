@@ -8,11 +8,12 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
-import type { ShapeStack } from "./ShapeStack.js";
+import { ShapeStack } from "./ShapeStack.js";
 import { shapeIdentifier } from "./shapeIdentifier.js";
 import { shapeName } from "./shapeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
+import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function isObjectTypePropertyRequired(property: {
   type: ast.ObjectType.Property["type"];
@@ -205,13 +206,14 @@ export function transformShapeToAstObjectType(
             const relatedObjectTypes = (
               relatedNodeShapes: readonly input.NodeShape[],
             ): readonly ast.ObjectType[] => {
-              return relatedNodeShapes.flatMap((relatedNodeShape) =>
-                transformShapeToAstObjectType
-                  .call(this, relatedNodeShape)
-                  .toMaybe()
-                  .toList()
-                  .flatMap((_) => _.toList()),
-              );
+              return relatedNodeShapes
+                .flatMap((relatedNodeShape) =>
+                  transformShapeToAstType
+                    .call(this, relatedNodeShape, new ShapeStack())
+                    .toMaybe()
+                    .toList(),
+                )
+                .filter((astType) => astType.kind === "ObjectType");
             };
             objectType.addAncestorObjectTypes(
               ...relatedObjectTypes(ancestorNodeShapes),
