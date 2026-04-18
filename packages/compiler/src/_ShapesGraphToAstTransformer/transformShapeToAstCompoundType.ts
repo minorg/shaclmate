@@ -9,7 +9,6 @@ import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeIdentifier } from "./shapeIdentifier.js";
 import { shapeName } from "./shapeName.js";
-import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -40,10 +39,6 @@ export function transformShapeToAstCompoundType(
         // Distinguish constraints that take arbitrary shapes from those that only take node shapes
         // With the latter we'll do special transformations.
         let memberShapes: readonly input.Shape[];
-        let transformMemberShape: (
-          memberShape: input.Shape,
-        ) => Either<Error, ast.Type> = (memberShape) =>
-          transformShapeToAstType.call(this, memberShape, shapeStack);
 
         if (andConstraintShapes.length > 0) {
           memberShapes = andConstraintShapes;
@@ -51,11 +46,6 @@ export function transformShapeToAstCompoundType(
         } else if (nodeConstraintShapes.length > 0) {
           memberShapes = nodeConstraintShapes;
           compoundTypeKind = "IntersectionType";
-          transformMemberShape = (memberShape) =>
-            transformShapeToAstObjectType.call(
-              this,
-              memberShape as input.NodeShape,
-            );
         } else if (xoneConstraintShapes.length > 0) {
           memberShapes = xoneConstraintShapes;
           compoundTypeKind = "UnionType";
@@ -87,10 +77,16 @@ export function transformShapeToAstCompoundType(
         }
 
         if (memberShapes.length === 1) {
-          return transformMemberShape(memberShapes[0]).map(Maybe.of);
+          return transformShapeToAstType
+            .call(this, memberShapes[0], shapeStack)
+            .map(Maybe.of);
         }
 
-        return Either.sequence(memberShapes.map(transformMemberShape))
+        return Either.sequence(
+          memberShapes.map((memberShape) =>
+            transformShapeToAstType.call(this, memberShape, shapeStack),
+          ),
+        )
           .chain(
             (
               memberShapeTypes,

@@ -56,6 +56,7 @@ function synthesizePartialAstObjectType({
 function transformPropertyShapeToAstType(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
+  shapeStack: ShapeStack,
 ): Either<Error, ast.Type> {
   // if (
   //   propertyShape.path.kind === "PredicatePath" &&
@@ -64,7 +65,7 @@ function transformPropertyShapeToAstType(
   // }
 
   return transformShapeToAstType
-    .call(this, propertyShape, new ShapeStack())
+    .call(this, propertyShape, shapeStack)
     .chain((propertyShapeAstType) => {
       let maxCount = propertyShape.constraints.maxCount.orDefault(
         Number.MAX_SAFE_INTEGER,
@@ -147,15 +148,16 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     propertyShape: input.PropertyShape;
   },
 ): Either<Error, ast.ObjectType.Property> {
+  const shapeStack = new ShapeStack();
   return Eithers.chain2(
     propertyShape.resolve,
-    transformPropertyShapeToAstType.call(this, propertyShape),
+    transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),
   ).chain(([propertyShapeResolve, astType]) => {
     let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
-      const astResolveTypeEither = transformShapeToAstObjectType
-        .call(this, propertyShapeResolve.unsafeCoerce())
+      const astResolveTypeEither = transformShapeToAstType
+        .call(this, propertyShapeResolve.unsafeCoerce(), shapeStack)
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
             case "ObjectType":
