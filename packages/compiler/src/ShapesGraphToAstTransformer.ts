@@ -4,18 +4,19 @@ import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
-import { transformShapeToAstObjectType } from "./_ShapesGraphToAstTransformer/transformShapeToAstObjectType.js";
+import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
+import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
 
 export class ShapesGraphToAstTransformer {
-  // Members are protected so they're accessible to the bound functions
-  protected readonly curieFactory: CurieFactory;
-  protected readonly shapeAstTypesByIdentifier: TermMap<
+  // Members are protected so they're accessible to functions in other files
+  protected readonly cachedAstTypesByShapeIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
     ast.Type
   > = new TermMap();
+  protected readonly curieFactory: CurieFactory;
   protected readonly shapesGraph: input.ShapesGraph;
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
@@ -50,9 +51,10 @@ export class ShapesGraphToAstTransformer {
         continue;
       }
 
-      const nodeShapeAstTypeEither = transformShapeToAstObjectType.call(
+      const nodeShapeAstTypeEither = transformShapeToAstType.call(
         this,
         nodeShape,
+        new ShapeStack(), // Start a new ShapeStack per named node shape
       );
       if (nodeShapeAstTypeEither.isLeft()) {
         return nodeShapeAstTypeEither;

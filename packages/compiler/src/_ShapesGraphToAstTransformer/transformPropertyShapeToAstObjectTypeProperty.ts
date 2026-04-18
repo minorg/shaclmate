@@ -10,7 +10,6 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeIdentifier } from "./shapeIdentifier.js";
 import { shapeName } from "./shapeName.js";
-import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
@@ -148,7 +147,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     propertyShape: input.PropertyShape;
   },
 ): Either<Error, ast.ObjectType.Property> {
-  const shapeStack = new ShapeStack();
+  const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
   return Eithers.chain2(
     propertyShape.resolve,
     transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),

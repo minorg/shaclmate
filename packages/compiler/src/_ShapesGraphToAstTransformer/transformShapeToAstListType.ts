@@ -82,7 +82,7 @@ export function transformShapeToAstListType(
         toRdfTypes: nodeShape.toRdfTypes,
       });
 
-      this.shapeAstTypesByIdentifier.set(nodeShape.identifier, listType);
+      this.cachedAstTypesByShapeIdentifier.set(nodeShape.identifier, listType);
 
       return (() => {
         let emptyListShape: input.Shape | undefined;
@@ -205,7 +205,7 @@ export function transformShapeToAstListType(
           },
         );
       })().ifLeft(() => {
-        this.shapeAstTypesByIdentifier.delete(nodeShape.identifier);
+        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.identifier);
       });
     });
   } finally {

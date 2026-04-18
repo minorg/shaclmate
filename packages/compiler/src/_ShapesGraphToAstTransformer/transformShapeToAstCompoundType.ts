@@ -73,7 +73,10 @@ export function transformShapeToAstCompoundType(
 
         if (shape.kind === "NodeShape") {
           // Put a placeholder in the cache to deal with cyclic references
-          this.shapeAstTypesByIdentifier.set(shape.identifier, compoundType);
+          this.cachedAstTypesByShapeIdentifier.set(
+            shape.identifier,
+            compoundType,
+          );
         }
 
         if (memberShapes.length === 1) {
@@ -176,7 +179,7 @@ export function transformShapeToAstCompoundType(
           )
           .ifLeft(() => {
             if (shape.kind === "NodeShape") {
-              this.shapeAstTypesByIdentifier.delete(shape.identifier);
+              this.cachedAstTypesByShapeIdentifier.delete(shape.identifier);
             }
           });
       },

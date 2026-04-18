@@ -195,7 +195,10 @@ export function transformShapeToAstObjectType(
             tsObjectDeclarationType: tsObjectDeclarationType.orDefault("class"),
           });
 
-          this.shapeAstTypesByIdentifier.set(nodeShape.identifier, objectType);
+          this.cachedAstTypesByShapeIdentifier.set(
+            nodeShape.identifier,
+            objectType,
+          );
 
           return (() => {
             // Populate ancestor and descendant object types
@@ -257,7 +260,7 @@ export function transformShapeToAstObjectType(
               Maybe.of(objectType),
             );
           })().ifLeft(() => {
-            this.shapeAstTypesByIdentifier.delete(nodeShape.identifier);
+            this.cachedAstTypesByShapeIdentifier.delete(nodeShape.identifier);
           });
         },
       );
