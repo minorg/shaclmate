@@ -8,7 +8,6 @@ import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
-import { codeName } from "../codeName.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -40,18 +39,22 @@ const reservedTsIdentifiers = reservedTsIdentifiers_({
   includeGlobalProperties: true,
 });
 
-const tsName = codeName((value) => {
+function tsName(name: string, options?: { synthetic?: boolean }): string {
   // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
-  if (reservedTsIdentifiers.has(value)) {
+  if (reservedTsIdentifiers.has(name)) {
     // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
-    return `$_${value}$`;
+    return `$_${name}$`;
   }
 
-  return value.replaceAll(
+  let tsName = name.replaceAll(
     /\P{ID_Continue}/gu,
     (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
   );
-}, syntheticNamePrefix);
+  if (options?.synthetic) {
+    tsName = `${syntheticNamePrefix}${tsName};`;
+  }
+  return tsName;
+}
 
 export class TypeFactory {
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
@@ -79,10 +82,11 @@ export class TypeFactory {
 
     const identifierType = this.createIdentifierType(astType.identifierType);
 
+    const name = tsName(astType.name.unsafeCoerce(), {
+      synthetic: astType.synthetic,
+    });
     const staticModuleName =
-      astType.childObjectTypes.length > 0
-        ? `${tsName(astType)}Static`
-        : tsName(astType);
+      astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
     const objectType = new ObjectType({
       abstract: astType.abstract,
@@ -120,7 +124,7 @@ export class TypeFactory {
             if (left.order > right.order) {
               return 1;
             }
-            return tsName(left).localeCompare(tsName(right));
+            return tsName(left.name).localeCompare(tsName(right.name));
           })
           .map((astProperty) =>
             this.createObjectTypeProperty({
@@ -206,7 +210,7 @@ export class TypeFactory {
         return properties;
       },
       identifierMintingStrategy: astType.identifierMintingStrategy,
-      name: tsName(astType),
+      name,
       staticModuleName,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
@@ -240,7 +244,7 @@ export class TypeFactory {
       memberTypes: ast.ObjectCompoundType.memberObjectTypes(astType).map(
         (objectType) => this.createObjectType(objectType),
       ),
-      name: tsName(astType as ast.ObjectUnionType),
+      name: tsName(astType.name.unsafeCoerce()),
     });
 
     this.cachedObjectUnionTypesByShapeIdentifier.set(
@@ -540,15 +544,13 @@ export class TypeFactory {
       }
     }
 
-    const name = tsName(astObjectTypeProperty);
-
     const property = new ObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
       label: astObjectTypeProperty.label,
       mutable: astObjectTypeProperty.mutable,
       objectType,
-      name,
+      name: tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
       type: this.createType(astObjectTypeProperty.type),

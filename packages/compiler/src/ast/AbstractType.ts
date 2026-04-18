@@ -63,13 +63,5 @@ export abstract class AbstractType {
     return true;
   }
 
-  get isNamed(): boolean {
-    return (
-      this.label.isJust() ||
-      this.name.isJust() ||
-      this.shapeIdentifier.termType === "NamedNode"
-    );
-  }
-
   abstract toString(): string;
 }

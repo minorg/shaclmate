@@ -3,6 +3,7 @@ import TermMap from "@rdfjs/term-map";
 import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
@@ -60,11 +61,12 @@ export class ShapesGraphToAstTransformer {
 
       switch (nodeShapeAstType.kind) {
         case "IntersectionType":
-          if (nodeShapeAstType.isNamed) {
+          if (nodeShapeAstType.name.isJust()) {
             astNamedIntersectionTypes.push(nodeShapeAstType);
           }
           break;
         case "ObjectType": {
+          invariant(nodeShapeAstType.name.isJust());
           astObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {
@@ -95,7 +97,7 @@ export class ShapesGraphToAstTransformer {
           break;
         }
         case "UnionType":
-          if (nodeShapeAstType.isNamed) {
+          if (nodeShapeAstType.name.isJust()) {
             astNamedUnionTypes.push(nodeShapeAstType);
           }
           break;
