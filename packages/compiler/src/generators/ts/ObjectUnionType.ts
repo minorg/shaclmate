@@ -65,7 +65,10 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }) {
     super(superParameters);
     this.identifierType = identifierType;
-    invariant(memberTypes.length > 0);
+    invariant(
+      memberTypes.length > 0,
+      "ObjectUnionType memberTypes array is empty",
+    );
     this.memberTypes = memberTypes.map(
       (memberType) =>
         new MemberType({
@@ -210,6 +213,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       // );
       invariant(
         memberType._discriminantProperty.name === discriminantPropertyName,
+        "ObjectUnionType discriminant property names don't line up",
       );
       discriminantPropertyDescendantValues.push(
         ...memberType._discriminantProperty.descendantValues,

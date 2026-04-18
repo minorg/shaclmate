@@ -31,7 +31,7 @@ export abstract class AbstractCompoundType<
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #memberTypes: MemberTypeT[];
+  readonly #memberTypes: MemberTypeT[] = [];
 
   /**
    * TypeScript features to generate.
@@ -39,15 +39,12 @@ export abstract class AbstractCompoundType<
   readonly #tsFeatures: ReadonlySet<TsFeature>;
 
   constructor({
-    memberTypes,
     tsFeatures,
     ...superParameters
   }: {
-    memberTypes?: readonly MemberTypeT[];
     tsFeatures: ReadonlySet<TsFeature>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.#memberTypes = memberTypes?.concat() ?? [];
     this.#tsFeatures = tsFeatures;
   }
 

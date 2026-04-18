@@ -71,18 +71,18 @@ export function transformShapeToAstCompoundType(
           tsFeatures,
         });
 
+        if (memberShapes.length === 1) {
+          return transformShapeToAstType
+            .call(this, memberShapes[0], shapeStack)
+            .map(Maybe.of);
+        }
+
         if (shape.kind === "NodeShape") {
           // Put a placeholder in the cache to deal with cyclic references
           this.cachedAstTypesByShapeIdentifier.set(
             shape.identifier,
             compoundType,
           );
-        }
-
-        if (memberShapes.length === 1) {
-          return transformShapeToAstType
-            .call(this, memberShapes[0], shapeStack)
-            .map(Maybe.of);
         }
 
         return Either.sequence(
@@ -105,7 +105,7 @@ export function transformShapeToAstCompoundType(
                     ),
                   );
                 }
-                memberTypes.push(memberType);
+                compoundType.addMemberType(memberType);
 
                 if (compoundTypeKind === "UnionType") {
                   let memberDiscriminantValue: string | undefined;
@@ -134,47 +134,17 @@ export function transformShapeToAstCompoundType(
                 }
               }
 
-              const astAbstractTypeProperties = {
-                comment: shape.comment,
-                label: shape.label,
-                name: shapeName(shape),
-                shapeIdentifier: shapeIdentifier.call(this, shape),
-              };
-
-              switch (compoundTypeKind) {
-                case "IntersectionType":
-                  return Either.of(
-                    Maybe.of(
-                      new ast.IntersectionType({
-                        ...astAbstractTypeProperties,
-                        memberTypes,
-                        tsFeatures,
-                      }),
-                    ),
-                  );
-                case "UnionType":
-                  if (
-                    memberDiscriminantValues.length > 0 &&
-                    memberDiscriminantValues.length !== memberTypes.length
-                  ) {
-                    return Left(
-                      new Error(
-                        `${shape} has members without discriminant values`,
-                      ),
-                    );
-                  }
-
-                  return Either.of(
-                    Maybe.of(
-                      new ast.UnionType({
-                        ...astAbstractTypeProperties,
-                        memberDiscriminantValues,
-                        memberTypes,
-                        tsFeatures,
-                      }),
-                    ),
-                  );
+              if (
+                compoundTypeKind === "UnionType" &&
+                memberDiscriminantValues.length > 0 &&
+                memberDiscriminantValues.length !== memberTypes.length
+              ) {
+                return Left(
+                  new Error(`${shape} has members without discriminant values`),
+                );
               }
+
+              return Either.of(Maybe.of(compoundType));
             },
           )
           .ifLeft(() => {
