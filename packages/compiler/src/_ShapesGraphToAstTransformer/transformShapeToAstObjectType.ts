@@ -62,12 +62,9 @@ export function transformShapeToAstObjectType(
     }
     const nodeShape = shape;
 
-    // {
-    //   const type = this.shapeAstTypesByIdentifier.get(nodeShape.identifier);
-    //   if (type) {
-    //     return Either.of(type);
-    //   }
-    // }
+    if (nodeShape.identifier.termType !== "NamedNode") {
+      return Either.of(Maybe.empty());
+    }
 
     return Eithers.chain2(
       nodeShape.constraints.and,

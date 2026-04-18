@@ -85,7 +85,8 @@ export namespace ObjectCompoundType {
     }
 
     invariant(
-      memberObjectTypes.length >= objectCompoundType.memberTypes.length,
+      memberObjectTypes_.length >= objectCompoundType.memberTypes.length,
+      "object compound type has no member ObjectType's",
     );
 
     // Member object types must have distinct RDF types or no RDF types at all.
