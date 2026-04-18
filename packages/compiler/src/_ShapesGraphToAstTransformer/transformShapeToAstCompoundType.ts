@@ -77,13 +77,11 @@ export function transformShapeToAstCompoundType(
             .map(Maybe.of);
         }
 
-        if (shape.kind === "NodeShape") {
-          // Put a placeholder in the cache to deal with cyclic references
-          this.cachedAstTypesByShapeIdentifier.set(
-            shape.identifier,
-            compoundType,
-          );
-        }
+        // Put a placeholder in the cache to deal with cyclic references
+        this.cachedAstTypesByShapeIdentifier.set(
+          shape.identifier,
+          compoundType,
+        );
 
         return Either.sequence(
           memberShapes.map((memberShape) =>
@@ -94,7 +92,6 @@ export function transformShapeToAstCompoundType(
             (
               memberShapeTypes,
             ): Either<Error, Maybe<ast.IntersectionType | ast.UnionType>> => {
-              const memberTypes: ast.IntersectionType.MemberType[] = [];
               for (let memberI = 0; memberI < memberShapes.length; memberI++) {
                 const memberShape = memberShapes[memberI];
                 const memberType = memberShapeTypes[memberI];
@@ -137,20 +134,21 @@ export function transformShapeToAstCompoundType(
               if (
                 compoundTypeKind === "UnionType" &&
                 memberDiscriminantValues.length > 0 &&
-                memberDiscriminantValues.length !== memberTypes.length
+                memberDiscriminantValues.length !== memberShapes.length
               ) {
                 return Left(
                   new Error(`${shape} has members without discriminant values`),
                 );
               }
 
+              invariant(
+                compoundType.memberTypes.length === memberShapes.length,
+              );
               return Either.of(Maybe.of(compoundType));
             },
           )
           .ifLeft(() => {
-            if (shape.kind === "NodeShape") {
-              this.cachedAstTypesByShapeIdentifier.delete(shape.identifier);
-            }
+            this.cachedAstTypesByShapeIdentifier.delete(shape.identifier);
           });
       },
     );

@@ -1,5 +1,6 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
@@ -17,6 +18,7 @@ export function synthesizeUberObjectUnionType(parameters: {
   const objectTypes = parameters.objectTypes.filter(
     (objectType) => !objectType.extern, // && !objectType.name.startsWith(syntheticNamePrefix),
   );
+  invariant(objectTypes.length > 0);
 
   const nodeKinds = objectTypes.reduce((nodeKinds, objectType) => {
     for (const nodeKind of objectType.identifierType.nodeKinds) {

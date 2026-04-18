@@ -2,11 +2,8 @@ import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-// import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
-// import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { snippets } from "./snippets.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
-// import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -41,24 +38,25 @@ export class TsGenerator implements Generator {
       (left, right) => left.name.localeCompare(right.name),
     );
 
-    const uberObjectUnionType = synthesizeUberObjectUnionType({
-      objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
-    });
-    declarations.push(uberObjectUnionType.declaration);
+    if (objectTypesToposorted.length > 0) {
+      const uberObjectUnionType = synthesizeUberObjectUnionType({
+        objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+      });
+      declarations.push(uberObjectUnionType.declaration);
+      objectUnionTypesNameSorted.push(uberObjectUnionType);
+    }
 
     declarations.push(
       ...objectSetDeclarations({
         objectTypes: objectTypesNameSorted,
-        objectUnionTypes:
-          objectUnionTypesNameSorted.concat(uberObjectUnionType),
+        objectUnionTypes: objectUnionTypesNameSorted,
       }),
     );
 
     declarations.push(
       ...graphqlSchemaVariableStatement({
         objectTypes: objectTypesNameSorted,
-        objectUnionTypes:
-          objectUnionTypesNameSorted.concat(uberObjectUnionType),
+        objectUnionTypes: objectUnionTypesNameSorted,
       }).toList(),
     );
 
