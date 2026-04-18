@@ -10,6 +10,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeName } from "./shapeName.js";
 import { transformNodeShapeToAstType } from "./transformNodeShapeToAstType.js";
+import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
   identifierType,

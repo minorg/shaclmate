@@ -1,4 +1,3 @@
-import dataFactory from "@rdfjs/data-model";
 import TermSet from "@rdfjs/term-set";
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
@@ -37,6 +36,8 @@ export namespace ObjectCompoundType {
       return new IdentifierType({
         comment: Maybe.empty(),
         label: Maybe.empty(),
+        name: Maybe.empty(),
+        shapeIdentifier: objectCompoundType.shapeIdentifier,
       });
     }
 
@@ -46,6 +47,8 @@ export namespace ObjectCompoundType {
         return new BlankNodeType({
           comment: Maybe.empty(),
           label: Maybe.empty(),
+          name: Maybe.empty(),
+          shapeIdentifier: objectCompoundType.shapeIdentifier,
         });
       case "IRI":
         return new IriType({
@@ -54,7 +57,7 @@ export namespace ObjectCompoundType {
           in_: [...memberIdentifierTypesIn],
           label: Maybe.empty(),
           name: Maybe.empty(),
-          shapeIdentifier: dataFactory.blankNode(),
+          shapeIdentifier: objectCompoundType.shapeIdentifier,
         });
       default:
         memberIdentifierTypeNodeKind satisfies never;

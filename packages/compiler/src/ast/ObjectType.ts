@@ -46,13 +46,6 @@ export class ObjectType extends AbstractType {
   readonly #descendantObjectTypes: ObjectType[] = [];
 
   /**
-   * Should generated code derived from this ObjectType be visible outside its module?
-   *
-   * Defaults to true.
-   */
-  readonly export: boolean;
-
-  /**
    * If true, the code for this ObjectType is defined externally and should not be generated.
    *
    * Defaults to false.
@@ -485,27 +478,6 @@ export namespace ObjectType {
                 )
               ) {
                 return true;
-              }
-            }
-            return false;
-          }
-          case "ObjectIntersectionType":
-          case "ObjectUnionType": {
-            if (DEBUG) {
-              process.stderr.write(`recurse into ${currentPropertyType}`);
-            }
-            for (const memberType of currentPropertyType.memberObjectTypes) {
-              for (const property of memberType.properties) {
-                if (
-                  helper(
-                    stack.concat({
-                      objectType: memberType,
-                      property,
-                    }),
-                  )
-                ) {
-                  return true;
-                }
               }
             }
             return false;

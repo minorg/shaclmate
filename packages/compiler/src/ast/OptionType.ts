@@ -18,6 +18,8 @@ export class OptionType<
       comment: itemType.comment,
       itemType,
       label: itemType.label,
+      name: itemType.name,
+      shapeIdentifier: itemType.shapeIdentifier,
     });
   }
 }

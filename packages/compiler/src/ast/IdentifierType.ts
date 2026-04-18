@@ -16,7 +16,7 @@ export class IdentifierType extends AbstractTermType<
   constructor(
     superParameters: Pick<
       ConstructorParameters<typeof AbstractTermType<NamedNode, BlankNode>>[0],
-      "comment" | "label"
+      "comment" | "label" | "name" | "shapeIdentifier"
     >,
   ) {
     super({

@@ -10,6 +10,7 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
+import { ShapeStack } from "./ShapeStack.js";
 import { shapeName } from "./shapeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
@@ -65,6 +66,8 @@ const listPropertiesObjectType = new ast.ObjectType({
   identifierType: new ast.IdentifierType({
     comment: Maybe.empty(),
     label: Maybe.empty(),
+    name: Maybe.empty(),
+    shapeIdentifier: dataFactory.blankNode(),
   }),
   fromRdfType: Maybe.empty(),
   name: Maybe.empty(),
@@ -100,13 +103,13 @@ function transformNodeShapeToAstListType(
   ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
     // Put a placeholder in the cache to deal with cyclic references
     // Remove the placeholder if the transformation fails.
-    const listType = new ast.ListType({
+    const listType = new ast.ListType<ast.ListType.ItemType>({
       comment: nodeShape.comment,
       identifierNodeKind: nodeKinds.has("BlankNode") ? "BlankNode" : "IRI",
       itemType: astListTypePlaceholderItemType,
       label: nodeShape.label,
       mutable: nodeShape.mutable.orDefault(false),
-      name: Maybe.empty(),
+      name: shapeName(nodeShape),
       identifierMintingStrategy,
       shapeIdentifier: this.shapeIdentifier(nodeShape),
       toRdfTypes: nodeShape.toRdfTypes,
@@ -288,10 +291,9 @@ export function transformNodeShapeToAstType(
       const export_ = nodeShape.export.orDefault(true);
 
       if (andShapes.length > 0 || xoneShapes.length > 0) {
-        return transformShapeToAstCompoundType.call(this, {
-          export_,
-          nodeShape,
-        });
+        return transformShapeToAstCompoundType
+          .call(this, nodeShape, new ShapeStack())
+          .map((_) => _.unsafeCoerce()); // Maybe.empty() is only returned when no logical constraints are present
       }
 
       let fromRdfType: Maybe<NamedNode>;

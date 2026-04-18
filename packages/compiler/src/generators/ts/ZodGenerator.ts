@@ -29,19 +29,18 @@ ${joinCode(
 }`);
     }
 
-    for (const objectUnionType of ast_.objectUnionTypes.map(
-      (astObjectUnionType) =>
+    for (const namedUnionType of ast_.namedUnionTypes
+      .filter((_) => _.isObjectUnionType())
+      .map((astObjectUnionType) =>
         this.typeFactory.createObjectUnionType(astObjectUnionType),
-    )) {
+      )) {
       declarations.push(code`\
-export namespace ${objectUnionType.staticModuleName} {
+export namespace ${namedUnionType.staticModuleName} {
 ${joinCode(
   [
-    ...ObjectUnionType_jsonTypeAliasDeclaration.bind(
-      objectUnionType,
-    )().toList(),
+    ...ObjectUnionType_jsonTypeAliasDeclaration.bind(namedUnionType)().toList(),
     ...ObjectUnionType_jsonZodSchemaFunctionDeclaration.bind(
-      objectUnionType,
+      namedUnionType,
     )().toList(),
   ],
   { on: "\n\n" },

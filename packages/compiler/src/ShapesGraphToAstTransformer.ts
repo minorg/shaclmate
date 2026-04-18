@@ -110,11 +110,11 @@ export class ShapesGraphToAstTransformer {
     }
 
     return Either.of({
-      objectIntersectionTypes: astNamedIntersectionTypes,
+      namedIntersectionTypes: astNamedIntersectionTypes,
       objectTypes: astObjectTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
       ),
-      objectUnionTypes: astNamedUnionTypes,
+      namedUnionTypes: astNamedUnionTypes,
     });
   }
 }

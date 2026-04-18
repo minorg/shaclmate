@@ -20,10 +20,11 @@ export class TsGenerator implements Generator {
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
 
-    const objectUnionTypesToposorted = ast_.objectUnionTypes.map(
-      (astObjectUnionType) =>
+    const objectUnionTypesToposorted = ast_.namedUnionTypes
+      .filter((_) => _.isObjectUnionType())
+      .map((astObjectUnionType) =>
         this.typeFactory.createObjectUnionType(astObjectUnionType),
-    );
+      );
 
     for (const objectType of objectTypesToposorted) {
       declarations.push(objectType.declaration);

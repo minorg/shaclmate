@@ -30,6 +30,8 @@ export class DefaultValueType<
       comment: itemType.comment,
       itemType,
       label: itemType.label,
+      name: itemType.name,
+      shapeIdentifier: itemType.shapeIdentifier,
     });
     this.defaultValue = defaultValue;
   }
