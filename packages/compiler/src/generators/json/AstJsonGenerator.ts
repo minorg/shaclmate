@@ -166,7 +166,7 @@ export class AstJsonGenerator implements Generator {
             description: property.description.extract(),
             label: property.label.extract(),
             mutable: property.mutable,
-            name: property.name.extract(),
+            name: property.name,
             order: property.order,
             path: property.path,
             recursive: property.recursive ? true : undefined,

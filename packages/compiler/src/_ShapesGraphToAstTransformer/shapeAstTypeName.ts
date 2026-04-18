@@ -1,13 +1,8 @@
 import { Curie } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import type * as input from "../input/index.js";
-import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import { shapeIdentifier } from "./shapeIdentifier.js";
 
-export function shapeAstTypeName(
-  this: ShapesGraphToAstTransformer,
-  shape: input.Shape,
-): Maybe<string> {
+export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
   if (shape.kind !== "NodeShape") {
     return Maybe.empty();
   }
@@ -27,13 +22,12 @@ export function shapeAstTypeName(
   }
 
   // CURIE shape identifier
-  const shapeIdentifier_ = shapeIdentifier.call(this, shape);
-  if (shapeIdentifier_ instanceof Curie) {
-    if (shapeIdentifier_.hasUniqueReference) {
-      return Maybe.of(shapeIdentifier_.reference);
+  if (shape.identifier instanceof Curie) {
+    if (shape.identifier.hasUniqueReference) {
+      return Maybe.of(shape.identifier.reference);
     }
 
-    return Maybe.of(`${shapeIdentifier_.prefix}_${shapeIdentifier_.reference}`);
+    return Maybe.of(`${shape.identifier.prefix}_${shape.identifier.reference}`);
   }
 
   return Maybe.empty();

@@ -8,7 +8,6 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
-import { shapeIdentifier } from "./shapeIdentifier.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -67,7 +66,7 @@ export function transformShapeToAstCompoundType(
           label: shape.label,
           name: shapeAstTypeName(shape),
           memberDiscriminantValues,
-          shapeIdentifier: shapeIdentifier.call(this, shape),
+          shapeIdentifier: shape.identifier,
           tsFeatures,
         });
 

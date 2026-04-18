@@ -1,4 +1,5 @@
 import dataFactory from "@rdfjs/data-model";
+import { Curie } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
@@ -8,7 +9,6 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
-import { shapeIdentifier } from "./shapeIdentifier.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
@@ -86,23 +86,13 @@ function propertyName(
   }
 
   // sh:path CURIE reference
-  if (propertyShape.path.termType === "NamedNode") {
-    const propertyPathCurie = this.curieFactory
-      .create(propertyShape.path)
-      .extract();
-    if (propertyPathCurie) {
-      return propertyPathCurie.reference;
-    }
+  if (propertyShape.path instanceof Curie) {
+    return propertyShape.path.reference;
   }
 
   // Shape identifier CURIE reference
-  if (propertyShape.identifier.termType === "NamedNode") {
-    const propertyShapeIdentifierCurie = this.curieFactory
-      .create(propertyShape.identifier)
-      .extract();
-    if (propertyShapeIdentifierCurie) {
-      return propertyShapeIdentifierCurie.reference;
-    }
+  if (propertyShape.identifier instanceof Curie) {
+    return propertyShape.identifier.reference;
   }
 
   // Shape identifier IRI
@@ -310,7 +300,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         comment: Maybe.empty(),
         label: Maybe.empty(),
         name: Maybe.empty(),
-        shapeIdentifier: shapeIdentifier.call(this, propertyShape),
+        shapeIdentifier: propertyShape.identifier,
       };
 
       switch (astType.kind) {
@@ -366,7 +356,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         objectType,
         order: propertyShape.order.orDefault(0),
         path: propertyShape.path,
-        shapeIdentifier: shapeIdentifier.call(this, propertyShape),
+        shapeIdentifier: propertyShape.identifier,
         type: astType,
         visibility: propertyShape.visibility,
       }),

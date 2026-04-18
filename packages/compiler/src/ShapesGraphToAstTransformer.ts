@@ -1,10 +1,8 @@
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
-import type { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
@@ -17,7 +15,6 @@ export class ShapesGraphToAstTransformer {
     rdfjs.BlankNode | rdfjs.NamedNode,
     ast.Type
   > = new TermMap();
-  protected readonly curieFactory: CurieFactory;
   protected readonly shapesGraph: input.ShapesGraph;
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 

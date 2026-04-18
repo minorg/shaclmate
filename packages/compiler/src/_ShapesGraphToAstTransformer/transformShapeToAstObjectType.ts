@@ -10,7 +10,6 @@ import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMinting
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
-import { shapeIdentifier } from "./shapeIdentifier.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
@@ -145,7 +144,7 @@ export function transformShapeToAstObjectType(
             comment: Maybe.empty(),
             label: Maybe.empty(),
             name: Maybe.empty(),
-            shapeIdentifier: shapeIdentifier.call(this, nodeShape),
+            shapeIdentifier: nodeShape.identifier,
           };
           if (nodeKinds.size === 2) {
             invariant(nodeShape.identifierIn.length === 0);
@@ -185,7 +184,7 @@ export function transformShapeToAstObjectType(
             identifierType,
             identifierMintingStrategy,
             name: shapeAstTypeName(nodeShape),
-            shapeIdentifier: shapeIdentifier.call(this, nodeShape),
+            shapeIdentifier: nodeShape.identifier,
             synthetic: false,
             toRdfTypes,
             tsFeatures,

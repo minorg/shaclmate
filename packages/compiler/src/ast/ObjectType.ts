@@ -10,7 +10,6 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
-import type { Curie } from "./Curie.js";
 import { arrayEquals } from "./equals.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
@@ -267,7 +266,7 @@ export namespace ObjectType {
     /**
      * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
      */
-    readonly path: Curie | PropertyPath;
+    readonly path: PropertyPath;
 
     /**
      * Identifier of the property shape.
@@ -304,7 +303,7 @@ export namespace ObjectType {
       name: string;
       objectType: ObjectType;
       order: number;
-      path: Curie | PropertyPath;
+      path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
       visibility: PropertyVisibility;
@@ -500,7 +499,7 @@ export namespace ObjectType {
     }
 
     toString(): string {
-      return `${this.name.orDefault(Resource.Identifier.toString(this.shapeIdentifier))}(path=${PropertyPath.$toString(this.path)})`;
+      return `${this.name}(path=${PropertyPath.$toString(this.path)})`;
     }
   }
 }
