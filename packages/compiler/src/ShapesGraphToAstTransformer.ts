@@ -4,9 +4,7 @@ import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
-import { nodeShapeTsFeatures } from "./_ShapesGraphToAstTransformer/nodeShapeTsFeatures.js";
-import { shapeIdentifier } from "./_ShapesGraphToAstTransformer/shapeIdentifier.js";
-import { transformNodeShapeToAstType } from "./_ShapesGraphToAstTransformer/transformNodeShapeToAstType.js";
+import { transformShapeToAstObjectType } from "./_ShapesGraphToAstTransformer/transformShapeToAstObjectType.js";
 import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
@@ -14,12 +12,10 @@ import type * as input from "./input/index.js";
 export class ShapesGraphToAstTransformer {
   // Members are protected so they're accessible to the bound functions
   protected readonly curieFactory: CurieFactory;
-  protected readonly nodeShapeAstTypesByIdentifier: TermMap<
+  protected readonly shapeAstTypesByIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
     ast.Type
   > = new TermMap();
-  protected nodeShapeTsFeatures = nodeShapeTsFeatures;
-  protected shapeIdentifier = shapeIdentifier;
   protected readonly shapesGraph: input.ShapesGraph;
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
@@ -54,7 +50,7 @@ export class ShapesGraphToAstTransformer {
         continue;
       }
 
-      const nodeShapeAstTypeEither = transformNodeShapeToAstType.call(
+      const nodeShapeAstTypeEither = transformShapeToAstObjectType.call(
         this,
         nodeShape,
       );

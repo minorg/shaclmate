@@ -7,8 +7,9 @@ import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { shapeIdentifier } from "./shapeIdentifier.js";
 import { shapeName } from "./shapeName.js";
-import { transformNodeShapeToAstType } from "./transformNodeShapeToAstType.js";
+import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -51,7 +52,7 @@ export function transformShapeToAstCompoundType(
           memberShapes = nodeConstraintShapes;
           compoundTypeKind = "IntersectionType";
           transformMemberShape = (memberShape) =>
-            transformNodeShapeToAstType.call(
+            transformShapeToAstObjectType.call(
               this,
               memberShape as input.NodeShape,
             );
@@ -76,16 +77,13 @@ export function transformShapeToAstCompoundType(
           label: shape.label,
           name: shapeName(shape),
           memberDiscriminantValues,
-          shapeIdentifier: this.shapeIdentifier(shape),
+          shapeIdentifier: shapeIdentifier.call(this, shape),
           tsFeatures,
         });
 
         if (shape.kind === "NodeShape") {
           // Put a placeholder in the cache to deal with cyclic references
-          this.nodeShapeAstTypesByIdentifier.set(
-            shape.identifier,
-            compoundType,
-          );
+          this.shapeAstTypesByIdentifier.set(shape.identifier, compoundType);
         }
 
         if (memberShapes.length === 1) {
@@ -141,7 +139,7 @@ export function transformShapeToAstCompoundType(
                 comment: shape.comment,
                 label: shape.label,
                 name: shapeName(shape),
-                shapeIdentifier: this.shapeIdentifier(shape),
+                shapeIdentifier: shapeIdentifier.call(this, shape),
               };
 
               switch (compoundTypeKind) {
@@ -182,7 +180,7 @@ export function transformShapeToAstCompoundType(
           )
           .ifLeft(() => {
             if (shape.kind === "NodeShape") {
-              this.nodeShapeAstTypesByIdentifier.delete(shape.identifier);
+              this.shapeAstTypesByIdentifier.delete(shape.identifier);
             }
           });
       },

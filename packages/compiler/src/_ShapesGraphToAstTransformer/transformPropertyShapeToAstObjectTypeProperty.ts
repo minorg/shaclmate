@@ -8,8 +8,9 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
+import { shapeIdentifier } from "./shapeIdentifier.js";
 import { shapeName } from "./shapeName.js";
-import { transformNodeShapeToAstType } from "./transformNodeShapeToAstType.js";
+import { transformShapeToAstObjectType } from "./transformShapeToAstObjectType.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
@@ -153,7 +154,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
-      const astResolveTypeEither = transformNodeShapeToAstType
+      const astResolveTypeEither = transformShapeToAstObjectType
         .call(this, propertyShapeResolve.unsafeCoerce())
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
@@ -242,7 +243,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         comment: Maybe.empty(),
         label: Maybe.empty(),
         name: Maybe.empty(),
-        shapeIdentifier: this.shapeIdentifier(propertyShape),
+        shapeIdentifier: shapeIdentifier.call(this, propertyShape),
       };
 
       switch (astType.kind) {
