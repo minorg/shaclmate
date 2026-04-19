@@ -28,6 +28,9 @@ export abstract class AbstractDeclaredType extends AbstractType {
 export namespace AbstractDeclaredType {
   export type Conversion = AbstractType.Conversion;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export namespace DiscriminantProperty {
+    export type Value = AbstractType.DiscriminantProperty.Value;
+  }
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
   export const JsonType = AbstractType.JsonType;

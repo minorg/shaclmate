@@ -203,10 +203,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   protected get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
-    const discriminantPropertyDescendantValues: string[] = [];
+    const discriminantPropertyDescendantValues: AbstractDeclaredType.DiscriminantProperty.Value[] =
+      [];
     const discriminantPropertyName =
       this.memberTypes[0]._discriminantProperty.name;
-    const discriminantPropertyOwnValues: string[] = [];
+    const discriminantPropertyOwnValues: AbstractDeclaredType.DiscriminantProperty.Value[] =
+      [];
     for (const memberType of this.memberTypes) {
       // invariant(
       //   memberType.declarationType === this.memberTypes[0].declarationType,

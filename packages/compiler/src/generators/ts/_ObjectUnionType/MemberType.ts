@@ -36,7 +36,7 @@ export class MemberType {
   }
 
   @Memoize()
-  get discriminantPropertyValues(): readonly string[] {
+  get discriminantPropertyValues(): readonly AbstractDeclaredType.DiscriminantProperty.Value[] {
     // A member type's combined discriminant property values are its "own" values plus any descendant values that are
     // not the "own" values of some other member type.
     // So if you have type A, type B, and B inherits A, then
@@ -47,7 +47,8 @@ export class MemberType {
     //  own discriminant property values: ["B"]
     //  descendant discriminant property values ["B"]
     // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
-    const memberOwnDiscriminantPropertyValues = new Set<string>();
+    const memberOwnDiscriminantPropertyValues =
+      new Set<AbstractDeclaredType.DiscriminantProperty.Value>();
     for (const memberType of this.universe) {
       for (const ownDiscriminantPropertyValue of memberType.discriminantProperty.unsafeCoerce()
         .ownValues) {

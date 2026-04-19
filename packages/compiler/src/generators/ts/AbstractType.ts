@@ -274,8 +274,12 @@ export namespace AbstractType {
 
   export interface DiscriminantProperty {
     readonly name: string;
-    readonly ownValues: readonly string[];
-    readonly descendantValues: readonly string[];
+    readonly ownValues: readonly DiscriminantProperty.Value[];
+    readonly descendantValues: readonly DiscriminantProperty.Value[];
+  }
+
+  export namespace DiscriminantProperty {
+    export type Value = number | string;
   }
 
   export class GraphqlType {

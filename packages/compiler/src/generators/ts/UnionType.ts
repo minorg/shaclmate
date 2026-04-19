@@ -34,7 +34,7 @@ class MemberType {
   }
 
   @Memoize()
-  get discriminantValues(): readonly string[] {
+  get discriminantValues(): readonly AbstractType.DiscriminantProperty.Value[] {
     switch (this.discriminant.kind) {
       case "envelope":
         return [this.discriminant.ownValues[this.delegateIndex]];
@@ -49,7 +49,8 @@ class MemberType {
         //  own discriminant property values: ["B"]
         //  descendant discriminant property values ["B"]
         // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
-        const memberOwnDiscriminantPropertyValues = new Set<string>();
+        const memberOwnDiscriminantPropertyValues =
+          new Set<AbstractType.DiscriminantProperty.Value>();
         for (const memberType of this.universe) {
           for (const ownDiscriminantPropertyValue of memberType.discriminantProperty.unsafeCoerce()
             .ownValues) {
@@ -217,10 +218,7 @@ export class UnionType extends AbstractType {
         ownValues:
           memberDiscriminantValues.length > 0
             ? memberDiscriminantValues
-            : memberTypes.map(
-                (memberType, memberTypeIndex) =>
-                  `${memberTypeIndex}-${memberType.name}`,
-              ),
+            : memberTypes.map((_, memberTypeIndex) => memberTypeIndex),
       };
     }
     this.discriminant = discriminant;
@@ -254,7 +252,7 @@ export class UnionType extends AbstractType {
         return this.memberTypes.map((memberType) => ({
           conversionExpression: (value) => value,
           sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "${memberType.discriminantValues[0]}"`,
+            code`typeof ${value} === ${literalOf(memberType.discriminantValues[0])}`,
           sourceTypeName: memberType.name,
           sourceTypeof: memberType.discriminantValues[0] as Typeof,
         }));
@@ -285,7 +283,7 @@ ${joinCode(
     memberType.discriminantValues.map(
       (
         value,
-      ) => code`if (${this.discriminantVariable(code`left`)} === "${value}" && ${this.discriminantVariable(code`right`)} === "${value}") {
+      ) => code`if (${this.discriminantVariable(code`left`)} === ${literalOf(value)} && ${this.discriminantVariable(code`right`)} === ${literalOf(value)}) {
   return ${memberType.equalsFunction}(${memberType.payload(code`left`)}, ${memberType.payload(code`right`)});
 }`,
     ),
@@ -303,10 +301,10 @@ ${joinCode(
 ${joinCode(
   this.memberTypes.map(
     (memberType) => code`\
-if (filter.on?.["${memberType.discriminantValues[0]}"] !== undefined) {
+if (filter.on?.[${literalOf(memberType.discriminantValues[0])}] !== undefined) {
   switch (${this.discriminantVariable(code`value`)}) {
-${memberType.discriminantValues.map((discriminantValue) => `case "${discriminantValue}":`)}
-    if (!${memberType.filterFunction}(filter.on["${memberType.discriminantValues[0]}"], ${memberType.payload(code`value`)})) {
+${memberType.discriminantValues.map((discriminantValue) => code`case ${literalOf(discriminantValue)}:`)}
+    if (!${memberType.filterFunction}(filter.on[${literalOf(memberType.discriminantValues[0])}], ${memberType.payload(code`value`)})) {
       return false;
     }
     break;
@@ -324,7 +322,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return code`{ readonly on?: { ${joinCode(
       this.memberTypes.map(
         (memberType) =>
-          code`readonly "${memberType.discriminantValues[0]}"?: ${memberType.filterType}`,
+          code`readonly ${literalOf(memberType.discriminantValues[0])}?: ${memberType.filterType}`,
       ),
       { on: ";" },
     )} } }`;
@@ -383,7 +381,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>
-            code`"${memberType.discriminantValues[0]}": ${{
+            code`${literalOf(memberType.discriminantValues[0])}: ${{
               discriminantValues: memberType.discriminantValues,
               type: memberType.schema,
             }}`,
@@ -402,8 +400,8 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>
-            code`readonly "${memberType.discriminantValues[0]}": ${{
-              discriminantValues: code`readonly string[]`,
+            code`readonly ${literalOf(memberType.discriminantValues[0])}: ${{
+              discriminantValues: code`readonly (number | string)[]`,
               type: memberType.schemaType,
             }}`,
         ),
@@ -421,7 +419,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.["${memberType.discriminantValues[0]}"], ignoreRdfType: false, schema: schema.members["${memberType.discriminantValues[0]}"].type }));`,
+triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(memberType.discriminantValues[0])}], ignoreRdfType: false, schema: schema.members[${literalOf(memberType.discriminantValues[0])}].type }));`,
     ),
   )}
   
@@ -438,7 +436,7 @@ triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ ...other
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...otherParameters, filter: filter?.on?.["${memberType.discriminantValues[0]}"], ignoreRdfType: false, schema: schema.members["${memberType.discriminantValues[0]}"].type }).concat(), type: "group" });`,
+unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(memberType.discriminantValues[0])}], ignoreRdfType: false, schema: schema.members[${literalOf(memberType.discriminantValues[0])}].type }).concat(), type: "group" });`,
     ),
   )}
   
@@ -464,7 +462,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
           },
         });
         if (this.discriminant.kind === "envelope") {
-          typeExpression = code`{ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value: ${typeExpression} }`;
+          typeExpression = code`{ ${this.discriminant.name}: ${literalOf(memberType.discriminantValues[0])} as const, value: ${typeExpression} }`;
         }
         return typeExpression;
       },
@@ -487,7 +485,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
             },
           });
           if (this.discriminant.kind === "envelope") {
-            typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value }) as (${this.name})))`;
+            typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(memberType.discriminantValues[0])} as const, value }) as (${this.name})))`;
           }
           typeExpression = code`(${typeExpression} as ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>>)`;
           return expression !== null
@@ -512,7 +510,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
     const caseBlocks: Code[] = [];
     for (const memberType of this.memberTypes) {
       caseBlocks.push(
-        code`${memberType.discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join()} { ${joinCode(
+        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case ${literalOf(discriminantPropertyValue)}:`))} { ${joinCode(
           memberType
             .hashStatements({
               depth: depth + 1,
@@ -541,7 +539,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
           code`(${joinCode(
             this.memberTypes.map(
               (memberType) =>
-                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonType().name} }`,
+                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: ${literalOf(memberType.discriminantValues[0])}, value: ${memberType.jsonType().name} }`,
             ),
             { on: "|" },
           )})`,
@@ -579,7 +577,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
         return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.memberTypes.map(
             (memberType) =>
-              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
+              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal(${literalOf(memberType.discriminantValues[0])}), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
           ),
           { on: "," },
         )}])`;
@@ -612,7 +610,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
       case "envelope":
         return this.ternaryExpression({
           memberTypeExpression: (memberType) =>
-            code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}" as const, value: ${memberType.toJsonExpression(
+            code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: ${literalOf(memberType.discriminantValues[0])} as const, value: ${memberType.toJsonExpression(
               {
                 variables: {
                   ...variables,
@@ -684,7 +682,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
         return code`(${joinCode(
           memberType.discriminantValues.map(
             (value) =>
-              code`${this.discriminantVariable(variables.value)} === "${value}"`,
+              code`${this.discriminantVariable(variables.value)} === ${literalOf(value)}`,
           ),
           { on: "||" },
         )}) ? ${memberTypeExpression_} : ${expression}`;
@@ -716,8 +714,9 @@ function inlineDiscriminantProperty(memberTypes: readonly Type[]):
       AbstractType.DiscriminantProperty,
       "descendantValues" | "ownValues"
     > & {
-      descendantValues: string[];
-      ownValues: string[];
+      // Mutable value arrays
+      descendantValues: AbstractType.DiscriminantProperty.Value[];
+      ownValues: AbstractType.DiscriminantProperty.Value[];
     })
   | undefined {
   let inlineDiscriminantProperty:
@@ -725,8 +724,9 @@ function inlineDiscriminantProperty(memberTypes: readonly Type[]):
         AbstractType.DiscriminantProperty,
         "descendantValues" | "ownValues"
       > & {
-        descendantValues: string[];
-        ownValues: string[];
+        // Mutable value arrays
+        descendantValues: AbstractType.DiscriminantProperty.Value[];
+        ownValues: AbstractType.DiscriminantProperty.Value[];
       })
     | undefined;
   for (const memberType of memberTypes) {
