@@ -4,9 +4,11 @@ import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfOptions.js";
+import { snippets_ToRdfOptions } from "./_snippets/snippets_ToRdfOptions.js";
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
+import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -20,10 +22,11 @@ import {
 } from "./ts-poet-wrapper.js";
 
 class MemberType {
-  private readonly delegate: Type;
   private readonly delegateIndex: number;
   private readonly discriminant: Discriminant;
   private readonly universe: readonly Type[];
+
+  readonly delegate: Type;
 
   constructor({
     delegate,
@@ -96,6 +99,10 @@ class MemberType {
 
   get filterType() {
     return this.delegate.filterType;
+  }
+
+  get kind() {
+    return this.delegate.kind;
   }
 
   get mutable() {
@@ -268,10 +275,14 @@ export class UnionType extends AbstractType {
       code`export type ${syntheticNamePrefix}Filter = ${this.inlineFilterType};`,
       code`export const ${syntheticNamePrefix}filter = ${this.inlineFilterFunction};`,
     );
+    if (this.features.has("hash")) {
+      code`export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(value: ${alias}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} }`;
+    }
     if (this.features.has("json")) {
       staticModuleDeclarations.push(
         code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType()}`,
         code`export const ${syntheticNamePrefix}fromJson = (json: ${syntheticNamePrefix}Json) => ${this.inlineFromJsonExpression({ variables: { value: code`json` } })}`,
+        code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema()}`,
         code`export const ${syntheticNamePrefix}toJson = (value: ${alias}) => ${this.inlineToJsonExpression({ variables: { value: code`value` } })}`,
       );
     }
@@ -288,6 +299,17 @@ export class UnionType extends AbstractType {
               propertyPath: code`parameters.propertyPath`,
               resource: code`parameters.resource`,
               resourceValues: code`parameters.resourceValues`,
+            },
+          },
+        )}`,
+        code`export const toRdf = (parameters: ${snippets_ToRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceSet: ${imports.ResourceSet}; value: ${alias}; }) => ${this.inlineToRdfExpression(
+          {
+            variables: {
+              graph: code`parameters.graph`,
+              propertyPath: code`parameters.propertyPath`,
+              resource: code`parameters.resource`,
+              resourceSet: code`parameters.resourceSet`,
+              value: code`parameters.value`,
             },
           },
         )}`,
@@ -562,7 +584,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
   }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
     const alias = this.alias.extract();
     if (alias && this.features.has("rdf")) {
-      return code`${alias}.${syntheticNamePrefix}fromRdf(${{ variables }})`;
+      return code`${alias}.${syntheticNamePrefix}fromRdf(${variables})`;
     }
     return this.inlineFromRdfExpression({ variables });
   }
@@ -577,28 +599,13 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
     depth,
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    const caseBlocks: Code[] = [];
-    for (const memberType of this.memberTypes) {
-      caseBlocks.push(
-        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case ${literalOf(discriminantPropertyValue)}:`))} { ${joinCode(
-          memberType
-            .hashStatements({
-              depth: depth + 1,
-              variables: {
-                hasher: variables.hasher,
-                value: memberType.payload(variables.value),
-              },
-            })
-            .concat(),
-        )} break; }`,
-      );
+    const alias = this.alias.extract();
+    if (alias && this.features.has("hash")) {
+      return [
+        code`${alias}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+      ];
     }
-    caseBlocks.push(
-      code`default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
-    );
-    return [
-      code`switch (${this.discriminantVariable(variables.value)}) { ${joinCode(caseBlocks)} }`,
-    ];
+    return this.inlineHashStatements({ depth, variables });
   }
 
   @Memoize()
@@ -614,41 +621,30 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
     return Maybe.empty();
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
-  ): Code {
-    switch (this.discriminant.kind) {
-      case "envelope":
-        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
-          this.memberTypes.map(
-            (memberType) =>
-              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal(${literalOf(memberType.discriminantValues[0])}), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
-          ),
-          { on: "," },
-        )}])`;
-      case "inline":
-        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
-          this.memberTypes.map((memberType) =>
-            memberType.jsonZodSchema({
-              includeDiscriminantProperty: true,
-              context: "type",
-            }),
-          ),
-          { on: "," },
-        )}])`;
-      case "typeof":
-        return code`${imports.z}.union([${joinCode(
-          this.memberTypes.map((memberType) =>
-            memberType.jsonZodSchema({ context: "type" }),
-          ),
-          { on: "," },
-        )}])`;
-      default:
-        throw this.discriminant satisfies never;
+  override jsonZodSchema({
+    context,
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
+    const alias = this.alias.extract();
+    if (alias && this.features.has("json")) {
+      const expression = code`${alias}.${syntheticNamePrefix}jsonZodSchema()`;
+      for (const memberType of this.memberTypes) {
+        if (
+          context === "property" &&
+          memberType.kind === "ObjectType" &&
+          (memberType.delegate as ObjectType).properties.some(
+            (property) => property.recursive,
+          )
+        ) {
+          return code`${imports.z}.lazy((): ${imports.z}.ZodType<${alias}.${syntheticNamePrefix}Json> => ${expression})`;
+        }
+      }
+      return expression;
     }
+
+    return this.inlineJsonZodSchema();
   }
 
-  toJsonExpression({
+  override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     const alias = this.alias.extract();
@@ -661,16 +657,11 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
   override toRdfExpression({
     variables,
   }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
-    return this.ternaryExpression({
-      memberTypeExpression: (memberType) =>
-        code`(${memberType.toRdfExpression({
-          variables: {
-            ...variables,
-            value: memberType.payload(variables.value),
-          },
-        })} as (bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode})[])`,
-      variables,
-    });
+    const alias = this.alias.extract();
+    if (alias && this.features.has("rdf")) {
+      return code`${alias}.${syntheticNamePrefix}toRdf(${variables})`;
+    }
+    return this.inlineToRdfExpression({ variables });
   }
 
   private discriminantVariable(variableValue: Code): Code {
@@ -729,6 +720,34 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
       }))`;
   }
 
+  private inlineHashStatements({
+    depth,
+    variables,
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
+    const caseBlocks: Code[] = [];
+    for (const memberType of this.memberTypes) {
+      caseBlocks.push(
+        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case ${literalOf(discriminantPropertyValue)}:`))} { ${joinCode(
+          memberType
+            .hashStatements({
+              depth: depth + 1,
+              variables: {
+                hasher: variables.hasher,
+                value: memberType.payload(variables.value),
+              },
+            })
+            .concat(),
+        )} break; }`,
+      );
+    }
+    caseBlocks.push(
+      code`default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
+    );
+    return [
+      code`switch (${this.discriminantVariable(variables.value)}) { ${joinCode(caseBlocks)} }`,
+    ];
+  }
+
   @Memoize()
   private inlineJsonType(): AbstractType.JsonType {
     switch (this.discriminant.kind) {
@@ -758,6 +777,38 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
             { on: "|" },
           ),
         );
+      default:
+        throw this.discriminant satisfies never;
+    }
+  }
+
+  private inlineJsonZodSchema(): Code {
+    switch (this.discriminant.kind) {
+      case "envelope":
+        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+          this.memberTypes.map(
+            (memberType) =>
+              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal(${literalOf(memberType.discriminantValues[0])}), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
+          ),
+          { on: "," },
+        )}])`;
+      case "inline":
+        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+          this.memberTypes.map((memberType) =>
+            memberType.jsonZodSchema({
+              includeDiscriminantProperty: true,
+              context: "type",
+            }),
+          ),
+          { on: "," },
+        )}])`;
+      case "typeof":
+        return code`${imports.z}.union([${joinCode(
+          this.memberTypes.map((memberType) =>
+            memberType.jsonZodSchema({ context: "type" }),
+          ),
+          { on: "," },
+        )}])`;
       default:
         throw this.discriminant satisfies never;
     }
@@ -794,6 +845,21 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
           variables,
         });
     }
+  }
+
+  private inlineToRdfExpression({
+    variables,
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+    return this.ternaryExpression({
+      memberTypeExpression: (memberType) =>
+        code`(${memberType.toRdfExpression({
+          variables: {
+            ...variables,
+            value: memberType.payload(variables.value),
+          },
+        })} as (bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode})[])`,
+      variables,
+    });
   }
 
   private ternaryExpression({
