@@ -471,6 +471,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in ("text"
+            "html"
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inStringsProperty
+    ], [
+        sh:in (true
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inBooleansProperty
+    ], [
+        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDateTimesProperty
+    ], [
         sh:in (1
             2
         ) ;
@@ -488,22 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inDoublesProperty
-    ], [
-        sh:in ("text"
-            "html"
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inStringsProperty
-    ], [
-        sh:in (true
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inBooleansProperty
-    ], [
-        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDateTimesProperty
     ] .
 
 :IndirectRecursiveClass
@@ -927,6 +927,58 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         ]
     ) .
+
+:NamedUnion1
+    a sh:NodeShape ;
+    rdfs:comment "Named union of IRI and string" ;
+    sh:xone ([
+            sh:nodeKind sh:IRI
+        ]
+        [
+            sh:datatype xsd:string
+        ]
+    ) .
+
+:NamedUnion2
+    a sh:NodeShape ;
+    rdfs:comment "Named union of date and date-time" ;
+    sh:xone ([
+            sh:datatype xsd:date
+        ]
+        [
+            sh:datatype xsd:dateTime
+        ]
+    ) .
+
+:NamedUnion3
+    a sh:NodeShape ;
+    rdfs:comment "Named union of numeric types" ;
+    sh:xone ([
+            sh:datatype xsd:decimal
+        ]
+        [
+            sh:datatype xsd:double
+        ]
+        [
+            sh:datatype xsd:int
+        ]
+        [
+            sh:datatype xsd:integer
+        ]
+    ) .
+
+:NamedUnionPropertiesClass
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:node :NamedUnion1 ;
+        sh:path :namedUnion1Property
+    ], [
+        sh:node :NamedUnion2 ;
+        sh:path :namedUnion2Property
+    ], [
+        sh:node :NamedUnion3 ;
+        sh:path :namedUnion3Property
+    ] .
 
 :NoRdfTypeClassUnion
     a sh:NodeShape ;
