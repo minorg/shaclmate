@@ -40,7 +40,7 @@ describe("equals", () => {
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
         requiredClassOrClassOrStringProperty: {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -52,7 +52,7 @@ describe("equals", () => {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
             requiredClassOrClassOrStringProperty: {
-              type: "2-string",
+              type: "string",
               value: "test",
             },
             requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -68,7 +68,7 @@ describe("equals", () => {
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
         requiredClassOrClassOrStringProperty: {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -80,7 +80,7 @@ describe("equals", () => {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
             requiredClassOrClassOrStringProperty: {
-              type: "2-string",
+              type: "string",
               value: "test",
             },
             requiredIriOrLiteralProperty: dataFactory.literal("test"),
@@ -97,7 +97,7 @@ describe("equals", () => {
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
         requiredClassOrClassOrStringProperty: {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -109,7 +109,7 @@ describe("equals", () => {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
             requiredClassOrClassOrStringProperty: {
-              type: "2-string",
+              type: "string",
               value: "test",
             },
             requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -125,7 +125,7 @@ describe("equals", () => {
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
         requiredClassOrClassOrStringProperty: {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -137,7 +137,7 @@ describe("equals", () => {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
             requiredClassOrClassOrStringProperty: {
-              type: "0-ClassUnionMember1",
+              type: "ClassUnionMember1",
               value: new kitchenSink.ClassUnionMember1({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/classUnionMember1",
@@ -162,7 +162,7 @@ describe("equals", () => {
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
         requiredClassOrClassOrStringProperty: {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -174,7 +174,7 @@ describe("equals", () => {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
             requiredClassOrClassOrStringProperty: {
-              type: "2-string",
+              type: "string",
               value: "test",
             },
             requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -190,7 +190,7 @@ describe("equals", () => {
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
         requiredClassOrClassOrStringProperty: {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
@@ -203,7 +203,7 @@ describe("equals", () => {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
             requiredClassOrClassOrStringProperty: {
-              type: "0-ClassUnionMember1",
+              type: "ClassUnionMember1",
               value: new kitchenSink.ClassUnionMember1({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/classUnionMember1",

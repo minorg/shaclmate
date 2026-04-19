@@ -8,7 +8,7 @@ describe("toJson", () => {
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionDiscriminantsClass");
       expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
-        type: "0-ClassUnionMember1",
+        type: "ClassUnionMember1",
         value: {
           $type: "ClassUnionMember1",
           "@id": "http://example.com/classUnionMember1a",
@@ -24,7 +24,7 @@ describe("toJson", () => {
         "@id": "http://example.com",
       });
       expect(jsonObject.requiredClassOrClassOrStringProperty).toStrictEqual({
-        type: "0-ClassUnionMember1",
+        type: "ClassUnionMember1",
         value: {
           $type: "ClassUnionMember1",
           "@id": "http://example.com/classUnionMember1b",
@@ -48,7 +48,7 @@ describe("toJson", () => {
       const jsonObject = harnesses.unionDiscriminantsClass2.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
-        type: "1-ClassUnionMember2",
+        type: "ClassUnionMember2",
         value: {
           $type: "ClassUnionMember2",
           "@id": "http://example.com/classUnionMember2a",
@@ -62,7 +62,7 @@ describe("toJson", () => {
       });
       expect(jsonObject.optionalIriOrStringProperty).toStrictEqual("test");
       expect(jsonObject.requiredClassOrClassOrStringProperty).toStrictEqual({
-        type: "2-string",
+        type: "string",
         value: "test",
       });
       expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
@@ -72,11 +72,11 @@ describe("toJson", () => {
       expect(jsonObject.requiredIriOrStringProperty).toStrictEqual("test");
       expect(jsonObject.setClassOrClassOrStringProperty).toStrictEqual([
         {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         {
-          type: "1-ClassUnionMember2",
+          type: "ClassUnionMember2",
           value: {
             $type: "ClassUnionMember2",
             "@id": "http://example.com/classUnionMember2b",
@@ -85,7 +85,7 @@ describe("toJson", () => {
           },
         },
         {
-          type: "0-ClassUnionMember1",
+          type: "ClassUnionMember1",
           value: {
             $type: "ClassUnionMember1",
             "@id": "http://example.com/classUnionMember1b",
