@@ -181,69 +181,18 @@ export class UnionType extends AbstractType {
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     invariant(memberTypes.length >= 2);
-    invariant(
-      memberDiscriminantValues.length === 0 ||
-        memberDiscriminantValues.length === memberTypes.length,
-    );
 
-    let discriminant: Discriminant | undefined;
-    if (memberDiscriminantValues.length === 0) {
-      // Infer the discriminant kind
-      const inlineDiscriminantProperty_ =
-        inlineDiscriminantProperty(memberTypes);
-      if (inlineDiscriminantProperty_) {
-        discriminant = {
-          ...inlineDiscriminantProperty_,
-          kind: "inline",
-        };
-      } else {
-        const memberTypeofs = new Set<string>();
-        for (const memberType of memberTypes) {
-          for (const typeof_ of memberType.typeofs) {
-            memberTypeofs.add(typeof_);
-          }
-        }
-        if (memberTypeofs.size === memberTypes.length) {
-          discriminant = {
-            kind: "typeof",
-          };
-        }
-      }
-    }
-    if (!discriminant) {
-      let ownValues: AbstractType.DiscriminantProperty.Value[];
-
-      const memberTypeNames = memberTypes.map((memberType) => memberType.name);
-      if (
-        memberTypeNames.every(
-          (memberTypeName) => typeof memberTypeName === "string",
-        )
-      ) {
-        const memberTypeNamesSet = new Set(memberTypeNames);
-        if (memberTypeNamesSet.size === memberTypeNames.length) {
-          // If every member type name is a unique string, use those strings as the discriminant values.
-          ownValues = memberTypeNames;
-        } else {
-          // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
-          ownValues = memberTypeNames.map(
-            (memberTypeName, memberTypeIndex) =>
-              `${memberTypeIndex}-${memberTypeName}`,
-          );
-        }
-      } else {
-        // At least one member type name is Code
-        // Use member type indices as the discriminant values.
-        ownValues = memberTypes.map((_, memberTypeIndex) => memberTypeIndex);
-      }
-
-      discriminant = {
+    if (memberDiscriminantValues.length === memberTypes.length) {
+      this.discriminant = {
         descendantValues: [],
         kind: "envelope",
         name: "type",
-        ownValues,
+        ownValues: memberDiscriminantValues,
       };
+    } else {
+      invariant(memberDiscriminantValues.length === 0);
+      this.discriminant = Discriminant.infer(memberTypes);
     }
-    this.discriminant = discriminant;
 
     this.memberTypes = memberTypes.map(
       (memberType, memberTypeIndex) =>
@@ -731,17 +680,8 @@ type TypeofDiscriminant = {
   kind: "typeof";
 };
 
-function inlineDiscriminantProperty(memberTypes: readonly Type[]):
-  | (Omit<
-      AbstractType.DiscriminantProperty,
-      "descendantValues" | "ownValues"
-    > & {
-      // Mutable value arrays
-      descendantValues: AbstractType.DiscriminantProperty.Value[];
-      ownValues: AbstractType.DiscriminantProperty.Value[];
-    })
-  | undefined {
-  let inlineDiscriminantProperty:
+export namespace Discriminant {
+  function inlineDiscriminantProperty(memberTypes: readonly Type[]):
     | (Omit<
         AbstractType.DiscriminantProperty,
         "descendantValues" | "ownValues"
@@ -750,36 +690,102 @@ function inlineDiscriminantProperty(memberTypes: readonly Type[]):
         descendantValues: AbstractType.DiscriminantProperty.Value[];
         ownValues: AbstractType.DiscriminantProperty.Value[];
       })
-    | undefined;
-  for (const memberType of memberTypes) {
-    const memberTypeDiscriminantProperty =
-      memberType.discriminantProperty.extract();
-    if (!memberTypeDiscriminantProperty) {
-      inlineDiscriminantProperty = undefined;
-      break;
+    | undefined {
+    let inlineDiscriminantProperty:
+      | (Omit<
+          AbstractType.DiscriminantProperty,
+          "descendantValues" | "ownValues"
+        > & {
+          // Mutable value arrays
+          descendantValues: AbstractType.DiscriminantProperty.Value[];
+          ownValues: AbstractType.DiscriminantProperty.Value[];
+        })
+      | undefined;
+    for (const memberType of memberTypes) {
+      const memberTypeDiscriminantProperty =
+        memberType.discriminantProperty.extract();
+      if (!memberTypeDiscriminantProperty) {
+        inlineDiscriminantProperty = undefined;
+        break;
+      }
+      if (!inlineDiscriminantProperty) {
+        inlineDiscriminantProperty = {
+          name: memberTypeDiscriminantProperty.name,
+          ownValues: memberTypeDiscriminantProperty.ownValues.concat(),
+          descendantValues:
+            memberTypeDiscriminantProperty.descendantValues.concat(),
+        };
+      } else if (
+        memberTypeDiscriminantProperty.name === inlineDiscriminantProperty.name
+      ) {
+        inlineDiscriminantProperty.descendantValues =
+          inlineDiscriminantProperty.descendantValues.concat(
+            memberTypeDiscriminantProperty.descendantValues,
+          );
+        inlineDiscriminantProperty.ownValues =
+          inlineDiscriminantProperty.ownValues.concat(
+            memberTypeDiscriminantProperty.ownValues,
+          );
+      } else {
+        return undefined;
+      }
     }
-    if (!inlineDiscriminantProperty) {
-      inlineDiscriminantProperty = {
-        name: memberTypeDiscriminantProperty.name,
-        ownValues: memberTypeDiscriminantProperty.ownValues.concat(),
-        descendantValues:
-          memberTypeDiscriminantProperty.descendantValues.concat(),
-      };
-    } else if (
-      memberTypeDiscriminantProperty.name === inlineDiscriminantProperty.name
-    ) {
-      inlineDiscriminantProperty.descendantValues =
-        inlineDiscriminantProperty.descendantValues.concat(
-          memberTypeDiscriminantProperty.descendantValues,
-        );
-      inlineDiscriminantProperty.ownValues =
-        inlineDiscriminantProperty.ownValues.concat(
-          memberTypeDiscriminantProperty.ownValues,
-        );
-    } else {
-      return undefined;
-    }
+
+    return inlineDiscriminantProperty;
   }
 
-  return inlineDiscriminantProperty;
+  export function infer(memberTypes: readonly Type[]): Discriminant {
+    // Infer the discriminant kind
+    const inlineDiscriminantProperty_ = inlineDiscriminantProperty(memberTypes);
+    if (inlineDiscriminantProperty_) {
+      return {
+        ...inlineDiscriminantProperty_,
+        kind: "inline",
+      };
+    } else {
+      const memberTypeofs = new Set<string>();
+      for (const memberType of memberTypes) {
+        for (const typeof_ of memberType.typeofs) {
+          memberTypeofs.add(typeof_);
+        }
+      }
+      if (memberTypeofs.size === memberTypes.length) {
+        return {
+          kind: "typeof",
+        };
+      }
+    }
+
+    let ownValues: AbstractType.DiscriminantProperty.Value[];
+
+    const memberTypeNames = memberTypes.map((memberType) => memberType.name);
+    if (
+      memberTypeNames.every(
+        (memberTypeName) => typeof memberTypeName === "string",
+      )
+    ) {
+      const memberTypeNamesSet = new Set(memberTypeNames);
+      if (memberTypeNamesSet.size === memberTypeNames.length) {
+        // If every member type name is a unique string, use those strings as the discriminant values.
+        ownValues = memberTypeNames;
+      } else {
+        // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
+        ownValues = memberTypeNames.map(
+          (memberTypeName, memberTypeIndex) =>
+            `${memberTypeIndex}-${memberTypeName}`,
+        );
+      }
+    } else {
+      // At least one member type name is Code
+      // Use member type indices as the discriminant values.
+      ownValues = memberTypes.map((_, memberTypeIndex) => memberTypeIndex);
+    }
+
+    return {
+      descendantValues: [],
+      kind: "envelope",
+      name: "type",
+      ownValues,
+    };
+  }
 }
