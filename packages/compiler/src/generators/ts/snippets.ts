@@ -95,6 +95,7 @@ import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
+import { snippets_ToRdfOptions } from "./_snippets/snippets_ToRdfOptions.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
@@ -205,5 +206,6 @@ export const snippets = {
   TermSchema: snippets_TermSchema,
   termSchemaSparqlPatterns: snippets_termSchemaSparqlPatterns,
   termSparqlWherePatterns: snippets_termSparqlWherePatterns,
+  ToRdfOptions: snippets_ToRdfOptions,
   UnwrapR: snippets_UnwrapR,
 };

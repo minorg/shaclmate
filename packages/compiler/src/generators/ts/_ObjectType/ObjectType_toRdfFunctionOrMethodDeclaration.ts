@@ -3,6 +3,7 @@ import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -24,9 +25,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
   if (this.declarationType === "interface") {
     parameters.push(code`${this.thisVariable}: ${this.name}`);
   }
-  parameters.push(
-    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.graph}?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, ${variables.resourceSet}?: ${imports.ResourceSet} }`,
-  );
+  parameters.push(code`options?: ${snippets.ToRdfOptions}`);
 
   const statements: Code[] = [
     code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${imports.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,

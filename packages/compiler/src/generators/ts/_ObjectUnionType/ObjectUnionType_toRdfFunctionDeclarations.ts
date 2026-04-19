@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { codeEquals } from "../codeEquals.js";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -12,7 +13,7 @@ export function ObjectUnionType_toRdfFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const parametersVariable = "_parameters";
+  const optionsVariable = "_options";
   const returnType = () => {
     let returnType: Code | undefined;
     for (const memberType of this.concreteMemberTypes) {
@@ -29,17 +30,17 @@ export function ObjectUnionType_toRdfFunctionDeclaration(
   };
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${parametersVariable}?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>, resourceSet?: ${imports.ResourceSet} }): ${returnType()} {
+export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${optionsVariable}?: ${snippets.ToRdfOptions}): ${returnType()} {
 ${joinCode(
   this.concreteMemberTypes
     .map((memberType) => {
       let returnExpression: Code;
       switch (memberType.declarationType) {
         case "class":
-          returnExpression = code`${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
+          returnExpression = code`${this.thisVariable}.${syntheticNamePrefix}toRdf(${optionsVariable})`;
           break;
         case "interface":
-          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
+          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${optionsVariable})`;
           break;
       }
       return code`if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
