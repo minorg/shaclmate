@@ -70,7 +70,10 @@ function propertyName(
 
   // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
   // like ex:NodeShape-property
-  if (propertyShape.identifier.termType === "NamedNode") {
+  if (
+    propertyShape.identifier.termType === "NamedNode" &&
+    objectType.shapeIdentifier.termType === "NamedNode"
+  ) {
     const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
     if (
       propertyShape.identifier.value.startsWith(
@@ -79,7 +82,7 @@ function propertyName(
       propertyShape.identifier.value.length >
         propertyShapeIdentifierPrefix.length
     ) {
-      propertyShape.identifier.value.substring(
+      return propertyShape.identifier.value.substring(
         propertyShapeIdentifierPrefix.length,
       );
     }

@@ -51,7 +51,7 @@ function tsName(name: string, options?: { synthetic?: boolean }): string {
     (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
   );
   if (options?.synthetic) {
-    tsName = `${syntheticNamePrefix}${tsName};`;
+    tsName = `${syntheticNamePrefix}${tsName}`;
   }
   return tsName;
 }
