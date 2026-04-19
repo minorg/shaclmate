@@ -1,3 +1,4 @@
+import DataFactory from "@rdfjs/data-model";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
@@ -177,7 +178,8 @@ export namespace ShapesGraph {
       }
 
       const curieFactory = new CurieFactory({
-        prefixMap: prefixMap ?? new PrefixMap(),
+        prefixMap:
+          prefixMap ?? new PrefixMap(undefined, { factory: DataFactory }),
       });
       const resourceSet = new ResourceSet(dataset);
       const curieResource = (identifier: Resource.Identifier) => {
