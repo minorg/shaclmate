@@ -570,6 +570,27 @@ export const harnesses = {
     }),
     kitchenSink.MutablePropertiesClass,
   ),
+  namedUnionPropertiesClass1: new ClassHarness(
+    new kitchenSink.NamedUnionPropertiesClass({
+      $identifier,
+      namedUnion1Property: "test",
+      namedUnion2Property: { type: "date", value: new Date("2025-12-08") },
+      namedUnion3Property: 1,
+    }),
+    kitchenSink.NamedUnionPropertiesClass,
+  ),
+  namedUnionPropertiesClass2: new ClassHarness(
+    new kitchenSink.NamedUnionPropertiesClass({
+      $identifier,
+      namedUnion1Property: dataFactory.namedNode("http://example.com"),
+      namedUnion2Property: {
+        type: "dateTime",
+        value: new Date("2025-12-08T21:17:27+00:00"),
+      },
+      namedUnion3Property: 2n,
+    }),
+    kitchenSink.NamedUnionPropertiesClass,
+  ),
   // nodeKindsClass1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
   nodeKindsClass1: new ClassHarness(
     new kitchenSink.NodeKindsClass({

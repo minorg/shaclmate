@@ -471,12 +471,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
-        sh:in (1
-            2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIntegersProperty
-    ], [
         sh:in (:InPropertiesIri1
             :InPropertiesIri2
         ) ;
@@ -504,6 +498,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inDateTimesProperty
+    ], [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegersProperty
     ] .
 
 :IndirectRecursiveClass
@@ -943,9 +943,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Named union of date and date-time" ;
     sh:xone ([
+            shaclmate:discriminantValue "date" ;
             sh:datatype xsd:date
         ]
         [
+            shaclmate:discriminantValue "dateTime" ;
             sh:datatype xsd:dateTime
         ]
     ) .
@@ -960,9 +962,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             sh:datatype xsd:double
         ]
         [
-            sh:datatype xsd:int
-        ]
-        [
             sh:datatype xsd:integer
         ]
     ) .
@@ -970,12 +969,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :NamedUnionPropertiesClass
     a owl:Class, sh:NodeShape ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:node :NamedUnion1 ;
         sh:path :namedUnion1Property
     ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:node :NamedUnion2 ;
         sh:path :namedUnion2Property
     ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:node :NamedUnion3 ;
         sh:path :namedUnion3Property
     ] .
