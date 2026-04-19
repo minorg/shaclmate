@@ -2616,6 +2616,12 @@ const $termSparqlWherePatterns: $SparqlWherePatternsFunction<
     ...parameters,
   });
 
+type $ToRdfOptions = {
+  graph?: Exclude<Quad_Graph, Variable>;
+  ignoreRdfType?: boolean;
+  resourceSet?: ResourceSet;
+};
+
 type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
 export class $NamedDefaultPartial {
   readonly $identifier: $NamedDefaultPartial.$Identifier;
@@ -2676,11 +2682,7 @@ export class $NamedDefaultPartial {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource<NamedNode> {
+  $toRdf(options?: $ToRdfOptions): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -3008,11 +3010,7 @@ export class $DefaultPartial {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -3707,11 +3705,7 @@ export namespace UuidV4IriIdentifierInterface {
 
   export function $toRdf(
     _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
@@ -3845,11 +3839,7 @@ export class UuidV4IriIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource<NamedNode> {
+  $toRdf(options?: $ToRdfOptions): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -5115,11 +5105,7 @@ export class UnionDiscriminantsClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -9559,11 +9545,7 @@ export class TermPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -10916,11 +10898,7 @@ export class Sha256IriIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource<NamedNode> {
+  $toRdf(options?: $ToRdfOptions): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -11367,11 +11345,7 @@ export class RecursiveClassUnionMember2 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -11941,11 +11915,7 @@ export class RecursiveClassUnionMember1 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -12529,11 +12499,7 @@ export class PropertyVisibilitiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -13131,11 +13097,7 @@ export class PropertyPathsClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -13866,11 +13828,7 @@ export class PropertyNamesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -14777,11 +14735,7 @@ export class PropertyCardinalitiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -15960,11 +15914,7 @@ export namespace PartialInterfaceUnionMember2 {
 
   export function $toRdf(
     _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -16519,11 +16469,7 @@ export namespace PartialInterfaceUnionMember1 {
 
   export function $toRdf(
     _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -16641,11 +16587,7 @@ export class PartialClassUnionMember2 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -17177,11 +17119,7 @@ export class PartialClassUnionMember1 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -17697,11 +17635,7 @@ export class NewName2Class {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -18126,11 +18060,7 @@ export class NewName1Class {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -18606,11 +18536,7 @@ export class OrderedPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -19688,11 +19614,7 @@ export class NumericPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -22019,11 +21941,7 @@ export class NodeKindsClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -23022,11 +22940,7 @@ export class NoRdfTypeClassUnionMember2 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -23464,11 +23378,7 @@ export class NoRdfTypeClassUnionMember1 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -24150,11 +24060,7 @@ export class NamedUnionPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -26016,11 +25922,7 @@ export class MutablePropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -26959,11 +26861,7 @@ export class ListPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -28325,11 +28223,7 @@ export namespace PartialInterface {
 
   export function $toRdf(
     _partialInterface: PartialInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -31623,11 +31517,7 @@ export namespace LazyPropertiesInterface {
 
   export function $toRdf(
     _lazyPropertiesInterface: LazyPropertiesInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -32736,11 +32626,7 @@ export class LazyPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -35426,11 +35312,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
 
   export function $toRdf(
     _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
@@ -35533,11 +35415,7 @@ export class LazilyResolvedIriIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource<NamedNode> {
+  $toRdf(options?: $ToRdfOptions): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -36415,11 +36293,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
   export function $toRdf(
     _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -36981,11 +36855,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
   export function $toRdf(
     _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -37105,11 +36975,7 @@ export class LazilyResolvedClassUnionMember2 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -37645,11 +37511,7 @@ export class LazilyResolvedClassUnionMember1 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -38640,11 +38502,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
   export function $toRdf(
     _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -38767,11 +38625,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -39335,11 +39189,7 @@ export class LanguageInPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -39885,11 +39735,7 @@ export class JsPrimitiveUnionPropertyClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -41094,11 +40940,7 @@ export namespace IriIdentifierInterface {
 
   export function $toRdf(
     _iriIdentifierInterface: IriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
@@ -41176,11 +41018,7 @@ export class IriIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource<NamedNode> {
+  $toRdf(options?: $ToRdfOptions): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -41943,11 +41781,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export function $toRdf(
     _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -42478,11 +42312,7 @@ export namespace InterfaceUnionMember2 {
 
   export function $toRdf(
     _interfaceUnionMember2: InterfaceUnionMember2,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -43023,11 +42853,7 @@ export namespace InterfaceUnionMember1 {
 
   export function $toRdf(
     _interfaceUnionMember1: InterfaceUnionMember1,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -43469,11 +43295,7 @@ export namespace Interface {
 
   export function $toRdf(
     _interface: Interface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -43599,11 +43421,7 @@ export class IndirectRecursiveHelperClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -44166,11 +43984,7 @@ export class IndirectRecursiveClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -44904,11 +44718,7 @@ export class InPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -45980,11 +45790,7 @@ export class InIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource<NamedNode> {
+  $toRdf(options?: $ToRdfOptions): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -46603,11 +46409,7 @@ export abstract class IdentifierOverride1Class {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -46955,11 +46757,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     return identifier;
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -47215,11 +47013,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
     super(parameters);
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -47645,11 +47439,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
       : `urn:shaclmate:${this.$type}:`;
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -48065,11 +47855,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
       : `urn:shaclmate:${this.$type}:`;
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -48551,11 +48337,7 @@ export class HasValuePropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -49069,11 +48851,7 @@ export class FlattenClassUnionMember3 {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -49631,11 +49409,7 @@ export class ExternClassPropertyClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -50238,11 +50012,7 @@ export abstract class AbstractBaseClassForExternClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -50657,11 +50427,7 @@ export class ExplicitRdfTypeClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -51196,11 +50962,7 @@ export class ExplicitFromToRdfTypesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -51763,11 +51525,7 @@ export class DirectRecursiveClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -52473,11 +52231,7 @@ export class DefaultValuePropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -53880,11 +53634,7 @@ export class DateUnionPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -56492,11 +56242,7 @@ export class ConvertibleTypePropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -58779,11 +58525,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $toRdf(
     _baseInterfaceWithProperties: BaseInterfaceWithProperties,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -59266,11 +59008,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $toRdf(
     _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -59827,11 +59565,7 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $toRdf(
     _concreteParentInterface: ConcreteParentInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -60374,11 +60108,7 @@ export namespace ConcreteChildInterface {
 
   export function $toRdf(
     _concreteChildInterface: ConcreteChildInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -60534,11 +60264,7 @@ export abstract class AbstractBaseClassWithProperties {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -60893,11 +60619,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
       : `urn:shaclmate:${this.$type}:`;
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -61204,11 +60926,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     );
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -61736,11 +61454,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     );
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -62267,11 +61981,7 @@ export abstract class ClassUnionMemberCommonParent {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -62647,11 +62357,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
     );
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -63144,11 +62850,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     );
   }
 
-  override $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  override $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -63674,11 +63376,7 @@ export class NonClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -64089,11 +63787,7 @@ export class PartialClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -64701,11 +64395,7 @@ export class ClassPropertiesClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -66085,11 +65775,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
 
   export function $toRdf(
     _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -66185,11 +65871,7 @@ export class BlankNodeOrIriIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -66982,11 +66664,7 @@ export namespace BlankNodeIdentifierInterface {
 
   export function $toRdf(
     _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: $ToRdfOptions,
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -67080,11 +66758,7 @@ export class BlankNodeIdentifierClass {
     );
   }
 
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource {
+  $toRdf(options?: $ToRdfOptions): Resource {
     const resourceSet =
       options?.resourceSet ??
       new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
@@ -67731,16 +67405,13 @@ export namespace ClassUnion {
 
   export function $toRdf(
     _classUnion: ClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
-      return _classUnion.$toRdf(_parameters);
+      return _classUnion.$toRdf(_options);
     }
     if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
-      return _classUnion.$toRdf(_parameters);
+      return _classUnion.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
@@ -68105,21 +67776,18 @@ export namespace FlattenClassUnion {
 
   export function $toRdf(
     _flattenClassUnion: FlattenClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
-      return _flattenClassUnion.$toRdf(_parameters);
+      return _flattenClassUnion.$toRdf(_options);
     }
     if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
-      return _flattenClassUnion.$toRdf(_parameters);
+      return _flattenClassUnion.$toRdf(_options);
     }
     if (
       FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
     ) {
-      return _flattenClassUnion.$toRdf(_parameters);
+      return _flattenClassUnion.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
@@ -68429,16 +68097,13 @@ export namespace InterfaceUnion {
 
   export function $toRdf(
     _interfaceUnion: InterfaceUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
-      return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
+      return InterfaceUnionMember1.$toRdf(_interfaceUnion, _options);
     }
     if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
-      return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
+      return InterfaceUnionMember2.$toRdf(_interfaceUnion, _options);
     }
     throw new Error("unrecognized type");
   }
@@ -68786,24 +68451,21 @@ export namespace LazilyResolvedClassUnion {
 
   export function $toRdf(
     _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (
       LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
         _lazilyResolvedClassUnion,
       )
     ) {
-      return _lazilyResolvedClassUnion.$toRdf(_parameters);
+      return _lazilyResolvedClassUnion.$toRdf(_options);
     }
     if (
       LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
         _lazilyResolvedClassUnion,
       )
     ) {
-      return _lazilyResolvedClassUnion.$toRdf(_parameters);
+      return _lazilyResolvedClassUnion.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
@@ -69169,10 +68831,7 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export function $toRdf(
     _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
@@ -69181,7 +68840,7 @@ export namespace LazilyResolvedInterfaceUnion {
     ) {
       return LazilyResolvedInterfaceUnionMember1.$toRdf(
         _lazilyResolvedInterfaceUnion,
-        _parameters,
+        _options,
       );
     }
     if (
@@ -69191,7 +68850,7 @@ export namespace LazilyResolvedInterfaceUnion {
     ) {
       return LazilyResolvedInterfaceUnionMember2.$toRdf(
         _lazilyResolvedInterfaceUnion,
-        _parameters,
+        _options,
       );
     }
     throw new Error("unrecognized type");
@@ -69512,20 +69171,17 @@ export namespace PartialClassUnion {
 
   export function $toRdf(
     _partialClassUnion: PartialClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (
       PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
     ) {
-      return _partialClassUnion.$toRdf(_parameters);
+      return _partialClassUnion.$toRdf(_options);
     }
     if (
       PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
     ) {
-      return _partialClassUnion.$toRdf(_parameters);
+      return _partialClassUnion.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
@@ -69867,10 +69523,7 @@ export namespace PartialInterfaceUnion {
 
   export function $toRdf(
     _partialInterfaceUnion: PartialInterfaceUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (
       PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
@@ -69879,7 +69532,7 @@ export namespace PartialInterfaceUnion {
     ) {
       return PartialInterfaceUnionMember1.$toRdf(
         _partialInterfaceUnion,
-        _parameters,
+        _options,
       );
     }
     if (
@@ -69889,7 +69542,7 @@ export namespace PartialInterfaceUnion {
     ) {
       return PartialInterfaceUnionMember2.$toRdf(
         _partialInterfaceUnion,
-        _parameters,
+        _options,
       );
     }
     throw new Error("unrecognized type");
@@ -70210,24 +69863,21 @@ export namespace NoRdfTypeClassUnion {
 
   export function $toRdf(
     _noRdfTypeClassUnion: NoRdfTypeClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (
       NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
         _noRdfTypeClassUnion,
       )
     ) {
-      return _noRdfTypeClassUnion.$toRdf(_parameters);
+      return _noRdfTypeClassUnion.$toRdf(_options);
     }
     if (
       NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
         _noRdfTypeClassUnion,
       )
     ) {
-      return _noRdfTypeClassUnion.$toRdf(_parameters);
+      return _noRdfTypeClassUnion.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
@@ -70547,24 +70197,21 @@ export namespace RecursiveClassUnion {
 
   export function $toRdf(
     _recursiveClassUnion: RecursiveClassUnion,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    _options?: $ToRdfOptions,
   ): Resource {
     if (
       RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
         _recursiveClassUnion,
       )
     ) {
-      return _recursiveClassUnion.$toRdf(_parameters);
+      return _recursiveClassUnion.$toRdf(_options);
     }
     if (
       RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
         _recursiveClassUnion,
       )
     ) {
-      return _recursiveClassUnion.$toRdf(_parameters);
+      return _recursiveClassUnion.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
@@ -75257,149 +74904,143 @@ export namespace $Object {
     throw new Error("unrecognized type");
   }
 
-  export function $toRdf(
-    _object: $Object,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
+  export function $toRdf(_object: $Object, _options?: $ToRdfOptions): Resource {
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(_object)) {
-      return BlankNodeIdentifierInterface.$toRdf(_object, _parameters);
+      return BlankNodeIdentifierInterface.$toRdf(_object, _options);
     }
     if (
       BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(_object)
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (
       BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
         _object,
       )
     ) {
-      return BlankNodeOrIriIdentifierInterface.$toRdf(_object, _parameters);
+      return BlankNodeOrIriIdentifierInterface.$toRdf(_object, _options);
     }
     if (ClassPropertiesClass.isClassPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PartialClass.isPartialClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NonClass.isNonClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ClassUnionMember1.isClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ClassUnionMember2.isClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ConcreteChildClass.isConcreteChildClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ConcreteChildInterface.isConcreteChildInterface(_object)) {
-      return ConcreteChildInterface.$toRdf(_object, _parameters);
+      return ConcreteChildInterface.$toRdf(_object, _options);
     }
     if (ConcreteParentInterfaceStatic.isConcreteParentInterface(_object)) {
-      return ConcreteParentInterfaceStatic.$toRdf(_object, _parameters);
+      return ConcreteParentInterfaceStatic.$toRdf(_object, _options);
     }
     if (
       BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
         _object,
       )
     ) {
-      return BaseInterfaceWithoutPropertiesStatic.$toRdf(_object, _parameters);
+      return BaseInterfaceWithoutPropertiesStatic.$toRdf(_object, _options);
     }
     if (
       BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(_object)
     ) {
-      return BaseInterfaceWithPropertiesStatic.$toRdf(_object, _parameters);
+      return BaseInterfaceWithPropertiesStatic.$toRdf(_object, _options);
     }
     if (
       ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(_object)
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (DateUnionPropertiesClass.isDateUnionPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (DirectRecursiveClass.isDirectRecursiveClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (ExternClassPropertyClass.isExternClassPropertyClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (FlattenClassUnionMember3.isFlattenClassUnionMember3(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (HasValuePropertiesClass.isHasValuePropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (IdentifierOverride5Class.isIdentifierOverride5Class(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (InIdentifierClass.isInIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (InPropertiesClass.isInPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (IndirectRecursiveClass.isIndirectRecursiveClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (Interface.isInterface(_object)) {
-      return Interface.$toRdf(_object, _parameters);
+      return Interface.$toRdf(_object, _options);
     }
     if (InterfaceUnionMember1.isInterfaceUnionMember1(_object)) {
-      return InterfaceUnionMember1.$toRdf(_object, _parameters);
+      return InterfaceUnionMember1.$toRdf(_object, _options);
     }
     if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
-      return InterfaceUnionMember2.$toRdf(_object, _parameters);
+      return InterfaceUnionMember2.$toRdf(_object, _options);
     }
     if (IriIdentifierClass.isIriIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (IriIdentifierInterface.isIriIdentifierInterface(_object)) {
-      return IriIdentifierInterface.$toRdf(_object, _parameters);
+      return IriIdentifierInterface.$toRdf(_object, _options);
     }
     if (
       JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(_object)
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (LanguageInPropertiesClass.isLanguageInPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (
       LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
         _object,
       )
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (
       LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
@@ -75408,136 +75049,136 @@ export namespace $Object {
     ) {
       return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdf(
         _object,
-        _parameters,
+        _options,
       );
     }
     if (
       LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(_object)
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (
       LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(_object)
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
         _object,
       )
     ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdf(_object, _parameters);
+      return LazilyResolvedInterfaceUnionMember1.$toRdf(_object, _options);
     }
     if (
       LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
         _object,
       )
     ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdf(_object, _parameters);
+      return LazilyResolvedInterfaceUnionMember2.$toRdf(_object, _options);
     }
     if (
       LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
         _object,
       )
     ) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (
       LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
         _object,
       )
     ) {
-      return LazilyResolvedIriIdentifierInterface.$toRdf(_object, _parameters);
+      return LazilyResolvedIriIdentifierInterface.$toRdf(_object, _options);
     }
     if (LazyPropertiesClass.isLazyPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (LazyPropertiesInterface.isLazyPropertiesInterface(_object)) {
-      return LazyPropertiesInterface.$toRdf(_object, _parameters);
+      return LazyPropertiesInterface.$toRdf(_object, _options);
     }
     if (PartialInterface.isPartialInterface(_object)) {
-      return PartialInterface.$toRdf(_object, _parameters);
+      return PartialInterface.$toRdf(_object, _options);
     }
     if (ListPropertiesClass.isListPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (MutablePropertiesClass.isMutablePropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NodeKindsClass.isNodeKindsClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NumericPropertiesClass.isNumericPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (OrderedPropertiesClass.isOrderedPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NewName1Class.isNewName1Class(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (NewName2Class.isNewName2Class(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PartialClassUnionMember1.isPartialClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PartialClassUnionMember2.isPartialClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(_object)) {
-      return PartialInterfaceUnionMember1.$toRdf(_object, _parameters);
+      return PartialInterfaceUnionMember1.$toRdf(_object, _options);
     }
     if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(_object)) {
-      return PartialInterfaceUnionMember2.$toRdf(_object, _parameters);
+      return PartialInterfaceUnionMember2.$toRdf(_object, _options);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PropertyNamesClass.isPropertyNamesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PropertyPathsClass.isPropertyPathsClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (TermPropertiesClass.isTermPropertiesClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(_object)) {
-      return UuidV4IriIdentifierInterface.$toRdf(_object, _parameters);
+      return UuidV4IriIdentifierInterface.$toRdf(_object, _options);
     }
     if ($DefaultPartial.is$DefaultPartial(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     if ($NamedDefaultPartial.is$NamedDefaultPartial(_object)) {
-      return _object.$toRdf(_parameters);
+      return _object.$toRdf(_options);
     }
     throw new Error("unrecognized type");
   }
