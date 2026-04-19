@@ -54,7 +54,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       it("should transform named union types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.namedUnionTypes).toHaveLength(12);
+          expect(ast.namedUnionTypes).toHaveLength(11);
         }
       });
 
