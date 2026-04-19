@@ -1,8 +1,8 @@
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
   override readonly filterFunction = code`${snippets.filterBigDecimal}`;

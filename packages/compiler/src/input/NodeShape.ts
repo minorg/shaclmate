@@ -112,10 +112,6 @@ export class NodeShape extends ShaclAstNodeShape<
     return this.generatedNodeShape.discriminantValue;
   }
 
-  get export(): Maybe<boolean> {
-    return this.generatedNodeShape.export_;
-  }
-
   get extern(): Maybe<boolean> {
     return this.generatedNodeShape.extern;
   }

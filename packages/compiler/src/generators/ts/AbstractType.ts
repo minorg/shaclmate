@@ -20,6 +20,11 @@ export abstract class AbstractType {
   abstract readonly conversions: readonly AbstractType.Conversion[];
 
   /**
+   * The declaration of named types.
+   */
+  abstract readonly declaration: Maybe<Code>;
+
+  /**
    * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
    */
   abstract readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty>;

@@ -1,5 +1,4 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { termEquals } from "./equals.js";

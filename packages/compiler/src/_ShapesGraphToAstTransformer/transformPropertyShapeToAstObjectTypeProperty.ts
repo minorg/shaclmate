@@ -33,7 +33,6 @@ function synthesizePartialAstObjectType({
   return new ast.ObjectType({
     abstract: false,
     comment: Maybe.empty(),
-    export_: true,
     extern: false,
     fromRdfType: Maybe.empty(),
     identifierType,

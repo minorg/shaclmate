@@ -1,6 +1,6 @@
 import { Memoize } from "typescript-memoize";
 
-import type { AbstractDeclaredType } from "../AbstractDeclaredType.js";
+import type { AbstractType } from "../AbstractType.js";
 import type { ObjectType } from "../ObjectType.js";
 
 export class MemberType {
@@ -36,7 +36,7 @@ export class MemberType {
   }
 
   @Memoize()
-  get discriminantPropertyValues(): readonly AbstractDeclaredType.DiscriminantProperty.Value[] {
+  get discriminantPropertyValues(): readonly AbstractType.DiscriminantProperty.Value[] {
     // A member type's combined discriminant property values are its "own" values plus any descendant values that are
     // not the "own" values of some other member type.
     // So if you have type A, type B, and B inherits A, then
@@ -48,7 +48,7 @@ export class MemberType {
     //  descendant discriminant property values ["B"]
     // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
     const memberOwnDiscriminantPropertyValues =
-      new Set<AbstractDeclaredType.DiscriminantProperty.Value>();
+      new Set<AbstractType.DiscriminantProperty.Value>();
     for (const memberType of this.universe) {
       for (const ownDiscriminantPropertyValue of memberType.discriminantProperty.unsafeCoerce()
         .ownValues) {
@@ -119,9 +119,7 @@ export class MemberType {
     return this.delegate.jsonType();
   }
 
-  jsonZodSchema(
-    parameters: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0],
-  ) {
+  jsonZodSchema(parameters: Parameters<AbstractType["jsonZodSchema"]>[0]) {
     return this.delegate.jsonZodSchema(parameters);
   }
 

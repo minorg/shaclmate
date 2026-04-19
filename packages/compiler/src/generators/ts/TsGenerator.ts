@@ -11,7 +11,7 @@ export class TsGenerator implements Generator {
   private readonly typeFactory = new TypeFactory();
 
   generate(ast_: ast.Ast): string {
-    const declarations: Code[] = [];
+    let declarations: Code[] = [];
 
     const objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
@@ -24,10 +24,10 @@ export class TsGenerator implements Generator {
       );
 
     for (const objectType of objectTypesToposorted) {
-      declarations.push(objectType.declaration);
+      declarations = declarations.concat(objectType.declaration.toList());
     }
     for (const objectUnionType of objectUnionTypesToposorted) {
-      declarations.push(objectUnionType.declaration);
+      declarations = declarations.concat(objectUnionType.declaration.toList());
     }
 
     const objectTypesNameSorted = objectTypesToposorted.toSorted(
@@ -42,7 +42,9 @@ export class TsGenerator implements Generator {
       const uberObjectUnionType = synthesizeUberObjectUnionType({
         objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
       });
-      declarations.push(uberObjectUnionType.declaration);
+      declarations = declarations.concat(
+        uberObjectUnionType.declaration.toList(),
+      );
       objectUnionTypesNameSorted.push(uberObjectUnionType);
     }
 

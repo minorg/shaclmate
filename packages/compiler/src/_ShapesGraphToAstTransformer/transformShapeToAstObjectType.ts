@@ -101,8 +101,6 @@ export function transformShapeToAstObjectType(
         ]) => {
           const abstract = nodeShape.abstract.orDefault(false);
 
-          const export_ = nodeShape.export.orDefault(true);
-
           let fromRdfType: Maybe<NamedNode>;
           let toRdfTypes: NamedNode[];
           if (!abstract) {
@@ -177,7 +175,6 @@ export function transformShapeToAstObjectType(
           const objectType = new ast.ObjectType({
             abstract,
             comment: nodeShape.comment,
-            export_,
             extern: nodeShape.extern.orDefault(false),
             fromRdfType,
             label: nodeShape.label,

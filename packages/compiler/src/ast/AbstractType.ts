@@ -12,11 +12,6 @@ export abstract class AbstractType {
   readonly comment: Maybe<string> = Maybe.empty();
 
   /**
-   * Should the type be exported? Only applies if the type is named.
-   */
-  readonly export: boolean;
-
-  /**
    * Human-readable label from rdfs:label.
    */
   readonly label: Maybe<string> = Maybe.empty();
@@ -33,19 +28,16 @@ export abstract class AbstractType {
 
   constructor({
     comment,
-    export_,
     label,
     name,
     shapeIdentifier,
   }: {
     comment: Maybe<string>;
-    export_?: boolean;
     label: Maybe<string>;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
   }) {
     this.comment = comment;
-    this.export = export_ ?? true;
     this.label = label;
     this.name = name;
     this.shapeIdentifier = shapeIdentifier;

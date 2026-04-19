@@ -15,7 +15,6 @@ import { transformPropertyShapeToAstObjectTypeProperty } from "./transformProper
 
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
-  export_: false,
   extern: false,
   comment: Maybe.empty(),
   label: Maybe.empty(),

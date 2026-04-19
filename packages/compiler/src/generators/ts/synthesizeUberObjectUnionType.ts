@@ -54,7 +54,6 @@ export function synthesizeUberObjectUnionType(parameters: {
 
   return new ObjectUnionType({
     comment: Maybe.empty(),
-    export_: true,
     features: objectTypes.reduce((features, objectType) => {
       for (const feature of objectType.features) {
         features.add(feature);

@@ -61,8 +61,6 @@ export function transformShapeToAstCompoundType(
             : ast.UnionType
         )({
           comment: shape.comment,
-          export_:
-            shape.kind === "NodeShape" ? shape.export.extract() : undefined,
           label: shape.label,
           name: shapeAstTypeName(shape),
           memberDiscriminantValues,

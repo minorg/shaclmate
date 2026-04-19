@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
@@ -27,6 +28,7 @@ import type { UnionType } from "./UnionType.js";
 export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
+  override readonly declaration: Maybe<Code> = Maybe.empty();
   abstract override readonly kind:
     | "DefaultValueType"
     | "ListType"

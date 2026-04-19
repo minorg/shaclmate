@@ -168,6 +168,7 @@ export class UnionType extends AbstractType {
 
   #name?: Code;
 
+  override readonly declaration: Maybe<Code> = Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "UnionType";
 

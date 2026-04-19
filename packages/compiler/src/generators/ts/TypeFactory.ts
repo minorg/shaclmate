@@ -92,7 +92,6 @@ export class TypeFactory {
       abstract: astType.abstract,
       comment: astType.comment,
       declarationType: astType.tsObjectDeclarationType,
-      export_: astType.export,
       extern: astType.extern,
       features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
@@ -209,7 +208,6 @@ export class TypeFactory {
 
         return properties;
       },
-      identifierMintingStrategy: astType.identifierMintingStrategy,
       name,
       staticModuleName,
       synthetic: astType.synthetic,
@@ -235,7 +233,6 @@ export class TypeFactory {
 
     const objectUnionType = new ObjectUnionType({
       comment: astType.comment,
-      export_: astType.export,
       features: astType.tsFeatures,
       identifierType: this.createIdentifierType(
         ast.ObjectCompoundType.identifierType(astType),

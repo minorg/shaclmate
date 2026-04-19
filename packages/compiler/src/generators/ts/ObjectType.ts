@@ -4,7 +4,8 @@ import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
+
+import type { TsFeature } from "../../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
@@ -37,7 +38,7 @@ import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./_ObjectType/Objec
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_ObjectType/TypeDiscriminantProperty.js";
-import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
@@ -47,7 +48,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
-export class ObjectType extends AbstractDeclaredType {
+export class ObjectType extends AbstractType {
   private readonly imports: readonly string[];
 
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -55,11 +56,12 @@ export class ObjectType extends AbstractDeclaredType {
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
+  readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
-  override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
-    Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectType";
+  readonly name: string;
   readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -68,6 +70,7 @@ export class ObjectType extends AbstractDeclaredType {
     abstract,
     declarationType,
     extern,
+    features,
     fromRdfType,
     identifierType,
     imports,
@@ -76,6 +79,7 @@ export class ObjectType extends AbstractDeclaredType {
     lazyDescendantObjectTypes,
     lazyParentObjectTypes,
     lazyProperties,
+    name,
     staticModuleName,
     synthetic,
     toRdfTypes,
@@ -85,8 +89,8 @@ export class ObjectType extends AbstractDeclaredType {
     comment: Maybe<string>;
     declarationType: TsObjectDeclarationType;
     extern: boolean;
+    features: ReadonlySet<TsFeature>;
     fromRdfType: Maybe<NamedNode>;
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     imports: readonly string[];
     label: Maybe<string>;
@@ -95,14 +99,16 @@ export class ObjectType extends AbstractDeclaredType {
     lazyDescendantObjectTypes: () => readonly ObjectType[];
     lazyParentObjectTypes: () => readonly ObjectType[];
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
+    name: string;
     staticModuleName: string;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof AbstractDeclaredType>[0]) {
+  } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.abstract = abstract;
     this.declarationType = declarationType;
     this.extern = extern;
+    this.features = features;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     this.imports = imports;
@@ -112,13 +118,14 @@ export class ObjectType extends AbstractDeclaredType {
     this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
+    this.name = name;
     this.staticModuleName = staticModuleName;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
   }
 
   @Memoize()
-  get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
+  get _discriminantProperty(): AbstractType.DiscriminantProperty {
     const discriminantProperty = this.properties.find(
       (property) => property instanceof ObjectType.TypeDiscriminantProperty,
     );
@@ -141,7 +148,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractDeclaredType.Conversion[] {
+  override get conversions(): readonly AbstractType.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
@@ -153,7 +160,7 @@ export class ObjectType extends AbstractDeclaredType {
     ];
   }
 
-  override get declaration(): Code {
+  override get declaration(): Maybe<Code> {
     const declarations: Code[] = [];
 
     for (const import_ of this.imports) {
@@ -226,7 +233,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       }
     }
 
-    return joinCode(declarations, { on: "\n\n" });
+    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
   }
 
   @Memoize()
@@ -249,7 +256,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<AbstractDeclaredType.DiscriminantProperty> {
+  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of(this._discriminantProperty);
   }
 
@@ -288,8 +295,8 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get graphqlType(): AbstractDeclaredType.GraphqlType {
-    return new AbstractDeclaredType.GraphqlType(
+  get graphqlType(): AbstractType.GraphqlType {
+    return new AbstractType.GraphqlType(
       code`${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -396,14 +403,14 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["fromJsonExpression"]>[0]): Code {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
     return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
     return code`${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
@@ -417,7 +424,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly Code[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     switch (this.declarationType) {
       case "class":
         return [
@@ -431,15 +438,15 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  override jsonType(): AbstractDeclaredType.JsonType {
-    return new AbstractDeclaredType.JsonType(
+  override jsonType(): AbstractType.JsonType {
+    return new AbstractType.JsonType(
       code`${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );
   }
 
   override jsonUiSchemaElement({
     variables,
-  }: Parameters<AbstractDeclaredType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
+  }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
@@ -447,7 +454,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   override jsonZodSchema({
     context,
-  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): Code {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
     let expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     if (
       context === "property" &&
@@ -469,7 +476,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): Code {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
         return code`${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -480,7 +487,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
         return code`[${variables.value}.${syntheticNamePrefix}toRdf({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;

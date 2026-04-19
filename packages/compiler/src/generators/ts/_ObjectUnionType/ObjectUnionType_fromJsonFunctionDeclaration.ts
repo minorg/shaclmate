@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
-import { type Code, code } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function ObjectUnionType_fromJsonFunctionDeclaration(
   this: ObjectUnionType,
