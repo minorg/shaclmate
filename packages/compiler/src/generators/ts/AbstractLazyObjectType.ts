@@ -1,6 +1,7 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -78,6 +79,10 @@ export abstract class AbstractLazyObjectType<
 
   override get name(): Code {
     return this.runtimeClass.name;
+  }
+
+  get recursive(): boolean {
+    return this.partialType.recursive;
   }
 
   @Memoize()

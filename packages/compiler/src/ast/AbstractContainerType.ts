@@ -40,6 +40,10 @@ export abstract class AbstractContainerType<
     this.itemType = itemType;
   }
 
+  override get recursive(): boolean {
+    return this.itemType.recursive;
+  }
+
   override equals(other: AbstractContainerType<ItemTypeT>): boolean {
     if (!super.equals(other)) {
       return false;

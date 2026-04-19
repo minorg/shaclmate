@@ -8,7 +8,6 @@ import { snippets_ToRdfOptions } from "./_snippets/snippets_ToRdfOptions.js";
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
-import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -22,11 +21,10 @@ import {
 } from "./ts-poet-wrapper.js";
 
 class MemberType {
+  private readonly delegate: Type;
   private readonly delegateIndex: number;
   private readonly discriminant: Discriminant;
   private readonly universe: readonly Type[];
-
-  readonly delegate: Type;
 
   constructor({
     delegate,
@@ -113,6 +111,10 @@ class MemberType {
     return this.delegate.name;
   }
 
+  get recursive() {
+    return this.delegate.recursive;
+  }
+
   get schema() {
     return this.delegate.schema;
   }
@@ -186,23 +188,27 @@ export class UnionType extends AbstractType {
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "UnionType";
+  override readonly recursive: boolean;
 
   constructor({
     features,
     memberDiscriminantValues,
     memberTypes,
     name,
+    recursive,
     ...superParameters
   }: {
     features: ReadonlySet<TsFeature>;
     memberDiscriminantValues: readonly string[];
     memberTypes: readonly Type[];
     name: Maybe<string>;
+    recursive: boolean;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.features = features;
     invariant(memberTypes.length >= 2);
     this.alias = name;
+    this.recursive = recursive;
 
     if (memberDiscriminantValues.length === memberTypes.length) {
       this.discriminant = {
@@ -627,16 +633,8 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
     const alias = this.alias.extract();
     if (alias && this.features.has("json")) {
       const expression = code`${alias}.${syntheticNamePrefix}jsonZodSchema()`;
-      for (const memberType of this.memberTypes) {
-        if (
-          context === "property" &&
-          memberType.kind === "ObjectType" &&
-          (memberType.delegate as ObjectType).properties.some(
-            (property) => property.recursive,
-          )
-        ) {
-          return code`${imports.z}.lazy((): ${imports.z}.ZodType<${alias}.${syntheticNamePrefix}Json> => ${expression})`;
-        }
+      if (context === "property" && this.recursive) {
+        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${alias}.${syntheticNamePrefix}Json> => ${expression})`;
       }
       return expression;
     }

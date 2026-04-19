@@ -32,6 +32,10 @@ export abstract class AbstractLazyObjectType<
     this.resolveType = resolveType;
   }
 
+  override get recursive(): boolean {
+    return this.partialType.recursive;
+  }
+
   override equals(
     other: AbstractLazyObjectType<PartialTypeT, ResolveTypeT>,
   ): boolean {

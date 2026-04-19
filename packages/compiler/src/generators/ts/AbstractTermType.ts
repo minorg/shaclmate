@@ -34,6 +34,7 @@ export abstract class AbstractTermType<
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
+  override readonly recursive = false;
   override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
     "object" as const,
   ]);

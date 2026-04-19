@@ -1,5 +1,6 @@
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -22,11 +23,6 @@ export abstract class AbstractCompoundType<
   MemberTypeT extends AbstractCompoundType.MemberType,
 > extends AbstractType {
   /**
-   * Type discriminant
-   */
-  abstract readonly kind: "IntersectionType" | "UnionType";
-
-  /**
    * Member types.
    *
    * Mutable to support cycle-handling logic in the compiler.
@@ -38,6 +34,11 @@ export abstract class AbstractCompoundType<
    */
   readonly #tsFeatures: ReadonlySet<TsFeature>;
 
+  /**
+   * Type discriminant
+   */
+  abstract readonly kind: "IntersectionType" | "UnionType";
+
   constructor({
     tsFeatures,
     ...superParameters
@@ -48,19 +49,13 @@ export abstract class AbstractCompoundType<
     this.#tsFeatures = tsFeatures;
   }
 
-  addMemberType(memberType: MemberTypeT): void {
-    this.#memberTypes.push(memberType);
-  }
-
-  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
-    // return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
-    // Don't recurse
-    return this.shapeIdentifier.equals(other.shapeIdentifier);
-  }
-
   get memberTypes(): readonly MemberTypeT[] {
     invariant(this.#memberTypes.length > 0);
     return this.#memberTypes;
+  }
+
+  override get recursive(): boolean {
+    return this.memberTypes.some((memberType) => memberType.recursive);
   }
 
   @Memoize()
@@ -106,6 +101,16 @@ export abstract class AbstractCompoundType<
     }
 
     return this.#tsFeatures;
+  }
+
+  addMemberType(memberType: MemberTypeT): void {
+    this.#memberTypes.push(memberType);
+  }
+
+  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
+    // return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
+    // Don't recurse
+    return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
   toString(): string {

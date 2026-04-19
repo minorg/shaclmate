@@ -1,9 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import type { Maybe } from "purify-ts";
 import { PropertyPath, Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { PropertyVisibility } from "../enums/PropertyVisibility.js";
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -16,13 +18,6 @@ import type { IriType } from "./IriType.js";
 import { Type } from "./Type.js";
 
 export class ObjectType extends AbstractType {
-  /**
-   * Classes generated from this type are abstract / cannot be instantiated themselves.
-   *
-   * Defaults to false.
-   */
-  readonly abstract: boolean;
-
   /**
    * Ancestor (parents, their parents, ad nauseum) ObjectTypes of this ObjectType.
    *
@@ -43,6 +38,27 @@ export class ObjectType extends AbstractType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #descendantObjectTypes: ObjectType[] = [];
+
+  /**
+   * Immediate parent ObjectTypes of this Object types.
+   *
+   * Mutable to support cycle-handling logic in the compiler.
+   */
+  readonly #parentObjectTypes: ObjectType[] = [];
+
+  /**
+   * Properties of this ObjectType.
+   *
+   * Mutable to support cycle-handling logic in the compiler.
+   */
+  readonly #properties: ObjectType.Property[] = [];
+
+  /**
+   * Classes generated from this type are abstract / cannot be instantiated themselves.
+   *
+   * Defaults to false.
+   */
+  readonly abstract: boolean;
 
   /**
    * If true, the code for this ObjectType is defined externally and should not be generated.
@@ -73,20 +89,6 @@ export class ObjectType extends AbstractType {
    * Type discriminant.
    */
   readonly kind = "ObjectType";
-
-  /**
-   * Immediate parent ObjectTypes of this Object types.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #parentObjectTypes: ObjectType[] = [];
-
-  /**
-   * Properties of this ObjectType.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #properties: ObjectType.Property[] = [];
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -158,6 +160,30 @@ export class ObjectType extends AbstractType {
     this.tsObjectDeclarationType = tsObjectDeclarationType;
   }
 
+  get ancestorObjectTypes(): readonly ObjectType[] {
+    return this.#ancestorObjectTypes;
+  }
+
+  get childObjectTypes(): readonly ObjectType[] {
+    return this.#childObjectTypes;
+  }
+
+  get descendantObjectTypes(): readonly ObjectType[] {
+    return this.#descendantObjectTypes;
+  }
+
+  get parentObjectTypes(): readonly ObjectType[] {
+    return this.#parentObjectTypes;
+  }
+
+  get properties(): readonly ObjectType.Property[] {
+    return this.#properties;
+  }
+
+  override get recursive(): boolean {
+    return this.properties.some((property) => property.recursive);
+  }
+
   addAncestorObjectTypes(...ancestorObjectTypes: readonly ObjectType[]): void {
     this.#ancestorObjectTypes.push(...ancestorObjectTypes);
   }
@@ -181,26 +207,6 @@ export class ObjectType extends AbstractType {
     for (const property of properties) {
       invariant(Object.is(property.objectType, this));
     }
-  }
-
-  get ancestorObjectTypes(): readonly ObjectType[] {
-    return this.#ancestorObjectTypes;
-  }
-
-  get childObjectTypes(): readonly ObjectType[] {
-    return this.#childObjectTypes;
-  }
-
-  get descendantObjectTypes(): readonly ObjectType[] {
-    return this.#descendantObjectTypes;
-  }
-
-  get parentObjectTypes(): readonly ObjectType[] {
-    return this.#parentObjectTypes;
-  }
-
-  get properties(): readonly ObjectType.Property[] {
-    return this.#properties;
   }
 
   override equals(other: ObjectType): boolean {

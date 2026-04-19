@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
@@ -50,6 +51,10 @@ export abstract class AbstractContainerType<
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.itemType = itemType;
+  }
+
+  get recursive(): boolean {
+    return this.itemType.recursive;
   }
 
   @Memoize()

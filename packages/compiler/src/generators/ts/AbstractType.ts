@@ -84,6 +84,11 @@ export abstract class AbstractType {
   abstract readonly name: Code | string;
 
   /**
+   * Does this type directly or indirectly reference itself?
+   */
+  abstract readonly recursive: boolean;
+
+  /**
    * TypeScript object describing this type, for runtime use.
    */
   abstract readonly schema: Code;

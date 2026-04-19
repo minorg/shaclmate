@@ -210,6 +210,7 @@ export class TypeFactory {
         return properties;
       },
       name,
+      recursive: astType.recursive,
       staticModuleName,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
@@ -243,6 +244,7 @@ export class TypeFactory {
         (objectType) => this.createObjectType(objectType),
       ),
       name: tsName(astType.name.unsafeCoerce()),
+      recursive: astType.recursive,
     });
 
     this.cachedObjectUnionTypesByShapeIdentifier.set(
@@ -602,13 +604,14 @@ export class TypeFactory {
 
     return new UnionType({
       comment: astType.comment,
+      features: astType.tsFeatures,
       label: astType.label,
       memberDiscriminantValues: astType.memberDiscriminantValues,
       memberTypes: astType.memberTypes.map((astType) =>
         this.createType(astType),
       ),
       name: Maybe.empty(),
-      features: astType.tsFeatures,
+      recursive: astType.recursive,
     });
   }
 }

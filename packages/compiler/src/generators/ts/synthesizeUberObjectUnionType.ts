@@ -65,5 +65,6 @@ export function synthesizeUberObjectUnionType(parameters: {
     label: Maybe.empty(),
     memberTypes: objectTypes,
     name: `${syntheticNamePrefix}Object`,
+    recursive: false,
   });
 }

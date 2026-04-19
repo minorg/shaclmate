@@ -52,12 +52,14 @@ export class ObjectUnionType extends AbstractType {
   readonly name: string;
   readonly memberTypes: readonly MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly recursive: boolean;
 
   constructor({
     features,
     identifierType,
     memberTypes,
     name,
+    recursive,
     ...superParameters
   }: ConstructorParameters<typeof AbstractType>[0] & {
     comment: Maybe<string>;
@@ -66,6 +68,7 @@ export class ObjectUnionType extends AbstractType {
     label: Maybe<string>;
     memberTypes: readonly ObjectType[];
     name: string;
+    recursive: boolean;
   }) {
     super(superParameters);
     this.features = features;
@@ -82,6 +85,7 @@ export class ObjectUnionType extends AbstractType {
         }),
     );
     this.name = name;
+    this.recursive = recursive;
   }
 
   @Memoize()
@@ -297,13 +301,8 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     context,
   }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
     const expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
-    for (const memberType of this.memberTypes) {
-      if (
-        context === "property" &&
-        memberType.properties.some((property) => property.recursive)
-      ) {
-        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
-      }
+    if (context === "property" && this.recursive) {
+      return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }

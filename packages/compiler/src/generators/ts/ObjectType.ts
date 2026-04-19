@@ -61,10 +61,11 @@ export class ObjectType extends AbstractType {
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectType";
-  readonly name: string;
+  override readonly name: string;
   readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly recursive: boolean;
 
   constructor({
     abstract,
@@ -80,6 +81,7 @@ export class ObjectType extends AbstractType {
     lazyParentObjectTypes,
     lazyProperties,
     name,
+    recursive,
     staticModuleName,
     synthetic,
     toRdfTypes,
@@ -100,6 +102,7 @@ export class ObjectType extends AbstractType {
     lazyParentObjectTypes: () => readonly ObjectType[];
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
     name: string;
+    recursive: boolean;
     staticModuleName: string;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
@@ -119,6 +122,7 @@ export class ObjectType extends AbstractType {
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.name = name;
+    this.recursive = recursive;
     this.staticModuleName = staticModuleName;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;

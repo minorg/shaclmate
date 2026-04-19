@@ -22,6 +22,11 @@ export abstract class AbstractType {
   readonly name: Maybe<string>;
 
   /**
+   * Does this type directly or indirectly reference itself?
+   */
+  abstract readonly recursive: boolean;
+
+  /**
    * Identifier of the shape this type was derived from.
    */
   readonly shapeIdentifier: BlankNode | NamedNode;
