@@ -267,7 +267,7 @@ export class UnionType extends AbstractType {
     }
 
     const declarations: Code[] = [
-      code`export ${def(alias)} = ${this.inlineName};`,
+      code`export type ${def(alias)} = ${this.inlineName};`,
     ];
 
     const staticModuleDeclarations: Code[] = [];
@@ -282,11 +282,13 @@ export class UnionType extends AbstractType {
       code`export const ${syntheticNamePrefix}filter = ${this.inlineFilterFunction};`,
     );
     if (this.features.has("hash")) {
-      code`export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(value: ${alias}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} }`;
+      staticModuleDeclarations.push(
+        code`export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(value: ${alias}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`,
+      );
     }
     if (this.features.has("json")) {
       staticModuleDeclarations.push(
-        code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType()}`,
+        code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType().requiredName}`,
         code`export const ${syntheticNamePrefix}fromJson = (json: ${syntheticNamePrefix}Json) => ${this.inlineFromJsonExpression({ variables: { value: code`json` } })}`,
         code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema()}`,
         code`export const ${syntheticNamePrefix}toJson = (value: ${alias}) => ${this.inlineToJsonExpression({ variables: { value: code`value` } })}`,
@@ -294,7 +296,7 @@ export class UnionType extends AbstractType {
     }
     if (this.features.has("rdf")) {
       staticModuleDeclarations.push(
-        code`export const fromRdf = (parameters: ${snippets_FromRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>; }) => ${this.inlineFromRdfExpression(
+        code`export const ${syntheticNamePrefix}fromRdf = (parameters: ${snippets_FromRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>; }) => ${this.inlineFromRdfExpression(
           {
             variables: {
               context: code`parameters.context`,
@@ -308,7 +310,7 @@ export class UnionType extends AbstractType {
             },
           },
         )}`,
-        code`export const toRdf = (parameters: ${snippets_ToRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceSet: ${imports.ResourceSet}; value: ${alias}; }) => ${this.inlineToRdfExpression(
+        code`export const ${syntheticNamePrefix}toRdf = (parameters: ${snippets_ToRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceSet: ${imports.ResourceSet}; value: ${alias}; }) => ${this.inlineToRdfExpression(
           {
             variables: {
               graph: code`parameters.graph`,
@@ -561,7 +563,7 @@ triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ ...other
   @Memoize()
   private get inlineSparqlWherePatternsFunction(): Code {
     return code`\
-(({ filter, schema, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => {
+(({ filter, schema, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>): readonly ${snippets.SparqlPattern}[] => {
   const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(

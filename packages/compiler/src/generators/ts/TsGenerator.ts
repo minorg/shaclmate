@@ -13,6 +13,15 @@ export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
     let declarations: Code[] = [];
 
+    for (const astNamedUnionType of ast_.namedUnionTypes) {
+      if (astNamedUnionType.isObjectUnionType()) {
+        continue;
+      }
+      declarations = declarations.concat(
+        this.typeFactory.createType(astNamedUnionType).declaration.toList(),
+      );
+    }
+
     const objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
@@ -22,7 +31,6 @@ export class TsGenerator implements Generator {
       .map((astObjectUnionType) =>
         this.typeFactory.createObjectUnionType(astObjectUnionType),
       );
-
     for (const objectType of objectTypesToposorted) {
       declarations = declarations.concat(objectType.declaration.toList());
     }

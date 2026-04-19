@@ -3,7 +3,6 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import base62 from "@sindresorhus/base62";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
-import { Maybe } from "purify-ts";
 import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
@@ -610,7 +609,7 @@ export class TypeFactory {
       memberTypes: astType.memberTypes.map((astType) =>
         this.createType(astType),
       ),
-      name: Maybe.empty(),
+      name: astType.name,
       recursive: astType.recursive,
     });
   }

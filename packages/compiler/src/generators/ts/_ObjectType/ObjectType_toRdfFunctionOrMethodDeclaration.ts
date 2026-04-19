@@ -66,8 +66,9 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     statements.push(
       ...property.toRdfStatements({
         variables: {
-          ...variables,
           graph: code`options?.${variables.graph}`,
+          resource: variables.resource,
+          resourceSet: variables.resourceSet,
           value: code`${this.thisVariable}.${property.name}`,
         },
       }),
