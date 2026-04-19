@@ -2623,6 +2623,499 @@ type $ToRdfOptions = {
 };
 
 type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
+export type NamedUnion1 = NamedNode | string;
+
+export namespace NamedUnion1 {
+  export const $equals = (left: NamedUnion1, right: NamedUnion1) => {
+    if (typeof left === "object" && typeof right === "object") {
+      return $booleanEquals(left, right);
+    }
+    if (typeof left === "string" && typeof right === "string") {
+      return $strictEquals(left, right);
+    }
+
+    return Left({
+      left,
+      right,
+      propertyName: "type",
+      propertyValuesUnequal: {
+        left: typeof left,
+        right: typeof right,
+        type: "boolean" as const,
+      },
+      type: "property" as const,
+    });
+  };
+
+  export type $Filter = {
+    readonly on?: {
+      readonly object?: $IriFilter;
+      readonly string?: $StringFilter;
+    };
+  };
+
+  export const $filter = (filter: NamedUnion1.$Filter, value: NamedUnion1) => {
+    if (filter.on?.["object"] !== undefined) {
+      switch (typeof value) {
+        case "object":
+          if (!$filterIri(filter.on["object"], value)) {
+            return false;
+          }
+          break;
+      }
+    }
+    if (filter.on?.["string"] !== undefined) {
+      switch (typeof value) {
+        case "string":
+          if (!$filterString(filter.on["string"], value)) {
+            return false;
+          }
+          break;
+      }
+    }
+
+    return true;
+  };
+
+  export function $hash<HasherT extends $Hasher>(
+    value: NamedUnion1,
+    hasher: HasherT,
+  ): HasherT {
+    switch (typeof value) {
+      case "object": {
+        hasher.update(value.termType);
+        hasher.update(value.value);
+        break;
+      }
+      case "string": {
+        hasher.update(value);
+        break;
+      }
+      default:
+        value satisfies never;
+        throw new Error("unrecognized type");
+    }
+    return hasher;
+  }
+
+  export type $Json = { readonly "@id": string } | string;
+
+  export const $fromJson = (json: $Json) =>
+    typeof json === "string" ? json : dataFactory.namedNode(json["@id"]);
+
+  export const $jsonZodSchema = () =>
+    z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
+
+  export const $toJson = (value: NamedUnion1) =>
+    typeof value === "string" ? value : { "@id": value.value };
+
+  export const $fromRdf = (
+    parameters: $FromRdfOptions & {
+      propertyPath: PropertyPath;
+      resource: Resource;
+      resourceValues: Either<Error, Resource.Values>;
+    },
+  ) =>
+    parameters.resourceValues.chain((values) =>
+      values.chainMap((value) => {
+        const valueAsValues = Right(value.toValues());
+        return (
+          valueAsValues.chain((values) =>
+            values.chainMap((value) => value.toIri()),
+          ) as Either<Error, Resource.Values<NamedUnion1>>
+        )
+          .altLazy(
+            () =>
+              valueAsValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages(
+                    values,
+                    parameters.preferredLanguages,
+                  ),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ) as Either<Error, Resource.Values<NamedUnion1>>,
+          )
+          .chain((values) => values.head());
+      }),
+    );
+
+  export const $toRdf = (
+    parameters: $ToRdfOptions & {
+      propertyPath: PropertyPath;
+      resource: Resource;
+      resourceSet: ResourceSet;
+      value: NamedUnion1;
+    },
+  ) =>
+    typeof parameters.value === "string"
+      ? ([$literalFactory.string(parameters.value)] as (
+          | bigint
+          | boolean
+          | number
+          | string
+          | BlankNode
+          | Literal
+          | NamedNode
+        )[])
+      : ([parameters.value] as (
+          | bigint
+          | boolean
+          | number
+          | string
+          | BlankNode
+          | Literal
+          | NamedNode
+        )[]);
+
+  export const $sparqlConstructTriples = ({
+    ignoreRdfType,
+    filter,
+    schema,
+    ...otherParameters
+  }: $SparqlConstructTriplesFunctionParameters<
+    NamedUnion1.$Filter,
+    {
+      kind: "Union";
+      members: {
+        readonly object: {
+          discriminantValues: readonly (number | string)[];
+          type: $IriSchema;
+        };
+        readonly string: {
+          discriminantValues: readonly (number | string)[];
+          type: $StringSchema;
+        };
+      };
+    }
+  >) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["object"],
+        ignoreRdfType: false,
+        schema: schema.members["object"].type,
+      }),
+    );
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["string"],
+        ignoreRdfType: false,
+        schema: schema.members["string"].type,
+      }),
+    );
+
+    return triples;
+  };
+
+  export const $sparqlWherePatterns = ({
+    filter,
+    schema,
+    ...otherParameters
+  }: $SparqlWherePatternsFunctionParameters<
+    NamedUnion1.$Filter,
+    {
+      kind: "Union";
+      members: {
+        readonly object: {
+          discriminantValues: readonly (number | string)[];
+          type: $IriSchema;
+        };
+        readonly string: {
+          discriminantValues: readonly (number | string)[];
+          type: $StringSchema;
+        };
+      };
+    }
+  >): readonly $SparqlPattern[] => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: $iriSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["object"],
+        ignoreRdfType: false,
+        schema: schema.members["object"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $stringSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["string"],
+        ignoreRdfType: false,
+        schema: schema.members["string"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  };
+}
+export type NamedUnion2 =
+  | { type: "date"; value: Date }
+  | { type: "dateTime"; value: Date };
+
+export namespace NamedUnion2 {
+  export const $equals = (left: NamedUnion2, right: NamedUnion2) => {
+    if (left.type === "date" && right.type === "date") {
+      return $dateEquals(left.value, right.value);
+    }
+    if (left.type === "dateTime" && right.type === "dateTime") {
+      return $dateEquals(left.value, right.value);
+    }
+
+    return Left({
+      left,
+      right,
+      propertyName: "type",
+      propertyValuesUnequal: {
+        left: typeof left,
+        right: typeof right,
+        type: "boolean" as const,
+      },
+      type: "property" as const,
+    });
+  };
+
+  export type $Filter = {
+    readonly on?: {
+      readonly date?: $DateFilter;
+      readonly dateTime?: $DateFilter;
+    };
+  };
+
+  export const $filter = (filter: NamedUnion2.$Filter, value: NamedUnion2) => {
+    if (filter.on?.["date"] !== undefined) {
+      switch (value.type) {
+        case "date":
+          if (!$filterDate(filter.on["date"], value.value)) {
+            return false;
+          }
+          break;
+      }
+    }
+    if (filter.on?.["dateTime"] !== undefined) {
+      switch (value.type) {
+        case "dateTime":
+          if (!$filterDate(filter.on["dateTime"], value.value)) {
+            return false;
+          }
+          break;
+      }
+    }
+
+    return true;
+  };
+
+  export function $hash<HasherT extends $Hasher>(
+    value: NamedUnion2,
+    hasher: HasherT,
+  ): HasherT {
+    switch (value.type) {
+      case "date": {
+        hasher.update(value.value.toISOString());
+        break;
+      }
+      case "dateTime": {
+        hasher.update(value.value.toISOString());
+        break;
+      }
+      default:
+        value satisfies never;
+        throw new Error("unrecognized type");
+    }
+    return hasher;
+  }
+
+  export type $Json =
+    | { type: "date"; value: string }
+    | { type: "dateTime"; value: string };
+
+  export const $fromJson = (json: $Json) =>
+    json.type === "dateTime"
+      ? { type: "dateTime" as const, value: new Date(json.value) }
+      : { type: "date" as const, value: new Date(json.value) };
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("type", [
+      z.object({ type: z.literal("date"), value: z.iso.date() }),
+      z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+    ]);
+
+  export const $toJson = (value: NamedUnion2) =>
+    value.type === "dateTime"
+      ? { type: "dateTime" as const, value: value.value.toISOString() }
+      : {
+          type: "date" as const,
+          value: value.value.toISOString().replace(/T.*$/, ""),
+        };
+
+  export const $fromRdf = (
+    parameters: $FromRdfOptions & {
+      propertyPath: PropertyPath;
+      resource: Resource;
+      resourceValues: Either<Error, Resource.Values>;
+    },
+  ) =>
+    parameters.resourceValues.chain((values) =>
+      values.chainMap((value) => {
+        const valueAsValues = Right(value.toValues());
+        return (
+          valueAsValues
+            .chain((values) => values.chainMap((value) => value.toDate()))
+            .map((values) =>
+              values.map(
+                (value) => ({ type: "date" as const, value }) as NamedUnion2,
+              ),
+            ) as Either<Error, Resource.Values<NamedUnion2>>
+        )
+          .altLazy(
+            () =>
+              valueAsValues
+                .chain((values) =>
+                  values.chainMap((value) => value.toDateTime()),
+                )
+                .map((values) =>
+                  values.map(
+                    (value) =>
+                      ({ type: "dateTime" as const, value }) as NamedUnion2,
+                  ),
+                ) as Either<Error, Resource.Values<NamedUnion2>>,
+          )
+          .chain((values) => values.head());
+      }),
+    );
+
+  export const $toRdf = (
+    parameters: $ToRdfOptions & {
+      propertyPath: PropertyPath;
+      resource: Resource;
+      resourceSet: ResourceSet;
+      value: NamedUnion2;
+    },
+  ) =>
+    parameters.value.type === "dateTime"
+      ? ([
+          $literalFactory.date(
+            parameters.value.value,
+            $RdfVocabularies.xsd.dateTime,
+          ),
+        ] as (
+          | bigint
+          | boolean
+          | number
+          | string
+          | BlankNode
+          | Literal
+          | NamedNode
+        )[])
+      : ([
+          $literalFactory.date(
+            parameters.value.value,
+            $RdfVocabularies.xsd.date,
+          ),
+        ] as (
+          | bigint
+          | boolean
+          | number
+          | string
+          | BlankNode
+          | Literal
+          | NamedNode
+        )[]);
+
+  export const $sparqlConstructTriples = ({
+    ignoreRdfType,
+    filter,
+    schema,
+    ...otherParameters
+  }: $SparqlConstructTriplesFunctionParameters<
+    NamedUnion2.$Filter,
+    {
+      kind: "Union";
+      members: {
+        readonly date: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+        readonly dateTime: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+      };
+    }
+  >) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["date"],
+        ignoreRdfType: false,
+        schema: schema.members["date"].type,
+      }),
+    );
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["dateTime"],
+        ignoreRdfType: false,
+        schema: schema.members["dateTime"].type,
+      }),
+    );
+
+    return triples;
+  };
+
+  export const $sparqlWherePatterns = ({
+    filter,
+    schema,
+    ...otherParameters
+  }: $SparqlWherePatternsFunctionParameters<
+    NamedUnion2.$Filter,
+    {
+      kind: "Union";
+      members: {
+        readonly date: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+        readonly dateTime: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+      };
+    }
+  >): readonly $SparqlPattern[] => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: $dateSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["date"],
+        ignoreRdfType: false,
+        schema: schema.members["date"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $dateSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["dateTime"],
+        ignoreRdfType: false,
+        schema: schema.members["dateTime"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  };
+}
 export class $NamedDefaultPartial {
   readonly $identifier: $NamedDefaultPartial.$Identifier;
 
@@ -8328,7 +8821,7 @@ export namespace UnionDiscriminantsClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -8456,7 +8949,7 @@ export namespace UnionDiscriminantsClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -8537,7 +9030,7 @@ export namespace UnionDiscriminantsClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -8602,7 +9095,7 @@ export namespace UnionDiscriminantsClass {
               };
             };
           }
-        >) => {
+        >): readonly $SparqlPattern[] => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -8708,7 +9201,7 @@ export namespace UnionDiscriminantsClass {
               };
             };
           }
-        >) => {
+        >): readonly $SparqlPattern[] => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -8767,7 +9260,7 @@ export namespace UnionDiscriminantsClass {
               };
             };
           }
-        >) => {
+        >): readonly $SparqlPattern[] => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
 
           unionPatterns.push({
@@ -8857,7 +9350,7 @@ export namespace UnionDiscriminantsClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -8985,7 +9478,7 @@ export namespace UnionDiscriminantsClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -9066,7 +9559,7 @@ export namespace UnionDiscriminantsClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -23729,18 +24222,14 @@ export class NamedUnionPropertiesClass {
   readonly $type: "NamedUnionPropertiesClass" =
     "NamedUnionPropertiesClass" as const;
 
-  readonly namedUnion1Property: NamedNode | string;
+  readonly namedUnion1Property: NamedUnion1;
 
-  readonly namedUnion2Property:
-    | { type: "date"; value: Date }
-    | { type: "dateTime"; value: Date };
+  readonly namedUnion2Property: NamedUnion2;
 
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly namedUnion1Property: NamedNode | string;
-    readonly namedUnion2Property:
-      | { type: "date"; value: Date }
-      | { type: "dateTime"; value: Date };
+    readonly namedUnion2Property: NamedUnion2;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -23788,71 +24277,28 @@ export class NamedUnionPropertiesClass {
         ),
       )
       .chain(() =>
-        ((left: NamedNode | string, right: NamedNode | string) => {
-          if (typeof left === "object" && typeof right === "object") {
-            return $booleanEquals(left, right);
-          }
-          if (typeof left === "string" && typeof right === "string") {
-            return $strictEquals(left, right);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(this.namedUnion1Property, other.namedUnion1Property).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "namedUnion1Property",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
+        NamedUnion1.$equals(
+          this.namedUnion1Property,
+          other.namedUnion1Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "namedUnion1Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
       )
       .chain(() =>
-        ((
-          left:
-            | { type: "date"; value: Date }
-            | { type: "dateTime"; value: Date },
-          right:
-            | { type: "date"; value: Date }
-            | { type: "dateTime"; value: Date },
-        ) => {
-          if (left.type === "date" && right.type === "date") {
-            return $dateEquals(left.value, right.value);
-          }
-          if (left.type === "dateTime" && right.type === "dateTime") {
-            return $dateEquals(left.value, right.value);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(this.namedUnion2Property, other.namedUnion2Property).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "namedUnion2Property",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
+        NamedUnion2.$equals(
+          this.namedUnion2Property,
+          other.namedUnion2Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "namedUnion2Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
       );
   }
 
@@ -23866,33 +24312,8 @@ export class NamedUnionPropertiesClass {
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
-    switch (typeof this.namedUnion1Property) {
-      case "object": {
-        _hasher.update(this.namedUnion1Property.termType);
-        _hasher.update(this.namedUnion1Property.value);
-        break;
-      }
-      case "string": {
-        _hasher.update(this.namedUnion1Property);
-        break;
-      }
-      default:
-        this.namedUnion1Property satisfies never;
-        throw new Error("unrecognized type");
-    }
-    switch (this.namedUnion2Property.type) {
-      case "date": {
-        _hasher.update(this.namedUnion2Property.value.toISOString());
-        break;
-      }
-      case "dateTime": {
-        _hasher.update(this.namedUnion2Property.value.toISOString());
-        break;
-      }
-      default:
-        this.namedUnion2Property satisfies never;
-        throw new Error("unrecognized type");
-    }
+    NamedUnion1.$hash(this.namedUnion1Property, _hasher);
+    NamedUnion2.$hash(this.namedUnion2Property, _hasher);
     return _hasher;
   }
 
@@ -23904,22 +24325,8 @@ export class NamedUnionPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        namedUnion1Property:
-          typeof this.namedUnion1Property === "string"
-            ? this.namedUnion1Property
-            : { "@id": this.namedUnion1Property.value },
-        namedUnion2Property:
-          this.namedUnion2Property.type === "dateTime"
-            ? {
-                type: "dateTime" as const,
-                value: this.namedUnion2Property.value.toISOString(),
-              }
-            : {
-                type: "date" as const,
-                value: this.namedUnion2Property.value
-                  .toISOString()
-                  .replace(/T.*$/, ""),
-              },
+        namedUnion1Property: NamedUnion1.$toJson(this.namedUnion1Property),
+        namedUnion2Property: NamedUnion2.$toJson(this.namedUnion2Property),
       } satisfies NamedUnionPropertiesClass.$Json),
     );
   }
@@ -23938,58 +24345,28 @@ export class NamedUnionPropertiesClass {
     }
     resource.add(
       dataFactory.namedNode("http://example.com/namedUnion1Property"),
-      typeof this.namedUnion1Property === "string"
-        ? ([$literalFactory.string(this.namedUnion1Property)] as (
-            | bigint
-            | boolean
-            | number
-            | string
-            | BlankNode
-            | Literal
-            | NamedNode
-          )[])
-        : ([this.namedUnion1Property] as (
-            | bigint
-            | boolean
-            | number
-            | string
-            | BlankNode
-            | Literal
-            | NamedNode
-          )[]),
+      NamedUnion1.$toRdf({
+        graph: options?.graph,
+        resource: resource,
+        resourceSet: resourceSet,
+        value: this.namedUnion1Property,
+        propertyPath: dataFactory.namedNode(
+          "http://example.com/namedUnion1Property",
+        ),
+      }),
       options?.graph,
     );
     resource.add(
       dataFactory.namedNode("http://example.com/namedUnion2Property"),
-      this.namedUnion2Property.type === "dateTime"
-        ? ([
-            $literalFactory.date(
-              this.namedUnion2Property.value,
-              $RdfVocabularies.xsd.dateTime,
-            ),
-          ] as (
-            | bigint
-            | boolean
-            | number
-            | string
-            | BlankNode
-            | Literal
-            | NamedNode
-          )[])
-        : ([
-            $literalFactory.date(
-              this.namedUnion2Property.value,
-              $RdfVocabularies.xsd.date,
-            ),
-          ] as (
-            | bigint
-            | boolean
-            | number
-            | string
-            | BlankNode
-            | Literal
-            | NamedNode
-          )[]),
+      NamedUnion2.$toRdf({
+        graph: options?.graph,
+        resource: resource,
+        resourceSet: resourceSet,
+        value: this.namedUnion2Property,
+        propertyPath: dataFactory.namedNode(
+          "http://example.com/namedUnion2Property",
+        ),
+      }),
       options?.graph,
     );
     return resource;
@@ -24011,10 +24388,8 @@ export namespace NamedUnionPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "NamedUnionPropertiesClass";
-    readonly namedUnion1Property: { readonly "@id": string } | string;
-    readonly namedUnion2Property:
-      | { type: "date"; value: string }
-      | { type: "dateTime"; value: string };
+    readonly namedUnion1Property: NamedUnion1.$Json;
+    readonly namedUnion2Property: NamedUnion2.$Json;
   };
 
   export function $filter(
@@ -24029,73 +24404,19 @@ export namespace NamedUnionPropertiesClass {
     }
     if (
       filter.namedUnion1Property !== undefined &&
-      !((
-        filter: {
-          readonly on?: {
-            readonly object?: $IriFilter;
-            readonly string?: $StringFilter;
-          };
-        },
-        value: NamedNode | string,
-      ) => {
-        if (filter.on?.["object"] !== undefined) {
-          switch (typeof value) {
-            case "object":
-              if (!$filterIri(filter.on["object"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["string"] !== undefined) {
-          switch (typeof value) {
-            case "string":
-              if (!$filterString(filter.on["string"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-
-        return true;
-      })(filter.namedUnion1Property, value.namedUnion1Property)
+      !NamedUnion1.$filter(
+        filter.namedUnion1Property,
+        value.namedUnion1Property,
+      )
     ) {
       return false;
     }
     if (
       filter.namedUnion2Property !== undefined &&
-      !((
-        filter: {
-          readonly on?: {
-            readonly date?: $DateFilter;
-            readonly dateTime?: $DateFilter;
-          };
-        },
-        value:
-          | { type: "date"; value: Date }
-          | { type: "dateTime"; value: Date },
-      ) => {
-        if (filter.on?.["date"] !== undefined) {
-          switch (value.type) {
-            case "date":
-              if (!$filterDate(filter.on["date"], value.value)) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["dateTime"] !== undefined) {
-          switch (value.type) {
-            case "dateTime":
-              if (!$filterDate(filter.on["dateTime"], value.value)) {
-                return false;
-              }
-              break;
-          }
-        }
-
-        return true;
-      })(filter.namedUnion2Property, value.namedUnion2Property)
+      !NamedUnion2.$filter(
+        filter.namedUnion2Property,
+        value.namedUnion2Property,
+      )
     ) {
       return false;
     }
@@ -24104,28 +24425,16 @@ export namespace NamedUnionPropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly namedUnion1Property?: {
-      readonly on?: {
-        readonly object?: $IriFilter;
-        readonly string?: $StringFilter;
-      };
-    };
-    readonly namedUnion2Property?: {
-      readonly on?: {
-        readonly date?: $DateFilter;
-        readonly dateTime?: $DateFilter;
-      };
-    };
+    readonly namedUnion1Property?: NamedUnion1.$Filter;
+    readonly namedUnion2Property?: NamedUnion2.$Filter;
   };
 
   export function $propertiesFromJson(_json: unknown): Either<
     z.ZodError,
     {
       $identifier: BlankNode | NamedNode;
-      namedUnion1Property: NamedNode | string;
-      namedUnion2Property:
-        | { type: "date"; value: Date }
-        | { type: "dateTime"; value: Date };
+      namedUnion1Property: NamedUnion1;
+      namedUnion2Property: NamedUnion2;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -24136,20 +24445,12 @@ export namespace NamedUnionPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const namedUnion1Property =
-      typeof $jsonObject["namedUnion1Property"] === "string"
-        ? $jsonObject["namedUnion1Property"]
-        : dataFactory.namedNode($jsonObject["namedUnion1Property"]["@id"]);
-    const namedUnion2Property =
-      $jsonObject["namedUnion2Property"].type === "dateTime"
-        ? {
-            type: "dateTime" as const,
-            value: new Date($jsonObject["namedUnion2Property"].value),
-          }
-        : {
-            type: "date" as const,
-            value: new Date($jsonObject["namedUnion2Property"].value),
-          };
+    const namedUnion1Property = NamedUnion1.$fromJson(
+      $jsonObject["namedUnion1Property"],
+    );
+    const namedUnion2Property = NamedUnion2.$fromJson(
+      $jsonObject["namedUnion2Property"],
+    );
     return Right({ $identifier, namedUnion1Property, namedUnion2Property });
   }
 
@@ -24240,14 +24541,8 @@ export namespace NamedUnionPropertiesClass {
     return z.object({
       "@id": z.string().min(1),
       $type: z.literal("NamedUnionPropertiesClass"),
-      namedUnion1Property: z.union([
-        z.object({ "@id": z.string().min(1) }),
-        z.string(),
-      ]),
-      namedUnion2Property: z.discriminatedUnion("type", [
-        z.object({ type: z.literal("date"), value: z.iso.date() }),
-        z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-      ]),
+      namedUnion1Property: NamedUnion1.$jsonZodSchema(),
+      namedUnion2Property: NamedUnion2.$jsonZodSchema(),
     }) satisfies z.ZodType<$Json>;
   }
 
@@ -24257,10 +24552,8 @@ export namespace NamedUnionPropertiesClass {
     Error,
     {
       $identifier: BlankNode | NamedNode;
-      namedUnion1Property: NamedNode | string;
-      namedUnion2Property:
-        | { type: "date"; value: Date }
-        | { type: "dateTime"; value: Date };
+      namedUnion1Property: NamedUnion1;
+      namedUnion2Property: NamedUnion2;
     }
   > {
     return (
@@ -24311,92 +24604,36 @@ export namespace NamedUnionPropertiesClass {
             resource: $parameters.resource,
             propertySchema: $schema.properties.namedUnion1Property,
             typeFromRdf: (resourceValues) =>
-              resourceValues.chain((values) =>
-                values.chainMap((value) => {
-                  const valueAsValues = Right(value.toValues());
-                  return (
-                    valueAsValues.chain((values) =>
-                      values.chainMap((value) => value.toIri()),
-                    ) as Either<Error, Resource.Values<NamedNode | string>>
-                  )
-                    .altLazy(
-                      () =>
-                        valueAsValues
-                          .chain((values) =>
-                            $fromRdfPreferredLanguages(
-                              values,
-                              $parameters.preferredLanguages,
-                            ),
-                          )
-                          .chain((values) =>
-                            values.chainMap((value) => value.toString()),
-                          ) as Either<
-                          Error,
-                          Resource.Values<NamedNode | string>
-                        >,
-                    )
-                    .chain((values) => values.head());
-                }),
-              ),
+              NamedUnion1.$fromRdf({
+                context: $parameters.context,
+                graph: $parameters.graph,
+                preferredLanguages: $parameters.preferredLanguages,
+                objectSet: $parameters.objectSet,
+                resource: $parameters.resource,
+                ignoreRdfType: true,
+                propertyPath:
+                  NamedUnionPropertiesClass.$schema.properties
+                    .namedUnion1Property.path,
+                resourceValues: resourceValues,
+              }),
           }).chain((namedUnion1Property) =>
             $shaclPropertyFromRdf({
               graph: $parameters.graph,
               resource: $parameters.resource,
               propertySchema: $schema.properties.namedUnion2Property,
               typeFromRdf: (resourceValues) =>
-                resourceValues.chain((values) =>
-                  values.chainMap((value) => {
-                    const valueAsValues = Right(value.toValues());
-                    return (
-                      valueAsValues
-                        .chain((values) =>
-                          values.chainMap((value) => value.toDate()),
-                        )
-                        .map((values) =>
-                          values.map(
-                            (value) =>
-                              ({
-                                type: "date" as const,
-                                value,
-                              }) as
-                                | { type: "date"; value: Date }
-                                | { type: "dateTime"; value: Date },
-                          ),
-                        ) as Either<
-                        Error,
-                        Resource.Values<
-                          | { type: "date"; value: Date }
-                          | { type: "dateTime"; value: Date }
-                        >
-                      >
-                    )
-                      .altLazy(
-                        () =>
-                          valueAsValues
-                            .chain((values) =>
-                              values.chainMap((value) => value.toDateTime()),
-                            )
-                            .map((values) =>
-                              values.map(
-                                (value) =>
-                                  ({
-                                    type: "dateTime" as const,
-                                    value,
-                                  }) as
-                                    | { type: "date"; value: Date }
-                                    | { type: "dateTime"; value: Date },
-                              ),
-                            ) as Either<
-                            Error,
-                            Resource.Values<
-                              | { type: "date"; value: Date }
-                              | { type: "dateTime"; value: Date }
-                            >
-                          >,
-                      )
-                      .chain((values) => values.head());
-                  }),
-                ),
+                NamedUnion2.$fromRdf({
+                  context: $parameters.context,
+                  graph: $parameters.graph,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  objectSet: $parameters.objectSet,
+                  resource: $parameters.resource,
+                  ignoreRdfType: true,
+                  propertyPath:
+                    NamedUnionPropertiesClass.$schema.properties
+                      .namedUnion2Property.path,
+                  resourceValues: resourceValues,
+                }),
             }).map((namedUnion2Property) => ({
               $identifier,
               namedUnion1Property,
@@ -24545,53 +24782,7 @@ export namespace NamedUnionPropertiesClass {
         ignoreRdfType: true,
         propertyName: "namedUnion1Property",
         propertySchema: $schema.properties.namedUnion1Property,
-        typeSparqlConstructTriples: ({
-          ignoreRdfType,
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlConstructTriplesFunctionParameters<
-          {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
-              };
-            };
-          }
-        >) => {
-          let triples: sparqljs.Triple[] = [];
-
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }),
-          );
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["string"],
-              ignoreRdfType: false,
-              schema: schema.members["string"].type,
-            }),
-          );
-
-          return triples;
-        },
+        typeSparqlConstructTriples: NamedUnion1.$sparqlConstructTriples,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -24602,53 +24793,7 @@ export namespace NamedUnionPropertiesClass {
         ignoreRdfType: true,
         propertyName: "namedUnion2Property",
         propertySchema: $schema.properties.namedUnion2Property,
-        typeSparqlConstructTriples: ({
-          ignoreRdfType,
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlConstructTriplesFunctionParameters<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >) => {
-          let triples: sparqljs.Triple[] = [];
-
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["date"],
-              ignoreRdfType: false,
-              schema: schema.members["date"].type,
-            }),
-          );
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["dateTime"],
-              ignoreRdfType: false,
-              schema: schema.members["dateTime"].type,
-            }),
-          );
-
-          return triples;
-        },
+        typeSparqlConstructTriples: NamedUnion2.$sparqlConstructTriples,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -24727,54 +24872,7 @@ export namespace NamedUnionPropertiesClass {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "namedUnion1Property",
         propertySchema: $schema.properties.namedUnion1Property,
-        typeSparqlWherePatterns: ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          {
-            readonly on?: {
-              readonly object?: $IriFilter;
-              readonly string?: $StringFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
-              };
-              readonly string: {
-                discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
-              };
-            };
-          }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
-
-          unionPatterns.push({
-            patterns: $iriSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $stringSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["string"],
-              ignoreRdfType: false,
-              schema: schema.members["string"].type,
-            }).concat(),
-            type: "group",
-          });
-
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
+        typeSparqlWherePatterns: NamedUnion1.$sparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -24786,54 +24884,7 @@ export namespace NamedUnionPropertiesClass {
         preferredLanguages: parameters.preferredLanguages,
         propertyName: "namedUnion2Property",
         propertySchema: $schema.properties.namedUnion2Property,
-        typeSparqlWherePatterns: ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          {
-            readonly on?: {
-              readonly date?: $DateFilter;
-              readonly dateTime?: $DateFilter;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly date: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-              readonly dateTime: {
-                discriminantValues: readonly (number | string)[];
-                type: $DateSchema;
-              };
-            };
-          }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
-
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["date"],
-              ignoreRdfType: false,
-              schema: schema.members["date"].type,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $dateSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["dateTime"],
-              ignoreRdfType: false,
-              schema: schema.members["dateTime"].type,
-            }).concat(),
-            type: "group",
-          });
-
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
+        typeSparqlWherePatterns: NamedUnion2.$sparqlWherePatterns,
         variablePrefix: parameters.variablePrefix,
       }),
     );
@@ -39581,7 +39632,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -54347,7 +54398,7 @@ export namespace DateUnionPropertiesClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -54428,7 +54479,7 @@ export namespace DateUnionPropertiesClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -54509,7 +54560,7 @@ export namespace DateUnionPropertiesClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
@@ -54590,7 +54641,7 @@ export namespace DateUnionPropertiesClass {
                 };
               };
             }
-          >) => {
+          >): readonly $SparqlPattern[] => {
             const unionPatterns: sparqljs.GroupPattern[] = [];
 
             unionPatterns.push({
