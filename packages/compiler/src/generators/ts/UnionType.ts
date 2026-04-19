@@ -211,14 +211,36 @@ export class UnionType extends AbstractType {
       }
     }
     if (!discriminant) {
+      let ownValues: AbstractType.DiscriminantProperty.Value[];
+
+      const memberTypeNames = memberTypes.map((memberType) => memberType.name);
+      if (
+        memberTypeNames.every(
+          (memberTypeName) => typeof memberTypeName === "string",
+        )
+      ) {
+        const memberTypeNamesSet = new Set(memberTypeNames);
+        if (memberTypeNamesSet.size === memberTypeNames.length) {
+          // If every member type name is a unique string, use those strings as the discriminant values.
+          ownValues = memberTypeNames;
+        } else {
+          // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
+          ownValues = memberTypeNames.map(
+            (memberTypeName, memberTypeIndex) =>
+              `${memberTypeIndex}-${memberTypeName}`,
+          );
+        }
+      } else {
+        // At least one member type name is Code
+        // Use member type indices as the discriminant values.
+        ownValues = memberTypes.map((_, memberTypeIndex) => memberTypeIndex);
+      }
+
       discriminant = {
         descendantValues: [],
         kind: "envelope",
         name: "type",
-        ownValues:
-          memberDiscriminantValues.length > 0
-            ? memberDiscriminantValues
-            : memberTypes.map((_, memberTypeIndex) => memberTypeIndex),
+        ownValues,
       };
     }
     this.discriminant = discriminant;
