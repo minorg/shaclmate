@@ -247,6 +247,7 @@ export class $LazyObjectOption<
   readonly partial: Maybe<PartialObjectT>;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
+    options?: { preferredLanguages?: readonly string[] },
   ) => Promise<Either<Error, ResolvedObjectT>>;
 
   constructor({
@@ -256,19 +257,22 @@ export class $LazyObjectOption<
     partial: Maybe<PartialObjectT>;
     resolver: (
       identifier: ObjectIdentifierT,
+      options?: { preferredLanguages?: readonly string[] },
     ) => Promise<Either<Error, ResolvedObjectT>>;
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  async resolve(): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
+  async resolve(options?: {
+    preferredLanguages?: readonly string[];
+  }): Promise<Either<Error, Maybe<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
       return Right(Maybe.empty());
     }
-    return (await this.resolver(this.partial.unsafeCoerce().$identifier)).map(
-      Maybe.of,
-    );
+    return (
+      await this.resolver(this.partial.unsafeCoerce().$identifier, options)
+    ).map(Maybe.of);
   }
 }
 
@@ -283,6 +287,7 @@ export class $LazyObjectSet<
   readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
     identifiers: readonly ObjectIdentifierT[],
+    options?: { preferredLanguages?: readonly string[] },
   ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
 
   constructor({
@@ -292,6 +297,7 @@ export class $LazyObjectSet<
     partials: readonly PartialObjectT[];
     resolver: (
       identifiers: readonly ObjectIdentifierT[],
+      options?: { preferredLanguages?: readonly string[] },
     ) => Promise<Either<Error, readonly ResolvedObjectT[]>>;
   }) {
     this.partials = partials;
@@ -305,6 +311,7 @@ export class $LazyObjectSet<
   async resolve(options?: {
     limit?: number;
     offset?: number;
+    preferredLanguages?: readonly string[];
   }): Promise<Either<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
       return Right([]);
@@ -324,6 +331,9 @@ export class $LazyObjectSet<
       this.partials
         .slice(offset, offset + limit)
         .map((partial) => partial.$identifier),
+      {
+        preferredLanguages: options?.preferredLanguages,
+      },
     );
   }
 }
@@ -500,6 +510,13 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
   export function $filter(
     filter: $DefaultPartial.$Filter,
     value: $DefaultPartial,
@@ -514,24 +531,6 @@ export namespace $DefaultPartial {
   }
 
   export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function is$DefaultPartial(
-    object: $Object,
-  ): object is $DefaultPartial {
-    switch (object.$type) {
-      case "$DefaultPartial":
-        return true;
-      default:
-        return false;
-    }
-  }
 
   export function $fromRdf(
     resource: Resource,
@@ -555,6 +554,17 @@ export namespace $DefaultPartial {
         resource,
       })
       .map((properties) => new $DefaultPartial(properties));
+  }
+
+  export function is$DefaultPartial(
+    object: $Object,
+  ): object is $DefaultPartial {
+    switch (object.$type) {
+      case "$DefaultPartial":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export function $propertiesFromRdf(
@@ -663,37 +673,6 @@ export class UnionMember2 {
 }
 
 export namespace UnionMember2 {
-  export function $filter(
-    filter: UnionMember2.$Filter,
-    value: UnionMember2,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember2",
-  );
-
   export const $GraphQL = new GraphQLObjectType<
     UnionMember2,
     { objectSet: $ObjectSet }
@@ -727,14 +706,32 @@ export namespace UnionMember2 {
     export const toString = Resource.Identifier.toString;
   }
 
-  export function isUnionMember2(object: $Object): object is UnionMember2 {
-    switch (object.$type) {
-      case "UnionMember2":
-        return true;
-      default:
-        return false;
+  export function $filter(
+    filter: UnionMember2.$Filter,
+    value: UnionMember2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
     }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
   }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+  };
 
   export function $fromRdf(
     resource: Resource,
@@ -756,6 +753,19 @@ export namespace UnionMember2 {
       preferredLanguages,
       resource,
     }).map((properties) => new UnionMember2(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/UnionMember2",
+  );
+
+  export function isUnionMember2(object: $Object): object is UnionMember2 {
+    switch (object.$type) {
+      case "UnionMember2":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export function $propertiesFromRdf(
@@ -943,37 +953,6 @@ export class UnionMember1 {
 }
 
 export namespace UnionMember1 {
-  export function $filter(
-    filter: UnionMember1.$Filter,
-    value: UnionMember1,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalNumberProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.optionalNumberProperty,
-        value.optionalNumberProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/UnionMember1",
-  );
-
   export const $GraphQL = new GraphQLObjectType<
     UnionMember1,
     { objectSet: $ObjectSet }
@@ -1007,14 +986,32 @@ export namespace UnionMember1 {
     export const toString = Resource.Identifier.toString;
   }
 
-  export function isUnionMember1(object: $Object): object is UnionMember1 {
-    switch (object.$type) {
-      case "UnionMember1":
-        return true;
-      default:
-        return false;
+  export function $filter(
+    filter: UnionMember1.$Filter,
+    value: UnionMember1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
     }
+    if (
+      filter.optionalNumberProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
   }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
+  };
 
   export function $fromRdf(
     resource: Resource,
@@ -1036,6 +1033,19 @@ export namespace UnionMember1 {
       preferredLanguages,
       resource,
     }).map((properties) => new UnionMember1(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/UnionMember1",
+  );
+
+  export function isUnionMember1(object: $Object): object is UnionMember1 {
+    switch (object.$type) {
+      case "UnionMember1":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export function $propertiesFromRdf(
@@ -1250,54 +1260,6 @@ export class Nested {
 }
 
 export namespace Nested {
-  export function $filter(filter: Nested.$Filter, value: Nested): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalNumberProperty !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
-        filter.optionalNumberProperty,
-        value.optionalNumberProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/Nested",
-  );
-
   export const $GraphQL = new GraphQLObjectType<
     Nested,
     { objectSet: $ObjectSet }
@@ -1345,14 +1307,49 @@ export namespace Nested {
     export const toString = Resource.Identifier.toString;
   }
 
-  export function isNested(object: $Object): object is Nested {
-    switch (object.$type) {
-      case "Nested":
-        return true;
-      default:
-        return false;
+  export function $filter(filter: Nested.$Filter, value: Nested): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
     }
+    if (
+      filter.optionalNumberProperty !== undefined &&
+      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+        filter.optionalNumberProperty,
+        value.optionalNumberProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredStringProperty !== undefined &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
   }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumericFilter<number>>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
+  };
 
   export function $fromRdf(
     resource: Resource,
@@ -1374,6 +1371,19 @@ export namespace Nested {
       preferredLanguages,
       resource,
     }).map((properties) => new Nested(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/Nested",
+  );
+
+  export function isNested(object: $Object): object is Nested {
+    switch (object.$type) {
+      case "Nested":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export function $propertiesFromRdf(
@@ -1609,37 +1619,6 @@ export class Parent {
 }
 
 export namespace ParentStatic {
-  export function $filter(
-    filter: ParentStatic.$Filter,
-    value: Parent,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.parentStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.parentStringProperty,
-        value.parentStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly parentStringProperty?: $MaybeFilter<$StringFilter>;
-  };
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/Parent",
-  );
-
   export const $GraphQL = new GraphQLObjectType<
     Parent,
     { objectSet: $ObjectSet }
@@ -1681,15 +1660,32 @@ export namespace ParentStatic {
     export const toString = Resource.Identifier.toString;
   }
 
-  export function isParent(object: $Object): object is Parent {
-    switch (object.$type) {
-      case "Child":
-      case "Parent":
-        return true;
-      default:
-        return false;
+  export function $filter(
+    filter: ParentStatic.$Filter,
+    value: Parent,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIri(filter.$identifier, value.$identifier)
+    ) {
+      return false;
     }
+    if (
+      filter.parentStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.parentStringProperty,
+        value.parentStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
   }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly parentStringProperty?: $MaybeFilter<$StringFilter>;
+  };
 
   export function $fromRdf(
     resource: Resource,
@@ -1711,6 +1707,20 @@ export namespace ParentStatic {
       preferredLanguages,
       resource,
     }).map((properties) => new Parent(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/Parent",
+  );
+
+  export function isParent(object: $Object): object is Parent {
+    switch (object.$type) {
+      case "Child":
+      case "Parent":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export function $propertiesFromRdf(
@@ -2067,93 +2077,6 @@ export class Child extends Parent {
 }
 
 export namespace Child {
-  export function $filter(filter: Child.$Filter, value: Child): boolean {
-    if (!ParentStatic.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.childStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.childStringProperty,
-        value.childStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.lazyObjectSetProperty !== undefined &&
-      !((
-        filter: $CollectionFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>,
-      ) =>
-        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partials))(
-        filter.lazyObjectSetProperty,
-        value.lazyObjectSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalLazyObjectProperty !== undefined &&
-      !((
-        filter: $MaybeFilter<$DefaultPartial.$Filter>,
-        value: $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>,
-      ) =>
-        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
-          $DefaultPartial.$filter,
-        )(filter, value.partial))(
-        filter.optionalLazyObjectProperty,
-        value.optionalLazyObjectProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalObjectProperty !== undefined &&
-      !$filterMaybe<Nested, Nested.$Filter>(Nested.$filter)(
-        filter.optionalObjectProperty,
-        value.optionalObjectProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly childStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
-    readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
-    readonly optionalObjectProperty?: $MaybeFilter<Nested.$Filter>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredStringProperty?: $StringFilter;
-  } & ParentStatic.$Filter;
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/Child",
-  );
-
   export const $GraphQL = new GraphQLObjectType<
     Child,
     { objectSet: $ObjectSet }
@@ -2239,14 +2162,88 @@ export namespace Child {
     export const toString = Resource.Identifier.toString;
   }
 
-  export function isChild(object: $Object): object is Child {
-    switch (object.$type) {
-      case "Child":
-        return true;
-      default:
-        return false;
+  export function $filter(filter: Child.$Filter, value: Child): boolean {
+    if (!ParentStatic.$filter(filter, value)) {
+      return false;
     }
+    if (
+      filter.childStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.childStringProperty,
+        value.childStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.lazyObjectSetProperty !== undefined &&
+      !((
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>,
+      ) =>
+        $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partials))(
+        filter.lazyObjectSetProperty,
+        value.lazyObjectSetProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalLazyObjectProperty !== undefined &&
+      !((
+        filter: $MaybeFilter<$DefaultPartial.$Filter>,
+        value: $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>,
+      ) =>
+        $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+          $DefaultPartial.$filter,
+        )(filter, value.partial))(
+        filter.optionalLazyObjectProperty,
+        value.optionalLazyObjectProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalObjectProperty !== undefined &&
+      !$filterMaybe<Nested, Nested.$Filter>(Nested.$filter)(
+        filter.optionalObjectProperty,
+        value.optionalObjectProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalStringProperty !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.optionalStringProperty,
+        value.optionalStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.requiredStringProperty !== undefined &&
+      !$filterString(
+        filter.requiredStringProperty,
+        value.requiredStringProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
   }
+
+  export type $Filter = {
+    readonly $identifier?: $IriFilter;
+    readonly childStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly lazyObjectSetProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalObjectProperty?: $MaybeFilter<Nested.$Filter>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
+  } & ParentStatic.$Filter;
 
   export function $fromRdf(
     resource: Resource,
@@ -2268,6 +2265,19 @@ export namespace Child {
       preferredLanguages,
       resource,
     }).map((properties) => new Child(properties));
+  }
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/Child",
+  );
+
+  export function isChild(object: $Object): object is Child {
+    switch (object.$type) {
+      case "Child":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export function $propertiesFromRdf(
@@ -2399,8 +2409,11 @@ export namespace Child {
                             Nested
                           >({
                             partials,
-                            resolver: (identifiers) =>
-                              $parameters.objectSet.nesteds({ identifiers }),
+                            resolver: (identifiers, options) =>
+                              $parameters.objectSet.nesteds({
+                                identifiers,
+                                ...options,
+                              }),
                           }),
                       ),
                     ),
@@ -2444,8 +2457,11 @@ export namespace Child {
                               Nested
                             >({
                               partial,
-                              resolver: (identifier) =>
-                                $parameters.objectSet.nested(identifier),
+                              resolver: (identifier, options) =>
+                                $parameters.objectSet.nested(
+                                  identifier,
+                                  options,
+                                ),
                             }),
                         ),
                       ),
@@ -2612,6 +2628,20 @@ export namespace Child {
 export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
+  export const $GraphQL = new GraphQLUnionType({
+    description: '"Union"',
+    name: "Union",
+    resolveType: (value: Union) => value.$type,
+    types: [UnionMember1.$GraphQL, UnionMember2.$GraphQL],
+  });
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
   export function $filter(filter: Union.$Filter, value: Union): boolean {
     if (
       filter.$identifier !== undefined &&
@@ -2644,28 +2674,6 @@ export namespace Union {
     };
   }
 
-  export const $GraphQL = new GraphQLUnionType({
-    description: '"Union"',
-    name: "Union",
-    resolveType: (value: Union) => value.$type,
-    types: [UnionMember1.$GraphQL, UnionMember2.$GraphQL],
-  });
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function isUnion(object: $Object): object is Union {
-    return (
-      UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object)
-    );
-  }
-
-  export const $schema = { properties: {} } as const;
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -2683,6 +2691,14 @@ export namespace Union {
         }) as Either<Error, Union>,
     );
   }
+
+  export function isUnion(object: $Object): object is Union {
+    return (
+      UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object)
+    );
+  }
+
+  export const $schema = { properties: {} } as const;
 
   export function $toRdf(
     _union: Union,
@@ -2709,6 +2725,13 @@ export type $Object =
   | $DefaultPartial;
 
 export namespace $Object {
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
   export function $filter(filter: $Object.$Filter, value: $Object): boolean {
     if (
       filter.$identifier !== undefined &&
@@ -2776,15 +2799,6 @@ export namespace $Object {
     };
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export const $schema = { properties: {} } as const;
-
   export function $fromRdf(
     resource: Resource,
     options?: $FromRdfOptions,
@@ -2832,6 +2846,8 @@ export namespace $Object {
       );
   }
 
+  export const $schema = { properties: {} } as const;
+
   export function $toRdf(
     _object: $Object,
     _parameters?: {
@@ -2861,7 +2877,10 @@ export namespace $Object {
   }
 }
 export interface $ObjectSet {
-  child(identifier: Child.$Identifier): Promise<Either<Error, Child>>;
+  child(
+    identifier: Child.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Child>>;
 
   childCount(
     query?: Pick<$ObjectSet.Query<Child.$Filter, Child.$Identifier>, "filter">,
@@ -2875,7 +2894,10 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<Child.$Filter, Child.$Identifier>,
   ): Promise<Either<Error, readonly Child[]>>;
 
-  nested(identifier: Nested.$Identifier): Promise<Either<Error, Nested>>;
+  nested(
+    identifier: Nested.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Nested>>;
 
   nestedCount(
     query?: Pick<
@@ -2892,7 +2914,10 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<Nested.$Filter, Nested.$Identifier>,
   ): Promise<Either<Error, readonly Nested[]>>;
 
-  parent(identifier: ParentStatic.$Identifier): Promise<Either<Error, Parent>>;
+  parent(
+    identifier: ParentStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Parent>>;
 
   parentCount(
     query?: Pick<
@@ -2911,6 +2936,7 @@ export interface $ObjectSet {
 
   unionMember1(
     identifier: UnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionMember1>>;
 
   unionMember1Count(
@@ -2930,6 +2956,7 @@ export interface $ObjectSet {
 
   unionMember2(
     identifier: UnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionMember2>>;
 
   unionMember2Count(
@@ -2947,7 +2974,10 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember2[]>>;
 
-  union(identifier: Union.$Identifier): Promise<Either<Error, Union>>;
+  union(
+    identifier: Union.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Union>>;
 
   unionCount(
     query?: Pick<$ObjectSet.Query<Union.$Filter, Union.$Identifier>, "filter">,
@@ -2961,7 +2991,10 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<Union.$Filter, Union.$Identifier>,
   ): Promise<Either<Error, readonly Union[]>>;
 
-  object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+  object(
+    identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, $Object>>;
 
   objectCount(
     query?: Pick<
@@ -3015,14 +3048,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
   }
 
-  async child(identifier: Child.$Identifier): Promise<Either<Error, Child>> {
-    return this.childSync(identifier);
+  async child(
+    identifier: Child.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Child>> {
+    return this.childSync(identifier, options);
   }
 
-  childSync(identifier: Child.$Identifier): Either<Error, Child> {
-    return this.childrenSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  childSync(
+    identifier: Child.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, Child> {
+    return this.childrenSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async childCount(
@@ -3070,14 +3110,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async nested(identifier: Nested.$Identifier): Promise<Either<Error, Nested>> {
-    return this.nestedSync(identifier);
+  async nested(
+    identifier: Nested.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Nested>> {
+    return this.nestedSync(identifier, options);
   }
 
-  nestedSync(identifier: Nested.$Identifier): Either<Error, Nested> {
-    return this.nestedsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  nestedSync(
+    identifier: Nested.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, Nested> {
+    return this.nestedsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async nestedCount(
@@ -3133,14 +3180,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async parent(
     identifier: ParentStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Parent>> {
-    return this.parentSync(identifier);
+    return this.parentSync(identifier, options);
   }
 
-  parentSync(identifier: ParentStatic.$Identifier): Either<Error, Parent> {
-    return this.parentsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  parentSync(
+    identifier: ParentStatic.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, Parent> {
+    return this.parentsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async parentCount(
@@ -3200,16 +3252,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async unionMember1(
     identifier: UnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionMember1>> {
-    return this.unionMember1Sync(identifier);
+    return this.unionMember1Sync(identifier, options);
   }
 
   unionMember1Sync(
     identifier: UnionMember1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, UnionMember1> {
-    return this.unionMember1sSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.unionMember1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async unionMember1Count(
@@ -3269,16 +3324,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async unionMember2(
     identifier: UnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, UnionMember2>> {
-    return this.unionMember2Sync(identifier);
+    return this.unionMember2Sync(identifier, options);
   }
 
   unionMember2Sync(
     identifier: UnionMember2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, UnionMember2> {
-    return this.unionMember2sSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+    return this.unionMember2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async unionMember2Count(
@@ -3336,14 +3394,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async union(identifier: Union.$Identifier): Promise<Either<Error, Union>> {
-    return this.unionSync(identifier);
+  async union(
+    identifier: Union.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Union>> {
+    return this.unionSync(identifier, options);
   }
 
-  unionSync(identifier: Union.$Identifier): Either<Error, Union> {
-    return this.unionsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  unionSync(
+    identifier: Union.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, Union> {
+    return this.unionsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async unionCount(
@@ -3400,14 +3465,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async object(
     identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>> {
-    return this.objectSync(identifier);
+    return this.objectSync(identifier, options);
   }
 
-  objectSync(identifier: $Object.$Identifier): Either<Error, $Object> {
-    return this.objectsSync({ identifiers: [identifier] }).map(
-      (objects) => objects[0],
-    );
+  objectSync(
+    identifier: $Object.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, $Object> {
+    return this.objectsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
   }
 
   async objectCount(
