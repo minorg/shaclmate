@@ -137,14 +137,14 @@ export const testData = {
         );
       },
 
-      get externalProject() {
-        return Maybe.of(
-          path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
-        )
-          .filter((filePath) => fs.existsSync(filePath))
-          .map(parseShapesGraph)
-          .extractNullable();
-      },
+      // get externalProject() {
+      //   return Maybe.of(
+      //     path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
+      //   )
+      //     .filter((filePath) => fs.existsSync(filePath))
+      //     .map(parseShapesGraph)
+      //     .extractNullable();
+      // },
 
       get kitchenSink() {
         return parseShapesGraph(
