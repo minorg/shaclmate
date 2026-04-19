@@ -431,7 +431,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     if (alias && this.features.has("sparql")) {
       return code`${alias}.${syntheticNamePrefix}sparqlConstructTriples`;
     }
-    return this.inlineFilterType;
+    return this.inlineSparqlConstructTriplesFunction;
   }
 
   @Memoize()
@@ -440,7 +440,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     if (alias && this.features.has("sparql")) {
       return code`${alias}.${syntheticNamePrefix}sparqlWherePatterns`;
     }
-    return this.inlineFilterType;
+    return this.inlineSparqlWherePatternsFunction;
   }
 
   @Memoize()
