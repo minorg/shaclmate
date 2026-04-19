@@ -42,19 +42,19 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       it("should transform object types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.objectTypes).toHaveLength(83);
+          expect(ast.objectTypes).toHaveLength(84);
         } else {
           expect(ast.objectTypes).not.toHaveLength(0);
         }
       });
 
-      it("should transform object intersection types", ({ expect }) => {
+      it("should transform named intersection types", ({ expect }) => {
         expect(ast.namedIntersectionTypes).toHaveLength(0);
       });
 
-      it("should transform object union types", ({ expect }) => {
+      it("should transform named union types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.namedUnionTypes).toHaveLength(9);
+          expect(ast.namedUnionTypes).toHaveLength(12);
         }
       });
 
