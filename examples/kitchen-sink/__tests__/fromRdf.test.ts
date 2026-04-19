@@ -69,6 +69,9 @@ describe("fromRdf", () => {
           },
         })
         .unsafeCoerce() as any;
+      if (id === "namedUnionPropertiesClass1") {
+        console.log("test");
+      }
       expect(harness.equals(fromRdfInstance).extract()).toStrictEqual(true);
     });
   }

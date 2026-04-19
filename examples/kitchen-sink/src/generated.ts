@@ -23735,15 +23735,12 @@ export class NamedUnionPropertiesClass {
     | { type: "date"; value: Date }
     | { type: "dateTime"; value: Date };
 
-  readonly namedUnion3Property: BigDecimal | number | bigint;
-
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly namedUnion1Property: NamedNode | string;
     readonly namedUnion2Property:
       | { type: "date"; value: Date }
       | { type: "dateTime"; value: Date };
-    readonly namedUnion3Property: BigDecimal | number | bigint;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -23761,15 +23758,6 @@ export class NamedUnionPropertiesClass {
       this.namedUnion1Property = parameters.namedUnion1Property satisfies never;
     }
     this.namedUnion2Property = parameters.namedUnion2Property;
-    if (typeof parameters.namedUnion3Property === "object") {
-      this.namedUnion3Property = parameters.namedUnion3Property;
-    } else if (typeof parameters.namedUnion3Property === "number") {
-      this.namedUnion3Property = parameters.namedUnion3Property;
-    } else if (typeof parameters.namedUnion3Property === "bigint") {
-      this.namedUnion3Property = parameters.namedUnion3Property;
-    } else {
-      this.namedUnion3Property = parameters.namedUnion3Property satisfies never;
-    }
   }
 
   get $identifier(): NamedUnionPropertiesClass.$Identifier {
@@ -23865,42 +23853,6 @@ export class NamedUnionPropertiesClass {
             type: "property" as const,
           }),
         ),
-      )
-      .chain(() =>
-        ((
-          left: BigDecimal | number | bigint,
-          right: BigDecimal | number | bigint,
-        ) => {
-          if (typeof left === "object" && typeof right === "object") {
-            return $booleanEquals(left, right);
-          }
-          if (typeof left === "number" && typeof right === "number") {
-            return $strictEquals(left, right);
-          }
-          if (typeof left === "bigint" && typeof right === "bigint") {
-            return $strictEquals(left, right);
-          }
-
-          return Left({
-            left,
-            right,
-            propertyName: "type",
-            propertyValuesUnequal: {
-              left: typeof left,
-              right: typeof right,
-              type: "boolean" as const,
-            },
-            type: "property" as const,
-          });
-        })(this.namedUnion3Property, other.namedUnion3Property).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "namedUnion3Property",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
       );
   }
 
@@ -23941,23 +23893,6 @@ export class NamedUnionPropertiesClass {
         this.namedUnion2Property satisfies never;
         throw new Error("unrecognized type");
     }
-    switch (typeof this.namedUnion3Property) {
-      case "object": {
-        _hasher.update(this.namedUnion3Property.toFixed());
-        break;
-      }
-      case "number": {
-        _hasher.update(this.namedUnion3Property.toString());
-        break;
-      }
-      case "bigint": {
-        _hasher.update(this.namedUnion3Property.toString());
-        break;
-      }
-      default:
-        this.namedUnion3Property satisfies never;
-        throw new Error("unrecognized type");
-    }
     return _hasher;
   }
 
@@ -23985,12 +23920,6 @@ export class NamedUnionPropertiesClass {
                   .toISOString()
                   .replace(/T.*$/, ""),
               },
-        namedUnion3Property:
-          typeof this.namedUnion3Property === "bigint"
-            ? this.namedUnion3Property.toString()
-            : typeof this.namedUnion3Property === "number"
-              ? this.namedUnion3Property
-              : this.namedUnion3Property.toFixed(),
       } satisfies NamedUnionPropertiesClass.$Json),
     );
   }
@@ -24063,49 +23992,6 @@ export class NamedUnionPropertiesClass {
           )[]),
       options?.graph,
     );
-    resource.add(
-      dataFactory.namedNode("http://example.com/namedUnion3Property"),
-      typeof this.namedUnion3Property === "bigint"
-        ? ([
-            $literalFactory.bigint(
-              this.namedUnion3Property,
-              $RdfVocabularies.xsd.integer,
-            ),
-          ] as (
-            | bigint
-            | boolean
-            | number
-            | string
-            | BlankNode
-            | Literal
-            | NamedNode
-          )[])
-        : typeof this.namedUnion3Property === "number"
-          ? ([
-              $literalFactory.number(
-                this.namedUnion3Property,
-                $RdfVocabularies.xsd.double,
-              ),
-            ] as (
-              | bigint
-              | boolean
-              | number
-              | string
-              | BlankNode
-              | Literal
-              | NamedNode
-            )[])
-          : ([$bigDecimalLiteral(this.namedUnion3Property)] as (
-              | bigint
-              | boolean
-              | number
-              | string
-              | BlankNode
-              | Literal
-              | NamedNode
-            )[]),
-      options?.graph,
-    );
     return resource;
   }
 
@@ -24129,7 +24015,6 @@ export namespace NamedUnionPropertiesClass {
     readonly namedUnion2Property:
       | { type: "date"; value: string }
       | { type: "dateTime"; value: string };
-    readonly namedUnion3Property: string | number | string;
   };
 
   export function $filter(
@@ -24214,51 +24099,6 @@ export namespace NamedUnionPropertiesClass {
     ) {
       return false;
     }
-    if (
-      filter.namedUnion3Property !== undefined &&
-      !((
-        filter: {
-          readonly on?: {
-            readonly object?: $NumericFilter<BigDecimal>;
-            readonly number?: $NumericFilter<number>;
-            readonly bigint?: $NumericFilter<bigint>;
-          };
-        },
-        value: BigDecimal | number | bigint,
-      ) => {
-        if (filter.on?.["object"] !== undefined) {
-          switch (typeof value) {
-            case "object":
-              if (!$filterBigDecimal(filter.on["object"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["number"] !== undefined) {
-          switch (typeof value) {
-            case "number":
-              if (!$filterNumeric<number>(filter.on["number"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-        if (filter.on?.["bigint"] !== undefined) {
-          switch (typeof value) {
-            case "bigint":
-              if (!$filterNumeric<bigint>(filter.on["bigint"], value)) {
-                return false;
-              }
-              break;
-          }
-        }
-
-        return true;
-      })(filter.namedUnion3Property, value.namedUnion3Property)
-    ) {
-      return false;
-    }
     return true;
   }
 
@@ -24276,13 +24116,6 @@ export namespace NamedUnionPropertiesClass {
         readonly dateTime?: $DateFilter;
       };
     };
-    readonly namedUnion3Property?: {
-      readonly on?: {
-        readonly object?: $NumericFilter<BigDecimal>;
-        readonly number?: $NumericFilter<number>;
-        readonly bigint?: $NumericFilter<bigint>;
-      };
-    };
   };
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -24293,7 +24126,6 @@ export namespace NamedUnionPropertiesClass {
       namedUnion2Property:
         | { type: "date"; value: Date }
         | { type: "dateTime"; value: Date };
-      namedUnion3Property: BigDecimal | number | bigint;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -24318,18 +24150,7 @@ export namespace NamedUnionPropertiesClass {
             type: "date" as const,
             value: new Date($jsonObject["namedUnion2Property"].value),
           };
-    const namedUnion3Property =
-      typeof $jsonObject["namedUnion3Property"] === "bigint"
-        ? BigInt($jsonObject["namedUnion3Property"])
-        : typeof $jsonObject["namedUnion3Property"] === "number"
-          ? $jsonObject["namedUnion3Property"]
-          : new BigDecimal($jsonObject["namedUnion3Property"]);
-    return Right({
-      $identifier,
-      namedUnion1Property,
-      namedUnion2Property,
-      namedUnion3Property,
-    });
+    return Right({ $identifier, namedUnion1Property, namedUnion2Property });
   }
 
   export function $fromJson(
@@ -24409,10 +24230,6 @@ export namespace NamedUnionPropertiesClass {
           scope: `${scopePrefix}/properties/namedUnion2Property`,
           type: "Control",
         },
-        {
-          scope: `${scopePrefix}/properties/namedUnion3Property`,
-          type: "Control",
-        },
       ],
       label: "NamedUnionPropertiesClass",
       type: "Group",
@@ -24431,7 +24248,6 @@ export namespace NamedUnionPropertiesClass {
         z.object({ type: z.literal("date"), value: z.iso.date() }),
         z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
       ]),
-      namedUnion3Property: z.union([z.string(), z.number(), z.string()]),
     }) satisfies z.ZodType<$Json>;
   }
 
@@ -24445,7 +24261,6 @@ export namespace NamedUnionPropertiesClass {
       namedUnion2Property:
         | { type: "date"; value: Date }
         | { type: "dateTime"; value: Date };
-      namedUnion3Property: BigDecimal | number | bigint;
     }
   > {
     return (
@@ -24582,60 +24397,11 @@ export namespace NamedUnionPropertiesClass {
                       .chain((values) => values.head());
                   }),
                 ),
-            }).chain((namedUnion2Property) =>
-              $shaclPropertyFromRdf({
-                graph: $parameters.graph,
-                resource: $parameters.resource,
-                propertySchema: $schema.properties.namedUnion3Property,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues.chain((values) =>
-                    values.chainMap((value) => {
-                      const valueAsValues = Right(value.toValues());
-                      return (
-                        valueAsValues
-                          .chain((values) =>
-                            $fromRdfPreferredLanguages(
-                              values,
-                              $parameters.preferredLanguages,
-                            ),
-                          )
-                          .chain((values) =>
-                            values.chainMap((value) =>
-                              value.toLiteral().chain($decodeBigDecimalLiteral),
-                            ),
-                          ) as Either<
-                          Error,
-                          Resource.Values<BigDecimal | number | bigint>
-                        >
-                      )
-                        .altLazy(
-                          () =>
-                            valueAsValues.chain((values) =>
-                              values.chainMap((value) => value.toFloat()),
-                            ) as Either<
-                              Error,
-                              Resource.Values<BigDecimal | number | bigint>
-                            >,
-                        )
-                        .altLazy(
-                          () =>
-                            valueAsValues.chain((values) =>
-                              values.chainMap((value) => value.toBigInt()),
-                            ) as Either<
-                              Error,
-                              Resource.Values<BigDecimal | number | bigint>
-                            >,
-                        )
-                        .chain((values) => values.head());
-                    }),
-                  ),
-              }).map((namedUnion3Property) => ({
-                $identifier,
-                namedUnion1Property,
-                namedUnion2Property,
-                namedUnion3Property,
-              })),
-            ),
+            }).map((namedUnion2Property) => ({
+              $identifier,
+              namedUnion1Property,
+              namedUnion2Property,
+            })),
           ),
         ),
     );
@@ -24687,27 +24453,6 @@ export namespace NamedUnionPropertiesClass {
           },
         }),
         path: dataFactory.namedNode("http://example.com/namedUnion2Property"),
-      },
-      namedUnion3Property: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Union" as const,
-          members: {
-            object: {
-              discriminantValues: ["object"],
-              type: { kind: "BigDecimal" as const },
-            },
-            number: {
-              discriminantValues: ["number"],
-              type: { kind: "Float" as const },
-            },
-            bigint: {
-              discriminantValues: ["bigint"],
-              type: { kind: "BigInt" as const },
-            },
-          },
-        }),
-        path: dataFactory.namedNode("http://example.com/namedUnion3Property"),
       },
     },
   } as const;
@@ -24907,76 +24652,6 @@ export namespace NamedUnionPropertiesClass {
         variablePrefix: parameters.variablePrefix,
       }),
     );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.namedUnion3Property,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "namedUnion3Property",
-        propertySchema: $schema.properties.namedUnion3Property,
-        typeSparqlConstructTriples: ({
-          ignoreRdfType,
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlConstructTriplesFunctionParameters<
-          {
-            readonly on?: {
-              readonly object?: $NumericFilter<BigDecimal>;
-              readonly number?: $NumericFilter<number>;
-              readonly bigint?: $NumericFilter<bigint>;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-              readonly number: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<number>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-            };
-          }
-        >) => {
-          let triples: sparqljs.Triple[] = [];
-
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }),
-          );
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["number"],
-              ignoreRdfType: false,
-              schema: schema.members["number"].type,
-            }),
-          );
-          triples = triples.concat(
-            ((_: object) => [])({
-              ...otherParameters,
-              filter: filter?.on?.["bigint"],
-              ignoreRdfType: false,
-              schema: schema.members["bigint"].type,
-            }),
-          );
-
-          return triples;
-        },
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
     return triples;
   }
 
@@ -25153,79 +24828,6 @@ export namespace NamedUnionPropertiesClass {
               filter: filter?.on?.["dateTime"],
               ignoreRdfType: false,
               schema: schema.members["dateTime"].type,
-            }).concat(),
-            type: "group",
-          });
-
-          return [{ patterns: unionPatterns, type: "union" }];
-        },
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.namedUnion3Property,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "namedUnion3Property",
-        propertySchema: $schema.properties.namedUnion3Property,
-        typeSparqlWherePatterns: ({
-          filter,
-          schema,
-          ...otherParameters
-        }: $SparqlWherePatternsFunctionParameters<
-          {
-            readonly on?: {
-              readonly object?: $NumericFilter<BigDecimal>;
-              readonly number?: $NumericFilter<number>;
-              readonly bigint?: $NumericFilter<bigint>;
-            };
-          },
-          {
-            kind: "Union";
-            members: {
-              readonly object: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<BigDecimal>;
-              };
-              readonly number: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<number>;
-              };
-              readonly bigint: {
-                discriminantValues: readonly (number | string)[];
-                type: $NumericSchema<bigint>;
-              };
-            };
-          }
-        >) => {
-          const unionPatterns: sparqljs.GroupPattern[] = [];
-
-          unionPatterns.push({
-            patterns: $bigDecimalSparqlWherePatterns({
-              ...otherParameters,
-              filter: filter?.on?.["object"],
-              ignoreRdfType: false,
-              schema: schema.members["object"].type,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $numericSparqlWherePatterns<number>({
-              ...otherParameters,
-              filter: filter?.on?.["number"],
-              ignoreRdfType: false,
-              schema: schema.members["number"].type,
-            }).concat(),
-            type: "group",
-          });
-          unionPatterns.push({
-            patterns: $numericSparqlWherePatterns<bigint>({
-              ...otherParameters,
-              filter: filter?.on?.["bigint"],
-              ignoreRdfType: false,
-              schema: schema.members["bigint"].type,
             }).concat(),
             type: "group",
           });
