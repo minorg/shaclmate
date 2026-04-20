@@ -156,8 +156,8 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     return code`\
 export const ${syntheticNamePrefix}schema =
 ${{
-  ...super.schemaTypeObject,
-  properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
+  ...super.schemaObject,
+  properties: code`{ ${joinCode(propertiesObject, { on: "; " })} }`,
 }} as const;`;
   }
 
