@@ -111,6 +111,41 @@ export class TypeFactory {
         astType.descendantObjectTypes.map((astType) =>
           this.createObjectType(astType),
         ),
+      lazyDiscriminantProperty: (objectType: ObjectType) => {
+        // Discriminant property
+        const discriminantOwnValue = !astType.abstract
+          ? objectType.discriminantValue
+          : undefined;
+        const discriminantDescendantValues = new Set<string>();
+        for (const descendantObjectType of objectType.descendantObjectTypes) {
+          if (!descendantObjectType.abstract) {
+            discriminantDescendantValues.add(
+              descendantObjectType.discriminantValue,
+            );
+          }
+        }
+
+        return new ObjectType.DiscriminantProperty({
+          name: `${syntheticNamePrefix}type`,
+          objectType,
+          type: new ObjectType.DiscriminantProperty.Type({
+            descendantValues: [...discriminantDescendantValues].sort(),
+            mutable: false,
+            ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
+          }),
+          visibility: "public",
+        });
+      },
+      lazyIdentifierProperty: (objectType: ObjectType) =>
+        new ObjectType.IdentifierProperty({
+          identifierMintingStrategy: astType.identifierMintingStrategy,
+          identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
+          name: `${syntheticNamePrefix}identifier`,
+          objectType,
+          type: identifierType,
+          typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
+          visibility: "public",
+        }),
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
           this.createObjectType(astType),
@@ -133,33 +168,11 @@ export class TypeFactory {
             }),
           );
 
-        // Discriminant property
-        const discriminantOwnValue = !astType.abstract
-          ? objectType.discriminantValue
-          : undefined;
-        const discriminantDescendantValues = new Set<string>();
-        for (const descendantObjectType of objectType.descendantObjectTypes) {
-          if (!descendantObjectType.abstract) {
-            discriminantDescendantValues.add(
-              descendantObjectType.discriminantValue,
-            );
-          }
-        }
-        if (discriminantOwnValue || discriminantDescendantValues.size > 0) {
-          properties.splice(
-            0,
-            0,
-            new ObjectType.DiscriminantProperty({
-              name: `${syntheticNamePrefix}type`,
-              objectType,
-              type: new ObjectType.DiscriminantProperty.Type({
-                descendantValues: [...discriminantDescendantValues].sort(),
-                mutable: false,
-                ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
-              }),
-              visibility: "public",
-            }),
-          );
+        if (
+          objectType._discriminantProperty.type.ownValues.length > 0 ||
+          objectType._discriminantProperty.type.descendantValues.length > 0
+        ) {
+          properties.splice(0, 0, objectType._discriminantProperty);
         }
 
         // Some ObjectTypes have an identifierPrefix property, depending on their identifier minting strategy.
@@ -188,19 +201,7 @@ export class TypeFactory {
         }
 
         // Every ObjectType has an identifier property. Some are abstract.
-        properties.splice(
-          0,
-          0,
-          new ObjectType.IdentifierProperty({
-            identifierMintingStrategy: astType.identifierMintingStrategy,
-            identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
-            name: `${syntheticNamePrefix}identifier`,
-            objectType,
-            type: identifierType,
-            typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-            visibility: "public",
-          }),
-        );
+        properties.splice(0, 0, objectType.identifierProperty);
 
         return properties;
       },

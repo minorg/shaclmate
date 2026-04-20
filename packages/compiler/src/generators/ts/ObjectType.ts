@@ -52,14 +52,12 @@ export class ObjectType extends AbstractType {
 
   protected readonly toRdfTypes: readonly NamedNode[];
 
-  protected readonly _discriminantProperty: ObjectType.DiscriminantProperty;
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly identifierProperty: ObjectType.IdentifierProperty;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectType";
   override readonly name: string;
@@ -79,6 +77,8 @@ export class ObjectType extends AbstractType {
     lazyAncestorObjectTypes,
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
+    lazyDiscriminantProperty,
+    lazyIdentifierProperty,
     lazyParentObjectTypes,
     lazyProperties,
     name,
@@ -99,6 +99,12 @@ export class ObjectType extends AbstractType {
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly ObjectType[];
     lazyChildObjectTypes: () => readonly ObjectType[];
+    lazyDiscriminantProperty: (
+      objectType: ObjectType,
+    ) => ObjectType.DiscriminantProperty;
+    lazyIdentifierProperty: (
+      objectType: ObjectType,
+    ) => ObjectType.IdentifierProperty;
     lazyDescendantObjectTypes: () => readonly ObjectType[];
     lazyParentObjectTypes: () => readonly ObjectType[];
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
@@ -120,6 +126,8 @@ export class ObjectType extends AbstractType {
     this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
     this.lazyChildObjectTypes = lazyChildObjectTypes;
     this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
+    this.lazyDiscriminantProperty = lazyDiscriminantProperty;
+    this.lazyIdentifierProperty = lazyIdentifierProperty;
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.name = name;
@@ -298,6 +306,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  get identifierProperty(): ObjectType.IdentifierProperty {
+    return this.lazyIdentifierProperty(this);
+  }
+
+  @Memoize()
   get identifierTypeAlias(): Code {
     return code`${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
   }
@@ -374,6 +387,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     }
 
     return code`${imports.Resource}${this.identifierType.kind === "IriType" ? code`<${imports.NamedNode}>` : ""}`;
+  }
+
+  @Memoize()
+  get _discriminantProperty(): ObjectType.DiscriminantProperty {
+    return this.lazyDiscriminantProperty(this);
   }
 
   @Memoize()
@@ -496,6 +514,14 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   private readonly lazyChildObjectTypes: () => readonly ObjectType[];
 
   private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyDiscriminantProperty: (
+    objectType: ObjectType,
+  ) => ObjectType.DiscriminantProperty;
+
+  private readonly lazyIdentifierProperty: (
+    objectType: ObjectType,
+  ) => ObjectType.IdentifierProperty;
 
   private readonly lazyParentObjectTypes: () => readonly ObjectType[];
 
