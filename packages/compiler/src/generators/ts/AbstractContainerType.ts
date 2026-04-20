@@ -14,6 +14,7 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { UnionType } from "./NamedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { removeUndefined } from "./removeUndefined.js";
@@ -21,7 +22,6 @@ import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
-import type { UnionType } from "./UnionType.js";
 
 /**
  * Abstract base class for types that contain other types e.g., ListType, OptionType, SetType.

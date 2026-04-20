@@ -18,6 +18,7 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { UnionType } from "./NamedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -26,7 +27,6 @@ import { snippets } from "./snippets.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
-import type { UnionType } from "./UnionType.js";
 
 export class ListType<
   ItemTypeT extends ListType.ItemType,

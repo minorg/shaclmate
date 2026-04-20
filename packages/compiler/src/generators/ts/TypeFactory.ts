@@ -8,6 +8,7 @@ import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
+import { AnonymousUnionType } from "./AnonymousUnionType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -24,6 +25,7 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import { NamedUnionType } from "./NamedUnionType.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
@@ -33,7 +35,6 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
-import { UnionType } from "./UnionType.js";
 
 const reservedTsIdentifiers = reservedTsIdentifiers_({
   includeGlobalProperties: true,
@@ -601,17 +602,33 @@ export class TypeFactory {
       return this.createObjectUnionType(astType);
     }
 
-    return new UnionType({
-      comment: astType.comment,
-      features: astType.tsFeatures,
-      label: astType.label,
-      memberDiscriminantValues: astType.memberDiscriminantValues,
-      memberTypes: astType.memberTypes.map((astType) =>
-        this.createType(astType),
-      ),
-      name: astType.name,
-      recursive: astType.recursive,
-    });
+    return astType.name
+      .map<AnonymousUnionType | NamedUnionType>(
+        (name) =>
+          new NamedUnionType({
+            comment: astType.comment,
+            features: astType.tsFeatures,
+            label: astType.label,
+            memberDiscriminantValues: astType.memberDiscriminantValues,
+            memberTypes: astType.memberTypes.map((astType) =>
+              this.createType(astType),
+            ),
+            name,
+            recursive: astType.recursive,
+          }),
+      )
+      .orDefaultLazy(
+        () =>
+          new AnonymousUnionType({
+            comment: astType.comment,
+            label: astType.label,
+            memberDiscriminantValues: astType.memberDiscriminantValues,
+            memberTypes: astType.memberTypes.map((astType) =>
+              this.createType(astType),
+            ),
+            recursive: astType.recursive,
+          }),
+      );
   }
 }
 
