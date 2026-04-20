@@ -20,11 +20,11 @@ import {
   literalOf,
 } from "./ts-poet-wrapper.js";
 
-class MemberType {
-  private readonly delegate: Type;
+class MemberTypeWrapper<MemberTypeT extends Type> {
+  private readonly delegate: MemberTypeT;
   private readonly delegateIndex: number;
   private readonly discriminant: Discriminant;
-  private readonly universe: readonly Type[];
+  private readonly universe: readonly MemberTypeT[];
 
   constructor({
     delegate,
@@ -32,10 +32,10 @@ class MemberType {
     discriminant,
     universe,
   }: {
-    delegate: Type;
+    delegate: MemberTypeT;
     delegateIndex: number;
     discriminant: Discriminant;
-    universe: readonly Type[];
+    universe: readonly MemberTypeT[];
   }) {
     this.delegate = delegate;
     this.delegateIndex = delegateIndex;
@@ -180,11 +180,11 @@ class MemberType {
   }
 }
 
-export class UnionType extends AbstractType {
+export class UnionType<MemberTypeT extends Type = Type> extends AbstractType {
   private readonly alias: Maybe<string>;
   private readonly discriminant: Discriminant;
   private readonly features: ReadonlySet<TsFeature>;
-  private readonly memberTypes: readonly MemberType[];
+  private readonly memberTypes: readonly MemberTypeWrapper<MemberTypeT>[];
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "UnionType";
@@ -200,7 +200,7 @@ export class UnionType extends AbstractType {
   }: {
     features: ReadonlySet<TsFeature>;
     memberDiscriminantValues: readonly string[];
-    memberTypes: readonly Type[];
+    memberTypes: readonly MemberTypeT[];
     name: Maybe<string>;
     recursive: boolean;
   } & ConstructorParameters<typeof AbstractType>[0]) {
@@ -224,7 +224,7 @@ export class UnionType extends AbstractType {
 
     this.memberTypes = memberTypes.map(
       (memberType, memberTypeIndex) =>
-        new MemberType({
+        new MemberTypeWrapper<MemberTypeT>({
           delegate: memberType,
           delegateIndex: memberTypeIndex,
           discriminant: this.discriminant,
@@ -866,7 +866,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
     memberTypeExpression,
     variables,
   }: {
-    memberTypeExpression: (memberType: MemberType) => Code;
+    memberTypeExpression: (memberType: MemberTypeWrapper<MemberTypeT>) => Code;
     variables: { value: Code };
   }): Code {
     return this.memberTypes.reduce(
