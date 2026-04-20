@@ -97,7 +97,7 @@ export abstract class AbstractUnionType<
 
   @Memoize()
   get memberTypeDescriptors(): readonly MemberTypeDescriptor<MemberTypeT>[] {
-    return this.memberTypes.map((memberType, memberTypeI) => {
+    return this.memberTypes.flatMap((memberType, memberTypeI) => {
       let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
       switch (this.discriminant.kind) {
         case "envelope":
@@ -143,19 +143,25 @@ export abstract class AbstractUnionType<
           throw this.discriminant satisfies never;
       }
 
-      return {
-        discriminantValues,
-        memberType,
-        payload: (instance: Code): Code => {
-          switch (this.discriminant.kind) {
-            case "envelope":
-              return code`${instance}.value`;
-            case "inline":
-            case "typeof":
-              return instance;
-          }
+      if (discriminantValues.length === 0) {
+        return [];
+      }
+
+      return [
+        {
+          discriminantValues,
+          memberType,
+          payload: (instance: Code): Code => {
+            switch (this.discriminant.kind) {
+              case "envelope":
+                return code`${instance}.value`;
+              case "inline":
+              case "typeof":
+                return instance;
+            }
+          },
         },
-      };
+      ];
     });
   }
 
