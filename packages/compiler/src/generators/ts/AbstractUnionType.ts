@@ -261,7 +261,7 @@ ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ memberType, payload, typeCheck }) =>
       code`if (${typeCheck(code`left`)} && ${typeCheck(code`right`)}) {
-  return ${memberType.equalsFunction}(${payload(code`left`)}, ${payload(code`right`)});
+  return ${memberType.equalsFunction}(${payload(code`left`)} as ${memberType.name}, ${payload(code`right`)} as ${memberType.name});
 }`,
   ),
 )}
@@ -583,7 +583,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
             ...variables,
             value: payload(variables.value),
           },
-        })} as (bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode})[])`,
+        })} as ${snippets.ToRdfValue}[])`,
       variables,
     });
   }
