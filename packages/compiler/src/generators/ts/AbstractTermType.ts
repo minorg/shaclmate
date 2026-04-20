@@ -27,6 +27,7 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
+  override readonly abstract = false;
   override readonly declaration: Maybe<Code> = Maybe.empty();
   readonly equalsFunction = code`${snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();

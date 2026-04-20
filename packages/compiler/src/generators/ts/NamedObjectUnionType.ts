@@ -61,18 +61,18 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
 
     if (this.features.has("graphql")) {
       staticModuleDeclarations.push(code`\
-      export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
+export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
         name: this.name,
         resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
         types: code`[${joinCode(
-          this.concreteMemberTypes.map(
-            (memberType) => memberType.graphqlType.nullableName,
-          ),
+          this.memberTypes
+            .filter((memberType) => !memberType.abstract)
+            .map((memberType) => memberType.graphqlType.nullableName),
           { on: ", " },
         )}]`,
       }});
-      `);
+`);
     }
 
     staticModuleDeclarations = staticModuleDeclarations.concat(
@@ -96,11 +96,6 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     staticModuleDeclarations.push(this.schemaVariableStatement);
 
     return staticModuleDeclarations;
-  }
-
-  @Memoize()
-  private get concreteMemberTypes(): readonly ObjectType[] {
-    return this.memberTypes.filter((memberType) => !memberType.abstract);
   }
 
   private get schemaVariableStatement(): Code {

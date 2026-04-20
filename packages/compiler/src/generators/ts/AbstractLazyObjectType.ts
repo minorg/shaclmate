@@ -22,6 +22,7 @@ export abstract class AbstractLazyObjectType<
     readonly rawName: Code;
   };
 
+  override readonly abstract = false;
   override readonly declaration: Maybe<Code> = Maybe.empty();
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();

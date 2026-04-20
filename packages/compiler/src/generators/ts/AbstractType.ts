@@ -10,6 +10,11 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractType {
   /**
+   * Is the type abstract?
+   */
+  abstract readonly abstract: boolean;
+
+  /**
    * Comment from rdfs:comment.
    */
   readonly comment: Maybe<string>;

@@ -30,6 +30,7 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
+  override readonly abstract = false;
   override readonly declaration: Maybe<Code> = Maybe.empty();
   abstract override readonly kind:
     | "DefaultValueType"
