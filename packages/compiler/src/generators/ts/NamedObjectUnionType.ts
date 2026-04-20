@@ -154,7 +154,11 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     }
 
     return code`\
-export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(propertiesObject, { on: ", " })} } } as const;`;
+export const ${syntheticNamePrefix}schema =
+${{
+  ...super.schemaTypeObject,
+  properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
+}} as const;`;
   }
 
   override graphqlResolveExpression({

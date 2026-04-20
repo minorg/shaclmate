@@ -176,22 +176,7 @@ export abstract class AbstractUnionType<
   }
 
   override get schemaType(): Code {
-    return code`${{
-      // discriminant: {
-      //   kind: '"envelope" | "inline" | "typeof"',
-      // },
-      kind: literalOf("Union"),
-      members: code`{ ${joinCode(
-        this.memberTypeDescriptors.map(
-          ({ memberType, discriminantValues }) =>
-            code`readonly ${literalOf(discriminantValues[0])}: ${{
-              discriminantValues: code`readonly (number | string)[]`,
-              type: memberType.schemaType,
-            }}`,
-        ),
-        { on: ";" },
-      )} }`,
-    }}`;
+    return code`${this.schemaTypeObject}`;
   }
 
   @Memoize()
@@ -321,18 +306,46 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
 })`;
   }
 
-  protected override get schemaObject(): { kind: Code; members: Code } {
+  protected override get schemaObject(): {
+    kind: Code;
+    members: Readonly<
+      Record<
+        string,
+        Readonly<{
+          discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
+          type: Code;
+        }>
+      >
+    >;
+  } {
     return {
       ...super.schemaObject,
+      members: this.memberTypeDescriptors.reduce(
+        (map, { memberType, discriminantValues }) => {
+          map[discriminantValues[0]] = {
+            discriminantValues,
+            type: memberType.schema,
+          };
+          return map;
+        },
+        {} as Record<string, any>,
+      ),
+    };
+  }
+
+  protected get schemaTypeObject(): { kind: Code; members: Code } {
+    invariant(this.kind.endsWith("Type"));
+    return {
+      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))} as const`,
       members: code`{ ${joinCode(
         this.memberTypeDescriptors.map(
           ({ memberType, discriminantValues }) =>
-            code`${literalOf(discriminantValues[0])}: ${{
-              discriminantValues,
-              type: memberType.schema,
+            code`readonly ${literalOf(discriminantValues[0])}: ${{
+              discriminantValues: code`readonly (number | string)[]`,
+              type: memberType.schemaType,
             }}`,
         ),
-        { on: "," },
+        { on: ";" },
       )} }`,
     };
   }
