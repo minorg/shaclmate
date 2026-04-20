@@ -1,6 +1,6 @@
 import { imports } from "./imports.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -9,10 +9,10 @@ import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMe
 
 export function sparqlObjectSetClassDeclaration({
   objectTypes,
-  objectUnionTypes,
+  namedObjectUnionTypes,
 }: {
   objectTypes: readonly ObjectType[];
-  objectUnionTypes: readonly ObjectUnionType[];
+  namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
   const sparqlWherePatternsFunctionType = code`(parameters: { filter: ObjectFilterT | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string; }) => readonly ${imports.sparqljs}.Pattern[]`;
 
@@ -44,7 +44,7 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
   }
 
 ${joinCode(
-  [...objectTypes, ...objectUnionTypes].flatMap(
+  [...objectTypes, ...namedObjectUnionTypes].flatMap(
     (objectType): readonly Code[] => {
       if (!objectType.features.has("sparql")) {
         return Object.values(

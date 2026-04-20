@@ -12,9 +12,9 @@ import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 interface MemberTypeDescriptor<MemberTypeT extends Type> {
-  discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-  memberType: MemberTypeT;
-  payload: (instance: Code) => Code;
+  readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
+  readonly memberType: MemberTypeT;
+  readonly payload: (instance: Code) => Code;
 }
 
 export abstract class AbstractUnionType<
@@ -23,7 +23,6 @@ export abstract class AbstractUnionType<
   private readonly discriminant: Discriminant;
 
   readonly memberTypes: readonly MemberTypeT[];
-
   override readonly recursive: boolean;
 
   constructor({
@@ -94,6 +93,70 @@ export abstract class AbstractUnionType<
       default:
         throw this.discriminant satisfies never;
     }
+  }
+
+  @Memoize()
+  get memberTypeDescriptors(): readonly MemberTypeDescriptor<MemberTypeT>[] {
+    return this.memberTypes.map((memberType, memberTypeI) => {
+      let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
+      switch (this.discriminant.kind) {
+        case "envelope":
+          discriminantValues = [this.discriminant.ownValues[memberTypeI]];
+          break;
+        case "inline": {
+          // A member type's combined discriminant property values are its "own" values plus any descendant values that are
+          // not the "own" values of some other member type.
+          // So if you have type A, type B, and B inherits A, then
+          // A has
+          //   own discriminant property values: ["A"]
+          //   descendant discriminant property values: ["B"]
+          // and B has
+          //  own discriminant property values: ["B"]
+          //  descendant discriminant property values ["B"]
+          // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
+          const memberOwnDiscriminantPropertyValues =
+            new Set<AbstractType.DiscriminantProperty.Value>();
+          for (const memberType_ of this.memberTypes) {
+            for (const ownDiscriminantPropertyValue of memberType_.discriminantProperty.unsafeCoerce()
+              .ownValues) {
+              memberOwnDiscriminantPropertyValues.add(
+                ownDiscriminantPropertyValue,
+              );
+            }
+          }
+
+          discriminantValues = memberType.discriminantProperty
+            .unsafeCoerce()
+            .ownValues.concat(
+              memberType.discriminantProperty
+                .unsafeCoerce()
+                .descendantValues.filter(
+                  (value) => !memberOwnDiscriminantPropertyValues.has(value),
+                ),
+            );
+          break;
+        }
+        case "typeof":
+          discriminantValues = memberType.typeofs;
+          break;
+        default:
+          throw this.discriminant satisfies never;
+      }
+
+      return {
+        discriminantValues,
+        memberType,
+        payload: (instance: Code): Code => {
+          switch (this.discriminant.kind) {
+            case "envelope":
+              return code`${instance}.value`;
+            case "inline":
+            case "typeof":
+              return instance;
+          }
+        },
+      };
+    });
   }
 
   @Memoize()
@@ -252,71 +315,7 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
 })`;
   }
 
-  @Memoize()
-  protected get memberTypeDescriptors(): readonly MemberTypeDescriptor<MemberTypeT>[] {
-    return this.memberTypes.map((memberType, memberTypeI) => {
-      let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-      switch (this.discriminant.kind) {
-        case "envelope":
-          discriminantValues = [this.discriminant.ownValues[memberTypeI]];
-          break;
-        case "inline": {
-          // A member type's combined discriminant property values are its "own" values plus any descendant values that are
-          // not the "own" values of some other member type.
-          // So if you have type A, type B, and B inherits A, then
-          // A has
-          //   own discriminant property values: ["A"]
-          //   descendant discriminant property values: ["B"]
-          // and B has
-          //  own discriminant property values: ["B"]
-          //  descendant discriminant property values ["B"]
-          // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
-          const memberOwnDiscriminantPropertyValues =
-            new Set<AbstractType.DiscriminantProperty.Value>();
-          for (const memberType_ of this.memberTypes) {
-            for (const ownDiscriminantPropertyValue of memberType_.discriminantProperty.unsafeCoerce()
-              .ownValues) {
-              memberOwnDiscriminantPropertyValues.add(
-                ownDiscriminantPropertyValue,
-              );
-            }
-          }
-
-          discriminantValues = memberType.discriminantProperty
-            .unsafeCoerce()
-            .ownValues.concat(
-              memberType.discriminantProperty
-                .unsafeCoerce()
-                .descendantValues.filter(
-                  (value) => !memberOwnDiscriminantPropertyValues.has(value),
-                ),
-            );
-          break;
-        }
-        case "typeof":
-          discriminantValues = memberType.typeofs;
-          break;
-        default:
-          throw this.discriminant satisfies never;
-      }
-
-      return {
-        discriminantValues,
-        memberType,
-        payload: (instance: Code): Code => {
-          switch (this.discriminant.kind) {
-            case "envelope":
-              return code`${instance}.value`;
-            case "inline":
-            case "typeof":
-              return instance;
-          }
-        },
-      };
-    });
-  }
-
-  protected override get schemaObject() {
+  protected override get schemaObject(): { kind: Code; members: Code } {
     return {
       ...super.schemaObject,
       members: code`{ ${joinCode(

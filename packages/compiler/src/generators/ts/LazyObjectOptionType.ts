@@ -2,8 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -63,7 +63,7 @@ export class LazyObjectOptionType extends Super {
         {
           conversionExpression: (value) =>
             code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
-          // Don't check instanceof value since the ObjectUnionType may be an interface
+          // Don't check instanceof value since the NamedObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
@@ -72,12 +72,12 @@ export class LazyObjectOptionType extends Super {
         },
       );
     } else if (
-      this.resolveType.itemType.kind === "ObjectUnionType" &&
-      this.partialType.itemType.kind === "ObjectUnionType" &&
+      this.resolveType.itemType.kind === "NamedObjectUnionType" &&
+      this.partialType.itemType.kind === "NamedObjectUnionType" &&
       this.resolveType.itemType.memberTypes.length ===
         this.partialType.itemType.memberTypes.length
     ) {
-      const maybeMap = code`.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolveType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })`;
+      const maybeMap = code`.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })`;
 
       conversions.push(
         {
@@ -91,7 +91,7 @@ export class LazyObjectOptionType extends Super {
         {
           conversionExpression: (value) =>
             code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
-          // Don't check instanceof value since the ObjectUnionType may be an interface
+          // Don't check instanceof value since the NamedObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,

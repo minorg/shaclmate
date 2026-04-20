@@ -3,8 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { SetType } from "./SetType.js";
@@ -170,34 +170,34 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
-  protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
-    resolvedObjectUnionType,
-    partialObjectUnionType,
+  protected resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({
+    resolvedNamedObjectUnionType,
+    partialNamedObjectUnionType,
     variables,
   }: {
-    resolvedObjectUnionType: ObjectUnionType;
-    partialObjectUnionType: ObjectUnionType;
+    resolvedNamedObjectUnionType: NamedObjectUnionType;
+    partialNamedObjectUnionType: NamedObjectUnionType;
     variables: { resolvedObjectUnion: Code };
   }) {
     invariant(
-      resolvedObjectUnionType.memberTypes.length ===
-        partialObjectUnionType.memberTypes.length,
+      resolvedNamedObjectUnionType.memberTypes.length ===
+        partialNamedObjectUnionType.memberTypes.length,
     );
 
-    const caseBlocks = resolvedObjectUnionType.memberTypes.map(
-      (resolvedObjectType, objectTypeI) => {
-        return code`${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+    const caseBlocks = resolvedNamedObjectUnionType.memberTypeDescriptors.map(
+      ({ discriminantValues }, objectTypeI) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(
       code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
+    return code`switch (${variables.resolvedObjectUnion}.${resolvedNamedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 
 export namespace AbstractLazyObjectType {
-  export type ObjectTypeConstraint = ObjectType | ObjectUnionType;
+  export type ObjectTypeConstraint = ObjectType | NamedObjectUnionType;
   export type PartialTypeConstraint =
     | ObjectTypeConstraint
     | OptionType<ObjectTypeConstraint>

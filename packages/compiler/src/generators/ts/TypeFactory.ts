@@ -28,7 +28,6 @@ import { LiteralType } from "./LiteralType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { NamedUnionType } from "./NamedUnionType.js";
 import { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
@@ -347,10 +346,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -360,10 +359,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createSetType(astType.partialType) as SetType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -375,10 +374,10 @@ export class TypeFactory {
 
       partialType: this.createType(astType.partialType) as
         | ObjectType
-        | ObjectUnionType,
+        | NamedObjectUnionType,
       resolveType: this.createType(astType.resolveType) as
         | ObjectType
-        | ObjectUnionType,
+        | NamedObjectUnionType,
     });
   }
 

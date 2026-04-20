@@ -141,10 +141,11 @@ export class DefaultValueType<
       case "TermType":
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(this.defaultValueTermExpression);
+      case "AnonymousUnionType":
       case "ListType":
       case "ObjectType":
-      case "ObjectUnionType":
-      case "UnionType":
+      case "NamedObjectUnionType":
+      case "NamedUnionType":
         return Maybe.empty();
       default:
         this.itemType satisfies never;
