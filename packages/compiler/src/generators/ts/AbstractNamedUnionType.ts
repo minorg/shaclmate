@@ -155,8 +155,8 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     }
     if (this.features.has("sparql")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}sparqlConstructTriples = ${this.inlineSparqlConstructTriplesFunction};`,
-        code`export const ${syntheticNamePrefix}sparqlWherePatterns = ${this.inlineSparqlWherePatternsFunction};`,
+        code`export const ${syntheticNamePrefix}sparqlConstructTriples: ${snippets.SparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineSparqlConstructTriplesFunction};`,
+        code`export const ${syntheticNamePrefix}sparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineSparqlWherePatternsFunction};`,
       );
     }
 

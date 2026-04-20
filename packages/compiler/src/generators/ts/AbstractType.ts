@@ -288,9 +288,9 @@ export namespace AbstractType {
   }
 
   export interface DiscriminantProperty {
+    readonly descendantValues: readonly DiscriminantProperty.Value[];
     readonly name: string;
     readonly ownValues: readonly DiscriminantProperty.Value[];
-    readonly descendantValues: readonly DiscriminantProperty.Value[];
   }
 
   export namespace DiscriminantProperty {
