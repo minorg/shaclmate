@@ -2,8 +2,6 @@ import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
 import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonZodSchemaFunctionDeclaration.js";
-import { ObjectUnionType_jsonTypeAliasDeclaration } from "./_ObjectUnionType/ObjectUnionType_jsonTypeAliasDeclaration.js";
-import { ObjectUnionType_jsonZodSchemaFunctionDeclaration } from "./_ObjectUnionType/ObjectUnionType_jsonZodSchemaFunctionDeclaration.js";
 import { snippets } from "./snippets.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -32,16 +30,14 @@ ${joinCode(
     for (const namedUnionType of ast_.namedUnionTypes
       .filter((_) => _.isObjectUnionType())
       .map((astObjectUnionType) =>
-        this.typeFactory.createObjectUnionType(astObjectUnionType),
+        this.typeFactory.createNamedObjectUnionType(astObjectUnionType),
       )) {
       declarations.push(code`\
 export namespace ${namedUnionType.staticModuleName} {
 ${joinCode(
   [
-    ...ObjectUnionType_jsonTypeAliasDeclaration.bind(namedUnionType)().toList(),
-    ...ObjectUnionType_jsonZodSchemaFunctionDeclaration.bind(
-      namedUnionType,
-    )().toList(),
+    namedUnionType.jsonTypeAliasDeclaration,
+    namedUnionType.jsonZodSchemaFunctionDeclaration,
   ],
   { on: "\n\n" },
 )}

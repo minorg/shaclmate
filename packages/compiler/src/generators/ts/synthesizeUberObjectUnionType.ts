@@ -5,8 +5,8 @@ import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
+import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
@@ -14,7 +14,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
  */
 export function synthesizeUberObjectUnionType(parameters: {
   objectTypes: readonly ObjectType[];
-}): ObjectUnionType {
+}): NamedObjectUnionType {
   const objectTypes = parameters.objectTypes.filter(
     (objectType) => !objectType.extern, // && !objectType.name.startsWith(syntheticNamePrefix),
   );
@@ -52,7 +52,7 @@ export function synthesizeUberObjectUnionType(parameters: {
     }
   }
 
-  return new ObjectUnionType({
+  return new NamedObjectUnionType({
     comment: Maybe.empty(),
     features: objectTypes.reduce((features, objectType) => {
       for (const feature of objectType.features) {
@@ -62,6 +62,7 @@ export function synthesizeUberObjectUnionType(parameters: {
       return features;
     }, new Set<TsFeature>()),
     identifierType,
+    memberDiscriminantValues: [],
     label: Maybe.empty(),
     memberTypes: objectTypes,
     name: `${syntheticNamePrefix}Object`,

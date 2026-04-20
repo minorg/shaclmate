@@ -1,6 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
+import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { AbstractNamedUnionType } from "./AbstractNamedUnionType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -32,6 +32,16 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     return new AbstractType.GraphqlType(
       code`${this._name}.${syntheticNamePrefix}GraphQL`,
     );
+  }
+
+  @Memoize()
+  get identifierTypeAlias(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    return ObjectType_objectSetMethodNames.call(this);
   }
 
   protected override get staticModuleDeclarations(): readonly Code[] {

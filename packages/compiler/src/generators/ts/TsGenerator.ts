@@ -26,25 +26,28 @@ export class TsGenerator implements Generator {
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
 
-    const objectUnionTypesToposorted = ast_.namedUnionTypes
+    const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
       .filter((_) => _.isObjectUnionType())
       .map((astObjectUnionType) =>
-        this.typeFactory.createObjectUnionType(astObjectUnionType),
+        this.typeFactory.createNamedObjectUnionType(astObjectUnionType),
       );
     for (const objectType of objectTypesToposorted) {
       declarations = declarations.concat(objectType.declaration.toList());
     }
-    for (const objectUnionType of objectUnionTypesToposorted) {
-      declarations = declarations.concat(objectUnionType.declaration.toList());
+    for (const namedObjectUnionType of namedObjectUnionTypesToposorted) {
+      declarations = declarations.concat(
+        namedObjectUnionType.declaration.toList(),
+      );
     }
 
     const objectTypesNameSorted = objectTypesToposorted.toSorted(
       (left, right) => left.name.localeCompare(right.name),
     );
 
-    const objectUnionTypesNameSorted = objectUnionTypesToposorted.toSorted(
-      (left, right) => left.name.localeCompare(right.name),
-    );
+    const namedObjectUnionTypesNameSorted =
+      namedObjectUnionTypesToposorted.toSorted((left, right) =>
+        left.name.localeCompare(right.name),
+      );
 
     if (objectTypesToposorted.length > 0) {
       const uberObjectUnionType = synthesizeUberObjectUnionType({
@@ -53,20 +56,20 @@ export class TsGenerator implements Generator {
       declarations = declarations.concat(
         uberObjectUnionType.declaration.toList(),
       );
-      objectUnionTypesNameSorted.push(uberObjectUnionType);
+      namedObjectUnionTypesNameSorted.push(uberObjectUnionType);
     }
 
     declarations.push(
       ...objectSetDeclarations({
         objectTypes: objectTypesNameSorted,
-        objectUnionTypes: objectUnionTypesNameSorted,
+        namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
       }),
     );
 
     declarations.push(
       ...graphqlSchemaVariableStatement({
         objectTypes: objectTypesNameSorted,
-        objectUnionTypes: objectUnionTypesNameSorted,
+        namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
       }).toList(),
     );
 

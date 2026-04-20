@@ -1,8 +1,8 @@
 import type { Maybe } from "purify-ts";
 import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfOptions.js";
 import { imports } from "./imports.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -11,10 +11,10 @@ import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMe
 
 export function rdfjsDatasetObjectSetClassDeclaration({
   objectTypes,
-  objectUnionTypes,
+  namedObjectUnionTypes,
 }: {
   objectTypes: readonly ObjectType[];
-  objectUnionTypes: readonly ObjectUnionType[];
+  namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
   const objectTypeType = code`\
 {
@@ -56,7 +56,7 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
 
   ${joinCode(
     [
-      ...[...objectTypes, ...objectUnionTypes].flatMap(
+      ...[...objectTypes, ...namedObjectUnionTypes].flatMap(
         (objectType): readonly Code[] => {
           if (!objectType.features.has("rdf")) {
             return Object.values(
@@ -131,7 +131,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(objectType.filterFunction, objectType)}, query);
 }`);
             }
-            case "ObjectUnionType":
+            case "NamedObjectUnionType":
               return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([
@@ -245,7 +245,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
           ]
         : []),
 
-      ...(objectUnionTypes.length > 0
+      ...(namedObjectUnionTypes.length > 0
         ? [
             code`\
 protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {

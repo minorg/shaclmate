@@ -25,9 +25,10 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { NamedUnionType } from "./NamedUnionType.js";
 import { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
@@ -58,6 +59,10 @@ function tsName(name: string, options?: { synthetic?: boolean }): string {
 }
 
 export class TypeFactory {
+  private cachedNamedObjectUnionTypesByShapeIdentifier: TermMap<
+    BlankNode | NamedNode,
+    NamedObjectUnionType
+  > = new TermMap();
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
@@ -65,10 +70,6 @@ export class TypeFactory {
   private cachedObjectTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType
-  > = new TermMap();
-  private cachedObjectUnionTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    ObjectUnionType
   > = new TermMap();
 
   createObjectType(astType: ast.ObjectType): ObjectType {
@@ -222,24 +223,27 @@ export class TypeFactory {
     return objectType;
   }
 
-  createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
+  createNamedObjectUnionType(
+    astType: ast.ObjectUnionType,
+  ): NamedObjectUnionType {
     {
-      const cachedObjectUnionType =
-        this.cachedObjectUnionTypesByShapeIdentifier.get(
+      const cachedNamedObjectUnionType =
+        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
           astType.shapeIdentifier,
         );
-      if (cachedObjectUnionType) {
-        return cachedObjectUnionType;
+      if (cachedNamedObjectUnionType) {
+        return cachedNamedObjectUnionType;
       }
     }
 
-    const objectUnionType = new ObjectUnionType({
+    const namedObjectUnionType = new NamedObjectUnionType({
       comment: astType.comment,
       features: astType.tsFeatures,
       identifierType: this.createIdentifierType(
         ast.ObjectCompoundType.identifierType(astType),
       ),
       label: astType.label,
+      memberDiscriminantValues: [],
       memberTypes: ast.ObjectCompoundType.memberObjectTypes(astType).map(
         (objectType) => this.createObjectType(objectType),
       ),
@@ -247,11 +251,12 @@ export class TypeFactory {
       recursive: astType.recursive,
     });
 
-    this.cachedObjectUnionTypesByShapeIdentifier.set(
+    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
-      objectUnionType,
+      namedObjectUnionType,
     );
-    return objectUnionType;
+
+    return namedObjectUnionType;
   }
 
   createType(
@@ -599,7 +604,7 @@ export class TypeFactory {
 
   private createUnionType(astType: ast.UnionType) {
     if (astType.isObjectUnionType()) {
-      return this.createObjectUnionType(astType);
+      return this.createNamedObjectUnionType(astType);
     }
 
     return astType.name

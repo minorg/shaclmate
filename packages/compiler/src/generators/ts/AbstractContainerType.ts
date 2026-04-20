@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { AnonymousUnionType } from "./AnonymousUnionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -14,9 +15,9 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { UnionType } from "./NamedUnionType.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
+import type { NamedUnionType } from "./NamedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
@@ -77,6 +78,7 @@ export namespace AbstractContainerType {
   export type GraphqlType = AbstractType.GraphqlType;
 
   export type ItemType =
+    | AnonymousUnionType
     | BigDecimalType
     | BigIntType
     | BlankNodeType
@@ -89,14 +91,15 @@ export namespace AbstractContainerType {
     | IriType
     | ListType<ListType.ItemType>
     | LiteralType
+    | NamedObjectUnionType
+    | NamedUnionType
     | ObjectType
-    | ObjectUnionType
     | StringType
-    | TermType
-    | UnionType;
+    | TermType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
+      case "AnonymousUnionType":
       case "BigDecimalType":
       case "BigIntType":
       case "BlankNodeType":
@@ -109,11 +112,11 @@ export namespace AbstractContainerType {
       case "IriType":
       case "ListType":
       case "LiteralType":
+      case "NamedObjectUnionType":
+      case "NamedUnionType":
       case "ObjectType":
-      case "ObjectUnionType":
       case "StringType":
       case "TermType":
-      case "UnionType":
         return true;
       case "DefaultValueType":
       case "LazyObjectOptionType":

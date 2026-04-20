@@ -6,6 +6,7 @@ import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { AnonymousUnionType } from "./AnonymousUnionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -18,9 +19,9 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { UnionType } from "./NamedUnionType.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
+import type { NamedUnionType } from "./NamedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
 import { snippets } from "./snippets.js";
@@ -166,6 +167,7 @@ export class ListType<
 
 export namespace ListType {
   export type ItemType =
+    | AnonymousUnionType
     | BigDecimalType
     | BigIntType
     | BlankNodeType
@@ -177,14 +179,15 @@ export namespace ListType {
     | IntType
     | IriType
     | LiteralType
+    | NamedObjectUnionType
+    | NamedUnionType
     | ObjectType
-    | ObjectUnionType
     | StringType
-    | TermType
-    | UnionType;
+    | TermType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
+      case "AnonymousUnionType":
       case "BigDecimalType":
       case "BigIntType":
       case "BlankNodeType":
@@ -196,11 +199,11 @@ export namespace ListType {
       case "IriType":
       case "IntType":
       case "LiteralType":
+      case "NamedObjectUnionType":
+      case "NamedUnionType":
       case "ObjectType":
-      case "ObjectUnionType":
       case "StringType":
       case "TermType":
-      case "UnionType":
         return true;
       case "DefaultValueType":
       case "LazyObjectOptionType":

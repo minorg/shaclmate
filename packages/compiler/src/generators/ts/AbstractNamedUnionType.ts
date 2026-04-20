@@ -15,8 +15,8 @@ import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractNamedUnionType<
   MemberTypeT extends Type,
 > extends AbstractUnionType<MemberTypeT> {
-  protected readonly features: ReadonlySet<TsFeature>;
   protected readonly _name: string;
+  readonly features: ReadonlySet<TsFeature>;
 
   constructor({
     features,
@@ -40,7 +40,7 @@ export abstract class AbstractNamedUnionType<
     const staticModuleDeclarations = this.staticModuleDeclarations;
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
-export namespace ${def(this._name)} {
+export namespace ${def(this.staticModuleName)} {
 ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
 }`);
     }
@@ -51,19 +51,19 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   @Memoize()
   override get equalsFunction(): Code {
     if (this.features.has("equals")) {
-      return code`${this._name}.${syntheticNamePrefix}equals`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
     }
     return this.inlineEqualsFunction;
   }
 
   @Memoize()
   override get filterFunction(): Code {
-    return code`${this._name}.${syntheticNamePrefix}filter`;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this._name}.${syntheticNamePrefix}Filter`;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
   }
 
   @Memoize()
@@ -74,7 +74,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   @Memoize()
   override get sparqlConstructTriplesFunction(): Code {
     if (this.features.has("sparql")) {
-      return code`${this._name}.${syntheticNamePrefix}sparqlConstructTriples`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
     }
     return this.inlineSparqlConstructTriplesFunction;
   }
@@ -82,9 +82,21 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
     if (this.features.has("sparql")) {
-      return code`${this._name}.${syntheticNamePrefix}sparqlWherePatterns`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns`;
     }
     return this.inlineSparqlWherePatternsFunction;
+  }
+
+  get staticModuleName(): string {
+    return this._name;
+  }
+
+  get jsonTypeAliasDeclaration(): Code {
+    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType().requiredName}`;
+  }
+
+  get jsonZodSchemaFunctionDeclaration(): Code {
+    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema()}`;
   }
 
   protected get staticModuleDeclarations(): readonly Code[] {
@@ -106,9 +118,9 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     }
     if (this.features.has("json")) {
       staticModuleDeclarations.push(
-        code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType().requiredName}`,
+        this.jsonTypeAliasDeclaration,
         code`export const ${syntheticNamePrefix}fromJson = (json: ${syntheticNamePrefix}Json) => ${this.inlineFromJsonExpression({ variables: { value: code`json` } })}`,
-        code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema()}`,
+        this.jsonZodSchemaFunctionDeclaration,
         code`export const ${syntheticNamePrefix}toJson = (value: ${this._name}) => ${this.inlineToJsonExpression({ variables: { value: code`value` } })}`,
       );
     }
@@ -155,7 +167,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     if (this.features.has("json")) {
-      return code`${this._name}.${syntheticNamePrefix}fromJson(${variables.value})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value})`;
     }
     return this.inlineFromJsonExpression({ variables });
   }
@@ -164,7 +176,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
     if (this.features.has("rdf")) {
-      return code`${this._name}.${syntheticNamePrefix}fromRdf(${variables})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdf(${variables})`;
     }
     return this.inlineFromRdfExpression({ variables });
   }
@@ -175,7 +187,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     if (this.features.has("hash")) {
       return [
-        code`${this._name}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+        code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
       ];
     }
     return this.inlineHashStatements({ depth, variables });
@@ -185,7 +197,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   override jsonType(): AbstractType.JsonType {
     if (this.features.has("json")) {
       return new AbstractType.JsonType(
-        `${this._name}.${syntheticNamePrefix}Json`,
+        `${this.staticModuleName}.${syntheticNamePrefix}Json`,
       );
     }
     return this.inlineJsonType();
@@ -195,9 +207,9 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     context,
   }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
     if (this.features.has("json")) {
-      const expression = code`${this._name}.${syntheticNamePrefix}jsonZodSchema()`;
+      const expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
       if (context === "property" && this.recursive) {
-        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this._name}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
       }
       return expression;
     }
@@ -208,7 +220,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     if (this.features.has("json")) {
-      return code`${this._name}.${syntheticNamePrefix}toJson(${variables.value})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
     }
     return this.inlineToJsonExpression({ variables });
   }
@@ -217,7 +229,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
     if (this.features.has("rdf")) {
-      return code`${this._name}.${syntheticNamePrefix}toRdf(${variables})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables})`;
     }
     return this.inlineToRdfExpression({ variables });
   }

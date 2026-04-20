@@ -22,7 +22,7 @@ export abstract class AbstractUnionType<
 > extends AbstractType {
   private readonly discriminant: Discriminant;
 
-  protected readonly memberTypes: readonly MemberTypeT[];
+  readonly memberTypes: readonly MemberTypeT[];
 
   override readonly recursive: boolean;
 
