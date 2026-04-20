@@ -3,7 +3,7 @@ import { Maybe } from "purify-ts";
 import type { AbstractType } from "./AbstractType.js";
 import { AbstractUnionType } from "./AbstractUnionType.js";
 import type { Type } from "./Type.js";
-import type { Code } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class AnonymousUnionType extends AbstractUnionType<Type> {
   override readonly declaration: Maybe<Code> = Maybe.empty();
@@ -38,16 +38,16 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     return this.inlineSparqlWherePatternsFunction;
   }
 
-  override fromJsonExpression(
-    parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
-  ): Code {
-    return this.inlineFromJsonExpression(parameters);
+  override fromJsonExpression({
+    variables,
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
+    return code`${this.inlineFromJsonFunction}(${variables})`;
   }
 
-  override fromRdfExpression(
-    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
-  ): Code {
-    return this.inlineFromRdfExpression(parameters);
+  override fromRdfExpression({
+    variables,
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
+    return code`${this.inlineFromRdfFunction}(${variables})`;
   }
 
   override graphqlResolveExpression(
@@ -63,24 +63,24 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
   }
 
   override jsonType(): AbstractType.JsonType {
-    return this.inlineJsonType();
+    return this.inlineJsonType;
   }
 
   override jsonZodSchema(
     _parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
   ): Code {
-    return this.inlineJsonZodSchema();
+    return this.inlineJsonZodSchema;
   }
 
-  override toJsonExpression(
-    parameters: Parameters<AbstractType["toJsonExpression"]>[0],
-  ): Code {
-    return this.inlineToJsonExpression(parameters);
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
+    return code`${this.inlineToJsonFunction}(${variables})`;
   }
 
-  override toRdfExpression(
-    parameters: Parameters<AbstractType["toRdfExpression"]>[0],
-  ): Code {
-    return this.inlineToRdfExpression(parameters);
+  override toRdfExpression({
+    variables,
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+    return code`${this.inlineToRdfFunction}(${variables})`;
   }
 }

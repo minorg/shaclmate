@@ -2,8 +2,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/TsFeature.js";
-import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfOptions.js";
-import { snippets_ToRdfOptions } from "./_snippets/snippets_ToRdfOptions.js";
 import { AbstractType } from "./AbstractType.js";
 import { AbstractUnionType } from "./AbstractUnionType.js";
 import { imports } from "./imports.js";
@@ -92,11 +90,11 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   }
 
   get jsonTypeAliasDeclaration(): Code {
-    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType().requiredName}`;
+    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType.name}`;
   }
 
   get jsonZodSchemaFunctionDeclaration(): Code {
-    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema()}`;
+    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema}`;
   }
 
   protected get staticModuleDeclarations(): readonly Code[] {
@@ -119,38 +117,15 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("json")) {
       staticModuleDeclarations.push(
         this.jsonTypeAliasDeclaration,
-        code`export const ${syntheticNamePrefix}fromJson = (json: ${syntheticNamePrefix}Json) => ${this.inlineFromJsonExpression({ variables: { value: code`json` } })}`,
+        code`export const ${syntheticNamePrefix}fromJson = ${this.inlineFromJsonFunction}`,
         this.jsonZodSchemaFunctionDeclaration,
-        code`export const ${syntheticNamePrefix}toJson = (value: ${this._name}) => ${this.inlineToJsonExpression({ variables: { value: code`value` } })}`,
+        code`export const ${syntheticNamePrefix}toJson = ${this.inlineToJsonFunction}`,
       );
     }
     if (this.features.has("rdf")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}fromRdf = (parameters: ${snippets_FromRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>; }) => ${this.inlineFromRdfExpression(
-          {
-            variables: {
-              context: code`parameters.context`,
-              graph: code`parameters.graph`,
-              ignoreRdfType: false,
-              objectSet: code`parameters.objectSet`,
-              preferredLanguages: code`parameters.preferredLanguages`,
-              propertyPath: code`parameters.propertyPath`,
-              resource: code`parameters.resource`,
-              resourceValues: code`parameters.resourceValues`,
-            },
-          },
-        )}`,
-        code`export const ${syntheticNamePrefix}toRdf = (parameters: ${snippets_ToRdfOptions} & { propertyPath: ${imports.PropertyPath}; resource: ${imports.Resource}; resourceSet: ${imports.ResourceSet}; value: ${this._name}; }) => ${this.inlineToRdfExpression(
-          {
-            variables: {
-              graph: code`parameters.graph`,
-              propertyPath: code`parameters.propertyPath`,
-              resource: code`parameters.resource`,
-              resourceSet: code`parameters.resourceSet`,
-              value: code`parameters.value`,
-            },
-          },
-        )}`,
+        code`export const ${syntheticNamePrefix}fromRdf: ${snippets.FromRdfFunction}<${this.name}> = ${this.inlineFromRdfFunction}`,
+        code`export const ${syntheticNamePrefix}toRdf: ${snippets.ToRdfFunction}<${this.name}> = ${this.inlineToRdfFunction}`,
       );
     }
     if (this.features.has("sparql")) {
@@ -169,7 +144,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("json")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value})`;
     }
-    return this.inlineFromJsonExpression({ variables });
+    return code`${this.inlineFromJsonFunction}(${variables.value})`;
   }
 
   override fromRdfExpression({
@@ -178,7 +153,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("rdf")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdf(${variables})`;
     }
-    return this.inlineFromRdfExpression({ variables });
+    return code`${this.inlineFromRdfFunction}(${variables})`;
   }
 
   override hashStatements({
@@ -200,7 +175,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
         `${this.staticModuleName}.${syntheticNamePrefix}Json`,
       );
     }
-    return this.inlineJsonType();
+    return this.inlineJsonType;
   }
 
   override jsonZodSchema({
@@ -213,7 +188,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
       }
       return expression;
     }
-    return this.inlineJsonZodSchema();
+    return this.inlineJsonZodSchema;
   }
 
   override toJsonExpression({
@@ -222,7 +197,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("json")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
     }
-    return this.inlineToJsonExpression({ variables });
+    return code`${this.inlineToJsonFunction}(${variables.value})`;
   }
 
   override toRdfExpression({
@@ -231,6 +206,6 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("rdf")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables})`;
     }
-    return this.inlineToRdfExpression({ variables });
+    return code`${this.inlineToRdfFunction}(${variables})`;
   }
 }

@@ -21,6 +21,8 @@ import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBig
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
+import { snippets_FromRdfFunction } from "./_snippets/snippets_FromRdfFunction.js";
+import { snippets_FromRdfFunctionParameters } from "./_snippets/snippets_FromRdfFunctionParameters.js";
 import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfOptions.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
 import { snippets_filterBigDecimal } from "./_snippets/snippets_filterBigDecimal.js";
@@ -95,6 +97,8 @@ import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
+import { snippets_ToRdfFunction } from "./_snippets/snippets_ToRdfFunction.js";
+import { snippets_ToRdfFunctionParameters } from "./_snippets/snippets_ToRdfFunctionParameters.js";
 import { snippets_ToRdfOptions } from "./_snippets/snippets_ToRdfOptions.js";
 import { snippets_ToRdfValue } from "./_snippets/snippets_ToRdfValue.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
@@ -138,6 +142,8 @@ export const snippets = {
   filterNumeric: snippets_filterNumeric,
   filterString: snippets_filterString,
   filterTerm: snippets_filterTerm,
+  FromRdfFunction: snippets_FromRdfFunction,
+  FromRdfFunctionParameters: snippets_FromRdfFunctionParameters,
   FromRdfOptions: snippets_FromRdfOptions,
   fromRdfLanguageIn: snippets_fromRdfLanguageIn,
   fromRdfPreferredLanguages: snippets_fromRdfPreferredLanguages,
@@ -207,6 +213,8 @@ export const snippets = {
   TermSchema: snippets_TermSchema,
   termSchemaSparqlPatterns: snippets_termSchemaSparqlPatterns,
   termSparqlWherePatterns: snippets_termSparqlWherePatterns,
+  ToRdfFunction: snippets_ToRdfFunction,
+  ToRdfFunctionParameters: snippets_ToRdfFunctionParameters,
   ToRdfOptions: snippets_ToRdfOptions,
   ToRdfValue: snippets_ToRdfValue,
   UnwrapR: snippets_UnwrapR,

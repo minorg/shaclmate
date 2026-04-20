@@ -80,7 +80,7 @@ export function ObjectType_fromJsonFunctionDeclarations(
   const functionDeclarations: Code[] = [];
 
   functionDeclarations.push(code`\
-export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${imports.Either}<${imports.z}.ZodError, ${joinCode(propertiesFromJsonReturnType, { on: " & " })}> {
+export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${imports.Either}<Error, ${joinCode(propertiesFromJsonReturnType, { on: " & " })}> {
 ${joinCode(propertiesFromJsonStatements)}
 }`);
 
@@ -93,7 +93,7 @@ ${joinCode(propertiesFromJsonStatements)}
     propertiesFromJsonExpression = code`${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
   }
   functionDeclarations.push(code`\
-export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<${imports.z}.ZodError, ${this.name}> {
+export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<Error, ${this.name}> {
   return ${propertiesFromJsonExpression};
 }`);
 
