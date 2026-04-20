@@ -2,11 +2,11 @@ import type { NamedNode } from "@rdfjs/types";
 
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
+import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
@@ -37,7 +37,6 @@ import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/Obje
 import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfFunctionOrMethodDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
-import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_ObjectType/TypeDiscriminantProperty.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -53,19 +52,21 @@ export class ObjectType extends AbstractType {
 
   protected readonly toRdfTypes: readonly NamedNode[];
 
+  protected readonly _discriminantProperty: ObjectType.DiscriminantProperty;
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  readonly identifierProperty: ObjectType.IdentifierProperty;
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "ObjectType";
   override readonly name: string;
+  override readonly recursive: boolean;
   readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
-  override readonly recursive: boolean;
 
   constructor({
     abstract,
@@ -126,19 +127,6 @@ export class ObjectType extends AbstractType {
     this.staticModuleName = staticModuleName;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
-  }
-
-  @Memoize()
-  get _discriminantProperty(): AbstractType.DiscriminantProperty {
-    const discriminantProperty = this.properties.find(
-      (property) => property instanceof ObjectType.TypeDiscriminantProperty,
-    );
-    invariant(discriminantProperty);
-    return {
-      name: discriminantProperty.name,
-      ownValues: discriminantProperty.type.ownValues,
-      descendantValues: discriminantProperty.type.descendantValues,
-    };
   }
 
   @Memoize()
@@ -261,7 +249,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
-    return Maybe.of(this._discriminantProperty);
+    return Maybe.of({
+      name: this._discriminantProperty.name,
+      ownValues: this._discriminantProperty.type.ownValues,
+      descendantValues: this._discriminantProperty.type.descendantValues,
+    });
   }
 
   @Memoize()
@@ -303,15 +295,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return new AbstractType.GraphqlType(
       code`${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
-  }
-
-  @Memoize()
-  get identifierProperty(): ObjectType.IdentifierProperty {
-    const identifierProperty = this.properties.find(
-      (property) => property.kind === "IdentifierProperty",
-    );
-    invariant(identifierProperty);
-    return identifierProperty;
   }
 
   @Memoize()
@@ -535,6 +518,6 @@ export namespace ObjectType {
   export type Property = _Property;
   export const ShaclProperty = _ShaclProperty;
   export type ShaclProperty<TypeT extends Type> = _ShaclProperty<TypeT>;
-  export const TypeDiscriminantProperty = _TypeDiscriminantProperty;
-  export type TypeDiscriminantProperty = _TypeDiscriminantProperty;
+  export const DiscriminantProperty = _DiscriminantProperty;
+  export type DiscriminantProperty = _DiscriminantProperty;
 }

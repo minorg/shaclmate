@@ -133,34 +133,29 @@ export class TypeFactory {
             }),
           );
 
-        // Type discriminant property
-        const typeDiscriminantOwnValue = !astType.abstract
+        // Discriminant property
+        const discriminantOwnValue = !astType.abstract
           ? objectType.discriminantValue
           : undefined;
-        const typeDiscriminantDescendantValues = new Set<string>();
+        const discriminantDescendantValues = new Set<string>();
         for (const descendantObjectType of objectType.descendantObjectTypes) {
           if (!descendantObjectType.abstract) {
-            typeDiscriminantDescendantValues.add(
+            discriminantDescendantValues.add(
               descendantObjectType.discriminantValue,
             );
           }
         }
-        if (
-          typeDiscriminantOwnValue ||
-          typeDiscriminantDescendantValues.size > 0
-        ) {
+        if (discriminantOwnValue || discriminantDescendantValues.size > 0) {
           properties.splice(
             0,
             0,
-            new ObjectType.TypeDiscriminantProperty({
+            new ObjectType.DiscriminantProperty({
               name: `${syntheticNamePrefix}type`,
               objectType,
-              type: new ObjectType.TypeDiscriminantProperty.Type({
-                descendantValues: [...typeDiscriminantDescendantValues].sort(),
+              type: new ObjectType.DiscriminantProperty.Type({
+                descendantValues: [...discriminantDescendantValues].sort(),
                 mutable: false,
-                ownValues: typeDiscriminantOwnValue
-                  ? [typeDiscriminantOwnValue]
-                  : [],
+                ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
               }),
               visibility: "public",
             }),

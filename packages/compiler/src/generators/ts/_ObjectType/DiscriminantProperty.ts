@@ -7,15 +7,15 @@ import { snippets } from "../snippets.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
-export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantProperty.Type> {
+export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
   override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
   override readonly equalsFunction = Maybe.of(code`${snippets.strictEquals}`);
-  override readonly filterProperty: AbstractProperty<TypeDiscriminantProperty.Type>["filterProperty"] =
+  override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly getAccessorDeclaration: Maybe<Code> = Maybe.empty();
-  override readonly graphqlField: AbstractProperty<TypeDiscriminantProperty.Type>["graphqlField"] =
+  override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
-  override readonly kind = "TypeDiscriminantProperty";
+  override readonly kind = "DiscriminantProperty";
   override readonly mutable = false;
   override readonly recursive = false;
 
@@ -23,7 +23,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     type,
     ...superParameters
   }: {
-    type: TypeDiscriminantProperty.Type;
+    type: DiscriminantProperty.Type;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super({ ...superParameters, type });
     invariant(this.visibility === "public");
@@ -49,7 +49,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   }
 
   @Memoize()
-  override get jsonZodSchema(): AbstractProperty<TypeDiscriminantProperty.Type>["jsonZodSchema"] {
+  override get jsonZodSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonZodSchema"] {
     return Maybe.of({
       key: this.name,
       schema:
@@ -100,7 +100,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override hashStatements({
     variables,
   }: Parameters<
-    AbstractProperty<TypeDiscriminantProperty.Type>["hashStatements"]
+    AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
     return [code`${variables.hasher}.update(${variables.value});`];
   }
@@ -108,7 +108,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    AbstractProperty<TypeDiscriminantProperty.Type>["jsonUiSchemaElement"]
+    AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return Maybe.of(
@@ -121,7 +121,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   }
 
   override sparqlWherePatternsExpression(): ReturnType<
-    AbstractProperty<TypeDiscriminantProperty.Type>["sparqlWherePatternsExpression"]
+    AbstractProperty<DiscriminantProperty.Type>["sparqlWherePatternsExpression"]
   > {
     return Maybe.empty();
   }
@@ -129,7 +129,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override toJsonObjectMemberExpression({
     variables,
   }: Parameters<
-    AbstractProperty<TypeDiscriminantProperty.Type>["toJsonObjectMemberExpression"]
+    AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`${this.name}: ${variables.value}`);
   }
@@ -139,7 +139,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   }
 }
 
-export namespace TypeDiscriminantProperty {
+export namespace DiscriminantProperty {
   export class Type {
     readonly filterFunction = code`nonextant`;
     readonly mutable: boolean;
