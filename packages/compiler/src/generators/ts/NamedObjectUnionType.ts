@@ -1,4 +1,5 @@
 import { Maybe } from "purify-ts";
+import { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
 import { AbstractNamedUnionType } from "./AbstractNamedUnionType.js";
@@ -9,6 +10,7 @@ import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
@@ -42,6 +44,16 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     return ObjectType_objectSetMethodNames.call(this);
+  }
+
+  @Memoize()
+  override get schema(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}schema`;
+  }
+
+  @Memoize()
+  override get schemaType(): Code {
+    return code`typeof ${this.schema}`;
   }
 
   protected override get staticModuleDeclarations(): readonly Code[] {
@@ -81,12 +93,68 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     }`);
     }
 
+    staticModuleDeclarations.push(this.schemaVariableStatement);
+
     return staticModuleDeclarations;
   }
 
   @Memoize()
   private get concreteMemberTypes(): readonly ObjectType[] {
     return this.memberTypes.filter((memberType) => !memberType.abstract);
+  }
+
+  private get schemaVariableStatement(): Code {
+    const commonPropertiesByName: Record<
+      string,
+      {
+        memberTypesWithProperty: boolean[];
+        property: ObjectType.ShaclProperty<Type>;
+      }
+    > = {};
+
+    this.memberTypes.forEach((memberType, memberTypeI) => {
+      for (const memberTypeProperty of memberType.ownProperties.concat(
+        memberType.ancestorObjectTypes.flatMap(
+          (ancestorObjectType) => ancestorObjectType.ownProperties,
+        ),
+      )) {
+        if (memberTypeProperty.kind !== "ShaclProperty") {
+          continue;
+        }
+        let commonProperty = commonPropertiesByName[memberTypeProperty.name];
+        if (commonProperty) {
+          if (
+            PropertyPath.equals(
+              commonProperty.property.path,
+              memberTypeProperty.path,
+            )
+          ) {
+            commonProperty.memberTypesWithProperty[memberTypeI] = true;
+          }
+        } else {
+          commonPropertiesByName[memberTypeProperty.name] = commonProperty = {
+            memberTypesWithProperty: new Array<boolean>(
+              this.memberTypes.length,
+            ).fill(false),
+            property: memberTypeProperty,
+          };
+          commonProperty.memberTypesWithProperty[memberTypeI] = true;
+        }
+      }
+    });
+
+    const propertiesObject: Code[] = [];
+    for (const name of Object.keys(commonPropertiesByName).toSorted()) {
+      const { memberTypesWithProperty, property } =
+        commonPropertiesByName[name];
+      if (!memberTypesWithProperty.every((value) => value)) {
+        continue;
+      }
+      propertiesObject.push(code`${property.name}: ${property.schema}`);
+    }
+
+    return code`\
+export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(propertiesObject, { on: ", " })} } } as const;`;
   }
 
   override graphqlResolveExpression({
