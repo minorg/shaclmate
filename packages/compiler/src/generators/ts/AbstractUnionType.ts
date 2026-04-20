@@ -304,8 +304,15 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 ((value: ${this.jsonType().name}): ${imports.Either}<Error, ${this.name}> => {
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
-    ({ jsonTypeCheck, memberType, payload }) =>
-      code`if (${jsonTypeCheck(code`value`)}) { return ${memberType.fromJsonExpression({ variables: { value: payload(code`value`) } })}; }`,
+    ({ jsonTypeCheck, memberType, primaryDiscriminantValue, payload }) => {
+      let memberTypeFromJsonExpression = memberType.fromJsonExpression({
+        variables: { value: payload(code`value`) },
+      });
+      if (this.discriminant.kind === "envelope") {
+        memberTypeFromJsonExpression = code`{ ${this.discriminant.name}: "${primaryDiscriminantValue}" as const, value: ${memberTypeFromJsonExpression} }`;
+      }
+      return code`if (${jsonTypeCheck(code`value`)}) { return ${imports.Right}(${memberTypeFromJsonExpression}); }`;
+    },
   ),
 )}
 
@@ -490,18 +497,26 @@ unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...ot
 ((value: ${this.name}): ${this.jsonType().name} => {
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
-    ({ memberType, payload, typeCheck }) =>
-      code`if (${typeCheck(code`value`)}) { return ${memberType.toJsonExpression({ variables: { value: payload(code`value`) } })}; }`,
+    ({ memberType, payload, primaryDiscriminantValue, typeCheck }) => {
+      let memberTypeToJsonExpression = memberType.toJsonExpression({
+        includeDiscriminantProperty: this.discriminant.kind === "inline",
+        variables: { value: payload(code`value`) },
+      });
+      if (this.discriminant.kind === "envelope") {
+        memberTypeToJsonExpression = code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${primaryDiscriminantValue}" as const, value: ${memberTypeToJsonExpression} }`;
+      }
+      return code`if (${typeCheck(code`value`)}) { return ${memberTypeToJsonExpression}; }`;
+    },
   ),
 )}
 
-  throw new Error("unable to serialize JSON");
+  throw new Error("unable to serialize to JSON");
 })`;
   }
 
   protected get inlineToRdfFunction(): Code {
     return code`\
-((parameters: ${snippets.ToRdfFunctionParameters}): ${snippets.ToRdfValue} => {
+((parameters: ${snippets.ToRdfFunctionParameters}): ${snippets.ToRdfValue}[] => {
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ memberType, payload, typeCheck }) =>
@@ -519,7 +534,7 @@ ${joinCode(
   ),
 )}
 
-  throw new Error("unable to serialize RDF");
+  throw new Error("unable to serialize to RDF");
 })`;
   }
 

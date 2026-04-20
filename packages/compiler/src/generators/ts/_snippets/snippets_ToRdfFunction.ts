@@ -5,5 +5,5 @@ import { snippets_ToRdfValue } from "./snippets_ToRdfValue.js";
 
 export const snippets_ToRdfFunction = conditionalOutput(
   `${syntheticNamePrefix}ToRdfFunction`,
-  code`type ${syntheticNamePrefix}ToRdfFunction<T> = (parameters: ${snippets_ToRdfFunctionParameters}<T>) => ${snippets_ToRdfValue};`,
+  code`type ${syntheticNamePrefix}ToRdfFunction<T> = (parameters: ${snippets_ToRdfFunctionParameters}<T>) => ${snippets_ToRdfValue}[];`,
 );
