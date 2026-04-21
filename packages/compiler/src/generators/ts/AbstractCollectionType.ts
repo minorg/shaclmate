@@ -1,11 +1,6 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { snippets_isReadonlyBigIntArray } from "./_snippets/snippets_isReadonlyBigIntArray.js";
-import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
-import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
-import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
-import { snippets_isReadonlyStringArray } from "./_snippets/snippets_isReadonlyStringArray.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
@@ -119,15 +114,15 @@ export abstract class AbstractCollectionType<
             sourceTypeCheckExpression: (value) => {
               switch (itemTypeof as Typeof) {
                 case "bigint":
-                  return code`${snippets_isReadonlyBigIntArray}(${value})`;
+                  return code`${snippets.isReadonlyBigIntArray}(${value})`;
                 case "boolean":
-                  return code`${snippets_isReadonlyBooleanArray}(${value})`;
+                  return code`${snippets.isReadonlyBooleanArray}(${value})`;
                 case "number":
-                  return code`${snippets_isReadonlyNumberArray}(${value})`;
+                  return code`${snippets.isReadonlyNumberArray}(${value})`;
                 case "object":
-                  return code`${snippets_isReadonlyObjectArray}(${value})`;
+                  return code`${snippets.isReadonlyObjectArray}(${value})`;
                 case "string":
-                  return code`${snippets_isReadonlyStringArray}(${value})`;
+                  return code`${snippets.isReadonlyStringArray}(${value})`;
                 case "function":
                 case "symbol":
                 case "undefined":

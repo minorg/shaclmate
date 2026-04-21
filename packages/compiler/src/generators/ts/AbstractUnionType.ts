@@ -320,23 +320,25 @@ ${joinCode(
 })`;
   }
 
-  protected get inlineFromRdfFunction(): Code {
-    const variables: Parameters<
-      AbstractType["fromRdfResourceValuesExpression"]
-    >[0]["variables"] = {
-      context: code`parameters.context`,
-      graph: code`parameters.graph`,
+  protected get inlineFromRdfResourceValuesFunction(): Code {
+    const variables: Omit<
+      Parameters<
+        AbstractType["fromRdfResourceValuesExpression"]
+      >[0]["variables"],
+      "resourceValues"
+    > = {
+      context: code`options.context`,
+      graph: code`options.graph`,
       ignoreRdfType: false,
-      objectSet: code`parameters.objectSet`,
-      preferredLanguages: code`parameters.preferredLanguages`,
-      propertyPath: code`parameters.propertyPath`,
-      resource: code`parameters.resource`,
-      resourceValues: code`parameters.resourceValues`,
+      objectSet: code`options.objectSet`,
+      preferredLanguages: code`options.preferredLanguages`,
+      propertyPath: code`options.propertyPath`,
+      resource: code`options.resource`,
     };
 
     return code`\
-((parameters: ${snippets.FromRdfFunctionParameters}): ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>> => 
-    ${variables.resourceValues}.chain(values => values.chainMap(value => {
+(((values, options) =>
+    values.chain(values => values.chainMap(value => {
       const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.concreteMemberTypeDescriptors.reduce(
         (expression, { memberType, primaryDiscriminantValue }) => {
@@ -360,7 +362,7 @@ ${joinCode(
         null as Code | null,
       )!}.chain(values => values.head());
     }))
-)`;
+) satisfies ${snippets.FromRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   @Memoize()

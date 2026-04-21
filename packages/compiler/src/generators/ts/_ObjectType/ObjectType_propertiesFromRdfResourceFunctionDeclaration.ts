@@ -7,7 +7,7 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function ObjectType_propertiesFromRdfFunctionDeclaration(
+export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("rdf")) {
@@ -20,17 +20,17 @@ export function ObjectType_propertiesFromRdfFunctionDeclaration(
   const returnType: Code[] = [];
 
   const variables = {
-    context: code`${syntheticNamePrefix}parameters.context`,
-    graph: code`${syntheticNamePrefix}parameters.graph`,
-    ignoreRdfType: code`${syntheticNamePrefix}parameters.ignoreRdfType`,
-    objectSet: code`${syntheticNamePrefix}parameters.objectSet`,
-    preferredLanguages: code`${syntheticNamePrefix}parameters.preferredLanguages`,
-    resource: code`${syntheticNamePrefix}parameters.resource`,
+    context: code`${syntheticNamePrefix}options.context`,
+    graph: code`${syntheticNamePrefix}options.graph`,
+    ignoreRdfType: code`${syntheticNamePrefix}options.ignoreRdfType`,
+    objectSet: code`${syntheticNamePrefix}options.objectSet`,
+    preferredLanguages: code`${syntheticNamePrefix}options.preferredLanguages`,
+    resource: code`${syntheticNamePrefix}resource`,
   };
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${syntheticNamePrefix}parameters, ignoreRdfType: true })`,
+      expression: code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf(${variables.resource}, { ...${syntheticNamePrefix}options, ignoreRdfType: true })`,
       variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
     });
     initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
@@ -116,7 +116,7 @@ export function ObjectType_propertiesFromRdfFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${snippets.PropertiesFromRdfParameters}): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
+const ${syntheticNamePrefix}propertiesFromRdfResource: ${snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${syntheticNamePrefix}options) => {
 ${joinCode(statements)}
 }`);
 }

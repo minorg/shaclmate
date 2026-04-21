@@ -1,5 +1,4 @@
 import type { Maybe } from "purify-ts";
-import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { imports } from "./imports.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -19,7 +18,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
   const objectTypeType = code`\
 {
   ${syntheticNamePrefix}filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options?: ${snippets_FromRdfOptions}) => ${imports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<ObjectT>;
   ${syntheticNamePrefix}fromRdfTypes: readonly ${imports.NamedNode}[]
 }`;
 
@@ -164,7 +163,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
 
-  const fromRdfOptions: ${snippets_FromRdfOptions} = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
+  const fromRdfResourceOptions: Parameters<${snippets.FromRdfResourceFunction}<${typeParameters.ObjectT}>>[1] = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
 
   let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
   const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
@@ -207,7 +206,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
       identifierSet.add(quad.subject);
       const resource = resourceSet.resource(quad.subject);
       // Eagerly eliminate the majority of resources that won't match the object type
-      objectType.${syntheticNamePrefix}fromRdf(resource, fromRdfOptions).ifRight(object => {
+      objectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions).ifRight(object => {
         resources.push({ object, resource });
       });
     }
@@ -222,7 +221,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   const objects: ObjectT[] = [];
   for (let { object, resource } of resources) {
     if (!object) {
-      const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, fromRdfOptions);
+      const objectEither = objectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions);
       if (objectEither.isLeft()) {
         return objectEither;
       }
@@ -257,7 +256,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
 
-  const fromRdfOptions: ${snippets_FromRdfOptions} = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
+  const fromRdfResourceOptions: Parameters<${snippets.FromRdfResourceFunction}<${typeParameters.ObjectT}>>[1] = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
 
   let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
   const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
@@ -303,7 +302,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
       // Eagerly eliminate the majority of resources that won't match the object types
       const resource = resourceSet.resource(quad.subject);
       for (const objectType of objectTypes) {
-        if (objectType.${syntheticNamePrefix}fromRdf(resource, fromRdfOptions).ifRight(object => {
+        if (objectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions).ifRight(object => {
           resources.push({ object, objectType, resource });
         }).isRight()) {
           break;
@@ -323,11 +322,11 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     if (!object) {
       let objectEither: ${imports.Either}<Error, ObjectT>;
       if (objectType) {
-        objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, fromRdfOptions);
+        objectEither = objectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions);
       } else {
         objectEither = ${imports.Left}(new Error("no object types"));
         for (const tryObjectType of objectTypes) {
-          objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, fromRdfOptions);
+          objectEither = tryObjectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions);
           if (objectEither.isRight()) {
             objectType = tryObjectType;
             break;

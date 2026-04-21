@@ -124,7 +124,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     }
     if (this.features.has("rdf")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}fromRdf: ${snippets.FromRdfFunction}<${this.name}> = ${this.inlineFromRdfFunction}`,
+        code`export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction}`,
         code`export const ${syntheticNamePrefix}toRdf: ${snippets.ToRdfFunction}<${this.name}> = ${this.inlineToRdfFunction}`,
       );
     }
@@ -153,7 +153,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("rdf")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdf(${variables})`;
     }
-    return code`${this.inlineFromRdfFunction}(${variables})`;
+    return code`${this.inlineFromRdfResourceValuesFunction}(${variables})`;
   }
 
   override hashStatements({
