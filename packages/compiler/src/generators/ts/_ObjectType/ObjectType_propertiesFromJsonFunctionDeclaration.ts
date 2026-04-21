@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { snippets } from "../snippets.js";
@@ -8,19 +9,19 @@ const variables = {
   jsonObject: code`${syntheticNamePrefix}jsonObject`,
 };
 
-export function ObjectType_fromJsonFunctionDeclarations(
+export function ObjectType_propertiesFromJsonFunctionDeclaration(
   this: ObjectType,
-): readonly Code[] {
+): Maybe<Code> {
   if (!this.features.has("json")) {
-    return [];
+    return Maybe.empty();
   }
 
   const initializers: string[] = [];
-  const propertiesFromJsonReturnType: Code[] = [];
-  const propertiesFromJsonStatements: Code[] = [];
-  const propertyReturnTypeSignatures: Code[] = [];
+  const returnType: Code[] = [];
+  const statements: Code[] = [];
+  const returnTypeSignatures: Code[] = [];
 
-  propertiesFromJsonStatements.push(
+  statements.push(
     code`const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(_json);`,
     code`if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${imports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }`,
     code`const ${variables.jsonObject} = ${syntheticNamePrefix}jsonSafeParseResult.data;`,
@@ -34,7 +35,7 @@ export function ObjectType_fromJsonFunctionDeclarations(
       variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
     });
     initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
-    propertiesFromJsonReturnType.push(
+    returnType.push(
       code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>>`,
     );
   });
@@ -44,21 +45,17 @@ export function ObjectType_fromJsonFunctionDeclarations(
       variables,
     });
     if (propertyFromJsonStatements.length > 0) {
-      propertiesFromJsonStatements.push(...propertyFromJsonStatements);
+      statements.push(...propertyFromJsonStatements);
       initializers.push(property.name);
-      propertyReturnTypeSignatures.push(
-        code`${property.name}: ${property.type.name};`,
-      );
+      returnTypeSignatures.push(code`${property.name}: ${property.type.name};`);
     }
   }
 
   const resultExpression = `{ ${initializers.join(", ")} }`;
   if (chains.length === 0) {
-    propertiesFromJsonStatements.push(
-      code`return ${imports.Right}(${resultExpression})`,
-    );
+    statements.push(code`return ${imports.Right}(${resultExpression})`);
   } else {
-    propertiesFromJsonStatements.push(
+    statements.push(
       code`return ${chains
         .reverse()
         .reduce(
@@ -69,33 +66,16 @@ export function ObjectType_fromJsonFunctionDeclarations(
     );
   }
 
-  if (propertyReturnTypeSignatures.length > 0) {
-    propertiesFromJsonReturnType.splice(
+  if (returnTypeSignatures.length > 0) {
+    returnType.splice(
       0,
       0,
-      code`{ ${joinCode(propertyReturnTypeSignatures, { on: " " })} }`,
+      code`{ ${joinCode(returnTypeSignatures, { on: " " })} }`,
     );
   }
 
-  const functionDeclarations: Code[] = [];
-
-  functionDeclarations.push(code`\
-export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${imports.Either}<Error, ${joinCode(propertiesFromJsonReturnType, { on: " & " })}> {
-${joinCode(propertiesFromJsonStatements)}
+  return Maybe.of(code`\
+export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
+${joinCode(statements)}
 }`);
-
-  if (this.abstract) {
-    return functionDeclarations;
-  }
-
-  let propertiesFromJsonExpression = code`${syntheticNamePrefix}propertiesFromJson(json)`;
-  if (this.declarationType === "class") {
-    propertiesFromJsonExpression = code`${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
-  }
-  functionDeclarations.push(code`\
-export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<Error, ${this.name}> {
-  return ${propertiesFromJsonExpression};
-}`);
-
-  return functionDeclarations;
 }

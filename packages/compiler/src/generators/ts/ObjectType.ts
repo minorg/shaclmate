@@ -15,7 +15,7 @@ import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_c
 import { ObjectType_equalsFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_equalsFunctionOrMethodDeclaration.js";
 import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
 import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
-import { ObjectType_fromJsonFunctionDeclarations } from "./_ObjectType/ObjectType_fromJsonFunctionDeclarations.js";
+import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { ObjectType_fromRdfTypeVariableStatement } from "./_ObjectType/ObjectType_fromRdfTypeVariableStatement.js";
@@ -28,6 +28,7 @@ import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_js
 import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
 import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonZodSchemaFunctionDeclaration.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_propertiesFromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromJsonFunctionDeclaration.js";
 import { ObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromRdfResourceFunctionDeclaration.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
@@ -195,7 +196,7 @@ export class ObjectType extends AbstractType {
         ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
         ObjectType_filterFunctionDeclaration.call(this),
         ObjectType_filterTypeDeclaration.call(this),
-        ...ObjectType_fromJsonFunctionDeclarations.call(this),
+        ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_fromRdfResourceFunctionDeclaration.call(this).toList(),
         ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
           this,
@@ -205,6 +206,9 @@ export class ObjectType extends AbstractType {
         ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
         ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
         ...ObjectType_jsonZodSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_propertiesFromJsonFunctionDeclaration.bind(
+          this,
+        )().toList(),
         ...ObjectType_propertiesFromRdfResourceFunctionDeclaration.bind(
           this,
         )().toList(),
