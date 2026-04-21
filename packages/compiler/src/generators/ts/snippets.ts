@@ -21,6 +21,8 @@ import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBig
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
+import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
+import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { snippets_FromRdfResourceValuesFunction } from "./_snippets/snippets_FromRdfResourceValuesFunction.js";
 import { snippets_filterArray } from "./_snippets/snippets_filterArray.js";
@@ -137,6 +139,9 @@ export const snippets = {
   filterNumeric: snippets_filterNumeric,
   filterString: snippets_filterString,
   filterTerm: snippets_filterTerm,
+  FocusSparqlConstructTriplesFunction:
+    snippets_FocusSparqlConstructTriplesFunction,
+  FocusSparqlWherePatternsFunction: snippets_FocusSparqlWherePatternsFunction,
   fromRdfLanguageIn: snippets_fromRdfLanguageIn,
   fromRdfPreferredLanguages: snippets_fromRdfPreferredLanguages,
   FromRdfResourceFunction: snippets_FromRdfResourceFunction,
