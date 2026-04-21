@@ -1,5 +1,5 @@
 import type { Maybe } from "purify-ts";
-import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfOptions.js";
+import { snippets_FromRdfOptions } from "./_snippets/snippets_FromRdfResourceFunction.js";
 import { imports } from "./imports.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
