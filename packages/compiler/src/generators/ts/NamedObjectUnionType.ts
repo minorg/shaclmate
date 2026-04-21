@@ -103,7 +103,7 @@ ${joinCode(
       let returnExpression: Code;
       switch (memberType.declarationType) {
         case "class":
-          returnExpression = code`value.${syntheticNamePrefix}toRdfResource(value, options)`;
+          returnExpression = code`value.${syntheticNamePrefix}toRdfResource(options)`;
           break;
         case "interface":
           returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;

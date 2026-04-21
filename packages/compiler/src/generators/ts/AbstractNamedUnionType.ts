@@ -207,8 +207,8 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
     if (this.features.has("rdf")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}toRdfResourceValues(valueVariable, ${otherVariables})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}toRdfResourceValues(${valueVariable}, ${otherVariables})`;
     }
-    return code`${this.inlineToRdfResourceValuesFunction}(valueVariable, ${otherVariables})`;
+    return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
   }
 }

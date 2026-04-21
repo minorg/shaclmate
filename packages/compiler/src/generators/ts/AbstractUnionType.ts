@@ -542,7 +542,7 @@ ${joinCode(
             graph: code`_options.graph`,
             propertyPath: code`_options.propertyPath`,
             resource: code`_options.resource`,
-            resourceSet: code`options_.resourceSet`,
+            resourceSet: code`_options.resourceSet`,
             value: payload(code`value`),
           },
         },
