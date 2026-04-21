@@ -11,7 +11,7 @@ export class LiteralType extends AbstractLiteralType {
   override readonly kind = "LiteralType";
   override readonly name = code`${imports.Literal}`;
   override readonly schemaType = code`${snippets.LiteralSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.literalSparqlWherePatterns}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {

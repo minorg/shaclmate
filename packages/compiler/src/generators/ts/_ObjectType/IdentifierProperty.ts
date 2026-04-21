@@ -464,7 +464,7 @@ export class IdentifierProperty extends AbstractProperty<
   >[0]) {
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
+      patterns: code`${this.type.valueSparqlWherePatternsFunction}(${{
         filter: code`${variables.filter}?.${this.name}`,
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,

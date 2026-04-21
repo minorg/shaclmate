@@ -483,7 +483,7 @@ ${joinCode(
   ${joinCode(
     this.concreteMemberTypeDescriptors.map(
       ({ memberType, primaryDiscriminantValue }) => code`\
-triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
+triples = triples.concat(${memberType.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
     ),
   )}
   
@@ -500,7 +500,7 @@ triples = triples.concat(${memberType.sparqlConstructTriplesFunction}({ ...other
   ${joinCode(
     this.concreteMemberTypeDescriptors.map(
       ({ memberType, primaryDiscriminantValue }) => code`\
-unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }).concat(), type: "group" });`,
+unionPatterns.push({ patterns: ${memberType.valueSparqlWherePatternsFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }).concat(), type: "group" });`,
     ),
   )}
   

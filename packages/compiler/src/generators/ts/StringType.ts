@@ -15,7 +15,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   );
   override readonly kind = "StringType";
   override readonly schemaType = code`${snippets.StringSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.stringSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["string" as const]);
 

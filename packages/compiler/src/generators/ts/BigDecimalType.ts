@@ -15,7 +15,7 @@ export class BigDecimalType extends AbstractLiteralType {
   override readonly name = code`${imports.BigDecimal}`;
   override readonly schemaType =
     code`${snippets.NumericSchema}<${imports.BigDecimal}>`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.bigDecimalSparqlWherePatterns}`;
 
   @Memoize()

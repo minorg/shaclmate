@@ -38,7 +38,7 @@ export abstract class AbstractNumericType<
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
+  override get valueSparqlWherePatternsFunction(): Code {
     return code`${snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
   }
 

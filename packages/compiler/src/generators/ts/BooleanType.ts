@@ -14,7 +14,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   );
   override readonly kind = "BooleanType";
   override readonly schemaType = code`${snippets.BooleanSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.booleanSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 

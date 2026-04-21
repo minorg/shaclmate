@@ -13,7 +13,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly kind = "IriType";
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType = code`${snippets.IriSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.iriSparqlWherePatterns}`;
 
   @Memoize()

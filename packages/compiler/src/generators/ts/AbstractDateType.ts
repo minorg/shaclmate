@@ -13,7 +13,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly mutable = false;
   override readonly name = "Date";
   override readonly schemaType = code`${snippets.DateSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.dateSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["object" as const]);
 

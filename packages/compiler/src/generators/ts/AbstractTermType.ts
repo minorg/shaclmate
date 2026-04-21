@@ -132,7 +132,7 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
+  override get valueSparqlConstructTriplesFunction(): Code {
     return code`((_: object) => [])`;
   }
 

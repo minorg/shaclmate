@@ -76,13 +76,13 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return this.itemType.sparqlConstructTriplesFunction;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return this.itemType.valueSparqlConstructTriplesFunction;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   protected override get schemaObject() {

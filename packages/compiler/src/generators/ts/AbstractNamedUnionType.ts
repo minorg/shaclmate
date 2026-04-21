@@ -70,7 +70,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
+  override get valueSparqlConstructTriplesFunction(): Code {
     if (this.features.has("sparql")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
     }
@@ -78,7 +78,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
+  override get valueSparqlWherePatternsFunction(): Code {
     if (this.features.has("sparql")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns`;
     }

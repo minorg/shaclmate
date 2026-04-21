@@ -101,13 +101,13 @@ export abstract class AbstractLazyObjectType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partial() }))`;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partial() }))`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partial() }))`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partial() }))`;
   }
 
   protected override get schemaObject() {

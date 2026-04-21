@@ -13,13 +13,13 @@ export class SetType<
   override readonly kind = "SetType";
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   override fromRdfResourceValuesExpression(

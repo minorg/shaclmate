@@ -293,7 +293,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         ignoreRdfType: true,
         propertyName: this.name,
         propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
-        typeSparqlConstructTriples: this.type.sparqlConstructTriplesFunction,
+        typeSparqlConstructTriples:
+          this.type.valueSparqlConstructTriplesFunction,
         variablePrefix: variables.variablePrefix,
       }})`,
     );
@@ -314,7 +315,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
         propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
-        typeSparqlWherePatterns: this.type.sparqlWherePatternsFunction,
+        typeSparqlWherePatterns: this.type.valueSparqlWherePatternsFunction,
         variablePrefix: variables.variablePrefix,
       }})`,
     });

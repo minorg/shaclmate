@@ -21,7 +21,7 @@ export class TermType<
   override readonly kind = "TermType";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly schemaType = code`${snippets.TermSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.termSparqlWherePatterns}`;
 
   constructor({

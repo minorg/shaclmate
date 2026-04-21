@@ -15,7 +15,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly name = code`${imports.BlankNode}`;
   override readonly nodeKinds = nodeKinds;
   readonly schemaType = code`${snippets.BlankNodeSchema}`;
-  readonly sparqlWherePatternsFunction =
+  readonly valueSparqlWherePatternsFunction =
     code`${snippets.blankNodeSparqlWherePatterns}`;
 
   constructor(
