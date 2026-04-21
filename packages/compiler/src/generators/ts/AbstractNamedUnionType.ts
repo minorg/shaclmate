@@ -74,7 +74,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("sparql")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
     }
-    return this.inlineSparqlConstructTriplesFunction;
+    return this.inlineValueSparqlConstructTriplesFunction;
   }
 
   @Memoize()
@@ -82,7 +82,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("sparql")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns`;
     }
-    return this.inlineSparqlWherePatternsFunction;
+    return this.inlineValueSparqlWherePatternsFunction;
   }
 
   get staticModuleName(): string {
@@ -130,8 +130,8 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     }
     if (this.features.has("sparql")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}sparqlConstructTriples: ${snippets.SparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineSparqlConstructTriplesFunction};`,
-        code`export const ${syntheticNamePrefix}sparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineSparqlWherePatternsFunction};`,
+        code`export const ${syntheticNamePrefix}sparqlConstructTriples: ${snippets.SparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`,
+        code`export const ${syntheticNamePrefix}sparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`,
       );
     }
 

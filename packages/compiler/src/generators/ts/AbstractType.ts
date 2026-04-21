@@ -109,9 +109,9 @@ export abstract class AbstractType {
   abstract readonly typeofs: NonEmptyList<Typeof>;
 
   /**
-   * A SparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.
+   * A ValueSparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.
    *
-   * The function takes a parameters object (type: SparqlConstructTriplesFunctionParameters) with the following parameters:
+   * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
    * - ignoreRdfType: boolean
    * - schema: instance of this.schemaType
@@ -121,9 +121,9 @@ export abstract class AbstractType {
   abstract readonly valueSparqlConstructTriplesFunction: Code;
 
   /**
-   * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property value of this type.
+   * A ValueSparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property value of this type.
    *
-   * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
+   * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
    * - preferredLanguages: array of preferred language code (strings) | undefined
    * - propertyPatterns: array of sparqljs.Pattern's for the property; may be empty

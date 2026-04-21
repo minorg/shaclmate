@@ -475,9 +475,9 @@ ${joinCode(
   }
 
   @Memoize()
-  protected get inlineSparqlConstructTriplesFunction(): Code {
+  protected get inlineValueSparqlConstructTriplesFunction(): Code {
     return code`\
-(({ ignoreRdfType, filter, schema, ...otherParameters }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => {
+((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
   let triples: ${imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
@@ -488,13 +488,13 @@ triples = triples.concat(${memberType.valueSparqlConstructTriplesFunction}({ ...
   )}
   
   return triples;
-})`;
+}) satisfies ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
   }
 
   @Memoize()
-  protected get inlineSparqlWherePatternsFunction(): Code {
+  protected get inlineValueSparqlWherePatternsFunction(): Code {
     return code`\
-(({ filter, schema, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>): readonly ${snippets.SparqlPattern}[] => {
+((({ filter, schema, ...otherParameters }) => {
   const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
@@ -505,7 +505,7 @@ unionPatterns.push({ patterns: ${memberType.valueSparqlWherePatternsFunction}({ 
   )}
   
   return [{ patterns: unionPatterns, type: "union" }];
-})`;
+}) satisfies ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
   }
 
   protected get inlineToJsonFunction(): Code {

@@ -31,11 +31,11 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
   }
 
   override get valueSparqlConstructTriplesFunction(): Code {
-    return this.inlineSparqlConstructTriplesFunction;
+    return this.inlineValueSparqlConstructTriplesFunction;
   }
 
   override get valueSparqlWherePatternsFunction(): Code {
-    return this.inlineSparqlWherePatternsFunction;
+    return this.inlineValueSparqlWherePatternsFunction;
   }
 
   override fromJsonExpression({
