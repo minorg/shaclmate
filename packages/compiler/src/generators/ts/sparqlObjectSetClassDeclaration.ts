@@ -14,7 +14,7 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
-  const sparqlWherePatternsFunctionType = code`(parameters: { filter: ObjectFilterT | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string; }) => readonly ${imports.sparqljs}.Pattern[]`;
+  const sparqlWherePatternsFunctionType = code`(parameters: { filter: ObjectFilterT | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string; }) => readonly ${snippets.SparqlPattern}[]`;
 
   const parameters = {
     constructObjectType: code`objectType: {\
