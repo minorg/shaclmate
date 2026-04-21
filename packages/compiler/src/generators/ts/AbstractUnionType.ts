@@ -301,7 +301,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 
   protected get inlineFromJsonFunction(): Code {
     return code`\
-((value: ${this.jsonType().name}): ${imports.Either}<Error, ${this.name}> => {
+((value: ${this.jsonType().name}): ${this.name} => {
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ jsonTypeCheck, memberType, primaryDiscriminantValue, payload }) => {
@@ -311,12 +311,12 @@ ${joinCode(
       if (this.discriminant.kind === "envelope") {
         memberTypeFromJsonExpression = code`{ ${this.discriminant.name}: "${primaryDiscriminantValue}" as const, value: ${memberTypeFromJsonExpression} }`;
       }
-      return code`if (${jsonTypeCheck(code`value`)}) { return ${imports.Right}(${memberTypeFromJsonExpression}); }`;
+      return code`if (${jsonTypeCheck(code`value`)}) { return ${memberTypeFromJsonExpression}; }`;
     },
   ),
 )}
 
-  return ${imports.Left}(new Error("unable to deserialize JSON"));
+  throw new Error("unable to deserialize JSON");
 })`;
   }
 
