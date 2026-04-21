@@ -22,13 +22,15 @@ export class SetType<
     return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
-  override fromRdfExpression(
+  override fromRdfResourceValuesExpression(
     parameters: Parameters<
-      AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
+      AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
     >[0],
   ): Code {
     const { variables } = parameters;
-    const chain: Code[] = [this.itemType.fromRdfExpression(parameters)];
+    const chain: Code[] = [
+      this.itemType.fromRdfResourceValuesExpression(parameters),
+    ];
     if (this.minCount === 0 || this._mutable) {
       chain.push(
         code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,

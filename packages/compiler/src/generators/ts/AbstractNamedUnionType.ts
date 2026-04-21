@@ -147,9 +147,9 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     return code`${this.inlineFromJsonFunction}(${variables.value})`;
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     if (this.features.has("rdf")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdf(${variables})`;
     }

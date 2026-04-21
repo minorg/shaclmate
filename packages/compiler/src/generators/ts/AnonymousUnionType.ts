@@ -44,9 +44,9 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     return code`${this.inlineFromJsonFunction}(${variables.value})`;
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     return code`${this.inlineFromRdfFunction}(${variables})`;
   }
 

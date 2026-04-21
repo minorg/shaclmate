@@ -242,14 +242,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         graph: variables.graph,
         resource: variables.resource,
         propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
-        typeFromRdf: code`((resourceValues) => ${this.type.fromRdfExpression({
-          variables: {
-            ...variables,
-            ignoreRdfType: true,
-            propertyPath: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
-            resourceValues: code`resourceValues`,
+        typeFromRdf: code`((resourceValues) => ${this.type.fromRdfResourceValuesExpression(
+          {
+            variables: {
+              ...variables,
+              ignoreRdfType: true,
+              propertyPath: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
+              resourceValues: code`resourceValues`,
+            },
           },
-        })})`,
+        )})`,
       }})`,
     );
   }

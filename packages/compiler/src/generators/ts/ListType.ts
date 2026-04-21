@@ -66,10 +66,10 @@ export class ListType<
     return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
+    AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
   >[0]): Code {
     return joinCode(
       [
@@ -77,7 +77,7 @@ export class ListType<
         code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>
         code`chain(valueLists =>
         valueLists.chainMap(
-          valueList => ${this.itemType.fromRdfExpression({
+          valueList => ${this.itemType.fromRdfResourceValuesExpression({
             variables: {
               ...variables,
               resourceValues: code`${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,

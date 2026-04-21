@@ -164,12 +164,12 @@ export class DefaultValueType<
     return this.itemType.fromJsonExpression(parameters);
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractContainerType<ItemTypeT>["fromRdfExpression"]
+    AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
   >[0]): Code {
-    return this.itemType.fromRdfExpression({
+    return this.itemType.fromRdfResourceValuesExpression({
       variables: {
         ...variables,
         resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.Value(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.defaultValueTermExpression }}).toValues())`,

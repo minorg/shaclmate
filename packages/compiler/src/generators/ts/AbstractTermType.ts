@@ -136,8 +136,8 @@ export abstract class AbstractTermType<
     return code`((_: object) => [])`;
   }
 
-  override fromRdfExpression(
-    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
+  override fromRdfResourceValuesExpression(
+    parameters: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0],
   ): Code {
     // invariant(
     //   this.nodeKinds.has("Literal") &&
@@ -189,7 +189,7 @@ export abstract class AbstractTermType<
    */
   protected fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
+  }: Parameters<Type["fromRdfResourceValuesExpression"]>[0]): {
     hasValues?: Code;
     languageIn?: Code;
     preferredLanguages?: Code;

@@ -413,9 +413,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     return code`${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 

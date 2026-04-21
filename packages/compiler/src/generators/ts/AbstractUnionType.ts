@@ -322,7 +322,7 @@ ${joinCode(
 
   protected get inlineFromRdfFunction(): Code {
     const variables: Parameters<
-      AbstractType["fromRdfExpression"]
+      AbstractType["fromRdfResourceValuesExpression"]
     >[0]["variables"] = {
       context: code`parameters.context`,
       graph: code`parameters.graph`,
@@ -340,13 +340,15 @@ ${joinCode(
       const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.concreteMemberTypeDescriptors.reduce(
         (expression, { memberType, primaryDiscriminantValue }) => {
-          let typeExpression: Code = memberType.fromRdfExpression({
-            variables: {
-              ...variables,
-              ignoreRdfType: false,
-              resourceValues: code`valueAsValues`,
+          let typeExpression: Code = memberType.fromRdfResourceValuesExpression(
+            {
+              variables: {
+                ...variables,
+                ignoreRdfType: false,
+                resourceValues: code`valueAsValues`,
+              },
             },
-          });
+          );
           if (this.discriminant.kind === "envelope") {
             typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(primaryDiscriminantValue)} as const, value }) as (${this.name})))`;
           }

@@ -425,7 +425,7 @@ export class IdentifierProperty extends AbstractProperty<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.fromRdfExpression({
+      code`${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
           propertyPath: rdfjsTermExpression(rdf.subject),

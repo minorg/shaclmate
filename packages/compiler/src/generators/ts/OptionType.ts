@@ -131,13 +131,13 @@ export class OptionType<
       : code`${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
-  override fromRdfExpression(
+  override fromRdfResourceValuesExpression(
     parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["fromRdfExpression"]
+      AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
     >[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${imports.Maybe}.of(value)) : ${imports.Resource}.Values.fromValue<${imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${imports.Maybe}.empty() }))`;
+    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${imports.Maybe}.of(value)) : ${imports.Resource}.Values.fromValue<${imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${imports.Maybe}.empty() }))`;
   }
 
   override graphqlResolveExpression(

@@ -184,7 +184,7 @@ export abstract class AbstractType {
    *   resource: the Resource passed to Object.fromRdf
    *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type
    */
-  abstract fromRdfExpression(parameters: {
+  abstract fromRdfResourceValuesExpression(parameters: {
     variables: {
       context: Code;
       graph: Code;
