@@ -3,6 +3,7 @@ import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -12,7 +13,7 @@ const variables = {
   variablePrefix: code`parameters.variablePrefix`,
 };
 
-export function ObjectType_sparqlConstructTriplesFunctionDeclaration(
+export function ObjectType_focusSparqlConstructTriplesFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("sparql")) {
@@ -58,7 +59,7 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(${statements.length === 0 ? "_" : ""}parameters: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean;  variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
+export const ${syntheticNamePrefix}focusSparqlConstructTriples: ${snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([

@@ -15,6 +15,8 @@ import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_c
 import { ObjectType_equalsFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_equalsFunctionOrMethodDeclaration.js";
 import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
 import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
+import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
+import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
 import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
 import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
@@ -33,8 +35,6 @@ import { ObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_Obje
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
 import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { ObjectType_sparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructTriplesFunctionDeclaration.js";
-import { ObjectType_sparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlWherePatternsFunctionDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionOrMethodDeclaration.js";
 import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
@@ -219,10 +219,10 @@ export class ObjectType extends AbstractType {
         ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_sparqlConstructTriplesFunctionDeclaration.bind(
+        ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_sparqlWherePatternsFunctionDeclaration.bind(
+        ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.bind(
           this,
         )().toList(),
         ...(this.declarationType === "interface"

@@ -14,7 +14,7 @@ const variables = {
   variablePrefix: code`parameters.variablePrefix`,
 };
 
-export function ObjectType_sparqlWherePatternsFunctionDeclaration(
+export function ObjectType_focusSparqlWherePatternsFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("sparql")) {
@@ -110,7 +110,7 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(${statements.length === 0 ? "_" : ""}parameters: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
+export const ${syntheticNamePrefix}focusSparqlWherePatterns: ${snippets.FocusSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
