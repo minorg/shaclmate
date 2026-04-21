@@ -80,7 +80,7 @@ export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
   };
   for (const property of this.properties) {
     property
-      .fromRdfExpression({
+      .fromRdfResourceValuesExpression({
         variables: propertyFromRdfVariables,
       })
       .ifJust((propertyFromRdfExpression) => {

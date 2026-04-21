@@ -536,7 +536,7 @@ ${joinCode(
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ memberType, payload, typeCheck }) =>
-      code`if (${typeCheck(code`value`)}) { return ${memberType.toRdfExpression(
+      code`if (${typeCheck(code`value`)}) { return ${memberType.toRdfResourceValuesExpression(
         {
           variables: {
             graph: code`_options.graph`,
@@ -551,7 +551,7 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to RDF");
-}) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
+}) as ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   protected override get schemaObject(): {

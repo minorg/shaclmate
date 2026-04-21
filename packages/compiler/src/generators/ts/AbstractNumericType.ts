@@ -70,9 +70,11 @@ export abstract class AbstractNumericType<
     }
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
   }
 

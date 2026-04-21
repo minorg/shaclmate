@@ -204,12 +204,16 @@ export class OptionType<
     return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })})).extract()`;
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractContainerType<ItemTypeT>["toRdfExpression"]>[0]): Code {
-    const itemTypeToRdfExpression = this.itemType.toRdfExpression({
-      variables: { ...variables, value: code`value` },
-    });
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toRdfResourceValuesExpression"]
+  >[0]): Code {
+    const itemTypeToRdfExpression = this.itemType.toRdfResourceValuesExpression(
+      {
+        variables: { ...variables, value: code`value` },
+      },
+    );
     let toRdfExpression = code`${variables.value}.toList()`;
     if (!codeEquals(itemTypeToRdfExpression, code`[value]`)) {
       toRdfExpression = code`${toRdfExpression}.flatMap((value) => ${itemTypeToRdfExpression})`;

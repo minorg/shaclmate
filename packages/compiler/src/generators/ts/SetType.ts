@@ -55,12 +55,12 @@ export class SetType<
     return new AbstractCollectionType.JsonType(name);
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractCollectionType<ItemTypeT>["toRdfExpression"]
+    AbstractCollectionType<ItemTypeT>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`${variables.value}.flatMap((item) => ${this.itemType.toRdfExpression(
+    return code`${variables.value}.flatMap((item) => ${this.itemType.toRdfResourceValuesExpression(
       {
         variables: { ...variables, value: code`item` },
       },

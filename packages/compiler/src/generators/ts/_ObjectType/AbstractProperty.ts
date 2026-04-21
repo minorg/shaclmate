@@ -157,7 +157,7 @@ export abstract class AbstractProperty<
   /**
    * Expression to deserialize this property on the given rdfjsResource.Resource to a Either<Error, this property type>.
    */
-  abstract fromRdfExpression(parameters: {
+  abstract fromRdfResourceValuesExpression(parameters: {
     variables: {
       context: Code;
       graph: Code;
@@ -229,9 +229,9 @@ export abstract class AbstractProperty<
   /**
    * Statements to serialize this property to an RDF resource.
    */
-  abstract toRdfStatements(parameters: {
+  abstract toRdfRdfResourceValuesStatements(parameters: {
     variables: Omit<
-      Parameters<Type["toRdfExpression"]>[0]["variables"],
+      Parameters<Type["toRdfResourceValuesExpression"]>[0]["variables"],
       "propertyPath"
     >;
   }): readonly Code[];

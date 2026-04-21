@@ -501,9 +501,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     }
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
         return code`[${variables.value}.${syntheticNamePrefix}toRdfResource({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;

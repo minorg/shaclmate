@@ -268,7 +268,7 @@ export abstract class AbstractType {
    *   resourceSet: ResourceSet for any new Resources needed while conversion (of e.g., nested objects)
    *   value: value of this type, to be converted to (BlankNode | Literal | NamedNode | bigint | boolean | number | string) or an array of the same
    */
-  abstract toRdfExpression(parameters: {
+  abstract toRdfResourceValuesExpression(parameters: {
     variables: {
       graph: Code;
       propertyPath: Code;

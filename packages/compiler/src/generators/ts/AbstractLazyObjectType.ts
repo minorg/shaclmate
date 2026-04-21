@@ -160,10 +160,10 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
-    return this.partialType.toRdfExpression({
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    return this.partialType.toRdfResourceValuesExpression({
       variables: {
         ...variables,
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,

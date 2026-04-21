@@ -26,7 +26,7 @@ export function ObjectType_toRdfResourceFunctionOrMethodDeclaration(
     parameters.push(code`${this.thisVariable}: ${this.name}`);
   }
   parameters.push(
-    code`options?: Parameters<${snippets.ToRdfResourceFunction}<${this.name}>[1]`,
+    code`options?: Parameters<${snippets.ToRdfResourceFunction}<${this.name}>>[1]`,
   );
 
   const statements: Code[] = [
@@ -66,7 +66,7 @@ export function ObjectType_toRdfResourceFunctionOrMethodDeclaration(
 
   for (const property of this.properties) {
     statements.push(
-      ...property.toRdfStatements({
+      ...property.toRdfRdfResourceValuesStatements({
         variables: {
           graph: code`options?.${variables.graph}`,
           resource: variables.resource,

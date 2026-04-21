@@ -63,9 +63,11 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return new AbstractPrimitiveType.JsonType(code`string`);
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractPrimitiveType<Date>["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${snippets.literalFactory}.date(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
   }
 

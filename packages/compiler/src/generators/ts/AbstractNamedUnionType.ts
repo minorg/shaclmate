@@ -202,12 +202,13 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     return code`${this.inlineToJsonFunction}(${variables.value})`;
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    const { value: valueVariable, ...otherVariables } = variables;
     if (this.features.has("rdf")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}toRdfResourceValues(valueVariable, ${otherVariables})`;
     }
-    return code`${this.inlineToRdfResourceValuesFunction}(${variables})`;
+    return code`${this.inlineToRdfResourceValuesFunction}(valueVariable, ${otherVariables})`;
   }
 }

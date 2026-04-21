@@ -100,9 +100,11 @@ export class BigDecimalType extends AbstractLiteralType {
     };
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractLiteralType["toRdfExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractLiteralType["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 }

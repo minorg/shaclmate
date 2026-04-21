@@ -221,17 +221,17 @@ export class DefaultValueType<
     return this.itemType.toJsonExpression(parameters);
   }
 
-  override toRdfExpression(
-    parameters: Parameters<AbstractType["toRdfExpression"]>[0],
+  override toRdfResourceValuesExpression(
+    parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
     return this.defaultValuePrimitiveExpression
       .map(
         (defaultValuePrimitiveExpression) =>
-          code`${this.itemType.equalsFunction}(${variables.value}, ${defaultValuePrimitiveExpression}).isLeft() ? ${this.itemType.toRdfExpression(parameters)} : []`,
+          code`${this.itemType.equalsFunction}(${variables.value}, ${defaultValuePrimitiveExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`,
       )
       .orDefault(
-        code`${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
+        code`${this.itemType.toRdfResourceValuesExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
       );
   }
 }

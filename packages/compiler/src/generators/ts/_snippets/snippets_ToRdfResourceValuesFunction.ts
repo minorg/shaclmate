@@ -14,5 +14,5 @@ export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<T> =
      resource: ${imports.Resource};
      resourceSet: ${imports.ResourceSet};
    }
-  ) => readonly (bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode})[];`,
+  ) => (bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode})[];`,
 );

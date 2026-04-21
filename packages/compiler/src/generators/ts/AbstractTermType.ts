@@ -172,9 +172,9 @@ export abstract class AbstractTermType<
     return Maybe.empty();
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     return code`[${variables.value}]`;
   }
 

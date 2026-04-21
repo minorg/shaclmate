@@ -89,7 +89,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
       : [];
   }
 
-  override fromRdfExpression(): Maybe<Code> {
+  override fromRdfResourceValuesExpression(): Maybe<Code> {
     return !this.abstract && this.objectType.declarationType === "interface"
       ? Maybe.of(
           code`${imports.Right}<${literalOf(this.objectType.discriminantValue)}>(${this.initializer})`,
@@ -134,7 +134,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.of(code`${this.name}: ${variables.value}`);
   }
 
-  override toRdfStatements(): readonly Code[] {
+  override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
 }

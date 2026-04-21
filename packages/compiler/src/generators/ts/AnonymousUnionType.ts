@@ -80,9 +80,10 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     return code`${this.inlineToJsonFunction}(${variables.value})`;
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
-    return code`${this.inlineToRdfResourceValuesFunction}(${variables})`;
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    const { value: valueVariable, ...otherVariables } = variables;
+    return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
   }
 }

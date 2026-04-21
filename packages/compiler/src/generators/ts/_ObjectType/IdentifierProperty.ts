@@ -419,10 +419,10 @@ export class IdentifierProperty extends AbstractProperty<
     ];
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromRdfExpression"]
+    AbstractProperty<IdentifierType>["fromRdfResourceValuesExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       code`${this.type.fromRdfResourceValuesExpression({
@@ -501,7 +501,7 @@ export class IdentifierProperty extends AbstractProperty<
     );
   }
 
-  override toRdfStatements(): readonly Code[] {
+  override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
 }
