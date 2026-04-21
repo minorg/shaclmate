@@ -25,7 +25,9 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
   if (this.declarationType === "interface") {
     parameters.push(code`${this.thisVariable}: ${this.name}`);
   }
-  parameters.push(code`options?: ${snippets.ToRdfOptions}`);
+  parameters.push(
+    code`options?: Parameters<${snippets.ToRdfResourceFunction}<${this.name}>[1]`,
+  );
 
   const statements: Code[] = [
     code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${imports.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,
@@ -37,10 +39,10 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
     switch (this.declarationType) {
       case "class":
         preamble = "override ";
-        superToRdfCall = code`super.${syntheticNamePrefix}toRdf(${superToRdfOptions})`;
+        superToRdfCall = code`super.${syntheticNamePrefix}toRdfResource(${superToRdfOptions})`;
         break;
       case "interface":
-        superToRdfCall = code`${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${superToRdfOptions})`;
+        superToRdfCall = code`${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdfResource(${this.thisVariable}, ${superToRdfOptions})`;
         break;
     }
     statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
@@ -78,7 +80,7 @@ export function ObjectType_toRdfFunctionOrMethodDeclaration(
   statements.push(code`return ${variables.resource};`);
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}toRdf(${joinCode(parameters, { on: "," })}): ${this.toRdfjsResourceType} {
+${preamble}${syntheticNamePrefix}toRdfResource(${joinCode(parameters, { on: "," })}): ${this.toRdfjsResourceType} {
   ${joinCode(statements)}
 }`);
 }

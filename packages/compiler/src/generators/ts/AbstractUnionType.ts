@@ -530,20 +530,20 @@ ${joinCode(
 })`;
   }
 
-  protected get inlineToRdfFunction(): Code {
+  protected get inlineToRdfResourceValuesFunction(): Code {
     return code`\
-((parameters: ${snippets.ToRdfFunctionParameters}<${this.name}>): ${snippets.ToRdfValue}[] => {
+(((value, _options) => {
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ memberType, payload, typeCheck }) =>
-      code`if (${typeCheck(code`parameters.value`)}) { return ${memberType.toRdfExpression(
+      code`if (${typeCheck(code`value`)}) { return ${memberType.toRdfExpression(
         {
           variables: {
-            graph: code`parameters.graph`,
-            propertyPath: code`parameters.propertyPath`,
-            resource: code`parameters.resource`,
-            resourceSet: code`parameters.resourceSet`,
-            value: payload(code`parameters.value`),
+            graph: code`_options.graph`,
+            propertyPath: code`_options.propertyPath`,
+            resource: code`_options.resource`,
+            resourceSet: code`options_.resourceSet`,
+            value: payload(code`value`),
           },
         },
       )}; }`,
@@ -551,7 +551,7 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to RDF");
-})`;
+}) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   protected override get schemaObject(): {

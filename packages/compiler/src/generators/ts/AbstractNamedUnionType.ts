@@ -125,7 +125,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("rdf")) {
       staticModuleDeclarations.push(
         code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction}`,
-        code`export const ${syntheticNamePrefix}toRdf: ${snippets.ToRdfFunction}<${this.name}> = ${this.inlineToRdfFunction}`,
+        code`export const ${syntheticNamePrefix}toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${this.name}> = ${this.inlineToRdfResourceValuesFunction}`,
       );
     }
     if (this.features.has("sparql")) {
@@ -208,6 +208,6 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("rdf")) {
       return code`${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables})`;
     }
-    return code`${this.inlineToRdfFunction}(${variables})`;
+    return code`${this.inlineToRdfResourceValuesFunction}(${variables})`;
   }
 }

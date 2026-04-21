@@ -36,7 +36,7 @@ import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_Obj
 import { ObjectType_sparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_sparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlWherePatternsFunctionDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { AbstractType } from "./AbstractType.js";
