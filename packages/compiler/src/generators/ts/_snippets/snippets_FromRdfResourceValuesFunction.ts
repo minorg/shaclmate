@@ -5,7 +5,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_FromRdfResourceValuesFunction = conditionalOutput(
   `${syntheticNamePrefix}FromRdfResourceValuesFunction`,
   code`\
-type ${syntheticNamePrefix}FromRdfResourceValuesFunction<T> = (
+export type ${syntheticNamePrefix}FromRdfResourceValuesFunction<T> = (
   resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>,
   options: {
     context?: unknown;

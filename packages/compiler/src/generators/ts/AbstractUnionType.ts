@@ -253,6 +253,13 @@ export abstract class AbstractUnionType<
   }
 
   @Memoize()
+  protected get concreteMemberTypeDescriptors(): readonly MemberTypeDescriptor<MemberTypeT>[] {
+    return this.memberTypeDescriptors.filter(
+      ({ memberType }) => !memberType.abstract,
+    );
+  }
+
+  @Memoize()
   protected get inlineEqualsFunction(): Code {
     return code`\
 ((left: ${this.name}, right: ${this.name}) => {
@@ -327,17 +334,17 @@ ${joinCode(
       >[0]["variables"],
       "resourceValues"
     > = {
-      context: code`options.context`,
-      graph: code`options.graph`,
+      context: code`_options.context`,
+      graph: code`_options.graph`,
       ignoreRdfType: false,
-      objectSet: code`options.objectSet`,
-      preferredLanguages: code`options.preferredLanguages`,
-      propertyPath: code`options.propertyPath`,
-      resource: code`options.resource`,
+      objectSet: code`_options.objectSet`,
+      preferredLanguages: code`_options.preferredLanguages`,
+      propertyPath: code`_options.propertyPath`,
+      resource: code`_options.resource`,
     };
 
     return code`\
-(((values, options) =>
+(((values, _options) =>
     values.chain(values => values.chainMap(value => {
       const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.concreteMemberTypeDescriptors.reduce(
@@ -345,8 +352,13 @@ ${joinCode(
           let typeExpression: Code = memberType.fromRdfResourceValuesExpression(
             {
               variables: {
-                ...variables,
+                context: variables.context,
+                graph: variables.graph,
                 ignoreRdfType: false,
+                objectSet: variables.objectSet,
+                preferredLanguages: variables.preferredLanguages,
+                propertyPath: variables.propertyPath,
+                resource: variables.resource,
                 resourceValues: code`valueAsValues`,
               },
             },
@@ -559,13 +571,6 @@ ${joinCode(
         { on: "," },
       )} }`,
     };
-  }
-
-  @Memoize()
-  private get concreteMemberTypeDescriptors(): readonly MemberTypeDescriptor<MemberTypeT>[] {
-    return this.memberTypeDescriptors.filter(
-      ({ memberType }) => !memberType.abstract,
-    );
   }
 
   override jsonUiSchemaElement(): Maybe<Code> {

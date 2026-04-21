@@ -20,14 +20,14 @@ export function ObjectType_fromRdfResourceFunctionDeclaration(
     code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,
   ];
 
-  let propertiesFromRdfExpression = code`${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages })`;
+  let propertiesFromRdfExpression = code`${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages })`;
   if (this.declarationType === "class") {
     propertiesFromRdfExpression = code`${propertiesFromRdfExpression}.map(properties => new ${this.name}(properties))`;
   }
   statements.push(code`return ${propertiesFromRdfExpression};`);
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction} = (resource, options) => {
+export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
 ${joinCode(statements)}
-}`);
+};`);
 }

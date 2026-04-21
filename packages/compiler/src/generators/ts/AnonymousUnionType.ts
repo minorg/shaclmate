@@ -47,7 +47,9 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-    return code`${this.inlineFromRdfResourceValuesFunction}(${variables})`;
+    const { resourceValues: resourceValuesVariable, ...otherVariables } =
+      variables;
+    return code`${this.inlineFromRdfResourceValuesFunction}(${resourceValuesVariable}, ${otherVariables})`;
   }
 
   override graphqlResolveExpression(

@@ -120,7 +120,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             const fromRdfTypes = objectType.fromRdfTypeVariable
               .toList()
               .concat(objectType.descendantFromRdfTypeVariables);
-            return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+            return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdfResource: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdfResource, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
           };
 
           switch (objectType.kind) {
@@ -163,7 +163,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
 
-  const fromRdfResourceOptions: Parameters<${snippets.FromRdfResourceFunction}<${typeParameters.ObjectT}>>[1] = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
+  const fromRdfResourceOptions: Parameters<${snippets.FromRdfResourceFunction}<ObjectT>>[1] = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
 
   let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
   const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily
@@ -256,7 +256,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
 
-  const fromRdfResourceOptions: Parameters<${snippets.FromRdfResourceFunction}<${typeParameters.ObjectT}>>[1] = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
+  const fromRdfResourceOptions: Parameters<${snippets.FromRdfResourceFunction}<ObjectT>>[1] = { graph, objectSet: this, preferredLanguages: query?.preferredLanguages };
 
   let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
   const resourceSet = this.${syntheticNamePrefix}resourceSet(); // Access once, in case it's instantiated lazily

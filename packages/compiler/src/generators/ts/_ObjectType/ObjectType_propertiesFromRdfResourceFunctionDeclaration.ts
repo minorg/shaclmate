@@ -7,6 +7,17 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
+const optionsVariable = `_${syntheticNamePrefix}options`;
+
+const variables = {
+  context: code`${optionsVariable}.context`,
+  graph: code`${optionsVariable}.graph`,
+  ignoreRdfType: code`${optionsVariable}.ignoreRdfType`,
+  objectSet: code`${optionsVariable}.objectSet`,
+  preferredLanguages: code`${optionsVariable}.preferredLanguages`,
+  resource: code`${syntheticNamePrefix}resource`,
+};
+
 export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
@@ -19,23 +30,14 @@ export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
   const propertySignatures: Code[] = [];
   const returnType: Code[] = [];
 
-  const variables = {
-    context: code`${syntheticNamePrefix}options.context`,
-    graph: code`${syntheticNamePrefix}options.graph`,
-    ignoreRdfType: code`${syntheticNamePrefix}options.ignoreRdfType`,
-    objectSet: code`${syntheticNamePrefix}options.objectSet`,
-    preferredLanguages: code`${syntheticNamePrefix}options.preferredLanguages`,
-    resource: code`${syntheticNamePrefix}resource`,
-  };
-
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf(${variables.resource}, { ...${syntheticNamePrefix}options, ignoreRdfType: true })`,
+      expression: code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
       variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
     });
     initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
-      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf>>`,
+      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource>>`,
     );
   });
 
@@ -116,7 +118,7 @@ export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-const ${syntheticNamePrefix}propertiesFromRdfResource: ${snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${syntheticNamePrefix}options) => {
+export const ${syntheticNamePrefix}propertiesFromRdfResource: ${snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${optionsVariable}) => {
 ${joinCode(statements)}
 }`);
 }

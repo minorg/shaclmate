@@ -5,8 +5,9 @@ import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 
 import {
+  type $FromRdfResourceFunction,
+  type $FromRdfResourceValuesFunction,
   type $Object,
-  type $ObjectSet,
   AbstractBaseClassForExternClass,
   AbstractBaseClassForExternClassStatic,
 } from "./generated.js";
@@ -76,15 +77,21 @@ export namespace ExternClass {
     );
   }
 
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: unknown;
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      objectSet?: $ObjectSet;
-    },
-  ): Either<Error, ExternClass> {
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ExternClass
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => ExternClass.$fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const $fromRdfResource: $FromRdfResourceFunction<ExternClass> = (
+    resource,
+    options,
+  ) => {
     const context = options?.context as
       | {
           extra: number;
@@ -94,7 +101,7 @@ export namespace ExternClass {
       throw new Error("extra didn't come through");
     }
     return Either.of(new ExternClass(resource.identifier));
-  }
+  };
 
   // Called by interface functions
   export function $hash<

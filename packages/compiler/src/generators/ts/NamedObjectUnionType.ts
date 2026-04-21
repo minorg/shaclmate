@@ -9,6 +9,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -79,6 +80,22 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
       code`export type ${syntheticNamePrefix}Identifier = ${this.identifierType.name};`,
       code`export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.identifierType.fromStringFunction, this.identifierType.toStringFunction])} }`,
     );
+
+    if (this.features.has("rdf")) {
+      staticModuleDeclarations = staticModuleDeclarations.concat(
+        code`\
+export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
+  ${this.concreteMemberTypeDescriptors.reduce(
+    (expression, { memberType }) => {
+      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
+      return expression !== null
+        ? code`${expression}.altLazy(() => ${memberTypeExpression})`
+        : memberTypeExpression;
+    },
+    null as Code | null,
+  )};`,
+      );
+    }
 
     if (this._name !== `${syntheticNamePrefix}Object`) {
       staticModuleDeclarations.push(code`\

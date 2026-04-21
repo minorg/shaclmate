@@ -17,6 +17,7 @@ import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_f
 import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
 import { ObjectType_fromJsonFunctionDeclarations } from "./_ObjectType/ObjectType_fromJsonFunctionDeclarations.js";
 import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
+import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { ObjectType_fromRdfTypeVariableStatement } from "./_ObjectType/ObjectType_fromRdfTypeVariableStatement.js";
 import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
 import { ObjectType_hashFunctionOrMethodDeclarations } from "./_ObjectType/ObjectType_hashFunctionOrMethodDeclarations.js";
@@ -196,6 +197,9 @@ export class ObjectType extends AbstractType {
         ObjectType_filterTypeDeclaration.call(this),
         ...ObjectType_fromJsonFunctionDeclarations.call(this),
         ...ObjectType_fromRdfResourceFunctionDeclaration.call(this).toList(),
+        ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
+          this,
+        ).toList(),
         ...ObjectType_fromRdfTypeVariableStatement.call(this).toList(),
         ObjectType_isTypeFunctionDeclaration.call(this),
         ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
@@ -416,7 +420,8 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-    return code`${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
+    const { resourceValues, ...options } = variables;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValues}, ${options})`;
   }
 
   override graphqlResolveExpression({

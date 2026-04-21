@@ -18,7 +18,7 @@ export function sparqlObjectSetClassDeclaration({
 
   const parameters = {
     constructObjectType: code`objectType: {\
-  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }) => ${imports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}fromRdfResource:  ${snippets.FromRdfResourceFunction}<ObjectT>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${imports.NamedNode} | ${imports.Variable}; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
@@ -184,7 +184,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       const dataset = ${imports.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
+        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdfResource(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
       }
       return objects;
     });

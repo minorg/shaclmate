@@ -124,7 +124,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     }
     if (this.features.has("rdf")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction}`,
+        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction}`,
         code`export const ${syntheticNamePrefix}toRdf: ${snippets.ToRdfFunction}<${this.name}> = ${this.inlineToRdfFunction}`,
       );
     }
@@ -150,10 +150,12 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
+    const { resourceValues: resourceValuesVariable, ...otherVariables } =
+      variables;
     if (this.features.has("rdf")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdf(${variables})`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValuesVariable}, ${otherVariables})`;
     }
-    return code`${this.inlineFromRdfResourceValuesFunction}(${variables})`;
+    return code`${this.inlineFromRdfResourceValuesFunction}(${resourceValuesVariable}, ${otherVariables})`;
   }
 
   override hashStatements({
