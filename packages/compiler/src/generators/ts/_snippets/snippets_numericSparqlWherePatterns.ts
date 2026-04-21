@@ -5,14 +5,14 @@ import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./snippets_NumericSchema.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_SparqlWherePatternsFunctionParameters } from "./snippets_SparqlWherePatternsFunctionParameters.js";
 import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
+import { snippets_ValueSparqlWherePatternsFunctionParameters } from "./snippets_ValueSparqlWherePatternsFunctionParameters.js";
 
 export const snippets_numericSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}numericSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | number>({ filter, valueVariable, ...otherParameters }: ${snippets_SparqlWherePatternsFunctionParameters}<${snippets_NumericFilter}<T>, ${snippets_NumericSchema}<T>>): readonly ${snippets_SparqlPattern}[] {
+function ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | number>({ filter, valueVariable, ...otherParameters }: ${snippets_ValueSparqlWherePatternsFunctionParameters}<${snippets_NumericFilter}<T>, ${snippets_NumericSchema}<T>>): readonly ${snippets_SparqlPattern}[] {
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (filter) {

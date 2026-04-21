@@ -74,13 +74,9 @@ import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numeri
 import { snippets_PropertiesFromRdfResourceFunction } from "./_snippets/snippets_PropertiesFromRdfResourceFunction.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
-import { snippets_SparqlConstructTriplesFunction } from "./_snippets/snippets_SparqlConstructTriplesFunction.js";
-import { snippets_SparqlConstructTriplesFunctionParameters } from "./_snippets/snippets_SparqlConstructTriplesFunctionParameters.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./_snippets/snippets_SparqlPattern.js";
 import { snippets_SparqlPattern_isSolutionGenerating } from "./_snippets/snippets_SparqlPattern_isSolutionGenerating.js";
-import { snippets_SparqlWherePatternsFunction } from "./_snippets/snippets_SparqlWherePatternsFunction.js";
-import { snippets_SparqlWherePatternsFunctionParameters } from "./_snippets/snippets_SparqlWherePatternsFunctionParameters.js";
 import { snippets_StringFilter } from "./_snippets/snippets_StringFilter.js";
 import { snippets_StringSchema } from "./_snippets/snippets_StringSchema.js";
 import { snippets_setSparqlConstructTriples } from "./_snippets/snippets_setSparqlConstructTriples.js";
@@ -102,6 +98,8 @@ import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilt
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
+import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets = {
   arrayIntersection: snippets_arrayIntersection,
@@ -187,9 +185,6 @@ export const snippets = {
   setSparqlConstructTriples: snippets_setSparqlConstructTriples,
   setSparqlWherePatterns: snippets_setSparqlWherePatterns,
   sortSparqlPatterns: snippets_sortSparqlPatterns,
-  SparqlConstructTriplesFunction: snippets_SparqlConstructTriplesFunction,
-  SparqlConstructTriplesFunctionParameters:
-    snippets_SparqlConstructTriplesFunctionParameters,
   SparqlFilterPattern: snippets_SparqlFilterPattern,
   sparqlInstancesOfPattern: snippets_sparqlInstancesOfPattern,
   SparqlPattern_isSolutionGenerating:
@@ -197,9 +192,6 @@ export const snippets = {
   SparqlPattern: snippets_SparqlPattern,
   sparqlPropertyPath: snippets_sparqlPropertyPath,
   sparqlValueInPattern: snippets_sparqlValueInPattern,
-  SparqlWherePatternsFunction: snippets_SparqlWherePatternsFunction,
-  SparqlWherePatternsFunctionParameters:
-    snippets_SparqlWherePatternsFunctionParameters,
   strictEquals: snippets_strictEquals,
   StringFilter: snippets_StringFilter,
   StringSchema: snippets_StringSchema,
@@ -212,4 +204,7 @@ export const snippets = {
   ToRdfResourceFunction: snippets_ToRdfResourceFunction,
   ToRdfResourceValuesFunction: snippets_ToRdfResourceValuesFunction,
   UnwrapR: snippets_UnwrapR,
+  ValueSparqlConstructTriplesFunction:
+    snippets_ValueSparqlConstructTriplesFunction,
+  ValueSparqlWherePatternsFunction: snippets_ValueSparqlWherePatternsFunction,
 };

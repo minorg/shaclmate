@@ -3,13 +3,13 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_IdentifierFilter } from "./snippets_IdentifierFilter.js";
 import { snippets_IdentifierSchema } from "./snippets_IdentifierSchema.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_identifierSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}identifierSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<${snippets_IdentifierFilter}, ${snippets_IdentifierSchema}> =
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_IdentifierFilter}, ${snippets_IdentifierSchema}> =
   ({ filter, propertyPatterns, valueVariable }) => {
     const patterns: ${snippets_SparqlPattern}[] = propertyPatterns.concat();
 

@@ -3,12 +3,12 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_liftSparqlPatterns } from "./snippets_liftSparqlPatterns.js";
 import { snippets_MaybeFilter } from "./snippets_MaybeFilter.js";
 import { snippets_MaybeSchema } from "./snippets_MaybeSchema.js";
-import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_maybeSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}maybeSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlWherePatternsFunction}<${snippets_MaybeFilter}<ItemFilterT>, ${snippets_MaybeSchema}<ItemSchemaT>> {  
+function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_ValueSparqlWherePatternsFunction}<${snippets_MaybeFilter}<ItemFilterT>, ${snippets_MaybeSchema}<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (filter === undefined) {
       // Treat the item's patterns as optional
