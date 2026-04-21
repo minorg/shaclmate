@@ -37,6 +37,8 @@ import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectTyp
 import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionOrMethodDeclaration.js";
 import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { ObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
+import { ObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { AbstractType } from "./AbstractType.js";
@@ -44,7 +46,6 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
@@ -196,6 +197,12 @@ export class ObjectType extends AbstractType {
         ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
         ObjectType_filterFunctionDeclaration.call(this),
         ObjectType_filterTypeDeclaration.call(this),
+        ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
+          this,
+        )().toList(),
+        ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.bind(
+          this,
+        )().toList(),
         ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_fromRdfResourceFunctionDeclaration.call(this).toList(),
         ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
@@ -219,12 +226,6 @@ export class ObjectType extends AbstractType {
         ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
-          this,
-        )().toList(),
-        ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.bind(
-          this,
-        )().toList(),
         ...(this.declarationType === "interface"
           ? ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList()
           : []),
@@ -233,6 +234,12 @@ export class ObjectType extends AbstractType {
               this,
             ).toList()
           : []),
+        ...ObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
+          this,
+        )().toList(),
+        ...ObjectType_valueSparqlWherePatternsFunctionDeclaration.bind(
+          this,
+        )().toList(),
       );
 
       if (staticModuleDeclarations.length > 0) {
@@ -382,12 +389,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`(({ filter, ignoreRdfType, valueVariable, variablePrefix }: ${snippets.SparqlConstructTriplesFunctionParameters}<${this.filterType}, ${this.schemaType}>) => ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter, focusIdentifier: valueVariable, ignoreRdfType, variablePrefix }))`;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`(({ filter, ignoreRdfType, preferredLanguages, propertyPatterns, valueVariable, variablePrefix }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })))`;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
   }
 
   @Memoize()
