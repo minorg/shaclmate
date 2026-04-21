@@ -94,6 +94,26 @@ export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFu
     },
     null as Code | null,
   )};`,
+
+        code`\
+export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
+${joinCode(
+  this.concreteMemberTypeDescriptors
+    .map(({ memberType }) => {
+      let returnExpression: Code;
+      switch (memberType.declarationType) {
+        case "class":
+          returnExpression = code`value.${syntheticNamePrefix}toRdfResource(value, options)`;
+          break;
+        case "interface":
+          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;
+          break;
+      }
+      return code`if (${memberType.staticModuleName}.is${memberType.name}(value)) { return ${returnExpression}; }`;
+    })
+    .concat(code`throw new Error("unrecognized type");`),
+)}
+}`,
       );
     }
 
