@@ -471,12 +471,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
-        sh:in ("text"
-            "html"
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inStringsProperty
-    ], [
         sh:in (true
         ) ;
         sh:maxCount 1 ;
@@ -504,6 +498,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inDoublesProperty
+    ], [
+        sh:in ("text"
+            "html"
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inStringsProperty
     ] .
 
 :IndirectRecursiveClass

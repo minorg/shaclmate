@@ -63,7 +63,7 @@ describe("fromRdf", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
-        .fromRdfResource(harness.toRdf(), {
+        .fromRdfResource(harness.toRdfResource(), {
           context: {
             extra: 1,
           },
@@ -79,7 +79,7 @@ describe("fromRdf", () => {
   it("concrete parent class fromRdf", ({ expect }) => {
     const fromRdfInstance =
       kitchenSink.ConcreteParentClassStatic.$fromRdfResource(
-        harnesses.concreteChildClass.toRdf(),
+        harnesses.concreteChildClass.toRdfResource(),
       ).unsafeCoerce();
     expect(fromRdfInstance).toBeInstanceOf(kitchenSink.ConcreteParentClass);
     expect(fromRdfInstance.concreteParentClassProperty).toStrictEqual(
@@ -127,7 +127,7 @@ describe("fromRdf", () => {
 
   it("ignore extraneous RDF type", ({ expect }) => {
     const expectedInstance = harnesses.concreteChildClass.instance;
-    const actualResource = expectedInstance.$toRdf();
+    const actualResource = expectedInstance.$toRdfResource();
     expect(kitchenSink.ConcreteChildClass.$fromRdfType.value).not.toStrictEqual(
       "http://example.com/ExtraneousRdfType",
     );
@@ -473,7 +473,7 @@ describe("fromRdf", () => {
       concreteChildClassProperty: "child",
       concreteParentClassProperty: "parent",
     });
-    const childResource = concreteChild.$toRdf();
+    const childResource = concreteChild.$toRdfResource();
 
     // Deserialize all of the superclasses of the child class
 
@@ -497,7 +497,7 @@ describe("fromRdf", () => {
       concreteParentClassProperty: "parent",
     });
     const dataset = datasetFactory.dataset();
-    for (const quad of child.$toRdf().dataset) {
+    for (const quad of child.$toRdfResource().dataset) {
       if (!quad.predicate.equals(rdf.type)) {
         dataset.add(quad);
       }

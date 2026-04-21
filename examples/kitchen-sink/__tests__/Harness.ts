@@ -39,7 +39,7 @@ export abstract class Harness<
 
   abstract toJson(): any;
 
-  abstract toRdf(kwds: {
+  abstract toRdfResource(kwds: {
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource;

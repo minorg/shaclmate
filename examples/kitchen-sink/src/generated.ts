@@ -5784,7 +5784,7 @@ export class UnionDiscriminantsClass {
               return [
                 value.value.$toRdfResource({
                   graph: _options.graph,
-                  resourceSet: options_.resourceSet,
+                  resourceSet: _options.resourceSet,
                 }).identifier,
               ];
             }
@@ -5792,7 +5792,7 @@ export class UnionDiscriminantsClass {
               return [
                 value.value.$toRdfResource({
                   graph: _options.graph,
-                  resourceSet: options_.resourceSet,
+                  resourceSet: _options.resourceSet,
                 }).identifier,
               ];
             }
@@ -5880,7 +5880,7 @@ export class UnionDiscriminantsClass {
             return [
               value.value.$toRdfResource({
                 graph: _options.graph,
-                resourceSet: options_.resourceSet,
+                resourceSet: _options.resourceSet,
               }).identifier,
             ];
           }
@@ -5888,7 +5888,7 @@ export class UnionDiscriminantsClass {
             return [
               value.value.$toRdfResource({
                 graph: _options.graph,
-                resourceSet: options_.resourceSet,
+                resourceSet: _options.resourceSet,
               }).identifier,
             ];
           }
@@ -5972,7 +5972,7 @@ export class UnionDiscriminantsClass {
               return [
                 value.value.$toRdfResource({
                   graph: _options.graph,
-                  resourceSet: options_.resourceSet,
+                  resourceSet: _options.resourceSet,
                 }).identifier,
               ];
             }
@@ -5980,7 +5980,7 @@ export class UnionDiscriminantsClass {
               return [
                 value.value.$toRdfResource({
                   graph: _options.graph,
-                  resourceSet: options_.resourceSet,
+                  resourceSet: _options.resourceSet,
                 }).identifier,
               ];
             }
@@ -12345,7 +12345,7 @@ export class RecursiveClassUnionMember2 {
         "http://example.com/recursiveClassUnionMember2Property",
       ),
       this.recursiveClassUnionMember2Property.toList().flatMap((value) =>
-        RecursiveClassUnion.$toRdfResourceValues(valueVariable, {
+        RecursiveClassUnion.$toRdfResourceValues(value, {
           graph: options?.graph,
           resource: resource,
           resourceSet: resourceSet,
@@ -12924,7 +12924,7 @@ export class RecursiveClassUnionMember1 {
         "http://example.com/recursiveClassUnionMember1Property",
       ),
       this.recursiveClassUnionMember1Property.toList().flatMap((value) =>
-        RecursiveClassUnion.$toRdfResourceValues(valueVariable, {
+        RecursiveClassUnion.$toRdfResourceValues(value, {
           graph: options?.graph,
           resource: resource,
           resourceSet: resourceSet,
@@ -25008,7 +25008,7 @@ export class NamedUnionPropertiesClass {
     }
     resource.add(
       dataFactory.namedNode("http://example.com/namedUnion1Property"),
-      NamedUnion1.$toRdfResourceValues(valueVariable, {
+      NamedUnion1.$toRdfResourceValues(this.namedUnion1Property, {
         graph: options?.graph,
         resource: resource,
         resourceSet: resourceSet,
@@ -25020,7 +25020,7 @@ export class NamedUnionPropertiesClass {
     );
     resource.add(
       dataFactory.namedNode("http://example.com/namedUnion2Property"),
-      NamedUnion2.$toRdfResourceValues(valueVariable, {
+      NamedUnion2.$toRdfResourceValues(this.namedUnion2Property, {
         graph: options?.graph,
         resource: resource,
         resourceSet: resourceSet,
@@ -31427,7 +31427,7 @@ export namespace LazyPropertiesInterface {
       _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) =>
-          PartialInterfaceUnion.$toRdfResourceValues(valueVariable, {
+          PartialInterfaceUnion.$toRdfResourceValues(value, {
             graph: options?.graph,
             resource: resource,
             resourceSet: resourceSet,
@@ -32546,7 +32546,7 @@ export class LazyPropertiesClass {
       this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) =>
-          PartialClassUnion.$toRdfResourceValues(valueVariable, {
+          PartialClassUnion.$toRdfResourceValues(value, {
             graph: options?.graph,
             resource: resource,
             resourceSet: resourceSet,
@@ -67780,7 +67780,7 @@ export namespace ClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -67788,7 +67788,7 @@ export namespace ClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -67960,10 +67960,10 @@ export namespace ClassUnion {
     options,
   ) => {
     if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };
@@ -68204,7 +68204,7 @@ export namespace FlattenClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -68212,7 +68212,7 @@ export namespace FlattenClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -68220,7 +68220,7 @@ export namespace FlattenClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -68450,13 +68450,13 @@ export namespace FlattenClassUnion {
     options,
   ) => {
     if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };
@@ -68648,7 +68648,7 @@ export namespace InterfaceUnion {
         return [
           InterfaceUnionMember1.$toRdfResource(value, {
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -68656,7 +68656,7 @@ export namespace InterfaceUnion {
         return [
           InterfaceUnionMember2.$toRdfResource(value, {
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -69051,7 +69051,7 @@ export namespace LazilyResolvedClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -69061,7 +69061,7 @@ export namespace LazilyResolvedClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -69233,12 +69233,12 @@ export namespace LazilyResolvedClassUnion {
     if (
       LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };
@@ -69491,7 +69491,7 @@ export namespace LazilyResolvedInterfaceUnion {
         return [
           LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, {
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -69503,7 +69503,7 @@ export namespace LazilyResolvedInterfaceUnion {
         return [
           LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, {
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -69894,7 +69894,7 @@ export namespace PartialClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -69902,7 +69902,7 @@ export namespace PartialClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -70074,10 +70074,10 @@ export namespace PartialClassUnion {
     options,
   ) => {
     if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };
@@ -70286,7 +70286,7 @@ export namespace PartialInterfaceUnion {
         return [
           PartialInterfaceUnionMember1.$toRdfResource(value, {
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -70294,7 +70294,7 @@ export namespace PartialInterfaceUnion {
         return [
           PartialInterfaceUnionMember2.$toRdfResource(value, {
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -70677,7 +70677,7 @@ export namespace NoRdfTypeClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -70685,7 +70685,7 @@ export namespace NoRdfTypeClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -70856,10 +70856,10 @@ export namespace NoRdfTypeClassUnion {
     options,
   ) => {
     if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };
@@ -71060,7 +71060,7 @@ export namespace RecursiveClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -71068,7 +71068,7 @@ export namespace RecursiveClassUnion {
         return [
           value.$toRdfResource({
             graph: _options.graph,
-            resourceSet: options_.resourceSet,
+            resourceSet: _options.resourceSet,
           }).identifier,
         ];
       }
@@ -71239,10 +71239,10 @@ export namespace RecursiveClassUnion {
     options,
   ) => {
     if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };
@@ -75053,7 +75053,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75061,7 +75061,7 @@ export namespace $Object {
       return [
         BlankNodeIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75069,7 +75069,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75081,7 +75081,7 @@ export namespace $Object {
       return [
         BlankNodeOrIriIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75089,7 +75089,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75097,7 +75097,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75105,7 +75105,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75113,7 +75113,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75121,7 +75121,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75129,7 +75129,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75137,7 +75137,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75145,7 +75145,7 @@ export namespace $Object {
       return [
         ConcreteChildInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75153,7 +75153,7 @@ export namespace $Object {
       return [
         ConcreteParentInterfaceStatic.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75165,7 +75165,7 @@ export namespace $Object {
       return [
         BaseInterfaceWithoutPropertiesStatic.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75175,7 +75175,7 @@ export namespace $Object {
       return [
         BaseInterfaceWithPropertiesStatic.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75185,7 +75185,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75193,7 +75193,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75201,7 +75201,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75209,7 +75209,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75217,7 +75217,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75225,7 +75225,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75233,7 +75233,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75241,7 +75241,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75249,7 +75249,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75257,7 +75257,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75265,7 +75265,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75273,7 +75273,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75281,7 +75281,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75289,7 +75289,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75297,7 +75297,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75305,7 +75305,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75313,7 +75313,7 @@ export namespace $Object {
       return [
         Interface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75321,7 +75321,7 @@ export namespace $Object {
       return [
         InterfaceUnionMember1.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75329,7 +75329,7 @@ export namespace $Object {
       return [
         InterfaceUnionMember2.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75337,7 +75337,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75345,7 +75345,7 @@ export namespace $Object {
       return [
         IriIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75353,7 +75353,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75361,7 +75361,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75373,7 +75373,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75385,7 +75385,7 @@ export namespace $Object {
       return [
         LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75395,7 +75395,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75405,7 +75405,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75417,7 +75417,7 @@ export namespace $Object {
       return [
         LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75429,7 +75429,7 @@ export namespace $Object {
       return [
         LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75439,7 +75439,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75451,7 +75451,7 @@ export namespace $Object {
       return [
         LazilyResolvedIriIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75459,7 +75459,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75467,7 +75467,7 @@ export namespace $Object {
       return [
         LazyPropertiesInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75475,7 +75475,7 @@ export namespace $Object {
       return [
         PartialInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75483,7 +75483,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75491,7 +75491,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75499,7 +75499,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75507,7 +75507,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75515,7 +75515,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75523,7 +75523,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75531,7 +75531,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75539,7 +75539,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75547,7 +75547,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75555,7 +75555,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75563,7 +75563,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75571,7 +75571,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75579,7 +75579,7 @@ export namespace $Object {
       return [
         PartialInterfaceUnionMember1.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75587,7 +75587,7 @@ export namespace $Object {
       return [
         PartialInterfaceUnionMember2.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75595,7 +75595,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75603,7 +75603,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75611,7 +75611,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75619,7 +75619,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75627,7 +75627,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75635,7 +75635,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75643,7 +75643,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75651,7 +75651,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75659,7 +75659,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75667,7 +75667,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75675,7 +75675,7 @@ export namespace $Object {
       return [
         UuidV4IriIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75683,7 +75683,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -75691,7 +75691,7 @@ export namespace $Object {
       return [
         value.$toRdfResource({
           graph: _options.graph,
-          resourceSet: options_.resourceSet,
+          resourceSet: _options.resourceSet,
         }).identifier,
       ];
     }
@@ -80096,13 +80096,13 @@ export namespace $Object {
     options,
   ) => {
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
       return BlankNodeIdentifierInterface.$toRdfResource(value, options);
     }
     if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
@@ -80112,25 +80112,25 @@ export namespace $Object {
       return BlankNodeOrIriIdentifierInterface.$toRdfResource(value, options);
     }
     if (ClassPropertiesClass.isClassPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PartialClass.isPartialClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NonClass.isNonClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ConcreteChildClass.isConcreteChildClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ConcreteChildInterface.isConcreteChildInterface(value)) {
       return ConcreteChildInterface.$toRdfResource(value, options);
@@ -80156,52 +80156,52 @@ export namespace $Object {
     if (
       ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (InIdentifierClass.isInIdentifierClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (InPropertiesClass.isInPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (Interface.isInterface(value)) {
       return Interface.$toRdfResource(value, options);
@@ -80213,23 +80213,23 @@ export namespace $Object {
       return InterfaceUnionMember2.$toRdfResource(value, options);
     }
     if (IriIdentifierClass.isIriIdentifierClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
       return IriIdentifierInterface.$toRdfResource(value, options);
     }
     if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
         value,
       )
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
@@ -80244,12 +80244,12 @@ export namespace $Object {
     if (
       LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
@@ -80268,7 +80268,7 @@ export namespace $Object {
     if (
       LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
     ) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (
       LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
@@ -80281,7 +80281,7 @@ export namespace $Object {
       );
     }
     if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
       return LazyPropertiesInterface.$toRdfResource(value, options);
@@ -80290,40 +80290,40 @@ export namespace $Object {
       return PartialInterface.$toRdfResource(value, options);
     }
     if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NodeKindsClass.isNodeKindsClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NewName1Class.isNewName1Class(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (NewName2Class.isNewName2Class(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
       return PartialInterfaceUnionMember1.$toRdfResource(value, options);
@@ -80332,43 +80332,43 @@ export namespace $Object {
       return PartialInterfaceUnionMember2.$toRdfResource(value, options);
     }
     if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PropertyNamesClass.isPropertyNamesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PropertyPathsClass.isPropertyPathsClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (TermPropertiesClass.isTermPropertiesClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
       return UuidV4IriIdentifierInterface.$toRdfResource(value, options);
     }
     if ($DefaultPartial.is$DefaultPartial(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return value.$toRdfResource(value, options);
+      return value.$toRdfResource(options);
     }
     throw new Error("unrecognized type");
   };

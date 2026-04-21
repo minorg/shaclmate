@@ -44,7 +44,7 @@ export class ExternClass extends AbstractBaseClassForExternClass {
   }
 
   // Called by class methods
-  override $toRdf(options?: {
+  override $toRdfResource(options?: {
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: rdfjsResource.ResourceSet;
   }) {
@@ -53,7 +53,7 @@ export class ExternClass extends AbstractBaseClassForExternClass {
       new rdfjsResource.ResourceSet(datasetFactory.dataset(), {
         dataFactory,
       });
-    const resource = super.$toRdf({
+    const resource = super.$toRdfResource({
       graph: options?.graph,
       resourceSet,
     });

@@ -64,7 +64,7 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      const toRdfDataset = harness.toRdf().dataset;
+      const toRdfDataset = harness.toRdfResource().dataset;
       const toRdfQuads: Quad[] = [];
 
       const oxigraphStore = new oxigraph.Store();
