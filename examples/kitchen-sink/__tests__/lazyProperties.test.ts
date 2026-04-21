@@ -209,17 +209,18 @@ describe("lazyProperties", () => {
       { resourceSet },
     );
 
-    emptyLazyPropertiesClassInstance = kitchenSink.LazyPropertiesClass.$fromRdf(
-      new kitchenSink.LazyPropertiesClass({
-        requiredLazyToResolvedClassProperty:
-          expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
-        requiredPartialClassToResolvedClassProperty:
-          expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
-      }).$toRdf({ resourceSet }),
-    ).unsafeCoerce();
+    emptyLazyPropertiesClassInstance =
+      kitchenSink.LazyPropertiesClass.$fromRdfResource(
+        new kitchenSink.LazyPropertiesClass({
+          requiredLazyToResolvedClassProperty:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
+          requiredPartialClassToResolvedClassProperty:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
+        }).$toRdf({ resourceSet }),
+      ).unsafeCoerce();
 
     emptyLazyPropertiesInterfaceInstance =
-      kitchenSink.LazyPropertiesInterface.$fromRdf(
+      kitchenSink.LazyPropertiesInterface.$fromRdfResource(
         kitchenSink.LazyPropertiesInterface.$toRdf(
           kitchenSink.LazyPropertiesInterface.$create({
             requiredLazyToResolvedInterfaceProperty:
@@ -232,7 +233,7 @@ describe("lazyProperties", () => {
       ).unsafeCoerce();
 
     nonEmptyLazyPropertiesClassInstance =
-      kitchenSink.LazyPropertiesClass.$fromRdf(
+      kitchenSink.LazyPropertiesClass.$fromRdfResource(
         new kitchenSink.LazyPropertiesClass({
           optionalLazyToResolvedClassProperty:
             expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
@@ -260,7 +261,7 @@ describe("lazyProperties", () => {
       ).unsafeCoerce();
 
     nonEmptyLazyPropertiesInterfaceInstance =
-      kitchenSink.LazyPropertiesInterface.$fromRdf(
+      kitchenSink.LazyPropertiesInterface.$fromRdfResource(
         kitchenSink.LazyPropertiesInterface.$toRdf(
           kitchenSink.LazyPropertiesInterface.$create({
             optionalLazyToResolvedInterfaceProperty:

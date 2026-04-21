@@ -63,7 +63,7 @@ describe("fromRdf", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
-        .fromRdf(harness.toRdf(), {
+        .fromRdfResource(harness.toRdf(), {
           context: {
             extra: 1,
           },
@@ -77,9 +77,10 @@ describe("fromRdf", () => {
   }
 
   it("concrete parent class fromRdf", ({ expect }) => {
-    const fromRdfInstance = kitchenSink.ConcreteParentClassStatic.$fromRdf(
-      harnesses.concreteChildClass.toRdf(),
-    ).unsafeCoerce();
+    const fromRdfInstance =
+      kitchenSink.ConcreteParentClassStatic.$fromRdfResource(
+        harnesses.concreteChildClass.toRdf(),
+      ).unsafeCoerce();
     expect(fromRdfInstance).toBeInstanceOf(kitchenSink.ConcreteParentClass);
     expect(fromRdfInstance.concreteParentClassProperty).toStrictEqual(
       harnesses.concreteChildClass.instance.concreteParentClassProperty,
@@ -101,7 +102,7 @@ describe("fromRdf", () => {
     );
 
     const fromRdfInstance =
-      kitchenSink.ExplicitFromToRdfTypesClass.$fromRdf(resource);
+      kitchenSink.ExplicitFromToRdfTypesClass.$fromRdfResource(resource);
     expect(fromRdfInstance.isLeft()).toBe(true);
   });
 
@@ -120,7 +121,7 @@ describe("fromRdf", () => {
     );
 
     const fromRdfInstance =
-      kitchenSink.ExplicitFromToRdfTypesClass.$fromRdf(resource);
+      kitchenSink.ExplicitFromToRdfTypesClass.$fromRdfResource(resource);
     expect(fromRdfInstance.isRight()).toBe(true);
   });
 
@@ -141,7 +142,7 @@ describe("fromRdf", () => {
       actualRdfTypeQuads[0].object.equals(extraneousRdfType),
     ).toStrictEqual(false);
     expect(
-      kitchenSink.ConcreteChildClass.$fromRdf(actualResource)
+      kitchenSink.ConcreteChildClass.$fromRdfResource(actualResource)
         .unsafeCoerce()
         .$equals(expectedInstance)
         .isRight(),
@@ -153,7 +154,7 @@ describe("fromRdf", () => {
       ...actualResource.dataset.match(actualResource.identifier, rdf.type),
     ]).toHaveLength(2);
     expect(
-      kitchenSink.ConcreteChildClass.$fromRdf(actualResource)
+      kitchenSink.ConcreteChildClass.$fromRdfResource(actualResource)
         .unsafeCoerce()
         .$equals(expectedInstance)
         .isRight(),
@@ -180,7 +181,7 @@ describe("fromRdf", () => {
       ),
     );
     expect(
-      kitchenSink.HasValuePropertiesClass.$fromRdf(
+      kitchenSink.HasValuePropertiesClass.$fromRdfResource(
         new ResourceSet(dataset, {
           dataFactory,
         }).resource(identifier),
@@ -202,7 +203,7 @@ describe("fromRdf", () => {
         dataFactory.literal("whatever"),
       ),
     );
-    const instance = kitchenSink.InIdentifierClass.$fromRdf(
+    const instance = kitchenSink.InIdentifierClass.$fromRdfResource(
       new ResourceSet(dataset, {
         dataFactory,
       }).resource(identifier),
@@ -220,7 +221,7 @@ describe("fromRdf", () => {
         dataFactory.namedNode("http://example.com/WithInPropertiesIriInvalid"),
       ),
     );
-    const result = kitchenSink.InPropertiesClass.$fromRdf(
+    const result = kitchenSink.InPropertiesClass.$fromRdfResource(
       new ResourceSet(dataset, {
         dataFactory,
       }).resource(identifier),
@@ -247,7 +248,7 @@ describe("fromRdf", () => {
         object,
       ),
     );
-    const result = kitchenSink.InPropertiesClass.$fromRdf(
+    const result = kitchenSink.InPropertiesClass.$fromRdfResource(
       new ResourceSet(dataset, {
         dataFactory,
       }).resource(identifier),
@@ -257,7 +258,7 @@ describe("fromRdf", () => {
   });
 
   it("languageIn: valid", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
       validLanguageInResource,
     ).unsafeCoerce();
     expect(instance.languageInLiteralProperty).toHaveLength(
@@ -274,14 +275,14 @@ describe("fromRdf", () => {
 
   it("languageIn: invalid", ({ expect }) => {
     expect(
-      kitchenSink.LanguageInPropertiesClass.$fromRdf(
+      kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
         invalidLanguageInResource,
       ).isLeft(),
     );
   });
 
   it("preferredLanguages: []", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
       validLanguageInResource,
       {
         preferredLanguages: [],
@@ -293,7 +294,7 @@ describe("fromRdf", () => {
   });
 
   it("preferredLanguages: ['en']", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
       validLanguageInResource,
       {
         preferredLanguages: ["en"],
@@ -308,14 +309,17 @@ describe("fromRdf", () => {
 
   it("preferredLanguages: ['']", ({ expect }) => {
     expect(
-      kitchenSink.LanguageInPropertiesClass.$fromRdf(validLanguageInResource, {
-        preferredLanguages: [""],
-      }).isLeft(),
+      kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
+        validLanguageInResource,
+        {
+          preferredLanguages: [""],
+        },
+      ).isLeft(),
     ).toStrictEqual(true);
   });
 
   it("preferredLanguages: ['', 'en']", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
       validLanguageInResource,
       {
         preferredLanguages: ["", "en"],
@@ -329,7 +333,7 @@ describe("fromRdf", () => {
   });
 
   it("preferredLanguages: ['en', '']", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
       validLanguageInResource,
       {
         preferredLanguages: ["en", ""],
@@ -343,7 +347,7 @@ describe("fromRdf", () => {
   });
 
   it("preferredLanguages: ['fr', 'en']", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
       validLanguageInResource,
       {
         preferredLanguages: ["fr", "en"],
@@ -362,7 +366,7 @@ describe("fromRdf", () => {
 
   it("accept right identifier type (NamedNode)", ({ expect }) => {
     expect(
-      kitchenSink.IriIdentifierClass.$fromRdf(
+      kitchenSink.IriIdentifierClass.$fromRdfResource(
         new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
@@ -374,7 +378,7 @@ describe("fromRdf", () => {
 
   it("accept right identifier type (sh:in identifier)", ({ expect }) => {
     expect(
-      kitchenSink.InIdentifierClass.$fromRdf(
+      kitchenSink.InIdentifierClass.$fromRdfResource(
         new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
@@ -388,7 +392,7 @@ describe("fromRdf", () => {
 
   it("reject wrong identifier type (BlankNode)", ({ expect }) => {
     expect(
-      kitchenSink.IriIdentifierClass.$fromRdf(
+      kitchenSink.IriIdentifierClass.$fromRdfResource(
         new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
@@ -400,7 +404,7 @@ describe("fromRdf", () => {
 
   it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
     expect(
-      kitchenSink.InIdentifierClass.$fromRdf(
+      kitchenSink.InIdentifierClass.$fromRdfResource(
         new ResourceSet(datasetFactory.dataset(), {
           dataFactory,
         })
@@ -422,7 +426,8 @@ describe("fromRdf", () => {
         .path,
       dataFactory.blankNode(),
     );
-    const result = kitchenSink.ListPropertiesClass.$fromRdf(instanceResource);
+    const result =
+      kitchenSink.ListPropertiesClass.$fromRdfResource(instanceResource);
     expect(result.isLeft()).toBe(true);
     // expect(result.extract()).toBeInstanceOf(Resource.ListStructureError);
   });
@@ -440,7 +445,8 @@ describe("fromRdf", () => {
     );
     listResource.add(rdf.first, dataFactory.blankNode());
     listResource.add(rdf.rest, rdf.nil);
-    const result = kitchenSink.ListPropertiesClass.$fromRdf(instanceResource);
+    const result =
+      kitchenSink.ListPropertiesClass.$fromRdfResource(instanceResource);
     expect(result.isLeft()).toBe(true);
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
@@ -456,7 +462,7 @@ describe("fromRdf", () => {
       dataFactory.blankNode(),
     );
     const result =
-      kitchenSink.PropertyCardinalitiesClass.$fromRdf(instanceResource);
+      kitchenSink.PropertyCardinalitiesClass.$fromRdfResource(instanceResource);
     expect(result.isLeft()).toBe(true);
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
@@ -472,7 +478,7 @@ describe("fromRdf", () => {
     // Deserialize all of the superclasses of the child class
 
     const concreteParent =
-      kitchenSink.ConcreteParentClassStatic.$fromRdf(
+      kitchenSink.ConcreteParentClassStatic.$fromRdfResource(
         childResource,
       ).unsafeCoerce();
 
@@ -499,7 +505,7 @@ describe("fromRdf", () => {
     const childResource = new ResourceSet(dataset).resource(child.$identifier);
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
-      kitchenSink.ConcreteChildClass.$fromRdf(childResource).isLeft(),
+      kitchenSink.ConcreteChildClass.$fromRdfResource(childResource).isLeft(),
     ).toStrictEqual(true);
     // Add rdf:type <subclass> statement
     dataset.add(
@@ -519,7 +525,7 @@ describe("fromRdf", () => {
     );
 
     expect(
-      kitchenSink.ConcreteChildClass.$fromRdf(childResource)
+      kitchenSink.ConcreteChildClass.$fromRdfResource(childResource)
         .unsafeCoerce()
         .$equals(child)
         .unsafeCoerce(),

@@ -7,7 +7,7 @@ export abstract class Harness<
   T extends { readonly $identifier: Resource.Identifier },
 > {
   readonly fromJson: (json: unknown) => Either<Error, T>;
-  readonly fromRdf: (
+  readonly fromRdfResource: (
     resource: Resource,
     parameters: {
       [_index: string]: any;
@@ -21,17 +21,17 @@ export abstract class Harness<
     readonly instance: T,
     {
       $fromJson,
-      $fromRdf,
+      $fromRdfResource,
       $sparqlConstructQueryString,
     }: {
       $fromJson: Harness<T>["fromJson"];
-      $fromRdf: Harness<T>["fromRdf"];
+      $fromRdfResource: Harness<T>["fromRdfResource"];
       $sparqlConstructQueryString: Harness<T>["sparqlConstructQueryString"];
     },
     readonly shapeName: string,
   ) {
     this.fromJson = $fromJson;
-    this.fromRdf = $fromRdf;
+    this.fromRdfResource = $fromRdfResource;
     this.sparqlConstructQueryString = $sparqlConstructQueryString;
   }
 
