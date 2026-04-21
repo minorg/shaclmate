@@ -335,7 +335,7 @@ ${joinCode(
     };
 
     return code`\
-((parameters: ${snippets.FromRdfFunctionParameters}): ${imports.Either}<Error, ${this.name}> => 
+((parameters: ${snippets.FromRdfFunctionParameters}): ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>> => 
     ${variables.resourceValues}.chain(values => values.chainMap(value => {
       const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.concreteMemberTypeDescriptors.reduce(
@@ -516,7 +516,7 @@ ${joinCode(
 
   protected get inlineToRdfFunction(): Code {
     return code`\
-((parameters: ${snippets.ToRdfFunctionParameters}): ${snippets.ToRdfValue}[] => {
+((parameters: ${snippets.ToRdfFunctionParameters}<${this.name}>): ${snippets.ToRdfValue}[] => {
 ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ memberType, payload, typeCheck }) =>
