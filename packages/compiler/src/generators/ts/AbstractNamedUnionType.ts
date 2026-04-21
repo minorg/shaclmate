@@ -14,6 +14,7 @@ export abstract class AbstractNamedUnionType<
   MemberTypeT extends Type,
 > extends AbstractUnionType<MemberTypeT> {
   protected readonly _name: string;
+
   readonly features: ReadonlySet<TsFeature>;
 
   constructor({
@@ -64,15 +65,27 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
   }
 
+  get jsonTypeAliasDeclaration(): Code {
+    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType.name}`;
+  }
+
+  get jsonZodSchemaFunctionDeclaration(): Code {
+    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema}`;
+  }
+
   @Memoize()
   override get name(): string {
+    return this._name;
+  }
+
+  get staticModuleName(): string {
     return this._name;
   }
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     if (this.features.has("sparql")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
     }
     return this.inlineValueSparqlConstructTriplesFunction;
   }
@@ -80,21 +93,9 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     if (this.features.has("sparql")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns`;
+      return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
     }
     return this.inlineValueSparqlWherePatternsFunction;
-  }
-
-  get staticModuleName(): string {
-    return this._name;
-  }
-
-  get jsonTypeAliasDeclaration(): Code {
-    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType.name}`;
-  }
-
-  get jsonZodSchemaFunctionDeclaration(): Code {
-    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema}`;
   }
 
   protected get staticModuleDeclarations(): readonly Code[] {
@@ -130,8 +131,8 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     }
     if (this.features.has("sparql")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}sparqlConstructTriples: ${snippets.SparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`,
-        code`export const ${syntheticNamePrefix}sparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`,
+        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`,
+        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`,
       );
     }
 
