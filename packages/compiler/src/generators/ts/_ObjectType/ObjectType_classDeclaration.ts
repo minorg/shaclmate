@@ -6,7 +6,7 @@ import { tsComment } from "../tsComment.js";
 import { ObjectType_equalsFunctionOrMethodDeclaration } from "./ObjectType_equalsFunctionOrMethodDeclaration.js";
 import { ObjectType_hashFunctionOrMethodDeclarations } from "./ObjectType_hashFunctionOrMethodDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./ObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 
 function ObjectType_constructorDeclaration(this: ObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
@@ -78,7 +78,7 @@ ${joinCode(
     ...ObjectType_equalsFunctionOrMethodDeclaration.call(this).toList(),
     ...ObjectType_hashFunctionOrMethodDeclarations.call(this),
     ...ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList(),
-    ...ObjectType_toRdfFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_toRdfResourceFunctionOrMethodDeclaration.call(this).toList(),
     ...ObjectType_toStringMethodDeclaration.call(this).toList(),
   ],
   { on: "\n\n" },

@@ -36,7 +36,7 @@ import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_Obj
 import { ObjectType_sparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructTriplesFunctionDeclaration.js";
 import { ObjectType_sparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlWherePatternsFunctionDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
 import { AbstractType } from "./AbstractType.js";
@@ -229,7 +229,9 @@ export class ObjectType extends AbstractType {
           ? ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList()
           : []),
         ...(this.declarationType === "interface"
-          ? ObjectType_toRdfFunctionOrMethodDeclaration.call(this).toList()
+          ? ObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
+              this,
+            ).toList()
           : []),
       );
 
@@ -504,9 +506,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
-        return code`[${variables.value}.${syntheticNamePrefix}toRdf({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+        return code`[${variables.value}.${syntheticNamePrefix}toRdfResource({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
       case "interface":
-        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
     }
   }
 
