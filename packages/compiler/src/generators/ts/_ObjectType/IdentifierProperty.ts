@@ -223,6 +223,12 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
+    if (this.type.in_.length > 0) {
+      return Maybe.of(
+        code`readonly "@id": ${this.type.in_.map((iri) => `"${iri.value}"`).join(" | ")}`,
+      );
+    }
+
     return Maybe.of(code`readonly "@id": string`);
   }
 
