@@ -49,7 +49,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   @Memoize()
-  override get jsonZodSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonZodSchema"] {
+  override get jsonZchema(): AbstractProperty<DiscriminantProperty.Type>["jsonZchema"] {
     return Maybe.of({
       key: this.name,
       schema:

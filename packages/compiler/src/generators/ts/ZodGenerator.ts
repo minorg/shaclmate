@@ -4,6 +4,7 @@ import type { Generator } from "../Generator.js";
 import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
 import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
 import { snippets } from "./snippets.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -18,13 +19,11 @@ export class ZodGenerator implements Generator {
     )) {
       declarations.push(code`\
 export namespace ${objectType.staticModuleName} {
-${joinCode(
-  [
-    ...ObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList(),
-    ...ObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList(),
-  ],
-  { on: "\n\n" },
-)}
+  ${joinCode(ObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList())}
+
+  export namespace ${syntheticNamePrefix}Json {
+    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList())}
+  }
 }`);
     }
 
@@ -35,13 +34,10 @@ ${joinCode(
       invariant(astNamedUnionType.kind !== "AnonymousUnionType");
       declarations.push(code`\
 export namespace ${astNamedUnionType.staticModuleName} {
-${joinCode(
-  [
-    astNamedUnionType.jsonTypeAliasDeclaration,
-    astNamedUnionType.jsonZodSchemaFunctionDeclaration,
-  ],
-  { on: "\n\n" },
-)}
+  ${astNamedUnionType.jsonTypeAliasDeclaration}
+  export namespace ${syntheticNamePrefix}Json {
+    ${astNamedUnionType.jsonSchemaFunctionDeclaration}
+  }
 }`);
     }
 

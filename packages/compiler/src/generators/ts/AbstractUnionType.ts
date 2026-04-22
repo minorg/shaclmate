@@ -434,7 +434,7 @@ ${joinCode(
     }
   }
 
-  protected get inlineJsonZodSchema(): Code {
+  protected get inlineJsonSchema(): Code {
     switch (this.discriminant.kind) {
       case "envelope":
         return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(

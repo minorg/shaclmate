@@ -233,7 +233,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get jsonZodSchema(): AbstractProperty<IdentifierType>["jsonZodSchema"] {
+  override get jsonZchema(): AbstractProperty<IdentifierType>["jsonZchema"] {
     let schema: Code;
     if (this.type.in_.length > 0 && this.type.kind === "IriType") {
       // Treat sh:in as a union of the IRIs

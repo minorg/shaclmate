@@ -21,7 +21,7 @@ export function ObjectType_jsonSchemaFunctionDeclaration(
     mergeZodObjectSchemas.push(
       code`${imports.z}.object({ ${joinCode(
         this.properties
-          .flatMap((property) => property.jsonZodSchema.toList())
+          .flatMap((property) => property.jsonZchema.toList())
           .map(({ key, schema }) => code`"${key}": ${schema}`),
         { on: "," },
       )} })`,

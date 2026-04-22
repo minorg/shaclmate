@@ -2795,15 +2795,17 @@ export namespace NamedUnion1 {
 
   export type $Json = { readonly "@id": string } | string;
 
-  export const $jsonZodSchema = () =>
-    z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
+  export namespace $Json {
+    export const schema = () =>
+      z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
 
-  export function $parseJson(json: unknown): Either<Error, NamedUnion1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $toJson = (value: NamedUnion1): NamedUnion1.$Json => {
@@ -3047,18 +3049,20 @@ export namespace NamedUnion2 {
     | { type: "date"; value: string }
     | { type: "dateTime"; value: string };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("type", [
-      z.object({ type: z.literal("date"), value: z.iso.date() }),
-      z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("type", [
+        z.object({ type: z.literal("date"), value: z.iso.date() }),
+        z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, NamedUnion2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $toJson = (value: NamedUnion2): NamedUnion2.$Json => {
@@ -12440,7 +12444,7 @@ export namespace RecursiveClassUnionMember2 {
         recursiveClassUnionMember2Property: z
           .lazy(
             (): z.ZodType<RecursiveClassUnion.$Json> =>
-              RecursiveClassUnion.$jsonZodSchema(),
+              RecursiveClassUnion.$Json.schema(),
           )
           .optional(),
       }) satisfies z.ZodType<$Json>;
@@ -13040,7 +13044,7 @@ export namespace RecursiveClassUnionMember1 {
         recursiveClassUnionMember1Property: z
           .lazy(
             (): z.ZodType<RecursiveClassUnion.$Json> =>
-              RecursiveClassUnion.$jsonZodSchema(),
+              RecursiveClassUnion.$Json.schema(),
           )
           .optional(),
       }) satisfies z.ZodType<$Json>;
@@ -25458,8 +25462,8 @@ export namespace NamedUnionPropertiesClass {
       return z.object({
         "@id": z.string().min(1),
         $type: z.literal("NamedUnionPropertiesClass"),
-        namedUnion1Property: NamedUnion1.$jsonZodSchema(),
-        namedUnion2Property: NamedUnion2.$jsonZodSchema(),
+        namedUnion1Property: NamedUnion1.$Json.schema(),
+        namedUnion2Property: NamedUnion2.$Json.schema(),
       }) satisfies z.ZodType<$Json>;
     }
     export function parse(json: unknown): Either<Error, $Json> {
@@ -29626,7 +29630,7 @@ export namespace LazyPropertiesInterface {
         optionalPartialInterfaceToResolvedInterfaceUnionProperty:
           PartialInterface.$Json.schema().optional(),
         optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
-          PartialInterfaceUnion.$jsonZodSchema().optional(),
+          PartialInterfaceUnion.$Json.schema().optional(),
         requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json.schema(),
         requiredPartialInterfaceToResolvedInterfaceProperty:
           PartialInterface.$Json.schema(),
@@ -32870,7 +32874,7 @@ export namespace LazyPropertiesClass {
           .schema()
           .optional(),
         optionalPartialClassUnionToResolvedClassUnionProperty:
-          PartialClassUnion.$jsonZodSchema().optional(),
+          PartialClassUnion.$Json.schema().optional(),
         requiredLazyToResolvedClassProperty: $DefaultPartial.$Json.schema(),
         requiredPartialClassToResolvedClassProperty:
           PartialClass.$Json.schema(),
@@ -68657,18 +68661,20 @@ export namespace ClassUnion {
 
   export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      ClassUnionMember1.$Json.schema(),
-      ClassUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        ClassUnionMember1.$Json.schema(),
+        ClassUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, ClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -69176,19 +69182,21 @@ export namespace FlattenClassUnion {
     | ClassUnionMember2.$Json
     | FlattenClassUnionMember3.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      ClassUnionMember1.$Json.schema(),
-      ClassUnionMember2.$Json.schema(),
-      FlattenClassUnionMember3.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        ClassUnionMember1.$Json.schema(),
+        ClassUnionMember2.$Json.schema(),
+        FlattenClassUnionMember3.$Json.schema(),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, FlattenClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -69664,18 +69672,20 @@ export namespace InterfaceUnion {
 
   export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      InterfaceUnionMember1.$Json.schema(),
-      InterfaceUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        InterfaceUnionMember1.$Json.schema(),
+        InterfaceUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, InterfaceUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -70137,20 +70147,20 @@ export namespace LazilyResolvedClassUnion {
     | LazilyResolvedClassUnionMember1.$Json
     | LazilyResolvedClassUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      LazilyResolvedClassUnionMember1.$Json.schema(),
-      LazilyResolvedClassUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        LazilyResolvedClassUnionMember1.$Json.schema(),
+        LazilyResolvedClassUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -70654,20 +70664,20 @@ export namespace LazilyResolvedInterfaceUnion {
     | LazilyResolvedInterfaceUnionMember1.$Json
     | LazilyResolvedInterfaceUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      LazilyResolvedInterfaceUnionMember1.$Json.schema(),
-      LazilyResolvedInterfaceUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        LazilyResolvedInterfaceUnionMember1.$Json.schema(),
+        LazilyResolvedInterfaceUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedInterfaceUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -71155,18 +71165,20 @@ export namespace PartialClassUnion {
     | PartialClassUnionMember1.$Json
     | PartialClassUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      PartialClassUnionMember1.$Json.schema(),
-      PartialClassUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        PartialClassUnionMember1.$Json.schema(),
+        PartialClassUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, PartialClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -71625,20 +71637,20 @@ export namespace PartialInterfaceUnion {
     | PartialInterfaceUnionMember1.$Json
     | PartialInterfaceUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      PartialInterfaceUnionMember1.$Json.schema(),
-      PartialInterfaceUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        PartialInterfaceUnionMember1.$Json.schema(),
+        PartialInterfaceUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PartialInterfaceUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -72099,20 +72111,20 @@ export namespace NoRdfTypeClassUnion {
     | NoRdfTypeClassUnionMember1.$Json
     | NoRdfTypeClassUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      NoRdfTypeClassUnionMember1.$Json.schema(),
-      NoRdfTypeClassUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        NoRdfTypeClassUnionMember1.$Json.schema(),
+        NoRdfTypeClassUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, NoRdfTypeClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -72565,20 +72577,20 @@ export namespace RecursiveClassUnion {
     | RecursiveClassUnionMember1.$Json
     | RecursiveClassUnionMember2.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      RecursiveClassUnionMember1.$Json.schema(),
-      RecursiveClassUnionMember2.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        RecursiveClassUnionMember1.$Json.schema(),
+        RecursiveClassUnionMember2.$Json.schema(),
+      ]);
 
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, RecursiveClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -78126,92 +78138,94 @@ export namespace $Object {
     | $DefaultPartial.$Json
     | $NamedDefaultPartial.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      BlankNodeIdentifierClass.$Json.schema(),
-      BlankNodeIdentifierInterface.$Json.schema(),
-      BlankNodeOrIriIdentifierClass.$Json.schema(),
-      BlankNodeOrIriIdentifierInterface.$Json.schema(),
-      ClassPropertiesClass.$Json.schema(),
-      PartialClass.$Json.schema(),
-      NonClass.$Json.schema(),
-      ClassUnionMember1.$Json.schema(),
-      ClassUnionMember2.$Json.schema(),
-      ConcreteChildClass.$Json.schema(),
-      ConcreteParentClassStatic.$Json.schema(),
-      ConcreteChildInterface.$Json.schema(),
-      ConcreteParentInterfaceStatic.$Json.schema(),
-      BaseInterfaceWithoutPropertiesStatic.$Json.schema(),
-      BaseInterfaceWithPropertiesStatic.$Json.schema(),
-      ConvertibleTypePropertiesClass.$Json.schema(),
-      DateUnionPropertiesClass.$Json.schema(),
-      DefaultValuePropertiesClass.$Json.schema(),
-      DirectRecursiveClass.$Json.schema(),
-      ExplicitFromToRdfTypesClass.$Json.schema(),
-      ExplicitRdfTypeClass.$Json.schema(),
-      ExternClassPropertyClass.$Json.schema(),
-      FlattenClassUnionMember3.$Json.schema(),
-      HasValuePropertiesClass.$Json.schema(),
-      IdentifierOverride5Class.$Json.schema(),
-      IdentifierOverride4ClassStatic.$Json.schema(),
-      IdentifierOverride3ClassStatic.$Json.schema(),
-      InIdentifierClass.$Json.schema(),
-      InPropertiesClass.$Json.schema(),
-      IndirectRecursiveClass.$Json.schema(),
-      IndirectRecursiveHelperClass.$Json.schema(),
-      Interface.$Json.schema(),
-      InterfaceUnionMember1.$Json.schema(),
-      InterfaceUnionMember2.$Json.schema(),
-      IriIdentifierClass.$Json.schema(),
-      IriIdentifierInterface.$Json.schema(),
-      JsPrimitiveUnionPropertyClass.$Json.schema(),
-      LanguageInPropertiesClass.$Json.schema(),
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$Json.schema(),
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json.schema(),
-      LazilyResolvedClassUnionMember1.$Json.schema(),
-      LazilyResolvedClassUnionMember2.$Json.schema(),
-      LazilyResolvedInterfaceUnionMember1.$Json.schema(),
-      LazilyResolvedInterfaceUnionMember2.$Json.schema(),
-      LazilyResolvedIriIdentifierClass.$Json.schema(),
-      LazilyResolvedIriIdentifierInterface.$Json.schema(),
-      LazyPropertiesClass.$Json.schema(),
-      LazyPropertiesInterface.$Json.schema(),
-      PartialInterface.$Json.schema(),
-      ListPropertiesClass.$Json.schema(),
-      MutablePropertiesClass.$Json.schema(),
-      NamedUnionPropertiesClass.$Json.schema(),
-      NoRdfTypeClassUnionMember1.$Json.schema(),
-      NoRdfTypeClassUnionMember2.$Json.schema(),
-      NodeKindsClass.$Json.schema(),
-      NumericPropertiesClass.$Json.schema(),
-      OrderedPropertiesClass.$Json.schema(),
-      NewName1Class.$Json.schema(),
-      NewName2Class.$Json.schema(),
-      PartialClassUnionMember1.$Json.schema(),
-      PartialClassUnionMember2.$Json.schema(),
-      PartialInterfaceUnionMember1.$Json.schema(),
-      PartialInterfaceUnionMember2.$Json.schema(),
-      PropertyCardinalitiesClass.$Json.schema(),
-      PropertyNamesClass.$Json.schema(),
-      PropertyPathsClass.$Json.schema(),
-      PropertyVisibilitiesClass.$Json.schema(),
-      RecursiveClassUnionMember1.$Json.schema(),
-      RecursiveClassUnionMember2.$Json.schema(),
-      Sha256IriIdentifierClass.$Json.schema(),
-      TermPropertiesClass.$Json.schema(),
-      UnionDiscriminantsClass.$Json.schema(),
-      UuidV4IriIdentifierClass.$Json.schema(),
-      UuidV4IriIdentifierInterface.$Json.schema(),
-      $DefaultPartial.$Json.schema(),
-      $NamedDefaultPartial.$Json.schema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        BlankNodeIdentifierClass.$Json.schema(),
+        BlankNodeIdentifierInterface.$Json.schema(),
+        BlankNodeOrIriIdentifierClass.$Json.schema(),
+        BlankNodeOrIriIdentifierInterface.$Json.schema(),
+        ClassPropertiesClass.$Json.schema(),
+        PartialClass.$Json.schema(),
+        NonClass.$Json.schema(),
+        ClassUnionMember1.$Json.schema(),
+        ClassUnionMember2.$Json.schema(),
+        ConcreteChildClass.$Json.schema(),
+        ConcreteParentClassStatic.$Json.schema(),
+        ConcreteChildInterface.$Json.schema(),
+        ConcreteParentInterfaceStatic.$Json.schema(),
+        BaseInterfaceWithoutPropertiesStatic.$Json.schema(),
+        BaseInterfaceWithPropertiesStatic.$Json.schema(),
+        ConvertibleTypePropertiesClass.$Json.schema(),
+        DateUnionPropertiesClass.$Json.schema(),
+        DefaultValuePropertiesClass.$Json.schema(),
+        DirectRecursiveClass.$Json.schema(),
+        ExplicitFromToRdfTypesClass.$Json.schema(),
+        ExplicitRdfTypeClass.$Json.schema(),
+        ExternClassPropertyClass.$Json.schema(),
+        FlattenClassUnionMember3.$Json.schema(),
+        HasValuePropertiesClass.$Json.schema(),
+        IdentifierOverride5Class.$Json.schema(),
+        IdentifierOverride4ClassStatic.$Json.schema(),
+        IdentifierOverride3ClassStatic.$Json.schema(),
+        InIdentifierClass.$Json.schema(),
+        InPropertiesClass.$Json.schema(),
+        IndirectRecursiveClass.$Json.schema(),
+        IndirectRecursiveHelperClass.$Json.schema(),
+        Interface.$Json.schema(),
+        InterfaceUnionMember1.$Json.schema(),
+        InterfaceUnionMember2.$Json.schema(),
+        IriIdentifierClass.$Json.schema(),
+        IriIdentifierInterface.$Json.schema(),
+        JsPrimitiveUnionPropertyClass.$Json.schema(),
+        LanguageInPropertiesClass.$Json.schema(),
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Json.schema(),
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json.schema(),
+        LazilyResolvedClassUnionMember1.$Json.schema(),
+        LazilyResolvedClassUnionMember2.$Json.schema(),
+        LazilyResolvedInterfaceUnionMember1.$Json.schema(),
+        LazilyResolvedInterfaceUnionMember2.$Json.schema(),
+        LazilyResolvedIriIdentifierClass.$Json.schema(),
+        LazilyResolvedIriIdentifierInterface.$Json.schema(),
+        LazyPropertiesClass.$Json.schema(),
+        LazyPropertiesInterface.$Json.schema(),
+        PartialInterface.$Json.schema(),
+        ListPropertiesClass.$Json.schema(),
+        MutablePropertiesClass.$Json.schema(),
+        NamedUnionPropertiesClass.$Json.schema(),
+        NoRdfTypeClassUnionMember1.$Json.schema(),
+        NoRdfTypeClassUnionMember2.$Json.schema(),
+        NodeKindsClass.$Json.schema(),
+        NumericPropertiesClass.$Json.schema(),
+        OrderedPropertiesClass.$Json.schema(),
+        NewName1Class.$Json.schema(),
+        NewName2Class.$Json.schema(),
+        PartialClassUnionMember1.$Json.schema(),
+        PartialClassUnionMember2.$Json.schema(),
+        PartialInterfaceUnionMember1.$Json.schema(),
+        PartialInterfaceUnionMember2.$Json.schema(),
+        PropertyCardinalitiesClass.$Json.schema(),
+        PropertyNamesClass.$Json.schema(),
+        PropertyPathsClass.$Json.schema(),
+        PropertyVisibilitiesClass.$Json.schema(),
+        RecursiveClassUnionMember1.$Json.schema(),
+        RecursiveClassUnionMember2.$Json.schema(),
+        Sha256IriIdentifierClass.$Json.schema(),
+        TermPropertiesClass.$Json.schema(),
+        UnionDiscriminantsClass.$Json.schema(),
+        UuidV4IriIdentifierClass.$Json.schema(),
+        UuidV4IriIdentifierInterface.$Json.schema(),
+        $DefaultPartial.$Json.schema(),
+        $NamedDefaultPartial.$Json.schema(),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, $Object> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
