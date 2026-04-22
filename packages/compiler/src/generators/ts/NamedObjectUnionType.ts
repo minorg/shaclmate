@@ -303,7 +303,7 @@ ${{
     }
 
     return singleEntryRecord(
-      ``,
+      `${syntheticNamePrefix}toRdfResource`,
       code`\
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
