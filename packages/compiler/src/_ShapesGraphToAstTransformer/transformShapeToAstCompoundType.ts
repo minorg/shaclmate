@@ -103,8 +103,8 @@ export function transformShapeToAstCompoundType(
 
                 if (
                   memberI > 0 &&
-                  compoundType.memberTypes.some((existingMemberType) =>
-                    ast.Type.equals(memberType, existingMemberType),
+                  compoundType.members.some((existingMember) =>
+                    ast.Type.equals(memberType, existingMember.type),
                   )
                 ) {
                   return Left(
@@ -114,10 +114,8 @@ export function transformShapeToAstCompoundType(
                   );
                 }
 
-                compoundType.addMemberType(memberType);
-
+                let memberDiscriminantValue: string | undefined;
                 if (compoundTypeKind === "UnionType") {
-                  let memberDiscriminantValue: string | undefined;
                   if (memberShape.kind === "NodeShape") {
                     memberDiscriminantValue =
                       memberShape.discriminantValue.extract();
@@ -133,29 +131,17 @@ export function transformShapeToAstCompoundType(
                       );
                     }
                     memberDiscriminantValues.push(memberDiscriminantValue);
-                  } else if (memberDiscriminantValues.length > 0) {
-                    return Left(
-                      new Error(
-                        `${shape} member ${memberShape} does not have a discriminant value while the other members of the compound type do`,
-                      ),
-                    );
                   }
                 }
+
+                compoundType.addMember({
+                  discriminantValue: Maybe.fromNullable(
+                    memberDiscriminantValue,
+                  ),
+                  type: memberType,
+                });
               }
 
-              if (
-                compoundTypeKind === "UnionType" &&
-                memberDiscriminantValues.length > 0 &&
-                memberDiscriminantValues.length !== memberShapes.length
-              ) {
-                return Left(
-                  new Error(`${shape} has members without discriminant values`),
-                );
-              }
-
-              invariant(
-                compoundType.memberTypes.length === memberShapes.length,
-              );
               return Either.of(Maybe.of(compoundType));
             },
           )

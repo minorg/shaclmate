@@ -20,14 +20,15 @@ import type { UnionType } from "./UnionType.js";
  * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
 export abstract class AbstractCompoundType<
+  MemberT extends AbstractCompoundType.Member<MemberTypeT>,
   MemberTypeT extends AbstractCompoundType.MemberType,
 > extends AbstractType {
   /**
-   * Member types.
+   * Members.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #memberTypes: MemberTypeT[] = [];
+  readonly #members: MemberT[] = [];
 
   /**
    * TypeScript features to generate.
@@ -49,13 +50,13 @@ export abstract class AbstractCompoundType<
     this.#tsFeatures = tsFeatures;
   }
 
-  get memberTypes(): readonly MemberTypeT[] {
-    invariant(this.#memberTypes.length > 0);
-    return this.#memberTypes;
+  get members(): readonly MemberT[] {
+    invariant(this.#members.length > 0);
+    return this.#members;
   }
 
   override get recursive(): boolean {
-    return this.memberTypes.some((memberType) => memberType.recursive);
+    return this.members.some((member) => member.type.recursive);
   }
 
   @Memoize()
@@ -63,14 +64,10 @@ export abstract class AbstractCompoundType<
     // Members of the compound type must have the same tsFeatures.
     // They must also have distinct RDF types or no RDF types at all.
     const mergedMemberTsFeatures = new Set<TsFeature>();
-    for (
-      let memberTypeI = 0;
-      memberTypeI < this.memberTypes.length;
-      memberTypeI++
-    ) {
-      const memberType = this.memberTypes[memberTypeI];
+    for (let memberI = 0; memberI < this.members.length; memberI++) {
+      const member = this.members[memberI];
 
-      switch (memberType.kind) {
+      switch (member.type.kind) {
         case "IntersectionType":
         case "ObjectType":
         case "UnionType":
@@ -79,22 +76,22 @@ export abstract class AbstractCompoundType<
           continue;
       }
 
-      if (memberTypeI === 0) {
-        for (const tsFeature of memberType.tsFeatures) {
+      if (memberI === 0) {
+        for (const tsFeature of member.type.tsFeatures) {
           mergedMemberTsFeatures.add(tsFeature);
         }
       }
 
-      if (memberType.tsFeatures.size !== mergedMemberTsFeatures.size) {
+      if (member.type.tsFeatures.size !== mergedMemberTsFeatures.size) {
         throw new Error(
-          `${this} has a member (${memberType}) with different tsFeatures than the other members`,
+          `${this} has a member (${member}) with different tsFeatures than the other members`,
         );
       }
 
-      for (const tsFeature of memberType.tsFeatures) {
+      for (const tsFeature of member.type.tsFeatures) {
         if (!mergedMemberTsFeatures.has(tsFeature)) {
           throw new Error(
-            `${this} has a member (${memberType}) with different tsFeatures than the other members`,
+            `${this} has a member (${member}) with different tsFeatures than the other members`,
           );
         }
       }
@@ -103,22 +100,26 @@ export abstract class AbstractCompoundType<
     return this.#tsFeatures;
   }
 
-  addMemberType(memberType: MemberTypeT): void {
-    this.#memberTypes.push(memberType);
+  addMember(member: MemberT): void {
+    this.#members.push(member);
   }
 
-  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
+  override equals(other: AbstractCompoundType<MemberT, MemberTypeT>): boolean {
     // return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
   toString(): string {
-    return `${this.kind}(memberTypes=[${this.memberTypes.map((memberType) => memberType.toString()).join(", ")}])`;
+    return `${this.kind}(memberTypes=[${this.members.map((memberType) => memberType.toString()).join(", ")}])`;
   }
 }
 
 export namespace AbstractCompoundType {
+  export interface Member<TypeT extends MemberType> {
+    readonly type: TypeT;
+  }
+
   export type MemberType =
     | BlankNodeType
     | IdentifierType

@@ -6,15 +6,18 @@ import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
  */
 export class IntersectionType<
   MemberTypeT extends IntersectionType.MemberType = IntersectionType.MemberType,
-> extends AbstractCompoundType<MemberTypeT> {
+> extends AbstractCompoundType<
+  AbstractCompoundType.Member<MemberTypeT>,
+  MemberTypeT
+> {
   override readonly kind = "IntersectionType";
 
   isObjectIntersectionType(): this is ObjectIntersectionType {
-    return this.memberTypes.every(
-      (memberType) =>
-        memberType.kind === "ObjectType" ||
-        (memberType.kind === "IntersectionType" &&
-          memberType.isObjectIntersectionType),
+    return this.members.every(
+      (member) =>
+        member.type.kind === "ObjectType" ||
+        (member.type.kind === "IntersectionType" &&
+          member.type.isObjectIntersectionType),
     );
   }
 }

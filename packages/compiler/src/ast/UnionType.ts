@@ -1,3 +1,4 @@
+import type { Maybe } from "purify-ts";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 
@@ -6,7 +7,7 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
  */
 export class UnionType<
   MemberTypeT extends UnionType.MemberType = UnionType.MemberType,
-> extends AbstractCompoundType<MemberTypeT> {
+> extends AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT> {
   override readonly kind = "UnionType";
   readonly memberDiscriminantValues: readonly string[];
 
@@ -15,21 +16,28 @@ export class UnionType<
     ...superParameters
   }: {
     memberDiscriminantValues: readonly string[];
-  } & ConstructorParameters<typeof AbstractCompoundType<MemberTypeT>>[0]) {
+  } & ConstructorParameters<
+    typeof AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT>
+  >[0]) {
     super(superParameters);
     this.memberDiscriminantValues = memberDiscriminantValues;
   }
 
   isObjectUnionType(): this is ObjectUnionType {
-    return this.memberTypes.every(
-      (memberType) =>
-        memberType.kind === "ObjectType" ||
-        (memberType.kind === "UnionType" && memberType.isObjectUnionType),
+    return this.members.every(
+      (member) =>
+        member.type.kind === "ObjectType" ||
+        (member.type.kind === "UnionType" && member.type.isObjectUnionType),
     );
   }
 }
 
 export namespace UnionType {
+  export interface Member<TypeT extends UnionType.MemberType>
+    extends AbstractCompoundType.Member<TypeT> {
+    readonly discriminantValue: Maybe<string>;
+  }
+
   export type MemberType = AbstractCompoundType.MemberType;
   export const isMemberType = AbstractCompoundType.isMemberType;
 }
