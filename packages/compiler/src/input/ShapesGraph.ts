@@ -39,7 +39,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: ShapesGraph;
     }): Either<Error, NodeShape> {
-      return generated.NodeShape.$fromRdf(resource, {
+      return generated.NodeShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedShape) => {
@@ -85,7 +85,7 @@ export namespace ShapesGraph {
     }: {
       resource: Resource;
     }): Either<Error, Ontology> {
-      return generated.Ontology.$fromRdf(resource, {
+      return generated.Ontology.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -96,7 +96,7 @@ export namespace ShapesGraph {
     }: {
       resource: Resource;
     }): Either<Error, PropertyGroup> {
-      return generated.PropertyGroup.$fromRdf(resource, {
+      return generated.PropertyGroup.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
@@ -113,7 +113,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: ShapesGraph;
     }): Either<Error, PropertyShape> {
-      return generated.PropertyShape.$fromRdf(resource, {
+      return generated.PropertyShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
