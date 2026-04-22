@@ -1,8 +1,8 @@
 import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
+import { ObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";

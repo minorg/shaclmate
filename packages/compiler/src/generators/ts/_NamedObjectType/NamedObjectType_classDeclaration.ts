@@ -3,10 +3,10 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, def, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
-import { ObjectType_equalsFunctionOrMethodDeclaration } from "./ObjectType_equalsFunctionOrMethodDeclaration.js";
-import { ObjectType_hashFunctionOrMethodDeclarations } from "./ObjectType_hashFunctionOrMethodDeclarations.js";
-import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./ObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { ObjectType_equalsFunctionOrMethodDeclaration } from "./NamedObjectType_equalsFunctionOrMethodDeclaration.js";
+import { ObjectType_hashFunctionOrMethodDeclarations } from "./NamedObjectType_hashFunctionOrMethodDeclarations.js";
+import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 
 function ObjectType_constructorDeclaration(this: ObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
