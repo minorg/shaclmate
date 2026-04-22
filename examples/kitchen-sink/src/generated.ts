@@ -2717,13 +2717,6 @@ export namespace NamedUnion1 {
     });
   };
 
-  export type $Filter = {
-    readonly on?: {
-      readonly object?: $IriFilter;
-      readonly string?: $StringFilter;
-    };
-  };
-
   export const $filter = (filter: NamedUnion1.$Filter, value: NamedUnion1) => {
     if (filter.on?.["object"] !== undefined && typeof value === "object") {
       if (!$filterIri(filter.on["object"], value)) {
@@ -2739,21 +2732,12 @@ export namespace NamedUnion1 {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: NamedUnion1,
-    hasher: HasherT,
-  ): HasherT {
-    if (typeof value === "object") {
-      hasher.update(value.termType);
-      hasher.update(value.value);
-    }
-    if (typeof value === "string") {
-      hasher.update(value);
-    }
-    return hasher;
-  }
-
-  export type $Json = { readonly "@id": string } | string;
+  export type $Filter = {
+    readonly on?: {
+      readonly object?: $IriFilter;
+      readonly string?: $StringFilter;
+    };
+  };
 
   export const $fromJson = (value: NamedUnion1.$Json): NamedUnion1 => {
     if (typeof value === "object") {
@@ -2766,28 +2750,6 @@ export namespace NamedUnion1 {
     }
 
     throw new Error("unable to deserialize JSON");
-  };
-
-  export const $jsonZodSchema = () =>
-    z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
-
-  export function $parseJson(json: unknown): Either<Error, NamedUnion1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (value: NamedUnion1): NamedUnion1.$Json => {
-    if (typeof value === "object") {
-      return { "@id": value.value };
-    }
-    if (typeof value === "string") {
-      return value;
-    }
-
-    throw new Error("unable to serialize to JSON");
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<NamedUnion1> =
@@ -2816,6 +2778,44 @@ export namespace NamedUnion1 {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<NamedUnion1>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: NamedUnion1,
+    hasher: HasherT,
+  ): HasherT {
+    if (typeof value === "object") {
+      hasher.update(value.termType);
+      hasher.update(value.value);
+    }
+    if (typeof value === "string") {
+      hasher.update(value);
+    }
+    return hasher;
+  }
+
+  export type $Json = { readonly "@id": string } | string;
+
+  export const $jsonZodSchema = () =>
+    z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
+
+  export function $parseJson(json: unknown): Either<Error, NamedUnion1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $toJson = (value: NamedUnion1): NamedUnion1.$Json => {
+    if (typeof value === "object") {
+      return { "@id": value.value };
+    }
+    if (typeof value === "string") {
+      return value;
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NamedUnion1> =
     ((value, _options) => {
@@ -2963,13 +2963,6 @@ export namespace NamedUnion2 {
     });
   };
 
-  export type $Filter = {
-    readonly on?: {
-      readonly date?: $DateFilter;
-      readonly dateTime?: $DateFilter;
-    };
-  };
-
   export const $filter = (filter: NamedUnion2.$Filter, value: NamedUnion2) => {
     if (filter.on?.["date"] !== undefined && value.type === "date") {
       if (!$filterDate(filter.on["date"], value.value)) {
@@ -2985,22 +2978,12 @@ export namespace NamedUnion2 {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: NamedUnion2,
-    hasher: HasherT,
-  ): HasherT {
-    if (value.type === "date") {
-      hasher.update(value.value.toISOString());
-    }
-    if (value.type === "dateTime") {
-      hasher.update(value.value.toISOString());
-    }
-    return hasher;
-  }
-
-  export type $Json =
-    | { type: "date"; value: string }
-    | { type: "dateTime"; value: string };
+  export type $Filter = {
+    readonly on?: {
+      readonly date?: $DateFilter;
+      readonly dateTime?: $DateFilter;
+    };
+  };
 
   export const $fromJson = (value: NamedUnion2.$Json): NamedUnion2 => {
     if (value.type === "date") {
@@ -3014,34 +2997,6 @@ export namespace NamedUnion2 {
     }
 
     throw new Error("unable to deserialize JSON");
-  };
-
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("type", [
-      z.object({ type: z.literal("date"), value: z.iso.date() }),
-      z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-    ]);
-
-  export function $parseJson(json: unknown): Either<Error, NamedUnion2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (value: NamedUnion2): NamedUnion2.$Json => {
-    if (value.type === "date") {
-      return {
-        type: "date" as const,
-        value: value.value.toISOString().replace(/T.*$/, ""),
-      };
-    }
-    if (value.type === "dateTime") {
-      return { type: "dateTime" as const, value: value.value.toISOString() };
-    }
-
-    throw new Error("unable to serialize to JSON");
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<NamedUnion2> =
@@ -3074,6 +3029,51 @@ export namespace NamedUnion2 {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<NamedUnion2>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: NamedUnion2,
+    hasher: HasherT,
+  ): HasherT {
+    if (value.type === "date") {
+      hasher.update(value.value.toISOString());
+    }
+    if (value.type === "dateTime") {
+      hasher.update(value.value.toISOString());
+    }
+    return hasher;
+  }
+
+  export type $Json =
+    | { type: "date"; value: string }
+    | { type: "dateTime"; value: string };
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("type", [
+      z.object({ type: z.literal("date"), value: z.iso.date() }),
+      z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+    ]);
+
+  export function $parseJson(json: unknown): Either<Error, NamedUnion2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $toJson = (value: NamedUnion2): NamedUnion2.$Json => {
+    if (value.type === "date") {
+      return {
+        type: "date" as const,
+        value: value.value.toISOString().replace(/T.*$/, ""),
+      };
+    }
+    if (value.type === "dateTime") {
+      return { type: "dateTime" as const, value: value.value.toISOString() };
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NamedUnion2> =
     ((value, _options) => {
@@ -68827,6 +68827,19 @@ export namespace BlankNodeIdentifierClass {
 export type ClassUnion = ClassUnionMember1 | ClassUnionMember2;
 
 export namespace ClassUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<ClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (left: ClassUnion, right: ClassUnion) => {
     if (
       ClassUnionMember1.isClassUnionMember1(left) &&
@@ -68860,14 +68873,6 @@ export namespace ClassUnion {
     });
   };
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
-      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
-
   export const $filter = (filter: ClassUnion.$Filter, value: ClassUnion) => {
     if (
       filter.$identifier !== undefined &&
@@ -68895,20 +68900,93 @@ export namespace ClassUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: ClassUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: ClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...ClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassUnionMember1`,
+      }).concat(),
+      ...ClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: ClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: ClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (value: ClassUnion.$Json): ClassUnion => {
     if (value.$type === "ClassUnionMember1") {
@@ -68921,30 +68999,22 @@ export namespace ClassUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(json: unknown): Either<Error, ClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (value: ClassUnion): ClassUnion.$Json => {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<ClassUnion> = (
+    resource,
+    options,
+  ) =>
+    (
+      ClassUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, ClassUnion>
+    ).altLazy(
+      () =>
+        ClassUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, ClassUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<ClassUnion> =
     ((values, _options) =>
@@ -68977,6 +69047,131 @@ export namespace ClassUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<ClassUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: ClassUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(json: unknown): Either<Error, ClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      ClassUnionMember1: {
+        discriminantValues: ["ClassUnionMember1"],
+        type: ClassUnionMember1.$schema,
+      },
+      ClassUnionMember2: {
+        discriminantValues: ["ClassUnionMember2"],
+        type: ClassUnionMember2.$schema,
+      },
+    },
+    properties: {
+      classUnionMemberCommonParentProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassUnion.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (value: ClassUnion): ClassUnion.$Json => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<ClassUnion> =
     ((value, _options) => {
@@ -69060,197 +69255,20 @@ export namespace ClassUnion {
     typeof ClassUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: ClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...ClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassUnionMember1`,
-      }).concat(),
-      ...ClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: ClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: ClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<ClassUnion> = (
-    resource,
-    options,
-  ) =>
-    (
-      ClassUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, ClassUnion>
-    ).altLazy(
-      () =>
-        ClassUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, ClassUnion>,
-    );
-
   export function isClassUnion(object: $Object): object is ClassUnion {
     return (
       ClassUnionMember1.isClassUnionMember1(object) ||
       ClassUnionMember2.isClassUnionMember2(object)
     );
   }
+}
+export type FlattenClassUnion =
+  | ClassUnionMember1
+  | ClassUnionMember2
+  | FlattenClassUnionMember3;
 
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      ClassUnionMember1: {
-        discriminantValues: ["ClassUnionMember1"],
-        type: ClassUnionMember1.$schema,
-      },
-      ClassUnionMember2: {
-        discriminantValues: ["ClassUnionMember2"],
-        type: ClassUnionMember2.$schema,
-      },
-    },
-    properties: {
-      classUnionMemberCommonParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/classUnionMemberCommonParentProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: ClassUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "classUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ClassUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          ClassUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof ClassUnion.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ClassUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<ClassUnion> = (
+export namespace FlattenClassUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<FlattenClassUnion> = (
     value,
     options,
   ) => {
@@ -69260,15 +69278,12 @@ export namespace ClassUnion {
     if (ClassUnionMember2.isClassUnionMember2(value)) {
       return value.$toRdfResource(options);
     }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.$toRdfResource(options);
+    }
     throw new Error("unrecognized type");
   };
-}
-export type FlattenClassUnion =
-  | ClassUnionMember1
-  | ClassUnionMember2
-  | FlattenClassUnionMember3;
 
-export namespace FlattenClassUnion {
   export const $equals = (
     left: FlattenClassUnion,
     right: FlattenClassUnion,
@@ -69314,15 +69329,6 @@ export namespace FlattenClassUnion {
     });
   };
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
-      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
-      readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
-
   export const $filter = (
     filter: FlattenClassUnion.$Filter,
     value: FlattenClassUnion,
@@ -69366,26 +69372,110 @@ export namespace FlattenClassUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: FlattenClassUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
+      readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: FlattenClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...ClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassUnionMember1`,
+      }).concat(),
+      ...ClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassUnionMember2`,
+      }).concat(),
+      ...FlattenClassUnionMember3.$focusSparqlConstructTriples({
+        filter: filter?.on?.FlattenClassUnionMember3,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
+      }).concat(),
+    ];
   }
 
-  export type $Json =
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | FlattenClassUnionMember3.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: FlattenClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: ClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: FlattenClassUnionMember3.$focusSparqlWherePatterns({
+            filter: filter?.on?.FlattenClassUnionMember3,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (
     value: FlattenClassUnion.$Json,
@@ -69405,36 +69495,30 @@ export namespace FlattenClassUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(json: unknown): Either<Error, FlattenClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: FlattenClassUnion,
-  ): FlattenClassUnion.$Json => {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<FlattenClassUnion> = (
+    resource,
+    options,
+  ) =>
+    (
+      ClassUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, FlattenClassUnion>
+    )
+      .altLazy(
+        () =>
+          ClassUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, FlattenClassUnion>,
+      )
+      .altLazy(
+        () =>
+          FlattenClassUnionMember3.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, FlattenClassUnion>,
+      );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<FlattenClassUnion> =
     ((values, _options) =>
@@ -69479,6 +69563,139 @@ export namespace FlattenClassUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<FlattenClassUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: FlattenClassUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+      FlattenClassUnionMember3.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(json: unknown): Either<Error, FlattenClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      ClassUnionMember1: {
+        discriminantValues: ["ClassUnionMember1"],
+        type: ClassUnionMember1.$schema,
+      },
+      ClassUnionMember2: {
+        discriminantValues: ["ClassUnionMember2"],
+        type: ClassUnionMember2.$schema,
+      },
+      FlattenClassUnionMember3: {
+        discriminantValues: ["FlattenClassUnionMember3"],
+        type: FlattenClassUnionMember3.$schema,
+      },
+    },
+    properties: {},
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: FlattenClassUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "flattenClassUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        FlattenClassUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          FlattenClassUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof FlattenClassUnion.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      FlattenClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (
+    value: FlattenClassUnion,
+  ): FlattenClassUnion.$Json => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<FlattenClassUnion> =
     ((value, _options) => {
@@ -69587,134 +69804,6 @@ export namespace FlattenClassUnion {
     typeof FlattenClassUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: FlattenClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...ClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassUnionMember1`,
-      }).concat(),
-      ...ClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassUnionMember2`,
-      }).concat(),
-      ...FlattenClassUnionMember3.$focusSparqlConstructTriples({
-        filter: filter?.on?.FlattenClassUnionMember3,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: FlattenClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: ClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: FlattenClassUnionMember3.$focusSparqlWherePatterns({
-            filter: filter?.on?.FlattenClassUnionMember3,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<FlattenClassUnion> = (
-    resource,
-    options,
-  ) =>
-    (
-      ClassUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, FlattenClassUnion>
-    )
-      .altLazy(
-        () =>
-          ClassUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, FlattenClassUnion>,
-      )
-      .altLazy(
-        () =>
-          FlattenClassUnionMember3.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, FlattenClassUnion>,
-      );
-
   export function isFlattenClassUnion(
     object: $Object,
   ): object is FlattenClassUnion {
@@ -69724,101 +69813,23 @@ export namespace FlattenClassUnion {
       FlattenClassUnionMember3.isFlattenClassUnionMember3(object)
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      ClassUnionMember1: {
-        discriminantValues: ["ClassUnionMember1"],
-        type: ClassUnionMember1.$schema,
-      },
-      ClassUnionMember2: {
-        discriminantValues: ["ClassUnionMember2"],
-        type: ClassUnionMember2.$schema,
-      },
-      FlattenClassUnionMember3: {
-        discriminantValues: ["FlattenClassUnionMember3"],
-        type: FlattenClassUnionMember3.$schema,
-      },
-    },
-    properties: {},
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: FlattenClassUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "flattenClassUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        FlattenClassUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          FlattenClassUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof FlattenClassUnion.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      FlattenClassUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<FlattenClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type InterfaceUnion = InterfaceUnionMember1 | InterfaceUnionMember2;
 
 export namespace InterfaceUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<InterfaceUnion> = (
+    value,
+    options,
+  ) => {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (left: InterfaceUnion, right: InterfaceUnion) => {
     if (
       InterfaceUnionMember1.isInterfaceUnionMember1(left) &&
@@ -69851,14 +69862,6 @@ export namespace InterfaceUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
-      readonly InterfaceUnionMember2?: InterfaceUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: InterfaceUnion.$Filter,
@@ -69900,20 +69903,93 @@ export namespace InterfaceUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: InterfaceUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      InterfaceUnionMember1.$hash(value, hasher);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      InterfaceUnionMember2.$hash(value, hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
+      readonly InterfaceUnionMember2?: InterfaceUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: InterfaceUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...InterfaceUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.InterfaceUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
+      }).concat(),
+      ...InterfaceUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.InterfaceUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: InterfaceUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: InterfaceUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.InterfaceUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InterfaceUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.InterfaceUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (value: InterfaceUnion.$Json): InterfaceUnion => {
     if (value.$type === "InterfaceUnionMember1") {
@@ -69930,30 +70006,22 @@ export namespace InterfaceUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(json: unknown): Either<Error, InterfaceUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (value: InterfaceUnion): InterfaceUnion.$Json => {
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return InterfaceUnionMember1.$toJson(value);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return InterfaceUnionMember2.$toJson(value);
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<InterfaceUnion> = (
+    resource,
+    options,
+  ) =>
+    (
+      InterfaceUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, InterfaceUnion>
+    ).altLazy(
+      () =>
+        InterfaceUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, InterfaceUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<InterfaceUnion> =
     ((values, _options) =>
@@ -69986,6 +70054,131 @@ export namespace InterfaceUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<InterfaceUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: InterfaceUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      InterfaceUnionMember1.$hash(value, hasher);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      InterfaceUnionMember2.$hash(value, hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      InterfaceUnionMember1.$jsonZodSchema(),
+      InterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(json: unknown): Either<Error, InterfaceUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      InterfaceUnionMember1: {
+        discriminantValues: ["InterfaceUnionMember1"],
+        type: InterfaceUnionMember1.$schema,
+      },
+      InterfaceUnionMember2: {
+        discriminantValues: ["InterfaceUnionMember2"],
+        type: InterfaceUnionMember2.$schema,
+      },
+    },
+    properties: {
+      interfaceUnionMemberCommonParentProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: InterfaceUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "interfaceUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        InterfaceUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          InterfaceUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof InterfaceUnion.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      InterfaceUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (value: InterfaceUnion): InterfaceUnion.$Json => {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toJson(value);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toJson(value);
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<InterfaceUnion> =
     ((value, _options) => {
@@ -70069,214 +70262,34 @@ export namespace InterfaceUnion {
     typeof InterfaceUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: InterfaceUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...InterfaceUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.InterfaceUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
-      }).concat(),
-      ...InterfaceUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.InterfaceUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: InterfaceUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: InterfaceUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.InterfaceUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InterfaceUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.InterfaceUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<InterfaceUnion> = (
-    resource,
-    options,
-  ) =>
-    (
-      InterfaceUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, InterfaceUnion>
-    ).altLazy(
-      () =>
-        InterfaceUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, InterfaceUnion>,
-    );
-
   export function isInterfaceUnion(object: $Object): object is InterfaceUnion {
     return (
       InterfaceUnionMember1.isInterfaceUnionMember1(object) ||
       InterfaceUnionMember2.isInterfaceUnionMember2(object)
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      InterfaceUnionMember1: {
-        discriminantValues: ["InterfaceUnionMember1"],
-        type: InterfaceUnionMember1.$schema,
-      },
-      InterfaceUnionMember2: {
-        discriminantValues: ["InterfaceUnionMember2"],
-        type: InterfaceUnionMember2.$schema,
-      },
-    },
-    properties: {
-      interfaceUnionMemberCommonParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMemberCommonParentProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: InterfaceUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "interfaceUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        InterfaceUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          InterfaceUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof InterfaceUnion.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<InterfaceUnion> = (
-    value,
-    options,
-  ) => {
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return InterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return InterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type LazilyResolvedClassUnion =
   | LazilyResolvedClassUnionMember1
   | LazilyResolvedClassUnionMember2;
 
 export namespace LazilyResolvedClassUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<
+    LazilyResolvedClassUnion
+  > = (value, options) => {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (
     left: LazilyResolvedClassUnion,
     right: LazilyResolvedClassUnion,
@@ -70312,14 +70325,6 @@ export namespace LazilyResolvedClassUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly LazilyResolvedClassUnionMember1?: LazilyResolvedClassUnionMember1.$Filter;
-      readonly LazilyResolvedClassUnionMember2?: LazilyResolvedClassUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: LazilyResolvedClassUnion.$Filter,
@@ -70361,26 +70366,93 @@ export namespace LazilyResolvedClassUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: LazilyResolvedClassUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      value.$hash(hasher);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly LazilyResolvedClassUnionMember1?: LazilyResolvedClassUnionMember1.$Filter;
+      readonly LazilyResolvedClassUnionMember2?: LazilyResolvedClassUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: LazilyResolvedClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...LazilyResolvedClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
+      }).concat(),
+      ...LazilyResolvedClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json =
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: LazilyResolvedClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: LazilyResolvedClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (
     value: LazilyResolvedClassUnion.$Json,
@@ -70399,38 +70471,21 @@ export namespace LazilyResolvedClassUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: LazilyResolvedClassUnion,
-  ): LazilyResolvedClassUnion.$Json => {
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      return value.$toJson();
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    LazilyResolvedClassUnion
+  > = (resource, options) =>
+    (
+      LazilyResolvedClassUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, LazilyResolvedClassUnion>
+    ).altLazy(
+      () =>
+        LazilyResolvedClassUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, LazilyResolvedClassUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<LazilyResolvedClassUnion> =
     ((values, _options) =>
@@ -70469,6 +70524,149 @@ export namespace LazilyResolvedClassUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<LazilyResolvedClassUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: LazilyResolvedClassUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      value.$hash(hasher);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      LazilyResolvedClassUnionMember1: {
+        discriminantValues: ["LazilyResolvedClassUnionMember1"],
+        type: LazilyResolvedClassUnionMember1.$schema,
+      },
+      LazilyResolvedClassUnionMember2: {
+        discriminantValues: ["LazilyResolvedClassUnionMember2"],
+        type: LazilyResolvedClassUnionMember2.$schema,
+      },
+    },
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedClassUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "lazilyResolvedClassUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedClassUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedClassUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LazilyResolvedClassUnion.$sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (
+    value: LazilyResolvedClassUnion,
+  ): LazilyResolvedClassUnion.$Json => {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.$toJson();
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<LazilyResolvedClassUnion> =
     ((value, _options) => {
@@ -70556,109 +70754,6 @@ export namespace LazilyResolvedClassUnion {
     typeof LazilyResolvedClassUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: LazilyResolvedClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...LazilyResolvedClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
-      }).concat(),
-      ...LazilyResolvedClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: LazilyResolvedClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: LazilyResolvedClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazilyResolvedClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazilyResolvedClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazilyResolvedClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    LazilyResolvedClassUnion
-  > = (resource, options) =>
-    (
-      LazilyResolvedClassUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, LazilyResolvedClassUnion>
-    ).altLazy(
-      () =>
-        LazilyResolvedClassUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, LazilyResolvedClassUnion>,
-    );
-
   export function isLazilyResolvedClassUnion(
     object: $Object,
   ): object is LazilyResolvedClassUnion {
@@ -70669,111 +70764,32 @@ export namespace LazilyResolvedClassUnion {
       LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(object)
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      LazilyResolvedClassUnionMember1: {
-        discriminantValues: ["LazilyResolvedClassUnionMember1"],
-        type: LazilyResolvedClassUnionMember1.$schema,
-      },
-      LazilyResolvedClassUnionMember2: {
-        discriminantValues: ["LazilyResolvedClassUnionMember2"],
-        type: LazilyResolvedClassUnionMember2.$schema,
-      },
-    },
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: LazilyResolvedClassUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "lazilyResolvedClassUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        LazilyResolvedClassUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          LazilyResolvedClassUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof LazilyResolvedClassUnion.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      LazilyResolvedClassUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedClassUnion
-  > = (value, options) => {
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type LazilyResolvedInterfaceUnion =
   | LazilyResolvedInterfaceUnionMember1
   | LazilyResolvedInterfaceUnionMember2;
 
 export namespace LazilyResolvedInterfaceUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<
+    LazilyResolvedInterfaceUnion
+  > = (value, options) => {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (
     left: LazilyResolvedInterfaceUnion,
     right: LazilyResolvedInterfaceUnion,
@@ -70817,14 +70833,6 @@ export namespace LazilyResolvedInterfaceUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly LazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1.$Filter;
-      readonly LazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: LazilyResolvedInterfaceUnion.$Filter,
@@ -70870,30 +70878,95 @@ export namespace LazilyResolvedInterfaceUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: LazilyResolvedInterfaceUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      LazilyResolvedInterfaceUnionMember1.$hash(value, hasher);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      LazilyResolvedInterfaceUnionMember2.$hash(value, hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly LazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1.$Filter;
+      readonly LazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: LazilyResolvedInterfaceUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...LazilyResolvedInterfaceUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
+      }).concat(),
+      ...LazilyResolvedInterfaceUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json =
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: LazilyResolvedInterfaceUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns:
+            LazilyResolvedInterfaceUnionMember1.$focusSparqlWherePatterns({
+              filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
+            }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedInterfaceUnionMember2.$focusSparqlWherePatterns({
+              filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
+            }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (
     value: LazilyResolvedInterfaceUnion.$Json,
@@ -70912,42 +70985,21 @@ export namespace LazilyResolvedInterfaceUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedInterfaceUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: LazilyResolvedInterfaceUnion,
-  ): LazilyResolvedInterfaceUnion.$Json => {
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toJson(value);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toJson(value);
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    LazilyResolvedInterfaceUnion
+  > = (resource, options) =>
+    (
+      LazilyResolvedInterfaceUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, LazilyResolvedInterfaceUnion>
+    ).altLazy(
+      () =>
+        LazilyResolvedInterfaceUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, LazilyResolvedInterfaceUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<LazilyResolvedInterfaceUnion> =
     ((values, _options) =>
@@ -70989,6 +71041,157 @@ export namespace LazilyResolvedInterfaceUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<LazilyResolvedInterfaceUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: LazilyResolvedInterfaceUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      LazilyResolvedInterfaceUnionMember1.$hash(value, hasher);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      LazilyResolvedInterfaceUnionMember2.$hash(value, hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedInterfaceUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      LazilyResolvedInterfaceUnionMember1: {
+        discriminantValues: ["LazilyResolvedInterfaceUnionMember1"],
+        type: LazilyResolvedInterfaceUnionMember1.$schema,
+      },
+      LazilyResolvedInterfaceUnionMember2: {
+        discriminantValues: ["LazilyResolvedInterfaceUnionMember2"],
+        type: LazilyResolvedInterfaceUnionMember2.$schema,
+      },
+    },
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedInterfaceUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "lazilyResolvedInterfaceUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedInterfaceUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedInterfaceUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LazilyResolvedInterfaceUnion.$sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedInterfaceUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (
+    value: LazilyResolvedInterfaceUnion,
+  ): LazilyResolvedInterfaceUnion.$Json => {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toJson(value);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toJson(value);
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<LazilyResolvedInterfaceUnion> =
     ((value, _options) => {
@@ -71080,111 +71283,6 @@ export namespace LazilyResolvedInterfaceUnion {
     typeof LazilyResolvedInterfaceUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: LazilyResolvedInterfaceUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...LazilyResolvedInterfaceUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
-      }).concat(),
-      ...LazilyResolvedInterfaceUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: LazilyResolvedInterfaceUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns:
-            LazilyResolvedInterfaceUnionMember1.$focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedInterfaceUnionMember2.$focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
-            }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    LazilyResolvedInterfaceUnion
-  > = (resource, options) =>
-    (
-      LazilyResolvedInterfaceUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, LazilyResolvedInterfaceUnion>
-    ).altLazy(
-      () =>
-        LazilyResolvedInterfaceUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, LazilyResolvedInterfaceUnion>,
-    );
-
   export function isLazilyResolvedInterfaceUnion(
     object: $Object,
   ): object is LazilyResolvedInterfaceUnion {
@@ -71197,115 +71295,25 @@ export namespace LazilyResolvedInterfaceUnion {
       )
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      LazilyResolvedInterfaceUnionMember1: {
-        discriminantValues: ["LazilyResolvedInterfaceUnionMember1"],
-        type: LazilyResolvedInterfaceUnionMember1.$schema,
-      },
-      LazilyResolvedInterfaceUnionMember2: {
-        discriminantValues: ["LazilyResolvedInterfaceUnionMember2"],
-        type: LazilyResolvedInterfaceUnionMember2.$schema,
-      },
-    },
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: LazilyResolvedInterfaceUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "lazilyResolvedInterfaceUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        LazilyResolvedInterfaceUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          LazilyResolvedInterfaceUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof LazilyResolvedInterfaceUnion.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      LazilyResolvedInterfaceUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedInterfaceUnion
-  > = (value, options) => {
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type PartialClassUnion =
   | PartialClassUnionMember1
   | PartialClassUnionMember2;
 
 export namespace PartialClassUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<PartialClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (
     left: PartialClassUnion,
     right: PartialClassUnion,
@@ -71341,14 +71349,6 @@ export namespace PartialClassUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
-      readonly PartialClassUnionMember2?: PartialClassUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: PartialClassUnion.$Filter,
@@ -71390,22 +71390,93 @@ export namespace PartialClassUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: PartialClassUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
+      readonly PartialClassUnionMember2?: PartialClassUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: PartialClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...PartialClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
+      }).concat(),
+      ...PartialClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json =
-    | PartialClassUnionMember1.$Json
-    | PartialClassUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: PartialClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: PartialClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (
     value: PartialClassUnion.$Json,
@@ -71424,32 +71495,22 @@ export namespace PartialClassUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(json: unknown): Either<Error, PartialClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: PartialClassUnion,
-  ): PartialClassUnion.$Json => {
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<PartialClassUnion> = (
+    resource,
+    options,
+  ) =>
+    (
+      PartialClassUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, PartialClassUnion>
+    ).altLazy(
+      () =>
+        PartialClassUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, PartialClassUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<PartialClassUnion> =
     ((values, _options) =>
@@ -71482,6 +71543,135 @@ export namespace PartialClassUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<PartialClassUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: PartialClassUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | PartialClassUnionMember1.$Json
+    | PartialClassUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      PartialClassUnionMember1.$jsonZodSchema(),
+      PartialClassUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(json: unknown): Either<Error, PartialClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      PartialClassUnionMember1: {
+        discriminantValues: ["PartialClassUnionMember1"],
+        type: PartialClassUnionMember1.$schema,
+      },
+      PartialClassUnionMember2: {
+        discriminantValues: ["PartialClassUnionMember2"],
+        type: PartialClassUnionMember2.$schema,
+      },
+    },
+    properties: {
+      lazilyResolvedStringProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PartialClassUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "partialClassUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PartialClassUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PartialClassUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof PartialClassUnion.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PartialClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (
+    value: PartialClassUnion,
+  ): PartialClassUnion.$Json => {
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialClassUnion> =
     ((value, _options) => {
@@ -71565,110 +71755,6 @@ export namespace PartialClassUnion {
     typeof PartialClassUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: PartialClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...PartialClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
-      }).concat(),
-      ...PartialClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: PartialClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: PartialClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<PartialClassUnion> = (
-    resource,
-    options,
-  ) =>
-    (
-      PartialClassUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, PartialClassUnion>
-    ).altLazy(
-      () =>
-        PartialClassUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, PartialClassUnion>,
-    );
-
   export function isPartialClassUnion(
     object: $Object,
   ): object is PartialClassUnion {
@@ -71677,104 +71763,25 @@ export namespace PartialClassUnion {
       PartialClassUnionMember2.isPartialClassUnionMember2(object)
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      PartialClassUnionMember1: {
-        discriminantValues: ["PartialClassUnionMember1"],
-        type: PartialClassUnionMember1.$schema,
-      },
-      PartialClassUnionMember2: {
-        discriminantValues: ["PartialClassUnionMember2"],
-        type: PartialClassUnionMember2.$schema,
-      },
-    },
-    properties: {
-      lazilyResolvedStringProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/lazilyResolvedStringProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: PartialClassUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "partialClassUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PartialClassUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          PartialClassUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof PartialClassUnion.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PartialClassUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<PartialClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type PartialInterfaceUnion =
   | PartialInterfaceUnionMember1
   | PartialInterfaceUnionMember2;
 
 export namespace PartialInterfaceUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<PartialInterfaceUnion> = (
+    value,
+    options,
+  ) => {
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (
     left: PartialInterfaceUnion,
     right: PartialInterfaceUnion,
@@ -71810,14 +71817,6 @@ export namespace PartialInterfaceUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly PartialInterfaceUnionMember1?: PartialInterfaceUnionMember1.$Filter;
-      readonly PartialInterfaceUnionMember2?: PartialInterfaceUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: PartialInterfaceUnion.$Filter,
@@ -71859,192 +71858,13 @@ export namespace PartialInterfaceUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: PartialInterfaceUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      PartialInterfaceUnionMember1.$hash(value, hasher);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      PartialInterfaceUnionMember2.$hash(value, hasher);
-    }
-    return hasher;
-  }
-
-  export type $Json =
-    | PartialInterfaceUnionMember1.$Json
-    | PartialInterfaceUnionMember2.$Json;
-
-  export const $fromJson = (
-    value: PartialInterfaceUnion.$Json,
-  ): PartialInterfaceUnion => {
-    if (value.$type === "PartialInterfaceUnionMember1") {
-      return PartialInterfaceUnionMember1.$fromJson(
-        value as PartialInterfaceUnionMember1.$Json,
-      );
-    }
-    if (value.$type === "PartialInterfaceUnionMember2") {
-      return PartialInterfaceUnionMember2.$fromJson(
-        value as PartialInterfaceUnionMember2.$Json,
-      );
-    }
-
-    throw new Error("unable to deserialize JSON");
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly PartialInterfaceUnionMember1?: PartialInterfaceUnionMember1.$Filter;
+      readonly PartialInterfaceUnionMember2?: PartialInterfaceUnionMember2.$Filter;
+    };
   };
-
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PartialInterfaceUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: PartialInterfaceUnion,
-  ): PartialInterfaceUnion.$Json => {
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return PartialInterfaceUnionMember1.$toJson(value);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return PartialInterfaceUnionMember2.$toJson(value);
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<PartialInterfaceUnion> =
-    ((values, _options) =>
-      values.chain((values) =>
-        values.chainMap((value) => {
-          const valueAsValues = Right(value.toValues());
-          return (
-            PartialInterfaceUnionMember1.$fromRdfResourceValues(valueAsValues, {
-              context: _options.context,
-              graph: _options.graph,
-              ignoreRdfType: false,
-              objectSet: _options.objectSet,
-              preferredLanguages: _options.preferredLanguages,
-              propertyPath: _options.propertyPath,
-              resource: _options.resource,
-            }) as Either<Error, Resource.Values<PartialInterfaceUnion>>
-          )
-            .altLazy(
-              () =>
-                PartialInterfaceUnionMember2.$fromRdfResourceValues(
-                  valueAsValues,
-                  {
-                    context: _options.context,
-                    graph: _options.graph,
-                    ignoreRdfType: false,
-                    objectSet: _options.objectSet,
-                    preferredLanguages: _options.preferredLanguages,
-                    propertyPath: _options.propertyPath,
-                    resource: _options.resource,
-                  },
-                ) as Either<Error, Resource.Values<PartialInterfaceUnion>>,
-            )
-            .chain((values) => values.head());
-        }),
-      )) satisfies $FromRdfResourceValuesFunction<PartialInterfaceUnion>;
-
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialInterfaceUnion> =
-    ((value, _options) => {
-      if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-        return [
-          PartialInterfaceUnionMember1.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-        return [
-          PartialInterfaceUnionMember2.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<PartialInterfaceUnion>;
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    PartialInterfaceUnion.$Filter,
-    typeof PartialInterfaceUnion.$schema
-  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-    let triples: sparqljs.Triple[] = [];
-
-    triples = triples.concat(
-      PartialInterfaceUnionMember1.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PartialInterfaceUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialInterfaceUnionMember1"].type,
-      }),
-    );
-    triples = triples.concat(
-      PartialInterfaceUnionMember2.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PartialInterfaceUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialInterfaceUnionMember2"].type,
-      }),
-    );
-
-    return triples;
-  }) satisfies $ValueSparqlConstructTriplesFunction<
-    PartialInterfaceUnion.$Filter,
-    typeof PartialInterfaceUnion.$schema
-  >;
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    PartialInterfaceUnion.$Filter,
-    typeof PartialInterfaceUnion.$schema
-  > = (({ filter, schema, ...otherParameters }) => {
-    const unionPatterns: sparqljs.GroupPattern[] = [];
-
-    unionPatterns.push({
-      patterns: PartialInterfaceUnionMember1.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PartialInterfaceUnionMember1"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialInterfaceUnionMember1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PartialInterfaceUnionMember2.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PartialInterfaceUnionMember2"],
-        ignoreRdfType: false,
-        schema: schema.members["PartialInterfaceUnionMember2"].type,
-      }).concat(),
-      type: "group",
-    });
-
-    return [{ patterns: unionPatterns, type: "union" }];
-  }) satisfies $ValueSparqlWherePatternsFunction<
-    PartialInterfaceUnion.$Filter,
-    typeof PartialInterfaceUnion.$schema
-  >;
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
 
   export function $focusSparqlConstructTriples({
     filter,
@@ -72126,6 +71946,23 @@ export namespace PartialInterfaceUnion {
     return patterns;
   }
 
+  export const $fromJson = (
+    value: PartialInterfaceUnion.$Json,
+  ): PartialInterfaceUnion => {
+    if (value.$type === "PartialInterfaceUnionMember1") {
+      return PartialInterfaceUnionMember1.$fromJson(
+        value as PartialInterfaceUnionMember1.$Json,
+      );
+    }
+    if (value.$type === "PartialInterfaceUnionMember2") {
+      return PartialInterfaceUnionMember2.$fromJson(
+        value as PartialInterfaceUnionMember2.$Json,
+      );
+    }
+
+    throw new Error("unable to deserialize JSON");
+  };
+
   export const $fromRdfResource: $FromRdfResourceFunction<
     PartialInterfaceUnion
   > = (resource, options) =>
@@ -72142,13 +71979,78 @@ export namespace PartialInterfaceUnion {
         }) as Either<Error, PartialInterfaceUnion>,
     );
 
-  export function isPartialInterfaceUnion(
-    object: $Object,
-  ): object is PartialInterfaceUnion {
-    return (
-      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(object) ||
-      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(object)
-    );
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<PartialInterfaceUnion> =
+    ((values, _options) =>
+      values.chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = Right(value.toValues());
+          return (
+            PartialInterfaceUnionMember1.$fromRdfResourceValues(valueAsValues, {
+              context: _options.context,
+              graph: _options.graph,
+              ignoreRdfType: false,
+              objectSet: _options.objectSet,
+              preferredLanguages: _options.preferredLanguages,
+              propertyPath: _options.propertyPath,
+              resource: _options.resource,
+            }) as Either<Error, Resource.Values<PartialInterfaceUnion>>
+          )
+            .altLazy(
+              () =>
+                PartialInterfaceUnionMember2.$fromRdfResourceValues(
+                  valueAsValues,
+                  {
+                    context: _options.context,
+                    graph: _options.graph,
+                    ignoreRdfType: false,
+                    objectSet: _options.objectSet,
+                    preferredLanguages: _options.preferredLanguages,
+                    propertyPath: _options.propertyPath,
+                    resource: _options.resource,
+                  },
+                ) as Either<Error, Resource.Values<PartialInterfaceUnion>>,
+            )
+            .chain((values) => values.head());
+        }),
+      )) satisfies $FromRdfResourceValuesFunction<PartialInterfaceUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: PartialInterfaceUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      PartialInterfaceUnionMember1.$hash(value, hasher);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      PartialInterfaceUnionMember2.$hash(value, hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | PartialInterfaceUnionMember1.$Json
+    | PartialInterfaceUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      PartialInterfaceUnionMember1.$jsonZodSchema(),
+      PartialInterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PartialInterfaceUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
@@ -72232,24 +72134,128 @@ export namespace PartialInterfaceUnion {
     );
   }
 
-  export const $toRdfResource: $ToRdfResourceFunction<PartialInterfaceUnion> = (
-    value,
-    options,
-  ) => {
+  export const $toJson = (
+    value: PartialInterfaceUnion,
+  ): PartialInterfaceUnion.$Json => {
     if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
+      return PartialInterfaceUnionMember1.$toJson(value);
     }
     if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
+      return PartialInterfaceUnionMember2.$toJson(value);
     }
-    throw new Error("unrecognized type");
+
+    throw new Error("unable to serialize to JSON");
   };
+
+  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialInterfaceUnion> =
+    ((value, _options) => {
+      if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+        return [
+          PartialInterfaceUnionMember1.$toRdfResource(value, {
+            graph: _options.graph,
+            resourceSet: _options.resourceSet,
+          }).identifier,
+        ];
+      }
+      if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+        return [
+          PartialInterfaceUnionMember2.$toRdfResource(value, {
+            graph: _options.graph,
+            resourceSet: _options.resourceSet,
+          }).identifier,
+        ];
+      }
+
+      throw new Error("unable to serialize to RDF");
+    }) as $ToRdfResourceValuesFunction<PartialInterfaceUnion>;
+
+  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PartialInterfaceUnion.$Filter,
+    typeof PartialInterfaceUnion.$schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      PartialInterfaceUnionMember1.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PartialInterfaceUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialInterfaceUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      PartialInterfaceUnionMember2.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PartialInterfaceUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialInterfaceUnionMember2"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    PartialInterfaceUnion.$Filter,
+    typeof PartialInterfaceUnion.$schema
+  >;
+
+  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PartialInterfaceUnion.$Filter,
+    typeof PartialInterfaceUnion.$schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: PartialInterfaceUnionMember1.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PartialInterfaceUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialInterfaceUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PartialInterfaceUnionMember2.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PartialInterfaceUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialInterfaceUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    PartialInterfaceUnion.$Filter,
+    typeof PartialInterfaceUnion.$schema
+  >;
+
+  export function isPartialInterfaceUnion(
+    object: $Object,
+  ): object is PartialInterfaceUnion {
+    return (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(object) ||
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(object)
+    );
+  }
 }
 export type NoRdfTypeClassUnion =
   | NoRdfTypeClassUnionMember1
   | NoRdfTypeClassUnionMember2;
 
 export namespace NoRdfTypeClassUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<NoRdfTypeClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (
     left: NoRdfTypeClassUnion,
     right: NoRdfTypeClassUnion,
@@ -72285,14 +72291,6 @@ export namespace NoRdfTypeClassUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
-      readonly NoRdfTypeClassUnionMember2?: NoRdfTypeClassUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: NoRdfTypeClassUnion.$Filter,
@@ -72334,22 +72332,93 @@ export namespace NoRdfTypeClassUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: NoRdfTypeClassUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
+      readonly NoRdfTypeClassUnionMember2?: NoRdfTypeClassUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: NoRdfTypeClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...NoRdfTypeClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
+      }).concat(),
+      ...NoRdfTypeClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json =
-    | NoRdfTypeClassUnionMember1.$Json
-    | NoRdfTypeClassUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: NoRdfTypeClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: NoRdfTypeClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (
     value: NoRdfTypeClassUnion.$Json,
@@ -72368,34 +72437,21 @@ export namespace NoRdfTypeClassUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, NoRdfTypeClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: NoRdfTypeClassUnion,
-  ): NoRdfTypeClassUnion.$Json => {
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    NoRdfTypeClassUnion
+  > = (resource, options) =>
+    (
+      NoRdfTypeClassUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, NoRdfTypeClassUnion>
+    ).altLazy(
+      () =>
+        NoRdfTypeClassUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, NoRdfTypeClassUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<NoRdfTypeClassUnion> =
     ((values, _options) =>
@@ -72431,6 +72487,131 @@ export namespace NoRdfTypeClassUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<NoRdfTypeClassUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: NoRdfTypeClassUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | NoRdfTypeClassUnionMember1.$Json
+    | NoRdfTypeClassUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, NoRdfTypeClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      NoRdfTypeClassUnionMember1: {
+        discriminantValues: ["NoRdfTypeClassUnionMember1"],
+        type: NoRdfTypeClassUnionMember1.$schema,
+      },
+      NoRdfTypeClassUnionMember2: {
+        discriminantValues: ["NoRdfTypeClassUnionMember2"],
+        type: NoRdfTypeClassUnionMember2.$schema,
+      },
+    },
+    properties: {},
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NoRdfTypeClassUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeClassUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NoRdfTypeClassUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof NoRdfTypeClassUnion.$sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (
+    value: NoRdfTypeClassUnion,
+  ): NoRdfTypeClassUnion.$Json => {
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NoRdfTypeClassUnion> =
     ((value, _options) => {
@@ -72514,109 +72695,6 @@ export namespace NoRdfTypeClassUnion {
     typeof NoRdfTypeClassUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: NoRdfTypeClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...NoRdfTypeClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.NoRdfTypeClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
-      }).concat(),
-      ...NoRdfTypeClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.NoRdfTypeClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: NoRdfTypeClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: NoRdfTypeClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.NoRdfTypeClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NoRdfTypeClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.NoRdfTypeClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    NoRdfTypeClassUnion
-  > = (resource, options) =>
-    (
-      NoRdfTypeClassUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, NoRdfTypeClassUnion>
-    ).altLazy(
-      () =>
-        NoRdfTypeClassUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, NoRdfTypeClassUnion>,
-    );
-
   export function isNoRdfTypeClassUnion(
     object: $Object,
   ): object is NoRdfTypeClassUnion {
@@ -72625,98 +72703,25 @@ export namespace NoRdfTypeClassUnion {
       NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(object)
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      NoRdfTypeClassUnionMember1: {
-        discriminantValues: ["NoRdfTypeClassUnionMember1"],
-        type: NoRdfTypeClassUnionMember1.$schema,
-      },
-      NoRdfTypeClassUnionMember2: {
-        discriminantValues: ["NoRdfTypeClassUnionMember2"],
-        type: NoRdfTypeClassUnionMember2.$schema,
-      },
-    },
-    properties: {},
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: NoRdfTypeClassUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        NoRdfTypeClassUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          NoRdfTypeClassUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof NoRdfTypeClassUnion.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      NoRdfTypeClassUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<NoRdfTypeClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type RecursiveClassUnion =
   | RecursiveClassUnionMember1
   | RecursiveClassUnionMember2;
 
 export namespace RecursiveClassUnion {
+  export const $toRdfResource: $ToRdfResourceFunction<RecursiveClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (
     left: RecursiveClassUnion,
     right: RecursiveClassUnion,
@@ -72752,14 +72757,6 @@ export namespace RecursiveClassUnion {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
-      readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (
     filter: RecursiveClassUnion.$Filter,
@@ -72801,22 +72798,93 @@ export namespace RecursiveClassUnion {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: RecursiveClassUnion,
-    hasher: HasherT,
-  ): HasherT {
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
+      readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: RecursiveClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...RecursiveClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
+      }).concat(),
+      ...RecursiveClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
+      }).concat(),
+    ];
   }
 
-  export type $Json =
-    | RecursiveClassUnionMember1.$Json
-    | RecursiveClassUnionMember2.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: RecursiveClassUnion.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: RecursiveClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (
     value: RecursiveClassUnion.$Json,
@@ -72835,34 +72903,21 @@ export namespace RecursiveClassUnion {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, RecursiveClassUnion> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (
-    value: RecursiveClassUnion,
-  ): RecursiveClassUnion.$Json => {
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    RecursiveClassUnion
+  > = (resource, options) =>
+    (
+      RecursiveClassUnionMember1.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, RecursiveClassUnion>
+    ).altLazy(
+      () =>
+        RecursiveClassUnionMember2.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, RecursiveClassUnion>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<RecursiveClassUnion> =
     ((values, _options) =>
@@ -72898,6 +72953,131 @@ export namespace RecursiveClassUnion {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<RecursiveClassUnion>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: RecursiveClassUnion,
+    hasher: HasherT,
+  ): HasherT {
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      RecursiveClassUnionMember1.$jsonZodSchema(),
+      RecursiveClassUnionMember2.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, RecursiveClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      RecursiveClassUnionMember1: {
+        discriminantValues: ["RecursiveClassUnionMember1"],
+        type: RecursiveClassUnionMember1.$schema,
+      },
+      RecursiveClassUnionMember2: {
+        discriminantValues: ["RecursiveClassUnionMember2"],
+        type: RecursiveClassUnionMember2.$schema,
+      },
+    },
+    properties: {},
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: RecursiveClassUnion.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "recursiveClassUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveClassUnion.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          RecursiveClassUnion.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof RecursiveClassUnion.$sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (
+    value: RecursiveClassUnion,
+  ): RecursiveClassUnion.$Json => {
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<RecursiveClassUnion> =
     ((value, _options) => {
@@ -72981,109 +73161,6 @@ export namespace RecursiveClassUnion {
     typeof RecursiveClassUnion.$schema
   >;
 
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: RecursiveClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...RecursiveClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.RecursiveClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
-      }).concat(),
-      ...RecursiveClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.RecursiveClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
-      }).concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: RecursiveClassUnion.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: RecursiveClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.RecursiveClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: RecursiveClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.RecursiveClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    RecursiveClassUnion
-  > = (resource, options) =>
-    (
-      RecursiveClassUnionMember1.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, RecursiveClassUnion>
-    ).altLazy(
-      () =>
-        RecursiveClassUnionMember2.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, RecursiveClassUnion>,
-    );
-
   export function isRecursiveClassUnion(
     object: $Object,
   ): object is RecursiveClassUnion {
@@ -73092,92 +73169,6 @@ export namespace RecursiveClassUnion {
       RecursiveClassUnionMember2.isRecursiveClassUnionMember2(object)
     );
   }
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      RecursiveClassUnionMember1: {
-        discriminantValues: ["RecursiveClassUnionMember1"],
-        type: RecursiveClassUnionMember1.$schema,
-      },
-      RecursiveClassUnionMember2: {
-        discriminantValues: ["RecursiveClassUnionMember2"],
-        type: RecursiveClassUnionMember2.$schema,
-      },
-    },
-    properties: {},
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: RecursiveClassUnion.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "recursiveClassUnion";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        RecursiveClassUnion.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          RecursiveClassUnion.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof RecursiveClassUnion.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      RecursiveClassUnion.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<RecursiveClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export type $Object =
   | BlankNodeIdentifierClass
@@ -73265,6 +73256,288 @@ export type $Object =
   | $NamedDefaultPartial;
 
 export namespace $Object {
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+    value,
+    options,
+  ) => {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
+      return BlankNodeIdentifierInterface.$toRdfResource(value, options);
+    }
+    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return BlankNodeOrIriIdentifierInterface.$toRdfResource(value, options);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClass.isPartialClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NonClass.isNonClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ConcreteChildClass.isConcreteChildClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
+      return ConcreteChildInterface.$toRdfResource(value, options);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
+      return ConcreteParentInterfaceStatic.$toRdfResource(value, options);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        value,
+      )
+    ) {
+      return BaseInterfaceWithoutPropertiesStatic.$toRdfResource(
+        value,
+        options,
+      );
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
+    ) {
+      return BaseInterfaceWithPropertiesStatic.$toRdfResource(value, options);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (InIdentifierClass.isInIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (InPropertiesClass.isInPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (Interface.isInterface(value)) {
+      return Interface.$toRdfResource(value, options);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
+      return IriIdentifierInterface.$toRdfResource(value, options);
+    }
+    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        value,
+      )
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdfResource(
+        value,
+        options,
+      );
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedIriIdentifierInterface.$toRdfResource(
+        value,
+        options,
+      );
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
+      return LazyPropertiesInterface.$toRdfResource(value, options);
+    }
+    if (PartialInterface.isPartialInterface(value)) {
+      return PartialInterface.$toRdfResource(value, options);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NodeKindsClass.isNodeKindsClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NewName1Class.isNewName1Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NewName2Class.isNewName2Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
+      return UuidV4IriIdentifierInterface.$toRdfResource(value, options);
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return value.$toRdfResource(options);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $equals = (left: $Object, right: $Object) => {
     if (
       BlankNodeIdentifierClass.isBlankNodeIdentifierClass(left) &&
@@ -73984,88 +74257,6 @@ export namespace $Object {
       type: "property" as const,
     });
   };
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly BlankNodeIdentifierClass?: BlankNodeIdentifierClass.$Filter;
-      readonly BlankNodeIdentifierInterface?: BlankNodeIdentifierInterface.$Filter;
-      readonly BlankNodeOrIriIdentifierClass?: BlankNodeOrIriIdentifierClass.$Filter;
-      readonly BlankNodeOrIriIdentifierInterface?: BlankNodeOrIriIdentifierInterface.$Filter;
-      readonly ClassPropertiesClass?: ClassPropertiesClass.$Filter;
-      readonly PartialClass?: PartialClass.$Filter;
-      readonly NonClass?: NonClass.$Filter;
-      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
-      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
-      readonly ConcreteChildClass?: ConcreteChildClass.$Filter;
-      readonly ConcreteParentClass?: ConcreteParentClassStatic.$Filter;
-      readonly ConcreteChildInterface?: ConcreteChildInterface.$Filter;
-      readonly ConcreteParentInterface?: ConcreteParentInterfaceStatic.$Filter;
-      readonly BaseInterfaceWithoutProperties?: BaseInterfaceWithoutPropertiesStatic.$Filter;
-      readonly BaseInterfaceWithProperties?: BaseInterfaceWithPropertiesStatic.$Filter;
-      readonly ConvertibleTypePropertiesClass?: ConvertibleTypePropertiesClass.$Filter;
-      readonly DateUnionPropertiesClass?: DateUnionPropertiesClass.$Filter;
-      readonly DefaultValuePropertiesClass?: DefaultValuePropertiesClass.$Filter;
-      readonly DirectRecursiveClass?: DirectRecursiveClass.$Filter;
-      readonly ExplicitFromToRdfTypesClass?: ExplicitFromToRdfTypesClass.$Filter;
-      readonly ExplicitRdfTypeClass?: ExplicitRdfTypeClass.$Filter;
-      readonly ExternClassPropertyClass?: ExternClassPropertyClass.$Filter;
-      readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
-      readonly HasValuePropertiesClass?: HasValuePropertiesClass.$Filter;
-      readonly IdentifierOverride5Class?: IdentifierOverride5Class.$Filter;
-      readonly IdentifierOverride4Class?: IdentifierOverride4ClassStatic.$Filter;
-      readonly IdentifierOverride3Class?: IdentifierOverride3ClassStatic.$Filter;
-      readonly InIdentifierClass?: InIdentifierClass.$Filter;
-      readonly InPropertiesClass?: InPropertiesClass.$Filter;
-      readonly IndirectRecursiveClass?: IndirectRecursiveClass.$Filter;
-      readonly IndirectRecursiveHelperClass?: IndirectRecursiveHelperClass.$Filter;
-      readonly Interface?: Interface.$Filter;
-      readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
-      readonly InterfaceUnionMember2?: InterfaceUnionMember2.$Filter;
-      readonly IriIdentifierClass?: IriIdentifierClass.$Filter;
-      readonly IriIdentifierInterface?: IriIdentifierInterface.$Filter;
-      readonly JsPrimitiveUnionPropertyClass?: JsPrimitiveUnionPropertyClass.$Filter;
-      readonly LanguageInPropertiesClass?: LanguageInPropertiesClass.$Filter;
-      readonly LazilyResolvedBlankNodeOrIriIdentifierClass?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter;
-      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter;
-      readonly LazilyResolvedClassUnionMember1?: LazilyResolvedClassUnionMember1.$Filter;
-      readonly LazilyResolvedClassUnionMember2?: LazilyResolvedClassUnionMember2.$Filter;
-      readonly LazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1.$Filter;
-      readonly LazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2.$Filter;
-      readonly LazilyResolvedIriIdentifierClass?: LazilyResolvedIriIdentifierClass.$Filter;
-      readonly LazilyResolvedIriIdentifierInterface?: LazilyResolvedIriIdentifierInterface.$Filter;
-      readonly LazyPropertiesClass?: LazyPropertiesClass.$Filter;
-      readonly LazyPropertiesInterface?: LazyPropertiesInterface.$Filter;
-      readonly PartialInterface?: PartialInterface.$Filter;
-      readonly ListPropertiesClass?: ListPropertiesClass.$Filter;
-      readonly MutablePropertiesClass?: MutablePropertiesClass.$Filter;
-      readonly NamedUnionPropertiesClass?: NamedUnionPropertiesClass.$Filter;
-      readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
-      readonly NoRdfTypeClassUnionMember2?: NoRdfTypeClassUnionMember2.$Filter;
-      readonly NodeKindsClass?: NodeKindsClass.$Filter;
-      readonly NumericPropertiesClass?: NumericPropertiesClass.$Filter;
-      readonly OrderedPropertiesClass?: OrderedPropertiesClass.$Filter;
-      readonly NewName1Class?: NewName1Class.$Filter;
-      readonly NewName2Class?: NewName2Class.$Filter;
-      readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
-      readonly PartialClassUnionMember2?: PartialClassUnionMember2.$Filter;
-      readonly PartialInterfaceUnionMember1?: PartialInterfaceUnionMember1.$Filter;
-      readonly PartialInterfaceUnionMember2?: PartialInterfaceUnionMember2.$Filter;
-      readonly PropertyCardinalitiesClass?: PropertyCardinalitiesClass.$Filter;
-      readonly PropertyNamesClass?: PropertyNamesClass.$Filter;
-      readonly PropertyPathsClass?: PropertyPathsClass.$Filter;
-      readonly PropertyVisibilitiesClass?: PropertyVisibilitiesClass.$Filter;
-      readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
-      readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
-      readonly Sha256IriIdentifierClass?: Sha256IriIdentifierClass.$Filter;
-      readonly TermPropertiesClass?: TermPropertiesClass.$Filter;
-      readonly UnionDiscriminantsClass?: UnionDiscriminantsClass.$Filter;
-      readonly UuidV4IriIdentifierClass?: UuidV4IriIdentifierClass.$Filter;
-      readonly UuidV4IriIdentifierInterface?: UuidV4IriIdentifierInterface.$Filter;
-      readonly $DefaultPartial?: $DefaultPartial.$Filter;
-      readonly $NamedDefaultPartial?: $NamedDefaultPartial.$Filter;
-    };
-  } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
@@ -74978,356 +75169,1378 @@ export namespace $Object {
     return true;
   };
 
-  export function $hash<HasherT extends $Hasher>(
-    value: $Object,
-    hasher: HasherT,
-  ): HasherT {
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
-      BlankNodeIdentifierInterface.$hash(value, hasher);
-    }
-    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        value,
-      )
-    ) {
-      BlankNodeOrIriIdentifierInterface.$hash(value, hasher);
-    }
-    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (PartialClass.isPartialClass(value)) {
-      value.$hash(hasher);
-    }
-    if (NonClass.isNonClass(value)) {
-      value.$hash(hasher);
-    }
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    if (ConcreteChildClass.isConcreteChildClass(value)) {
-      value.$hash(hasher);
-    }
-    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
-      value.$hash(hasher);
-    }
-    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
-      ConcreteChildInterface.$hash(value, hasher);
-    }
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
-      ConcreteParentInterfaceStatic.$hash(value, hasher);
-    }
-    if (
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        value,
-      )
-    ) {
-      BaseInterfaceWithoutPropertiesStatic.$hash(value, hasher);
-    }
-    if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
-    ) {
-      BaseInterfaceWithPropertiesStatic.$hash(value, hasher);
-    }
-    if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
-    ) {
-      value.$hash(hasher);
-    }
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
-      value.$hash(hasher);
-    }
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
-      value.$hash(hasher);
-    }
-    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
-      value.$hash(hasher);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      value.$hash(hasher);
-    }
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      value.$hash(hasher);
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      value.$hash(hasher);
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
-      value.$hash(hasher);
-    }
-    if (InIdentifierClass.isInIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (InPropertiesClass.isInPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
-      value.$hash(hasher);
-    }
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
-      value.$hash(hasher);
-    }
-    if (Interface.isInterface(value)) {
-      Interface.$hash(value, hasher);
-    }
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      InterfaceUnionMember1.$hash(value, hasher);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      InterfaceUnionMember2.$hash(value, hasher);
-    }
-    if (IriIdentifierClass.isIriIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
-      IriIdentifierInterface.$hash(value, hasher);
-    }
-    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
-      value.$hash(hasher);
-    }
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        value,
-      )
-    ) {
-      value.$hash(hasher);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        value,
-      )
-    ) {
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$hash(value, hasher);
-    }
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      value.$hash(hasher);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      value.$hash(hasher);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      LazilyResolvedInterfaceUnionMember1.$hash(value, hasher);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      LazilyResolvedInterfaceUnionMember2.$hash(value, hasher);
-    }
-    if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
-    ) {
-      value.$hash(hasher);
-    }
-    if (
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        value,
-      )
-    ) {
-      LazilyResolvedIriIdentifierInterface.$hash(value, hasher);
-    }
-    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
-      LazyPropertiesInterface.$hash(value, hasher);
-    }
-    if (PartialInterface.isPartialInterface(value)) {
-      PartialInterface.$hash(value, hasher);
-    }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    if (NodeKindsClass.isNodeKindsClass(value)) {
-      value.$hash(hasher);
-    }
-    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (NewName1Class.isNewName1Class(value)) {
-      value.$hash(hasher);
-    }
-    if (NewName2Class.isNewName2Class(value)) {
-      value.$hash(hasher);
-    }
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      PartialInterfaceUnionMember1.$hash(value, hasher);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      PartialInterfaceUnionMember2.$hash(value, hasher);
-    }
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (PropertyNamesClass.isPropertyNamesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (PropertyPathsClass.isPropertyPathsClass(value)) {
-      value.$hash(hasher);
-    }
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      value.$hash(hasher);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      value.$hash(hasher);
-    }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (TermPropertiesClass.isTermPropertiesClass(value)) {
-      value.$hash(hasher);
-    }
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
-      value.$hash(hasher);
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      UuidV4IriIdentifierInterface.$hash(value, hasher);
-    }
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      value.$hash(hasher);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      value.$hash(hasher);
-    }
-    return hasher;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly BlankNodeIdentifierClass?: BlankNodeIdentifierClass.$Filter;
+      readonly BlankNodeIdentifierInterface?: BlankNodeIdentifierInterface.$Filter;
+      readonly BlankNodeOrIriIdentifierClass?: BlankNodeOrIriIdentifierClass.$Filter;
+      readonly BlankNodeOrIriIdentifierInterface?: BlankNodeOrIriIdentifierInterface.$Filter;
+      readonly ClassPropertiesClass?: ClassPropertiesClass.$Filter;
+      readonly PartialClass?: PartialClass.$Filter;
+      readonly NonClass?: NonClass.$Filter;
+      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
+      readonly ConcreteChildClass?: ConcreteChildClass.$Filter;
+      readonly ConcreteParentClass?: ConcreteParentClassStatic.$Filter;
+      readonly ConcreteChildInterface?: ConcreteChildInterface.$Filter;
+      readonly ConcreteParentInterface?: ConcreteParentInterfaceStatic.$Filter;
+      readonly BaseInterfaceWithoutProperties?: BaseInterfaceWithoutPropertiesStatic.$Filter;
+      readonly BaseInterfaceWithProperties?: BaseInterfaceWithPropertiesStatic.$Filter;
+      readonly ConvertibleTypePropertiesClass?: ConvertibleTypePropertiesClass.$Filter;
+      readonly DateUnionPropertiesClass?: DateUnionPropertiesClass.$Filter;
+      readonly DefaultValuePropertiesClass?: DefaultValuePropertiesClass.$Filter;
+      readonly DirectRecursiveClass?: DirectRecursiveClass.$Filter;
+      readonly ExplicitFromToRdfTypesClass?: ExplicitFromToRdfTypesClass.$Filter;
+      readonly ExplicitRdfTypeClass?: ExplicitRdfTypeClass.$Filter;
+      readonly ExternClassPropertyClass?: ExternClassPropertyClass.$Filter;
+      readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
+      readonly HasValuePropertiesClass?: HasValuePropertiesClass.$Filter;
+      readonly IdentifierOverride5Class?: IdentifierOverride5Class.$Filter;
+      readonly IdentifierOverride4Class?: IdentifierOverride4ClassStatic.$Filter;
+      readonly IdentifierOverride3Class?: IdentifierOverride3ClassStatic.$Filter;
+      readonly InIdentifierClass?: InIdentifierClass.$Filter;
+      readonly InPropertiesClass?: InPropertiesClass.$Filter;
+      readonly IndirectRecursiveClass?: IndirectRecursiveClass.$Filter;
+      readonly IndirectRecursiveHelperClass?: IndirectRecursiveHelperClass.$Filter;
+      readonly Interface?: Interface.$Filter;
+      readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
+      readonly InterfaceUnionMember2?: InterfaceUnionMember2.$Filter;
+      readonly IriIdentifierClass?: IriIdentifierClass.$Filter;
+      readonly IriIdentifierInterface?: IriIdentifierInterface.$Filter;
+      readonly JsPrimitiveUnionPropertyClass?: JsPrimitiveUnionPropertyClass.$Filter;
+      readonly LanguageInPropertiesClass?: LanguageInPropertiesClass.$Filter;
+      readonly LazilyResolvedBlankNodeOrIriIdentifierClass?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter;
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter;
+      readonly LazilyResolvedClassUnionMember1?: LazilyResolvedClassUnionMember1.$Filter;
+      readonly LazilyResolvedClassUnionMember2?: LazilyResolvedClassUnionMember2.$Filter;
+      readonly LazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1.$Filter;
+      readonly LazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2.$Filter;
+      readonly LazilyResolvedIriIdentifierClass?: LazilyResolvedIriIdentifierClass.$Filter;
+      readonly LazilyResolvedIriIdentifierInterface?: LazilyResolvedIriIdentifierInterface.$Filter;
+      readonly LazyPropertiesClass?: LazyPropertiesClass.$Filter;
+      readonly LazyPropertiesInterface?: LazyPropertiesInterface.$Filter;
+      readonly PartialInterface?: PartialInterface.$Filter;
+      readonly ListPropertiesClass?: ListPropertiesClass.$Filter;
+      readonly MutablePropertiesClass?: MutablePropertiesClass.$Filter;
+      readonly NamedUnionPropertiesClass?: NamedUnionPropertiesClass.$Filter;
+      readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
+      readonly NoRdfTypeClassUnionMember2?: NoRdfTypeClassUnionMember2.$Filter;
+      readonly NodeKindsClass?: NodeKindsClass.$Filter;
+      readonly NumericPropertiesClass?: NumericPropertiesClass.$Filter;
+      readonly OrderedPropertiesClass?: OrderedPropertiesClass.$Filter;
+      readonly NewName1Class?: NewName1Class.$Filter;
+      readonly NewName2Class?: NewName2Class.$Filter;
+      readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
+      readonly PartialClassUnionMember2?: PartialClassUnionMember2.$Filter;
+      readonly PartialInterfaceUnionMember1?: PartialInterfaceUnionMember1.$Filter;
+      readonly PartialInterfaceUnionMember2?: PartialInterfaceUnionMember2.$Filter;
+      readonly PropertyCardinalitiesClass?: PropertyCardinalitiesClass.$Filter;
+      readonly PropertyNamesClass?: PropertyNamesClass.$Filter;
+      readonly PropertyPathsClass?: PropertyPathsClass.$Filter;
+      readonly PropertyVisibilitiesClass?: PropertyVisibilitiesClass.$Filter;
+      readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
+      readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
+      readonly Sha256IriIdentifierClass?: Sha256IriIdentifierClass.$Filter;
+      readonly TermPropertiesClass?: TermPropertiesClass.$Filter;
+      readonly UnionDiscriminantsClass?: UnionDiscriminantsClass.$Filter;
+      readonly UuidV4IriIdentifierClass?: UuidV4IriIdentifierClass.$Filter;
+      readonly UuidV4IriIdentifierInterface?: UuidV4IriIdentifierInterface.$Filter;
+      readonly $DefaultPartial?: $DefaultPartial.$Filter;
+      readonly $NamedDefaultPartial?: $NamedDefaultPartial.$Filter;
+    };
+  };
+
+  export function $focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: $Object.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...BlankNodeIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.BlankNodeIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BlankNodeIdentifierClass`,
+      }).concat(),
+      ...BlankNodeIdentifierInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.BlankNodeIdentifierInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BlankNodeIdentifierInterface`,
+      }).concat(),
+      ...BlankNodeOrIriIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.BlankNodeOrIriIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierClass`,
+      }).concat(),
+      ...BlankNodeOrIriIdentifierInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.BlankNodeOrIriIdentifierInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierInterface`,
+      }).concat(),
+      ...ClassPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassPropertiesClass`,
+      }).concat(),
+      ...PartialClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialClass`,
+      }).concat(),
+      ...NonClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.NonClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NonClass`,
+      }).concat(),
+      ...ClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassUnionMember1`,
+      }).concat(),
+      ...ClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassUnionMember2`,
+      }).concat(),
+      ...ConcreteChildClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ConcreteChildClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ConcreteChildClass`,
+      }).concat(),
+      ...ConcreteParentClassStatic.$focusSparqlConstructTriples({
+        filter: filter?.on?.ConcreteParentClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ConcreteParentClass`,
+      }).concat(),
+      ...ConcreteChildInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.ConcreteChildInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ConcreteChildInterface`,
+      }).concat(),
+      ...ConcreteParentInterfaceStatic.$focusSparqlConstructTriples({
+        filter: filter?.on?.ConcreteParentInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ConcreteParentInterface`,
+      }).concat(),
+      ...BaseInterfaceWithoutPropertiesStatic.$focusSparqlConstructTriples({
+        filter: filter?.on?.BaseInterfaceWithoutProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BaseInterfaceWithoutProperties`,
+      }).concat(),
+      ...BaseInterfaceWithPropertiesStatic.$focusSparqlConstructTriples({
+        filter: filter?.on?.BaseInterfaceWithProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BaseInterfaceWithProperties`,
+      }).concat(),
+      ...ConvertibleTypePropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ConvertibleTypePropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ConvertibleTypePropertiesClass`,
+      }).concat(),
+      ...DateUnionPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.DateUnionPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DateUnionPropertiesClass`,
+      }).concat(),
+      ...DefaultValuePropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.DefaultValuePropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DefaultValuePropertiesClass`,
+      }).concat(),
+      ...DirectRecursiveClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.DirectRecursiveClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DirectRecursiveClass`,
+      }).concat(),
+      ...ExplicitFromToRdfTypesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ExplicitFromToRdfTypesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ExplicitFromToRdfTypesClass`,
+      }).concat(),
+      ...ExplicitRdfTypeClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ExplicitRdfTypeClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ExplicitRdfTypeClass`,
+      }).concat(),
+      ...ExternClassPropertyClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ExternClassPropertyClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ExternClassPropertyClass`,
+      }).concat(),
+      ...FlattenClassUnionMember3.$focusSparqlConstructTriples({
+        filter: filter?.on?.FlattenClassUnionMember3,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
+      }).concat(),
+      ...HasValuePropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.HasValuePropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
+      }).concat(),
+      ...IdentifierOverride5Class.$focusSparqlConstructTriples({
+        filter: filter?.on?.IdentifierOverride5Class,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IdentifierOverride5Class`,
+      }).concat(),
+      ...IdentifierOverride4ClassStatic.$focusSparqlConstructTriples({
+        filter: filter?.on?.IdentifierOverride4Class,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IdentifierOverride4Class`,
+      }).concat(),
+      ...IdentifierOverride3ClassStatic.$focusSparqlConstructTriples({
+        filter: filter?.on?.IdentifierOverride3Class,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IdentifierOverride3Class`,
+      }).concat(),
+      ...InIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.InIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InIdentifierClass`,
+      }).concat(),
+      ...InPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.InPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InPropertiesClass`,
+      }).concat(),
+      ...IndirectRecursiveClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.IndirectRecursiveClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IndirectRecursiveClass`,
+      }).concat(),
+      ...IndirectRecursiveHelperClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.IndirectRecursiveHelperClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IndirectRecursiveHelperClass`,
+      }).concat(),
+      ...Interface.$focusSparqlConstructTriples({
+        filter: filter?.on?.Interface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}Interface`,
+      }).concat(),
+      ...InterfaceUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.InterfaceUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
+      }).concat(),
+      ...InterfaceUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.InterfaceUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
+      }).concat(),
+      ...IriIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.IriIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IriIdentifierClass`,
+      }).concat(),
+      ...IriIdentifierInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.IriIdentifierInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IriIdentifierInterface`,
+      }).concat(),
+      ...JsPrimitiveUnionPropertyClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.JsPrimitiveUnionPropertyClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}JsPrimitiveUnionPropertyClass`,
+      }).concat(),
+      ...LanguageInPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.LanguageInPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LanguageInPropertiesClass`,
+      }).concat(),
+      ...LazilyResolvedBlankNodeOrIriIdentifierClass.$focusSparqlConstructTriples(
+        {
+          filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierClass,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass`,
+        },
+      ).concat(),
+      ...LazilyResolvedBlankNodeOrIriIdentifierInterface.$focusSparqlConstructTriples(
+        {
+          filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface`,
+        },
+      ).concat(),
+      ...LazilyResolvedClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
+      }).concat(),
+      ...LazilyResolvedClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
+      }).concat(),
+      ...LazilyResolvedInterfaceUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
+      }).concat(),
+      ...LazilyResolvedInterfaceUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
+      }).concat(),
+      ...LazilyResolvedIriIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedIriIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierClass`,
+      }).concat(),
+      ...LazilyResolvedIriIdentifierInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedIriIdentifierInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierInterface`,
+      }).concat(),
+      ...LazyPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazyPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazyPropertiesClass`,
+      }).concat(),
+      ...LazyPropertiesInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.LazyPropertiesInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazyPropertiesInterface`,
+      }).concat(),
+      ...PartialInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialInterface`,
+      }).concat(),
+      ...ListPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.ListPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ListPropertiesClass`,
+      }).concat(),
+      ...MutablePropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.MutablePropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}MutablePropertiesClass`,
+      }).concat(),
+      ...NamedUnionPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.NamedUnionPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NamedUnionPropertiesClass`,
+      }).concat(),
+      ...NoRdfTypeClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
+      }).concat(),
+      ...NoRdfTypeClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
+      }).concat(),
+      ...NodeKindsClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.NodeKindsClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NodeKindsClass`,
+      }).concat(),
+      ...NumericPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.NumericPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NumericPropertiesClass`,
+      }).concat(),
+      ...OrderedPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.OrderedPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}OrderedPropertiesClass`,
+      }).concat(),
+      ...NewName1Class.$focusSparqlConstructTriples({
+        filter: filter?.on?.NewName1Class,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NewName1Class`,
+      }).concat(),
+      ...NewName2Class.$focusSparqlConstructTriples({
+        filter: filter?.on?.NewName2Class,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NewName2Class`,
+      }).concat(),
+      ...PartialClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
+      }).concat(),
+      ...PartialClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
+      }).concat(),
+      ...PartialInterfaceUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialInterfaceUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialInterfaceUnionMember1`,
+      }).concat(),
+      ...PartialInterfaceUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.PartialInterfaceUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialInterfaceUnionMember2`,
+      }).concat(),
+      ...PropertyCardinalitiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyCardinalitiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyCardinalitiesClass`,
+      }).concat(),
+      ...PropertyNamesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyNamesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyNamesClass`,
+      }).concat(),
+      ...PropertyPathsClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyPathsClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyPathsClass`,
+      }).concat(),
+      ...PropertyVisibilitiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyVisibilitiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyVisibilitiesClass`,
+      }).concat(),
+      ...RecursiveClassUnionMember1.$focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveClassUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
+      }).concat(),
+      ...RecursiveClassUnionMember2.$focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveClassUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
+      }).concat(),
+      ...Sha256IriIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.Sha256IriIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}Sha256IriIdentifierClass`,
+      }).concat(),
+      ...TermPropertiesClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.TermPropertiesClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}TermPropertiesClass`,
+      }).concat(),
+      ...UnionDiscriminantsClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.UnionDiscriminantsClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionDiscriminantsClass`,
+      }).concat(),
+      ...UuidV4IriIdentifierClass.$focusSparqlConstructTriples({
+        filter: filter?.on?.UuidV4IriIdentifierClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UuidV4IriIdentifierClass`,
+      }).concat(),
+      ...UuidV4IriIdentifierInterface.$focusSparqlConstructTriples({
+        filter: filter?.on?.UuidV4IriIdentifierInterface,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UuidV4IriIdentifierInterface`,
+      }).concat(),
+      ...$DefaultPartial
+        .$focusSparqlConstructTriples({
+          filter: filter?.on?.$DefaultPartial,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}DefaultPartial`,
+        })
+        .concat(),
+      ...$NamedDefaultPartial
+        .$focusSparqlConstructTriples({
+          filter: filter?.on?.$NamedDefaultPartial,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}NamedDefaultPartial`,
+        })
+        .concat(),
+    ];
   }
 
-  export type $Json =
-    | BlankNodeIdentifierClass.$Json
-    | BlankNodeIdentifierInterface.$Json
-    | BlankNodeOrIriIdentifierClass.$Json
-    | BlankNodeOrIriIdentifierInterface.$Json
-    | ClassPropertiesClass.$Json
-    | PartialClass.$Json
-    | NonClass.$Json
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | ConcreteChildClass.$Json
-    | ConcreteParentClassStatic.$Json
-    | ConcreteChildInterface.$Json
-    | ConcreteParentInterfaceStatic.$Json
-    | BaseInterfaceWithoutPropertiesStatic.$Json
-    | BaseInterfaceWithPropertiesStatic.$Json
-    | ConvertibleTypePropertiesClass.$Json
-    | DateUnionPropertiesClass.$Json
-    | DefaultValuePropertiesClass.$Json
-    | DirectRecursiveClass.$Json
-    | ExplicitFromToRdfTypesClass.$Json
-    | ExplicitRdfTypeClass.$Json
-    | ExternClassPropertyClass.$Json
-    | FlattenClassUnionMember3.$Json
-    | HasValuePropertiesClass.$Json
-    | IdentifierOverride5Class.$Json
-    | IdentifierOverride4ClassStatic.$Json
-    | IdentifierOverride3ClassStatic.$Json
-    | InIdentifierClass.$Json
-    | InPropertiesClass.$Json
-    | IndirectRecursiveClass.$Json
-    | IndirectRecursiveHelperClass.$Json
-    | Interface.$Json
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2.$Json
-    | IriIdentifierClass.$Json
-    | IriIdentifierInterface.$Json
-    | JsPrimitiveUnionPropertyClass.$Json
-    | LanguageInPropertiesClass.$Json
-    | LazilyResolvedBlankNodeOrIriIdentifierClass.$Json
-    | LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json
-    | LazilyResolvedIriIdentifierClass.$Json
-    | LazilyResolvedIriIdentifierInterface.$Json
-    | LazyPropertiesClass.$Json
-    | LazyPropertiesInterface.$Json
-    | PartialInterface.$Json
-    | ListPropertiesClass.$Json
-    | MutablePropertiesClass.$Json
-    | NamedUnionPropertiesClass.$Json
-    | NoRdfTypeClassUnionMember1.$Json
-    | NoRdfTypeClassUnionMember2.$Json
-    | NodeKindsClass.$Json
-    | NumericPropertiesClass.$Json
-    | OrderedPropertiesClass.$Json
-    | NewName1Class.$Json
-    | NewName2Class.$Json
-    | PartialClassUnionMember1.$Json
-    | PartialClassUnionMember2.$Json
-    | PartialInterfaceUnionMember1.$Json
-    | PartialInterfaceUnionMember2.$Json
-    | PropertyCardinalitiesClass.$Json
-    | PropertyNamesClass.$Json
-    | PropertyPathsClass.$Json
-    | PropertyVisibilitiesClass.$Json
-    | RecursiveClassUnionMember1.$Json
-    | RecursiveClassUnionMember2.$Json
-    | Sha256IriIdentifierClass.$Json
-    | TermPropertiesClass.$Json
-    | UnionDiscriminantsClass.$Json
-    | UuidV4IriIdentifierClass.$Json
-    | UuidV4IriIdentifierInterface.$Json
-    | $DefaultPartial.$Json
-    | $NamedDefaultPartial.$Json;
+  export function $focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: $Object.$Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: BlankNodeIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.BlankNodeIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BlankNodeIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeIdentifierInterface.$focusSparqlWherePatterns({
+            filter: filter?.on?.BlankNodeIdentifierInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BlankNodeIdentifierInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeOrIriIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.BlankNodeOrIriIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeOrIriIdentifierInterface.$focusSparqlWherePatterns(
+            {
+              filter: filter?.on?.BlankNodeOrIriIdentifierInterface,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierInterface`,
+            },
+          ).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NonClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.NonClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NonClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteChildClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ConcreteChildClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ConcreteChildClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteParentClassStatic.$focusSparqlWherePatterns({
+            filter: filter?.on?.ConcreteParentClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ConcreteParentClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteChildInterface.$focusSparqlWherePatterns({
+            filter: filter?.on?.ConcreteChildInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ConcreteChildInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteParentInterfaceStatic.$focusSparqlWherePatterns({
+            filter: filter?.on?.ConcreteParentInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ConcreteParentInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            BaseInterfaceWithoutPropertiesStatic.$focusSparqlWherePatterns({
+              filter: filter?.on?.BaseInterfaceWithoutProperties,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}BaseInterfaceWithoutProperties`,
+            }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BaseInterfaceWithPropertiesStatic.$focusSparqlWherePatterns(
+            {
+              filter: filter?.on?.BaseInterfaceWithProperties,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}BaseInterfaceWithProperties`,
+            },
+          ).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConvertibleTypePropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ConvertibleTypePropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ConvertibleTypePropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DateUnionPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.DateUnionPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DateUnionPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DefaultValuePropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.DefaultValuePropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DefaultValuePropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DirectRecursiveClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.DirectRecursiveClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DirectRecursiveClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExplicitFromToRdfTypesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ExplicitFromToRdfTypesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ExplicitFromToRdfTypesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExplicitRdfTypeClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ExplicitRdfTypeClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ExplicitRdfTypeClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExternClassPropertyClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ExternClassPropertyClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ExternClassPropertyClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: FlattenClassUnionMember3.$focusSparqlWherePatterns({
+            filter: filter?.on?.FlattenClassUnionMember3,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: HasValuePropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.HasValuePropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IdentifierOverride5Class.$focusSparqlWherePatterns({
+            filter: filter?.on?.IdentifierOverride5Class,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IdentifierOverride5Class`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IdentifierOverride4ClassStatic.$focusSparqlWherePatterns({
+            filter: filter?.on?.IdentifierOverride4Class,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IdentifierOverride4Class`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IdentifierOverride3ClassStatic.$focusSparqlWherePatterns({
+            filter: filter?.on?.IdentifierOverride3Class,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IdentifierOverride3Class`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.InIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.InPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IndirectRecursiveClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.IndirectRecursiveClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IndirectRecursiveClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IndirectRecursiveHelperClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.IndirectRecursiveHelperClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IndirectRecursiveHelperClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: Interface.$focusSparqlWherePatterns({
+            filter: filter?.on?.Interface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}Interface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InterfaceUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.InterfaceUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InterfaceUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.InterfaceUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IriIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.IriIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IriIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IriIdentifierInterface.$focusSparqlWherePatterns({
+            filter: filter?.on?.IriIdentifierInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IriIdentifierInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: JsPrimitiveUnionPropertyClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.JsPrimitiveUnionPropertyClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}JsPrimitiveUnionPropertyClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LanguageInPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.LanguageInPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LanguageInPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$focusSparqlWherePatterns(
+              {
+                filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierClass,
+                focusIdentifier,
+                ignoreRdfType: false,
+                preferredLanguages,
+                variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass`,
+              },
+            ).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$focusSparqlWherePatterns(
+              {
+                filter:
+                  filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
+                focusIdentifier,
+                ignoreRdfType: false,
+                preferredLanguages,
+                variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface`,
+              },
+            ).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedInterfaceUnionMember1.$focusSparqlWherePatterns({
+              filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
+            }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedInterfaceUnionMember2.$focusSparqlWherePatterns({
+              filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
+            }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedIriIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedIriIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedIriIdentifierInterface.$focusSparqlWherePatterns({
+              filter: filter?.on?.LazilyResolvedIriIdentifierInterface,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierInterface`,
+            }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazyPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazyPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazyPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazyPropertiesInterface.$focusSparqlWherePatterns({
+            filter: filter?.on?.LazyPropertiesInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazyPropertiesInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterface.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ListPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.ListPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ListPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: MutablePropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.MutablePropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}MutablePropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NamedUnionPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.NamedUnionPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NamedUnionPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NodeKindsClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.NodeKindsClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NodeKindsClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NumericPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.NumericPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NumericPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: OrderedPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.OrderedPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}OrderedPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NewName1Class.$focusSparqlWherePatterns({
+            filter: filter?.on?.NewName1Class,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NewName1Class`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NewName2Class.$focusSparqlWherePatterns({
+            filter: filter?.on?.NewName2Class,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NewName2Class`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterfaceUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialInterfaceUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialInterfaceUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterfaceUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.PartialInterfaceUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialInterfaceUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyCardinalitiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyCardinalitiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyCardinalitiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyNamesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyNamesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyNamesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyPathsClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyPathsClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyPathsClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyVisibilitiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyVisibilitiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyVisibilitiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveClassUnionMember1.$focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveClassUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveClassUnionMember2.$focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveClassUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: Sha256IriIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.Sha256IriIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}Sha256IriIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: TermPropertiesClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.TermPropertiesClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}TermPropertiesClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionDiscriminantsClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.UnionDiscriminantsClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionDiscriminantsClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UuidV4IriIdentifierClass.$focusSparqlWherePatterns({
+            filter: filter?.on?.UuidV4IriIdentifierClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UuidV4IriIdentifierClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UuidV4IriIdentifierInterface.$focusSparqlWherePatterns({
+            filter: filter?.on?.UuidV4IriIdentifierInterface,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UuidV4IriIdentifierInterface`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: $DefaultPartial
+            .$focusSparqlWherePatterns({
+              filter: filter?.on?.$DefaultPartial,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}DefaultPartial`,
+            })
+            .concat(),
+          type: "group",
+        },
+        {
+          patterns: $NamedDefaultPartial
+            .$focusSparqlWherePatterns({
+              filter: filter?.on?.$NamedDefaultPartial,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}NamedDefaultPartial`,
+            })
+            .concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const $fromJson = (value: $Object.$Json): $Object => {
     if (value.$type === "BlankNodeIdentifierClass") {
@@ -75676,364 +76889,547 @@ export namespace $Object {
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      BlankNodeIdentifierClass.$jsonZodSchema(),
-      BlankNodeIdentifierInterface.$jsonZodSchema(),
-      BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
-      BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
-      ClassPropertiesClass.$jsonZodSchema(),
-      PartialClass.$jsonZodSchema(),
-      NonClass.$jsonZodSchema(),
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      ConcreteChildClass.$jsonZodSchema(),
-      ConcreteParentClassStatic.$jsonZodSchema(),
-      ConcreteChildInterface.$jsonZodSchema(),
-      ConcreteParentInterfaceStatic.$jsonZodSchema(),
-      BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema(),
-      BaseInterfaceWithPropertiesStatic.$jsonZodSchema(),
-      ConvertibleTypePropertiesClass.$jsonZodSchema(),
-      DateUnionPropertiesClass.$jsonZodSchema(),
-      DefaultValuePropertiesClass.$jsonZodSchema(),
-      DirectRecursiveClass.$jsonZodSchema(),
-      ExplicitFromToRdfTypesClass.$jsonZodSchema(),
-      ExplicitRdfTypeClass.$jsonZodSchema(),
-      ExternClassPropertyClass.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
-      HasValuePropertiesClass.$jsonZodSchema(),
-      IdentifierOverride5Class.$jsonZodSchema(),
-      IdentifierOverride4ClassStatic.$jsonZodSchema(),
-      IdentifierOverride3ClassStatic.$jsonZodSchema(),
-      InIdentifierClass.$jsonZodSchema(),
-      InPropertiesClass.$jsonZodSchema(),
-      IndirectRecursiveClass.$jsonZodSchema(),
-      IndirectRecursiveHelperClass.$jsonZodSchema(),
-      Interface.$jsonZodSchema(),
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2.$jsonZodSchema(),
-      IriIdentifierClass.$jsonZodSchema(),
-      IriIdentifierInterface.$jsonZodSchema(),
-      JsPrimitiveUnionPropertyClass.$jsonZodSchema(),
-      LanguageInPropertiesClass.$jsonZodSchema(),
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$jsonZodSchema(),
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
-      LazilyResolvedIriIdentifierClass.$jsonZodSchema(),
-      LazilyResolvedIriIdentifierInterface.$jsonZodSchema(),
-      LazyPropertiesClass.$jsonZodSchema(),
-      LazyPropertiesInterface.$jsonZodSchema(),
-      PartialInterface.$jsonZodSchema(),
-      ListPropertiesClass.$jsonZodSchema(),
-      MutablePropertiesClass.$jsonZodSchema(),
-      NamedUnionPropertiesClass.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
-      NodeKindsClass.$jsonZodSchema(),
-      NumericPropertiesClass.$jsonZodSchema(),
-      OrderedPropertiesClass.$jsonZodSchema(),
-      NewName1Class.$jsonZodSchema(),
-      NewName2Class.$jsonZodSchema(),
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
-      PropertyCardinalitiesClass.$jsonZodSchema(),
-      PropertyNamesClass.$jsonZodSchema(),
-      PropertyPathsClass.$jsonZodSchema(),
-      PropertyVisibilitiesClass.$jsonZodSchema(),
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
-      Sha256IriIdentifierClass.$jsonZodSchema(),
-      TermPropertiesClass.$jsonZodSchema(),
-      UnionDiscriminantsClass.$jsonZodSchema(),
-      UuidV4IriIdentifierClass.$jsonZodSchema(),
-      UuidV4IriIdentifierInterface.$jsonZodSchema(),
-      $DefaultPartial.$jsonZodSchema(),
-      $NamedDefaultPartial.$jsonZodSchema(),
-    ]);
-
-  export function $parseJson(json: unknown): Either<Error, $Object> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
-  export const $toJson = (value: $Object): $Object.$Json => {
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
-      return BlankNodeIdentifierInterface.$toJson(value);
-    }
-    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        value,
+  export const $fromRdfResource: $FromRdfResourceFunction<$Object> = (
+    resource,
+    options,
+  ) =>
+    (
+      BlankNodeIdentifierClass.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, $Object>
+    )
+      .altLazy(
+        () =>
+          BlankNodeIdentifierInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return BlankNodeOrIriIdentifierInterface.$toJson(value);
-    }
-    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (PartialClass.isPartialClass(value)) {
-      return value.$toJson();
-    }
-    if (NonClass.isNonClass(value)) {
-      return value.$toJson();
-    }
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-    if (ConcreteChildClass.isConcreteChildClass(value)) {
-      return value.$toJson();
-    }
-    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
-      return value.$toJson();
-    }
-    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
-      return ConcreteChildInterface.$toJson(value);
-    }
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
-      return ConcreteParentInterfaceStatic.$toJson(value);
-    }
-    if (
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        value,
+      .altLazy(
+        () =>
+          BlankNodeOrIriIdentifierClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return BaseInterfaceWithoutPropertiesStatic.$toJson(value);
-    }
-    if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
-    ) {
-      return BaseInterfaceWithPropertiesStatic.$toJson(value);
-    }
-    if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
-    ) {
-      return value.$toJson();
-    }
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
-      return value.$toJson();
-    }
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
-      return value.$toJson();
-    }
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
-      return value.$toJson();
-    }
-    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
-      return value.$toJson();
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toJson();
-    }
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.$toJson();
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.$toJson();
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
-      return value.$toJson();
-    }
-    if (InIdentifierClass.isInIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (InPropertiesClass.isInPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
-      return value.$toJson();
-    }
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
-      return value.$toJson();
-    }
-    if (Interface.isInterface(value)) {
-      return Interface.$toJson(value);
-    }
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return InterfaceUnionMember1.$toJson(value);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return InterfaceUnionMember2.$toJson(value);
-    }
-    if (IriIdentifierClass.isIriIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
-      return IriIdentifierInterface.$toJson(value);
-    }
-    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
-      return value.$toJson();
-    }
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        value,
+      .altLazy(
+        () =>
+          BlankNodeOrIriIdentifierInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return value.$toJson();
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        value,
+      .altLazy(
+        () =>
+          ClassPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toJson(value);
-    }
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      return value.$toJson();
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      return value.$toJson();
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
+      .altLazy(
+        () =>
+          PartialClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toJson(value);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
+      .altLazy(
+        () =>
+          NonClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toJson(value);
-    }
-    if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
-    ) {
-      return value.$toJson();
-    }
-    if (
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        value,
+      .altLazy(
+        () =>
+          ClassUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
       )
-    ) {
-      return LazilyResolvedIriIdentifierInterface.$toJson(value);
-    }
-    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
-      return LazyPropertiesInterface.$toJson(value);
-    }
-    if (PartialInterface.isPartialInterface(value)) {
-      return PartialInterface.$toJson(value);
-    }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-    if (NodeKindsClass.isNodeKindsClass(value)) {
-      return value.$toJson();
-    }
-    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (NewName1Class.isNewName1Class(value)) {
-      return value.$toJson();
-    }
-    if (NewName2Class.isNewName2Class(value)) {
-      return value.$toJson();
-    }
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return PartialInterfaceUnionMember1.$toJson(value);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return PartialInterfaceUnionMember2.$toJson(value);
-    }
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
-      return value.$toJson();
-    }
-    if (PropertyNamesClass.isPropertyNamesClass(value)) {
-      return value.$toJson();
-    }
-    if (PropertyPathsClass.isPropertyPathsClass(value)) {
-      return value.$toJson();
-    }
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
-      return value.$toJson();
-    }
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toJson();
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toJson();
-    }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (TermPropertiesClass.isTermPropertiesClass(value)) {
-      return value.$toJson();
-    }
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
-      return value.$toJson();
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return UuidV4IriIdentifierInterface.$toJson(value);
-    }
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return value.$toJson();
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return value.$toJson();
-    }
-
-    throw new Error("unable to serialize to JSON");
-  };
+      .altLazy(
+        () =>
+          ClassUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ConcreteChildClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ConcreteParentClassStatic.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ConcreteChildInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ConcreteParentInterfaceStatic.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          BaseInterfaceWithPropertiesStatic.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ConvertibleTypePropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          DateUnionPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          DefaultValuePropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          DirectRecursiveClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ExplicitFromToRdfTypesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ExplicitRdfTypeClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ExternClassPropertyClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          FlattenClassUnionMember3.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          HasValuePropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IdentifierOverride5Class.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IdentifierOverride4ClassStatic.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IdentifierOverride3ClassStatic.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          InIdentifierClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          InPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IndirectRecursiveClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IndirectRecursiveHelperClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          Interface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          InterfaceUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          InterfaceUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IriIdentifierClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          IriIdentifierInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          JsPrimitiveUnionPropertyClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LanguageInPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfResource(
+            resource,
+            {
+              ...options,
+              ignoreRdfType: false,
+            },
+          ) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfResource(
+            resource,
+            {
+              ...options,
+              ignoreRdfType: false,
+            },
+          ) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedClassUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedClassUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedInterfaceUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedInterfaceUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedIriIdentifierClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazilyResolvedIriIdentifierInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazyPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          LazyPropertiesInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PartialInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ListPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          MutablePropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NamedUnionPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NoRdfTypeClassUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NoRdfTypeClassUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NodeKindsClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NumericPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          OrderedPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NewName1Class.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          NewName2Class.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PartialClassUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PartialClassUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PartialInterfaceUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PartialInterfaceUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyCardinalitiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyNamesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyPathsClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyVisibilitiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          RecursiveClassUnionMember1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          RecursiveClassUnionMember2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          Sha256IriIdentifierClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          TermPropertiesClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          UnionDiscriminantsClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          UuidV4IriIdentifierClass.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          UuidV4IriIdentifierInterface.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          $DefaultPartial.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          $NamedDefaultPartial.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<$Object> =
     ((values, _options) =>
@@ -77053,6 +78449,1083 @@ export namespace $Object {
             .chain((values) => values.head());
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
+
+  export function $hash<HasherT extends $Hasher>(
+    value: $Object,
+    hasher: HasherT,
+  ): HasherT {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
+      value.$hash(hasher);
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
+      BlankNodeIdentifierInterface.$hash(value, hasher);
+    }
+    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
+      value.$hash(hasher);
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      BlankNodeOrIriIdentifierInterface.$hash(value, hasher);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (PartialClass.isPartialClass(value)) {
+      value.$hash(hasher);
+    }
+    if (NonClass.isNonClass(value)) {
+      value.$hash(hasher);
+    }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    if (ConcreteChildClass.isConcreteChildClass(value)) {
+      value.$hash(hasher);
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
+      value.$hash(hasher);
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
+      ConcreteChildInterface.$hash(value, hasher);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
+      ConcreteParentInterfaceStatic.$hash(value, hasher);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        value,
+      )
+    ) {
+      BaseInterfaceWithoutPropertiesStatic.$hash(value, hasher);
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
+    ) {
+      BaseInterfaceWithPropertiesStatic.$hash(value, hasher);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
+    ) {
+      value.$hash(hasher);
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
+      value.$hash(hasher);
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
+      value.$hash(hasher);
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
+      value.$hash(hasher);
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      value.$hash(hasher);
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
+      value.$hash(hasher);
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
+      value.$hash(hasher);
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+      value.$hash(hasher);
+    }
+    if (InIdentifierClass.isInIdentifierClass(value)) {
+      value.$hash(hasher);
+    }
+    if (InPropertiesClass.isInPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
+      value.$hash(hasher);
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
+      value.$hash(hasher);
+    }
+    if (Interface.isInterface(value)) {
+      Interface.$hash(value, hasher);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      InterfaceUnionMember1.$hash(value, hasher);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      InterfaceUnionMember2.$hash(value, hasher);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(value)) {
+      value.$hash(hasher);
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
+      IriIdentifierInterface.$hash(value, hasher);
+    }
+    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
+      value.$hash(hasher);
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        value,
+      )
+    ) {
+      value.$hash(hasher);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$hash(value, hasher);
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      value.$hash(hasher);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      value.$hash(hasher);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      LazilyResolvedInterfaceUnionMember1.$hash(value, hasher);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      LazilyResolvedInterfaceUnionMember2.$hash(value, hasher);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
+    ) {
+      value.$hash(hasher);
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        value,
+      )
+    ) {
+      LazilyResolvedIriIdentifierInterface.$hash(value, hasher);
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
+      LazyPropertiesInterface.$hash(value, hasher);
+    }
+    if (PartialInterface.isPartialInterface(value)) {
+      PartialInterface.$hash(value, hasher);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    if (NodeKindsClass.isNodeKindsClass(value)) {
+      value.$hash(hasher);
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (NewName1Class.isNewName1Class(value)) {
+      value.$hash(hasher);
+    }
+    if (NewName2Class.isNewName2Class(value)) {
+      value.$hash(hasher);
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      PartialInterfaceUnionMember1.$hash(value, hasher);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      PartialInterfaceUnionMember2.$hash(value, hasher);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(value)) {
+      value.$hash(hasher);
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      value.$hash(hasher);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      value.$hash(hasher);
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
+      value.$hash(hasher);
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(value)) {
+      value.$hash(hasher);
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
+      value.$hash(hasher);
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
+      value.$hash(hasher);
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
+      UuidV4IriIdentifierInterface.$hash(value, hasher);
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      value.$hash(hasher);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      value.$hash(hasher);
+    }
+    return hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | BlankNodeIdentifierClass.$Json
+    | BlankNodeIdentifierInterface.$Json
+    | BlankNodeOrIriIdentifierClass.$Json
+    | BlankNodeOrIriIdentifierInterface.$Json
+    | ClassPropertiesClass.$Json
+    | PartialClass.$Json
+    | NonClass.$Json
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | ConcreteChildClass.$Json
+    | ConcreteParentClassStatic.$Json
+    | ConcreteChildInterface.$Json
+    | ConcreteParentInterfaceStatic.$Json
+    | BaseInterfaceWithoutPropertiesStatic.$Json
+    | BaseInterfaceWithPropertiesStatic.$Json
+    | ConvertibleTypePropertiesClass.$Json
+    | DateUnionPropertiesClass.$Json
+    | DefaultValuePropertiesClass.$Json
+    | DirectRecursiveClass.$Json
+    | ExplicitFromToRdfTypesClass.$Json
+    | ExplicitRdfTypeClass.$Json
+    | ExternClassPropertyClass.$Json
+    | FlattenClassUnionMember3.$Json
+    | HasValuePropertiesClass.$Json
+    | IdentifierOverride5Class.$Json
+    | IdentifierOverride4ClassStatic.$Json
+    | IdentifierOverride3ClassStatic.$Json
+    | InIdentifierClass.$Json
+    | InPropertiesClass.$Json
+    | IndirectRecursiveClass.$Json
+    | IndirectRecursiveHelperClass.$Json
+    | Interface.$Json
+    | InterfaceUnionMember1.$Json
+    | InterfaceUnionMember2.$Json
+    | IriIdentifierClass.$Json
+    | IriIdentifierInterface.$Json
+    | JsPrimitiveUnionPropertyClass.$Json
+    | LanguageInPropertiesClass.$Json
+    | LazilyResolvedBlankNodeOrIriIdentifierClass.$Json
+    | LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json
+    | LazilyResolvedIriIdentifierClass.$Json
+    | LazilyResolvedIriIdentifierInterface.$Json
+    | LazyPropertiesClass.$Json
+    | LazyPropertiesInterface.$Json
+    | PartialInterface.$Json
+    | ListPropertiesClass.$Json
+    | MutablePropertiesClass.$Json
+    | NamedUnionPropertiesClass.$Json
+    | NoRdfTypeClassUnionMember1.$Json
+    | NoRdfTypeClassUnionMember2.$Json
+    | NodeKindsClass.$Json
+    | NumericPropertiesClass.$Json
+    | OrderedPropertiesClass.$Json
+    | NewName1Class.$Json
+    | NewName2Class.$Json
+    | PartialClassUnionMember1.$Json
+    | PartialClassUnionMember2.$Json
+    | PartialInterfaceUnionMember1.$Json
+    | PartialInterfaceUnionMember2.$Json
+    | PropertyCardinalitiesClass.$Json
+    | PropertyNamesClass.$Json
+    | PropertyPathsClass.$Json
+    | PropertyVisibilitiesClass.$Json
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json
+    | Sha256IriIdentifierClass.$Json
+    | TermPropertiesClass.$Json
+    | UnionDiscriminantsClass.$Json
+    | UuidV4IriIdentifierClass.$Json
+    | UuidV4IriIdentifierInterface.$Json
+    | $DefaultPartial.$Json
+    | $NamedDefaultPartial.$Json;
+
+  export const $jsonZodSchema = () =>
+    z.discriminatedUnion("$type", [
+      BlankNodeIdentifierClass.$jsonZodSchema(),
+      BlankNodeIdentifierInterface.$jsonZodSchema(),
+      BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
+      BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
+      ClassPropertiesClass.$jsonZodSchema(),
+      PartialClass.$jsonZodSchema(),
+      NonClass.$jsonZodSchema(),
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+      ConcreteChildClass.$jsonZodSchema(),
+      ConcreteParentClassStatic.$jsonZodSchema(),
+      ConcreteChildInterface.$jsonZodSchema(),
+      ConcreteParentInterfaceStatic.$jsonZodSchema(),
+      BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema(),
+      BaseInterfaceWithPropertiesStatic.$jsonZodSchema(),
+      ConvertibleTypePropertiesClass.$jsonZodSchema(),
+      DateUnionPropertiesClass.$jsonZodSchema(),
+      DefaultValuePropertiesClass.$jsonZodSchema(),
+      DirectRecursiveClass.$jsonZodSchema(),
+      ExplicitFromToRdfTypesClass.$jsonZodSchema(),
+      ExplicitRdfTypeClass.$jsonZodSchema(),
+      ExternClassPropertyClass.$jsonZodSchema(),
+      FlattenClassUnionMember3.$jsonZodSchema(),
+      HasValuePropertiesClass.$jsonZodSchema(),
+      IdentifierOverride5Class.$jsonZodSchema(),
+      IdentifierOverride4ClassStatic.$jsonZodSchema(),
+      IdentifierOverride3ClassStatic.$jsonZodSchema(),
+      InIdentifierClass.$jsonZodSchema(),
+      InPropertiesClass.$jsonZodSchema(),
+      IndirectRecursiveClass.$jsonZodSchema(),
+      IndirectRecursiveHelperClass.$jsonZodSchema(),
+      Interface.$jsonZodSchema(),
+      InterfaceUnionMember1.$jsonZodSchema(),
+      InterfaceUnionMember2.$jsonZodSchema(),
+      IriIdentifierClass.$jsonZodSchema(),
+      IriIdentifierInterface.$jsonZodSchema(),
+      JsPrimitiveUnionPropertyClass.$jsonZodSchema(),
+      LanguageInPropertiesClass.$jsonZodSchema(),
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$jsonZodSchema(),
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
+      LazilyResolvedIriIdentifierClass.$jsonZodSchema(),
+      LazilyResolvedIriIdentifierInterface.$jsonZodSchema(),
+      LazyPropertiesClass.$jsonZodSchema(),
+      LazyPropertiesInterface.$jsonZodSchema(),
+      PartialInterface.$jsonZodSchema(),
+      ListPropertiesClass.$jsonZodSchema(),
+      MutablePropertiesClass.$jsonZodSchema(),
+      NamedUnionPropertiesClass.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+      NodeKindsClass.$jsonZodSchema(),
+      NumericPropertiesClass.$jsonZodSchema(),
+      OrderedPropertiesClass.$jsonZodSchema(),
+      NewName1Class.$jsonZodSchema(),
+      NewName2Class.$jsonZodSchema(),
+      PartialClassUnionMember1.$jsonZodSchema(),
+      PartialClassUnionMember2.$jsonZodSchema(),
+      PartialInterfaceUnionMember1.$jsonZodSchema(),
+      PartialInterfaceUnionMember2.$jsonZodSchema(),
+      PropertyCardinalitiesClass.$jsonZodSchema(),
+      PropertyNamesClass.$jsonZodSchema(),
+      PropertyPathsClass.$jsonZodSchema(),
+      PropertyVisibilitiesClass.$jsonZodSchema(),
+      RecursiveClassUnionMember1.$jsonZodSchema(),
+      RecursiveClassUnionMember2.$jsonZodSchema(),
+      Sha256IriIdentifierClass.$jsonZodSchema(),
+      TermPropertiesClass.$jsonZodSchema(),
+      UnionDiscriminantsClass.$jsonZodSchema(),
+      UuidV4IriIdentifierClass.$jsonZodSchema(),
+      UuidV4IriIdentifierInterface.$jsonZodSchema(),
+      $DefaultPartial.$jsonZodSchema(),
+      $NamedDefaultPartial.$jsonZodSchema(),
+    ]);
+
+  export function $parseJson(json: unknown): Either<Error, $Object> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      BlankNodeIdentifierClass: {
+        discriminantValues: ["BlankNodeIdentifierClass"],
+        type: BlankNodeIdentifierClass.$schema,
+      },
+      BlankNodeIdentifierInterface: {
+        discriminantValues: ["BlankNodeIdentifierInterface"],
+        type: BlankNodeIdentifierInterface.$schema,
+      },
+      BlankNodeOrIriIdentifierClass: {
+        discriminantValues: ["BlankNodeOrIriIdentifierClass"],
+        type: BlankNodeOrIriIdentifierClass.$schema,
+      },
+      BlankNodeOrIriIdentifierInterface: {
+        discriminantValues: ["BlankNodeOrIriIdentifierInterface"],
+        type: BlankNodeOrIriIdentifierInterface.$schema,
+      },
+      ClassPropertiesClass: {
+        discriminantValues: ["ClassPropertiesClass"],
+        type: ClassPropertiesClass.$schema,
+      },
+      PartialClass: {
+        discriminantValues: ["PartialClass"],
+        type: PartialClass.$schema,
+      },
+      NonClass: { discriminantValues: ["NonClass"], type: NonClass.$schema },
+      ClassUnionMember1: {
+        discriminantValues: ["ClassUnionMember1"],
+        type: ClassUnionMember1.$schema,
+      },
+      ClassUnionMember2: {
+        discriminantValues: ["ClassUnionMember2"],
+        type: ClassUnionMember2.$schema,
+      },
+      ConcreteChildClass: {
+        discriminantValues: ["ConcreteChildClass"],
+        type: ConcreteChildClass.$schema,
+      },
+      ConcreteParentClass: {
+        discriminantValues: ["ConcreteParentClass"],
+        type: ConcreteParentClassStatic.$schema,
+      },
+      ConcreteChildInterface: {
+        discriminantValues: ["ConcreteChildInterface"],
+        type: ConcreteChildInterface.$schema,
+      },
+      ConcreteParentInterface: {
+        discriminantValues: ["ConcreteParentInterface"],
+        type: ConcreteParentInterfaceStatic.$schema,
+      },
+      BaseInterfaceWithoutProperties: {
+        discriminantValues: ["BaseInterfaceWithoutProperties"],
+        type: BaseInterfaceWithoutPropertiesStatic.$schema,
+      },
+      BaseInterfaceWithProperties: {
+        discriminantValues: ["BaseInterfaceWithProperties"],
+        type: BaseInterfaceWithPropertiesStatic.$schema,
+      },
+      ConvertibleTypePropertiesClass: {
+        discriminantValues: ["ConvertibleTypePropertiesClass"],
+        type: ConvertibleTypePropertiesClass.$schema,
+      },
+      DateUnionPropertiesClass: {
+        discriminantValues: ["DateUnionPropertiesClass"],
+        type: DateUnionPropertiesClass.$schema,
+      },
+      DefaultValuePropertiesClass: {
+        discriminantValues: ["DefaultValuePropertiesClass"],
+        type: DefaultValuePropertiesClass.$schema,
+      },
+      DirectRecursiveClass: {
+        discriminantValues: ["DirectRecursiveClass"],
+        type: DirectRecursiveClass.$schema,
+      },
+      ExplicitFromToRdfTypesClass: {
+        discriminantValues: ["ExplicitFromToRdfTypesClass"],
+        type: ExplicitFromToRdfTypesClass.$schema,
+      },
+      ExplicitRdfTypeClass: {
+        discriminantValues: ["ExplicitRdfTypeClass"],
+        type: ExplicitRdfTypeClass.$schema,
+      },
+      ExternClassPropertyClass: {
+        discriminantValues: ["ExternClassPropertyClass"],
+        type: ExternClassPropertyClass.$schema,
+      },
+      FlattenClassUnionMember3: {
+        discriminantValues: ["FlattenClassUnionMember3"],
+        type: FlattenClassUnionMember3.$schema,
+      },
+      HasValuePropertiesClass: {
+        discriminantValues: ["HasValuePropertiesClass"],
+        type: HasValuePropertiesClass.$schema,
+      },
+      IdentifierOverride5Class: {
+        discriminantValues: ["IdentifierOverride5Class"],
+        type: IdentifierOverride5Class.$schema,
+      },
+      IdentifierOverride4Class: {
+        discriminantValues: ["IdentifierOverride4Class"],
+        type: IdentifierOverride4ClassStatic.$schema,
+      },
+      IdentifierOverride3Class: {
+        discriminantValues: ["IdentifierOverride3Class"],
+        type: IdentifierOverride3ClassStatic.$schema,
+      },
+      InIdentifierClass: {
+        discriminantValues: ["InIdentifierClass"],
+        type: InIdentifierClass.$schema,
+      },
+      InPropertiesClass: {
+        discriminantValues: ["InPropertiesClass"],
+        type: InPropertiesClass.$schema,
+      },
+      IndirectRecursiveClass: {
+        discriminantValues: ["IndirectRecursiveClass"],
+        type: IndirectRecursiveClass.$schema,
+      },
+      IndirectRecursiveHelperClass: {
+        discriminantValues: ["IndirectRecursiveHelperClass"],
+        type: IndirectRecursiveHelperClass.$schema,
+      },
+      Interface: { discriminantValues: ["Interface"], type: Interface.$schema },
+      InterfaceUnionMember1: {
+        discriminantValues: ["InterfaceUnionMember1"],
+        type: InterfaceUnionMember1.$schema,
+      },
+      InterfaceUnionMember2: {
+        discriminantValues: ["InterfaceUnionMember2"],
+        type: InterfaceUnionMember2.$schema,
+      },
+      IriIdentifierClass: {
+        discriminantValues: ["IriIdentifierClass"],
+        type: IriIdentifierClass.$schema,
+      },
+      IriIdentifierInterface: {
+        discriminantValues: ["IriIdentifierInterface"],
+        type: IriIdentifierInterface.$schema,
+      },
+      JsPrimitiveUnionPropertyClass: {
+        discriminantValues: ["JsPrimitiveUnionPropertyClass"],
+        type: JsPrimitiveUnionPropertyClass.$schema,
+      },
+      LanguageInPropertiesClass: {
+        discriminantValues: ["LanguageInPropertiesClass"],
+        type: LanguageInPropertiesClass.$schema,
+      },
+      LazilyResolvedBlankNodeOrIriIdentifierClass: {
+        discriminantValues: ["LazilyResolvedBlankNodeOrIriIdentifierClass"],
+        type: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+      },
+      LazilyResolvedBlankNodeOrIriIdentifierInterface: {
+        discriminantValues: ["LazilyResolvedBlankNodeOrIriIdentifierInterface"],
+        type: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+      },
+      LazilyResolvedClassUnionMember1: {
+        discriminantValues: ["LazilyResolvedClassUnionMember1"],
+        type: LazilyResolvedClassUnionMember1.$schema,
+      },
+      LazilyResolvedClassUnionMember2: {
+        discriminantValues: ["LazilyResolvedClassUnionMember2"],
+        type: LazilyResolvedClassUnionMember2.$schema,
+      },
+      LazilyResolvedInterfaceUnionMember1: {
+        discriminantValues: ["LazilyResolvedInterfaceUnionMember1"],
+        type: LazilyResolvedInterfaceUnionMember1.$schema,
+      },
+      LazilyResolvedInterfaceUnionMember2: {
+        discriminantValues: ["LazilyResolvedInterfaceUnionMember2"],
+        type: LazilyResolvedInterfaceUnionMember2.$schema,
+      },
+      LazilyResolvedIriIdentifierClass: {
+        discriminantValues: ["LazilyResolvedIriIdentifierClass"],
+        type: LazilyResolvedIriIdentifierClass.$schema,
+      },
+      LazilyResolvedIriIdentifierInterface: {
+        discriminantValues: ["LazilyResolvedIriIdentifierInterface"],
+        type: LazilyResolvedIriIdentifierInterface.$schema,
+      },
+      LazyPropertiesClass: {
+        discriminantValues: ["LazyPropertiesClass"],
+        type: LazyPropertiesClass.$schema,
+      },
+      LazyPropertiesInterface: {
+        discriminantValues: ["LazyPropertiesInterface"],
+        type: LazyPropertiesInterface.$schema,
+      },
+      PartialInterface: {
+        discriminantValues: ["PartialInterface"],
+        type: PartialInterface.$schema,
+      },
+      ListPropertiesClass: {
+        discriminantValues: ["ListPropertiesClass"],
+        type: ListPropertiesClass.$schema,
+      },
+      MutablePropertiesClass: {
+        discriminantValues: ["MutablePropertiesClass"],
+        type: MutablePropertiesClass.$schema,
+      },
+      NamedUnionPropertiesClass: {
+        discriminantValues: ["NamedUnionPropertiesClass"],
+        type: NamedUnionPropertiesClass.$schema,
+      },
+      NoRdfTypeClassUnionMember1: {
+        discriminantValues: ["NoRdfTypeClassUnionMember1"],
+        type: NoRdfTypeClassUnionMember1.$schema,
+      },
+      NoRdfTypeClassUnionMember2: {
+        discriminantValues: ["NoRdfTypeClassUnionMember2"],
+        type: NoRdfTypeClassUnionMember2.$schema,
+      },
+      NodeKindsClass: {
+        discriminantValues: ["NodeKindsClass"],
+        type: NodeKindsClass.$schema,
+      },
+      NumericPropertiesClass: {
+        discriminantValues: ["NumericPropertiesClass"],
+        type: NumericPropertiesClass.$schema,
+      },
+      OrderedPropertiesClass: {
+        discriminantValues: ["OrderedPropertiesClass"],
+        type: OrderedPropertiesClass.$schema,
+      },
+      NewName1Class: {
+        discriminantValues: ["NewName1Class"],
+        type: NewName1Class.$schema,
+      },
+      NewName2Class: {
+        discriminantValues: ["NewName2Class"],
+        type: NewName2Class.$schema,
+      },
+      PartialClassUnionMember1: {
+        discriminantValues: ["PartialClassUnionMember1"],
+        type: PartialClassUnionMember1.$schema,
+      },
+      PartialClassUnionMember2: {
+        discriminantValues: ["PartialClassUnionMember2"],
+        type: PartialClassUnionMember2.$schema,
+      },
+      PartialInterfaceUnionMember1: {
+        discriminantValues: ["PartialInterfaceUnionMember1"],
+        type: PartialInterfaceUnionMember1.$schema,
+      },
+      PartialInterfaceUnionMember2: {
+        discriminantValues: ["PartialInterfaceUnionMember2"],
+        type: PartialInterfaceUnionMember2.$schema,
+      },
+      PropertyCardinalitiesClass: {
+        discriminantValues: ["PropertyCardinalitiesClass"],
+        type: PropertyCardinalitiesClass.$schema,
+      },
+      PropertyNamesClass: {
+        discriminantValues: ["PropertyNamesClass"],
+        type: PropertyNamesClass.$schema,
+      },
+      PropertyPathsClass: {
+        discriminantValues: ["PropertyPathsClass"],
+        type: PropertyPathsClass.$schema,
+      },
+      PropertyVisibilitiesClass: {
+        discriminantValues: ["PropertyVisibilitiesClass"],
+        type: PropertyVisibilitiesClass.$schema,
+      },
+      RecursiveClassUnionMember1: {
+        discriminantValues: ["RecursiveClassUnionMember1"],
+        type: RecursiveClassUnionMember1.$schema,
+      },
+      RecursiveClassUnionMember2: {
+        discriminantValues: ["RecursiveClassUnionMember2"],
+        type: RecursiveClassUnionMember2.$schema,
+      },
+      Sha256IriIdentifierClass: {
+        discriminantValues: ["Sha256IriIdentifierClass"],
+        type: Sha256IriIdentifierClass.$schema,
+      },
+      TermPropertiesClass: {
+        discriminantValues: ["TermPropertiesClass"],
+        type: TermPropertiesClass.$schema,
+      },
+      UnionDiscriminantsClass: {
+        discriminantValues: ["UnionDiscriminantsClass"],
+        type: UnionDiscriminantsClass.$schema,
+      },
+      UuidV4IriIdentifierClass: {
+        discriminantValues: ["UuidV4IriIdentifierClass"],
+        type: UuidV4IriIdentifierClass.$schema,
+      },
+      UuidV4IriIdentifierInterface: {
+        discriminantValues: ["UuidV4IriIdentifierInterface"],
+        type: UuidV4IriIdentifierInterface.$schema,
+      },
+      $DefaultPartial: {
+        discriminantValues: ["$DefaultPartial"],
+        type: $DefaultPartial.$schema,
+      },
+      $NamedDefaultPartial: {
+        discriminantValues: ["$NamedDefaultPartial"],
+        type: $NamedDefaultPartial.$schema,
+      },
+    },
+    properties: {},
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: $Object.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "object";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        $Object.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          $Object.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof $Object.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      $Object.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export const $toJson = (value: $Object): $Object.$Json => {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
+      return value.$toJson();
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
+      return BlankNodeIdentifierInterface.$toJson(value);
+    }
+    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
+      return value.$toJson();
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return BlankNodeOrIriIdentifierInterface.$toJson(value);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (PartialClass.isPartialClass(value)) {
+      return value.$toJson();
+    }
+    if (NonClass.isNonClass(value)) {
+      return value.$toJson();
+    }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+    if (ConcreteChildClass.isConcreteChildClass(value)) {
+      return value.$toJson();
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
+      return value.$toJson();
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
+      return ConcreteChildInterface.$toJson(value);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
+      return ConcreteParentInterfaceStatic.$toJson(value);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        value,
+      )
+    ) {
+      return BaseInterfaceWithoutPropertiesStatic.$toJson(value);
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
+    ) {
+      return BaseInterfaceWithPropertiesStatic.$toJson(value);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
+    ) {
+      return value.$toJson();
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
+      return value.$toJson();
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
+      return value.$toJson();
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
+      return value.$toJson();
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
+      return value.$toJson();
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.$toJson();
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
+      return value.$toJson();
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
+      return value.$toJson();
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+      return value.$toJson();
+    }
+    if (InIdentifierClass.isInIdentifierClass(value)) {
+      return value.$toJson();
+    }
+    if (InPropertiesClass.isInPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
+      return value.$toJson();
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
+      return value.$toJson();
+    }
+    if (Interface.isInterface(value)) {
+      return Interface.$toJson(value);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toJson(value);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toJson(value);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(value)) {
+      return value.$toJson();
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
+      return IriIdentifierInterface.$toJson(value);
+    }
+    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
+      return value.$toJson();
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        value,
+      )
+    ) {
+      return value.$toJson();
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toJson(value);
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.$toJson();
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.$toJson();
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toJson(value);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toJson(value);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
+    ) {
+      return value.$toJson();
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedIriIdentifierInterface.$toJson(value);
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
+      return LazyPropertiesInterface.$toJson(value);
+    }
+    if (PartialInterface.isPartialInterface(value)) {
+      return PartialInterface.$toJson(value);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+    if (NodeKindsClass.isNodeKindsClass(value)) {
+      return value.$toJson();
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (NewName1Class.isNewName1Class(value)) {
+      return value.$toJson();
+    }
+    if (NewName2Class.isNewName2Class(value)) {
+      return value.$toJson();
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toJson(value);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toJson(value);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
+      return value.$toJson();
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(value)) {
+      return value.$toJson();
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(value)) {
+      return value.$toJson();
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
+      return value.$toJson();
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.$toJson();
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.$toJson();
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
+      return value.$toJson();
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(value)) {
+      return value.$toJson();
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
+      return value.$toJson();
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
+      return value.$toJson();
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
+      return UuidV4IriIdentifierInterface.$toJson(value);
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return value.$toJson();
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return value.$toJson();
+    }
+
+    throw new Error("unable to serialize to JSON");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
     value,
@@ -79043,2489 +81516,6 @@ export namespace $Object {
     $Object.$Filter,
     typeof $Object.$schema
   >;
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $focusSparqlConstructTriples({
-    filter,
-    focusIdentifier,
-    variablePrefix,
-  }: {
-    filter: $Object.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    variablePrefix: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...BlankNodeIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.BlankNodeIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BlankNodeIdentifierClass`,
-      }).concat(),
-      ...BlankNodeIdentifierInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.BlankNodeIdentifierInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BlankNodeIdentifierInterface`,
-      }).concat(),
-      ...BlankNodeOrIriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.BlankNodeOrIriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierClass`,
-      }).concat(),
-      ...BlankNodeOrIriIdentifierInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.BlankNodeOrIriIdentifierInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierInterface`,
-      }).concat(),
-      ...ClassPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassPropertiesClass`,
-      }).concat(),
-      ...PartialClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialClass`,
-      }).concat(),
-      ...NonClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.NonClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NonClass`,
-      }).concat(),
-      ...ClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassUnionMember1`,
-      }).concat(),
-      ...ClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.ClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ClassUnionMember2`,
-      }).concat(),
-      ...ConcreteChildClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConcreteChildClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConcreteChildClass`,
-      }).concat(),
-      ...ConcreteParentClassStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConcreteParentClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConcreteParentClass`,
-      }).concat(),
-      ...ConcreteChildInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConcreteChildInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConcreteChildInterface`,
-      }).concat(),
-      ...ConcreteParentInterfaceStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConcreteParentInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConcreteParentInterface`,
-      }).concat(),
-      ...BaseInterfaceWithoutPropertiesStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.BaseInterfaceWithoutProperties,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BaseInterfaceWithoutProperties`,
-      }).concat(),
-      ...BaseInterfaceWithPropertiesStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.BaseInterfaceWithProperties,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BaseInterfaceWithProperties`,
-      }).concat(),
-      ...ConvertibleTypePropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConvertibleTypePropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConvertibleTypePropertiesClass`,
-      }).concat(),
-      ...DateUnionPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.DateUnionPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DateUnionPropertiesClass`,
-      }).concat(),
-      ...DefaultValuePropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.DefaultValuePropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DefaultValuePropertiesClass`,
-      }).concat(),
-      ...DirectRecursiveClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.DirectRecursiveClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}DirectRecursiveClass`,
-      }).concat(),
-      ...ExplicitFromToRdfTypesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ExplicitFromToRdfTypesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ExplicitFromToRdfTypesClass`,
-      }).concat(),
-      ...ExplicitRdfTypeClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ExplicitRdfTypeClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ExplicitRdfTypeClass`,
-      }).concat(),
-      ...ExternClassPropertyClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ExternClassPropertyClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ExternClassPropertyClass`,
-      }).concat(),
-      ...FlattenClassUnionMember3.$focusSparqlConstructTriples({
-        filter: filter?.on?.FlattenClassUnionMember3,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
-      }).concat(),
-      ...HasValuePropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.HasValuePropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
-      }).concat(),
-      ...IdentifierOverride5Class.$focusSparqlConstructTriples({
-        filter: filter?.on?.IdentifierOverride5Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IdentifierOverride5Class`,
-      }).concat(),
-      ...IdentifierOverride4ClassStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.IdentifierOverride4Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IdentifierOverride4Class`,
-      }).concat(),
-      ...IdentifierOverride3ClassStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.IdentifierOverride3Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IdentifierOverride3Class`,
-      }).concat(),
-      ...InIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.InIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InIdentifierClass`,
-      }).concat(),
-      ...InPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.InPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InPropertiesClass`,
-      }).concat(),
-      ...IndirectRecursiveClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.IndirectRecursiveClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IndirectRecursiveClass`,
-      }).concat(),
-      ...IndirectRecursiveHelperClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.IndirectRecursiveHelperClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IndirectRecursiveHelperClass`,
-      }).concat(),
-      ...Interface.$focusSparqlConstructTriples({
-        filter: filter?.on?.Interface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}Interface`,
-      }).concat(),
-      ...InterfaceUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.InterfaceUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
-      }).concat(),
-      ...InterfaceUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.InterfaceUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
-      }).concat(),
-      ...IriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.IriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IriIdentifierClass`,
-      }).concat(),
-      ...IriIdentifierInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.IriIdentifierInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IriIdentifierInterface`,
-      }).concat(),
-      ...JsPrimitiveUnionPropertyClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.JsPrimitiveUnionPropertyClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}JsPrimitiveUnionPropertyClass`,
-      }).concat(),
-      ...LanguageInPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.LanguageInPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LanguageInPropertiesClass`,
-      }).concat(),
-      ...LazilyResolvedBlankNodeOrIriIdentifierClass.$focusSparqlConstructTriples(
-        {
-          filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierClass,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass`,
-        },
-      ).concat(),
-      ...LazilyResolvedBlankNodeOrIriIdentifierInterface.$focusSparqlConstructTriples(
-        {
-          filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface`,
-        },
-      ).concat(),
-      ...LazilyResolvedClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
-      }).concat(),
-      ...LazilyResolvedClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
-      }).concat(),
-      ...LazilyResolvedInterfaceUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
-      }).concat(),
-      ...LazilyResolvedInterfaceUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
-      }).concat(),
-      ...LazilyResolvedIriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedIriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierClass`,
-      }).concat(),
-      ...LazilyResolvedIriIdentifierInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazilyResolvedIriIdentifierInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierInterface`,
-      }).concat(),
-      ...LazyPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazyPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazyPropertiesClass`,
-      }).concat(),
-      ...LazyPropertiesInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.LazyPropertiesInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}LazyPropertiesInterface`,
-      }).concat(),
-      ...PartialInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialInterface`,
-      }).concat(),
-      ...ListPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ListPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ListPropertiesClass`,
-      }).concat(),
-      ...MutablePropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.MutablePropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}MutablePropertiesClass`,
-      }).concat(),
-      ...NamedUnionPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.NamedUnionPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NamedUnionPropertiesClass`,
-      }).concat(),
-      ...NoRdfTypeClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.NoRdfTypeClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
-      }).concat(),
-      ...NoRdfTypeClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.NoRdfTypeClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
-      }).concat(),
-      ...NodeKindsClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.NodeKindsClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NodeKindsClass`,
-      }).concat(),
-      ...NumericPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.NumericPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NumericPropertiesClass`,
-      }).concat(),
-      ...OrderedPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.OrderedPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}OrderedPropertiesClass`,
-      }).concat(),
-      ...NewName1Class.$focusSparqlConstructTriples({
-        filter: filter?.on?.NewName1Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NewName1Class`,
-      }).concat(),
-      ...NewName2Class.$focusSparqlConstructTriples({
-        filter: filter?.on?.NewName2Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NewName2Class`,
-      }).concat(),
-      ...PartialClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
-      }).concat(),
-      ...PartialClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
-      }).concat(),
-      ...PartialInterfaceUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialInterfaceUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialInterfaceUnionMember1`,
-      }).concat(),
-      ...PartialInterfaceUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.PartialInterfaceUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PartialInterfaceUnionMember2`,
-      }).concat(),
-      ...PropertyCardinalitiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyCardinalitiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyCardinalitiesClass`,
-      }).concat(),
-      ...PropertyNamesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyNamesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyNamesClass`,
-      }).concat(),
-      ...PropertyPathsClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyPathsClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyPathsClass`,
-      }).concat(),
-      ...PropertyVisibilitiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyVisibilitiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyVisibilitiesClass`,
-      }).concat(),
-      ...RecursiveClassUnionMember1.$focusSparqlConstructTriples({
-        filter: filter?.on?.RecursiveClassUnionMember1,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
-      }).concat(),
-      ...RecursiveClassUnionMember2.$focusSparqlConstructTriples({
-        filter: filter?.on?.RecursiveClassUnionMember2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
-      }).concat(),
-      ...Sha256IriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.Sha256IriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}Sha256IriIdentifierClass`,
-      }).concat(),
-      ...TermPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.TermPropertiesClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}TermPropertiesClass`,
-      }).concat(),
-      ...UnionDiscriminantsClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.UnionDiscriminantsClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}UnionDiscriminantsClass`,
-      }).concat(),
-      ...UuidV4IriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.UuidV4IriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}UuidV4IriIdentifierClass`,
-      }).concat(),
-      ...UuidV4IriIdentifierInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.UuidV4IriIdentifierInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}UuidV4IriIdentifierInterface`,
-      }).concat(),
-      ...$DefaultPartial
-        .$focusSparqlConstructTriples({
-          filter: filter?.on?.$DefaultPartial,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}DefaultPartial`,
-        })
-        .concat(),
-      ...$NamedDefaultPartial
-        .$focusSparqlConstructTriples({
-          filter: filter?.on?.$NamedDefaultPartial,
-          focusIdentifier,
-          ignoreRdfType: false,
-          variablePrefix: `${variablePrefix}NamedDefaultPartial`,
-        })
-        .concat(),
-    ];
-  }
-
-  export function $focusSparqlWherePatterns({
-    filter,
-    focusIdentifier,
-    preferredLanguages,
-    variablePrefix,
-  }: {
-    filter: $Object.$Filter | undefined;
-    focusIdentifier: NamedNode | Variable;
-    ignoreRdfType: boolean;
-    preferredLanguages: readonly string[] | undefined;
-    variablePrefix: string;
-  }): readonly $SparqlPattern[] {
-    let patterns: $SparqlPattern[] = [];
-    if (focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: filter?.$identifier,
-          ignoreRdfType: false,
-          preferredLanguages,
-          propertyPatterns: [],
-          schema: { kind: "Identifier" as const },
-          valueVariable: focusIdentifier,
-          variablePrefix,
-        }),
-      );
-    }
-    patterns.push({
-      patterns: [
-        {
-          patterns: BlankNodeIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.BlankNodeIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BlankNodeIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BlankNodeIdentifierInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.BlankNodeIdentifierInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BlankNodeIdentifierInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BlankNodeOrIriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.BlankNodeOrIriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BlankNodeOrIriIdentifierInterface.$focusSparqlWherePatterns(
-            {
-              filter: filter?.on?.BlankNodeOrIriIdentifierInterface,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifierInterface`,
-            },
-          ).concat(),
-          type: "group",
-        },
-        {
-          patterns: ClassPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NonClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.NonClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NonClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.ClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConcreteChildClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConcreteChildClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConcreteChildClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConcreteParentClassStatic.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConcreteParentClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConcreteParentClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConcreteChildInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConcreteChildInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConcreteChildInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConcreteParentInterfaceStatic.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConcreteParentInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConcreteParentInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            BaseInterfaceWithoutPropertiesStatic.$focusSparqlWherePatterns({
-              filter: filter?.on?.BaseInterfaceWithoutProperties,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}BaseInterfaceWithoutProperties`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BaseInterfaceWithPropertiesStatic.$focusSparqlWherePatterns(
-            {
-              filter: filter?.on?.BaseInterfaceWithProperties,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}BaseInterfaceWithProperties`,
-            },
-          ).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConvertibleTypePropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConvertibleTypePropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConvertibleTypePropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DateUnionPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.DateUnionPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DateUnionPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DefaultValuePropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.DefaultValuePropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DefaultValuePropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: DirectRecursiveClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.DirectRecursiveClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}DirectRecursiveClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ExplicitFromToRdfTypesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ExplicitFromToRdfTypesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ExplicitFromToRdfTypesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ExplicitRdfTypeClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ExplicitRdfTypeClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ExplicitRdfTypeClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ExternClassPropertyClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ExternClassPropertyClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ExternClassPropertyClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: FlattenClassUnionMember3.$focusSparqlWherePatterns({
-            filter: filter?.on?.FlattenClassUnionMember3,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}FlattenClassUnionMember3`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: HasValuePropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.HasValuePropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IdentifierOverride5Class.$focusSparqlWherePatterns({
-            filter: filter?.on?.IdentifierOverride5Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IdentifierOverride5Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IdentifierOverride4ClassStatic.$focusSparqlWherePatterns({
-            filter: filter?.on?.IdentifierOverride4Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IdentifierOverride4Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IdentifierOverride3ClassStatic.$focusSparqlWherePatterns({
-            filter: filter?.on?.IdentifierOverride3Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IdentifierOverride3Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.InIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.InPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IndirectRecursiveClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.IndirectRecursiveClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IndirectRecursiveClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IndirectRecursiveHelperClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.IndirectRecursiveHelperClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IndirectRecursiveHelperClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: Interface.$focusSparqlWherePatterns({
-            filter: filter?.on?.Interface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}Interface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InterfaceUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.InterfaceUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InterfaceUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: InterfaceUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.InterfaceUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}InterfaceUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.IriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IriIdentifierInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.IriIdentifierInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IriIdentifierInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: JsPrimitiveUnionPropertyClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.JsPrimitiveUnionPropertyClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}JsPrimitiveUnionPropertyClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LanguageInPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.LanguageInPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LanguageInPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedBlankNodeOrIriIdentifierClass.$focusSparqlWherePatterns(
-              {
-                filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierClass,
-                focusIdentifier,
-                ignoreRdfType: false,
-                preferredLanguages,
-                variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass`,
-              },
-            ).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedBlankNodeOrIriIdentifierInterface.$focusSparqlWherePatterns(
-              {
-                filter:
-                  filter?.on?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
-                focusIdentifier,
-                ignoreRdfType: false,
-                preferredLanguages,
-                variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface`,
-              },
-            ).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazilyResolvedClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazilyResolvedClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazilyResolvedClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazilyResolvedClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazilyResolvedClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedInterfaceUnionMember1.$focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedInterfaceUnionMember1,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember1`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedInterfaceUnionMember2.$focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedInterfaceUnionMember2,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedInterfaceUnionMember2`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazilyResolvedIriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazilyResolvedIriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns:
-            LazilyResolvedIriIdentifierInterface.$focusSparqlWherePatterns({
-              filter: filter?.on?.LazilyResolvedIriIdentifierInterface,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifierInterface`,
-            }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazyPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazyPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazyPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: LazyPropertiesInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.LazyPropertiesInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}LazyPropertiesInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ListPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ListPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ListPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: MutablePropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.MutablePropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}MutablePropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NamedUnionPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.NamedUnionPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NamedUnionPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NoRdfTypeClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.NoRdfTypeClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NoRdfTypeClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.NoRdfTypeClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NoRdfTypeClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NodeKindsClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.NodeKindsClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NodeKindsClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NumericPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.NumericPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NumericPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: OrderedPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.OrderedPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}OrderedPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NewName1Class.$focusSparqlWherePatterns({
-            filter: filter?.on?.NewName1Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NewName1Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NewName2Class.$focusSparqlWherePatterns({
-            filter: filter?.on?.NewName2Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NewName2Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialInterfaceUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialInterfaceUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialInterfaceUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PartialInterfaceUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.PartialInterfaceUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PartialInterfaceUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyCardinalitiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyCardinalitiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyCardinalitiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyNamesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyNamesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyNamesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyPathsClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyPathsClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyPathsClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: PropertyVisibilitiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyVisibilitiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyVisibilitiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: RecursiveClassUnionMember1.$focusSparqlWherePatterns({
-            filter: filter?.on?.RecursiveClassUnionMember1,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}RecursiveClassUnionMember1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: RecursiveClassUnionMember2.$focusSparqlWherePatterns({
-            filter: filter?.on?.RecursiveClassUnionMember2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: Sha256IriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.Sha256IriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}Sha256IriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: TermPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.TermPropertiesClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}TermPropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: UnionDiscriminantsClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.UnionDiscriminantsClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}UnionDiscriminantsClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: UuidV4IriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.UuidV4IriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}UuidV4IriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: UuidV4IriIdentifierInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.UuidV4IriIdentifierInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}UuidV4IriIdentifierInterface`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: $DefaultPartial
-            .$focusSparqlWherePatterns({
-              filter: filter?.on?.$DefaultPartial,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}DefaultPartial`,
-            })
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $NamedDefaultPartial
-            .$focusSparqlWherePatterns({
-              filter: filter?.on?.$NamedDefaultPartial,
-              focusIdentifier,
-              ignoreRdfType: false,
-              preferredLanguages,
-              variablePrefix: `${variablePrefix}NamedDefaultPartial`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "union",
-    });
-    return patterns;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<$Object> = (
-    resource,
-    options,
-  ) =>
-    (
-      BlankNodeIdentifierClass.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, $Object>
-    )
-      .altLazy(
-        () =>
-          BlankNodeIdentifierInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BlankNodeOrIriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BlankNodeOrIriIdentifierInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ClassPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NonClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ClassUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ClassUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConcreteChildClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConcreteParentClassStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConcreteChildInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConcreteParentInterfaceStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BaseInterfaceWithoutPropertiesStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BaseInterfaceWithPropertiesStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConvertibleTypePropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DateUnionPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DefaultValuePropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          DirectRecursiveClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ExplicitFromToRdfTypesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ExplicitRdfTypeClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ExternClassPropertyClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          FlattenClassUnionMember3.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          HasValuePropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride5Class.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride4ClassStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride3ClassStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IndirectRecursiveClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IndirectRecursiveHelperClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          Interface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IriIdentifierInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          JsPrimitiveUnionPropertyClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LanguageInPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfResource(
-            resource,
-            {
-              ...options,
-              ignoreRdfType: false,
-            },
-          ) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfResource(
-            resource,
-            {
-              ...options,
-              ignoreRdfType: false,
-            },
-          ) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedClassUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedClassUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedInterfaceUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedInterfaceUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedIriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazilyResolvedIriIdentifierInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazyPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          LazyPropertiesInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ListPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          MutablePropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NamedUnionPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NoRdfTypeClassUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NoRdfTypeClassUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NodeKindsClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NumericPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          OrderedPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NewName1Class.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NewName2Class.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialClassUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialClassUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialInterfaceUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PartialInterfaceUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyCardinalitiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyNamesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyPathsClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyVisibilitiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          RecursiveClassUnionMember1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          RecursiveClassUnionMember2.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          Sha256IriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          TermPropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UnionDiscriminantsClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UuidV4IriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UuidV4IriIdentifierInterface.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          $DefaultPartial.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          $NamedDefaultPartial.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      );
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      BlankNodeIdentifierClass: {
-        discriminantValues: ["BlankNodeIdentifierClass"],
-        type: BlankNodeIdentifierClass.$schema,
-      },
-      BlankNodeIdentifierInterface: {
-        discriminantValues: ["BlankNodeIdentifierInterface"],
-        type: BlankNodeIdentifierInterface.$schema,
-      },
-      BlankNodeOrIriIdentifierClass: {
-        discriminantValues: ["BlankNodeOrIriIdentifierClass"],
-        type: BlankNodeOrIriIdentifierClass.$schema,
-      },
-      BlankNodeOrIriIdentifierInterface: {
-        discriminantValues: ["BlankNodeOrIriIdentifierInterface"],
-        type: BlankNodeOrIriIdentifierInterface.$schema,
-      },
-      ClassPropertiesClass: {
-        discriminantValues: ["ClassPropertiesClass"],
-        type: ClassPropertiesClass.$schema,
-      },
-      PartialClass: {
-        discriminantValues: ["PartialClass"],
-        type: PartialClass.$schema,
-      },
-      NonClass: { discriminantValues: ["NonClass"], type: NonClass.$schema },
-      ClassUnionMember1: {
-        discriminantValues: ["ClassUnionMember1"],
-        type: ClassUnionMember1.$schema,
-      },
-      ClassUnionMember2: {
-        discriminantValues: ["ClassUnionMember2"],
-        type: ClassUnionMember2.$schema,
-      },
-      ConcreteChildClass: {
-        discriminantValues: ["ConcreteChildClass"],
-        type: ConcreteChildClass.$schema,
-      },
-      ConcreteParentClass: {
-        discriminantValues: ["ConcreteParentClass"],
-        type: ConcreteParentClassStatic.$schema,
-      },
-      ConcreteChildInterface: {
-        discriminantValues: ["ConcreteChildInterface"],
-        type: ConcreteChildInterface.$schema,
-      },
-      ConcreteParentInterface: {
-        discriminantValues: ["ConcreteParentInterface"],
-        type: ConcreteParentInterfaceStatic.$schema,
-      },
-      BaseInterfaceWithoutProperties: {
-        discriminantValues: ["BaseInterfaceWithoutProperties"],
-        type: BaseInterfaceWithoutPropertiesStatic.$schema,
-      },
-      BaseInterfaceWithProperties: {
-        discriminantValues: ["BaseInterfaceWithProperties"],
-        type: BaseInterfaceWithPropertiesStatic.$schema,
-      },
-      ConvertibleTypePropertiesClass: {
-        discriminantValues: ["ConvertibleTypePropertiesClass"],
-        type: ConvertibleTypePropertiesClass.$schema,
-      },
-      DateUnionPropertiesClass: {
-        discriminantValues: ["DateUnionPropertiesClass"],
-        type: DateUnionPropertiesClass.$schema,
-      },
-      DefaultValuePropertiesClass: {
-        discriminantValues: ["DefaultValuePropertiesClass"],
-        type: DefaultValuePropertiesClass.$schema,
-      },
-      DirectRecursiveClass: {
-        discriminantValues: ["DirectRecursiveClass"],
-        type: DirectRecursiveClass.$schema,
-      },
-      ExplicitFromToRdfTypesClass: {
-        discriminantValues: ["ExplicitFromToRdfTypesClass"],
-        type: ExplicitFromToRdfTypesClass.$schema,
-      },
-      ExplicitRdfTypeClass: {
-        discriminantValues: ["ExplicitRdfTypeClass"],
-        type: ExplicitRdfTypeClass.$schema,
-      },
-      ExternClassPropertyClass: {
-        discriminantValues: ["ExternClassPropertyClass"],
-        type: ExternClassPropertyClass.$schema,
-      },
-      FlattenClassUnionMember3: {
-        discriminantValues: ["FlattenClassUnionMember3"],
-        type: FlattenClassUnionMember3.$schema,
-      },
-      HasValuePropertiesClass: {
-        discriminantValues: ["HasValuePropertiesClass"],
-        type: HasValuePropertiesClass.$schema,
-      },
-      IdentifierOverride5Class: {
-        discriminantValues: ["IdentifierOverride5Class"],
-        type: IdentifierOverride5Class.$schema,
-      },
-      IdentifierOverride4Class: {
-        discriminantValues: ["IdentifierOverride4Class"],
-        type: IdentifierOverride4ClassStatic.$schema,
-      },
-      IdentifierOverride3Class: {
-        discriminantValues: ["IdentifierOverride3Class"],
-        type: IdentifierOverride3ClassStatic.$schema,
-      },
-      InIdentifierClass: {
-        discriminantValues: ["InIdentifierClass"],
-        type: InIdentifierClass.$schema,
-      },
-      InPropertiesClass: {
-        discriminantValues: ["InPropertiesClass"],
-        type: InPropertiesClass.$schema,
-      },
-      IndirectRecursiveClass: {
-        discriminantValues: ["IndirectRecursiveClass"],
-        type: IndirectRecursiveClass.$schema,
-      },
-      IndirectRecursiveHelperClass: {
-        discriminantValues: ["IndirectRecursiveHelperClass"],
-        type: IndirectRecursiveHelperClass.$schema,
-      },
-      Interface: { discriminantValues: ["Interface"], type: Interface.$schema },
-      InterfaceUnionMember1: {
-        discriminantValues: ["InterfaceUnionMember1"],
-        type: InterfaceUnionMember1.$schema,
-      },
-      InterfaceUnionMember2: {
-        discriminantValues: ["InterfaceUnionMember2"],
-        type: InterfaceUnionMember2.$schema,
-      },
-      IriIdentifierClass: {
-        discriminantValues: ["IriIdentifierClass"],
-        type: IriIdentifierClass.$schema,
-      },
-      IriIdentifierInterface: {
-        discriminantValues: ["IriIdentifierInterface"],
-        type: IriIdentifierInterface.$schema,
-      },
-      JsPrimitiveUnionPropertyClass: {
-        discriminantValues: ["JsPrimitiveUnionPropertyClass"],
-        type: JsPrimitiveUnionPropertyClass.$schema,
-      },
-      LanguageInPropertiesClass: {
-        discriminantValues: ["LanguageInPropertiesClass"],
-        type: LanguageInPropertiesClass.$schema,
-      },
-      LazilyResolvedBlankNodeOrIriIdentifierClass: {
-        discriminantValues: ["LazilyResolvedBlankNodeOrIriIdentifierClass"],
-        type: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
-      },
-      LazilyResolvedBlankNodeOrIriIdentifierInterface: {
-        discriminantValues: ["LazilyResolvedBlankNodeOrIriIdentifierInterface"],
-        type: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
-      },
-      LazilyResolvedClassUnionMember1: {
-        discriminantValues: ["LazilyResolvedClassUnionMember1"],
-        type: LazilyResolvedClassUnionMember1.$schema,
-      },
-      LazilyResolvedClassUnionMember2: {
-        discriminantValues: ["LazilyResolvedClassUnionMember2"],
-        type: LazilyResolvedClassUnionMember2.$schema,
-      },
-      LazilyResolvedInterfaceUnionMember1: {
-        discriminantValues: ["LazilyResolvedInterfaceUnionMember1"],
-        type: LazilyResolvedInterfaceUnionMember1.$schema,
-      },
-      LazilyResolvedInterfaceUnionMember2: {
-        discriminantValues: ["LazilyResolvedInterfaceUnionMember2"],
-        type: LazilyResolvedInterfaceUnionMember2.$schema,
-      },
-      LazilyResolvedIriIdentifierClass: {
-        discriminantValues: ["LazilyResolvedIriIdentifierClass"],
-        type: LazilyResolvedIriIdentifierClass.$schema,
-      },
-      LazilyResolvedIriIdentifierInterface: {
-        discriminantValues: ["LazilyResolvedIriIdentifierInterface"],
-        type: LazilyResolvedIriIdentifierInterface.$schema,
-      },
-      LazyPropertiesClass: {
-        discriminantValues: ["LazyPropertiesClass"],
-        type: LazyPropertiesClass.$schema,
-      },
-      LazyPropertiesInterface: {
-        discriminantValues: ["LazyPropertiesInterface"],
-        type: LazyPropertiesInterface.$schema,
-      },
-      PartialInterface: {
-        discriminantValues: ["PartialInterface"],
-        type: PartialInterface.$schema,
-      },
-      ListPropertiesClass: {
-        discriminantValues: ["ListPropertiesClass"],
-        type: ListPropertiesClass.$schema,
-      },
-      MutablePropertiesClass: {
-        discriminantValues: ["MutablePropertiesClass"],
-        type: MutablePropertiesClass.$schema,
-      },
-      NamedUnionPropertiesClass: {
-        discriminantValues: ["NamedUnionPropertiesClass"],
-        type: NamedUnionPropertiesClass.$schema,
-      },
-      NoRdfTypeClassUnionMember1: {
-        discriminantValues: ["NoRdfTypeClassUnionMember1"],
-        type: NoRdfTypeClassUnionMember1.$schema,
-      },
-      NoRdfTypeClassUnionMember2: {
-        discriminantValues: ["NoRdfTypeClassUnionMember2"],
-        type: NoRdfTypeClassUnionMember2.$schema,
-      },
-      NodeKindsClass: {
-        discriminantValues: ["NodeKindsClass"],
-        type: NodeKindsClass.$schema,
-      },
-      NumericPropertiesClass: {
-        discriminantValues: ["NumericPropertiesClass"],
-        type: NumericPropertiesClass.$schema,
-      },
-      OrderedPropertiesClass: {
-        discriminantValues: ["OrderedPropertiesClass"],
-        type: OrderedPropertiesClass.$schema,
-      },
-      NewName1Class: {
-        discriminantValues: ["NewName1Class"],
-        type: NewName1Class.$schema,
-      },
-      NewName2Class: {
-        discriminantValues: ["NewName2Class"],
-        type: NewName2Class.$schema,
-      },
-      PartialClassUnionMember1: {
-        discriminantValues: ["PartialClassUnionMember1"],
-        type: PartialClassUnionMember1.$schema,
-      },
-      PartialClassUnionMember2: {
-        discriminantValues: ["PartialClassUnionMember2"],
-        type: PartialClassUnionMember2.$schema,
-      },
-      PartialInterfaceUnionMember1: {
-        discriminantValues: ["PartialInterfaceUnionMember1"],
-        type: PartialInterfaceUnionMember1.$schema,
-      },
-      PartialInterfaceUnionMember2: {
-        discriminantValues: ["PartialInterfaceUnionMember2"],
-        type: PartialInterfaceUnionMember2.$schema,
-      },
-      PropertyCardinalitiesClass: {
-        discriminantValues: ["PropertyCardinalitiesClass"],
-        type: PropertyCardinalitiesClass.$schema,
-      },
-      PropertyNamesClass: {
-        discriminantValues: ["PropertyNamesClass"],
-        type: PropertyNamesClass.$schema,
-      },
-      PropertyPathsClass: {
-        discriminantValues: ["PropertyPathsClass"],
-        type: PropertyPathsClass.$schema,
-      },
-      PropertyVisibilitiesClass: {
-        discriminantValues: ["PropertyVisibilitiesClass"],
-        type: PropertyVisibilitiesClass.$schema,
-      },
-      RecursiveClassUnionMember1: {
-        discriminantValues: ["RecursiveClassUnionMember1"],
-        type: RecursiveClassUnionMember1.$schema,
-      },
-      RecursiveClassUnionMember2: {
-        discriminantValues: ["RecursiveClassUnionMember2"],
-        type: RecursiveClassUnionMember2.$schema,
-      },
-      Sha256IriIdentifierClass: {
-        discriminantValues: ["Sha256IriIdentifierClass"],
-        type: Sha256IriIdentifierClass.$schema,
-      },
-      TermPropertiesClass: {
-        discriminantValues: ["TermPropertiesClass"],
-        type: TermPropertiesClass.$schema,
-      },
-      UnionDiscriminantsClass: {
-        discriminantValues: ["UnionDiscriminantsClass"],
-        type: UnionDiscriminantsClass.$schema,
-      },
-      UuidV4IriIdentifierClass: {
-        discriminantValues: ["UuidV4IriIdentifierClass"],
-        type: UuidV4IriIdentifierClass.$schema,
-      },
-      UuidV4IriIdentifierInterface: {
-        discriminantValues: ["UuidV4IriIdentifierInterface"],
-        type: UuidV4IriIdentifierInterface.$schema,
-      },
-      $DefaultPartial: {
-        discriminantValues: ["$DefaultPartial"],
-        type: $DefaultPartial.$schema,
-      },
-      $NamedDefaultPartial: {
-        discriminantValues: ["$NamedDefaultPartial"],
-        type: $NamedDefaultPartial.$schema,
-      },
-    },
-    properties: {},
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: $Object.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "object";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        $Object.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          $Object.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof $Object.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      $Object.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
-    options,
-  ) => {
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
-      return BlankNodeIdentifierInterface.$toRdfResource(value, options);
-    }
-    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        value,
-      )
-    ) {
-      return BlankNodeOrIriIdentifierInterface.$toRdfResource(value, options);
-    }
-    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClass.isPartialClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NonClass.isNonClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ConcreteChildClass.isConcreteChildClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
-      return ConcreteChildInterface.$toRdfResource(value, options);
-    }
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
-      return ConcreteParentInterfaceStatic.$toRdfResource(value, options);
-    }
-    if (
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        value,
-      )
-    ) {
-      return BaseInterfaceWithoutPropertiesStatic.$toRdfResource(
-        value,
-        options,
-      );
-    }
-    if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
-    ) {
-      return BaseInterfaceWithPropertiesStatic.$toRdfResource(value, options);
-    }
-    if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (InIdentifierClass.isInIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (InPropertiesClass.isInPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (Interface.isInterface(value)) {
-      return Interface.$toRdfResource(value, options);
-    }
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return InterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return InterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    if (IriIdentifierClass.isIriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
-      return IriIdentifierInterface.$toRdfResource(value, options);
-    }
-    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        value,
-      )
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        value,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdfResource(
-        value,
-        options,
-      );
-    }
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        value,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierInterface.$toRdfResource(
-        value,
-        options,
-      );
-    }
-    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
-      return LazyPropertiesInterface.$toRdfResource(value, options);
-    }
-    if (PartialInterface.isPartialInterface(value)) {
-      return PartialInterface.$toRdfResource(value, options);
-    }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NodeKindsClass.isNodeKindsClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NewName1Class.isNewName1Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NewName2Class.isNewName2Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PropertyNamesClass.isPropertyNamesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PropertyPathsClass.isPropertyPathsClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (TermPropertiesClass.isTermPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return UuidV4IriIdentifierInterface.$toRdfResource(value, options);
-    }
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return value.$toRdfResource(options);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export interface $ObjectSet {
   baseInterfaceWithoutProperties(

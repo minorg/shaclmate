@@ -1674,6 +1674,28 @@
       "properties": [
         {
           "mutable": false,
+          "name": "inIrisProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inIrisProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inIrisProperty"
+          },
+          "shapeIdentifier": "_:n3-197",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "IriType",
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
           "name": "inDoublesProperty",
           "order": 0,
           "path": {
@@ -1682,7 +1704,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDoublesProperty"
           },
-          "shapeIdentifier": "_:n3-197",
+          "shapeIdentifier": "_:n3-200",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1701,7 +1723,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inStringsProperty"
           },
-          "shapeIdentifier": "_:n3-200",
+          "shapeIdentifier": "_:n3-203",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1720,7 +1742,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inBooleansProperty"
           },
-          "shapeIdentifier": "_:n3-203",
+          "shapeIdentifier": "_:n3-206",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1739,7 +1761,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDateTimesProperty"
           },
-          "shapeIdentifier": "_:n3-205",
+          "shapeIdentifier": "_:n3-208",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1758,33 +1780,11 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIntegersProperty"
           },
-          "shapeIdentifier": "_:n3-207",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inIrisProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inIrisProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inIrisProperty"
-          },
           "shapeIdentifier": "_:n3-210",
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "IriType",
-              "nodeKinds": [
-                "IRI"
-              ]
+              "kind": "LiteralType"
             }
           },
           "visibility": "public"
