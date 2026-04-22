@@ -73980,7 +73980,6 @@ export namespace $Object {
       readonly DirectRecursiveClass?: DirectRecursiveClass.$Filter;
       readonly ExplicitFromToRdfTypesClass?: ExplicitFromToRdfTypesClass.$Filter;
       readonly ExplicitRdfTypeClass?: ExplicitRdfTypeClass.$Filter;
-      readonly ExternClass?: AbstractBaseClassForExternClassStatic.$Filter;
       readonly ExternClassPropertyClass?: ExternClassPropertyClass.$Filter;
       readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
       readonly HasValuePropertiesClass?: HasValuePropertiesClass.$Filter;
@@ -74282,21 +74281,6 @@ export namespace $Object {
     ) {
       if (
         !ExplicitRdfTypeClass.$filter(filter.on["ExplicitRdfTypeClass"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ExternClass"] !== undefined &&
-      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-        value,
-      )
-    ) {
-      if (
-        !AbstractBaseClassForExternClassStatic.$filter(
-          filter.on["ExternClass"],
-          value,
-        )
       ) {
         return false;
       }
@@ -80954,10 +80938,6 @@ export namespace $Object {
       ExplicitRdfTypeClass: {
         discriminantValues: ["ExplicitRdfTypeClass"],
         type: ExplicitRdfTypeClass.$schema,
-      },
-      ExternClass: {
-        discriminantValues: ["ExternClass"],
-        type: AbstractBaseClassForExternClassStatic.$schema,
       },
       ExternClassPropertyClass: {
         discriminantValues: ["ExternClassPropertyClass"],

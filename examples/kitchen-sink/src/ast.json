@@ -944,23 +944,25 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "memberDiscriminantValues": [
-                "date",
-                "dateTime"
-              ],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  "discriminantValue": "date",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#date"
+                    }
                   }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  "discriminantValue": "dateTime",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                    }
                   }
                 }
               ],
@@ -984,23 +986,25 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "memberDiscriminantValues": [
-                "dateTime",
-                "date"
-              ],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  "discriminantValue": "dateTime",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                    }
                   }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  "discriminantValue": "date",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#date"
+                    }
                   }
                 }
               ],
@@ -1024,23 +1028,25 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "memberDiscriminantValues": [
-                "date",
-                "string"
-              ],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  "discriminantValue": "date",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#date"
+                    }
                   }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "discriminantValue": "string",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 }
               ],
@@ -1064,23 +1070,25 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "memberDiscriminantValues": [
-                "string",
-                "date"
-              ],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "discriminantValue": "string",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  "discriminantValue": "date",
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#date"
+                    }
                   }
                 }
               ],
@@ -2089,27 +2097,32 @@
             "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#boolean"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#boolean"
+                    }
                   }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#double"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#double"
+                    }
                   }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 }
               ],
@@ -2585,53 +2598,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedClassUnionMember1",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedClassUnionMember1",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedClassUnionMember2",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedClassUnionMember2",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "LazilyResolvedClassUnion",
@@ -2856,53 +2872,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedClassUnionMember1",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedClassUnionMember1",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedClassUnionMember2",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedClassUnionMember2",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "LazilyResolvedClassUnion",
@@ -2931,53 +2950,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "PartialClassUnionMember1",
-                    "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/ClassUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "PartialClassUnionMember1",
+                      "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/ClassUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/ClassUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "PartialClassUnionMember2",
-                    "shapeIdentifier": "<http://example.com/PartialClassUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/ClassUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "PartialClassUnionMember2",
+                      "shapeIdentifier": "<http://example.com/PartialClassUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/ClassUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/ClassUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "PartialClassUnion",
@@ -2990,53 +3012,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedClassUnionMember1",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedClassUnionMember1",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedClassUnionMember2",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedClassUnionMember2",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "LazilyResolvedClassUnion",
@@ -3317,53 +3342,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedInterfaceUnionMember1",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedInterfaceUnionMember1",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedInterfaceUnionMember2",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedInterfaceUnionMember2",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "LazilyResolvedInterfaceUnion",
@@ -3588,53 +3616,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedInterfaceUnionMember1",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedInterfaceUnionMember1",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedInterfaceUnionMember2",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedInterfaceUnionMember2",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "LazilyResolvedInterfaceUnion",
@@ -3663,53 +3694,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "PartialInterfaceUnionMember1",
-                    "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/InterfaceUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "PartialInterfaceUnionMember1",
+                      "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/InterfaceUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/InterfaceUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "PartialInterfaceUnionMember2",
-                    "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/InterfaceUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "PartialInterfaceUnionMember2",
+                      "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/InterfaceUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/InterfaceUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "PartialInterfaceUnion",
@@ -3722,53 +3756,56 @@
               "itemType": {
                 "kind": "UnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "memberDiscriminantValues": [],
-                "memberTypes": [
+                "members": [
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedInterfaceUnionMember1",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedInterfaceUnionMember1",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                        }
+                      ]
+                    }
                   },
                   {
-                    "kind": "ObjectType",
-                    "name": "LazilyResolvedInterfaceUnionMember2",
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                    },
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "IRI"
-                      ]
-                    },
-                    "toRdfTypes": [
-                      {
+                    "type": {
+                      "kind": "ObjectType",
+                      "name": "LazilyResolvedInterfaceUnionMember2",
+                      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
+                      "fromRdfType": {
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                      }
-                    ]
+                      },
+                      "identifierMintingStrategy": "blankNode",
+                      "identifierType": {
+                        "kind": "IdentifierType",
+                        "nodeKinds": [
+                          "BlankNode",
+                          "IRI"
+                        ]
+                      },
+                      "toRdfTypes": [
+                        {
+                          "termType": "NamedNode",
+                          "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                        }
+                      ]
+                    }
                   }
                 ],
                 "name": "LazilyResolvedInterfaceUnion",
@@ -4166,19 +4203,22 @@
           "type": {
             "kind": "UnionType",
             "comment": "Named union of IRI and string",
-            "memberDiscriminantValues": [],
-            "memberTypes": [
+            "members": [
               {
-                "kind": "IriType",
-                "nodeKinds": [
-                  "IRI"
-                ]
+                "type": {
+                  "kind": "IriType",
+                  "nodeKinds": [
+                    "IRI"
+                  ]
+                }
               },
               {
-                "kind": "LiteralType",
-                "datatype": {
-                  "termType": "NamedNode",
-                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                "type": {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  }
                 }
               }
             ],
@@ -4201,23 +4241,25 @@
           "type": {
             "kind": "UnionType",
             "comment": "Named union of date and date-time",
-            "memberDiscriminantValues": [
-              "date",
-              "dateTime"
-            ],
-            "memberTypes": [
+            "members": [
               {
-                "kind": "LiteralType",
-                "datatype": {
-                  "termType": "NamedNode",
-                  "value": "http://www.w3.org/2001/XMLSchema#date"
+                "discriminantValue": "date",
+                "type": {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  }
                 }
               },
               {
-                "kind": "LiteralType",
-                "datatype": {
-                  "termType": "NamedNode",
-                  "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                "discriminantValue": "dateTime",
+                "type": {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  }
                 }
               }
             ],
@@ -5452,53 +5494,56 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "ObjectType",
-                  "name": "RecursiveClassUnionMember1",
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/RecursiveClassUnionMember1"
-                  },
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "RecursiveClassUnionMember1",
+                    "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/RecursiveClassUnionMember1"
-                    }
-                  ]
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/RecursiveClassUnionMember1"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "kind": "ObjectType",
-                  "name": "RecursiveClassUnionMember2",
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/RecursiveClassUnionMember2"
-                  },
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "RecursiveClassUnionMember2",
+                    "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/RecursiveClassUnionMember2"
-                    }
-                  ]
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/RecursiveClassUnionMember2"
+                      }
+                    ]
+                  }
                 }
               ],
               "name": "RecursiveClassUnion",
@@ -5540,53 +5585,56 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "ObjectType",
-                  "name": "RecursiveClassUnionMember1",
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/RecursiveClassUnionMember1"
-                  },
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "RecursiveClassUnionMember1",
+                    "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/RecursiveClassUnionMember1"
-                    }
-                  ]
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/RecursiveClassUnionMember1"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "kind": "ObjectType",
-                  "name": "RecursiveClassUnionMember2",
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/RecursiveClassUnionMember2"
-                  },
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "RecursiveClassUnionMember2",
+                    "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/RecursiveClassUnionMember2"
-                    }
-                  ]
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/RecursiveClassUnionMember2"
+                      }
+                    ]
+                  }
                 }
               ],
               "name": "RecursiveClassUnion",
@@ -5877,65 +5925,70 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "ObjectType",
-                  "name": "ClassUnionMember1",
-                  "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/ClassUnionMember1"
-                  },
-                  "parentObjectTypes": [
-                    "<http://example.com/ClassUnionMemberCommonParent>"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "ClassUnionMember1",
+                    "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember1"
-                    }
-                  ]
+                    },
+                    "parentObjectTypes": [
+                      "<http://example.com/ClassUnionMemberCommonParent>"
+                    ],
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/ClassUnionMember1"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "kind": "ObjectType",
-                  "name": "ClassUnionMember2",
-                  "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/ClassUnionMember2"
-                  },
-                  "parentObjectTypes": [
-                    "<http://example.com/ClassUnionMemberCommonParent>"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "ClassUnionMember2",
+                    "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember2"
-                    }
-                  ]
+                    },
+                    "parentObjectTypes": [
+                      "<http://example.com/ClassUnionMemberCommonParent>"
+                    ],
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/ClassUnionMember2"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 }
               ],
@@ -5962,16 +6015,19 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Union that can be discriminated by an inline discriminant property (termType).",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "IriType",
-                  "nodeKinds": [
-                    "IRI"
-                  ]
+                  "type": {
+                    "kind": "IriType",
+                    "nodeKinds": [
+                      "IRI"
+                    ]
+                  }
                 },
                 {
-                  "kind": "LiteralType"
+                  "type": {
+                    "kind": "LiteralType"
+                  }
                 }
               ],
               "shapeIdentifier": "_:n3-384"
@@ -5997,19 +6053,22 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Union that can be discriminated by typeof.",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "IriType",
-                  "nodeKinds": [
-                    "IRI"
-                  ]
+                  "type": {
+                    "kind": "IriType",
+                    "nodeKinds": [
+                      "IRI"
+                    ]
+                  }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 }
               ],
@@ -6033,65 +6092,70 @@
           "type": {
             "kind": "UnionType",
             "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
-            "memberDiscriminantValues": [],
-            "memberTypes": [
+            "members": [
               {
-                "kind": "ObjectType",
-                "name": "ClassUnionMember1",
-                "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
-                "fromRdfType": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ClassUnionMember1"
-                },
-                "parentObjectTypes": [
-                  "<http://example.com/ClassUnionMemberCommonParent>"
-                ],
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
-                },
-                "toRdfTypes": [
-                  {
+                "type": {
+                  "kind": "ObjectType",
+                  "name": "ClassUnionMember1",
+                  "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
+                  "fromRdfType": {
                     "termType": "NamedNode",
                     "value": "http://example.com/ClassUnionMember1"
-                  }
-                ]
+                  },
+                  "parentObjectTypes": [
+                    "<http://example.com/ClassUnionMemberCommonParent>"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "identifierType": {
+                    "kind": "IdentifierType",
+                    "nodeKinds": [
+                      "BlankNode",
+                      "IRI"
+                    ]
+                  },
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/ClassUnionMember1"
+                    }
+                  ]
+                }
               },
               {
-                "kind": "ObjectType",
-                "name": "ClassUnionMember2",
-                "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
-                "fromRdfType": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/ClassUnionMember2"
-                },
-                "parentObjectTypes": [
-                  "<http://example.com/ClassUnionMemberCommonParent>"
-                ],
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "IRI"
-                  ]
-                },
-                "toRdfTypes": [
-                  {
+                "type": {
+                  "kind": "ObjectType",
+                  "name": "ClassUnionMember2",
+                  "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+                  "fromRdfType": {
                     "termType": "NamedNode",
                     "value": "http://example.com/ClassUnionMember2"
-                  }
-                ]
+                  },
+                  "parentObjectTypes": [
+                    "<http://example.com/ClassUnionMemberCommonParent>"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "identifierType": {
+                    "kind": "IdentifierType",
+                    "nodeKinds": [
+                      "BlankNode",
+                      "IRI"
+                    ]
+                  },
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/ClassUnionMember2"
+                    }
+                  ]
+                }
               },
               {
-                "kind": "LiteralType",
-                "datatype": {
-                  "termType": "NamedNode",
-                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                "type": {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  }
                 }
               }
             ],
@@ -6114,16 +6178,19 @@
           "type": {
             "kind": "UnionType",
             "comment": "Union that can be discriminated by an inline discriminant property (termType).",
-            "memberDiscriminantValues": [],
-            "memberTypes": [
+            "members": [
               {
-                "kind": "IriType",
-                "nodeKinds": [
-                  "IRI"
-                ]
+                "type": {
+                  "kind": "IriType",
+                  "nodeKinds": [
+                    "IRI"
+                  ]
+                }
               },
               {
-                "kind": "LiteralType"
+                "type": {
+                  "kind": "LiteralType"
+                }
               }
             ],
             "shapeIdentifier": "_:n3-401"
@@ -6145,19 +6212,22 @@
           "type": {
             "kind": "UnionType",
             "comment": "Union that can be discriminated by typeof.",
-            "memberDiscriminantValues": [],
-            "memberTypes": [
+            "members": [
               {
-                "kind": "IriType",
-                "nodeKinds": [
-                  "IRI"
-                ]
+                "type": {
+                  "kind": "IriType",
+                  "nodeKinds": [
+                    "IRI"
+                  ]
+                }
               },
               {
-                "kind": "LiteralType",
-                "datatype": {
-                  "termType": "NamedNode",
-                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                "type": {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  }
                 }
               }
             ],
@@ -6183,65 +6253,70 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "ObjectType",
-                  "name": "ClassUnionMember1",
-                  "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/ClassUnionMember1"
-                  },
-                  "parentObjectTypes": [
-                    "<http://example.com/ClassUnionMemberCommonParent>"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "ClassUnionMember1",
+                    "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember1"
-                    }
-                  ]
+                    },
+                    "parentObjectTypes": [
+                      "<http://example.com/ClassUnionMemberCommonParent>"
+                    ],
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/ClassUnionMember1"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "kind": "ObjectType",
-                  "name": "ClassUnionMember2",
-                  "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/ClassUnionMember2"
-                  },
-                  "parentObjectTypes": [
-                    "<http://example.com/ClassUnionMemberCommonParent>"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "nodeKinds": [
-                      "BlankNode",
-                      "IRI"
-                    ]
-                  },
-                  "toRdfTypes": [
-                    {
+                  "type": {
+                    "kind": "ObjectType",
+                    "name": "ClassUnionMember2",
+                    "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+                    "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember2"
-                    }
-                  ]
+                    },
+                    "parentObjectTypes": [
+                      "<http://example.com/ClassUnionMemberCommonParent>"
+                    ],
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "nodeKinds": [
+                        "BlankNode",
+                        "IRI"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/ClassUnionMember2"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 }
               ],
@@ -6268,16 +6343,19 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Union that can be discriminated by an inline discriminant property (termType).",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "IriType",
-                  "nodeKinds": [
-                    "IRI"
-                  ]
+                  "type": {
+                    "kind": "IriType",
+                    "nodeKinds": [
+                      "IRI"
+                    ]
+                  }
                 },
                 {
-                  "kind": "LiteralType"
+                  "type": {
+                    "kind": "LiteralType"
+                  }
                 }
               ],
               "shapeIdentifier": "_:n3-418"
@@ -6303,19 +6381,22 @@
             "itemType": {
               "kind": "UnionType",
               "comment": "Union that can be discriminated by typeof.",
-              "memberDiscriminantValues": [],
-              "memberTypes": [
+              "members": [
                 {
-                  "kind": "IriType",
-                  "nodeKinds": [
-                    "IRI"
-                  ]
+                  "type": {
+                    "kind": "IriType",
+                    "nodeKinds": [
+                      "IRI"
+                    ]
+                  }
                 },
                 {
-                  "kind": "LiteralType",
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  "type": {
+                    "kind": "LiteralType",
+                    "datatype": {
+                      "termType": "NamedNode",
+                      "value": "http://www.w3.org/2001/XMLSchema#string"
+                    }
                   }
                 }
               ],

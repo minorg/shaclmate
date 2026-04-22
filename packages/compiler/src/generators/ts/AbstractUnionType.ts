@@ -59,7 +59,11 @@ export abstract class AbstractUnionType<
     }
 
     this.lazyMembers = () =>
-      members.flatMap((member, memberI) => {
+      members.map((member, memberI) => {
+        if (member.type.abstract) {
+          return { abstract: true, discriminantValues: [], type: member.type };
+        }
+
         let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
         switch (this.discriminant.kind) {
           case "envelope":
@@ -106,7 +110,7 @@ export abstract class AbstractUnionType<
         }
 
         if (discriminantValues.length === 0) {
-          return [];
+          return { abstract: true, discriminantValues: [], type: member.type };
         }
 
         const typeCheck =
@@ -117,7 +121,7 @@ export abstract class AbstractUnionType<
                 return code`(${joinCode(
                   discriminantValues.map(
                     (discriminantValue) =>
-                      code`${instance}.type === ${literalOf(discriminantValue)}`,
+                      code`${instance}.${(this.discriminant as EnvelopeDiscriminant).name} === ${literalOf(discriminantValue)}`,
                   ),
                   { on: " || " },
                 )})`;
@@ -151,33 +155,32 @@ export abstract class AbstractUnionType<
             }
           };
 
-        return [
-          {
-            discriminantValues,
-            jsonTypeCheck: typeCheck(true),
-            primaryDiscriminantValue: discriminantValues[0],
-            type: member.type,
-            typeCheck: typeCheck(false),
-            unwrap: (instance: Code): Code => {
-              switch (this.discriminant.kind) {
-                case "envelope":
-                  return code`${instance}.value`;
-                case "inline":
-                case "typeof":
-                  return instance;
-              }
-            },
-            wrap: (instance: Code): Code => {
-              switch (this.discriminant.kind) {
-                case "envelope":
-                  return code`{ ${this.discriminant.name}: "${discriminantValues[0]}" as const, value: ${instance} }`;
-                case "inline":
-                case "typeof":
-                  return instance;
-              }
-            },
+        return {
+          abstract: false,
+          discriminantValues,
+          jsonTypeCheck: typeCheck(true),
+          primaryDiscriminantValue: discriminantValues[0],
+          type: member.type,
+          typeCheck: typeCheck(false),
+          unwrap: (instance: Code): Code => {
+            switch (this.discriminant.kind) {
+              case "envelope":
+                return code`${instance}.value`;
+              case "inline":
+              case "typeof":
+                return instance;
+            }
           },
-        ];
+          wrap: (instance: Code): Code => {
+            switch (this.discriminant.kind) {
+              case "envelope":
+                return code`{ ${this.discriminant.name}: "${discriminantValues[0]}" as const, value: ${instance} }`;
+              case "inline":
+              case "typeof":
+                return instance;
+            }
+          },
+        };
       });
   }
 
@@ -196,7 +199,7 @@ export abstract class AbstractUnionType<
           },
         ];
       case "typeof":
-        return this.members.map(
+        return this.concreteMembers.map(
           ({ primaryDiscriminantValue, type, typeCheck }) => ({
             conversionExpression: (value) => value,
             sourceTypeCheckExpression: (value) => typeCheck(value),
@@ -246,7 +249,7 @@ export abstract class AbstractUnionType<
       // },
       kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))}`,
       members: code`{ ${joinCode(
-        this.members.map(
+        this.concreteMembers.map(
           ({ type, primaryDiscriminantValue }) =>
             code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
               discriminantValues: code`readonly (number | string)[]`,
@@ -261,13 +264,13 @@ export abstract class AbstractUnionType<
   @Memoize()
   override get typeofs(): AbstractType["typeofs"] {
     return NonEmptyList.fromArray(
-      this.members.flatMap((member) => member.type.typeofs),
+      this.concreteMembers.flatMap((member) => member.type.typeofs),
     ).unsafeCoerce();
   }
 
   @Memoize()
-  protected get concreteMembers(): readonly AbstractUnionType.Member<MemberTypeT>[] {
-    return this.members.filter((member) => !member.type.abstract);
+  protected get concreteMembers(): readonly AbstractUnionType.ConcreteMember<MemberTypeT>[] {
+    return this.members.filter((member) => !member.abstract);
   }
 
   @Memoize()
@@ -300,7 +303,7 @@ if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierType.f
 }`,
     )
     .toList(),
-  ...this.members.map(
+  ...this.concreteMembers.map(
     ({ primaryDiscriminantValue, type, typeCheck, unwrap }) => code`\
 if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeCheck(code`value`)}) {
   if (!${type.filterFunction}(filter.on[${literalOf(primaryDiscriminantValue)}], ${unwrap(code`value`)})) {
@@ -320,7 +323,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
   {
    ${this.identifierType.map((identifierType) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierType.filterType};`).orDefault(code``)}
    readonly on?: { ${joinCode(
-     this.members.map(
+     this.concreteMembers.map(
        ({ type, primaryDiscriminantValue }) =>
          code`readonly ${literalOf(primaryDiscriminantValue)}?: ${type.filterType}`,
      ),
@@ -468,7 +471,7 @@ ${joinCode(
     switch (this.discriminant.kind) {
       case "envelope":
         return code`(${joinCode(
-          this.members.map(
+          this.concreteMembers.map(
             ({ type, primaryDiscriminantValue }) =>
               code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`,
           ),
@@ -578,7 +581,7 @@ ${joinCode(
     return {
       ...super.schemaObject,
       members: code`{ ${joinCode(
-        this.members.map(
+        this.concreteMembers.map(
           ({ discriminantValues, type, primaryDiscriminantValue }) =>
             code`${literalOf(primaryDiscriminantValue)}: ${{
               discriminantValues: discriminantValues,
@@ -742,7 +745,14 @@ export namespace Discriminant {
 }
 
 export namespace AbstractUnionType {
-  export interface Member<TypeT extends Type> {
+  export interface AbstractMember<TypeT extends Type> {
+    readonly abstract: true;
+    readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
+    readonly type: TypeT;
+  }
+
+  export interface ConcreteMember<TypeT extends Type> {
+    readonly abstract: false;
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
     readonly jsonTypeCheck: (instance: Code) => Code;
     readonly primaryDiscriminantValue: AbstractType.DiscriminantProperty.Value;
@@ -751,4 +761,8 @@ export namespace AbstractUnionType {
     readonly unwrap: (instance: Code) => Code;
     readonly wrap: (instance: Code) => Code;
   }
+
+  export type Member<TypeT extends Type> =
+    | AbstractMember<TypeT>
+    | ConcreteMember<TypeT>;
 }

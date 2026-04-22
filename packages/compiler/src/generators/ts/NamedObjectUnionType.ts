@@ -167,9 +167,9 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         name: this.name,
         resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
         types: code`[${joinCode(
-          this.members
-            .filter((member) => !member.type.abstract)
-            .map((member) => member.type.graphqlType.nullableName),
+          this.concreteMembers.map(
+            (member) => member.type.graphqlType.nullableName,
+          ),
           { on: ", " },
         )}]`,
       }});
@@ -192,7 +192,7 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
     return Maybe.of(code`\
     export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
-        this.members.map(
+        this.concreteMembers.map(
           (member) =>
             code`${member.type.staticModuleName}.is${member.type.name}(object)`,
         ),
@@ -210,7 +210,7 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
       }
     > = {};
 
-    this.members.forEach((member, memberI) => {
+    this.concreteMembers.forEach((member, memberI) => {
       for (const memberTypeProperty of member.type.ownProperties.concat(
         member.type.ancestorObjectTypes.flatMap(
           (ancestorObjectType) => ancestorObjectType.ownProperties,
@@ -232,7 +232,7 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         } else {
           commonPropertiesByName[memberTypeProperty.name] = commonProperty = {
             memberTypesWithProperty: new Array<boolean>(
-              this.members.length,
+              this.concreteMembers.length,
             ).fill(false),
             property: memberTypeProperty,
           };
