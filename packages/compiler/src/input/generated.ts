@@ -334,7 +334,7 @@ export namespace $PropertyPath {
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.$fromRdf;
+    RdfjsResourcePropertyPath.fromResource;
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $PropertyPath
@@ -350,7 +350,7 @@ export namespace $PropertyPath {
   export const $schema: Readonly<object> = {};
 
   export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.$toRdf;
+    RdfjsResourcePropertyPath.toResource;
 }
 
 namespace $RdfVocabularies {
@@ -8780,12 +8780,17 @@ export namespace NodeShape {
 export type Shape = NodeShape | PropertyShape;
 
 export namespace Shape {
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly NodeShape?: NodeShape.$Filter;
-      readonly PropertyShape?: PropertyShape.$Filter;
-    };
+  export const $toRdfResource: $ToRdfResourceFunction<Shape> = (
+    value,
+    options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toRdfResource(value, options);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
   };
 
   export const $filter = (filter: Shape.$Filter, value: Shape) => {
@@ -8814,6 +8819,31 @@ export namespace Shape {
 
     return true;
   };
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly NodeShape?: NodeShape.$Filter;
+      readonly PropertyShape?: PropertyShape.$Filter;
+    };
+  };
+
+  export const $fromRdfResource: $FromRdfResourceFunction<Shape> = (
+    resource,
+    options,
+  ) =>
+    (
+      NodeShape.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, Shape>
+    ).altLazy(
+      () =>
+        PropertyShape.$fromRdfResource(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as Either<Error, Shape>,
+    );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<Shape> =
     ((values, _options) =>
@@ -8847,58 +8877,10 @@ export namespace Shape {
         }),
       )) satisfies $FromRdfResourceValuesFunction<Shape>;
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Shape> = ((
-    value,
-    _options,
-  ) => {
-    if (NodeShape.isNodeShape(value)) {
-      return [
-        NodeShape.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (PropertyShape.isPropertyShape(value)) {
-      return [
-        PropertyShape.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-
-    throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<Shape>;
-
   export type $Identifier = BlankNode | NamedNode;
-
   export namespace $Identifier {
     export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
     export const toString = Resource.Identifier.toString;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<Shape> = (
-    resource,
-    options,
-  ) =>
-    (
-      NodeShape.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, Shape>
-    ).altLazy(
-      () =>
-        PropertyShape.$fromRdfResource(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as Either<Error, Shape>,
-    );
-
-  export function isShape(object: $Object): object is Shape {
-    return (
-      NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object)
-    );
   }
 
   export const $schema = {
@@ -9167,30 +9149,56 @@ export namespace Shape {
     },
   } as const;
 
-  export const $toRdfResource: $ToRdfResourceFunction<Shape> = (
+  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Shape> = ((
+    value,
+    _options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return [
+        NodeShape.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return [
+        PropertyShape.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+
+    throw new Error("unable to serialize to RDF");
+  }) as $ToRdfResourceValuesFunction<Shape>;
+
+  export function isShape(object: $Object): object is Shape {
+    return (
+      NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object)
+    );
+  }
+}
+export type $Object = NodeShape | Ontology | PropertyGroup | PropertyShape;
+
+export namespace $Object {
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
     value,
     options,
   ) => {
     if (NodeShape.isNodeShape(value)) {
       return NodeShape.$toRdfResource(value, options);
     }
+    if (Ontology.isOntology(value)) {
+      return Ontology.$toRdfResource(value, options);
+    }
+    if (PropertyGroup.isPropertyGroup(value)) {
+      return PropertyGroup.$toRdfResource(value, options);
+    }
     if (PropertyShape.isPropertyShape(value)) {
       return PropertyShape.$toRdfResource(value, options);
     }
     throw new Error("unrecognized type");
-  };
-}
-export type $Object = NodeShape | Ontology | PropertyGroup | PropertyShape;
-
-export namespace $Object {
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly NodeShape?: NodeShape.$Filter;
-      readonly Ontology?: Ontology.$Filter;
-      readonly PropertyGroup?: PropertyGroup.$Filter;
-      readonly PropertyShape?: PropertyShape.$Filter;
-    };
   };
 
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
@@ -9232,6 +9240,48 @@ export namespace $Object {
 
     return true;
   };
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly on?: {
+      readonly NodeShape?: NodeShape.$Filter;
+      readonly Ontology?: Ontology.$Filter;
+      readonly PropertyGroup?: PropertyGroup.$Filter;
+      readonly PropertyShape?: PropertyShape.$Filter;
+    };
+  };
+
+  export const $fromRdfResource: $FromRdfResourceFunction<$Object> = (
+    resource,
+    options,
+  ) =>
+    (
+      NodeShape.$fromRdfResource(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as Either<Error, $Object>
+    )
+      .altLazy(
+        () =>
+          Ontology.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyGroup.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          PropertyShape.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      );
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<$Object> =
     ((values, _options) =>
@@ -9289,6 +9339,40 @@ export namespace $Object {
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
+  }
+
+  export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.$schema },
+      Ontology: { discriminantValues: ["Ontology"], type: Ontology.$schema },
+      PropertyGroup: {
+        discriminantValues: ["PropertyGroup"],
+        type: PropertyGroup.$schema,
+      },
+      PropertyShape: {
+        discriminantValues: ["PropertyShape"],
+        type: PropertyShape.$schema,
+      },
+    },
+    properties: {
+      labels: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#label",
+        ),
+      },
+    },
+  } as const;
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
     value,
     _options,
@@ -9328,92 +9412,6 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) as $ToRdfResourceValuesFunction<$Object>;
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<$Object> = (
-    resource,
-    options,
-  ) =>
-    (
-      NodeShape.$fromRdfResource(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as Either<Error, $Object>
-    )
-      .altLazy(
-        () =>
-          Ontology.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyGroup.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyShape.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      );
-
-  export const $schema = {
-    kind: "NamedObjectUnion" as const,
-    members: {
-      NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.$schema },
-      Ontology: { discriminantValues: ["Ontology"], type: Ontology.$schema },
-      PropertyGroup: {
-        discriminantValues: ["PropertyGroup"],
-        type: PropertyGroup.$schema,
-      },
-      PropertyShape: {
-        discriminantValues: ["PropertyShape"],
-        type: PropertyShape.$schema,
-      },
-    },
-    properties: {
-      labels: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://www.w3.org/2000/01/rdf-schema#label",
-        ),
-      },
-    },
-  } as const;
-
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
-    options,
-  ) => {
-    if (NodeShape.isNodeShape(value)) {
-      return NodeShape.$toRdfResource(value, options);
-    }
-    if (Ontology.isOntology(value)) {
-      return Ontology.$toRdfResource(value, options);
-    }
-    if (PropertyGroup.isPropertyGroup(value)) {
-      return PropertyGroup.$toRdfResource(value, options);
-    }
-    if (PropertyShape.isPropertyShape(value)) {
-      return PropertyShape.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
 }
 export interface $ObjectSet {
   nodeShape(

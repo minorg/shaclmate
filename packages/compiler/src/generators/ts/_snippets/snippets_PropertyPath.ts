@@ -20,7 +20,7 @@ export namespace ${syntheticNamePrefix}PropertyPath {
     return true;
   }
 
-  export const ${syntheticNamePrefix}fromRdfResource: ${snippets_FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.${syntheticNamePrefix}fromRdf;
+  export const ${syntheticNamePrefix}fromRdfResource: ${snippets_FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.fromResource;
 
   export const $fromRdfResourceValues: ${snippets_FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
     values.chain((values) =>
@@ -33,6 +33,6 @@ export namespace ${syntheticNamePrefix}PropertyPath {
 
   export const $schema: Readonly<object> = {};
 
-  export const ${syntheticNamePrefix}toRdfResource: ${snippets_ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.${syntheticNamePrefix}toRdf;
+  export const ${syntheticNamePrefix}toRdfResource: ${snippets_ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.toResource;
 }`,
 );

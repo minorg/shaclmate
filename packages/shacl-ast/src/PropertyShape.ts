@@ -75,7 +75,7 @@ export class PropertyShape<
   override toString(): string {
     return `PropertyShape(${[
       `identifier=${Resource.Identifier.toString(this.identifier)}`,
-      `path=${PropertyPath.$toString(this.path)}`,
+      `path=${PropertyPath.toString(this.path)}`,
     ].join(", ")})`;
   }
 }

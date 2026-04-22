@@ -505,7 +505,7 @@ export namespace ObjectType {
     }
 
     toString(): string {
-      return `${this.name}(path=${PropertyPath.$toString(this.path)})`;
+      return `${this.name}(path=${PropertyPath.toString(this.path)})`;
     }
   }
 }
