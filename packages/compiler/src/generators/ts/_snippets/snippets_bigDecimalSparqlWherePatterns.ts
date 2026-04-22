@@ -6,12 +6,12 @@ import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./snippets_NumericSchema.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_SparqlWherePatternsFunctionParameters } from "./snippets_SparqlWherePatternsFunctionParameters.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_bigDecimalSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}bigDecimalSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}bigDecimalSparqlWherePatterns({ filter, propertyPatterns, schema, valueVariable }: ${snippets_SparqlWherePatternsFunctionParameters}<${snippets_NumericFilter}<${imports.BigDecimal}>, ${snippets_NumericSchema}<${imports.BigDecimal}>>): readonly ${snippets_SparqlPattern}[] {
+const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_NumericFilter}<${imports.BigDecimal}>, ${snippets_NumericSchema}<${imports.BigDecimal}>> = ({ filter, propertyPatterns, schema, valueVariable }) => {
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (filter) {

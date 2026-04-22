@@ -5,8 +5,9 @@ import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 
 import {
+  type $FromRdfResourceFunction,
+  type $FromRdfResourceValuesFunction,
   type $Object,
-  type $ObjectSet,
   AbstractBaseClassForExternClass,
   AbstractBaseClassForExternClassStatic,
 } from "./generated.js";
@@ -43,7 +44,7 @@ export class ExternClass extends AbstractBaseClassForExternClass {
   }
 
   // Called by class methods
-  override $toRdf(options?: {
+  override $toRdfResource(options?: {
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: rdfjsResource.ResourceSet;
   }) {
@@ -52,7 +53,7 @@ export class ExternClass extends AbstractBaseClassForExternClass {
       new rdfjsResource.ResourceSet(datasetFactory.dataset(), {
         dataFactory,
       });
-    const resource = super.$toRdf({
+    const resource = super.$toRdfResource({
       graph: options?.graph,
       resourceSet,
     });
@@ -65,26 +66,37 @@ export class ExternClass extends AbstractBaseClassForExternClass {
 }
 
 export namespace ExternClass {
+  export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
+  export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
+  export type $Json = AbstractBaseClassForExternClassStatic.$Json;
+
   // Called by interface functions
   export function $equals(left: ExternClass, right: ExternClass) {
     return left.$equals(right);
   }
 
-  export function $fromJson(json: unknown) {
-    return AbstractBaseClassForExternClassStatic.$propertiesFromJson(json).map(
-      (properties) => new ExternClass(properties.$identifier),
+  export function $fromJson(json: $Json) {
+    return new ExternClass(
+      AbstractBaseClassForExternClassStatic.$propertiesFromJson(json)
+        .$identifier,
     );
   }
 
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      context?: unknown;
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      objectSet?: $ObjectSet;
-    },
-  ): Either<Error, ExternClass> {
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ExternClass
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => ExternClass.$fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const $fromRdfResource: $FromRdfResourceFunction<ExternClass> = (
+    resource,
+    options,
+  ) => {
     const context = options?.context as
       | {
           extra: number;
@@ -94,7 +106,7 @@ export namespace ExternClass {
       throw new Error("extra didn't come through");
     }
     return Either.of(new ExternClass(resource.identifier));
-  }
+  };
 
   // Called by interface functions
   export function $hash<
@@ -111,12 +123,16 @@ export namespace ExternClass {
   }
 
   export const $filter = AbstractBaseClassForExternClassStatic.$filter;
+
+  export const $focusSparqlConstructTriples =
+    AbstractBaseClassForExternClassStatic.$focusSparqlConstructTriples;
+  export const $focusSparqlWherePatterns =
+    AbstractBaseClassForExternClassStatic.$focusSparqlWherePatterns;
+
   export const $fromRdfType = dataFactory.namedNode(
     "http://example.com/ExternClass",
   );
-  export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
-  export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
-  export type $Json = AbstractBaseClassForExternClassStatic.$Json;
+
   export const $jsonZodSchema =
     AbstractBaseClassForExternClassStatic.$jsonZodSchema;
   export const $jsonUiSchema =
@@ -124,8 +140,8 @@ export namespace ExternClass {
 
   export const $schema = AbstractBaseClassForExternClassStatic.$schema;
 
-  export const $sparqlConstructTriples =
-    AbstractBaseClassForExternClassStatic.$sparqlConstructTriples;
-  export const $sparqlWherePatterns =
-    AbstractBaseClassForExternClassStatic.$sparqlWherePatterns;
+  export const $valueSparqlConstructTriples =
+    AbstractBaseClassForExternClassStatic.$valueSparqlConstructTriples;
+  export const $valueSparqlWherePatterns =
+    AbstractBaseClassForExternClassStatic.$valueSparqlWherePatterns;
 }

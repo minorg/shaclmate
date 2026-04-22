@@ -1,7 +1,17 @@
 import { invariant } from "ts-invariant";
+import { Memoize } from "typescript-memoize";
+
+import type { TsFeature } from "../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
-import { arrayEquals } from "./equals.js";
-import { Type } from "./Type.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
+import type { IdentifierType } from "./IdentifierType.js";
+import type { IntersectionType } from "./IntersectionType.js";
+import type { IriType } from "./IriType.js";
+import type { LiteralType } from "./LiteralType.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { TermType } from "./TermType.js";
+import type { Type } from "./Type.js";
+import type { UnionType } from "./UnionType.js";
 
 /**
  * A compound of types, such as an intersection or union.
@@ -10,52 +20,135 @@ import { Type } from "./Type.js";
  * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
 export abstract class AbstractCompoundType<
-  MemberTypeT extends Type,
+  MemberT extends AbstractCompoundType.Member<MemberTypeT>,
+  MemberTypeT extends AbstractCompoundType.MemberType,
 > extends AbstractType {
   /**
-   * Type discriminant
-   */
-  abstract readonly kind:
-    | "IntersectionType"
-    | "ObjectIntersectionType"
-    | "ObjectUnionType"
-    | "UnionType";
-
-  /**
-   * Member types.
+   * Members.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #memberTypes: MemberTypeT[];
+  readonly #members: MemberT[] = [];
+
+  /**
+   * TypeScript features to generate.
+   */
+  readonly #tsFeatures: ReadonlySet<TsFeature>;
+
+  /**
+   * Type discriminant
+   */
+  abstract readonly kind: "IntersectionType" | "UnionType";
 
   constructor({
-    memberTypes,
+    tsFeatures,
     ...superParameters
-  }: { memberTypes?: readonly MemberTypeT[] } & ConstructorParameters<
-    typeof AbstractType
-  >[0]) {
+  }: {
+    tsFeatures: ReadonlySet<TsFeature>;
+  } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.#memberTypes = memberTypes?.concat() ?? [];
+    this.#tsFeatures = tsFeatures;
   }
 
-  addMemberType(memberType: MemberTypeT): void {
-    this.#memberTypes.push(memberType);
+  get members(): readonly MemberT[] {
+    invariant(this.#members.length > 0);
+    return this.#members;
   }
 
-  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
-    if (!super.equals(other)) {
-      return false;
+  override get recursive(): boolean {
+    return this.members.some((member) => member.type.recursive);
+  }
+
+  @Memoize()
+  get tsFeatures(): ReadonlySet<TsFeature> {
+    // Members of the compound type must have the same tsFeatures.
+    // They must also have distinct RDF types or no RDF types at all.
+    const mergedMemberTsFeatures = new Set<TsFeature>();
+    for (let memberI = 0; memberI < this.members.length; memberI++) {
+      const member = this.members[memberI];
+
+      switch (member.type.kind) {
+        case "IntersectionType":
+        case "ObjectType":
+        case "UnionType":
+          break;
+        default:
+          continue;
+      }
+
+      if (memberI === 0) {
+        for (const tsFeature of member.type.tsFeatures) {
+          mergedMemberTsFeatures.add(tsFeature);
+        }
+      }
+
+      if (member.type.tsFeatures.size !== mergedMemberTsFeatures.size) {
+        throw new Error(
+          `${this} has a member (${member}) with different tsFeatures than the other members`,
+        );
+      }
+
+      for (const tsFeature of member.type.tsFeatures) {
+        if (!mergedMemberTsFeatures.has(tsFeature)) {
+          throw new Error(
+            `${this} has a member (${member}) with different tsFeatures than the other members`,
+          );
+        }
+      }
     }
 
-    return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
+    return this.#tsFeatures;
   }
 
-  get memberTypes(): readonly MemberTypeT[] {
-    invariant(this.#memberTypes.length > 0);
-    return this.#memberTypes;
+  addMember(member: MemberT): void {
+    this.#members.push(member);
+  }
+
+  override equals(other: AbstractCompoundType<MemberT, MemberTypeT>): boolean {
+    // return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
+    // Don't recurse
+    return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
   toString(): string {
-    return `${this.kind}(memberTypes=[${this.memberTypes.map((memberType) => memberType.toString()).join(", ")}])`;
+    return `${this.kind}(memberTypes=[${this.members.map((memberType) => memberType.toString()).join(", ")}])`;
+  }
+}
+
+export namespace AbstractCompoundType {
+  export interface Member<TypeT extends MemberType> {
+    readonly type: TypeT;
+  }
+
+  export type MemberType =
+    | BlankNodeType
+    | IdentifierType
+    | IntersectionType
+    | IriType
+    | LiteralType
+    | ObjectType
+    | TermType
+    | UnionType;
+
+  export function isMemberType(type: Type): type is MemberType {
+    switch (type.kind) {
+      case "BlankNodeType":
+      case "IdentifierType":
+      case "IntersectionType":
+      case "IriType":
+      case "LiteralType":
+      case "ObjectType":
+      case "TermType":
+      case "UnionType":
+        return true;
+      case "DefaultValueType":
+      case "LazyObjectOptionType":
+      case "LazyObjectSetType":
+      case "LazyObjectType":
+      case "ListType":
+      case "OptionType":
+      case "SetType":
+        return false;
+    }
   }
 }

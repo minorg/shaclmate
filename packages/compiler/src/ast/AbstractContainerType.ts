@@ -5,10 +5,7 @@ import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -43,6 +40,10 @@ export abstract class AbstractContainerType<
     this.itemType = itemType;
   }
 
+  override get recursive(): boolean {
+    return this.itemType.recursive;
+  }
+
   override equals(other: AbstractContainerType<ItemTypeT>): boolean {
     if (!super.equals(other)) {
       return false;
@@ -68,10 +69,7 @@ export namespace AbstractContainerType {
     | IriType
     | ListType
     | LiteralType
-    | ObjectIntersectionType
     | ObjectType
-    | ObjectUnionType
-    | PlaceholderType
     | TermType
     | UnionType;
 
@@ -83,9 +81,7 @@ export namespace AbstractContainerType {
       case "IriType":
       case "ListType":
       case "LiteralType":
-      case "ObjectIntersectionType":
       case "ObjectType":
-      case "ObjectUnionType":
       case "TermType":
       case "UnionType":
         return true;
@@ -96,8 +92,6 @@ export namespace AbstractContainerType {
       case "OptionType":
       case "SetType":
         return false;
-      case "PlaceholderType":
-        throw new Error("should never happen");
     }
   }
 }

@@ -96,7 +96,7 @@ function generate({
     );
   }
 
-  const iriPrefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
+  const prefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
 
   {
     const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
@@ -105,7 +105,7 @@ function generate({
     if (!validationReport.conforms) {
       process.stderr.write("input is not valid SHACL:\n");
       const n3WriterPrefixes: Record<string, string> = {};
-      for (const prefixEntry of iriPrefixMap.entries()) {
+      for (const prefixEntry of prefixMap.entries()) {
         n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
       }
       const n3Writer = new Writer({
@@ -120,10 +120,8 @@ function generate({
     }
   }
 
-  ShapesGraph.create({ dataset })
-    .chain((shapesGraph) =>
-      new Compiler({ generator, iriPrefixMap }).compile(shapesGraph),
-    )
+  ShapesGraph.create({ dataset, prefixMap })
+    .chain((shapesGraph) => new Compiler({ generator }).compile(shapesGraph))
     .ifLeft((error) => {
       throw error;
     })

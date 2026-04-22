@@ -1,3 +1,4 @@
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
 
@@ -15,12 +16,36 @@ export abstract class AbstractType {
    */
   readonly label: Maybe<string> = Maybe.empty();
 
+  /**
+   * Name of this type, from shaclmate:name or sh:name.
+   */
+  readonly name: Maybe<string>;
+
+  /**
+   * Does this type directly or indirectly reference itself?
+   */
+  abstract readonly recursive: boolean;
+
+  /**
+   * Identifier of the shape this type was derived from.
+   */
+  readonly shapeIdentifier: BlankNode | NamedNode;
+
   constructor({
     comment,
     label,
-  }: { comment: Maybe<string>; label: Maybe<string> }) {
+    name,
+    shapeIdentifier,
+  }: {
+    comment: Maybe<string>;
+    label: Maybe<string>;
+    name: Maybe<string>;
+    shapeIdentifier: BlankNode | NamedNode;
+  }) {
     this.comment = comment;
     this.label = label;
+    this.name = name;
+    this.shapeIdentifier = shapeIdentifier;
   }
 
   equals(other: AbstractType): boolean {

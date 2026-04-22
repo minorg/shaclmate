@@ -25,7 +25,7 @@ export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfTy
     prefixes: prefixes ?? {},
     queryType: "CONSTRUCT",
     template: (queryParameters.template ?? []).concat(
-      ${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({
+      ${this.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples({
         filter,
         focusIdentifier: subject,
         ignoreRdfType: !!ignoreRdfType,
@@ -35,7 +35,7 @@ export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfTy
     type: "query",
     where: (queryParameters.where ?? []).concat(
       ${snippets.normalizeSparqlWherePatterns}(
-        ${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({
+        ${this.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,

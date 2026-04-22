@@ -29,7 +29,7 @@ describe("toRdf", async () => {
   );
 
   it("should populate a dataset", ({ expect }) => {
-    const resource = harnesses.concreteChildClass.toRdf();
+    const resource = harnesses.concreteChildClass.toRdfResource();
     expect(resource.dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
@@ -55,7 +55,7 @@ describe("toRdf", async () => {
   });
 
   it("should produce serializable RDF", ({ expect }) => {
-    const resource = harnesses.nonClass.toRdf();
+    const resource = harnesses.nonClass.toRdfResource();
     const ttl = new Writer({ format: "text/turtle" }).quadsToString([
       ...resource.dataset,
     ]);
@@ -63,7 +63,7 @@ describe("toRdf", async () => {
   });
 
   it("explicit rdfType", ({ expect }) => {
-    const resource = harnesses.explicitRdfTypeClass.toRdf();
+    const resource = harnesses.explicitRdfTypeClass.toRdfResource();
     expect(resource.dataset.size).toStrictEqual(2); // One rdf:type and the property
     expect(
       resource.isInstanceOf(
@@ -82,7 +82,7 @@ describe("toRdf", async () => {
   });
 
   it("explicit toRdfType", ({ expect }) => {
-    const resource = harnesses.explicitFromToRdfTypesClass.toRdf();
+    const resource = harnesses.explicitFromToRdfTypesClass.toRdfResource();
     expect(resource.dataset.size).toStrictEqual(3); // Two RDF types and the property
     expect(
       resource.isInstanceOf(
@@ -106,13 +106,13 @@ describe("toRdf", async () => {
   });
 
   it("should not serialize default values", ({ expect }) => {
-    const resource = harnesses.defaultValuePropertiesClass.toRdf();
+    const resource = harnesses.defaultValuePropertiesClass.toRdfResource();
     expect(resource.dataset.size).toStrictEqual(1); // Only the rdf:type
   });
 
   it("should serialize non-default values", ({ expect }) => {
     const resource =
-      harnesses.defaultValuePropertiesOverriddenDifferent.toRdf();
+      harnesses.defaultValuePropertiesOverriddenDifferent.toRdfResource();
     expect(resource.dataset.size).toStrictEqual(5); // Properties + the rdf:type
     expect(
       resource
@@ -132,7 +132,7 @@ describe("toRdf", async () => {
     it(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
-      const dataResource = harness.toRdf();
+      const dataResource = harness.toRdfResource();
       const dataGraph = dataResource.dataset;
 
       const shapeNode = dataFactory.namedNode(

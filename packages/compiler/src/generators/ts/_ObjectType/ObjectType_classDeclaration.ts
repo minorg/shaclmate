@@ -6,7 +6,7 @@ import { tsComment } from "../tsComment.js";
 import { ObjectType_equalsFunctionOrMethodDeclaration } from "./ObjectType_equalsFunctionOrMethodDeclaration.js";
 import { ObjectType_hashFunctionOrMethodDeclarations } from "./ObjectType_hashFunctionOrMethodDeclarations.js";
 import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./ObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { ObjectType_toRdfFunctionOrMethodDeclaration } from "./ObjectType_toRdfFunctionOrMethodDeclaration.js";
+import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./ObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 
 function ObjectType_constructorDeclaration(this: ObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
@@ -67,19 +67,19 @@ ${this.comment
   .map(tsComment)
   .orDefault(
     "",
-  )}${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? ` extends ${this.parentObjectTypes[0].name}` : ""} {
+  )}export ${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? ` extends ${this.parentObjectTypes[0].name}` : ""} {
 ${joinCode(
   [
     ...this.properties.flatMap((property) => property.declaration.toList()),
-    ObjectType_constructorDeclaration.bind(this)(),
+    ObjectType_constructorDeclaration.call(this),
     ...this.properties.flatMap((property) =>
       property.getAccessorDeclaration.toList(),
     ),
-    ...ObjectType_equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...ObjectType_hashFunctionOrMethodDeclarations.bind(this)(),
-    ...ObjectType_toJsonFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...ObjectType_toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
-    ...ObjectType_toStringMethodDeclaration.bind(this)().toList(),
+    ...ObjectType_equalsFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_hashFunctionOrMethodDeclarations.call(this),
+    ...ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_toRdfResourceFunctionOrMethodDeclaration.call(this).toList(),
+    ...ObjectType_toStringMethodDeclaration.call(this).toList(),
   ],
   { on: "\n\n" },
 )}

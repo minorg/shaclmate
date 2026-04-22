@@ -1,9 +1,10 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { SetType } from "./SetType.js";
@@ -21,6 +22,8 @@ export abstract class AbstractLazyObjectType<
     readonly rawName: Code;
   };
 
+  override readonly abstract = false;
+  override readonly declaration: Maybe<Code> = Maybe.empty();
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
@@ -79,6 +82,10 @@ export abstract class AbstractLazyObjectType<
     return this.runtimeClass.name;
   }
 
+  get recursive(): boolean {
+    return this.partialType.recursive;
+  }
+
   @Memoize()
   override get schema(): Code {
     return code`${removeUndefined(this.schemaObject)}`;
@@ -94,13 +101,13 @@ export abstract class AbstractLazyObjectType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partial() }))`;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partial() }))`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partial() }))`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partial() }))`;
   }
 
   protected override get schemaObject() {
@@ -153,10 +160,10 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
-    return this.partialType.toRdfExpression({
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    return this.partialType.toRdfResourceValuesExpression({
       variables: {
         ...variables,
         value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
@@ -164,34 +171,34 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
-  protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
-    resolvedObjectUnionType,
-    partialObjectUnionType,
+  protected resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({
+    resolvedNamedObjectUnionType,
+    partialNamedObjectUnionType,
     variables,
   }: {
-    resolvedObjectUnionType: ObjectUnionType;
-    partialObjectUnionType: ObjectUnionType;
+    resolvedNamedObjectUnionType: NamedObjectUnionType;
+    partialNamedObjectUnionType: NamedObjectUnionType;
     variables: { resolvedObjectUnion: Code };
   }) {
     invariant(
-      resolvedObjectUnionType.memberTypes.length ===
-        partialObjectUnionType.memberTypes.length,
+      resolvedNamedObjectUnionType.members.length ===
+        partialNamedObjectUnionType.members.length,
     );
 
-    const caseBlocks = resolvedObjectUnionType.memberTypes.map(
-      (resolvedObjectType, objectTypeI) => {
-        return code`${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+    const caseBlocks = resolvedNamedObjectUnionType.members.map(
+      ({ discriminantValues }, memberI) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.members[memberI].type.newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(
       code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
+    return code`switch (${variables.resolvedObjectUnion}.${resolvedNamedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 
 export namespace AbstractLazyObjectType {
-  export type ObjectTypeConstraint = ObjectType | ObjectUnionType;
+  export type ObjectTypeConstraint = ObjectType | NamedObjectUnionType;
   export type PartialTypeConstraint =
     | ObjectTypeConstraint
     | OptionType<ObjectTypeConstraint>

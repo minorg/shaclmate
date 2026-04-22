@@ -1,4 +1,7 @@
-import { ShapesGraph as _ShapesGraph } from "@shaclmate/shacl-ast";
+import {
+  ShapesGraph as _ShapesGraph,
+  type CurieFactory,
+} from "@shaclmate/shacl-ast";
 import { owl, rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { Either } from "purify-ts";
 import type { Resource } from "rdfjs-resource";
@@ -36,7 +39,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: ShapesGraph;
     }): Either<Error, NodeShape> {
-      return generated.NodeShape.$fromRdf(resource, {
+      return generated.NodeShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedShape) => {
@@ -82,7 +85,7 @@ export namespace ShapesGraph {
     }: {
       resource: Resource;
     }): Either<Error, Ontology> {
-      return generated.Ontology.$fromRdf(resource, {
+      return generated.Ontology.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -93,7 +96,7 @@ export namespace ShapesGraph {
     }: {
       resource: Resource;
     }): Either<Error, PropertyGroup> {
-      return generated.PropertyGroup.$fromRdf(resource, {
+      return generated.PropertyGroup.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
@@ -102,17 +105,29 @@ export namespace ShapesGraph {
     }
 
     protected override createPropertyShape({
+      curieFactory,
       resource,
       shapesGraph,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph;
     }): Either<Error, PropertyShape> {
-      return generated.PropertyShape.$fromRdf(resource, {
+      return generated.PropertyShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
-        (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
+        (generatedShape) =>
+          new PropertyShape(
+            {
+              ...generatedShape,
+              path:
+                (generatedShape.path.termType === "NamedNode"
+                  ? curieFactory.create(generatedShape.path).extract()
+                  : undefined) ?? generatedShape.path,
+            },
+            shapesGraph,
+          ),
       );
     }
   }

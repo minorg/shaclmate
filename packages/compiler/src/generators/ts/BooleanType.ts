@@ -14,7 +14,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   );
   override readonly kind = "BooleanType";
   override readonly schemaType = code`${snippets.BooleanSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.booleanSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
@@ -42,9 +42,11 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return code`${imports.z}.boolean()`;
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractPrimitiveType<boolean>["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${snippets.literalFactory}.boolean(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
   }
 

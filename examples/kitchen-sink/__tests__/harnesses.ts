@@ -570,6 +570,25 @@ export const harnesses = {
     }),
     kitchenSink.MutablePropertiesClass,
   ),
+  namedUnionPropertiesClass1: new ClassHarness(
+    new kitchenSink.NamedUnionPropertiesClass({
+      $identifier,
+      namedUnion1Property: "test",
+      namedUnion2Property: { type: "date", value: new Date("2025-12-08") },
+    }),
+    kitchenSink.NamedUnionPropertiesClass,
+  ),
+  namedUnionPropertiesClass2: new ClassHarness(
+    new kitchenSink.NamedUnionPropertiesClass({
+      $identifier,
+      namedUnion1Property: dataFactory.namedNode("http://example.com"),
+      namedUnion2Property: {
+        type: "dateTime",
+        value: new Date("2025-12-08T21:17:27+00:00"),
+      },
+    }),
+    kitchenSink.NamedUnionPropertiesClass,
+  ),
   // nodeKindsClass1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
   nodeKindsClass1: new ClassHarness(
     new kitchenSink.NodeKindsClass({
@@ -765,7 +784,7 @@ export const harnesses = {
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrClassOrStringProperty: {
-        type: "0-ClassUnionMember1",
+        type: "ClassUnionMember1",
         value: new kitchenSink.ClassUnionMember1({
           $identifier: dataFactory.namedNode(
             "http://example.com/classUnionMember1a",
@@ -777,7 +796,7 @@ export const harnesses = {
       optionalIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
       optionalIriOrStringProperty: dataFactory.namedNode("http://example.com"),
       requiredClassOrClassOrStringProperty: {
-        type: "0-ClassUnionMember1",
+        type: "ClassUnionMember1",
         value: new kitchenSink.ClassUnionMember1({
           $identifier: dataFactory.namedNode(
             "http://example.com/classUnionMember1b",
@@ -796,7 +815,7 @@ export const harnesses = {
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrClassOrStringProperty: {
-        type: "1-ClassUnionMember2",
+        type: "ClassUnionMember2",
         value: new kitchenSink.ClassUnionMember2({
           $identifier: dataFactory.namedNode(
             "http://example.com/classUnionMember2a",
@@ -808,7 +827,7 @@ export const harnesses = {
       optionalIriOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrStringProperty: "test",
       requiredClassOrClassOrStringProperty: {
-        type: "2-string",
+        type: "string",
         value: "test",
       },
       requiredIriOrLiteralProperty: dataFactory.literal("test"),
@@ -816,11 +835,11 @@ export const harnesses = {
       setClassOrClassOrStringProperty: [
         // Opposite order
         {
-          type: "2-string",
+          type: "string",
           value: "test",
         },
         {
-          type: "1-ClassUnionMember2",
+          type: "ClassUnionMember2",
           value: new kitchenSink.ClassUnionMember2({
             $identifier: dataFactory.namedNode(
               "http://example.com/classUnionMember2b",
@@ -830,7 +849,7 @@ export const harnesses = {
           }),
         },
         {
-          type: "0-ClassUnionMember1",
+          type: "ClassUnionMember1",
           value: new kitchenSink.ClassUnionMember1({
             $identifier: dataFactory.namedNode(
               "http://example.com/classUnionMember1b",

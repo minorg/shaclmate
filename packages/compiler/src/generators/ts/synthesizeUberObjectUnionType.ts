@@ -1,11 +1,12 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
+import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
@@ -13,10 +14,11 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
  */
 export function synthesizeUberObjectUnionType(parameters: {
   objectTypes: readonly ObjectType[];
-}): ObjectUnionType {
+}): NamedObjectUnionType {
   const objectTypes = parameters.objectTypes.filter(
     (objectType) => !objectType.extern, // && !objectType.name.startsWith(syntheticNamePrefix),
   );
+  invariant(objectTypes.length > 0);
 
   const nodeKinds = objectTypes.reduce((nodeKinds, objectType) => {
     for (const nodeKind of objectType.identifierType.nodeKinds) {
@@ -50,9 +52,8 @@ export function synthesizeUberObjectUnionType(parameters: {
     }
   }
 
-  return new ObjectUnionType({
+  return new NamedObjectUnionType({
     comment: Maybe.empty(),
-    export_: true,
     features: objectTypes.reduce((features, objectType) => {
       for (const feature of objectType.features) {
         features.add(feature);
@@ -62,7 +63,11 @@ export function synthesizeUberObjectUnionType(parameters: {
     }, new Set<TsFeature>()),
     identifierType,
     label: Maybe.empty(),
-    memberTypes: objectTypes,
+    members: objectTypes.map((objectType) => ({
+      discriminantValue: Maybe.empty(),
+      type: objectType,
+    })),
     name: `${syntheticNamePrefix}Object`,
+    recursive: false,
   });
 }

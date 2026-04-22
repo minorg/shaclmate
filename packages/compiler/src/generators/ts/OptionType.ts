@@ -100,13 +100,13 @@ export class OptionType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return code`${snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`${snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   protected override get schemaObject() {
@@ -131,13 +131,13 @@ export class OptionType<
       : code`${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
-  override fromRdfExpression(
+  override fromRdfResourceValuesExpression(
     parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["fromRdfExpression"]
+      AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
     >[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${imports.Maybe}.of(value)) : ${imports.Resource}.Values.fromValue<${imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${imports.Maybe}.empty() }))`;
+    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${imports.Maybe}.of(value)) : ${imports.Resource}.Values.fromValue<${imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${imports.Maybe}.empty() }))`;
   }
 
   override graphqlResolveExpression(
@@ -204,12 +204,16 @@ export class OptionType<
     return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })})).extract()`;
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractContainerType<ItemTypeT>["toRdfExpression"]>[0]): Code {
-    const itemTypeToRdfExpression = this.itemType.toRdfExpression({
-      variables: { ...variables, value: code`value` },
-    });
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toRdfResourceValuesExpression"]
+  >[0]): Code {
+    const itemTypeToRdfExpression = this.itemType.toRdfResourceValuesExpression(
+      {
+        variables: { ...variables, value: code`value` },
+      },
+    );
     let toRdfExpression = code`${variables.value}.toList()`;
     if (!codeEquals(itemTypeToRdfExpression, code`[value]`)) {
       toRdfExpression = code`${toRdfExpression}.flatMap((value) => ${itemTypeToRdfExpression})`;

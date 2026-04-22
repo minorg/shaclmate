@@ -3,12 +3,12 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./snippets_CollectionSchema.js";
 import { snippets_liftSparqlPatterns } from "./snippets_liftSparqlPatterns.js";
-import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_setSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}setSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlWherePatternsFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_ValueSparqlWherePatternsFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item() });
 

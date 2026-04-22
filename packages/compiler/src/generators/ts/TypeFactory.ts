@@ -3,12 +3,16 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import base62 from "@sindresorhus/base62";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
+
+import { Maybe } from "purify-ts";
 import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
-import type * as ast from "../../ast/index.js";
+
+import * as ast from "../../ast/index.js";
+
 import { logger } from "../../logger.js";
-import { codeName } from "../codeName.js";
+import { AnonymousUnionType } from "./AnonymousUnionType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -25,8 +29,9 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
+import { NamedUnionType } from "./NamedUnionType.js";
 import { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
@@ -34,26 +39,12 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
-import { UnionType } from "./UnionType.js";
-
-const reservedTsIdentifiers = reservedTsIdentifiers_({
-  includeGlobalProperties: true,
-});
-
-const tsName = codeName((value) => {
-  // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
-  if (reservedTsIdentifiers.has(value)) {
-    // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
-    return `$_${value}$`;
-  }
-
-  return value.replaceAll(
-    /\P{ID_Continue}/gu,
-    (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
-  );
-}, syntheticNamePrefix);
 
 export class TypeFactory {
+  private cachedNamedObjectUnionTypesByShapeIdentifier: TermMap<
+    BlankNode | NamedNode,
+    NamedObjectUnionType
+  > = new TermMap();
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
@@ -62,10 +53,44 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectType
   > = new TermMap();
-  private cachedObjectUnionTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    ObjectUnionType
-  > = new TermMap();
+
+  createNamedObjectUnionType(
+    astType: ast.ObjectUnionType,
+  ): NamedObjectUnionType {
+    {
+      const cachedNamedObjectUnionType =
+        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
+          astType.shapeIdentifier,
+        );
+      if (cachedNamedObjectUnionType) {
+        return cachedNamedObjectUnionType;
+      }
+    }
+
+    const namedObjectUnionType = new NamedObjectUnionType({
+      comment: astType.comment,
+      features: astType.tsFeatures,
+      identifierType: this.createIdentifierType(
+        ast.ObjectCompoundType.identifierType(astType),
+      ),
+      label: astType.label,
+      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
+        (objectType) => ({
+          discriminantValue: Maybe.empty(),
+          type: this.createObjectType(objectType),
+        }),
+      ),
+      name: tsName(astType.name.unsafeCoerce()),
+      recursive: astType.recursive,
+    });
+
+    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      namedObjectUnionType,
+    );
+
+    return namedObjectUnionType;
+  }
 
   createObjectType(astType: ast.ObjectType): ObjectType {
     {
@@ -79,16 +104,16 @@ export class TypeFactory {
 
     const identifierType = this.createIdentifierType(astType.identifierType);
 
+    const name = tsName(astType.name.unsafeCoerce(), {
+      synthetic: astType.synthetic,
+    });
     const staticModuleName =
-      astType.childObjectTypes.length > 0
-        ? `${tsName(astType)}Static`
-        : tsName(astType);
+      astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
     const objectType = new ObjectType({
       abstract: astType.abstract,
       comment: astType.comment,
       declarationType: astType.tsObjectDeclarationType,
-      export_: astType.export,
       extern: astType.extern,
       features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
@@ -107,6 +132,41 @@ export class TypeFactory {
         astType.descendantObjectTypes.map((astType) =>
           this.createObjectType(astType),
         ),
+      lazyDiscriminantProperty: (objectType: ObjectType) => {
+        // Discriminant property
+        const discriminantOwnValue = !astType.abstract
+          ? objectType.discriminantValue
+          : undefined;
+        const discriminantDescendantValues = new Set<string>();
+        for (const descendantObjectType of objectType.descendantObjectTypes) {
+          if (!descendantObjectType.abstract) {
+            discriminantDescendantValues.add(
+              descendantObjectType.discriminantValue,
+            );
+          }
+        }
+
+        return new ObjectType.DiscriminantProperty({
+          name: `${syntheticNamePrefix}type`,
+          objectType,
+          type: new ObjectType.DiscriminantProperty.Type({
+            descendantValues: [...discriminantDescendantValues].sort(),
+            mutable: false,
+            ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
+          }),
+          visibility: "public",
+        });
+      },
+      lazyIdentifierProperty: (objectType: ObjectType) =>
+        new ObjectType.IdentifierProperty({
+          identifierMintingStrategy: astType.identifierMintingStrategy,
+          identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
+          name: `${syntheticNamePrefix}identifier`,
+          objectType,
+          type: identifierType,
+          typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
+          visibility: "public",
+        }),
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
           this.createObjectType(astType),
@@ -120,7 +180,7 @@ export class TypeFactory {
             if (left.order > right.order) {
               return 1;
             }
-            return tsName(left).localeCompare(tsName(right));
+            return tsName(left.name).localeCompare(tsName(right.name));
           })
           .map((astProperty) =>
             this.createObjectTypeProperty({
@@ -129,38 +189,11 @@ export class TypeFactory {
             }),
           );
 
-        // Type discriminant property
-        const typeDiscriminantOwnValue = !astType.abstract
-          ? objectType.discriminantValue
-          : undefined;
-        const typeDiscriminantDescendantValues = new Set<string>();
-        for (const descendantObjectType of objectType.descendantObjectTypes) {
-          if (!descendantObjectType.abstract) {
-            typeDiscriminantDescendantValues.add(
-              descendantObjectType.discriminantValue,
-            );
-          }
-        }
         if (
-          typeDiscriminantOwnValue ||
-          typeDiscriminantDescendantValues.size > 0
+          objectType._discriminantProperty.type.ownValues.length > 0 ||
+          objectType._discriminantProperty.type.descendantValues.length > 0
         ) {
-          properties.splice(
-            0,
-            0,
-            new ObjectType.TypeDiscriminantProperty({
-              name: `${syntheticNamePrefix}type`,
-              objectType,
-              type: new ObjectType.TypeDiscriminantProperty.Type({
-                descendantValues: [...typeDiscriminantDescendantValues].sort(),
-                mutable: false,
-                ownValues: typeDiscriminantOwnValue
-                  ? [typeDiscriminantOwnValue]
-                  : [],
-              }),
-              visibility: "public",
-            }),
-          );
+          properties.splice(0, 0, objectType._discriminantProperty);
         }
 
         // Some ObjectTypes have an identifierPrefix property, depending on their identifier minting strategy.
@@ -189,24 +222,12 @@ export class TypeFactory {
         }
 
         // Every ObjectType has an identifier property. Some are abstract.
-        properties.splice(
-          0,
-          0,
-          new ObjectType.IdentifierProperty({
-            identifierMintingStrategy: astType.identifierMintingStrategy,
-            identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
-            name: `${syntheticNamePrefix}identifier`,
-            objectType,
-            type: identifierType,
-            typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-            visibility: "public",
-          }),
-        );
+        properties.splice(0, 0, objectType.identifierProperty);
 
         return properties;
       },
-      identifierMintingStrategy: astType.identifierMintingStrategy,
-      name: tsName(astType),
+      name,
+      recursive: astType.recursive,
       staticModuleName,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
@@ -216,36 +237,6 @@ export class TypeFactory {
       objectType,
     );
     return objectType;
-  }
-
-  createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
-    {
-      const cachedObjectUnionType =
-        this.cachedObjectUnionTypesByShapeIdentifier.get(
-          astType.shapeIdentifier,
-        );
-      if (cachedObjectUnionType) {
-        return cachedObjectUnionType;
-      }
-    }
-
-    const objectUnionType = new ObjectUnionType({
-      comment: astType.comment,
-      export_: astType.export,
-      features: astType.tsFeatures,
-      identifierType: this.createIdentifierType(astType.identifierType),
-      label: astType.label,
-      memberTypes: astType.memberObjectTypes.map((objectType) =>
-        this.createObjectType(objectType),
-      ),
-      name: tsName(astType as ast.ObjectUnionType),
-    });
-
-    this.cachedObjectUnionTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      objectUnionType,
-    );
-    return objectUnionType;
   }
 
   createType(
@@ -273,16 +264,10 @@ export class TypeFactory {
         return this.createListType(astType);
       case "LiteralType":
         return this.createLiteralType(astType, parameters);
-      case "ObjectIntersectionType":
-        throw new Error("not implemented");
       case "ObjectType":
         return this.createObjectType(astType);
-      case "ObjectUnionType":
-        return this.createObjectUnionType(astType);
       case "OptionType":
         return this.createOptionType(astType);
-      case "PlaceholderType":
-        throw new Error(astType.kind);
       case "SetType":
         return this.createSetType(astType);
       case "TermType":
@@ -290,6 +275,44 @@ export class TypeFactory {
       case "UnionType":
         return this.createUnionType(astType);
     }
+  }
+
+  createUnionType(
+    astType: ast.UnionType,
+  ): AnonymousUnionType | NamedUnionType | NamedObjectUnionType {
+    if (astType.isObjectUnionType()) {
+      return this.createNamedObjectUnionType(astType);
+    }
+
+    return astType.name
+      .map<AnonymousUnionType | NamedUnionType>(
+        (name) =>
+          new NamedUnionType({
+            comment: astType.comment,
+            features: astType.tsFeatures,
+            identifierType: Maybe.empty(),
+            label: astType.label,
+            members: astType.members.map((member) => ({
+              discriminantValue: member.discriminantValue,
+              type: this.createType(member.type),
+            })),
+            name,
+            recursive: astType.recursive,
+          }),
+      )
+      .orDefaultLazy(
+        () =>
+          new AnonymousUnionType({
+            comment: astType.comment,
+            label: astType.label,
+            identifierType: Maybe.empty(),
+            members: astType.members.map((member) => ({
+              discriminantValue: member.discriminantValue,
+              type: this.createType(member.type),
+            })),
+            recursive: astType.recursive,
+          }),
+      );
   }
 
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
@@ -342,10 +365,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -355,10 +378,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createSetType(astType.partialType) as SetType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        ObjectType | ObjectUnionType
+        ObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -370,10 +393,10 @@ export class TypeFactory {
 
       partialType: this.createType(astType.partialType) as
         | ObjectType
-        | ObjectUnionType,
+        | NamedObjectUnionType,
       resolveType: this.createType(astType.resolveType) as
         | ObjectType
-        | ObjectUnionType,
+        | NamedObjectUnionType,
     });
   }
 
@@ -544,15 +567,13 @@ export class TypeFactory {
       }
     }
 
-    const name = tsName(astObjectTypeProperty);
-
     const property = new ObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
       label: astObjectTypeProperty.label,
       mutable: astObjectTypeProperty.mutable,
       objectType,
-      name,
+      name: tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
       type: this.createType(astObjectTypeProperty.type),
@@ -598,17 +619,6 @@ export class TypeFactory {
       nodeKinds: astType.nodeKinds,
     });
   }
-
-  private createUnionType(astType: ast.UnionType) {
-    return new UnionType({
-      comment: astType.comment,
-      label: astType.label,
-      memberDiscriminantValues: astType.memberDiscriminantValues,
-      memberTypes: astType.memberTypes.map((astType) =>
-        this.createType(astType),
-      ),
-    });
-  }
 }
 
 function objectTypeNeedsIdentifierPrefixProperty(
@@ -629,3 +639,28 @@ function objectTypeNeedsIdentifierPrefixProperty(
     })
     .orDefault(false);
 }
+
+function tsName(name: string, options?: { synthetic?: boolean }): string {
+  if (name[0] === "$") {
+    return name;
+  }
+
+  // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
+  if (reservedTsIdentifiers.has(name)) {
+    // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
+    return `$_${name}$`;
+  }
+
+  let tsName = name.replaceAll(
+    /\P{ID_Continue}/gu,
+    (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
+  );
+  if (options?.synthetic) {
+    tsName = `${syntheticNamePrefix}${tsName}`;
+  }
+  return tsName;
+}
+
+const reservedTsIdentifiers = reservedTsIdentifiers_({
+  includeGlobalProperties: true,
+});

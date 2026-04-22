@@ -1,41 +1,30 @@
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
-import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
-import * as _ShapesGraphToAstTransformer from "./_ShapesGraphToAstTransformer/index.js";
+import { invariant } from "ts-invariant";
+import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
+import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
 
 export class ShapesGraphToAstTransformer {
-  // Members are protected so they're accessible to the bound functions
-  protected readonly curieFactory: CurieFactory;
-  protected readonly nodeShapeAstTypesByIdentifier: TermMap<
+  // Members are protected so they're accessible to functions in other files
+  protected readonly cachedAstTypesByShapeIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
-    _ShapesGraphToAstTransformer.NodeShapeAstType
+    ast.Type
   > = new TermMap();
   protected readonly shapesGraph: input.ShapesGraph;
-  protected shapeIdentifier = _ShapesGraphToAstTransformer.shapeIdentifier;
-  protected transformNodeShapeToAstType =
-    _ShapesGraphToAstTransformer.transformNodeShapeToAstType;
-  protected transformPropertyShapeToAstObjectTypeProperty =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstObjectTypeProperty;
-  protected transformShapeToAstType =
-    _ShapesGraphToAstTransformer.transformShapeToAstType;
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
-    iriPrefixMap,
     shapesGraph,
     tsFeaturesDefault,
   }: {
-    iriPrefixMap: PrefixMap;
     shapesGraph: input.ShapesGraph;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }) {
-    this.curieFactory = new CurieFactory({ prefixMap: iriPrefixMap });
     this.shapesGraph = shapesGraph;
     this.tsFeaturesDefault =
       tsFeaturesDefault ??
@@ -43,11 +32,10 @@ export class ShapesGraphToAstTransformer {
   }
 
   transform(): Either<Error, ast.Ast> {
-    const nodeShapeAstObjectIntersectionTypes: ast.ObjectIntersectionType[] =
-      [];
-    const nodeShapeAstObjectTypes: ast.ObjectType[] = [];
+    const astNamedIntersectionTypes: ast.IntersectionType[] = [];
+    const astObjectTypes: ast.ObjectType[] = [];
     const syntheticAstObjectTypesByName: Record<string, ast.ObjectType> = {};
-    const nodeShapeAstObjectUnionTypes: ast.ObjectUnionType[] = [];
+    const astNamedUnionTypes: ast.UnionType[] = [];
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
       if (nodeShape.identifier.termType !== "NamedNode") {
@@ -58,21 +46,25 @@ export class ShapesGraphToAstTransformer {
         continue;
       }
 
-      const nodeShapeAstTypeEither =
-        this.transformNodeShapeToAstType(nodeShape);
+      const nodeShapeAstTypeEither = transformShapeToAstType.call(
+        this,
+        nodeShape,
+        new ShapeStack(), // Start a new ShapeStack per named node shape
+      );
       if (nodeShapeAstTypeEither.isLeft()) {
         return nodeShapeAstTypeEither;
       }
       const nodeShapeAstType = nodeShapeAstTypeEither.unsafeCoerce();
 
       switch (nodeShapeAstType.kind) {
-        case "ListType":
-          break; // Ignore
-        case "ObjectIntersectionType":
-          nodeShapeAstObjectIntersectionTypes.push(nodeShapeAstType);
+        case "IntersectionType":
+          if (nodeShapeAstType.name.isJust()) {
+            astNamedIntersectionTypes.push(nodeShapeAstType);
+          }
           break;
         case "ObjectType": {
-          nodeShapeAstObjectTypes.push(nodeShapeAstType);
+          invariant(nodeShapeAstType.name.isJust());
+          astObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {
               case "LazyObjectOptionType":
@@ -80,7 +72,7 @@ export class ShapesGraphToAstTransformer {
               case "LazyObjectType": {
                 const partialItemType =
                   property.type.partialType.kind === "ObjectType" ||
-                  property.type.partialType.kind === "ObjectUnionType"
+                  property.type.partialType.kind === "UnionType"
                     ? property.type.partialType
                     : property.type.partialType.itemType;
 
@@ -101,20 +93,22 @@ export class ShapesGraphToAstTransformer {
 
           break;
         }
-        case "ObjectUnionType":
-          nodeShapeAstObjectUnionTypes.push(nodeShapeAstType);
+        case "UnionType":
+          if (nodeShapeAstType.name.isJust()) {
+            astNamedUnionTypes.push(nodeShapeAstType);
+          }
           break;
         default:
-          nodeShapeAstType satisfies never;
+          break;
       }
     }
 
     return Either.of({
-      objectIntersectionTypes: nodeShapeAstObjectIntersectionTypes,
-      objectTypes: nodeShapeAstObjectTypes.concat(
+      namedIntersectionTypes: astNamedIntersectionTypes,
+      objectTypes: astObjectTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
       ),
-      objectUnionTypes: nodeShapeAstObjectUnionTypes,
+      namedUnionTypes: astNamedUnionTypes,
     });
   }
 }

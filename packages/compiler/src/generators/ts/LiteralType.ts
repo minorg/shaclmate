@@ -11,7 +11,7 @@ export class LiteralType extends AbstractLiteralType {
   override readonly kind = "LiteralType";
   override readonly name = code`${imports.Literal}`;
   override readonly schemaType = code`${snippets.LiteralSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.literalSparqlWherePatterns}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
@@ -21,7 +21,7 @@ export class LiteralType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+    return code`${imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
   }
 
   override graphqlResolveExpression(

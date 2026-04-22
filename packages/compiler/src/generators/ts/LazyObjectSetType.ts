@@ -2,8 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -61,14 +61,14 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
         sourceTypeof: "object",
       });
     } else if (
-      this.resolveType.itemType.kind === "ObjectUnionType" &&
-      this.partialType.itemType.kind === "ObjectUnionType" &&
-      this.resolveType.itemType.memberTypes.length ===
-        this.partialType.itemType.memberTypes.length
+      this.resolveType.itemType.kind === "NamedObjectUnionType" &&
+      this.partialType.itemType.kind === "NamedObjectUnionType" &&
+      this.resolveType.itemType.members.length ===
+        this.partialType.itemType.members.length
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolveType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
@@ -93,11 +93,11 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
   }
 
-  override fromRdfExpression(
-    parameters: Parameters<Super["fromRdfExpression"]>[0],
+  override fromRdfResourceValuesExpression(
+    parameters: Parameters<Super["fromRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers, options) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers, ...options }) })))`;
+    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers, options) => ${variables.objectSet}.${this.resolveType.itemType.objectSetMethodNames.objects}({ identifiers, ...options }) })))`;
   }
 
   override graphqlResolveExpression({

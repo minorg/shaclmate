@@ -27,12 +27,15 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
+  override readonly abstract = false;
+  override readonly declaration: Maybe<Code> = Maybe.empty();
   readonly equalsFunction = code`${snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
+  override readonly recursive = false;
   override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
     "object" as const,
   ]);
@@ -129,12 +132,12 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
+  override get valueSparqlConstructTriplesFunction(): Code {
     return code`((_: object) => [])`;
   }
 
-  override fromRdfExpression(
-    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
+  override fromRdfResourceValuesExpression(
+    parameters: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0],
   ): Code {
     // invariant(
     //   this.nodeKinds.has("Literal") &&
@@ -169,9 +172,9 @@ export abstract class AbstractTermType<
     return Maybe.empty();
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     return code`[${variables.value}]`;
   }
 
@@ -186,7 +189,7 @@ export abstract class AbstractTermType<
    */
   protected fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
+  }: Parameters<Type["fromRdfResourceValuesExpression"]>[0]): {
     hasValues?: Code;
     languageIn?: Code;
     preferredLanguages?: Code;

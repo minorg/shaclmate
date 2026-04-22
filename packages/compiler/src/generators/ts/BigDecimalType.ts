@@ -1,8 +1,8 @@
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
   override readonly filterFunction = code`${snippets.filterBigDecimal}`;
@@ -15,7 +15,7 @@ export class BigDecimalType extends AbstractLiteralType {
   override readonly name = code`${imports.BigDecimal}`;
   override readonly schemaType =
     code`${snippets.NumericSchema}<${imports.BigDecimal}>`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.bigDecimalSparqlWherePatterns}`;
 
   @Memoize()
@@ -100,9 +100,11 @@ export class BigDecimalType extends AbstractLiteralType {
     };
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractLiteralType["toRdfExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractLiteralType["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 }

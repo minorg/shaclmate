@@ -8,10 +8,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { IriType } from "./IriType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
@@ -39,11 +36,6 @@ export class ListType<
   readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
 
   /**
-   * Identifier of the node shape this type was derived from.
-   */
-  readonly shapeIdentifier: BlankNode | NamedNode;
-
-  /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
    *
    * This is usually the identifier of an sh:NodeShape that is also an rdfs:Class (i.e., a node shape with implicit
@@ -54,7 +46,6 @@ export class ListType<
   constructor({
     identifierMintingStrategy,
     identifierNodeKind,
-    shapeIdentifier,
     toRdfTypes,
     ...superParameters
   }: {
@@ -66,7 +57,6 @@ export class ListType<
     super(superParameters);
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierNodeKind = identifierNodeKind;
-    this.shapeIdentifier = shapeIdentifier;
     this.toRdfTypes = toRdfTypes;
   }
 
@@ -83,10 +73,7 @@ export namespace ListType {
     | IntersectionType
     | IriType
     | LiteralType
-    | ObjectIntersectionType
     | ObjectType
-    | ObjectUnionType
-    | PlaceholderType
     | TermType
     | UnionType;
 
@@ -97,10 +84,7 @@ export namespace ListType {
       case "IntersectionType":
       case "IriType":
       case "LiteralType":
-      case "ObjectIntersectionType":
       case "ObjectType":
-      case "ObjectUnionType":
-      case "PlaceholderType":
       case "TermType":
       case "UnionType":
         return true;

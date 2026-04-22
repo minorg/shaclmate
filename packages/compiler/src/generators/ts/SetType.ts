@@ -13,22 +13,24 @@ export class SetType<
   override readonly kind = "SetType";
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
-  override fromRdfExpression(
+  override fromRdfResourceValuesExpression(
     parameters: Parameters<
-      AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
+      AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
     >[0],
   ): Code {
     const { variables } = parameters;
-    const chain: Code[] = [this.itemType.fromRdfExpression(parameters)];
+    const chain: Code[] = [
+      this.itemType.fromRdfResourceValuesExpression(parameters),
+    ];
     if (this.minCount === 0 || this._mutable) {
       chain.push(
         code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
@@ -46,19 +48,19 @@ export class SetType<
 
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
-    const name = code`readonly (${this.itemType.jsonType().name})[]`;
+    const name = code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().name})[]`;
     if (this.minCount === 0) {
       return new AbstractCollectionType.JsonType(name, { optional: true });
     }
     return new AbstractCollectionType.JsonType(name);
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractCollectionType<ItemTypeT>["toRdfExpression"]
+    AbstractCollectionType<ItemTypeT>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`${variables.value}.flatMap((item) => ${this.itemType.toRdfExpression(
+    return code`${variables.value}.flatMap((item) => ${this.itemType.toRdfResourceValuesExpression(
       {
         variables: { ...variables, value: code`item` },
       },

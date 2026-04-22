@@ -54,7 +54,7 @@ const externalDependencies = {
   plur: "~5.1.0",
   "purify-ts": "~2.1.4",
   "rdf-validate-shacl": "0.5.8",
-  "rdfjs-resource": "3.0.6",
+  "rdfjs-resource": "3.0.7",
   "reserved-identifiers": "~1.0.0",
   react: "~18",
   "react-dom": "~18",

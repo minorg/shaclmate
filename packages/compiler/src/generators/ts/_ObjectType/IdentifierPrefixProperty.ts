@@ -84,7 +84,7 @@ protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} 
     return [];
   }
 
-  override fromRdfExpression(): Maybe<Code> {
+  override fromRdfResourceValuesExpression(): Maybe<Code> {
     return Maybe.empty();
   }
 
@@ -110,7 +110,7 @@ protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} 
     return Maybe.empty();
   }
 
-  override toRdfStatements(): readonly Code[] {
+  override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
 }

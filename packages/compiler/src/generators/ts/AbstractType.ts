@@ -10,6 +10,11 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractType {
   /**
+   * Is the type abstract?
+   */
+  abstract readonly abstract: boolean;
+
+  /**
    * Comment from rdfs:comment.
    */
   readonly comment: Maybe<string>;
@@ -18,6 +23,11 @@ export abstract class AbstractType {
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */
   abstract readonly conversions: readonly AbstractType.Conversion[];
+
+  /**
+   * The declaration of named types.
+   */
+  abstract readonly declaration: Maybe<Code>;
 
   /**
    * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
@@ -79,6 +89,11 @@ export abstract class AbstractType {
   abstract readonly name: Code | string;
 
   /**
+   * Does this type directly or indirectly reference itself?
+   */
+  abstract readonly recursive: boolean;
+
+  /**
    * TypeScript object describing this type, for runtime use.
    */
   abstract readonly schema: Code;
@@ -89,21 +104,26 @@ export abstract class AbstractType {
   abstract readonly schemaType: Code;
 
   /**
-   * A SparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property of this type.
+   * JavaScript typeof(s) the type.
+   */
+  abstract readonly typeofs: NonEmptyList<Typeof>;
+
+  /**
+   * A ValueSparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.
    *
-   * The function takes a parameters object (type: SparqlConstructTriplesFunctionParameters) with the following parameters:
+   * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
    * - ignoreRdfType: boolean
    * - schema: instance of this.schemaType
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
-  abstract readonly sparqlConstructTriplesFunction: Code;
+  abstract readonly valueSparqlConstructTriplesFunction: Code;
 
   /**
-   * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
+   * A ValueSparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property value of this type.
    *
-   * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
+   * The function takes a parameters object with the following parameters:
    * - filter: an instance of filterType | undefined
    * - preferredLanguages: array of preferred language code (strings) | undefined
    * - propertyPatterns: array of sparqljs.Pattern's for the property; may be empty
@@ -111,12 +131,7 @@ export abstract class AbstractType {
    * - valueVariable: rdfjs.Variable of the value of this type
    * - variablePrefix: string prefix to use for new variables
    */
-  abstract readonly sparqlWherePatternsFunction: Code;
-
-  /**
-   * JavaScript typeof(s) the type.
-   */
-  abstract readonly typeofs: NonEmptyList<Typeof>;
+  abstract readonly valueSparqlWherePatternsFunction: Code;
 
   constructor({
     comment,
@@ -169,7 +184,7 @@ export abstract class AbstractType {
    *   resource: the Resource passed to Object.fromRdf
    *   resourceValues: the Either<Error, rdfjsResource.Resource.Values> to be converted to values of this type
    */
-  abstract fromRdfExpression(parameters: {
+  abstract fromRdfResourceValuesExpression(parameters: {
     variables: {
       context: Code;
       graph: Code;
@@ -253,7 +268,7 @@ export abstract class AbstractType {
    *   resourceSet: ResourceSet for any new Resources needed while conversion (of e.g., nested objects)
    *   value: value of this type, to be converted to (BlankNode | Literal | NamedNode | bigint | boolean | number | string) or an array of the same
    */
-  abstract toRdfExpression(parameters: {
+  abstract toRdfResourceValuesExpression(parameters: {
     variables: {
       graph: Code;
       propertyPath: Code;
@@ -273,9 +288,13 @@ export namespace AbstractType {
   }
 
   export interface DiscriminantProperty {
+    readonly descendantValues: readonly DiscriminantProperty.Value[];
     readonly name: string;
-    readonly ownValues: readonly string[];
-    readonly descendantValues: readonly string[];
+    readonly ownValues: readonly DiscriminantProperty.Value[];
+  }
+
+  export namespace DiscriminantProperty {
+    export type Value = number | string;
   }
 
   export class GraphqlType {

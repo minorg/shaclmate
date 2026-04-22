@@ -1,4 +1,5 @@
 import dataFactory from "@rdfjs/data-model";
+import { Curie } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
@@ -8,7 +9,7 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
-import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
+import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -32,7 +33,6 @@ function synthesizePartialAstObjectType({
   return new ast.ObjectType({
     abstract: false,
     comment: Maybe.empty(),
-    export_: true,
     extern: false,
     fromRdfType: Maybe.empty(),
     identifierType,
@@ -50,9 +50,70 @@ function synthesizePartialAstObjectType({
   });
 }
 
+function propertyName(
+  this: ShapesGraphToAstTransformer,
+  objectType: ast.ObjectType,
+  propertyShape: input.PropertyShape,
+): string {
+  // Explicit shaclmate:name or sh:name
+  const name = propertyShape.shaclmateName.alt(propertyShape.name).extract();
+  if (name) {
+    return name;
+  }
+
+  // Explicit rdfs:label
+  const label = propertyShape.label.extract();
+  if (label) {
+    return label;
+  }
+
+  // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
+  // like ex:NodeShape-property
+  if (
+    propertyShape.identifier.termType === "NamedNode" &&
+    objectType.shapeIdentifier.termType === "NamedNode"
+  ) {
+    const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
+    if (
+      propertyShape.identifier.value.startsWith(
+        propertyShapeIdentifierPrefix,
+      ) &&
+      propertyShape.identifier.value.length >
+        propertyShapeIdentifierPrefix.length
+    ) {
+      return propertyShape.identifier.value.substring(
+        propertyShapeIdentifierPrefix.length,
+      );
+    }
+  }
+
+  // sh:path CURIE reference
+  if (propertyShape.path instanceof Curie) {
+    return propertyShape.path.reference;
+  }
+
+  // Shape identifier CURIE reference
+  if (propertyShape.identifier instanceof Curie) {
+    return propertyShape.identifier.reference;
+  }
+
+  // Shape identifier IRI
+  if (propertyShape.identifier.termType === "NamedNode") {
+    return propertyShape.identifier.value;
+  }
+
+  // sh:path IRI
+  if (propertyShape.path.termType === "NamedNode") {
+    return propertyShape.path.value;
+  }
+
+  throw new Error(`${propertyShape}: unable to infer name`);
+}
+
 function transformPropertyShapeToAstType(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
+  shapeStack: ShapeStack,
 ): Either<Error, ast.Type> {
   // if (
   //   propertyShape.path.kind === "PredicatePath" &&
@@ -60,8 +121,9 @@ function transformPropertyShapeToAstType(
   // ) {
   // }
 
-  return this.transformShapeToAstType(propertyShape, new ShapeStack()).chain(
-    (propertyShapeAstType) => {
+  return transformShapeToAstType
+    .call(this, propertyShape, shapeStack)
+    .chain((propertyShapeAstType) => {
       let maxCount = propertyShape.constraints.maxCount.orDefault(
         Number.MAX_SAFE_INTEGER,
       );
@@ -130,8 +192,7 @@ function transformPropertyShapeToAstType(
           mutable: propertyShape.mutable.orDefault(false),
         }),
       );
-    },
-  );
+    });
 }
 
 export function transformPropertyShapeToAstObjectTypeProperty(
@@ -144,32 +205,41 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     propertyShape: input.PropertyShape;
   },
 ): Either<Error, ast.ObjectType.Property> {
-  return Eithers.chain3(
-    transformShapeToAstAbstractTypeProperties(propertyShape),
+  const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
+  return Eithers.chain2(
     propertyShape.resolve,
-    transformPropertyShapeToAstType.bind(this)(propertyShape),
-  ).chain(([astAbstractTypeProperties, propertyShapeResolve, astType]) => {
+    transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),
+  ).chain(([propertyShapeResolve, astType]) => {
     let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
 
     if (propertyShapeResolve.isJust()) {
-      const astResolveTypeEither = this.transformNodeShapeToAstType(
-        propertyShapeResolve.unsafeCoerce(),
-      ).chain((astResolveType) => {
-        switch (astResolveType.kind) {
-          case "ListType":
-          case "ObjectIntersectionType":
-            return Left(
-              new Error(
-                `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
-              ),
-            );
-          case "ObjectType":
-          case "ObjectUnionType":
-            return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-              astResolveType,
-            );
-        }
-      });
+      const astResolveTypeEither = transformShapeToAstType
+        .call(this, propertyShapeResolve.unsafeCoerce(), shapeStack)
+        .chain((astResolveType) => {
+          switch (astResolveType.kind) {
+            case "ObjectType":
+              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+                astResolveType,
+              );
+            case "UnionType":
+              if (!astResolveType.isObjectUnionType()) {
+                return Left(
+                  new Error(
+                    `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-ObjectType members`,
+                  ),
+                );
+              }
+              return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+                astResolveType,
+              );
+            default:
+              return Left(
+                new Error(
+                  `${propertyShape} resolve cannot refer to a ${astResolveType.kind}`,
+                ),
+              );
+          }
+        });
       if (astResolveTypeEither.isLeft()) {
         return astResolveTypeEither;
       }
@@ -208,7 +278,16 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           });
           break;
         case "ObjectType":
-        case "ObjectUnionType":
+          astPartialItemType = astItemType;
+          break;
+        case "UnionType":
+          if (!astItemType.isObjectUnionType()) {
+            return Left(
+              new Error(
+                `${propertyShape} partial type cannot be a ${astItemType.kind} with non-ObjectType members`,
+              ),
+            );
+          }
           astPartialItemType = astItemType;
           break;
         default:
@@ -219,12 +298,19 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           );
       }
 
+      const astAbstractTypeProperties = {
+        comment: Maybe.empty(),
+        label: Maybe.empty(),
+        name: Maybe.empty(),
+        shapeIdentifier: propertyShape.identifier,
+      };
+
       switch (astType.kind) {
         case "BlankNodeType":
         case "IdentifierType":
         case "IriType":
         case "ObjectType":
-        case "ObjectUnionType":
+        case "UnionType":
           astType = new ast.LazyObjectType({
             ...astAbstractTypeProperties,
             partialType: astPartialItemType,
@@ -268,17 +354,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         description: propertyShape.description,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
-        name: propertyShape.shaclmateName.alt(propertyShape.name),
+        name: propertyName.call(this, objectType, propertyShape),
         objectType,
         order: propertyShape.order.orDefault(0),
-        path:
-          (propertyShape.path.termType === "NamedNode"
-            ? this.curieFactory.create(propertyShape.path).extract()
-            : undefined) ?? propertyShape.path,
-        shapeIdentifier:
-          (propertyShape.identifier.termType === "NamedNode"
-            ? this.curieFactory.create(propertyShape.identifier).extract()
-            : undefined) ?? propertyShape.identifier,
+        path: propertyShape.path,
+        shapeIdentifier: propertyShape.identifier,
         type: astType,
         visibility: propertyShape.visibility,
       }),

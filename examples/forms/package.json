@@ -14,7 +14,7 @@
     "@types/rdfjs__dataset": "~2.0.7",
     "n3": "~1.26.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.6",
+    "rdfjs-resource": "3.0.7",
     "react": "~18",
     "react-dom": "~18",
     "zod": "~4.1.12"

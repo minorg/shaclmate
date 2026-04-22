@@ -7,7 +7,7 @@ describe("fromJson", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
       const jsonObject = harness.toJson();
-      const fromJsonInstance: any = harness.fromJson(jsonObject).unsafeCoerce();
+      const fromJsonInstance: any = harness.fromJson(jsonObject);
       const equalsResult = harness.equals(fromJsonInstance).extract();
       if (equalsResult !== true) {
         console.log("not equal");
@@ -19,7 +19,7 @@ describe("fromJson", () => {
   it("concrete base class fromJson", ({ expect }) => {
     const fromJsonInstance = kitchenSink.ConcreteParentClassStatic.$fromJson(
       harnesses.concreteChildClass.toJson(),
-    ).unsafeCoerce();
+    );
     expect(fromJsonInstance).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
     expect(
       fromJsonInstance.$identifier.equals(

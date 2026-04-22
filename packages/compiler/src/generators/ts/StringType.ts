@@ -15,7 +15,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   );
   override readonly kind = "StringType";
   override readonly schemaType = code`${snippets.StringSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.stringSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["string" as const]);
 
@@ -58,9 +58,11 @@ export class StringType extends AbstractPrimitiveType<string> {
     }
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
+  }: Parameters<
+    AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
+  >[0]): Code {
     return code`[${snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${rdfjsTermExpression(this.datatype)}` : ""})]`;
   }
 

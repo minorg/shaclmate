@@ -1,29 +1,23 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import type { Maybe } from "purify-ts";
 import { PropertyPath, Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { PropertyVisibility } from "../enums/PropertyVisibility.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
-import type { Curie } from "./Curie.js";
 import { arrayEquals } from "./equals.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { Type } from "./Type.js";
 
 export class ObjectType extends AbstractType {
-  /**
-   * Classes generated from this type are abstract / cannot be instantiated themselves.
-   *
-   * Defaults to false.
-   */
-  readonly abstract: boolean;
-
   /**
    * Ancestor (parents, their parents, ad nauseum) ObjectTypes of this ObjectType.
    *
@@ -46,11 +40,25 @@ export class ObjectType extends AbstractType {
   readonly #descendantObjectTypes: ObjectType[] = [];
 
   /**
-   * Should generated code derived from this ObjectType be visible outside its module?
+   * Immediate parent ObjectTypes of this Object types.
    *
-   * Defaults to true.
+   * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly export: boolean;
+  readonly #parentObjectTypes: ObjectType[] = [];
+
+  /**
+   * Properties of this ObjectType.
+   *
+   * Mutable to support cycle-handling logic in the compiler.
+   */
+  readonly #properties: ObjectType.Property[] = [];
+
+  /**
+   * Classes generated from this type are abstract / cannot be instantiated themselves.
+   *
+   * Defaults to false.
+   */
+  readonly abstract: boolean;
 
   /**
    * If true, the code for this ObjectType is defined externally and should not be generated.
@@ -81,30 +89,6 @@ export class ObjectType extends AbstractType {
    * Type discriminant.
    */
   readonly kind = "ObjectType";
-
-  /**
-   * Name of this type, from shaclmate:name.
-   */
-  readonly name: Maybe<string>;
-
-  /**
-   * Immediate parent ObjectTypes of this Object types.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #parentObjectTypes: ObjectType[] = [];
-
-  /**
-   * Properties of this ObjectType.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  readonly #properties: ObjectType.Property[] = [];
-
-  /**
-   * Identifier of the shape this ObjectType was derived from.
-   */
-  readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -141,13 +125,10 @@ export class ObjectType extends AbstractType {
 
   constructor({
     abstract,
-    export_,
     extern,
     fromRdfType,
     identifierMintingStrategy,
     identifierType,
-    name,
-    shapeIdentifier,
     synthetic,
     toRdfTypes,
     tsFeatures,
@@ -156,13 +137,10 @@ export class ObjectType extends AbstractType {
     ...superParameters
   }: {
     abstract: boolean;
-    export_: boolean;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: BlankNodeType | IdentifierType | IriType;
-    name: Maybe<string>;
-    shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
     tsFeatures: ReadonlySet<TsFeature>;
@@ -171,18 +149,39 @@ export class ObjectType extends AbstractType {
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.abstract = abstract;
-    this.export = export_;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierType = identifierType;
-    this.name = name;
-    this.shapeIdentifier = shapeIdentifier;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
     this.tsFeatures = tsFeatures;
     this.tsImports = tsImports;
     this.tsObjectDeclarationType = tsObjectDeclarationType;
+  }
+
+  get ancestorObjectTypes(): readonly ObjectType[] {
+    return this.#ancestorObjectTypes;
+  }
+
+  get childObjectTypes(): readonly ObjectType[] {
+    return this.#childObjectTypes;
+  }
+
+  get descendantObjectTypes(): readonly ObjectType[] {
+    return this.#descendantObjectTypes;
+  }
+
+  get parentObjectTypes(): readonly ObjectType[] {
+    return this.#parentObjectTypes;
+  }
+
+  get properties(): readonly ObjectType.Property[] {
+    return this.#properties;
+  }
+
+  override get recursive(): boolean {
+    return this.properties.some((property) => property.recursive);
   }
 
   addAncestorObjectTypes(...ancestorObjectTypes: readonly ObjectType[]): void {
@@ -208,26 +207,6 @@ export class ObjectType extends AbstractType {
     for (const property of properties) {
       invariant(Object.is(property.objectType, this));
     }
-  }
-
-  get ancestorObjectTypes(): readonly ObjectType[] {
-    return this.#ancestorObjectTypes;
-  }
-
-  get childObjectTypes(): readonly ObjectType[] {
-    return this.#childObjectTypes;
-  }
-
-  get descendantObjectTypes(): readonly ObjectType[] {
-    return this.#descendantObjectTypes;
-  }
-
-  get parentObjectTypes(): readonly ObjectType[] {
-    return this.#parentObjectTypes;
-  }
-
-  get properties(): readonly ObjectType.Property[] {
-    return this.#properties;
   }
 
   override equals(other: ObjectType): boolean {
@@ -276,14 +255,14 @@ export namespace ObjectType {
     readonly mutable: boolean;
 
     /**
+     * Name of this property, derived from sh:name or shaclmate:name.
+     */
+    readonly name: string;
+
+    /**
      * Object type this property belongs to.
      */
     readonly objectType: ObjectType;
-
-    /**
-     * Name of this property, derived from sh:name or shaclmate:name.
-     */
-    readonly name: Maybe<string>;
 
     /**
      * Relative order of this property, derived from sh:order.
@@ -293,7 +272,7 @@ export namespace ObjectType {
     /**
      * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
      */
-    readonly path: Curie | PropertyPath;
+    readonly path: PropertyPath;
 
     /**
      * Identifier of the property shape.
@@ -327,10 +306,10 @@ export namespace ObjectType {
       description: Maybe<string>;
       label: Maybe<string>;
       mutable: boolean;
-      name: Maybe<string>;
+      name: string;
       objectType: ObjectType;
       order: number;
-      path: Curie | PropertyPath;
+      path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
       visibility: PropertyVisibility;
@@ -433,7 +412,6 @@ export namespace ObjectType {
           case "IdentifierType":
           case "IriType":
           case "LiteralType":
-          case "PlaceholderType":
           case "TermType":
             return false;
           case "LazyObjectOptionType":
@@ -494,38 +472,17 @@ export namespace ObjectType {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);
             }
-            for (const memberType of currentPropertyType.memberTypes) {
+            for (const member of currentPropertyType.members) {
               if (
                 helper(
                   stack.concat({
                     objectType,
                     property,
-                    propertyType: propertyType.concat(memberType),
+                    propertyType: propertyType.concat(member.type),
                   }),
                 )
               ) {
                 return true;
-              }
-            }
-            return false;
-          }
-          case "ObjectIntersectionType":
-          case "ObjectUnionType": {
-            if (DEBUG) {
-              process.stderr.write(`recurse into ${currentPropertyType}`);
-            }
-            for (const memberType of currentPropertyType.memberObjectTypes) {
-              for (const property of memberType.properties) {
-                if (
-                  helper(
-                    stack.concat({
-                      objectType: memberType,
-                      property,
-                    }),
-                  )
-                ) {
-                  return true;
-                }
               }
             }
             return false;
@@ -548,7 +505,7 @@ export namespace ObjectType {
     }
 
     toString(): string {
-      return `${this.name.orDefault(Resource.Identifier.toString(this.shapeIdentifier))}(path=${PropertyPath.$toString(this.path)})`;
+      return `${this.name}(path=${PropertyPath.toString(this.path)})`;
     }
   }
 }

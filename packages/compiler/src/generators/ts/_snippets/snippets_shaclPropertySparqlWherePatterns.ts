@@ -1,10 +1,11 @@
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
 import { snippets_ShaclPropertySchema } from "./snippets_ShaclPropertySchema.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_sparqlPropertyPath } from "./snippets_sparqlPropertyPath.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_shaclPropertySparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}shaclPropertySparqlWherePatterns`,
@@ -16,12 +17,12 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
   preferredLanguages: readonly string[] | undefined;
   propertySchema: ${snippets_ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
-  typeSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
+  typeSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${snippets_SparqlPattern}[] {
   const propertyPathSparqlWherePatterns = ({ end, propertyPath, start, variableCounter }: {
     end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
-    propertyPath: ${imports.PropertyPath};
+    propertyPath: ${snippets_PropertyPath};
     start: ${imports.NamedNode} | ${imports.Variable};
     variableCounter: { value: number };
   }): ${snippets_SparqlPattern}[] => {

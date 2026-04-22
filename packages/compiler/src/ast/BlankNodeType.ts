@@ -12,7 +12,7 @@ export class BlankNodeType extends AbstractTermType<NamedNode, BlankNode> {
   constructor(
     superParameters: Pick<
       ConstructorParameters<typeof AbstractTermType<NamedNode, BlankNode>>[0],
-      "comment" | "label"
+      "comment" | "label" | "name" | "shapeIdentifier"
     >,
   ) {
     super({

@@ -18,7 +18,7 @@ export class IdentifierType extends AbstractIdentifierType<
   override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType = code`${snippets.IdentifierSchema}`;
-  override readonly sparqlWherePatternsFunction =
+  override readonly valueSparqlWherePatternsFunction =
     code`${snippets.identifierSparqlWherePatterns}`;
 
   constructor(

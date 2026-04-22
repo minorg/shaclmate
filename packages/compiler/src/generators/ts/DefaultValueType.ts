@@ -76,13 +76,13 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return this.itemType.sparqlConstructTriplesFunction;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return this.itemType.valueSparqlConstructTriplesFunction;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   protected override get schemaObject() {
@@ -141,10 +141,11 @@ export class DefaultValueType<
       case "TermType":
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(this.defaultValueTermExpression);
+      case "AnonymousUnionType":
       case "ListType":
       case "ObjectType":
-      case "ObjectUnionType":
-      case "UnionType":
+      case "NamedObjectUnionType":
+      case "NamedUnionType":
         return Maybe.empty();
       default:
         this.itemType satisfies never;
@@ -163,12 +164,12 @@ export class DefaultValueType<
     return this.itemType.fromJsonExpression(parameters);
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractContainerType<ItemTypeT>["fromRdfExpression"]
+    AbstractContainerType<ItemTypeT>["fromRdfResourceValuesExpression"]
   >[0]): Code {
-    return this.itemType.fromRdfExpression({
+    return this.itemType.fromRdfResourceValuesExpression({
       variables: {
         ...variables,
         resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.Value(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.defaultValueTermExpression }}).toValues())`,
@@ -220,17 +221,17 @@ export class DefaultValueType<
     return this.itemType.toJsonExpression(parameters);
   }
 
-  override toRdfExpression(
-    parameters: Parameters<AbstractType["toRdfExpression"]>[0],
+  override toRdfResourceValuesExpression(
+    parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
     return this.defaultValuePrimitiveExpression
       .map(
         (defaultValuePrimitiveExpression) =>
-          code`${this.itemType.equalsFunction}(${variables.value}, ${defaultValuePrimitiveExpression}).isLeft() ? ${this.itemType.toRdfExpression(parameters)} : []`,
+          code`${this.itemType.equalsFunction}(${variables.value}, ${defaultValuePrimitiveExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`,
       )
       .orDefault(
-        code`${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
+        code`${this.itemType.toRdfResourceValuesExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
       );
   }
 }

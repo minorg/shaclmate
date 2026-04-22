@@ -796,7 +796,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier: identifiers[0],
             requiredClassOrClassOrStringProperty: {
-              type: "0-ClassUnionMember1",
+              type: "ClassUnionMember1",
               value: new kitchenSink.ClassUnionMember1({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/classUnionMember1",
@@ -816,7 +816,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           new kitchenSink.UnionDiscriminantsClass({
             $identifier: identifiers[1],
             requiredClassOrClassOrStringProperty: {
-              type: "2-string",
+              type: "string",
               value: "http://example.com/test1",
             },
             requiredIriOrLiteralProperty: dataFactory.literal(
@@ -832,17 +832,17 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredClassOrClassOrStringProperty: {
               on: {
-                "0-ClassUnionMember1": {
+                ClassUnionMember1: {
                   classUnionMember1Property: {
                     in: ["http://example.com/test0"],
                   },
                 },
-                "1-ClassUnionMember2": {
+                ClassUnionMember2: {
                   classUnionMember2Property: {
                     in: ["http://example.com/test0"],
                   },
                 },
-                "2-string": { in: ["http://example.com/test0"] },
+                string: { in: ["http://example.com/test0"] },
               },
             },
           },
@@ -852,17 +852,17 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           {
             requiredClassOrClassOrStringProperty: {
               on: {
-                "0-ClassUnionMember1": {
+                ClassUnionMember1: {
                   classUnionMember1Property: {
                     in: ["http://example.com/testx"],
                   },
                 },
-                "1-ClassUnionMember2": {
+                ClassUnionMember2: {
                   classUnionMember2Property: {
                     in: ["http://example.com/testx"],
                   },
                 },
-                "2-string": { in: ["http://example.com/testx"] },
+                string: { in: ["http://example.com/testx"] },
               },
             },
           },

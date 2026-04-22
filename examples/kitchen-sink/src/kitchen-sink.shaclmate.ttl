@@ -471,6 +471,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegersProperty
+    ], [
+        sh:in (:InPropertiesIri1
+            :InPropertiesIri2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIrisProperty
+    ], [
         sh:in (1e0
             2e0
         ) ;
@@ -492,18 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inDateTimesProperty
-    ], [
-        sh:in (1
-            2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIntegersProperty
-    ], [
-        sh:in (:InPropertiesIri1
-            :InPropertiesIri2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIrisProperty
     ] .
 
 :IndirectRecursiveClass
@@ -927,6 +927,44 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         ]
     ) .
+
+:NamedUnion1
+    a sh:NodeShape ;
+    rdfs:comment "Named union of IRI and string" ;
+    sh:xone ([
+            sh:nodeKind sh:IRI
+        ]
+        [
+            sh:datatype xsd:string
+        ]
+    ) .
+
+:NamedUnion2
+    a sh:NodeShape ;
+    rdfs:comment "Named union of date and date-time" ;
+    sh:xone ([
+            shaclmate:discriminantValue "date" ;
+            sh:datatype xsd:date
+        ]
+        [
+            shaclmate:discriminantValue "dateTime" ;
+            sh:datatype xsd:dateTime
+        ]
+    ) .
+
+:NamedUnionPropertiesClass
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :NamedUnion1 ;
+        sh:path :namedUnion1Property
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :NamedUnion2 ;
+        sh:path :namedUnion2Property
+    ] .
 
 :NoRdfTypeClassUnion
     a sh:NodeShape ;

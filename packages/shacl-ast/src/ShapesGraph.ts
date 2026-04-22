@@ -1,3 +1,5 @@
+import DataFactory from "@rdfjs/data-model";
+import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type {
@@ -11,6 +13,7 @@ import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
+import { CurieFactory } from "./CurieFactory.js";
 import * as generated from "./generated.js";
 import { NodeShape } from "./NodeShape.js";
 import { Ontology } from "./Ontology.js";
@@ -144,15 +147,19 @@ export namespace ShapesGraph {
   > {
     protected preferredLanguages: readonly string[];
 
-    constructor(parameters?: { preferredLanguages?: readonly string[] }) {
+    constructor(parameters?: {
+      preferredLanguages?: readonly string[];
+    }) {
       this.preferredLanguages = parameters?.preferredLanguages ?? ["en", ""];
     }
 
     createShapesGraph({
       dataset,
+      prefixMap,
       ignoreUndefinedShapes,
     }: {
       dataset: DatasetCore;
+      prefixMap?: PrefixMap;
       ignoreUndefinedShapes?: boolean;
     }): Either<
       Error,
@@ -170,7 +177,20 @@ export namespace ShapesGraph {
         return false;
       }
 
+      const curieFactory = new CurieFactory({
+        prefixMap:
+          prefixMap ?? new PrefixMap(undefined, { factory: DataFactory }),
+      });
       const resourceSet = new ResourceSet(dataset);
+      const curieResource = (identifier: Resource.Identifier) => {
+        if (identifier.termType === "NamedNode") {
+          const curie = curieFactory.create(identifier).extract();
+          if (curie) {
+            return resourceSet.resource(curie);
+          }
+        }
+        return resourceSet.resource(identifier);
+      };
 
       const nodeShapesByIdentifier = new TermMap<
         BlankNode | NamedNode,
@@ -235,7 +255,8 @@ export namespace ShapesGraph {
             continue;
           }
           this.createOntology({
-            resource: ontologyResource,
+            curieFactory,
+            resource: curieResource(ontologyResource.identifier),
             shapesGraph,
           }).ifRight((ontology) =>
             ontologiesByIdentifier.set(ontologyResource.identifier, ontology),
@@ -250,13 +271,16 @@ export namespace ShapesGraph {
           if (propertyGroupResource.identifier.termType !== "NamedNode") {
             continue;
           }
+
           if (
             propertyGroupsByIdentifier.has(propertyGroupResource.identifier)
           ) {
             continue;
           }
+
           this.createPropertyGroup({
-            resource: propertyGroupResource,
+            curieFactory,
+            resource: curieResource(propertyGroupResource.identifier),
             shapesGraph,
           }).ifRight((propertyGroup) =>
             propertyGroupsByIdentifier.set(
@@ -401,7 +425,8 @@ export namespace ShapesGraph {
             propertyShapesByIdentifier.set(
               shapeNode,
               this.createPropertyShape({
-                resource: resourceSet.resource(shapeNode),
+                curieFactory,
+                resource: curieResource(shapeNode),
                 shapesGraph,
               }).unsafeCoerce(),
             );
@@ -410,7 +435,8 @@ export namespace ShapesGraph {
             nodeShapesByIdentifier.set(
               shapeNode,
               this.createNodeShape({
-                resource: resourceSet.resource(shapeNode),
+                curieFactory,
+                resource: curieResource(shapeNode),
                 shapesGraph,
               }).unsafeCoerce(),
             );
@@ -422,6 +448,7 @@ export namespace ShapesGraph {
     }
 
     protected abstract createNodeShape(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -433,6 +460,7 @@ export namespace ShapesGraph {
     }): Either<Error, NodeShapeT>;
 
     protected abstract createOntology(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -444,6 +472,7 @@ export namespace ShapesGraph {
     }): Either<Error, OntologyT>;
 
     protected abstract createPropertyGroup(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -455,6 +484,7 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyGroupT>;
 
     protected abstract createPropertyShape(parameters: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: ShapesGraph<
         NodeShapeT,
@@ -512,7 +542,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }) {
-      return generated.NodeShape.$fromRdf(resource, {
+      return generated.NodeShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
@@ -521,10 +551,11 @@ export namespace ShapesGraph {
     protected override createOntology({
       resource,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, Ontology> {
-      return generated.Ontology.$fromRdf(resource, {
+      return generated.Ontology.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -533,27 +564,40 @@ export namespace ShapesGraph {
     protected override createPropertyGroup({
       resource,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, PropertyGroup> {
-      return generated.PropertyGroup.$fromRdf(resource, {
+      return generated.PropertyGroup.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((propertyGroup) => new PropertyGroup(propertyGroup));
     }
 
     protected override createPropertyShape({
+      curieFactory,
       resource,
       shapesGraph,
     }: {
+      curieFactory: CurieFactory;
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, DefaultPropertyShape> {
-      return generated.PropertyShape.$fromRdf(resource, {
+      return generated.PropertyShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
-        (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
+        (generatedShape) =>
+          new PropertyShape(
+            {
+              ...generatedShape,
+              path:
+                (generatedShape.path.termType === "NamedNode"
+                  ? curieFactory.create(generatedShape.path).extract()
+                  : undefined) ?? generatedShape.path,
+            },
+            shapesGraph,
+          ),
       );
     }
   }

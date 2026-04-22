@@ -20,7 +20,7 @@ for (let i = 0; i < 4; i++) {
     optionalStringProperty: "optional string (nested)",
     requiredStringProperty: "required string (nested)",
   });
-  lazyObject.$toRdf({ resourceSet });
+  lazyObject.$toRdfResource({ resourceSet });
 
   new Child({
     $identifier: dataFactory.namedNode(`http://example.com/child${i}`),
@@ -36,22 +36,22 @@ for (let i = 0; i < 4; i++) {
     optionalStringProperty: "optional string (concrete child)",
     parentStringProperty: "parent string (concrete child)",
     requiredStringProperty: "required string (concrete child)",
-  }).$toRdf({ resourceSet });
+  }).$toRdfResource({ resourceSet });
 
   new Parent({
     $identifier: dataFactory.namedNode(`http://example.com/parent${i}`),
     parentStringProperty: "parent string",
-  }).$toRdf({ resourceSet });
+  }).$toRdfResource({ resourceSet });
 
   if (i % 2 === 0) {
     new UnionMember1({
       $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
       optionalNumberProperty: 1,
-    }).$toRdf({ resourceSet });
+    }).$toRdfResource({ resourceSet });
   } else {
     new UnionMember2({
       $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
       optionalStringProperty: "test",
-    }).$toRdf({ resourceSet });
+    }).$toRdfResource({ resourceSet });
   }
 }

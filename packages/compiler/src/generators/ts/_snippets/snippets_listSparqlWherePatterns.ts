@@ -6,12 +6,12 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./snippets_CollectionSchema.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_listSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}listSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_SparqlWherePatternsFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_ValueSparqlWherePatternsFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
   return (parameters) => {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil

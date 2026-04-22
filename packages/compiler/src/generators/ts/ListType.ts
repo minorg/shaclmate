@@ -6,6 +6,7 @@ import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { AnonymousUnionType } from "./AnonymousUnionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -18,15 +19,15 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
+import type { NamedUnionType } from "./NamedUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
 import { snippets } from "./snippets.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
-import type { UnionType } from "./UnionType.js";
 
 export class ListType<
   ItemTypeT extends ListType.ItemType,
@@ -56,19 +57,19 @@ export class ListType<
   }
 
   @Memoize()
-  override get sparqlConstructTriplesFunction(): Code {
-    return code`${snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlConstructTriplesFunction})`;
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`${snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
+    AbstractCollectionType<ItemTypeT>["fromRdfResourceValuesExpression"]
   >[0]): Code {
     return joinCode(
       [
@@ -76,7 +77,7 @@ export class ListType<
         code`chain(values => values.chainMap(value => value.toList(${{ graph: variables.graph }})))`, // Resource.Values<Resource.Value> to Resource.Values<Resource.Values>
         code`chain(valueLists =>
         valueLists.chainMap(
-          valueList => ${this.itemType.fromRdfExpression({
+          valueList => ${this.itemType.fromRdfResourceValuesExpression({
             variables: {
               ...variables,
               resourceValues: code`${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
@@ -92,14 +93,14 @@ export class ListType<
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
     return new AbstractCollectionType.JsonType(
-      code`readonly (${this.itemType.jsonType().name})[]`,
+      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().name})[]`,
     );
   }
 
-  override toRdfExpression({
+  override toRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractCollectionType<ItemTypeT>["toRdfExpression"]
+    AbstractCollectionType<ItemTypeT>["toRdfResourceValuesExpression"]
   >[0]): Code {
     let listIdentifier: Code;
     let resourceTypeName: Code;
@@ -145,7 +146,7 @@ export class ListType<
     
     ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
     
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 
     if (itemIndex + 1 === list.length) {
       currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)}, ${variables.graph});
@@ -166,6 +167,7 @@ export class ListType<
 
 export namespace ListType {
   export type ItemType =
+    | AnonymousUnionType
     | BigDecimalType
     | BigIntType
     | BlankNodeType
@@ -177,14 +179,15 @@ export namespace ListType {
     | IntType
     | IriType
     | LiteralType
+    | NamedObjectUnionType
+    | NamedUnionType
     | ObjectType
-    | ObjectUnionType
     | StringType
-    | TermType
-    | UnionType;
+    | TermType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
+      case "AnonymousUnionType":
       case "BigDecimalType":
       case "BigIntType":
       case "BlankNodeType":
@@ -196,11 +199,11 @@ export namespace ListType {
       case "IriType":
       case "IntType":
       case "LiteralType":
+      case "NamedObjectUnionType":
+      case "NamedUnionType":
       case "ObjectType":
-      case "ObjectUnionType":
       case "StringType":
       case "TermType":
-      case "UnionType":
         return true;
       case "DefaultValueType":
       case "LazyObjectOptionType":

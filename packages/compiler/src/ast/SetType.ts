@@ -1,5 +1,4 @@
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
 
 /**
  * An unordered set of items of a specific type.
@@ -27,6 +26,8 @@ export class SetType<
       comment: itemType.comment,
       itemType,
       label: itemType.label,
+      name: itemType.name,
+      shapeIdentifier: itemType.shapeIdentifier,
     });
     this.minCount = minCount;
   }
@@ -45,9 +46,6 @@ export class SetType<
 }
 
 export namespace SetType {
-  export type ItemType = Exclude<
-    AbstractCollectionType.ItemType,
-    PlaceholderType
-  >;
+  export type ItemType = AbstractCollectionType.ItemType;
   export const isItemType = AbstractCollectionType.isItemType;
 }

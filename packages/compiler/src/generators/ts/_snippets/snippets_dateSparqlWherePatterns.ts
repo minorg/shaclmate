@@ -5,13 +5,13 @@ import { snippets_DateSchema } from "./snippets_DateSchema.js";
 import { snippets_literalFactory } from "./snippets_literalFactory.js";
 import { snippets_RdfVocabularies } from "./snippets_RdfVocabularies.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_SparqlWherePatternsFunction } from "./snippets_SparqlWherePatternsFunction.js";
 import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
+import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
 export const snippets_dateSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}dateSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_SparqlWherePatternsFunction}<${snippets_DateFilter}, ${snippets_DateSchema}> =
+const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_DateFilter}, ${snippets_DateSchema}> =
   ({ filter, schema, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 

@@ -2,13 +2,12 @@ import type { NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 import type { Resource, ResourceSet } from "rdfjs-resource";
-import type { z as zod } from "zod";
 
 export abstract class Harness<
   T extends { readonly $identifier: Resource.Identifier },
 > {
-  readonly fromJson: (json: unknown) => Either<zod.ZodError, T>;
-  readonly fromRdf: (
+  readonly fromJson: (json: any) => T;
+  readonly fromRdfResource: (
     resource: Resource,
     parameters: {
       [_index: string]: any;
@@ -22,17 +21,17 @@ export abstract class Harness<
     readonly instance: T,
     {
       $fromJson,
-      $fromRdf,
+      $fromRdfResource,
       $sparqlConstructQueryString,
     }: {
       $fromJson: Harness<T>["fromJson"];
-      $fromRdf: Harness<T>["fromRdf"];
+      $fromRdfResource: Harness<T>["fromRdfResource"];
       $sparqlConstructQueryString: Harness<T>["sparqlConstructQueryString"];
     },
     readonly shapeName: string,
   ) {
     this.fromJson = $fromJson;
-    this.fromRdf = $fromRdf;
+    this.fromRdfResource = $fromRdfResource;
     this.sparqlConstructQueryString = $sparqlConstructQueryString;
   }
 
@@ -40,7 +39,7 @@ export abstract class Harness<
 
   abstract toJson(): any;
 
-  abstract toRdf(kwds: {
+  abstract toRdfResource(kwds: {
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource;

@@ -70,12 +70,13 @@ function typeToJson(type: ast.Type): AstJson.Type {
         nodeKinds: [...type.nodeKinds],
       };
     case "IntersectionType":
-    case "UnionType":
       return {
         ...common,
-        memberDiscriminantValues:
-          type.kind === "UnionType" ? type.memberDiscriminantValues : undefined,
-        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
+        members: type.members.map((member) => ({
+          type: typeToJson(member.type),
+        })),
+        name: type.name.extract(),
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
       };
     case "LazyObjectOptionType":
     case "LazyObjectSetType":
@@ -106,14 +107,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
         minInclusive: type.minInclusive.map(termToJson).extract(),
       } satisfies AstJson.Type;
     }
-    case "ObjectIntersectionType":
-    case "ObjectUnionType":
-      return {
-        ...common,
-        name: type.name.extract(),
-        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
-        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
-      };
     case "ObjectType":
       return {
         ...common,
@@ -140,8 +133,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
         ...common,
         itemType: typeToJson(type.itemType),
       };
-    case "PlaceholderType":
-      throw new Error(type.kind);
     case "SetType":
       return {
         ...common,
@@ -150,6 +141,16 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "TermType":
       return {
         ...common,
+      };
+    case "UnionType":
+      return {
+        ...common,
+        members: type.members.map((member) => ({
+          discriminantValue: member.discriminantValue.extract(),
+          type: typeToJson(member.type),
+        })),
+        name: type.name.extract(),
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
       };
   }
 }
@@ -174,7 +175,7 @@ export class AstJsonGenerator implements Generator {
             description: property.description.extract(),
             label: property.label.extract(),
             mutable: property.mutable,
-            name: property.name.extract(),
+            name: property.name,
             order: property.order,
             path: property.path,
             recursive: property.recursive ? true : undefined,

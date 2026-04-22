@@ -64,7 +64,7 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      const toRdfDataset = harness.toRdf().dataset;
+      const toRdfDataset = harness.toRdfResource().dataset;
       const toRdfQuads: Quad[] = [];
 
       const oxigraphStore = new oxigraph.Store();
@@ -81,7 +81,7 @@ describe("sparql", () => {
       const constructResultDataset = datasetFactory.dataset(
         oxigraphStore.query(constructQueryString) as Quad[],
       );
-      const constructInstanceEither = harness.fromRdf(
+      const constructInstanceEither = harness.fromRdfResource(
         new ResourceSet(constructResultDataset, {
           dataFactory,
         }).resource(harness.instance.$identifier as NamedNode),

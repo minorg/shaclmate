@@ -27,9 +27,11 @@ export const imports = {
   Maybe: imp("Maybe@purify-ts"),
   NamedNode: imp("NamedNode@@rdfjs/types"),
   NonEmptyList: imp("NonEmptyList@purify-ts"),
-  PropertyPath: imp("PropertyPath@rdfjs-resource"),
   Quad: imp("Quad@@rdfjs/types"),
   Quad_Graph: imp("Quad_Graph@@rdfjs/types"),
+  RdfjsResourcePropertyPath: imp(
+    "PropertyPath:RdfjsResourcePropertyPath@rdfjs-resource",
+  ),
   Resource: imp("Resource@rdfjs-resource"),
   ResourceSet: imp("ResourceSet@rdfjs-resource"),
   Right: imp("Right@purify-ts"),

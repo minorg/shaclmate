@@ -1,0 +1,183 @@
+import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
+import { Memoize } from "typescript-memoize";
+import { imports } from "../imports.js";
+import { removeUndefined } from "../removeUndefined.js";
+import { snippets } from "../snippets.js";
+import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
+import { AbstractProperty } from "./AbstractProperty.js";
+
+export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
+  override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
+  override readonly equalsFunction = Maybe.of(code`${snippets.strictEquals}`);
+  override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
+    Maybe.empty();
+  override readonly getAccessorDeclaration: Maybe<Code> = Maybe.empty();
+  override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
+    Maybe.empty();
+  override readonly kind = "DiscriminantProperty";
+  override readonly mutable = false;
+  override readonly recursive = false;
+
+  constructor({
+    type,
+    ...superParameters
+  }: {
+    type: DiscriminantProperty.Type;
+  } & ConstructorParameters<typeof AbstractProperty>[0]) {
+    super({ ...superParameters, type });
+    invariant(this.visibility === "public");
+  }
+
+  override get declaration(): Maybe<Code> {
+    switch (this.objectType.declarationType) {
+      case "class":
+        return Maybe.of(
+          code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`,
+        );
+      case "interface":
+        return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);
+      default:
+        this.objectType.declarationType satisfies never;
+        throw new Error("should never reach this point");
+    }
+  }
+
+  @Memoize()
+  override get jsonSignature(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
+  }
+
+  @Memoize()
+  override get jsonZodSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonZodSchema"] {
+    return Maybe.of({
+      key: this.name,
+      schema:
+        this.type.values.length > 1
+          ? code`${imports.z}.enum(${arrayOf(...this.type.values)})`
+          : code`${imports.z}.literal(${literalOf(this.type.values[0])})`,
+    });
+  }
+
+  private get abstract(): boolean {
+    return this.objectType.abstract;
+  }
+
+  private get initializer(): Code {
+    return code`${literalOf(this.objectType.discriminantValue)} as const`;
+  }
+
+  private get override(): boolean {
+    return this.objectType.parentObjectTypes.length > 0;
+  }
+
+  override constructorStatements(): readonly Code[] {
+    switch (this.objectType.declarationType) {
+      case "class":
+        return [];
+      case "interface":
+        if (this.abstract) {
+          return [];
+        }
+        return [code`const ${this.name} = ${this.initializer};`];
+    }
+  }
+
+  override fromJsonStatements(): readonly Code[] {
+    return !this.abstract && this.objectType.declarationType === "interface"
+      ? [code`const ${this.name} = ${this.initializer};`]
+      : [];
+  }
+
+  override fromRdfResourceValuesExpression(): Maybe<Code> {
+    return !this.abstract && this.objectType.declarationType === "interface"
+      ? Maybe.of(
+          code`${imports.Right}<${literalOf(this.objectType.discriminantValue)}>(${this.initializer})`,
+        )
+      : Maybe.empty();
+  }
+
+  override hashStatements({
+    variables,
+  }: Parameters<
+    AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
+  >[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value});`];
+  }
+
+  override jsonUiSchemaElement({
+    variables,
+  }: Parameters<
+    AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
+  >[0]): Maybe<Code> {
+    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+    return Maybe.of(
+      code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
+    );
+  }
+
+  override sparqlConstructTriplesExpression(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  override sparqlWherePatternsExpression(): ReturnType<
+    AbstractProperty<DiscriminantProperty.Type>["sparqlWherePatternsExpression"]
+  > {
+    return Maybe.empty();
+  }
+
+  override toJsonObjectMemberExpression({
+    variables,
+  }: Parameters<
+    AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(code`${this.name}: ${variables.value}`);
+  }
+
+  override toRdfRdfResourceValuesStatements(): readonly Code[] {
+    return [];
+  }
+}
+
+export namespace DiscriminantProperty {
+  export class Type {
+    readonly filterFunction = code`nonextant`;
+    readonly mutable: boolean;
+    readonly descendantValues: readonly string[];
+    readonly ownValues: readonly string[];
+
+    constructor({
+      descendantValues,
+      mutable,
+      ownValues,
+    }: {
+      descendantValues: readonly string[];
+      mutable: boolean;
+      ownValues: readonly string[];
+    }) {
+      this.descendantValues = descendantValues;
+      this.mutable = mutable;
+      this.ownValues = ownValues;
+    }
+
+    @Memoize()
+    get name(): string {
+      return `${this.values.map((name) => `"${name}"`).join(" | ")}`;
+    }
+
+    @Memoize()
+    get schema(): Code {
+      return code`${removeUndefined({
+        descendantValues:
+          this.descendantValues.length > 0 ? this.descendantValues : undefined,
+        kind: code`${literalOf("TypeDiscriminant")} as const`,
+        ownValues: this.ownValues.length > 0 ? this.ownValues : undefined,
+      })}`;
+    }
+
+    @Memoize()
+    get values() {
+      return this.ownValues.concat(this.descendantValues);
+    }
+  }
+}

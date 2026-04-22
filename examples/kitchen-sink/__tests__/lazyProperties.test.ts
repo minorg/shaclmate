@@ -191,36 +191,39 @@ describe("lazyProperties", () => {
     const resourceSet = new ResourceSet(datasetFactory.dataset(), {
       dataFactory: dataFactory,
     });
-    expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance.$toRdf({
+    expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance.$toRdfResource({
       resourceSet,
     });
-    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdf(
+    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdfResource(
       expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
       { resourceSet },
     );
-    expectedLazilyResolvedIriIdentifierClassInstance.$toRdf({ resourceSet });
-    kitchenSink.LazilyResolvedIriIdentifierInterface.$toRdf(
+    expectedLazilyResolvedIriIdentifierClassInstance.$toRdfResource({
+      resourceSet,
+    });
+    kitchenSink.LazilyResolvedIriIdentifierInterface.$toRdfResource(
       expectedLazilyResolvedIriIdentifierInterfaceInstance,
       { resourceSet },
     );
-    expectedLazilyResolvedClassUnionInstance.$toRdf({ resourceSet });
-    kitchenSink.LazilyResolvedInterfaceUnion.$toRdf(
+    expectedLazilyResolvedClassUnionInstance.$toRdfResource({ resourceSet });
+    kitchenSink.LazilyResolvedInterfaceUnion.$toRdfResource(
       expectedLazilyResolvedInterfaceUnionInstance,
       { resourceSet },
     );
 
-    emptyLazyPropertiesClassInstance = kitchenSink.LazyPropertiesClass.$fromRdf(
-      new kitchenSink.LazyPropertiesClass({
-        requiredLazyToResolvedClassProperty:
-          expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
-        requiredPartialClassToResolvedClassProperty:
-          expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
-      }).$toRdf({ resourceSet }),
-    ).unsafeCoerce();
+    emptyLazyPropertiesClassInstance =
+      kitchenSink.LazyPropertiesClass.$fromRdfResource(
+        new kitchenSink.LazyPropertiesClass({
+          requiredLazyToResolvedClassProperty:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
+          requiredPartialClassToResolvedClassProperty:
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
+        }).$toRdfResource({ resourceSet }),
+      ).unsafeCoerce();
 
     emptyLazyPropertiesInterfaceInstance =
-      kitchenSink.LazyPropertiesInterface.$fromRdf(
-        kitchenSink.LazyPropertiesInterface.$toRdf(
+      kitchenSink.LazyPropertiesInterface.$fromRdfResource(
+        kitchenSink.LazyPropertiesInterface.$toRdfResource(
           kitchenSink.LazyPropertiesInterface.$create({
             requiredLazyToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
@@ -232,7 +235,7 @@ describe("lazyProperties", () => {
       ).unsafeCoerce();
 
     nonEmptyLazyPropertiesClassInstance =
-      kitchenSink.LazyPropertiesClass.$fromRdf(
+      kitchenSink.LazyPropertiesClass.$fromRdfResource(
         new kitchenSink.LazyPropertiesClass({
           optionalLazyToResolvedClassProperty:
             expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
@@ -256,12 +259,12 @@ describe("lazyProperties", () => {
           setPartialClassToResolvedClassProperty: [
             expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           ],
-        }).$toRdf({ resourceSet }),
+        }).$toRdfResource({ resourceSet }),
       ).unsafeCoerce();
 
     nonEmptyLazyPropertiesInterfaceInstance =
-      kitchenSink.LazyPropertiesInterface.$fromRdf(
-        kitchenSink.LazyPropertiesInterface.$toRdf(
+      kitchenSink.LazyPropertiesInterface.$fromRdfResource(
+        kitchenSink.LazyPropertiesInterface.$toRdfResource(
           kitchenSink.LazyPropertiesInterface.$create({
             optionalLazyToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,

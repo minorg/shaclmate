@@ -11,7 +11,7 @@ export class InterfaceHarness<
 > extends Harness<T> {
   readonly equals: (other: T) => $EqualsResult;
   readonly toJson: () => any;
-  readonly toRdf: (options?: {
+  readonly toRdfResource: (options?: {
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }) => Resource;
@@ -21,12 +21,12 @@ export class InterfaceHarness<
     {
       $equals,
       $toJson,
-      $toRdf,
+      $toRdfResource,
       ...superParameters
     }: {
       $equals: (left: T, right: T) => $EqualsResult;
       $toJson: (instance: T) => any;
-      $toRdf: (
+      $toRdfResource: (
         instance: T,
         options?: {
           graph?: Exclude<Quad_Graph, Variable>;
@@ -39,6 +39,6 @@ export class InterfaceHarness<
     super(instance, superParameters, shapeName ?? instance.$type);
     this.equals = (other) => $equals(this.instance, other);
     this.toJson = () => $toJson(this.instance);
-    this.toRdf = (kwds) => $toRdf(this.instance, kwds);
+    this.toRdfResource = (kwds) => $toRdfResource(this.instance, kwds);
   }
 }

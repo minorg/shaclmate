@@ -15,7 +15,7 @@ export function objectDataset(
   });
   if (Array.isArray(instances)) {
     for (const instance of instances) {
-      kitchenSink.$Object.$toRdf(instance, {
+      kitchenSink.$Object.$toRdfResource(instance, {
         resourceSet,
       });
     }
@@ -26,7 +26,10 @@ export function objectDataset(
           ? dataFactory.defaultGraph()
           : dataFactory.namedNode(graphIri);
       for (const graphInstance of graphInstances) {
-        kitchenSink.$Object.$toRdf(graphInstance, { graph, resourceSet });
+        kitchenSink.$Object.$toRdfResource(graphInstance, {
+          graph,
+          resourceSet,
+        });
       }
     }
   }

@@ -223,6 +223,12 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
+    if (this.type.in_.length > 0) {
+      return Maybe.of(
+        code`readonly "@id": ${this.type.in_.map((iri) => `"${iri.value}"`).join(" | ")}`,
+      );
+    }
+
     return Maybe.of(code`readonly "@id": string`);
   }
 
@@ -419,13 +425,13 @@ export class IdentifierProperty extends AbstractProperty<
     ];
   }
 
-  override fromRdfExpression({
+  override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromRdfExpression"]
+    AbstractProperty<IdentifierType>["fromRdfResourceValuesExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.fromRdfExpression({
+      code`${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
           propertyPath: rdfjsTermExpression(rdf.subject),
@@ -464,7 +470,7 @@ export class IdentifierProperty extends AbstractProperty<
   >[0]) {
     return Maybe.of({
       condition: code`${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
+      patterns: code`${this.type.valueSparqlWherePatternsFunction}(${{
         filter: code`${variables.filter}?.${this.name}`,
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
@@ -501,7 +507,7 @@ export class IdentifierProperty extends AbstractProperty<
     );
   }
 
-  override toRdfStatements(): readonly Code[] {
+  override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
 }

@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
+import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -53,15 +53,14 @@ export class LazyObjectType extends AbstractLazyObjectType<
         sourceTypeof: "object",
       });
     } else if (
-      this.resolveType.kind === "ObjectUnionType" &&
-      this.partialType.kind === "ObjectUnionType" &&
-      this.resolveType.memberTypes.length ===
-        this.partialType.memberTypes.length
+      this.resolveType.kind === "NamedObjectUnionType" &&
+      this.partialType.kind === "NamedObjectUnionType" &&
+      this.resolveType.members.length === this.partialType.members.length
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolveType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolveType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
-        // Don't check instanceof value since the ObjectUnionType may be an interface
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolveType.name}) => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
+        // Don't check instanceof value since the NamedObjectUnionType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
@@ -79,11 +78,11 @@ export class LazyObjectType extends AbstractLazyObjectType<
     return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${imports.Left}(new Error(\`unable to resolve identifier \${${imports.Resource}.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
   }
 
-  override fromRdfExpression(
-    parameters: Parameters<Super["fromRdfExpression"]>[0],
+  override fromRdfResourceValuesExpression(
+    parameters: Parameters<Super["fromRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier, options) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(identifier, options) })))`;
+    return code`${this.partialType.fromRdfResourceValuesExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier, options) => ${variables.objectSet}.${this.resolveType.objectSetMethodNames.object}(identifier, options) })))`;
   }
 
   override graphqlResolveExpression({

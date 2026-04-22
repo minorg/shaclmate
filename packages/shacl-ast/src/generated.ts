@@ -11,7 +11,7 @@ import type {
 import { Either, Left, Maybe, Right } from "purify-ts";
 import {
   LiteralFactory,
-  PropertyPath,
+  PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "rdfjs-resource";
@@ -201,14 +201,6 @@ function $filterTerm(
   return true;
 }
 
-type $FromRdfOptions = {
-  context?: unknown;
-  graph?: Exclude<Quad_Graph, Variable>;
-  ignoreRdfType?: boolean;
-  objectSet?: $ObjectSet;
-  preferredLanguages?: readonly string[];
-};
-
 function $fromRdfPreferredLanguages(
   values: Resource.Values,
   preferredLanguages?: readonly string[],
@@ -238,6 +230,30 @@ function $fromRdfPreferredLanguages(
     }),
   );
 }
+
+export type $FromRdfResourceFunction<T> = (
+  resource: Resource,
+  options?: {
+    context?: unknown;
+    graph?: Exclude<Quad_Graph, Variable>;
+    ignoreRdfType?: boolean;
+    objectSet?: $ObjectSet;
+    preferredLanguages?: readonly string[];
+  },
+) => Either<Error, T>;
+
+export type $FromRdfResourceValuesFunction<T> = (
+  resourceValues: Either<Error, Resource.Values>,
+  options: {
+    context?: unknown;
+    graph?: Exclude<Quad_Graph, Variable>;
+    ignoreRdfType?: boolean;
+    objectSet?: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    propertyPath: $PropertyPath;
+    resource: Resource;
+  },
+) => Either<Error, Resource.Values<T>>;
 
 interface $IdentifierFilter {
   readonly in?: readonly (BlankNode | NamedNode)[];
@@ -297,14 +313,45 @@ interface $NumericFilter<T> {
   readonly minInclusive?: T;
 }
 
-type $PropertiesFromRdfParameters = {
-  context?: unknown;
-  graph?: Exclude<Quad_Graph, Variable>;
-  ignoreRdfType: boolean;
-  objectSet: $ObjectSet;
-  preferredLanguages?: readonly string[];
-  resource: Resource;
-};
+type $PropertiesFromRdfResourceFunction<T> = (
+  resource: Resource,
+  options: {
+    context: undefined | unknown;
+    graph: Exclude<Quad_Graph, Variable> | undefined;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+  },
+) => Either<Error, T>;
+
+export type $PropertyPath = RdfjsResourcePropertyPath;
+
+export namespace $PropertyPath {
+  export type $Filter = object;
+
+  export function $filter(_filter: $Filter, _value: $PropertyPath): boolean {
+    return true;
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
+    RdfjsResourcePropertyPath.fromResource;
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    $PropertyPath
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => $fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const $schema: Readonly<object> = {};
+
+  export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
+    RdfjsResourcePropertyPath.toResource;
+}
 
 namespace $RdfVocabularies {
   export namespace rdf {
@@ -415,7 +462,7 @@ function $shaclPropertyFromRdf<T>({
 
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
   readonly kind: "Shacl";
-  readonly path: PropertyPath;
+  readonly path: $PropertyPath;
   readonly type: () => TypeSchemaT;
 }
 
@@ -431,6 +478,26 @@ interface $TermFilter {
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }
+
+export type $ToRdfResourceFunction<T> = (
+  value: T,
+  options?: {
+    graph?: Exclude<Quad_Graph, Variable>;
+    ignoreRdfType?: boolean;
+    resourceSet?: ResourceSet;
+  },
+) => Resource;
+
+export type $ToRdfResourceValuesFunction<T> = (
+  value: T,
+  options: {
+    graph?: Exclude<Quad_Graph, Variable>;
+    ignoreRdfType?: boolean;
+    propertyPath: $PropertyPath;
+    resource: Resource;
+    resourceSet: ResourceSet;
+  },
+) => (bigint | boolean | number | string | BlankNode | Literal | NamedNode)[];
 export interface PropertyShape {
   readonly $identifier: PropertyShape.$Identifier;
   readonly $type: "PropertyShape";
@@ -471,7 +538,7 @@ export interface PropertyShape {
   readonly not: readonly (BlankNode | NamedNode)[];
   readonly or: readonly (readonly (BlankNode | NamedNode)[])[];
   readonly order: Maybe<number>;
-  readonly path: PropertyPath;
+  readonly path: $PropertyPath;
   readonly patterns: readonly string[];
   readonly uniqueLang: Maybe<boolean>;
   readonly xone: readonly (readonly (BlankNode | NamedNode)[])[];
@@ -762,7 +829,7 @@ export namespace PropertyShape {
     }
     if (
       filter.path !== undefined &&
-      !PropertyPath.$filter(filter.path, value.path)
+      !$PropertyPath.$filter(filter.path, value.path)
     ) {
       return false;
     }
@@ -830,18 +897,19 @@ export namespace PropertyShape {
     readonly not?: $CollectionFilter<$IdentifierFilter>;
     readonly or?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly order?: $MaybeFilter<$NumericFilter<number>>;
-    readonly path?: PropertyPath.$Filter;
+    readonly path?: $PropertyPath.$Filter;
     readonly patterns?: $CollectionFilter<$StringFilter>;
     readonly uniqueLang?: $MaybeFilter<$BooleanFilter>;
     readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PropertyShape> {
+  export const $fromRdfResource: $FromRdfResourceFunction<PropertyShape> = (
+    resource,
+    options,
+  ) => {
     let {
       context,
+      graph,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
@@ -849,14 +917,27 @@ export namespace PropertyShape {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return PropertyShape.$propertiesFromRdf({
+    return PropertyShape.$propertiesFromRdfResource(resource, {
       context,
+      graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-      resource,
     });
-  }
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    PropertyShape
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            PropertyShape.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://www.w3.org/ns/shacl#PropertyShape",
@@ -871,60 +952,55 @@ export namespace PropertyShape {
     }
   }
 
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "PropertyShape";
-      and: readonly (readonly (BlankNode | NamedNode)[])[];
-      classes: readonly NamedNode[];
-      comments: readonly string[];
-      datatype: Maybe<NamedNode>;
-      deactivated: Maybe<boolean>;
-      defaultValue: Maybe<NamedNode | Literal>;
-      descriptions: readonly string[];
-      flags: readonly string[];
-      groups: readonly (BlankNode | NamedNode)[];
-      hasValues: readonly (NamedNode | Literal)[];
-      in_: Maybe<readonly (NamedNode | Literal)[]>;
-      isDefinedBy: Maybe<BlankNode | NamedNode>;
-      labels: readonly string[];
-      languageIn: Maybe<readonly string[]>;
-      maxCount: Maybe<number>;
-      maxExclusive: Maybe<Literal>;
-      maxInclusive: Maybe<Literal>;
-      maxLength: Maybe<number>;
-      minCount: Maybe<number>;
-      minExclusive: Maybe<Literal>;
-      minInclusive: Maybe<Literal>;
-      minLength: Maybe<number>;
-      names: readonly string[];
-      nodeKind: Maybe<
-        NamedNode<
-          | "http://www.w3.org/ns/shacl#BlankNode"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-          | "http://www.w3.org/ns/shacl#IRI"
-          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-          | "http://www.w3.org/ns/shacl#Literal"
-        >
-      >;
-      nodes: readonly (BlankNode | NamedNode)[];
-      not: readonly (BlankNode | NamedNode)[];
-      or: readonly (readonly (BlankNode | NamedNode)[])[];
-      order: Maybe<number>;
-      path: PropertyPath;
-      patterns: readonly string[];
-      uniqueLang: Maybe<boolean>;
-      xone: readonly (readonly (BlankNode | NamedNode)[])[];
-    }
-  > {
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+    $identifier: BlankNode | NamedNode;
+    $type: "PropertyShape";
+    and: readonly (readonly (BlankNode | NamedNode)[])[];
+    classes: readonly NamedNode[];
+    comments: readonly string[];
+    datatype: Maybe<NamedNode>;
+    deactivated: Maybe<boolean>;
+    defaultValue: Maybe<NamedNode | Literal>;
+    descriptions: readonly string[];
+    flags: readonly string[];
+    groups: readonly (BlankNode | NamedNode)[];
+    hasValues: readonly (NamedNode | Literal)[];
+    in_: Maybe<readonly (NamedNode | Literal)[]>;
+    isDefinedBy: Maybe<BlankNode | NamedNode>;
+    labels: readonly string[];
+    languageIn: Maybe<readonly string[]>;
+    maxCount: Maybe<number>;
+    maxExclusive: Maybe<Literal>;
+    maxInclusive: Maybe<Literal>;
+    maxLength: Maybe<number>;
+    minCount: Maybe<number>;
+    minExclusive: Maybe<Literal>;
+    minInclusive: Maybe<Literal>;
+    minLength: Maybe<number>;
+    names: readonly string[];
+    nodeKind: Maybe<
+      NamedNode<
+        | "http://www.w3.org/ns/shacl#BlankNode"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+        | "http://www.w3.org/ns/shacl#IRI"
+        | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+        | "http://www.w3.org/ns/shacl#Literal"
+      >
+    >;
+    nodes: readonly (BlankNode | NamedNode)[];
+    not: readonly (BlankNode | NamedNode)[];
+    or: readonly (readonly (BlankNode | NamedNode)[])[];
+    order: Maybe<number>;
+    path: $PropertyPath;
+    patterns: readonly string[];
+    uniqueLang: Maybe<boolean>;
+    xone: readonly (readonly (BlankNode | NamedNode)[])[];
+  }> = ($resource, _$options) => {
     return (
-      !$parameters.ignoreRdfType
-        ? $parameters.resource
-            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -935,8 +1011,8 @@ export namespace PropertyShape {
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $parameters.resource.isInstanceOf(PropertyShape.$fromRdfType, {
-                  graph: $parameters.graph,
+                $resource.isInstanceOf(PropertyShape.$fromRdfType, {
+                  graph: _$options.graph,
                 })
               ) {
                 return Right(true as const);
@@ -945,7 +1021,7 @@ export namespace PropertyShape {
               return Left(
                 new Error(
                   `${Resource.Identifier.toString(
-                    $parameters.resource.identifier,
+                    $resource.identifier,
                   )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
                 ),
               );
@@ -955,9 +1031,9 @@ export namespace PropertyShape {
       Right(
         new Resource.Value({
           dataFactory: dataFactory,
-          focusResource: $parameters.resource,
+          focusResource: $resource,
           propertyPath: $RdfVocabularies.rdf.subject,
-          term: $parameters.resource.identifier,
+          term: $resource.identifier,
         }).toValues(),
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
@@ -965,21 +1041,21 @@ export namespace PropertyShape {
         .chain(($identifier) =>
           Right<"PropertyShape">("PropertyShape" as const).chain(($type) =>
             $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
+              graph: _$options.graph,
+              resource: $resource,
               propertySchema: $schema.properties.and,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
                     values.chainMap((value) =>
-                      value.toList({ graph: $parameters.graph }),
+                      value.toList({ graph: _$options.graph }),
                     ),
                   )
                   .chain((valueLists) =>
                     valueLists.chainMap((valueList) =>
                       Right(
                         Resource.Values.fromArray({
-                          focusResource: $parameters.resource,
+                          focusResource: $resource,
                           propertyPath:
                             PropertyShape.$schema.properties.and.path,
                           values: valueList.toArray(),
@@ -995,15 +1071,15 @@ export namespace PropertyShape {
                   .map((values) => values.toArray())
                   .map((valuesArray) =>
                     Resource.Values.fromValue({
-                      focusResource: $parameters.resource,
+                      focusResource: $resource,
                       propertyPath: PropertyShape.$schema.properties.and.path,
                       value: valuesArray,
                     }),
                   ),
             }).chain((and) =>
               $shaclPropertyFromRdf({
-                graph: $parameters.graph,
-                resource: $parameters.resource,
+                graph: _$options.graph,
+                resource: $resource,
                 propertySchema: $schema.properties.classes,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
@@ -1013,7 +1089,7 @@ export namespace PropertyShape {
                     .map((values) => values.toArray())
                     .map((valuesArray) =>
                       Resource.Values.fromValue({
-                        focusResource: $parameters.resource,
+                        focusResource: $resource,
                         propertyPath:
                           PropertyShape.$schema.properties.classes.path,
                         value: valuesArray,
@@ -1021,15 +1097,15 @@ export namespace PropertyShape {
                     ),
               }).chain((classes) =>
                 $shaclPropertyFromRdf({
-                  graph: $parameters.graph,
-                  resource: $parameters.resource,
+                  graph: _$options.graph,
+                  resource: $resource,
                   propertySchema: $schema.properties.comments,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
                         $fromRdfPreferredLanguages(
                           values,
-                          $parameters.preferredLanguages,
+                          _$options.preferredLanguages,
                         ),
                       )
                       .chain((values) =>
@@ -1038,7 +1114,7 @@ export namespace PropertyShape {
                       .map((values) => values.toArray())
                       .map((valuesArray) =>
                         Resource.Values.fromValue({
-                          focusResource: $parameters.resource,
+                          focusResource: $resource,
                           propertyPath:
                             PropertyShape.$schema.properties.comments.path,
                           value: valuesArray,
@@ -1046,8 +1122,8 @@ export namespace PropertyShape {
                       ),
                 }).chain((comments) =>
                   $shaclPropertyFromRdf({
-                    graph: $parameters.graph,
-                    resource: $parameters.resource,
+                    graph: _$options.graph,
+                    resource: $resource,
                     propertySchema: $schema.properties.datatype,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
@@ -1058,7 +1134,7 @@ export namespace PropertyShape {
                           values.length > 0
                             ? values.map((value) => Maybe.of(value))
                             : Resource.Values.fromValue<Maybe<NamedNode>>({
-                                focusResource: $parameters.resource,
+                                focusResource: $resource,
                                 propertyPath:
                                   PropertyShape.$schema.properties.datatype
                                     .path,
@@ -1067,8 +1143,8 @@ export namespace PropertyShape {
                         ),
                   }).chain((datatype) =>
                     $shaclPropertyFromRdf({
-                      graph: $parameters.graph,
-                      resource: $parameters.resource,
+                      graph: _$options.graph,
+                      resource: $resource,
                       propertySchema: $schema.properties.deactivated,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
@@ -1079,7 +1155,7 @@ export namespace PropertyShape {
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<Maybe<boolean>>({
-                                  focusResource: $parameters.resource,
+                                  focusResource: $resource,
                                   propertyPath:
                                     PropertyShape.$schema.properties.deactivated
                                       .path,
@@ -1088,8 +1164,8 @@ export namespace PropertyShape {
                           ),
                     }).chain((deactivated) =>
                       $shaclPropertyFromRdf({
-                        graph: $parameters.graph,
-                        resource: $parameters.resource,
+                        graph: _$options.graph,
+                        resource: $resource,
                         propertySchema: $schema.properties.defaultValue,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
@@ -1109,7 +1185,7 @@ export namespace PropertyShape {
                                           actualValue: term,
                                           expectedValueType:
                                             "(NamedNode | Literal)",
-                                          focusResource: $parameters.resource,
+                                          focusResource: $resource,
                                           propertyPath:
                                             PropertyShape.$schema.properties
                                               .defaultValue.path,
@@ -1125,7 +1201,7 @@ export namespace PropertyShape {
                                 : Resource.Values.fromValue<
                                     Maybe<NamedNode | Literal>
                                   >({
-                                    focusResource: $parameters.resource,
+                                    focusResource: $resource,
                                     propertyPath:
                                       PropertyShape.$schema.properties
                                         .defaultValue.path,
@@ -1134,15 +1210,15 @@ export namespace PropertyShape {
                             ),
                       }).chain((defaultValue) =>
                         $shaclPropertyFromRdf({
-                          graph: $parameters.graph,
-                          resource: $parameters.resource,
+                          graph: _$options.graph,
+                          resource: $resource,
                           propertySchema: $schema.properties.descriptions,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
                                 $fromRdfPreferredLanguages(
                                   values,
-                                  $parameters.preferredLanguages,
+                                  _$options.preferredLanguages,
                                 ),
                               )
                               .chain((values) =>
@@ -1151,7 +1227,7 @@ export namespace PropertyShape {
                               .map((values) => values.toArray())
                               .map((valuesArray) =>
                                 Resource.Values.fromValue({
-                                  focusResource: $parameters.resource,
+                                  focusResource: $resource,
                                   propertyPath:
                                     PropertyShape.$schema.properties
                                       .descriptions.path,
@@ -1160,15 +1236,15 @@ export namespace PropertyShape {
                               ),
                         }).chain((descriptions) =>
                           $shaclPropertyFromRdf({
-                            graph: $parameters.graph,
-                            resource: $parameters.resource,
+                            graph: _$options.graph,
+                            resource: $resource,
                             propertySchema: $schema.properties.flags,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
                                 .chain((values) =>
                                   $fromRdfPreferredLanguages(
                                     values,
-                                    $parameters.preferredLanguages,
+                                    _$options.preferredLanguages,
                                   ),
                                 )
                                 .chain((values) =>
@@ -1177,7 +1253,7 @@ export namespace PropertyShape {
                                 .map((values) => values.toArray())
                                 .map((valuesArray) =>
                                   Resource.Values.fromValue({
-                                    focusResource: $parameters.resource,
+                                    focusResource: $resource,
                                     propertyPath:
                                       PropertyShape.$schema.properties.flags
                                         .path,
@@ -1186,8 +1262,8 @@ export namespace PropertyShape {
                                 ),
                           }).chain((flags) =>
                             $shaclPropertyFromRdf({
-                              graph: $parameters.graph,
-                              resource: $parameters.resource,
+                              graph: _$options.graph,
+                              resource: $resource,
                               propertySchema: $schema.properties.groups,
                               typeFromRdf: (resourceValues) =>
                                 resourceValues
@@ -1199,7 +1275,7 @@ export namespace PropertyShape {
                                   .map((values) => values.toArray())
                                   .map((valuesArray) =>
                                     Resource.Values.fromValue({
-                                      focusResource: $parameters.resource,
+                                      focusResource: $resource,
                                       propertyPath:
                                         PropertyShape.$schema.properties.groups
                                           .path,
@@ -1208,8 +1284,8 @@ export namespace PropertyShape {
                                   ),
                             }).chain((groups) =>
                               $shaclPropertyFromRdf({
-                                graph: $parameters.graph,
-                                resource: $parameters.resource,
+                                graph: _$options.graph,
+                                resource: $resource,
                                 propertySchema: $schema.properties.hasValues,
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
@@ -1233,8 +1309,7 @@ export namespace PropertyShape {
                                                     actualValue: term,
                                                     expectedValueType:
                                                       "(NamedNode | Literal)",
-                                                    focusResource:
-                                                      $parameters.resource,
+                                                    focusResource: $resource,
                                                     propertyPath:
                                                       PropertyShape.$schema
                                                         .properties.hasValues
@@ -1249,7 +1324,7 @@ export namespace PropertyShape {
                                     .map((values) => values.toArray())
                                     .map((valuesArray) =>
                                       Resource.Values.fromValue({
-                                        focusResource: $parameters.resource,
+                                        focusResource: $resource,
                                         propertyPath:
                                           PropertyShape.$schema.properties
                                             .hasValues.path,
@@ -1258,15 +1333,15 @@ export namespace PropertyShape {
                                     ),
                               }).chain((hasValues) =>
                                 $shaclPropertyFromRdf({
-                                  graph: $parameters.graph,
-                                  resource: $parameters.resource,
+                                  graph: _$options.graph,
+                                  resource: $resource,
                                   propertySchema: $schema.properties.in_,
                                   typeFromRdf: (resourceValues) =>
                                     resourceValues
                                       .chain((values) =>
                                         values.chainMap((value) =>
                                           value.toList({
-                                            graph: $parameters.graph,
+                                            graph: _$options.graph,
                                           }),
                                         ),
                                       )
@@ -1274,8 +1349,7 @@ export namespace PropertyShape {
                                         valueLists.chainMap((valueList) =>
                                           Right(
                                             Resource.Values.fromArray({
-                                              focusResource:
-                                                $parameters.resource,
+                                              focusResource: $resource,
                                               propertyPath:
                                                 PropertyShape.$schema.properties
                                                   .in_.path,
@@ -1302,7 +1376,7 @@ export namespace PropertyShape {
                                                           expectedValueType:
                                                             "(NamedNode | Literal)",
                                                           focusResource:
-                                                            $parameters.resource,
+                                                            $resource,
                                                           propertyPath:
                                                             PropertyShape
                                                               .$schema
@@ -1332,8 +1406,7 @@ export namespace PropertyShape {
                                                 readonly (NamedNode | Literal)[]
                                               >
                                             >({
-                                              focusResource:
-                                                $parameters.resource,
+                                              focusResource: $resource,
                                               propertyPath:
                                                 PropertyShape.$schema.properties
                                                   .in_.path,
@@ -1342,8 +1415,8 @@ export namespace PropertyShape {
                                       ),
                                 }).chain((in_) =>
                                   $shaclPropertyFromRdf({
-                                    graph: $parameters.graph,
-                                    resource: $parameters.resource,
+                                    graph: _$options.graph,
+                                    resource: $resource,
                                     propertySchema:
                                       $schema.properties.isDefinedBy,
                                     typeFromRdf: (resourceValues) =>
@@ -1361,8 +1434,7 @@ export namespace PropertyShape {
                                             : Resource.Values.fromValue<
                                                 Maybe<BlankNode | NamedNode>
                                               >({
-                                                focusResource:
-                                                  $parameters.resource,
+                                                focusResource: $resource,
                                                 propertyPath:
                                                   PropertyShape.$schema
                                                     .properties.isDefinedBy
@@ -1372,15 +1444,15 @@ export namespace PropertyShape {
                                         ),
                                   }).chain((isDefinedBy) =>
                                     $shaclPropertyFromRdf({
-                                      graph: $parameters.graph,
-                                      resource: $parameters.resource,
+                                      graph: _$options.graph,
+                                      resource: $resource,
                                       propertySchema: $schema.properties.labels,
                                       typeFromRdf: (resourceValues) =>
                                         resourceValues
                                           .chain((values) =>
                                             $fromRdfPreferredLanguages(
                                               values,
-                                              $parameters.preferredLanguages,
+                                              _$options.preferredLanguages,
                                             ),
                                           )
                                           .chain((values) =>
@@ -1391,8 +1463,7 @@ export namespace PropertyShape {
                                           .map((values) => values.toArray())
                                           .map((valuesArray) =>
                                             Resource.Values.fromValue({
-                                              focusResource:
-                                                $parameters.resource,
+                                              focusResource: $resource,
                                               propertyPath:
                                                 PropertyShape.$schema.properties
                                                   .labels.path,
@@ -1401,8 +1472,8 @@ export namespace PropertyShape {
                                           ),
                                     }).chain((labels) =>
                                       $shaclPropertyFromRdf({
-                                        graph: $parameters.graph,
-                                        resource: $parameters.resource,
+                                        graph: _$options.graph,
+                                        resource: $resource,
                                         propertySchema:
                                           $schema.properties.languageIn,
                                         typeFromRdf: (resourceValues) =>
@@ -1410,7 +1481,7 @@ export namespace PropertyShape {
                                             .chain((values) =>
                                               values.chainMap((value) =>
                                                 value.toList({
-                                                  graph: $parameters.graph,
+                                                  graph: _$options.graph,
                                                 }),
                                               ),
                                             )
@@ -1418,8 +1489,7 @@ export namespace PropertyShape {
                                               valueLists.chainMap((valueList) =>
                                                 Right(
                                                   Resource.Values.fromArray({
-                                                    focusResource:
-                                                      $parameters.resource,
+                                                    focusResource: $resource,
                                                     propertyPath:
                                                       PropertyShape.$schema
                                                         .properties.languageIn
@@ -1430,7 +1500,7 @@ export namespace PropertyShape {
                                                   .chain((values) =>
                                                     $fromRdfPreferredLanguages(
                                                       values,
-                                                      $parameters.preferredLanguages,
+                                                      _$options.preferredLanguages,
                                                     ),
                                                   )
                                                   .chain((values) =>
@@ -1453,8 +1523,7 @@ export namespace PropertyShape {
                                                 : Resource.Values.fromValue<
                                                     Maybe<readonly string[]>
                                                   >({
-                                                    focusResource:
-                                                      $parameters.resource,
+                                                    focusResource: $resource,
                                                     propertyPath:
                                                       PropertyShape.$schema
                                                         .properties.languageIn
@@ -1464,8 +1533,8 @@ export namespace PropertyShape {
                                             ),
                                       }).chain((languageIn) =>
                                         $shaclPropertyFromRdf({
-                                          graph: $parameters.graph,
-                                          resource: $parameters.resource,
+                                          graph: _$options.graph,
+                                          resource: $resource,
                                           propertySchema:
                                             $schema.properties.maxCount,
                                           typeFromRdf: (resourceValues) =>
@@ -1483,8 +1552,7 @@ export namespace PropertyShape {
                                                   : Resource.Values.fromValue<
                                                       Maybe<number>
                                                     >({
-                                                      focusResource:
-                                                        $parameters.resource,
+                                                      focusResource: $resource,
                                                       propertyPath:
                                                         PropertyShape.$schema
                                                           .properties.maxCount
@@ -1494,8 +1562,8 @@ export namespace PropertyShape {
                                               ),
                                         }).chain((maxCount) =>
                                           $shaclPropertyFromRdf({
-                                            graph: $parameters.graph,
-                                            resource: $parameters.resource,
+                                            graph: _$options.graph,
+                                            resource: $resource,
                                             propertySchema:
                                               $schema.properties.maxExclusive,
                                             typeFromRdf: (resourceValues) =>
@@ -1503,7 +1571,7 @@ export namespace PropertyShape {
                                                 .chain((values) =>
                                                   $fromRdfPreferredLanguages(
                                                     values,
-                                                    $parameters.preferredLanguages,
+                                                    _$options.preferredLanguages,
                                                   ),
                                                 )
                                                 .chain((values) =>
@@ -1520,7 +1588,7 @@ export namespace PropertyShape {
                                                         Maybe<Literal>
                                                       >({
                                                         focusResource:
-                                                          $parameters.resource,
+                                                          $resource,
                                                         propertyPath:
                                                           PropertyShape.$schema
                                                             .properties
@@ -1530,8 +1598,8 @@ export namespace PropertyShape {
                                                 ),
                                           }).chain((maxExclusive) =>
                                             $shaclPropertyFromRdf({
-                                              graph: $parameters.graph,
-                                              resource: $parameters.resource,
+                                              graph: _$options.graph,
+                                              resource: $resource,
                                               propertySchema:
                                                 $schema.properties.maxInclusive,
                                               typeFromRdf: (resourceValues) =>
@@ -1539,7 +1607,7 @@ export namespace PropertyShape {
                                                   .chain((values) =>
                                                     $fromRdfPreferredLanguages(
                                                       values,
-                                                      $parameters.preferredLanguages,
+                                                      _$options.preferredLanguages,
                                                     ),
                                                   )
                                                   .chain((values) =>
@@ -1556,7 +1624,7 @@ export namespace PropertyShape {
                                                           Maybe<Literal>
                                                         >({
                                                           focusResource:
-                                                            $parameters.resource,
+                                                            $resource,
                                                           propertyPath:
                                                             PropertyShape
                                                               .$schema
@@ -1568,8 +1636,8 @@ export namespace PropertyShape {
                                                   ),
                                             }).chain((maxInclusive) =>
                                               $shaclPropertyFromRdf({
-                                                graph: $parameters.graph,
-                                                resource: $parameters.resource,
+                                                graph: _$options.graph,
+                                                resource: $resource,
                                                 propertySchema:
                                                   $schema.properties.maxLength,
                                                 typeFromRdf: (resourceValues) =>
@@ -1588,7 +1656,7 @@ export namespace PropertyShape {
                                                             Maybe<number>
                                                           >({
                                                             focusResource:
-                                                              $parameters.resource,
+                                                              $resource,
                                                             propertyPath:
                                                               PropertyShape
                                                                 .$schema
@@ -1600,9 +1668,8 @@ export namespace PropertyShape {
                                                     ),
                                               }).chain((maxLength) =>
                                                 $shaclPropertyFromRdf({
-                                                  graph: $parameters.graph,
-                                                  resource:
-                                                    $parameters.resource,
+                                                  graph: _$options.graph,
+                                                  resource: $resource,
                                                   propertySchema:
                                                     $schema.properties.minCount,
                                                   typeFromRdf: (
@@ -1625,7 +1692,7 @@ export namespace PropertyShape {
                                                               Maybe<number>
                                                             >({
                                                               focusResource:
-                                                                $parameters.resource,
+                                                                $resource,
                                                               propertyPath:
                                                                 PropertyShape
                                                                   .$schema
@@ -1638,9 +1705,8 @@ export namespace PropertyShape {
                                                       ),
                                                 }).chain((minCount) =>
                                                   $shaclPropertyFromRdf({
-                                                    graph: $parameters.graph,
-                                                    resource:
-                                                      $parameters.resource,
+                                                    graph: _$options.graph,
+                                                    resource: $resource,
                                                     propertySchema:
                                                       $schema.properties
                                                         .minExclusive,
@@ -1651,7 +1717,7 @@ export namespace PropertyShape {
                                                         .chain((values) =>
                                                           $fromRdfPreferredLanguages(
                                                             values,
-                                                            $parameters.preferredLanguages,
+                                                            _$options.preferredLanguages,
                                                           ),
                                                         )
                                                         .chain((values) =>
@@ -1672,7 +1738,7 @@ export namespace PropertyShape {
                                                                 Maybe<Literal>
                                                               >({
                                                                 focusResource:
-                                                                  $parameters.resource,
+                                                                  $resource,
                                                                 propertyPath:
                                                                   PropertyShape
                                                                     .$schema
@@ -1685,9 +1751,8 @@ export namespace PropertyShape {
                                                         ),
                                                   }).chain((minExclusive) =>
                                                     $shaclPropertyFromRdf({
-                                                      graph: $parameters.graph,
-                                                      resource:
-                                                        $parameters.resource,
+                                                      graph: _$options.graph,
+                                                      resource: $resource,
                                                       propertySchema:
                                                         $schema.properties
                                                           .minInclusive,
@@ -1698,7 +1763,7 @@ export namespace PropertyShape {
                                                           .chain((values) =>
                                                             $fromRdfPreferredLanguages(
                                                               values,
-                                                              $parameters.preferredLanguages,
+                                                              _$options.preferredLanguages,
                                                             ),
                                                           )
                                                           .chain((values) =>
@@ -1719,7 +1784,7 @@ export namespace PropertyShape {
                                                                   Maybe<Literal>
                                                                 >({
                                                                   focusResource:
-                                                                    $parameters.resource,
+                                                                    $resource,
                                                                   propertyPath:
                                                                     PropertyShape
                                                                       .$schema
@@ -1732,10 +1797,8 @@ export namespace PropertyShape {
                                                           ),
                                                     }).chain((minInclusive) =>
                                                       $shaclPropertyFromRdf({
-                                                        graph:
-                                                          $parameters.graph,
-                                                        resource:
-                                                          $parameters.resource,
+                                                        graph: _$options.graph,
+                                                        resource: $resource,
                                                         propertySchema:
                                                           $schema.properties
                                                             .minLength,
@@ -1761,7 +1824,7 @@ export namespace PropertyShape {
                                                                     Maybe<number>
                                                                   >({
                                                                     focusResource:
-                                                                      $parameters.resource,
+                                                                      $resource,
                                                                     propertyPath:
                                                                       PropertyShape
                                                                         .$schema
@@ -1775,9 +1838,8 @@ export namespace PropertyShape {
                                                       }).chain((minLength) =>
                                                         $shaclPropertyFromRdf({
                                                           graph:
-                                                            $parameters.graph,
-                                                          resource:
-                                                            $parameters.resource,
+                                                            _$options.graph,
+                                                          resource: $resource,
                                                           propertySchema:
                                                             $schema.properties
                                                               .names,
@@ -1788,7 +1850,7 @@ export namespace PropertyShape {
                                                               .chain((values) =>
                                                                 $fromRdfPreferredLanguages(
                                                                   values,
-                                                                  $parameters.preferredLanguages,
+                                                                  _$options.preferredLanguages,
                                                                 ),
                                                               )
                                                               .chain((values) =>
@@ -1805,7 +1867,7 @@ export namespace PropertyShape {
                                                                   Resource.Values.fromValue(
                                                                     {
                                                                       focusResource:
-                                                                        $parameters.resource,
+                                                                        $resource,
                                                                       propertyPath:
                                                                         PropertyShape
                                                                           .$schema
@@ -1821,9 +1883,9 @@ export namespace PropertyShape {
                                                           $shaclPropertyFromRdf(
                                                             {
                                                               graph:
-                                                                $parameters.graph,
+                                                                _$options.graph,
                                                               resource:
-                                                                $parameters.resource,
+                                                                $resource,
                                                               propertySchema:
                                                                 $schema
                                                                   .properties
@@ -1887,7 +1949,7 @@ export namespace PropertyShape {
                                                                             >
                                                                           >({
                                                                             focusResource:
-                                                                              $parameters.resource,
+                                                                              $resource,
                                                                             propertyPath:
                                                                               PropertyShape
                                                                                 .$schema
@@ -1903,9 +1965,9 @@ export namespace PropertyShape {
                                                             $shaclPropertyFromRdf(
                                                               {
                                                                 graph:
-                                                                  $parameters.graph,
+                                                                  _$options.graph,
                                                                 resource:
-                                                                  $parameters.resource,
+                                                                  $resource,
                                                                 propertySchema:
                                                                   $schema
                                                                     .properties
@@ -1938,7 +2000,7 @@ export namespace PropertyShape {
                                                                         Resource.Values.fromValue(
                                                                           {
                                                                             focusResource:
-                                                                              $parameters.resource,
+                                                                              $resource,
                                                                             propertyPath:
                                                                               PropertyShape
                                                                                 .$schema
@@ -1955,9 +2017,9 @@ export namespace PropertyShape {
                                                               $shaclPropertyFromRdf(
                                                                 {
                                                                   graph:
-                                                                    $parameters.graph,
+                                                                    _$options.graph,
                                                                   resource:
-                                                                    $parameters.resource,
+                                                                    $resource,
                                                                   propertySchema:
                                                                     $schema
                                                                       .properties
@@ -1990,7 +2052,7 @@ export namespace PropertyShape {
                                                                           Resource.Values.fromValue(
                                                                             {
                                                                               focusResource:
-                                                                                $parameters.resource,
+                                                                                $resource,
                                                                               propertyPath:
                                                                                 PropertyShape
                                                                                   .$schema
@@ -2007,9 +2069,9 @@ export namespace PropertyShape {
                                                                 $shaclPropertyFromRdf(
                                                                   {
                                                                     graph:
-                                                                      $parameters.graph,
+                                                                      _$options.graph,
                                                                     resource:
-                                                                      $parameters.resource,
+                                                                      $resource,
                                                                     propertySchema:
                                                                       $schema
                                                                         .properties
@@ -2030,7 +2092,7 @@ export namespace PropertyShape {
                                                                                   value.toList(
                                                                                     {
                                                                                       graph:
-                                                                                        $parameters.graph,
+                                                                                        _$options.graph,
                                                                                     },
                                                                                   ),
                                                                               ),
@@ -2047,7 +2109,7 @@ export namespace PropertyShape {
                                                                                     Resource.Values.fromArray(
                                                                                       {
                                                                                         focusResource:
-                                                                                          $parameters.resource,
+                                                                                          $resource,
                                                                                         propertyPath:
                                                                                           PropertyShape
                                                                                             .$schema
@@ -2095,7 +2157,7 @@ export namespace PropertyShape {
                                                                               Resource.Values.fromValue(
                                                                                 {
                                                                                   focusResource:
-                                                                                    $parameters.resource,
+                                                                                    $resource,
                                                                                   propertyPath:
                                                                                     PropertyShape
                                                                                       .$schema
@@ -2112,9 +2174,9 @@ export namespace PropertyShape {
                                                                   $shaclPropertyFromRdf(
                                                                     {
                                                                       graph:
-                                                                        $parameters.graph,
+                                                                        _$options.graph,
                                                                       resource:
-                                                                        $parameters.resource,
+                                                                        $resource,
                                                                       propertySchema:
                                                                         $schema
                                                                           .properties
@@ -2154,7 +2216,7 @@ export namespace PropertyShape {
                                                                                     >(
                                                                                       {
                                                                                         focusResource:
-                                                                                          $parameters.resource,
+                                                                                          $resource,
                                                                                         propertyPath:
                                                                                           PropertyShape
                                                                                             .$schema
@@ -2172,9 +2234,9 @@ export namespace PropertyShape {
                                                                       $shaclPropertyFromRdf(
                                                                         {
                                                                           graph:
-                                                                            $parameters.graph,
+                                                                            _$options.graph,
                                                                           resource:
-                                                                            $parameters.resource,
+                                                                            $resource,
                                                                           propertySchema:
                                                                             $schema
                                                                               .properties
@@ -2183,34 +2245,27 @@ export namespace PropertyShape {
                                                                             (
                                                                               resourceValues,
                                                                             ) =>
-                                                                              resourceValues.chain(
-                                                                                (
-                                                                                  values,
-                                                                                ) =>
-                                                                                  values.chainMap(
-                                                                                    (
-                                                                                      value,
-                                                                                    ) =>
-                                                                                      value
-                                                                                        .toResource()
-                                                                                        .chain(
-                                                                                          (
-                                                                                            resource,
-                                                                                          ) =>
-                                                                                            PropertyPath.$fromRdf(
-                                                                                              resource,
-                                                                                              {
-                                                                                                context:
-                                                                                                  $parameters.context,
-                                                                                                ignoreRdfType: true,
-                                                                                                objectSet:
-                                                                                                  $parameters.objectSet,
-                                                                                                preferredLanguages:
-                                                                                                  $parameters.preferredLanguages,
-                                                                                              },
-                                                                                            ),
-                                                                                        ),
-                                                                                  ),
+                                                                              $PropertyPath.$fromRdfResourceValues(
+                                                                                resourceValues,
+                                                                                {
+                                                                                  context:
+                                                                                    _$options.context,
+                                                                                  graph:
+                                                                                    _$options.graph,
+                                                                                  preferredLanguages:
+                                                                                    _$options.preferredLanguages,
+                                                                                  objectSet:
+                                                                                    _$options.objectSet,
+                                                                                  resource:
+                                                                                    $resource,
+                                                                                  ignoreRdfType: true,
+                                                                                  propertyPath:
+                                                                                    PropertyShape
+                                                                                      .$schema
+                                                                                      .properties
+                                                                                      .path
+                                                                                      .path,
+                                                                                },
                                                                               ),
                                                                         },
                                                                       ).chain(
@@ -2220,9 +2275,9 @@ export namespace PropertyShape {
                                                                           $shaclPropertyFromRdf(
                                                                             {
                                                                               graph:
-                                                                                $parameters.graph,
+                                                                                _$options.graph,
                                                                               resource:
-                                                                                $parameters.resource,
+                                                                                $resource,
                                                                               propertySchema:
                                                                                 $schema
                                                                                   .properties
@@ -2238,7 +2293,7 @@ export namespace PropertyShape {
                                                                                       ) =>
                                                                                         $fromRdfPreferredLanguages(
                                                                                           values,
-                                                                                          $parameters.preferredLanguages,
+                                                                                          _$options.preferredLanguages,
                                                                                         ),
                                                                                     )
                                                                                     .chain(
@@ -2265,7 +2320,7 @@ export namespace PropertyShape {
                                                                                         Resource.Values.fromValue(
                                                                                           {
                                                                                             focusResource:
-                                                                                              $parameters.resource,
+                                                                                              $resource,
                                                                                             propertyPath:
                                                                                               PropertyShape
                                                                                                 .$schema
@@ -2285,9 +2340,9 @@ export namespace PropertyShape {
                                                                               $shaclPropertyFromRdf(
                                                                                 {
                                                                                   graph:
-                                                                                    $parameters.graph,
+                                                                                    _$options.graph,
                                                                                   resource:
-                                                                                    $parameters.resource,
+                                                                                    $resource,
                                                                                   propertySchema:
                                                                                     $schema
                                                                                       .properties
@@ -2327,7 +2382,7 @@ export namespace PropertyShape {
                                                                                                 >(
                                                                                                   {
                                                                                                     focusResource:
-                                                                                                      $parameters.resource,
+                                                                                                      $resource,
                                                                                                     propertyPath:
                                                                                                       PropertyShape
                                                                                                         .$schema
@@ -2347,9 +2402,9 @@ export namespace PropertyShape {
                                                                                   $shaclPropertyFromRdf(
                                                                                     {
                                                                                       graph:
-                                                                                        $parameters.graph,
+                                                                                        _$options.graph,
                                                                                       resource:
-                                                                                        $parameters.resource,
+                                                                                        $resource,
                                                                                       propertySchema:
                                                                                         $schema
                                                                                           .properties
@@ -2370,7 +2425,7 @@ export namespace PropertyShape {
                                                                                                     value.toList(
                                                                                                       {
                                                                                                         graph:
-                                                                                                          $parameters.graph,
+                                                                                                          _$options.graph,
                                                                                                       },
                                                                                                     ),
                                                                                                 ),
@@ -2387,7 +2442,7 @@ export namespace PropertyShape {
                                                                                                       Resource.Values.fromArray(
                                                                                                         {
                                                                                                           focusResource:
-                                                                                                            $parameters.resource,
+                                                                                                            $resource,
                                                                                                           propertyPath:
                                                                                                             PropertyShape
                                                                                                               .$schema
@@ -2435,7 +2490,7 @@ export namespace PropertyShape {
                                                                                                 Resource.Values.fromValue(
                                                                                                   {
                                                                                                     focusResource:
-                                                                                                      $parameters.resource,
+                                                                                                      $resource,
                                                                                                     propertyPath:
                                                                                                       PropertyShape
                                                                                                         .$schema
@@ -2522,7 +2577,7 @@ export namespace PropertyShape {
           ),
         ),
     );
-  }
+  };
 
   export const $schema = {
     properties: {
@@ -2531,7 +2586,7 @@ export namespace PropertyShape {
         type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminant" as const,
+        kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PropertyShape"],
@@ -2795,7 +2850,7 @@ export namespace PropertyShape {
       },
       path: {
         kind: "Shacl" as const,
-        type: () => PropertyPath.$schema,
+        type: () => $PropertyPath.$schema,
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
       },
       patterns: {
@@ -2828,13 +2883,9 @@ export namespace PropertyShape {
     },
   } as const;
 
-  export function $toRdf(
+  export function $toRdfResource(
     _propertyShape: PropertyShape,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: Parameters<$ToRdfResourceFunction<PropertyShape>>[1],
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -3208,7 +3259,7 @@ export namespace PropertyShape {
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
       [
-        PropertyPath.$toRdf(_propertyShape.path, {
+        $PropertyPath.$toRdfResource(_propertyShape.path, {
           graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
@@ -3337,12 +3388,13 @@ export namespace PropertyGroup {
     readonly labels?: $CollectionFilter<$StringFilter>;
   };
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, PropertyGroup> {
+  export const $fromRdfResource: $FromRdfResourceFunction<PropertyGroup> = (
+    resource,
+    options,
+  ) => {
     let {
       context,
+      graph,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
@@ -3350,14 +3402,27 @@ export namespace PropertyGroup {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return PropertyGroup.$propertiesFromRdf({
+    return PropertyGroup.$propertiesFromRdfResource(resource, {
       context,
+      graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-      resource,
     });
-  }
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    PropertyGroup
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            PropertyGroup.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://www.w3.org/ns/shacl#PropertyGroup",
@@ -3372,21 +3437,16 @@ export namespace PropertyGroup {
     }
   }
 
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "PropertyGroup";
-      comments: readonly string[];
-      labels: readonly string[];
-    }
-  > {
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+    $identifier: BlankNode | NamedNode;
+    $type: "PropertyGroup";
+    comments: readonly string[];
+    labels: readonly string[];
+  }> = ($resource, _$options) => {
     return (
-      !$parameters.ignoreRdfType
-        ? $parameters.resource
-            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -3397,8 +3457,8 @@ export namespace PropertyGroup {
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $parameters.resource.isInstanceOf(PropertyGroup.$fromRdfType, {
-                  graph: $parameters.graph,
+                $resource.isInstanceOf(PropertyGroup.$fromRdfType, {
+                  graph: _$options.graph,
                 })
               ) {
                 return Right(true as const);
@@ -3407,7 +3467,7 @@ export namespace PropertyGroup {
               return Left(
                 new Error(
                   `${Resource.Identifier.toString(
-                    $parameters.resource.identifier,
+                    $resource.identifier,
                   )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
                 ),
               );
@@ -3417,9 +3477,9 @@ export namespace PropertyGroup {
       Right(
         new Resource.Value({
           dataFactory: dataFactory,
-          focusResource: $parameters.resource,
+          focusResource: $resource,
           propertyPath: $RdfVocabularies.rdf.subject,
-          term: $parameters.resource.identifier,
+          term: $resource.identifier,
         }).toValues(),
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
@@ -3427,15 +3487,15 @@ export namespace PropertyGroup {
         .chain(($identifier) =>
           Right<"PropertyGroup">("PropertyGroup" as const).chain(($type) =>
             $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
+              graph: _$options.graph,
+              resource: $resource,
               propertySchema: $schema.properties.comments,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
                     $fromRdfPreferredLanguages(
                       values,
-                      $parameters.preferredLanguages,
+                      _$options.preferredLanguages,
                     ),
                   )
                   .chain((values) =>
@@ -3444,7 +3504,7 @@ export namespace PropertyGroup {
                   .map((values) => values.toArray())
                   .map((valuesArray) =>
                     Resource.Values.fromValue({
-                      focusResource: $parameters.resource,
+                      focusResource: $resource,
                       propertyPath:
                         PropertyGroup.$schema.properties.comments.path,
                       value: valuesArray,
@@ -3452,15 +3512,15 @@ export namespace PropertyGroup {
                   ),
             }).chain((comments) =>
               $shaclPropertyFromRdf({
-                graph: $parameters.graph,
-                resource: $parameters.resource,
+                graph: _$options.graph,
+                resource: $resource,
                 propertySchema: $schema.properties.labels,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
                       $fromRdfPreferredLanguages(
                         values,
-                        $parameters.preferredLanguages,
+                        _$options.preferredLanguages,
                       ),
                     )
                     .chain((values) =>
@@ -3469,7 +3529,7 @@ export namespace PropertyGroup {
                     .map((values) => values.toArray())
                     .map((valuesArray) =>
                       Resource.Values.fromValue({
-                        focusResource: $parameters.resource,
+                        focusResource: $resource,
                         propertyPath:
                           PropertyGroup.$schema.properties.labels.path,
                         value: valuesArray,
@@ -3480,7 +3540,7 @@ export namespace PropertyGroup {
           ),
         ),
     );
-  }
+  };
 
   export const $schema = {
     properties: {
@@ -3489,7 +3549,7 @@ export namespace PropertyGroup {
         type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminant" as const,
+        kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PropertyGroup"],
@@ -3518,13 +3578,9 @@ export namespace PropertyGroup {
     },
   } as const;
 
-  export function $toRdf(
+  export function $toRdfResource(
     _propertyGroup: PropertyGroup,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: Parameters<$ToRdfResourceFunction<PropertyGroup>>[1],
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -3588,12 +3644,13 @@ export namespace Ontology {
     readonly labels?: $CollectionFilter<$StringFilter>;
   };
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, Ontology> {
+  export const $fromRdfResource: $FromRdfResourceFunction<Ontology> = (
+    resource,
+    options,
+  ) => {
     let {
       context,
+      graph,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
@@ -3601,14 +3658,25 @@ export namespace Ontology {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return Ontology.$propertiesFromRdf({
+    return Ontology.$propertiesFromRdfResource(resource, {
       context,
+      graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-      resource,
     });
-  }
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    Ontology
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => Ontology.$fromRdfResource(resource, options)),
+      ),
+    );
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://www.w3.org/2002/07/owl#Ontology",
@@ -3623,20 +3691,15 @@ export namespace Ontology {
     }
   }
 
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "Ontology";
-      labels: readonly string[];
-    }
-  > {
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+    $identifier: BlankNode | NamedNode;
+    $type: "Ontology";
+    labels: readonly string[];
+  }> = ($resource, _$options) => {
     return (
-      !$parameters.ignoreRdfType
-        ? $parameters.resource
-            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -3647,8 +3710,8 @@ export namespace Ontology {
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $parameters.resource.isInstanceOf(Ontology.$fromRdfType, {
-                  graph: $parameters.graph,
+                $resource.isInstanceOf(Ontology.$fromRdfType, {
+                  graph: _$options.graph,
                 })
               ) {
                 return Right(true as const);
@@ -3657,7 +3720,7 @@ export namespace Ontology {
               return Left(
                 new Error(
                   `${Resource.Identifier.toString(
-                    $parameters.resource.identifier,
+                    $resource.identifier,
                   )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
                 ),
               );
@@ -3667,9 +3730,9 @@ export namespace Ontology {
       Right(
         new Resource.Value({
           dataFactory: dataFactory,
-          focusResource: $parameters.resource,
+          focusResource: $resource,
           propertyPath: $RdfVocabularies.rdf.subject,
-          term: $parameters.resource.identifier,
+          term: $resource.identifier,
         }).toValues(),
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
@@ -3677,15 +3740,15 @@ export namespace Ontology {
         .chain(($identifier) =>
           Right<"Ontology">("Ontology" as const).chain(($type) =>
             $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
+              graph: _$options.graph,
+              resource: $resource,
               propertySchema: $schema.properties.labels,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
                     $fromRdfPreferredLanguages(
                       values,
-                      $parameters.preferredLanguages,
+                      _$options.preferredLanguages,
                     ),
                   )
                   .chain((values) =>
@@ -3694,7 +3757,7 @@ export namespace Ontology {
                   .map((values) => values.toArray())
                   .map((valuesArray) =>
                     Resource.Values.fromValue({
-                      focusResource: $parameters.resource,
+                      focusResource: $resource,
                       propertyPath: Ontology.$schema.properties.labels.path,
                       value: valuesArray,
                     }),
@@ -3703,7 +3766,7 @@ export namespace Ontology {
           ),
         ),
     );
-  }
+  };
 
   export const $schema = {
     properties: {
@@ -3712,7 +3775,7 @@ export namespace Ontology {
         type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminant" as const,
+        kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["Ontology"],
@@ -3731,13 +3794,9 @@ export namespace Ontology {
     },
   } as const;
 
-  export function $toRdf(
+  export function $toRdfResource(
     _ontology: Ontology,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: Parameters<$ToRdfResourceFunction<Ontology>>[1],
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -4121,12 +4180,13 @@ export namespace NodeShape {
     readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, NodeShape> {
+  export const $fromRdfResource: $FromRdfResourceFunction<NodeShape> = (
+    resource,
+    options,
+  ) => {
     let {
       context,
+      graph,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
@@ -4134,14 +4194,25 @@ export namespace NodeShape {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return NodeShape.$propertiesFromRdf({
+    return NodeShape.$propertiesFromRdfResource(resource, {
       context,
+      graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-      resource,
     });
-  }
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    NodeShape
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => NodeShape.$fromRdfResource(resource, options)),
+      ),
+    );
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
     "http://www.w3.org/ns/shacl#NodeShape",
@@ -4156,56 +4227,51 @@ export namespace NodeShape {
     }
   }
 
-  export function $propertiesFromRdf(
-    $parameters: $PropertiesFromRdfParameters,
-  ): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "NodeShape";
-      and: readonly (readonly (BlankNode | NamedNode)[])[];
-      classes: readonly NamedNode[];
-      closed: Maybe<boolean>;
-      comments: readonly string[];
-      datatype: Maybe<NamedNode>;
-      deactivated: Maybe<boolean>;
-      flags: readonly string[];
-      hasValues: readonly (NamedNode | Literal)[];
-      ignoredProperties: Maybe<readonly NamedNode[]>;
-      in_: Maybe<readonly (NamedNode | Literal)[]>;
-      isDefinedBy: Maybe<BlankNode | NamedNode>;
-      labels: readonly string[];
-      languageIn: Maybe<readonly string[]>;
-      maxCount: Maybe<number>;
-      maxExclusive: Maybe<Literal>;
-      maxInclusive: Maybe<Literal>;
-      maxLength: Maybe<number>;
-      minCount: Maybe<number>;
-      minExclusive: Maybe<Literal>;
-      minInclusive: Maybe<Literal>;
-      minLength: Maybe<number>;
-      nodeKind: Maybe<
-        NamedNode<
-          | "http://www.w3.org/ns/shacl#BlankNode"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-          | "http://www.w3.org/ns/shacl#IRI"
-          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-          | "http://www.w3.org/ns/shacl#Literal"
-        >
-      >;
-      nodes: readonly (BlankNode | NamedNode)[];
-      not: readonly (BlankNode | NamedNode)[];
-      or: readonly (readonly (BlankNode | NamedNode)[])[];
-      patterns: readonly string[];
-      properties: readonly (BlankNode | NamedNode)[];
-      xone: readonly (readonly (BlankNode | NamedNode)[])[];
-    }
-  > {
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+    $identifier: BlankNode | NamedNode;
+    $type: "NodeShape";
+    and: readonly (readonly (BlankNode | NamedNode)[])[];
+    classes: readonly NamedNode[];
+    closed: Maybe<boolean>;
+    comments: readonly string[];
+    datatype: Maybe<NamedNode>;
+    deactivated: Maybe<boolean>;
+    flags: readonly string[];
+    hasValues: readonly (NamedNode | Literal)[];
+    ignoredProperties: Maybe<readonly NamedNode[]>;
+    in_: Maybe<readonly (NamedNode | Literal)[]>;
+    isDefinedBy: Maybe<BlankNode | NamedNode>;
+    labels: readonly string[];
+    languageIn: Maybe<readonly string[]>;
+    maxCount: Maybe<number>;
+    maxExclusive: Maybe<Literal>;
+    maxInclusive: Maybe<Literal>;
+    maxLength: Maybe<number>;
+    minCount: Maybe<number>;
+    minExclusive: Maybe<Literal>;
+    minInclusive: Maybe<Literal>;
+    minLength: Maybe<number>;
+    nodeKind: Maybe<
+      NamedNode<
+        | "http://www.w3.org/ns/shacl#BlankNode"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+        | "http://www.w3.org/ns/shacl#IRI"
+        | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+        | "http://www.w3.org/ns/shacl#Literal"
+      >
+    >;
+    nodes: readonly (BlankNode | NamedNode)[];
+    not: readonly (BlankNode | NamedNode)[];
+    or: readonly (readonly (BlankNode | NamedNode)[])[];
+    patterns: readonly string[];
+    properties: readonly (BlankNode | NamedNode)[];
+    xone: readonly (readonly (BlankNode | NamedNode)[])[];
+  }> = ($resource, _$options) => {
     return (
-      !$parameters.ignoreRdfType
-        ? $parameters.resource
-            .value($RdfVocabularies.rdf.type, { graph: $parameters.graph })
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
             .chain((actualRdfType) => actualRdfType.toIri())
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
@@ -4216,8 +4282,8 @@ export namespace NodeShape {
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $parameters.resource.isInstanceOf(NodeShape.$fromRdfType, {
-                  graph: $parameters.graph,
+                $resource.isInstanceOf(NodeShape.$fromRdfType, {
+                  graph: _$options.graph,
                 })
               ) {
                 return Right(true as const);
@@ -4226,7 +4292,7 @@ export namespace NodeShape {
               return Left(
                 new Error(
                   `${Resource.Identifier.toString(
-                    $parameters.resource.identifier,
+                    $resource.identifier,
                   )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
                 ),
               );
@@ -4236,9 +4302,9 @@ export namespace NodeShape {
       Right(
         new Resource.Value({
           dataFactory: dataFactory,
-          focusResource: $parameters.resource,
+          focusResource: $resource,
           propertyPath: $RdfVocabularies.rdf.subject,
-          term: $parameters.resource.identifier,
+          term: $resource.identifier,
         }).toValues(),
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
@@ -4246,21 +4312,21 @@ export namespace NodeShape {
         .chain(($identifier) =>
           Right<"NodeShape">("NodeShape" as const).chain(($type) =>
             $shaclPropertyFromRdf({
-              graph: $parameters.graph,
-              resource: $parameters.resource,
+              graph: _$options.graph,
+              resource: $resource,
               propertySchema: $schema.properties.and,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
                     values.chainMap((value) =>
-                      value.toList({ graph: $parameters.graph }),
+                      value.toList({ graph: _$options.graph }),
                     ),
                   )
                   .chain((valueLists) =>
                     valueLists.chainMap((valueList) =>
                       Right(
                         Resource.Values.fromArray({
-                          focusResource: $parameters.resource,
+                          focusResource: $resource,
                           propertyPath:
                             PropertyShape.$schema.properties.and.path,
                           values: valueList.toArray(),
@@ -4276,15 +4342,15 @@ export namespace NodeShape {
                   .map((values) => values.toArray())
                   .map((valuesArray) =>
                     Resource.Values.fromValue({
-                      focusResource: $parameters.resource,
+                      focusResource: $resource,
                       propertyPath: PropertyShape.$schema.properties.and.path,
                       value: valuesArray,
                     }),
                   ),
             }).chain((and) =>
               $shaclPropertyFromRdf({
-                graph: $parameters.graph,
-                resource: $parameters.resource,
+                graph: _$options.graph,
+                resource: $resource,
                 propertySchema: $schema.properties.classes,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
@@ -4294,7 +4360,7 @@ export namespace NodeShape {
                     .map((values) => values.toArray())
                     .map((valuesArray) =>
                       Resource.Values.fromValue({
-                        focusResource: $parameters.resource,
+                        focusResource: $resource,
                         propertyPath:
                           PropertyShape.$schema.properties.classes.path,
                         value: valuesArray,
@@ -4302,8 +4368,8 @@ export namespace NodeShape {
                     ),
               }).chain((classes) =>
                 $shaclPropertyFromRdf({
-                  graph: $parameters.graph,
-                  resource: $parameters.resource,
+                  graph: _$options.graph,
+                  resource: $resource,
                   propertySchema: $schema.properties.closed,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
@@ -4314,7 +4380,7 @@ export namespace NodeShape {
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
                           : Resource.Values.fromValue<Maybe<boolean>>({
-                              focusResource: $parameters.resource,
+                              focusResource: $resource,
                               propertyPath:
                                 NodeShape.$schema.properties.closed.path,
                               value: Maybe.empty(),
@@ -4322,15 +4388,15 @@ export namespace NodeShape {
                       ),
                 }).chain((closed) =>
                   $shaclPropertyFromRdf({
-                    graph: $parameters.graph,
-                    resource: $parameters.resource,
+                    graph: _$options.graph,
+                    resource: $resource,
                     propertySchema: $schema.properties.comments,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
                           $fromRdfPreferredLanguages(
                             values,
-                            $parameters.preferredLanguages,
+                            _$options.preferredLanguages,
                           ),
                         )
                         .chain((values) =>
@@ -4339,7 +4405,7 @@ export namespace NodeShape {
                         .map((values) => values.toArray())
                         .map((valuesArray) =>
                           Resource.Values.fromValue({
-                            focusResource: $parameters.resource,
+                            focusResource: $resource,
                             propertyPath:
                               PropertyShape.$schema.properties.comments.path,
                             value: valuesArray,
@@ -4347,8 +4413,8 @@ export namespace NodeShape {
                         ),
                   }).chain((comments) =>
                     $shaclPropertyFromRdf({
-                      graph: $parameters.graph,
-                      resource: $parameters.resource,
+                      graph: _$options.graph,
+                      resource: $resource,
                       propertySchema: $schema.properties.datatype,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
@@ -4359,7 +4425,7 @@ export namespace NodeShape {
                             values.length > 0
                               ? values.map((value) => Maybe.of(value))
                               : Resource.Values.fromValue<Maybe<NamedNode>>({
-                                  focusResource: $parameters.resource,
+                                  focusResource: $resource,
                                   propertyPath:
                                     PropertyShape.$schema.properties.datatype
                                       .path,
@@ -4368,8 +4434,8 @@ export namespace NodeShape {
                           ),
                     }).chain((datatype) =>
                       $shaclPropertyFromRdf({
-                        graph: $parameters.graph,
-                        resource: $parameters.resource,
+                        graph: _$options.graph,
+                        resource: $resource,
                         propertySchema: $schema.properties.deactivated,
                         typeFromRdf: (resourceValues) =>
                           resourceValues
@@ -4380,7 +4446,7 @@ export namespace NodeShape {
                               values.length > 0
                                 ? values.map((value) => Maybe.of(value))
                                 : Resource.Values.fromValue<Maybe<boolean>>({
-                                    focusResource: $parameters.resource,
+                                    focusResource: $resource,
                                     propertyPath:
                                       PropertyShape.$schema.properties
                                         .deactivated.path,
@@ -4389,15 +4455,15 @@ export namespace NodeShape {
                             ),
                       }).chain((deactivated) =>
                         $shaclPropertyFromRdf({
-                          graph: $parameters.graph,
-                          resource: $parameters.resource,
+                          graph: _$options.graph,
+                          resource: $resource,
                           propertySchema: $schema.properties.flags,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
                                 $fromRdfPreferredLanguages(
                                   values,
-                                  $parameters.preferredLanguages,
+                                  _$options.preferredLanguages,
                                 ),
                               )
                               .chain((values) =>
@@ -4406,7 +4472,7 @@ export namespace NodeShape {
                               .map((values) => values.toArray())
                               .map((valuesArray) =>
                                 Resource.Values.fromValue({
-                                  focusResource: $parameters.resource,
+                                  focusResource: $resource,
                                   propertyPath:
                                     PropertyShape.$schema.properties.flags.path,
                                   value: valuesArray,
@@ -4414,8 +4480,8 @@ export namespace NodeShape {
                               ),
                         }).chain((flags) =>
                           $shaclPropertyFromRdf({
-                            graph: $parameters.graph,
-                            resource: $parameters.resource,
+                            graph: _$options.graph,
+                            resource: $resource,
                             propertySchema: $schema.properties.hasValues,
                             typeFromRdf: (resourceValues) =>
                               resourceValues
@@ -4439,8 +4505,7 @@ export namespace NodeShape {
                                                 actualValue: term,
                                                 expectedValueType:
                                                   "(NamedNode | Literal)",
-                                                focusResource:
-                                                  $parameters.resource,
+                                                focusResource: $resource,
                                                 propertyPath:
                                                   PropertyShape.$schema
                                                     .properties.hasValues.path,
@@ -4454,7 +4519,7 @@ export namespace NodeShape {
                                 .map((values) => values.toArray())
                                 .map((valuesArray) =>
                                   Resource.Values.fromValue({
-                                    focusResource: $parameters.resource,
+                                    focusResource: $resource,
                                     propertyPath:
                                       PropertyShape.$schema.properties.hasValues
                                         .path,
@@ -4463,24 +4528,22 @@ export namespace NodeShape {
                                 ),
                           }).chain((hasValues) =>
                             $shaclPropertyFromRdf({
-                              graph: $parameters.graph,
-                              resource: $parameters.resource,
+                              graph: _$options.graph,
+                              resource: $resource,
                               propertySchema:
                                 $schema.properties.ignoredProperties,
                               typeFromRdf: (resourceValues) =>
                                 resourceValues
                                   .chain((values) =>
                                     values.chainMap((value) =>
-                                      value.toList({
-                                        graph: $parameters.graph,
-                                      }),
+                                      value.toList({ graph: _$options.graph }),
                                     ),
                                   )
                                   .chain((valueLists) =>
                                     valueLists.chainMap((valueList) =>
                                       Right(
                                         Resource.Values.fromArray({
-                                          focusResource: $parameters.resource,
+                                          focusResource: $resource,
                                           propertyPath:
                                             NodeShape.$schema.properties
                                               .ignoredProperties.path,
@@ -4504,7 +4567,7 @@ export namespace NodeShape {
                                       : Resource.Values.fromValue<
                                           Maybe<readonly NamedNode[]>
                                         >({
-                                          focusResource: $parameters.resource,
+                                          focusResource: $resource,
                                           propertyPath:
                                             NodeShape.$schema.properties
                                               .ignoredProperties.path,
@@ -4513,15 +4576,15 @@ export namespace NodeShape {
                                   ),
                             }).chain((ignoredProperties) =>
                               $shaclPropertyFromRdf({
-                                graph: $parameters.graph,
-                                resource: $parameters.resource,
+                                graph: _$options.graph,
+                                resource: $resource,
                                 propertySchema: $schema.properties.in_,
                                 typeFromRdf: (resourceValues) =>
                                   resourceValues
                                     .chain((values) =>
                                       values.chainMap((value) =>
                                         value.toList({
-                                          graph: $parameters.graph,
+                                          graph: _$options.graph,
                                         }),
                                       ),
                                     )
@@ -4529,7 +4592,7 @@ export namespace NodeShape {
                                       valueLists.chainMap((valueList) =>
                                         Right(
                                           Resource.Values.fromArray({
-                                            focusResource: $parameters.resource,
+                                            focusResource: $resource,
                                             propertyPath:
                                               PropertyShape.$schema.properties
                                                 .in_.path,
@@ -4556,7 +4619,7 @@ export namespace NodeShape {
                                                         expectedValueType:
                                                           "(NamedNode | Literal)",
                                                         focusResource:
-                                                          $parameters.resource,
+                                                          $resource,
                                                         propertyPath:
                                                           PropertyShape.$schema
                                                             .properties.in_
@@ -4583,7 +4646,7 @@ export namespace NodeShape {
                                               readonly (NamedNode | Literal)[]
                                             >
                                           >({
-                                            focusResource: $parameters.resource,
+                                            focusResource: $resource,
                                             propertyPath:
                                               PropertyShape.$schema.properties
                                                 .in_.path,
@@ -4592,8 +4655,8 @@ export namespace NodeShape {
                                     ),
                               }).chain((in_) =>
                                 $shaclPropertyFromRdf({
-                                  graph: $parameters.graph,
-                                  resource: $parameters.resource,
+                                  graph: _$options.graph,
+                                  resource: $resource,
                                   propertySchema:
                                     $schema.properties.isDefinedBy,
                                   typeFromRdf: (resourceValues) =>
@@ -4611,8 +4674,7 @@ export namespace NodeShape {
                                           : Resource.Values.fromValue<
                                               Maybe<BlankNode | NamedNode>
                                             >({
-                                              focusResource:
-                                                $parameters.resource,
+                                              focusResource: $resource,
                                               propertyPath:
                                                 PropertyShape.$schema.properties
                                                   .isDefinedBy.path,
@@ -4621,15 +4683,15 @@ export namespace NodeShape {
                                       ),
                                 }).chain((isDefinedBy) =>
                                   $shaclPropertyFromRdf({
-                                    graph: $parameters.graph,
-                                    resource: $parameters.resource,
+                                    graph: _$options.graph,
+                                    resource: $resource,
                                     propertySchema: $schema.properties.labels,
                                     typeFromRdf: (resourceValues) =>
                                       resourceValues
                                         .chain((values) =>
                                           $fromRdfPreferredLanguages(
                                             values,
-                                            $parameters.preferredLanguages,
+                                            _$options.preferredLanguages,
                                           ),
                                         )
                                         .chain((values) =>
@@ -4640,7 +4702,7 @@ export namespace NodeShape {
                                         .map((values) => values.toArray())
                                         .map((valuesArray) =>
                                           Resource.Values.fromValue({
-                                            focusResource: $parameters.resource,
+                                            focusResource: $resource,
                                             propertyPath:
                                               PropertyShape.$schema.properties
                                                 .labels.path,
@@ -4649,8 +4711,8 @@ export namespace NodeShape {
                                         ),
                                   }).chain((labels) =>
                                     $shaclPropertyFromRdf({
-                                      graph: $parameters.graph,
-                                      resource: $parameters.resource,
+                                      graph: _$options.graph,
+                                      resource: $resource,
                                       propertySchema:
                                         $schema.properties.languageIn,
                                       typeFromRdf: (resourceValues) =>
@@ -4658,7 +4720,7 @@ export namespace NodeShape {
                                           .chain((values) =>
                                             values.chainMap((value) =>
                                               value.toList({
-                                                graph: $parameters.graph,
+                                                graph: _$options.graph,
                                               }),
                                             ),
                                           )
@@ -4666,8 +4728,7 @@ export namespace NodeShape {
                                             valueLists.chainMap((valueList) =>
                                               Right(
                                                 Resource.Values.fromArray({
-                                                  focusResource:
-                                                    $parameters.resource,
+                                                  focusResource: $resource,
                                                   propertyPath:
                                                     PropertyShape.$schema
                                                       .properties.languageIn
@@ -4678,7 +4739,7 @@ export namespace NodeShape {
                                                 .chain((values) =>
                                                   $fromRdfPreferredLanguages(
                                                     values,
-                                                    $parameters.preferredLanguages,
+                                                    _$options.preferredLanguages,
                                                   ),
                                                 )
                                                 .chain((values) =>
@@ -4701,8 +4762,7 @@ export namespace NodeShape {
                                               : Resource.Values.fromValue<
                                                   Maybe<readonly string[]>
                                                 >({
-                                                  focusResource:
-                                                    $parameters.resource,
+                                                  focusResource: $resource,
                                                   propertyPath:
                                                     PropertyShape.$schema
                                                       .properties.languageIn
@@ -4712,8 +4772,8 @@ export namespace NodeShape {
                                           ),
                                     }).chain((languageIn) =>
                                       $shaclPropertyFromRdf({
-                                        graph: $parameters.graph,
-                                        resource: $parameters.resource,
+                                        graph: _$options.graph,
+                                        resource: $resource,
                                         propertySchema:
                                           $schema.properties.maxCount,
                                         typeFromRdf: (resourceValues) =>
@@ -4731,8 +4791,7 @@ export namespace NodeShape {
                                                 : Resource.Values.fromValue<
                                                     Maybe<number>
                                                   >({
-                                                    focusResource:
-                                                      $parameters.resource,
+                                                    focusResource: $resource,
                                                     propertyPath:
                                                       PropertyShape.$schema
                                                         .properties.maxCount
@@ -4742,8 +4801,8 @@ export namespace NodeShape {
                                             ),
                                       }).chain((maxCount) =>
                                         $shaclPropertyFromRdf({
-                                          graph: $parameters.graph,
-                                          resource: $parameters.resource,
+                                          graph: _$options.graph,
+                                          resource: $resource,
                                           propertySchema:
                                             $schema.properties.maxExclusive,
                                           typeFromRdf: (resourceValues) =>
@@ -4751,7 +4810,7 @@ export namespace NodeShape {
                                               .chain((values) =>
                                                 $fromRdfPreferredLanguages(
                                                   values,
-                                                  $parameters.preferredLanguages,
+                                                  _$options.preferredLanguages,
                                                 ),
                                               )
                                               .chain((values) =>
@@ -4767,8 +4826,7 @@ export namespace NodeShape {
                                                   : Resource.Values.fromValue<
                                                       Maybe<Literal>
                                                     >({
-                                                      focusResource:
-                                                        $parameters.resource,
+                                                      focusResource: $resource,
                                                       propertyPath:
                                                         PropertyShape.$schema
                                                           .properties
@@ -4778,8 +4836,8 @@ export namespace NodeShape {
                                               ),
                                         }).chain((maxExclusive) =>
                                           $shaclPropertyFromRdf({
-                                            graph: $parameters.graph,
-                                            resource: $parameters.resource,
+                                            graph: _$options.graph,
+                                            resource: $resource,
                                             propertySchema:
                                               $schema.properties.maxInclusive,
                                             typeFromRdf: (resourceValues) =>
@@ -4787,7 +4845,7 @@ export namespace NodeShape {
                                                 .chain((values) =>
                                                   $fromRdfPreferredLanguages(
                                                     values,
-                                                    $parameters.preferredLanguages,
+                                                    _$options.preferredLanguages,
                                                   ),
                                                 )
                                                 .chain((values) =>
@@ -4804,7 +4862,7 @@ export namespace NodeShape {
                                                         Maybe<Literal>
                                                       >({
                                                         focusResource:
-                                                          $parameters.resource,
+                                                          $resource,
                                                         propertyPath:
                                                           PropertyShape.$schema
                                                             .properties
@@ -4814,8 +4872,8 @@ export namespace NodeShape {
                                                 ),
                                           }).chain((maxInclusive) =>
                                             $shaclPropertyFromRdf({
-                                              graph: $parameters.graph,
-                                              resource: $parameters.resource,
+                                              graph: _$options.graph,
+                                              resource: $resource,
                                               propertySchema:
                                                 $schema.properties.maxLength,
                                               typeFromRdf: (resourceValues) =>
@@ -4834,7 +4892,7 @@ export namespace NodeShape {
                                                           Maybe<number>
                                                         >({
                                                           focusResource:
-                                                            $parameters.resource,
+                                                            $resource,
                                                           propertyPath:
                                                             PropertyShape
                                                               .$schema
@@ -4845,8 +4903,8 @@ export namespace NodeShape {
                                                   ),
                                             }).chain((maxLength) =>
                                               $shaclPropertyFromRdf({
-                                                graph: $parameters.graph,
-                                                resource: $parameters.resource,
+                                                graph: _$options.graph,
+                                                resource: $resource,
                                                 propertySchema:
                                                   $schema.properties.minCount,
                                                 typeFromRdf: (resourceValues) =>
@@ -4865,7 +4923,7 @@ export namespace NodeShape {
                                                             Maybe<number>
                                                           >({
                                                             focusResource:
-                                                              $parameters.resource,
+                                                              $resource,
                                                             propertyPath:
                                                               PropertyShape
                                                                 .$schema
@@ -4877,9 +4935,8 @@ export namespace NodeShape {
                                                     ),
                                               }).chain((minCount) =>
                                                 $shaclPropertyFromRdf({
-                                                  graph: $parameters.graph,
-                                                  resource:
-                                                    $parameters.resource,
+                                                  graph: _$options.graph,
+                                                  resource: $resource,
                                                   propertySchema:
                                                     $schema.properties
                                                       .minExclusive,
@@ -4890,7 +4947,7 @@ export namespace NodeShape {
                                                       .chain((values) =>
                                                         $fromRdfPreferredLanguages(
                                                           values,
-                                                          $parameters.preferredLanguages,
+                                                          _$options.preferredLanguages,
                                                         ),
                                                       )
                                                       .chain((values) =>
@@ -4909,7 +4966,7 @@ export namespace NodeShape {
                                                               Maybe<Literal>
                                                             >({
                                                               focusResource:
-                                                                $parameters.resource,
+                                                                $resource,
                                                               propertyPath:
                                                                 PropertyShape
                                                                   .$schema
@@ -4922,9 +4979,8 @@ export namespace NodeShape {
                                                       ),
                                                 }).chain((minExclusive) =>
                                                   $shaclPropertyFromRdf({
-                                                    graph: $parameters.graph,
-                                                    resource:
-                                                      $parameters.resource,
+                                                    graph: _$options.graph,
+                                                    resource: $resource,
                                                     propertySchema:
                                                       $schema.properties
                                                         .minInclusive,
@@ -4935,7 +4991,7 @@ export namespace NodeShape {
                                                         .chain((values) =>
                                                           $fromRdfPreferredLanguages(
                                                             values,
-                                                            $parameters.preferredLanguages,
+                                                            _$options.preferredLanguages,
                                                           ),
                                                         )
                                                         .chain((values) =>
@@ -4956,7 +5012,7 @@ export namespace NodeShape {
                                                                 Maybe<Literal>
                                                               >({
                                                                 focusResource:
-                                                                  $parameters.resource,
+                                                                  $resource,
                                                                 propertyPath:
                                                                   PropertyShape
                                                                     .$schema
@@ -4969,9 +5025,8 @@ export namespace NodeShape {
                                                         ),
                                                   }).chain((minInclusive) =>
                                                     $shaclPropertyFromRdf({
-                                                      graph: $parameters.graph,
-                                                      resource:
-                                                        $parameters.resource,
+                                                      graph: _$options.graph,
+                                                      resource: $resource,
                                                       propertySchema:
                                                         $schema.properties
                                                           .minLength,
@@ -4997,7 +5052,7 @@ export namespace NodeShape {
                                                                   Maybe<number>
                                                                 >({
                                                                   focusResource:
-                                                                    $parameters.resource,
+                                                                    $resource,
                                                                   propertyPath:
                                                                     PropertyShape
                                                                       .$schema
@@ -5010,10 +5065,8 @@ export namespace NodeShape {
                                                           ),
                                                     }).chain((minLength) =>
                                                       $shaclPropertyFromRdf({
-                                                        graph:
-                                                          $parameters.graph,
-                                                        resource:
-                                                          $parameters.resource,
+                                                        graph: _$options.graph,
+                                                        resource: $resource,
                                                         propertySchema:
                                                           $schema.properties
                                                             .nodeKind,
@@ -5067,7 +5120,7 @@ export namespace NodeShape {
                                                                     >
                                                                   >({
                                                                     focusResource:
-                                                                      $parameters.resource,
+                                                                      $resource,
                                                                     propertyPath:
                                                                       PropertyShape
                                                                         .$schema
@@ -5081,9 +5134,8 @@ export namespace NodeShape {
                                                       }).chain((nodeKind) =>
                                                         $shaclPropertyFromRdf({
                                                           graph:
-                                                            $parameters.graph,
-                                                          resource:
-                                                            $parameters.resource,
+                                                            _$options.graph,
+                                                          resource: $resource,
                                                           propertySchema:
                                                             $schema.properties
                                                               .nodes,
@@ -5105,7 +5157,7 @@ export namespace NodeShape {
                                                                   Resource.Values.fromValue(
                                                                     {
                                                                       focusResource:
-                                                                        $parameters.resource,
+                                                                        $resource,
                                                                       propertyPath:
                                                                         PropertyShape
                                                                           .$schema
@@ -5121,9 +5173,9 @@ export namespace NodeShape {
                                                           $shaclPropertyFromRdf(
                                                             {
                                                               graph:
-                                                                $parameters.graph,
+                                                                _$options.graph,
                                                               resource:
-                                                                $parameters.resource,
+                                                                $resource,
                                                               propertySchema:
                                                                 $schema
                                                                   .properties
@@ -5152,7 +5204,7 @@ export namespace NodeShape {
                                                                       Resource.Values.fromValue(
                                                                         {
                                                                           focusResource:
-                                                                            $parameters.resource,
+                                                                            $resource,
                                                                           propertyPath:
                                                                             PropertyShape
                                                                               .$schema
@@ -5169,9 +5221,9 @@ export namespace NodeShape {
                                                             $shaclPropertyFromRdf(
                                                               {
                                                                 graph:
-                                                                  $parameters.graph,
+                                                                  _$options.graph,
                                                                 resource:
-                                                                  $parameters.resource,
+                                                                  $resource,
                                                                 propertySchema:
                                                                   $schema
                                                                     .properties
@@ -5191,7 +5243,7 @@ export namespace NodeShape {
                                                                             value.toList(
                                                                               {
                                                                                 graph:
-                                                                                  $parameters.graph,
+                                                                                  _$options.graph,
                                                                               },
                                                                             ),
                                                                         ),
@@ -5208,7 +5260,7 @@ export namespace NodeShape {
                                                                               Resource.Values.fromArray(
                                                                                 {
                                                                                   focusResource:
-                                                                                    $parameters.resource,
+                                                                                    $resource,
                                                                                   propertyPath:
                                                                                     PropertyShape
                                                                                       .$schema
@@ -5256,7 +5308,7 @@ export namespace NodeShape {
                                                                         Resource.Values.fromValue(
                                                                           {
                                                                             focusResource:
-                                                                              $parameters.resource,
+                                                                              $resource,
                                                                             propertyPath:
                                                                               PropertyShape
                                                                                 .$schema
@@ -5273,9 +5325,9 @@ export namespace NodeShape {
                                                               $shaclPropertyFromRdf(
                                                                 {
                                                                   graph:
-                                                                    $parameters.graph,
+                                                                    _$options.graph,
                                                                   resource:
-                                                                    $parameters.resource,
+                                                                    $resource,
                                                                   propertySchema:
                                                                     $schema
                                                                       .properties
@@ -5290,7 +5342,7 @@ export namespace NodeShape {
                                                                         ) =>
                                                                           $fromRdfPreferredLanguages(
                                                                             values,
-                                                                            $parameters.preferredLanguages,
+                                                                            _$options.preferredLanguages,
                                                                           ),
                                                                       )
                                                                       .chain(
@@ -5317,7 +5369,7 @@ export namespace NodeShape {
                                                                           Resource.Values.fromValue(
                                                                             {
                                                                               focusResource:
-                                                                                $parameters.resource,
+                                                                                $resource,
                                                                               propertyPath:
                                                                                 PropertyShape
                                                                                   .$schema
@@ -5335,9 +5387,9 @@ export namespace NodeShape {
                                                                   $shaclPropertyFromRdf(
                                                                     {
                                                                       graph:
-                                                                        $parameters.graph,
+                                                                        _$options.graph,
                                                                       resource:
-                                                                        $parameters.resource,
+                                                                        $resource,
                                                                       propertySchema:
                                                                         $schema
                                                                           .properties
@@ -5371,7 +5423,7 @@ export namespace NodeShape {
                                                                                 Resource.Values.fromValue(
                                                                                   {
                                                                                     focusResource:
-                                                                                      $parameters.resource,
+                                                                                      $resource,
                                                                                     propertyPath:
                                                                                       NodeShape
                                                                                         .$schema
@@ -5391,9 +5443,9 @@ export namespace NodeShape {
                                                                       $shaclPropertyFromRdf(
                                                                         {
                                                                           graph:
-                                                                            $parameters.graph,
+                                                                            _$options.graph,
                                                                           resource:
-                                                                            $parameters.resource,
+                                                                            $resource,
                                                                           propertySchema:
                                                                             $schema
                                                                               .properties
@@ -5414,7 +5466,7 @@ export namespace NodeShape {
                                                                                         value.toList(
                                                                                           {
                                                                                             graph:
-                                                                                              $parameters.graph,
+                                                                                              _$options.graph,
                                                                                           },
                                                                                         ),
                                                                                     ),
@@ -5431,7 +5483,7 @@ export namespace NodeShape {
                                                                                           Resource.Values.fromArray(
                                                                                             {
                                                                                               focusResource:
-                                                                                                $parameters.resource,
+                                                                                                $resource,
                                                                                               propertyPath:
                                                                                                 PropertyShape
                                                                                                   .$schema
@@ -5479,7 +5531,7 @@ export namespace NodeShape {
                                                                                     Resource.Values.fromValue(
                                                                                       {
                                                                                         focusResource:
-                                                                                          $parameters.resource,
+                                                                                          $resource,
                                                                                         propertyPath:
                                                                                           PropertyShape
                                                                                             .$schema
@@ -5558,7 +5610,7 @@ export namespace NodeShape {
           ),
         ),
     );
-  }
+  };
 
   export const $schema = {
     properties: {
@@ -5567,7 +5619,7 @@ export namespace NodeShape {
         type: () => ({ kind: "Identifier" as const }),
       },
       $type: {
-        kind: "TypeDiscriminant" as const,
+        kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NodeShape"],
@@ -5840,13 +5892,9 @@ export namespace NodeShape {
     },
   } as const;
 
-  export function $toRdf(
+  export function $toRdfResource(
     _nodeShape: NodeShape,
-    options?: {
-      ignoreRdfType?: boolean;
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
+    options?: Parameters<$ToRdfResourceFunction<NodeShape>>[1],
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -6317,14 +6365,20 @@ export namespace NodeShape {
 export type Shape = NodeShape | PropertyShape;
 
 export namespace Shape {
-  export type $Identifier = BlankNode | NamedNode;
+  export const $toRdfResource: $ToRdfResourceFunction<Shape> = (
+    value,
+    options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toRdfResource(value, options);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
 
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $filter(filter: Shape.$Filter, value: Shape): boolean {
+  export const $filter = (filter: Shape.$Filter, value: Shape) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
@@ -6332,55 +6386,97 @@ export namespace Shape {
       return false;
     }
     if (
-      NodeShape.isNodeShape(value) &&
-      filter.on?.NodeShape &&
-      !NodeShape.$filter(filter.on.NodeShape, value as NodeShape)
+      filter.on?.["NodeShape"] !== undefined &&
+      NodeShape.isNodeShape(value)
     ) {
-      return false;
+      if (!NodeShape.$filter(filter.on["NodeShape"], value)) {
+        return false;
+      }
     }
     if (
-      PropertyShape.isPropertyShape(value) &&
-      filter.on?.PropertyShape &&
-      !PropertyShape.$filter(filter.on.PropertyShape, value as PropertyShape)
+      filter.on?.["PropertyShape"] !== undefined &&
+      PropertyShape.isPropertyShape(value)
     ) {
-      return false;
+      if (!PropertyShape.$filter(filter.on["PropertyShape"], value)) {
+        return false;
+      }
     }
-    return true;
-  }
 
-  export interface $Filter {
+    return true;
+  };
+
+  export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly NodeShape?: Omit<NodeShape.$Filter, "$identifier">;
-      readonly PropertyShape?: Omit<PropertyShape.$Filter, "$identifier">;
+      readonly NodeShape?: NodeShape.$Filter;
+      readonly PropertyShape?: PropertyShape.$Filter;
     };
-  }
+  };
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, Shape> {
-    return (
-      NodeShape.$fromRdf(resource, {
+  export const $fromRdfResource: $FromRdfResourceFunction<Shape> = (
+    resource,
+    options,
+  ) =>
+    (
+      NodeShape.$fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, Shape>
     ).altLazy(
       () =>
-        PropertyShape.$fromRdf(resource, {
+        PropertyShape.$fromRdfResource(resource, {
           ...options,
           ignoreRdfType: false,
         }) as Either<Error, Shape>,
     );
-  }
 
-  export function isShape(object: $Object): object is Shape {
-    return (
-      NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object)
-    );
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<Shape> =
+    ((values, _options) =>
+      values.chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = Right(value.toValues());
+          return (
+            NodeShape.$fromRdfResourceValues(valueAsValues, {
+              context: _options.context,
+              graph: _options.graph,
+              ignoreRdfType: false,
+              objectSet: _options.objectSet,
+              preferredLanguages: _options.preferredLanguages,
+              propertyPath: _options.propertyPath,
+              resource: _options.resource,
+            }) as Either<Error, Resource.Values<Shape>>
+          )
+            .altLazy(
+              () =>
+                PropertyShape.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<Shape>>,
+            )
+            .chain((values) => values.head());
+        }),
+      )) satisfies $FromRdfResourceValuesFunction<Shape>;
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.$schema },
+      PropertyShape: {
+        discriminantValues: ["PropertyShape"],
+        type: PropertyShape.$schema,
+      },
+    },
     properties: {
       and: {
         kind: "Shacl" as const,
@@ -6620,33 +6716,59 @@ export namespace Shape {
     },
   } as const;
 
-  export function $toRdf(
-    _shape: Shape,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (NodeShape.isNodeShape(_shape)) {
-      return NodeShape.$toRdf(_shape, _parameters);
+  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Shape> = ((
+    value,
+    _options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return [
+        NodeShape.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
     }
-    if (PropertyShape.isPropertyShape(_shape)) {
-      return PropertyShape.$toRdf(_shape, _parameters);
+    if (PropertyShape.isPropertyShape(value)) {
+      return [
+        PropertyShape.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
     }
-    throw new Error("unrecognized type");
+
+    throw new Error("unable to serialize to RDF");
+  }) as $ToRdfResourceValuesFunction<Shape>;
+
+  export function isShape(object: $Object): object is Shape {
+    return (
+      NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object)
+    );
   }
 }
 export type $Object = NodeShape | Ontology | PropertyGroup | PropertyShape;
 
 export namespace $Object {
-  export type $Identifier = BlankNode | NamedNode;
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+    value,
+    options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toRdfResource(value, options);
+    }
+    if (Ontology.isOntology(value)) {
+      return Ontology.$toRdfResource(value, options);
+    }
+    if (PropertyGroup.isPropertyGroup(value)) {
+      return PropertyGroup.$toRdfResource(value, options);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
 
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
-  export function $filter(filter: $Object.$Filter, value: $Object): boolean {
+  export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier)
@@ -6654,80 +6776,156 @@ export namespace $Object {
       return false;
     }
     if (
-      NodeShape.isNodeShape(value) &&
-      filter.on?.NodeShape &&
-      !NodeShape.$filter(filter.on.NodeShape, value as NodeShape)
+      filter.on?.["NodeShape"] !== undefined &&
+      NodeShape.isNodeShape(value)
     ) {
-      return false;
+      if (!NodeShape.$filter(filter.on["NodeShape"], value)) {
+        return false;
+      }
+    }
+    if (filter.on?.["Ontology"] !== undefined && Ontology.isOntology(value)) {
+      if (!Ontology.$filter(filter.on["Ontology"], value)) {
+        return false;
+      }
     }
     if (
-      Ontology.isOntology(value) &&
-      filter.on?.Ontology &&
-      !Ontology.$filter(filter.on.Ontology, value as Ontology)
+      filter.on?.["PropertyGroup"] !== undefined &&
+      PropertyGroup.isPropertyGroup(value)
     ) {
-      return false;
+      if (!PropertyGroup.$filter(filter.on["PropertyGroup"], value)) {
+        return false;
+      }
     }
     if (
-      PropertyGroup.isPropertyGroup(value) &&
-      filter.on?.PropertyGroup &&
-      !PropertyGroup.$filter(filter.on.PropertyGroup, value as PropertyGroup)
+      filter.on?.["PropertyShape"] !== undefined &&
+      PropertyShape.isPropertyShape(value)
     ) {
-      return false;
+      if (!PropertyShape.$filter(filter.on["PropertyShape"], value)) {
+        return false;
+      }
     }
-    if (
-      PropertyShape.isPropertyShape(value) &&
-      filter.on?.PropertyShape &&
-      !PropertyShape.$filter(filter.on.PropertyShape, value as PropertyShape)
-    ) {
-      return false;
-    }
-    return true;
-  }
 
-  export interface $Filter {
+    return true;
+  };
+
+  export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly NodeShape?: Omit<NodeShape.$Filter, "$identifier">;
-      readonly Ontology?: Omit<Ontology.$Filter, "$identifier">;
-      readonly PropertyGroup?: Omit<PropertyGroup.$Filter, "$identifier">;
-      readonly PropertyShape?: Omit<PropertyShape.$Filter, "$identifier">;
+      readonly NodeShape?: NodeShape.$Filter;
+      readonly Ontology?: Ontology.$Filter;
+      readonly PropertyGroup?: PropertyGroup.$Filter;
+      readonly PropertyShape?: PropertyShape.$Filter;
     };
-  }
+  };
 
-  export function $fromRdf(
-    resource: Resource,
-    options?: $FromRdfOptions,
-  ): Either<Error, $Object> {
-    return (
-      NodeShape.$fromRdf(resource, {
+  export const $fromRdfResource: $FromRdfResourceFunction<$Object> = (
+    resource,
+    options,
+  ) =>
+    (
+      NodeShape.$fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     )
       .altLazy(
         () =>
-          Ontology.$fromRdf(resource, {
+          Ontology.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
       )
       .altLazy(
         () =>
-          PropertyGroup.$fromRdf(resource, {
+          PropertyGroup.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
       )
       .altLazy(
         () =>
-          PropertyShape.$fromRdf(resource, {
+          PropertyShape.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
       );
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<$Object> =
+    ((values, _options) =>
+      values.chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = Right(value.toValues());
+          return (
+            NodeShape.$fromRdfResourceValues(valueAsValues, {
+              context: _options.context,
+              graph: _options.graph,
+              ignoreRdfType: false,
+              objectSet: _options.objectSet,
+              preferredLanguages: _options.preferredLanguages,
+              propertyPath: _options.propertyPath,
+              resource: _options.resource,
+            }) as Either<Error, Resource.Values<$Object>>
+          )
+            .altLazy(
+              () =>
+                Ontology.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                PropertyGroup.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                PropertyShape.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .chain((values) => values.head());
+        }),
+      )) satisfies $FromRdfResourceValuesFunction<$Object>;
+
+  export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export const $schema = {
+    kind: "NamedObjectUnion" as const,
+    members: {
+      NodeShape: { discriminantValues: ["NodeShape"], type: NodeShape.$schema },
+      Ontology: { discriminantValues: ["Ontology"], type: Ontology.$schema },
+      PropertyGroup: {
+        discriminantValues: ["PropertyGroup"],
+        type: PropertyGroup.$schema,
+      },
+      PropertyShape: {
+        discriminantValues: ["PropertyShape"],
+        type: PropertyShape.$schema,
+      },
+    },
     properties: {
       labels: {
         kind: "Shacl" as const,
@@ -6742,27 +6940,45 @@ export namespace $Object {
     },
   } as const;
 
-  export function $toRdf(
-    _object: $Object,
-    _parameters?: {
-      graph?: Exclude<Quad_Graph, Variable>;
-      resourceSet?: ResourceSet;
-    },
-  ): Resource {
-    if (NodeShape.isNodeShape(_object)) {
-      return NodeShape.$toRdf(_object, _parameters);
+  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
+    value,
+    _options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return [
+        NodeShape.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
     }
-    if (Ontology.isOntology(_object)) {
-      return Ontology.$toRdf(_object, _parameters);
+    if (Ontology.isOntology(value)) {
+      return [
+        Ontology.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
     }
-    if (PropertyGroup.isPropertyGroup(_object)) {
-      return PropertyGroup.$toRdf(_object, _parameters);
+    if (PropertyGroup.isPropertyGroup(value)) {
+      return [
+        PropertyGroup.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
     }
-    if (PropertyShape.isPropertyShape(_object)) {
-      return PropertyShape.$toRdf(_object, _parameters);
+    if (PropertyShape.isPropertyShape(value)) {
+      return [
+        PropertyShape.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
     }
-    throw new Error("unrecognized type");
-  }
+
+    throw new Error("unable to serialize to RDF");
+  }) as $ToRdfResourceValuesFunction<$Object>;
 }
 export interface $ObjectSet {
   nodeShape(
@@ -6984,7 +7200,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >(
       {
         $filter: NodeShape.$filter,
-        $fromRdf: NodeShape.$fromRdf,
+        $fromRdfResource: NodeShape.$fromRdfResource,
         $fromRdfTypes: [NodeShape.$fromRdfType],
       },
       query,
@@ -7052,7 +7268,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<Ontology, Ontology.$Filter, Ontology.$Identifier>(
       {
         $filter: Ontology.$filter,
-        $fromRdf: Ontology.$fromRdf,
+        $fromRdfResource: Ontology.$fromRdfResource,
         $fromRdfTypes: [Ontology.$fromRdfType],
       },
       query,
@@ -7124,7 +7340,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >(
       {
         $filter: PropertyGroup.$filter,
-        $fromRdf: PropertyGroup.$fromRdf,
+        $fromRdfResource: PropertyGroup.$fromRdfResource,
         $fromRdfTypes: [PropertyGroup.$fromRdfType],
       },
       query,
@@ -7196,7 +7412,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >(
       {
         $filter: PropertyShape.$filter,
-        $fromRdf: PropertyShape.$fromRdf,
+        $fromRdfResource: PropertyShape.$fromRdfResource,
         $fromRdfTypes: [PropertyShape.$fromRdfType],
       },
       query,
@@ -7259,12 +7475,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       [
         {
           $filter: Shape.$filter,
-          $fromRdf: NodeShape.$fromRdf,
+          $fromRdfResource: NodeShape.$fromRdfResource,
           $fromRdfTypes: [NodeShape.$fromRdfType],
         },
         {
           $filter: Shape.$filter,
-          $fromRdf: PropertyShape.$fromRdf,
+          $fromRdfResource: PropertyShape.$fromRdfResource,
           $fromRdfTypes: [PropertyShape.$fromRdfType],
         },
       ],
@@ -7338,22 +7554,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       [
         {
           $filter: $Object.$filter,
-          $fromRdf: NodeShape.$fromRdf,
+          $fromRdfResource: NodeShape.$fromRdfResource,
           $fromRdfTypes: [NodeShape.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
-          $fromRdf: Ontology.$fromRdf,
+          $fromRdfResource: Ontology.$fromRdfResource,
           $fromRdfTypes: [Ontology.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
-          $fromRdf: PropertyGroup.$fromRdf,
+          $fromRdfResource: PropertyGroup.$fromRdfResource,
           $fromRdfTypes: [PropertyGroup.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
-          $fromRdf: PropertyShape.$fromRdf,
+          $fromRdfResource: PropertyShape.$fromRdfResource,
           $fromRdfTypes: [PropertyShape.$fromRdfType],
         },
       ],
@@ -7368,10 +7584,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-      $fromRdf: (
-        resource: Resource,
-        options?: $FromRdfOptions,
-      ) => Either<Error, ObjectT>;
+      $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
@@ -7388,7 +7601,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    const fromRdfOptions: $FromRdfOptions = {
+    const fromRdfResourceOptions: Parameters<
+      $FromRdfResourceFunction<ObjectT>
+    >[1] = {
       graph,
       objectSet: this,
       preferredLanguages: query?.preferredLanguages,
@@ -7439,9 +7654,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
-        objectType.$fromRdf(resource, fromRdfOptions).ifRight((object) => {
-          resources.push({ object, resource });
-        });
+        objectType
+          .$fromRdfResource(resource, fromRdfResourceOptions)
+          .ifRight((object) => {
+            resources.push({ object, resource });
+          });
       }
     }
 
@@ -7458,7 +7675,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = objectType.$fromRdf(resource, fromRdfOptions);
+        const objectEither = objectType.$fromRdfResource(
+          resource,
+          fromRdfResourceOptions,
+        );
         if (objectEither.isLeft()) {
           return objectEither;
         }
@@ -7486,10 +7706,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectTypes: readonly {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-      $fromRdf: (
-        resource: Resource,
-        options?: $FromRdfOptions,
-      ) => Either<Error, ObjectT>;
+      $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
@@ -7506,7 +7723,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    const fromRdfOptions: $FromRdfOptions = {
+    const fromRdfResourceOptions: Parameters<
+      $FromRdfResourceFunction<ObjectT>
+    >[1] = {
       graph,
       objectSet: this,
       preferredLanguages: query?.preferredLanguages,
@@ -7516,10 +7735,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       object?: ObjectT;
       objectType?: {
         $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-        $fromRdf: (
-          resource: Resource,
-          options?: $FromRdfOptions,
-        ) => Either<Error, ObjectT>;
+        $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
         $fromRdfTypes: readonly NamedNode[];
       };
       resource: Resource;
@@ -7575,7 +7791,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         for (const objectType of objectTypes) {
           if (
             objectType
-              .$fromRdf(resource, fromRdfOptions)
+              .$fromRdfResource(resource, fromRdfResourceOptions)
               .ifRight((object) => {
                 resources.push({ object, objectType, resource });
               })
@@ -7602,11 +7818,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
         if (objectType) {
-          objectEither = objectType.$fromRdf(resource, fromRdfOptions);
+          objectEither = objectType.$fromRdfResource(
+            resource,
+            fromRdfResourceOptions,
+          );
         } else {
           objectEither = Left(new Error("no object types"));
           for (const tryObjectType of objectTypes) {
-            objectEither = tryObjectType.$fromRdf(resource, fromRdfOptions);
+            objectEither = tryObjectType.$fromRdfResource(
+              resource,
+              fromRdfResourceOptions,
+            );
             if (objectEither.isRight()) {
               objectType = tryObjectType;
               break;

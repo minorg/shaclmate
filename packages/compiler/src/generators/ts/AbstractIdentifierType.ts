@@ -1,9 +1,9 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,

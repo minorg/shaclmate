@@ -7,7 +7,7 @@ export class ClassUnionHarness<
   T extends {
     $identifier: Resource.Identifier;
     $toJson: () => any;
-    $toRdf: (options?: {
+    $toRdfResource: (options?: {
       graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     }) => Resource;
@@ -33,10 +33,10 @@ export class ClassUnionHarness<
     return this.instance.$toJson();
   }
 
-  override toRdf(options?: {
+  override toRdfResource(options?: {
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource {
-    return this.instance.$toRdf(options);
+    return this.instance.$toRdfResource(options);
   }
 }

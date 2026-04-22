@@ -6,8 +6,8 @@ export function ObjectType_isTypeFunctionDeclaration(this: ObjectType): Code {
   return code`\
 export function is${this.name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
   switch (object.${this._discriminantProperty.name}) {
-    ${this._discriminantProperty.descendantValues
-      .concat(this._discriminantProperty.ownValues)
+    ${this._discriminantProperty.type.descendantValues
+      .concat(this._discriminantProperty.type.ownValues)
       .map((value) => `case "${value}":`)
       .join("\n")} return true; default: return false;
   }
