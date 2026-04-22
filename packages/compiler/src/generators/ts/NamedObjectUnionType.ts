@@ -12,16 +12,11 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
-
-function singleEntryRecord<T>(key: string, value: T): Record<string, T> {
-  const record: Record<string, T> = {};
-  record[key] = value;
-  return record;
-}
 
 export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   readonly #identifierType: BlankNodeType | IdentifierType | IriType;
@@ -303,7 +298,7 @@ ${{
     }
 
     return singleEntryRecord(
-      ``,
+      `${syntheticNamePrefix}toRdfResource`,
       code`\
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
