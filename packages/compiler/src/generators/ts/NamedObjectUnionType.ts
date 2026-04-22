@@ -3,6 +3,8 @@ import { Maybe } from "purify-ts";
 import { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { AbstractNamedUnionType } from "./AbstractNamedUnionType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -67,6 +69,10 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
       ...this.graphqlTypeVariableStatement.toList(),
       ...this.isTypeFunctionDeclaration.toList(),
       this.schemaVariableStatement,
+      ...ObjectType_sparqlConstructQueryFunctionDeclaration.call(this).toList(),
+      ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call(
+        this,
+      ).toList(),
       ...this.toRdfResourceFunctionDeclaration.toList(),
     );
   }
