@@ -2730,19 +2730,6 @@ export namespace Child {
 export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
-  export const $toRdfResource: $ToRdfResourceFunction<Union> = (
-    value,
-    options,
-  ) => {
-    if (UnionMember1.isUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $filter = (filter: Union.$Filter, value: Union) => {
     if (
       filter.$identifier !== undefined &&
@@ -2855,6 +2842,19 @@ export namespace Union {
     properties: {},
   } as const;
 
+  export const $toRdfResource: $ToRdfResourceFunction<Union> = (
+    value,
+    options,
+  ) => {
+    if (UnionMember1.isUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UnionMember2.isUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Union> = ((
     value,
     _options,
@@ -2894,31 +2894,6 @@ export type $Object =
   | $DefaultPartial;
 
 export namespace $Object {
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
-    options,
-  ) => {
-    if (Child.isChild(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ParentStatic.isParent(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (Nested.isNested(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UnionMember1.isUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UnionMember2.isUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
@@ -3134,6 +3109,31 @@ export namespace $Object {
     },
     properties: {},
   } as const;
+
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+    value,
+    options,
+  ) => {
+    if (Child.isChild(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ParentStatic.isParent(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (Nested.isNested(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UnionMember1.isUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UnionMember2.isUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
     value,
