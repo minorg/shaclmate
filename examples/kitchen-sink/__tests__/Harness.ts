@@ -6,7 +6,7 @@ import type { Resource, ResourceSet } from "rdfjs-resource";
 export abstract class Harness<
   T extends { readonly $identifier: Resource.Identifier },
 > {
-  readonly fromJson: (json: unknown) => Either<Error, T>;
+  readonly fromJson: (json: any) => T;
   readonly fromRdfResource: (
     resource: Resource,
     parameters: {

@@ -2728,10 +2728,12 @@ export namespace NamedUnion1 {
 
   export const $fromJson = (value: NamedUnion1.$Json): NamedUnion1 => {
     if (typeof value === "object") {
-      return dataFactory.namedNode(value["@id"]);
+      return dataFactory.namedNode(
+        (value as { readonly "@id": string })["@id"],
+      );
     }
     if (typeof value === "string") {
-      return value;
+      return value as string;
     }
 
     throw new Error("unable to deserialize JSON");
@@ -2965,10 +2967,13 @@ export namespace NamedUnion2 {
 
   export const $fromJson = (value: NamedUnion2.$Json): NamedUnion2 => {
     if (value.type === "date") {
-      return { type: "date" as const, value: new Date(value.value) };
+      return { type: "date" as const, value: new Date(value.value as string) };
     }
     if (value.type === "dateTime") {
-      return { type: "dateTime" as const, value: new Date(value.value) };
+      return {
+        type: "dateTime" as const,
+        value: new Date(value.value as string),
+      };
     }
 
     throw new Error("unable to deserialize JSON");
@@ -8395,17 +8400,21 @@ export namespace UnionDiscriminantsClass {
         if (value.type === "ClassUnionMember1") {
           return {
             type: "ClassUnionMember1" as const,
-            value: ClassUnionMember1.$fromJson(value.value),
+            value: ClassUnionMember1.$fromJson(
+              value.value as ClassUnionMember1.$Json,
+            ),
           };
         }
         if (value.type === "ClassUnionMember2") {
           return {
             type: "ClassUnionMember2" as const,
-            value: ClassUnionMember2.$fromJson(value.value),
+            value: ClassUnionMember2.$fromJson(
+              value.value as ClassUnionMember2.$Json,
+            ),
           };
         }
         if (value.type === "string") {
-          return { type: "string" as const, value: value.value };
+          return { type: "string" as const, value: value.value as string };
         }
 
         throw new Error("unable to deserialize JSON");
@@ -8425,15 +8434,49 @@ export namespace UnionDiscriminantsClass {
             },
       ): NamedNode | Literal => {
         if (value.termType === "NamedNode") {
-          return dataFactory.namedNode(value["@id"]);
+          return dataFactory.namedNode(
+            (value as { readonly "@id": string })["@id"],
+          );
         }
         if (value.termType === "Literal") {
           return dataFactory.literal(
-            value["@value"],
-            value["@language"] !== undefined
-              ? value["@language"]
-              : value["@type"] !== undefined
-                ? dataFactory.namedNode(value["@type"])
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@value"],
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@language"] !== undefined
+              ? (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"]
+              : (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"] !== undefined
+                ? dataFactory.namedNode(
+                    (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"]!,
+                  )
                 : undefined,
           );
         }
@@ -8446,10 +8489,12 @@ export namespace UnionDiscriminantsClass {
     ).map((item) =>
       ((value: { readonly "@id": string } | string): NamedNode | string => {
         if (typeof value === "object") {
-          return dataFactory.namedNode(value["@id"]);
+          return dataFactory.namedNode(
+            (value as { readonly "@id": string })["@id"],
+          );
         }
         if (typeof value === "string") {
-          return value;
+          return value as string;
         }
 
         throw new Error("unable to deserialize JSON");
@@ -8473,17 +8518,21 @@ export namespace UnionDiscriminantsClass {
       if (value.type === "ClassUnionMember1") {
         return {
           type: "ClassUnionMember1" as const,
-          value: ClassUnionMember1.$fromJson(value.value),
+          value: ClassUnionMember1.$fromJson(
+            value.value as ClassUnionMember1.$Json,
+          ),
         };
       }
       if (value.type === "ClassUnionMember2") {
         return {
           type: "ClassUnionMember2" as const,
-          value: ClassUnionMember2.$fromJson(value.value),
+          value: ClassUnionMember2.$fromJson(
+            value.value as ClassUnionMember2.$Json,
+          ),
         };
       }
       if (value.type === "string") {
-        return { type: "string" as const, value: value.value };
+        return { type: "string" as const, value: value.value as string };
       }
 
       throw new Error("unable to deserialize JSON");
@@ -8499,15 +8548,49 @@ export namespace UnionDiscriminantsClass {
           },
     ): NamedNode | Literal => {
       if (value.termType === "NamedNode") {
-        return dataFactory.namedNode(value["@id"]);
+        return dataFactory.namedNode(
+          (value as { readonly "@id": string })["@id"],
+        );
       }
       if (value.termType === "Literal") {
         return dataFactory.literal(
-          value["@value"],
-          value["@language"] !== undefined
-            ? value["@language"]
-            : value["@type"] !== undefined
-              ? dataFactory.namedNode(value["@type"])
+          (
+            value as {
+              readonly "@language"?: string;
+              readonly "@type"?: string;
+              readonly "@value": string;
+            }
+          )["@value"],
+          (
+            value as {
+              readonly "@language"?: string;
+              readonly "@type"?: string;
+              readonly "@value": string;
+            }
+          )["@language"] !== undefined
+            ? (
+                value as {
+                  readonly "@language"?: string;
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@language"]
+            : (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@type"] !== undefined
+              ? dataFactory.namedNode(
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"]!,
+                )
               : undefined,
         );
       }
@@ -8518,17 +8601,19 @@ export namespace UnionDiscriminantsClass {
       value: { readonly "@id": string } | string,
     ): NamedNode | string => {
       if (typeof value === "object") {
-        return dataFactory.namedNode(value["@id"]);
+        return dataFactory.namedNode(
+          (value as { readonly "@id": string })["@id"],
+        );
       }
       if (typeof value === "string") {
-        return value;
+        return value as string;
       }
 
       throw new Error("unable to deserialize JSON");
     })($json["requiredIriOrStringProperty"]);
-    const setClassOrClassOrStringProperty = $json[
-      "setClassOrClassOrStringProperty"
-    ].map((item) =>
+    const setClassOrClassOrStringProperty = (
+      $json["setClassOrClassOrStringProperty"] ?? []
+    ).map((item) =>
       ((
         value:
           | { type: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
@@ -8547,62 +8632,104 @@ export namespace UnionDiscriminantsClass {
         if (value.type === "ClassUnionMember1") {
           return {
             type: "ClassUnionMember1" as const,
-            value: ClassUnionMember1.$fromJson(value.value),
+            value: ClassUnionMember1.$fromJson(
+              value.value as ClassUnionMember1.$Json,
+            ),
           };
         }
         if (value.type === "ClassUnionMember2") {
           return {
             type: "ClassUnionMember2" as const,
-            value: ClassUnionMember2.$fromJson(value.value),
+            value: ClassUnionMember2.$fromJson(
+              value.value as ClassUnionMember2.$Json,
+            ),
           };
         }
         if (value.type === "string") {
-          return { type: "string" as const, value: value.value };
+          return { type: "string" as const, value: value.value as string };
         }
 
         throw new Error("unable to deserialize JSON");
       })(item),
     );
-    const setIriOrLiteralProperty = $json["setIriOrLiteralProperty"].map(
-      (item) =>
-        ((
-          value:
-            | { readonly "@id": string; readonly termType: "NamedNode" }
-            | {
+    const setIriOrLiteralProperty = (
+      $json["setIriOrLiteralProperty"] ?? []
+    ).map((item) =>
+      ((
+        value:
+          | { readonly "@id": string; readonly termType: "NamedNode" }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            },
+      ): NamedNode | Literal => {
+        if (value.termType === "NamedNode") {
+          return dataFactory.namedNode(
+            (value as { readonly "@id": string })["@id"],
+          );
+        }
+        if (value.termType === "Literal") {
+          return dataFactory.literal(
+            (
+              value as {
                 readonly "@language"?: string;
-                readonly termType: "Literal";
                 readonly "@type"?: string;
                 readonly "@value": string;
-              },
-        ): NamedNode | Literal => {
-          if (value.termType === "NamedNode") {
-            return dataFactory.namedNode(value["@id"]);
-          }
-          if (value.termType === "Literal") {
-            return dataFactory.literal(
-              value["@value"],
-              value["@language"] !== undefined
-                ? value["@language"]
-                : value["@type"] !== undefined
-                  ? dataFactory.namedNode(value["@type"])
-                  : undefined,
+              }
+            )["@value"],
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@language"] !== undefined
+              ? (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"]
+              : (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"] !== undefined
+                ? dataFactory.namedNode(
+                    (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"]!,
+                  )
+                : undefined,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })(item),
+    );
+    const setIriOrStringProperty = ($json["setIriOrStringProperty"] ?? []).map(
+      (item) =>
+        ((value: { readonly "@id": string } | string): NamedNode | string => {
+          if (typeof value === "object") {
+            return dataFactory.namedNode(
+              (value as { readonly "@id": string })["@id"],
             );
+          }
+          if (typeof value === "string") {
+            return value as string;
           }
 
           throw new Error("unable to deserialize JSON");
         })(item),
-    );
-    const setIriOrStringProperty = $json["setIriOrStringProperty"].map((item) =>
-      ((value: { readonly "@id": string } | string): NamedNode | string => {
-        if (typeof value === "object") {
-          return dataFactory.namedNode(value["@id"]);
-        }
-        if (typeof value === "string") {
-          return value;
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
     );
     return {
       $identifier,
@@ -11111,7 +11238,7 @@ export namespace TermPropertiesClass {
         item["@language"] !== undefined
           ? item["@language"]
           : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"])
+            ? dataFactory.namedNode(item["@type"]!)
             : undefined,
       ),
     );
@@ -11125,7 +11252,7 @@ export namespace TermPropertiesClass {
               item["@language"] !== undefined
                 ? item["@language"]
                 : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"])
+                  ? dataFactory.namedNode(item["@type"]!)
                   : undefined,
             )
           : item.termType === "NamedNode"
@@ -16168,7 +16295,7 @@ export namespace PropertyCardinalitiesClass {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const emptyStringSetProperty = $json["emptyStringSetProperty"];
+    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
     const nonEmptyStringSetProperty = NonEmptyList.fromArray(
       $json["nonEmptyStringSetProperty"],
     ).unsafeCoerce();
@@ -23883,7 +24010,7 @@ export namespace NodeKindsClass {
               : $json["blankNodeOrLiteralNodeKindProperty"]["@type"] !==
                   undefined
                 ? dataFactory.namedNode(
-                    $json["blankNodeOrLiteralNodeKindProperty"]["@type"],
+                    $json["blankNodeOrLiteralNodeKindProperty"]["@type"]!,
                   )
                 : undefined,
           )
@@ -23901,7 +24028,7 @@ export namespace NodeKindsClass {
               ? $json["iriOrLiteralNodeKindProperty"]["@language"]
               : $json["iriOrLiteralNodeKindProperty"]["@type"] !== undefined
                 ? dataFactory.namedNode(
-                    $json["iriOrLiteralNodeKindProperty"]["@type"],
+                    $json["iriOrLiteralNodeKindProperty"]["@type"]!,
                   )
                 : undefined,
           )
@@ -23911,7 +24038,7 @@ export namespace NodeKindsClass {
       $json["literalNodeKindProperty"]["@language"] !== undefined
         ? $json["literalNodeKindProperty"]["@language"]
         : $json["literalNodeKindProperty"]["@type"] !== undefined
-          ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"])
+          ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"]!)
           : undefined,
     );
     return {
@@ -26193,8 +26320,8 @@ export namespace MutablePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "MutablePropertiesClass";
-    readonly mutableListProperty?: readonly string[];
-    readonly mutableSetProperty?: readonly string[];
+    readonly mutableListProperty?: string[];
+    readonly mutableSetProperty?: string[];
     readonly mutableStringProperty?: string;
   };
 
@@ -26569,8 +26696,8 @@ export namespace MutablePropertiesClass {
       : dataFactory.namedNode($json["@id"]);
     const mutableListProperty = Maybe.fromNullable(
       $json["mutableListProperty"],
-    );
-    const mutableSetProperty = $json["mutableSetProperty"];
+    ).map((item) => item ?? []);
+    const mutableSetProperty = $json["mutableSetProperty"] ?? [];
     const mutableStringProperty = Maybe.fromNullable(
       $json["mutableStringProperty"],
     );
@@ -27648,12 +27775,14 @@ export namespace ListPropertiesClass {
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
     const iriListProperty = Maybe.fromNullable($json["iriListProperty"]).map(
-      (item) => item.map((item) => dataFactory.namedNode(item["@id"])),
+      (item) => (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
     );
     const objectListProperty = Maybe.fromNullable(
       $json["objectListProperty"],
-    ).map((item) => item.map((item) => NonClass.$fromJson(item)));
-    const stringListProperty = Maybe.fromNullable($json["stringListProperty"]);
+    ).map((item) => (item ?? []).map((item) => NonClass.$fromJson(item)));
+    const stringListProperty = Maybe.fromNullable(
+      $json["stringListProperty"],
+    ).map((item) => item ?? []);
     return {
       $identifier,
       iriListProperty,
@@ -30529,8 +30658,8 @@ export namespace LazyPropertiesInterface {
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
-      partials: $json["setLazyToResolvedInterfaceProperty"].map((item) =>
-        $DefaultPartial.$fromJson(item),
+      partials: ($json["setLazyToResolvedInterfaceProperty"] ?? []).map(
+        (item) => $DefaultPartial.$fromJson(item),
       ),
       resolver: () =>
         Promise.resolve(
@@ -30544,9 +30673,9 @@ export namespace LazyPropertiesInterface {
       PartialInterface,
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
-      partials: $json["setPartialInterfaceToResolvedInterfaceProperty"].map(
-        (item) => PartialInterface.$fromJson(item),
-      ),
+      partials: (
+        $json["setPartialInterfaceToResolvedInterfaceProperty"] ?? []
+      ).map((item) => PartialInterface.$fromJson(item)),
       resolver: () =>
         Promise.resolve(
           Left(
@@ -33741,7 +33870,7 @@ export namespace LazyPropertiesClass {
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
-      partials: $json["setLazyToResolvedClassProperty"].map((item) =>
+      partials: ($json["setLazyToResolvedClassProperty"] ?? []).map((item) =>
         $DefaultPartial.$fromJson(item),
       ),
       resolver: () =>
@@ -33756,8 +33885,8 @@ export namespace LazyPropertiesClass {
       PartialClass,
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
-      partials: $json["setPartialClassToResolvedClassProperty"].map((item) =>
-        PartialClass.$fromJson(item),
+      partials: ($json["setPartialClassToResolvedClassProperty"] ?? []).map(
+        (item) => PartialClass.$fromJson(item),
       ),
       resolver: () =>
         Promise.resolve(
@@ -39507,7 +39636,7 @@ export namespace LanguageInPropertiesClass {
           item["@language"] !== undefined
             ? item["@language"]
             : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"])
+              ? dataFactory.namedNode(item["@type"]!)
               : undefined,
         ),
       );
@@ -40377,21 +40506,22 @@ export namespace JsPrimitiveUnionPropertyClass {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const jsPrimitiveUnionProperty = $json["jsPrimitiveUnionProperty"].map(
-      (item) =>
-        ((value: boolean | number | string): boolean | number | string => {
-          if (typeof value === "boolean") {
-            return value;
-          }
-          if (typeof value === "number") {
-            return value;
-          }
-          if (typeof value === "string") {
-            return value;
-          }
+    const jsPrimitiveUnionProperty = (
+      $json["jsPrimitiveUnionProperty"] ?? []
+    ).map((item) =>
+      ((value: boolean | number | string): boolean | number | string => {
+        if (typeof value === "boolean") {
+          return value as boolean;
+        }
+        if (typeof value === "number") {
+          return value as number;
+        }
+        if (typeof value === "string") {
+          return value as string;
+        }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
+        throw new Error("unable to deserialize JSON");
+      })(item),
     );
     return { $identifier, jsPrimitiveUnionProperty };
   }
@@ -42376,14 +42506,12 @@ export namespace InterfaceUnionMember2 {
     const $type = "InterfaceUnionMember2" as const;
     const interfaceUnionMember2Property =
       $json["interfaceUnionMember2Property"];
-    return InterfaceUnionMemberCommonParentStatic.$propertiesFromJson(
-      $json,
-    ).map(($super0) => ({
-      ...$super0,
+    return {
+      ...InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($json),
       $identifier,
       $type,
       interfaceUnionMember2Property,
-    }));
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -42954,14 +43082,12 @@ export namespace InterfaceUnionMember1 {
     const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
       $json["interfaceUnionMember1Property"];
-    return InterfaceUnionMemberCommonParentStatic.$propertiesFromJson(
-      $json,
-    ).map(($super0) => ({
-      ...$super0,
+    return {
+      ...InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($json),
       $identifier,
       $type,
       interfaceUnionMember1Property,
-    }));
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -46317,7 +46443,9 @@ export namespace InIdentifierClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
+    readonly "@id":
+      | "http://example.com/InIdentifierInstance1"
+      | "http://example.com/InIdentifierInstance2";
     readonly $type: "InIdentifierClass";
     readonly inIdentifierProperty?: string;
   };
@@ -47379,9 +47507,10 @@ export namespace IdentifierOverride2ClassStatic {
     typeof IdentifierOverride1ClassStatic.$propertiesFromJson
   > {
     const $identifier = dataFactory.namedNode($json["@id"]);
-    return IdentifierOverride1ClassStatic.$propertiesFromJson($json).map(
-      ($super0) => ({ ...$super0, $identifier }),
-    );
+    return {
+      ...IdentifierOverride1ClassStatic.$propertiesFromJson($json),
+      $identifier,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -47783,9 +47912,10 @@ export namespace IdentifierOverride3ClassStatic {
     typeof IdentifierOverride2ClassStatic.$propertiesFromJson
   > {
     const $identifier = dataFactory.namedNode($json["@id"]);
-    return IdentifierOverride2ClassStatic.$propertiesFromJson($json).map(
-      ($super0) => ({ ...$super0, $identifier }),
-    );
+    return {
+      ...IdentifierOverride2ClassStatic.$propertiesFromJson($json),
+      $identifier,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -48237,9 +48367,10 @@ export namespace IdentifierOverride4ClassStatic {
     typeof IdentifierOverride3ClassStatic.$propertiesFromJson
   > {
     const $identifier = dataFactory.namedNode($json["@id"]);
-    return IdentifierOverride3ClassStatic.$propertiesFromJson($json).map(
-      ($super0) => ({ ...$super0, $identifier }),
-    );
+    return {
+      ...IdentifierOverride3ClassStatic.$propertiesFromJson($json),
+      $identifier,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -48672,9 +48803,10 @@ export namespace IdentifierOverride5Class {
     typeof IdentifierOverride4ClassStatic.$propertiesFromJson
   > {
     const $identifier = dataFactory.namedNode($json["@id"]);
-    return IdentifierOverride4ClassStatic.$propertiesFromJson($json).map(
-      ($super0) => ({ ...$super0, $identifier }),
-    );
+    return {
+      ...IdentifierOverride4ClassStatic.$propertiesFromJson($json),
+      $identifier,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -55727,10 +55859,16 @@ export namespace DateUnionPropertiesClass {
           | { type: "dateTime"; value: string },
       ): { type: "date"; value: Date } | { type: "dateTime"; value: Date } => {
         if (value.type === "date") {
-          return { type: "date" as const, value: new Date(value.value) };
+          return {
+            type: "date" as const,
+            value: new Date(value.value as string),
+          };
         }
         if (value.type === "dateTime") {
-          return { type: "dateTime" as const, value: new Date(value.value) };
+          return {
+            type: "dateTime" as const,
+            value: new Date(value.value as string),
+          };
         }
 
         throw new Error("unable to deserialize JSON");
@@ -55745,10 +55883,13 @@ export namespace DateUnionPropertiesClass {
           | { type: "string"; value: string },
       ): { type: "date"; value: Date } | { type: "string"; value: string } => {
         if (value.type === "date") {
-          return { type: "date" as const, value: new Date(value.value) };
+          return {
+            type: "date" as const,
+            value: new Date(value.value as string),
+          };
         }
         if (value.type === "string") {
-          return { type: "string" as const, value: value.value };
+          return { type: "string" as const, value: value.value as string };
         }
 
         throw new Error("unable to deserialize JSON");
@@ -55763,10 +55904,16 @@ export namespace DateUnionPropertiesClass {
           | { type: "date"; value: string },
       ): { type: "dateTime"; value: Date } | { type: "date"; value: Date } => {
         if (value.type === "dateTime") {
-          return { type: "dateTime" as const, value: new Date(value.value) };
+          return {
+            type: "dateTime" as const,
+            value: new Date(value.value as string),
+          };
         }
         if (value.type === "date") {
-          return { type: "date" as const, value: new Date(value.value) };
+          return {
+            type: "date" as const,
+            value: new Date(value.value as string),
+          };
         }
 
         throw new Error("unable to deserialize JSON");
@@ -55781,10 +55928,13 @@ export namespace DateUnionPropertiesClass {
           | { type: "date"; value: string },
       ): { type: "string"; value: string } | { type: "date"; value: Date } => {
         if (value.type === "string") {
-          return { type: "string" as const, value: value.value };
+          return { type: "string" as const, value: value.value as string };
         }
         if (value.type === "date") {
-          return { type: "date" as const, value: new Date(value.value) };
+          return {
+            type: "date" as const,
+            value: new Date(value.value as string),
+          };
         }
 
         throw new Error("unable to deserialize JSON");
@@ -58191,9 +58341,9 @@ export namespace ConvertibleTypePropertiesClass {
     const convertibleIriProperty = dataFactory.namedNode(
       $json["convertibleIriProperty"]["@id"],
     );
-    const convertibleIriSetProperty = $json["convertibleIriSetProperty"].map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
+    const convertibleIriSetProperty = (
+      $json["convertibleIriSetProperty"] ?? []
+    ).map((item) => dataFactory.namedNode(item["@id"]));
     const convertibleLiteralNonEmptySetProperty = NonEmptyList.fromArray(
       $json["convertibleLiteralNonEmptySetProperty"],
     )
@@ -58204,7 +58354,7 @@ export namespace ConvertibleTypePropertiesClass {
           item["@language"] !== undefined
             ? item["@language"]
             : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"])
+              ? dataFactory.namedNode(item["@type"]!)
               : undefined,
         ),
       );
@@ -58216,7 +58366,7 @@ export namespace ConvertibleTypePropertiesClass {
         item["@language"] !== undefined
           ? item["@language"]
           : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"])
+            ? dataFactory.namedNode(item["@type"]!)
             : undefined,
       ),
     );
@@ -58225,18 +58375,18 @@ export namespace ConvertibleTypePropertiesClass {
       $json["convertibleLiteralProperty"]["@language"] !== undefined
         ? $json["convertibleLiteralProperty"]["@language"]
         : $json["convertibleLiteralProperty"]["@type"] !== undefined
-          ? dataFactory.namedNode($json["convertibleLiteralProperty"]["@type"])
+          ? dataFactory.namedNode($json["convertibleLiteralProperty"]["@type"]!)
           : undefined,
     );
-    const convertibleLiteralSetProperty = $json[
-      "convertibleLiteralSetProperty"
-    ].map((item) =>
+    const convertibleLiteralSetProperty = (
+      $json["convertibleLiteralSetProperty"] ?? []
+    ).map((item) =>
       dataFactory.literal(
         item["@value"],
         item["@language"] !== undefined
           ? item["@language"]
           : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"])
+            ? dataFactory.namedNode(item["@type"]!)
             : undefined,
       ),
     );
@@ -58251,7 +58401,7 @@ export namespace ConvertibleTypePropertiesClass {
               item["@language"] !== undefined
                 ? item["@language"]
                 : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"])
+                  ? dataFactory.namedNode(item["@type"]!)
                   : undefined,
             )
           : item.termType === "NamedNode"
@@ -58267,7 +58417,7 @@ export namespace ConvertibleTypePropertiesClass {
             item["@language"] !== undefined
               ? item["@language"]
               : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"])
+                ? dataFactory.namedNode(item["@type"]!)
                 : undefined,
           )
         : item.termType === "NamedNode"
@@ -58282,7 +58432,7 @@ export namespace ConvertibleTypePropertiesClass {
               ? $json["convertibleTermProperty"]["@language"]
               : $json["convertibleTermProperty"]["@type"] !== undefined
                 ? dataFactory.namedNode(
-                    $json["convertibleTermProperty"]["@type"],
+                    $json["convertibleTermProperty"]["@type"]!,
                   )
                 : undefined,
           )
@@ -58291,20 +58441,21 @@ export namespace ConvertibleTypePropertiesClass {
           : dataFactory.blankNode(
               $json["convertibleTermProperty"]["@id"].substring(2),
             );
-    const convertibleTermSetProperty = $json["convertibleTermSetProperty"].map(
-      (item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"])
-                  : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
+    const convertibleTermSetProperty = (
+      $json["convertibleTermSetProperty"] ?? []
+    ).map((item) =>
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            item["@language"] !== undefined
+              ? item["@language"]
+              : item["@type"] !== undefined
+                ? dataFactory.namedNode(item["@type"]!)
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
+          : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return {
       $identifier,
@@ -59869,13 +60020,11 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
     const $type = "BaseInterfaceWithoutProperties" as const;
-    return BaseInterfaceWithPropertiesStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-        $type,
-      }),
-    );
+    return {
+      ...BaseInterfaceWithPropertiesStatic.$propertiesFromJson($json),
+      $identifier,
+      $type,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -60440,14 +60589,12 @@ export namespace ConcreteParentInterfaceStatic {
     const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
       $json["concreteParentInterfaceProperty"];
-    return BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-        $type,
-        concreteParentInterfaceProperty,
-      }),
-    );
+    return {
+      ...BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson($json),
+      $identifier,
+      $type,
+      concreteParentInterfaceProperty,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -61026,14 +61173,12 @@ export namespace ConcreteChildInterface {
     const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
       $json["concreteChildInterfaceProperty"];
-    return ConcreteParentInterfaceStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-        $type,
-        concreteChildInterfaceProperty,
-      }),
-    );
+    return {
+      ...ConcreteParentInterfaceStatic.$propertiesFromJson($json),
+      $identifier,
+      $type,
+      concreteChildInterfaceProperty,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -61891,12 +62036,10 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    return AbstractBaseClassWithPropertiesStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-      }),
-    );
+    return {
+      ...AbstractBaseClassWithPropertiesStatic.$propertiesFromJson($json),
+      $identifier,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -62394,13 +62537,11 @@ export namespace ConcreteParentClassStatic {
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
     const concreteParentClassProperty = $json["concreteParentClassProperty"];
-    return AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson(
-      $json,
-    ).map(($super0) => ({
-      ...$super0,
+    return {
+      ...AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson($json),
       $identifier,
       concreteParentClassProperty,
-    }));
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -62939,13 +63080,11 @@ export namespace ConcreteChildClass {
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
     const concreteChildClassProperty = $json["concreteChildClassProperty"];
-    return ConcreteParentClassStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-        concreteChildClassProperty,
-      }),
-    );
+    return {
+      ...ConcreteParentClassStatic.$propertiesFromJson($json),
+      $identifier,
+      concreteChildClassProperty,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -63892,13 +64031,11 @@ export namespace ClassUnionMember2 {
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
     const classUnionMember2Property = $json["classUnionMember2Property"];
-    return ClassUnionMemberCommonParentStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-        classUnionMember2Property,
-      }),
-    );
+    return {
+      ...ClassUnionMemberCommonParentStatic.$propertiesFromJson($json),
+      $identifier,
+      classUnionMember2Property,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -64423,13 +64560,11 @@ export namespace ClassUnionMember1 {
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
     const classUnionMember1Property = $json["classUnionMember1Property"];
-    return ClassUnionMemberCommonParentStatic.$propertiesFromJson($json).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-        classUnionMember1Property,
-      }),
-    );
+    return {
+      ...ClassUnionMemberCommonParentStatic.$propertiesFromJson($json),
+      $identifier,
+      classUnionMember1Property,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -68725,10 +68860,10 @@ export namespace ClassUnion {
 
   export const $fromJson = (value: ClassUnion.$Json): ClassUnion => {
     if (value.$type === "ClassUnionMember1") {
-      return ClassUnionMember1.$fromJson(value);
+      return ClassUnionMember1.$fromJson(value as ClassUnionMember1.$Json);
     }
     if (value.$type === "ClassUnionMember2") {
-      return ClassUnionMember2.$fromJson(value);
+      return ClassUnionMember2.$fromJson(value as ClassUnionMember2.$Json);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -69189,13 +69324,15 @@ export namespace FlattenClassUnion {
     value: FlattenClassUnion.$Json,
   ): FlattenClassUnion => {
     if (value.$type === "ClassUnionMember1") {
-      return ClassUnionMember1.$fromJson(value);
+      return ClassUnionMember1.$fromJson(value as ClassUnionMember1.$Json);
     }
     if (value.$type === "ClassUnionMember2") {
-      return ClassUnionMember2.$fromJson(value);
+      return ClassUnionMember2.$fromJson(value as ClassUnionMember2.$Json);
     }
     if (value.$type === "FlattenClassUnionMember3") {
-      return FlattenClassUnionMember3.$fromJson(value);
+      return FlattenClassUnionMember3.$fromJson(
+        value as FlattenClassUnionMember3.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -69698,10 +69835,14 @@ export namespace InterfaceUnion {
 
   export const $fromJson = (value: InterfaceUnion.$Json): InterfaceUnion => {
     if (value.$type === "InterfaceUnionMember1") {
-      return InterfaceUnionMember1.$fromJson(value);
+      return InterfaceUnionMember1.$fromJson(
+        value as InterfaceUnionMember1.$Json,
+      );
     }
     if (value.$type === "InterfaceUnionMember2") {
-      return InterfaceUnionMember2.$fromJson(value);
+      return InterfaceUnionMember2.$fromJson(
+        value as InterfaceUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -70148,10 +70289,14 @@ export namespace LazilyResolvedClassUnion {
     value: LazilyResolvedClassUnion.$Json,
   ): LazilyResolvedClassUnion => {
     if (value.$type === "LazilyResolvedClassUnionMember1") {
-      return LazilyResolvedClassUnionMember1.$fromJson(value);
+      return LazilyResolvedClassUnionMember1.$fromJson(
+        value as LazilyResolvedClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedClassUnionMember2") {
-      return LazilyResolvedClassUnionMember2.$fromJson(value);
+      return LazilyResolvedClassUnionMember2.$fromJson(
+        value as LazilyResolvedClassUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -70640,10 +70785,14 @@ export namespace LazilyResolvedInterfaceUnion {
     value: LazilyResolvedInterfaceUnion.$Json,
   ): LazilyResolvedInterfaceUnion => {
     if (value.$type === "LazilyResolvedInterfaceUnionMember1") {
-      return LazilyResolvedInterfaceUnionMember1.$fromJson(value);
+      return LazilyResolvedInterfaceUnionMember1.$fromJson(
+        value as LazilyResolvedInterfaceUnionMember1.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedInterfaceUnionMember2") {
-      return LazilyResolvedInterfaceUnionMember2.$fromJson(value);
+      return LazilyResolvedInterfaceUnionMember2.$fromJson(
+        value as LazilyResolvedInterfaceUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -71131,10 +71280,14 @@ export namespace PartialClassUnion {
     value: PartialClassUnion.$Json,
   ): PartialClassUnion => {
     if (value.$type === "PartialClassUnionMember1") {
-      return PartialClassUnionMember1.$fromJson(value);
+      return PartialClassUnionMember1.$fromJson(
+        value as PartialClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "PartialClassUnionMember2") {
-      return PartialClassUnionMember2.$fromJson(value);
+      return PartialClassUnionMember2.$fromJson(
+        value as PartialClassUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -71581,10 +71734,14 @@ export namespace PartialInterfaceUnion {
     value: PartialInterfaceUnion.$Json,
   ): PartialInterfaceUnion => {
     if (value.$type === "PartialInterfaceUnionMember1") {
-      return PartialInterfaceUnionMember1.$fromJson(value);
+      return PartialInterfaceUnionMember1.$fromJson(
+        value as PartialInterfaceUnionMember1.$Json,
+      );
     }
     if (value.$type === "PartialInterfaceUnionMember2") {
-      return PartialInterfaceUnionMember2.$fromJson(value);
+      return PartialInterfaceUnionMember2.$fromJson(
+        value as PartialInterfaceUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -72035,10 +72192,14 @@ export namespace NoRdfTypeClassUnion {
     value: NoRdfTypeClassUnion.$Json,
   ): NoRdfTypeClassUnion => {
     if (value.$type === "NoRdfTypeClassUnionMember1") {
-      return NoRdfTypeClassUnionMember1.$fromJson(value);
+      return NoRdfTypeClassUnionMember1.$fromJson(
+        value as NoRdfTypeClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "NoRdfTypeClassUnionMember2") {
-      return NoRdfTypeClassUnionMember2.$fromJson(value);
+      return NoRdfTypeClassUnionMember2.$fromJson(
+        value as NoRdfTypeClassUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -72481,10 +72642,14 @@ export namespace RecursiveClassUnion {
     value: RecursiveClassUnion.$Json,
   ): RecursiveClassUnion => {
     if (value.$type === "RecursiveClassUnionMember1") {
-      return RecursiveClassUnionMember1.$fromJson(value);
+      return RecursiveClassUnionMember1.$fromJson(
+        value as RecursiveClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "RecursiveClassUnionMember2") {
-      return RecursiveClassUnionMember2.$fromJson(value);
+      return RecursiveClassUnionMember2.$fromJson(
+        value as RecursiveClassUnionMember2.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -74985,232 +75150,346 @@ export namespace $Object {
 
   export const $fromJson = (value: $Object.$Json): $Object => {
     if (value.$type === "BlankNodeIdentifierClass") {
-      return BlankNodeIdentifierClass.$fromJson(value);
+      return BlankNodeIdentifierClass.$fromJson(
+        value as BlankNodeIdentifierClass.$Json,
+      );
     }
     if (value.$type === "BlankNodeIdentifierInterface") {
-      return BlankNodeIdentifierInterface.$fromJson(value);
+      return BlankNodeIdentifierInterface.$fromJson(
+        value as BlankNodeIdentifierInterface.$Json,
+      );
     }
     if (value.$type === "BlankNodeOrIriIdentifierClass") {
-      return BlankNodeOrIriIdentifierClass.$fromJson(value);
+      return BlankNodeOrIriIdentifierClass.$fromJson(
+        value as BlankNodeOrIriIdentifierClass.$Json,
+      );
     }
     if (value.$type === "BlankNodeOrIriIdentifierInterface") {
-      return BlankNodeOrIriIdentifierInterface.$fromJson(value);
+      return BlankNodeOrIriIdentifierInterface.$fromJson(
+        value as BlankNodeOrIriIdentifierInterface.$Json,
+      );
     }
     if (value.$type === "ClassPropertiesClass") {
-      return ClassPropertiesClass.$fromJson(value);
+      return ClassPropertiesClass.$fromJson(
+        value as ClassPropertiesClass.$Json,
+      );
     }
     if (value.$type === "PartialClass") {
-      return PartialClass.$fromJson(value);
+      return PartialClass.$fromJson(value as PartialClass.$Json);
     }
     if (value.$type === "NonClass") {
-      return NonClass.$fromJson(value);
+      return NonClass.$fromJson(value as NonClass.$Json);
     }
     if (value.$type === "ClassUnionMember1") {
-      return ClassUnionMember1.$fromJson(value);
+      return ClassUnionMember1.$fromJson(value as ClassUnionMember1.$Json);
     }
     if (value.$type === "ClassUnionMember2") {
-      return ClassUnionMember2.$fromJson(value);
+      return ClassUnionMember2.$fromJson(value as ClassUnionMember2.$Json);
     }
     if (value.$type === "ConcreteChildClass") {
-      return ConcreteChildClass.$fromJson(value);
+      return ConcreteChildClass.$fromJson(value as ConcreteChildClass.$Json);
     }
     if (value.$type === "ConcreteParentClass") {
-      return ConcreteParentClassStatic.$fromJson(value);
+      return ConcreteParentClassStatic.$fromJson(
+        value as ConcreteParentClassStatic.$Json,
+      );
     }
     if (value.$type === "ConcreteChildInterface") {
-      return ConcreteChildInterface.$fromJson(value);
+      return ConcreteChildInterface.$fromJson(
+        value as ConcreteChildInterface.$Json,
+      );
     }
     if (value.$type === "ConcreteParentInterface") {
-      return ConcreteParentInterfaceStatic.$fromJson(value);
+      return ConcreteParentInterfaceStatic.$fromJson(
+        value as ConcreteParentInterfaceStatic.$Json,
+      );
     }
     if (value.$type === "BaseInterfaceWithoutProperties") {
-      return BaseInterfaceWithoutPropertiesStatic.$fromJson(value);
+      return BaseInterfaceWithoutPropertiesStatic.$fromJson(
+        value as BaseInterfaceWithoutPropertiesStatic.$Json,
+      );
     }
     if (value.$type === "BaseInterfaceWithProperties") {
-      return BaseInterfaceWithPropertiesStatic.$fromJson(value);
+      return BaseInterfaceWithPropertiesStatic.$fromJson(
+        value as BaseInterfaceWithPropertiesStatic.$Json,
+      );
     }
     if (value.$type === "ConvertibleTypePropertiesClass") {
-      return ConvertibleTypePropertiesClass.$fromJson(value);
+      return ConvertibleTypePropertiesClass.$fromJson(
+        value as ConvertibleTypePropertiesClass.$Json,
+      );
     }
     if (value.$type === "DateUnionPropertiesClass") {
-      return DateUnionPropertiesClass.$fromJson(value);
+      return DateUnionPropertiesClass.$fromJson(
+        value as DateUnionPropertiesClass.$Json,
+      );
     }
     if (value.$type === "DefaultValuePropertiesClass") {
-      return DefaultValuePropertiesClass.$fromJson(value);
+      return DefaultValuePropertiesClass.$fromJson(
+        value as DefaultValuePropertiesClass.$Json,
+      );
     }
     if (value.$type === "DirectRecursiveClass") {
-      return DirectRecursiveClass.$fromJson(value);
+      return DirectRecursiveClass.$fromJson(
+        value as DirectRecursiveClass.$Json,
+      );
     }
     if (value.$type === "ExplicitFromToRdfTypesClass") {
-      return ExplicitFromToRdfTypesClass.$fromJson(value);
+      return ExplicitFromToRdfTypesClass.$fromJson(
+        value as ExplicitFromToRdfTypesClass.$Json,
+      );
     }
     if (value.$type === "ExplicitRdfTypeClass") {
-      return ExplicitRdfTypeClass.$fromJson(value);
+      return ExplicitRdfTypeClass.$fromJson(
+        value as ExplicitRdfTypeClass.$Json,
+      );
     }
     if (value.$type === "ExternClassPropertyClass") {
-      return ExternClassPropertyClass.$fromJson(value);
+      return ExternClassPropertyClass.$fromJson(
+        value as ExternClassPropertyClass.$Json,
+      );
     }
     if (value.$type === "FlattenClassUnionMember3") {
-      return FlattenClassUnionMember3.$fromJson(value);
+      return FlattenClassUnionMember3.$fromJson(
+        value as FlattenClassUnionMember3.$Json,
+      );
     }
     if (value.$type === "HasValuePropertiesClass") {
-      return HasValuePropertiesClass.$fromJson(value);
+      return HasValuePropertiesClass.$fromJson(
+        value as HasValuePropertiesClass.$Json,
+      );
     }
     if (value.$type === "IdentifierOverride5Class") {
-      return IdentifierOverride5Class.$fromJson(value);
+      return IdentifierOverride5Class.$fromJson(
+        value as IdentifierOverride5Class.$Json,
+      );
     }
     if (value.$type === "IdentifierOverride4Class") {
-      return IdentifierOverride4ClassStatic.$fromJson(value);
+      return IdentifierOverride4ClassStatic.$fromJson(
+        value as IdentifierOverride4ClassStatic.$Json,
+      );
     }
     if (value.$type === "IdentifierOverride3Class") {
-      return IdentifierOverride3ClassStatic.$fromJson(value);
+      return IdentifierOverride3ClassStatic.$fromJson(
+        value as IdentifierOverride3ClassStatic.$Json,
+      );
     }
     if (value.$type === "InIdentifierClass") {
-      return InIdentifierClass.$fromJson(value);
+      return InIdentifierClass.$fromJson(value as InIdentifierClass.$Json);
     }
     if (value.$type === "InPropertiesClass") {
-      return InPropertiesClass.$fromJson(value);
+      return InPropertiesClass.$fromJson(value as InPropertiesClass.$Json);
     }
     if (value.$type === "IndirectRecursiveClass") {
-      return IndirectRecursiveClass.$fromJson(value);
+      return IndirectRecursiveClass.$fromJson(
+        value as IndirectRecursiveClass.$Json,
+      );
     }
     if (value.$type === "IndirectRecursiveHelperClass") {
-      return IndirectRecursiveHelperClass.$fromJson(value);
+      return IndirectRecursiveHelperClass.$fromJson(
+        value as IndirectRecursiveHelperClass.$Json,
+      );
     }
     if (value.$type === "Interface") {
-      return Interface.$fromJson(value);
+      return Interface.$fromJson(value as Interface.$Json);
     }
     if (value.$type === "InterfaceUnionMember1") {
-      return InterfaceUnionMember1.$fromJson(value);
+      return InterfaceUnionMember1.$fromJson(
+        value as InterfaceUnionMember1.$Json,
+      );
     }
     if (value.$type === "InterfaceUnionMember2") {
-      return InterfaceUnionMember2.$fromJson(value);
+      return InterfaceUnionMember2.$fromJson(
+        value as InterfaceUnionMember2.$Json,
+      );
     }
     if (value.$type === "IriIdentifierClass") {
-      return IriIdentifierClass.$fromJson(value);
+      return IriIdentifierClass.$fromJson(value as IriIdentifierClass.$Json);
     }
     if (value.$type === "IriIdentifierInterface") {
-      return IriIdentifierInterface.$fromJson(value);
+      return IriIdentifierInterface.$fromJson(
+        value as IriIdentifierInterface.$Json,
+      );
     }
     if (value.$type === "JsPrimitiveUnionPropertyClass") {
-      return JsPrimitiveUnionPropertyClass.$fromJson(value);
+      return JsPrimitiveUnionPropertyClass.$fromJson(
+        value as JsPrimitiveUnionPropertyClass.$Json,
+      );
     }
     if (value.$type === "LanguageInPropertiesClass") {
-      return LanguageInPropertiesClass.$fromJson(value);
+      return LanguageInPropertiesClass.$fromJson(
+        value as LanguageInPropertiesClass.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedBlankNodeOrIriIdentifierClass") {
-      return LazilyResolvedBlankNodeOrIriIdentifierClass.$fromJson(value);
+      return LazilyResolvedBlankNodeOrIriIdentifierClass.$fromJson(
+        value as LazilyResolvedBlankNodeOrIriIdentifierClass.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedBlankNodeOrIriIdentifierInterface") {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromJson(value);
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromJson(
+        value as LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedClassUnionMember1") {
-      return LazilyResolvedClassUnionMember1.$fromJson(value);
+      return LazilyResolvedClassUnionMember1.$fromJson(
+        value as LazilyResolvedClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedClassUnionMember2") {
-      return LazilyResolvedClassUnionMember2.$fromJson(value);
+      return LazilyResolvedClassUnionMember2.$fromJson(
+        value as LazilyResolvedClassUnionMember2.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedInterfaceUnionMember1") {
-      return LazilyResolvedInterfaceUnionMember1.$fromJson(value);
+      return LazilyResolvedInterfaceUnionMember1.$fromJson(
+        value as LazilyResolvedInterfaceUnionMember1.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedInterfaceUnionMember2") {
-      return LazilyResolvedInterfaceUnionMember2.$fromJson(value);
+      return LazilyResolvedInterfaceUnionMember2.$fromJson(
+        value as LazilyResolvedInterfaceUnionMember2.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedIriIdentifierClass") {
-      return LazilyResolvedIriIdentifierClass.$fromJson(value);
+      return LazilyResolvedIriIdentifierClass.$fromJson(
+        value as LazilyResolvedIriIdentifierClass.$Json,
+      );
     }
     if (value.$type === "LazilyResolvedIriIdentifierInterface") {
-      return LazilyResolvedIriIdentifierInterface.$fromJson(value);
+      return LazilyResolvedIriIdentifierInterface.$fromJson(
+        value as LazilyResolvedIriIdentifierInterface.$Json,
+      );
     }
     if (value.$type === "LazyPropertiesClass") {
-      return LazyPropertiesClass.$fromJson(value);
+      return LazyPropertiesClass.$fromJson(value as LazyPropertiesClass.$Json);
     }
     if (value.$type === "LazyPropertiesInterface") {
-      return LazyPropertiesInterface.$fromJson(value);
+      return LazyPropertiesInterface.$fromJson(
+        value as LazyPropertiesInterface.$Json,
+      );
     }
     if (value.$type === "PartialInterface") {
-      return PartialInterface.$fromJson(value);
+      return PartialInterface.$fromJson(value as PartialInterface.$Json);
     }
     if (value.$type === "ListPropertiesClass") {
-      return ListPropertiesClass.$fromJson(value);
+      return ListPropertiesClass.$fromJson(value as ListPropertiesClass.$Json);
     }
     if (value.$type === "MutablePropertiesClass") {
-      return MutablePropertiesClass.$fromJson(value);
+      return MutablePropertiesClass.$fromJson(
+        value as MutablePropertiesClass.$Json,
+      );
     }
     if (value.$type === "NamedUnionPropertiesClass") {
-      return NamedUnionPropertiesClass.$fromJson(value);
+      return NamedUnionPropertiesClass.$fromJson(
+        value as NamedUnionPropertiesClass.$Json,
+      );
     }
     if (value.$type === "NoRdfTypeClassUnionMember1") {
-      return NoRdfTypeClassUnionMember1.$fromJson(value);
+      return NoRdfTypeClassUnionMember1.$fromJson(
+        value as NoRdfTypeClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "NoRdfTypeClassUnionMember2") {
-      return NoRdfTypeClassUnionMember2.$fromJson(value);
+      return NoRdfTypeClassUnionMember2.$fromJson(
+        value as NoRdfTypeClassUnionMember2.$Json,
+      );
     }
     if (value.$type === "NodeKindsClass") {
-      return NodeKindsClass.$fromJson(value);
+      return NodeKindsClass.$fromJson(value as NodeKindsClass.$Json);
     }
     if (value.$type === "NumericPropertiesClass") {
-      return NumericPropertiesClass.$fromJson(value);
+      return NumericPropertiesClass.$fromJson(
+        value as NumericPropertiesClass.$Json,
+      );
     }
     if (value.$type === "OrderedPropertiesClass") {
-      return OrderedPropertiesClass.$fromJson(value);
+      return OrderedPropertiesClass.$fromJson(
+        value as OrderedPropertiesClass.$Json,
+      );
     }
     if (value.$type === "NewName1Class") {
-      return NewName1Class.$fromJson(value);
+      return NewName1Class.$fromJson(value as NewName1Class.$Json);
     }
     if (value.$type === "NewName2Class") {
-      return NewName2Class.$fromJson(value);
+      return NewName2Class.$fromJson(value as NewName2Class.$Json);
     }
     if (value.$type === "PartialClassUnionMember1") {
-      return PartialClassUnionMember1.$fromJson(value);
+      return PartialClassUnionMember1.$fromJson(
+        value as PartialClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "PartialClassUnionMember2") {
-      return PartialClassUnionMember2.$fromJson(value);
+      return PartialClassUnionMember2.$fromJson(
+        value as PartialClassUnionMember2.$Json,
+      );
     }
     if (value.$type === "PartialInterfaceUnionMember1") {
-      return PartialInterfaceUnionMember1.$fromJson(value);
+      return PartialInterfaceUnionMember1.$fromJson(
+        value as PartialInterfaceUnionMember1.$Json,
+      );
     }
     if (value.$type === "PartialInterfaceUnionMember2") {
-      return PartialInterfaceUnionMember2.$fromJson(value);
+      return PartialInterfaceUnionMember2.$fromJson(
+        value as PartialInterfaceUnionMember2.$Json,
+      );
     }
     if (value.$type === "PropertyCardinalitiesClass") {
-      return PropertyCardinalitiesClass.$fromJson(value);
+      return PropertyCardinalitiesClass.$fromJson(
+        value as PropertyCardinalitiesClass.$Json,
+      );
     }
     if (value.$type === "PropertyNamesClass") {
-      return PropertyNamesClass.$fromJson(value);
+      return PropertyNamesClass.$fromJson(value as PropertyNamesClass.$Json);
     }
     if (value.$type === "PropertyPathsClass") {
-      return PropertyPathsClass.$fromJson(value);
+      return PropertyPathsClass.$fromJson(value as PropertyPathsClass.$Json);
     }
     if (value.$type === "PropertyVisibilitiesClass") {
-      return PropertyVisibilitiesClass.$fromJson(value);
+      return PropertyVisibilitiesClass.$fromJson(
+        value as PropertyVisibilitiesClass.$Json,
+      );
     }
     if (value.$type === "RecursiveClassUnionMember1") {
-      return RecursiveClassUnionMember1.$fromJson(value);
+      return RecursiveClassUnionMember1.$fromJson(
+        value as RecursiveClassUnionMember1.$Json,
+      );
     }
     if (value.$type === "RecursiveClassUnionMember2") {
-      return RecursiveClassUnionMember2.$fromJson(value);
+      return RecursiveClassUnionMember2.$fromJson(
+        value as RecursiveClassUnionMember2.$Json,
+      );
     }
     if (value.$type === "Sha256IriIdentifierClass") {
-      return Sha256IriIdentifierClass.$fromJson(value);
+      return Sha256IriIdentifierClass.$fromJson(
+        value as Sha256IriIdentifierClass.$Json,
+      );
     }
     if (value.$type === "TermPropertiesClass") {
-      return TermPropertiesClass.$fromJson(value);
+      return TermPropertiesClass.$fromJson(value as TermPropertiesClass.$Json);
     }
     if (value.$type === "UnionDiscriminantsClass") {
-      return UnionDiscriminantsClass.$fromJson(value);
+      return UnionDiscriminantsClass.$fromJson(
+        value as UnionDiscriminantsClass.$Json,
+      );
     }
     if (value.$type === "UuidV4IriIdentifierClass") {
-      return UuidV4IriIdentifierClass.$fromJson(value);
+      return UuidV4IriIdentifierClass.$fromJson(
+        value as UuidV4IriIdentifierClass.$Json,
+      );
     }
     if (value.$type === "UuidV4IriIdentifierInterface") {
-      return UuidV4IriIdentifierInterface.$fromJson(value);
+      return UuidV4IriIdentifierInterface.$fromJson(
+        value as UuidV4IriIdentifierInterface.$Json,
+      );
     }
     if (value.$type === "$DefaultPartial") {
-      return $DefaultPartial.$fromJson(value);
+      return $DefaultPartial.$fromJson(value as $DefaultPartial.$Json);
     }
     if (value.$type === "$NamedDefaultPartial") {
-      return $NamedDefaultPartial.$fromJson(value);
+      return $NamedDefaultPartial.$fromJson(
+        value as $NamedDefaultPartial.$Json,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
