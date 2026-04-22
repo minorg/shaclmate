@@ -74,6 +74,7 @@ import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
 import { snippets_PropertiesFromRdfResourceFunction } from "./_snippets/snippets_PropertiesFromRdfResourceFunction.js";
+import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
@@ -181,6 +182,7 @@ export const snippets = {
   NumericSchema: snippets_NumericSchema,
   numericSparqlWherePatterns: snippets_numericSparqlWherePatterns,
   PropertiesFromRdfResourceFunction: snippets_PropertiesFromRdfResourceFunction,
+  PropertyPath: snippets_PropertyPath,
   RdfVocabularies: snippets_RdfVocabularies,
   shaclPropertyFromRdf: snippets_shaclPropertyFromRdf,
   ShaclPropertySchema: snippets_ShaclPropertySchema,

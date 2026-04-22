@@ -13,7 +13,7 @@ export type ${syntheticNamePrefix}FromRdfResourceValuesFunction<T> = (
     ignoreRdfType?: boolean;
     objectSet?: ${syntheticNamePrefix}ObjectSet;
     preferredLanguages?: readonly string[];
-    propertyPath: ${imports.PropertyPath};
+    propertyPath: ${syntheticNamePrefix}PropertyPath;
     resource: ${imports.Resource};
   }
 ) => ${imports.Either}<Error, ${imports.Resource}.Values<T>>;`,

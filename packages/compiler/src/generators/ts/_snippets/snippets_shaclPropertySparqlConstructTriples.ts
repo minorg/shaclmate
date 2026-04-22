@@ -1,6 +1,7 @@
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
 import { snippets_ShaclPropertySchema } from "./snippets_ShaclPropertySchema.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./snippets_ValueSparqlConstructTriplesFunction.js";
 
@@ -19,7 +20,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
   const propertyPathSparqlConstructTriples = ({ end, propertyPath, start, variableCounter }: {
     variableCounter: { value: number };
     end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
-    propertyPath: ${imports.PropertyPath};
+    propertyPath: ${snippets_PropertyPath};
     start: ${imports.NamedNode} | ${imports.Variable};
   }): readonly ${imports.sparqljs}.Triple[] => {
     switch (propertyPath.termType) {

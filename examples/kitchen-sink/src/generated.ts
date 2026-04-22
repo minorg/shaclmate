@@ -21,7 +21,7 @@ import {
 } from "purify-ts";
 import {
   LiteralFactory,
-  type PropertyPath,
+  PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "rdfjs-resource";
@@ -882,7 +882,7 @@ export type $FromRdfResourceValuesFunction<T> = (
     ignoreRdfType?: boolean;
     objectSet?: $ObjectSet;
     preferredLanguages?: readonly string[];
-    propertyPath: PropertyPath;
+    propertyPath: $PropertyPath;
     resource: Resource;
   },
 ) => Either<Error, Resource.Values<T>>;
@@ -1764,6 +1764,13 @@ type $PropertiesFromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
+export type $PropertyPath = RdfjsResourcePropertyPath;
+
+export namespace $PropertyPath {
+  export const $fromRdfResource = RdfjsResourcePropertyPath.$fromRdf;
+  export const $toRdfResource = RdfjsResourcePropertyPath.$toRdf;
+}
+
 namespace $RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode(
@@ -1920,7 +1927,7 @@ function $shaclPropertyFromRdf<T>({
 
 export interface $ShaclPropertySchema<TypeSchemaT = object> {
   readonly kind: "Shacl";
-  readonly path: PropertyPath;
+  readonly path: $PropertyPath;
   readonly type: () => TypeSchemaT;
 }
 
@@ -1952,7 +1959,7 @@ function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
   }: {
     variableCounter: { value: number };
     end: Literal | NamedNode | Variable;
-    propertyPath: PropertyPath;
+    propertyPath: $PropertyPath;
     start: NamedNode | Variable;
   }): readonly sparqljs.Triple[] => {
     switch (propertyPath.termType) {
@@ -2095,7 +2102,7 @@ function $shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({
     variableCounter,
   }: {
     end: Literal | NamedNode | Variable;
-    propertyPath: PropertyPath;
+    propertyPath: $PropertyPath;
     start: NamedNode | Variable;
     variableCounter: { value: number };
   }): $SparqlPattern[] => {
@@ -2302,10 +2309,10 @@ namespace $SparqlPattern {
 }
 
 /**
- * Convert a PropertyPath to a sparqljs.PropertyPath.
+ * Convert a $PropertyPath to a sparqljs.PropertyPath.
  */
 function $sparqlPropertyPath(
-  propertyPath: PropertyPath,
+  propertyPath: $PropertyPath,
 ): NamedNode | sparqljs.PropertyPath {
   switch (propertyPath.termType) {
     case "AlternativePath":
@@ -2639,7 +2646,7 @@ export type $ToRdfResourceValuesFunction<T> = (
   options: {
     graph?: Exclude<Quad_Graph, Variable>;
     ignoreRdfType?: boolean;
-    propertyPath: PropertyPath;
+    propertyPath: $PropertyPath;
     resource: Resource;
     resourceSet: ResourceSet;
   },
