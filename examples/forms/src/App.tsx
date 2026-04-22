@@ -50,9 +50,9 @@ const initialData = generated.FormNodeShape.$toJson(
   }),
 );
 
-const jsonSchema = generated.FormNodeShape.$jsonSchema();
+const jsonSchema = generated.FormNodeShape.$Json.schema();
 const jsonSchemaString = JSON.stringify(jsonSchema, null, 2);
-const jsonUiSchema = generated.FormNodeShape.$jsonUiSchema();
+const jsonUiSchema = generated.FormNodeShape.$Json.uiSchema();
 const jsonUiSchemaString = JSON.stringify(jsonUiSchema, null, 2);
 
 const renderers = materialRenderers;
@@ -62,11 +62,11 @@ const App: FC = () => {
   const dataJsonString = useMemo(() => JSON.stringify(data, null, 2), [data]);
   const dataRdfString = useMemo(
     () =>
-      generated.FormNodeShape.$parseJson(data)
+      generated.FormNodeShape.$Json.parse(data)
         .mapLeft((error) => error.toString())
-        .map((instance) => {
+        .map((json) => {
           return new Writer({ format: "N-Triples" }).quadsToString([
-            ...generated.FormNodeShape.$toRdfResource(instance).dataset,
+            ...generated.FormNodeShape.$toRdfResource(generated.FormNodeShape.$fromJson(json)).dataset,
           ]);
         })
         .extract(),
